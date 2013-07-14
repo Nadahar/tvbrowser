@@ -52,7 +52,6 @@ import tvbrowser.core.contextmenu.DoNothingContextMenuItem;
 import tvbrowser.core.plugin.PluginProxyManager;
 import util.program.CompoundedProgramFieldType;
 import util.programmouseevent.ProgramMouseEventHandler;
-import util.settings.ContextMenuMouseActionSetting;
 import util.ui.Localizer;
 import util.ui.TextAreaIcon;
 import util.ui.UiUtilities;
@@ -185,52 +184,26 @@ public class ProgramMenuItem extends JMenuItem {
       mIconHeight = mIcon.getIconHeight();
       setMargin(new Insets(1,getMargin().left,1,getMargin().right));
     }
-    
+        
     addMouseListener(new MouseAdapter() {
       @Override
       public void mousePressed(MouseEvent e) {
-        if(SwingUtilities.isLeftMouseButton(e)) {
-          ContextMenuMouseActionSetting[] leftSingleSetting = Settings.propLeftSingleClickIfArray.getContextMenuMouseActionArray();
-          
-          ContextMenuIf leftSingleClickIf = null;
-          
-          if(leftSingleSetting != null && leftSingleSetting.length > 0) {
-            leftSingleClickIf = ContextMenuManager.getInstance().getContextMenuArrayForModifierEx(leftSingleSetting[0].getModifiersEx(), true, true);
-          }
-          
-          if(leftSingleClickIf == null || leftSingleClickIf.equals(DoNothingContextMenuItem.getInstance())) {
-            ContextMenuMouseActionSetting[] leftDoubleSetting = Settings.propLeftDoubleClickIfArray.getContextMenuMouseActionArray();
-            
-            leftSingleClickIf = ContextMenuManager.getInstance().getContextMenuArrayForModifierEx(leftDoubleSetting[0].getModifiersEx(), true, false);
-          }
-          
-          if(leftSingleClickIf != null) {
-            ProgramMouseEventHandler.handleAction(mProgram, leftSingleClickIf.getContextMenuActions(mProgram));
-          }          
-        }
-        else if(SwingUtilities.isMiddleMouseButton(e)) {
-          ContextMenuMouseActionSetting[] middleSingleSetting = Settings.propMiddleSingleClickIfArray.getContextMenuMouseActionArray();
-          
-          ContextMenuIf middleSingleClickIf = null;
-          
-          if(middleSingleSetting != null && middleSingleSetting.length > 0) {
-            middleSingleClickIf = ContextMenuManager.getInstance().getContextMenuArrayForModifierEx(middleSingleSetting[0].getModifiersEx(), true, true);
-          }
-          
-          if(middleSingleClickIf == null || middleSingleClickIf.equals(DoNothingContextMenuItem.getInstance())) {
-            ContextMenuMouseActionSetting[] middleDoubleSetting = Settings.propMiddleDoubleClickIfArray.getContextMenuMouseActionArray();
-            
-            middleSingleClickIf = ContextMenuManager.getInstance().getContextMenuArrayForModifierEx(middleDoubleSetting[0].getModifiersEx(), true, false);
-          }
-          
-          if(middleSingleClickIf != null) {
-            ProgramMouseEventHandler.handleAction(mProgram, middleSingleClickIf.getContextMenuActions(mProgram));
-          }
-        } else if (SwingUtilities.isRightMouseButton(e)) {
+        if (SwingUtilities.isRightMouseButton(e)) {
           Point point = e.getPoint();
           SwingUtilities.convertPointToScreen(point,e.getComponent());
           showPopup(point,PluginProxyManager.createPluginContextMenu(mProgram));
           e.consume();
+        }
+        else {
+          ContextMenuIf menu = ContextMenuManager.getInstance().getContextMenuForSingleClick(e);
+          
+          if(menu == null || menu.equals(DoNothingContextMenuItem.getInstance())) {
+            menu = ContextMenuManager.getInstance().getContextMenuForDoubleClick(e);
+          }
+          
+          if(menu != null) {
+            ProgramMouseEventHandler.handleAction(mProgram, menu.getContextMenuActions(mProgram));
+          }
         }
       }
     });
