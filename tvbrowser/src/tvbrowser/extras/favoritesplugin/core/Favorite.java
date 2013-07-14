@@ -44,6 +44,7 @@ import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
 import tvbrowser.extras.favoritesplugin.FavoritesPluginProxy;
 import tvbrowser.extras.favoritesplugin.dlgs.FavoriteTreeModel;
 import tvbrowser.extras.favoritesplugin.dlgs.ManageFavoritesDialog;
+import tvbrowser.extras.reminderplugin.ReminderFrame;
 import tvbrowser.extras.reminderplugin.ReminderPlugin;
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
@@ -544,7 +545,7 @@ public abstract class Favorite {
       }
       else if (comparator.compare(p1[inx1], newProgList[inx2]) > 0) {
         // add (p2[inx2]
-        markProgram(newProgList[inx2],-31);
+        markProgram(newProgList[inx2],ReminderFrame.DONT_REMIND_AGAIN);
         newPrograms.add(newProgList[inx2]);
         resultList.add(newProgList[inx2]);
         inx2++;
@@ -568,7 +569,7 @@ public abstract class Favorite {
     if (inx2 < newProgList.length) {
       // add (p2[inx2]..p2[p2.length-1])
       for (int i=inx2; i< newProgList.length; i++) {
-        markProgram(newProgList[i],-31);
+        markProgram(newProgList[i],ReminderFrame.DONT_REMIND_AGAIN);
         newPrograms.add(newProgList[i]);
         resultList.add(newProgList[i]);
       }
@@ -695,7 +696,7 @@ public abstract class Favorite {
       return;
     }
     if(mBlackList.remove(program)) {
-      markProgram(program,-31);
+      markProgram(program,ReminderFrame.DONT_REMIND_AGAIN);
       FavoritesPlugin.getInstance().updateRootNode(true);
       updateManageDialog();
     }
@@ -872,7 +873,7 @@ public abstract class Favorite {
 
           if(pos < 0 && !wasOnList) {
             mPrograms.add(p);
-            markProgram(p,-31);
+            markProgram(p,ReminderFrame.DONT_REMIND_AGAIN);
 
             if(!p.isExpired()) {
               synchronized(mNewPrograms) {
