@@ -494,8 +494,7 @@ public class ReminderSettingsTab implements SettingsTab {
     mSettings.setProperty("autoCloseBehaviour", mCloseOnEnd.isSelected() ? "onEnd" : mCloseNever.isSelected() ? "never" : "onTime");
 
     mSettings.setProperty("autoCloseReminderTime", mAutoCloseReminderTimeSp.getValue().toString());
-    mSettings.setProperty("defaultReminderEntry", Integer
-        .toString(mDefaultReminderEntryList.getSelectedIndex()));
+    mSettings.setProperty("defaultReminderEntry", String.valueOf(ReminderFrame.getMinutesForValue((String)mDefaultReminderEntryList.getSelectedItem())));
     mSettings.setProperty("showTimeSelectionDialog", String.valueOf(mShowTimeSelectionDlg.isSelected()));
     mSettings.setProperty("showRemovedDialog", String.valueOf(mShowRemovedDlg.isSelected()));
 

@@ -85,17 +85,19 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
   private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(ReminderFrame.class);
 
+  public static final int DONT_REMIND_AGAIN = -31; 
+  
   /**
    * The UI texts for the choosable options how long before a program start the
    * reminder should appear.
    */
   static final String[] REMIND_MSG_ARR = {
-    mLocalizer.msg("remind.-31", "Don't remind me"),
     mLocalizer.msg("remind.-30","Remind me when the program runs 30 minutes"),
     mLocalizer.msg("remind.-20","Remind me when the program runs 20 minutes"),
     mLocalizer.msg("remind.-10","Remind me when the program runs 10 minutes"),
     mLocalizer.msg("remind.-5","Remind me when the program runs 5 minutes"),
     mLocalizer.msg("remind.-1","Remind me when the program runs one minute"),
+    mLocalizer.msg("remind."+String.valueOf(DONT_REMIND_AGAIN), "Don't remind me"),
     mLocalizer.msg("remind.0", "Remind me when the program begins"),
     mLocalizer.msg("remind.1", "Remind me one minute before"),
     mLocalizer.msg("remind.2", "Remind me 2 minutes before"),
@@ -119,7 +121,7 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
    * reminder should appear.
    */
   static final int[] REMIND_VALUE_ARR
-    = { -31, -30, -20, -10, -5, -1, 0, 1, 2, 3, 5, 10, 15, 30, 60,
+    = { -30, -20, -10, -5, -1, DONT_REMIND_AGAIN, 0, 1, 2, 3, 5, 10, 15, 30, 60,
       90, 120, 240, 480, 720, 1440, 7 * 1440 };
 
   /**
@@ -240,6 +242,9 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
       if(program.isOnAir()) {
         runningMinutes = Math.max(runningMinutes, (minutesAfterMidnight - progMinutesAfterMidnight));
       }
+      else if(program.isExpired()) {
+        runningMinutes = -1;
+      }
       
       if (today.compareTo(program.getDate()) >= 0
           && minutesAfterMidnight > progMinutesAfterMidnight) {
@@ -323,15 +328,23 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
         remainingMinutesMax = reminder.getMinutes();
       }
     }
-System.out.println(remainingMinutesMax + " " +runningMinutes);
+    
     mReminderCB = new JComboBox();
     
     int i=0;
     
+    while (i < 5 && runningMinutes >= 0 && runningMinutes-Math.abs(REMIND_VALUE_ARR[i]) < 0) {
+      mReminderCB.addItem(REMIND_MSG_ARR[i++]);
+    }
+    
+    mReminderCB.addItem(REMIND_MSG_ARR[5]);
+    mReminderCB.setSelectedItem(REMIND_MSG_ARR[5]);
+    
+    i = 6;
+    
     while (i < REMIND_VALUE_ARR.length
-        && REMIND_VALUE_ARR[i] < remainingMinutesMax && (REMIND_VALUE_ARR[i] >= 0 || REMIND_VALUE_ARR[i] < -runningMinutes || REMIND_VALUE_ARR[i] == -31)) {
-      mReminderCB.addItem(REMIND_MSG_ARR[i]);
-      i++;
+        && REMIND_VALUE_ARR[i] < remainingMinutesMax) {
+      mReminderCB.addItem(REMIND_MSG_ARR[i++]);
     }
     // don't show reminder selection if it contains only the
     // entry "don't remind me"
@@ -510,10 +523,18 @@ System.out.println(remainingMinutesMax + " " +runningMinutes);
   }
 
   public void close() {
-    final int minutes = REMIND_VALUE_ARR[mReminderCB.getSelectedIndex()];
+    int minutes = DONT_REMIND_AGAIN;
+    
+    for(int i = 0; i < REMIND_MSG_ARR.length; i++) {
+      if(mReminderCB.getSelectedItem().equals(REMIND_MSG_ARR[i])) {
+        minutes = REMIND_VALUE_ARR[i];
+        break;
+      }
+    }
+    
     for (ReminderListItem reminder : mReminderItems) {
       mGlobalReminderList.removeWithoutChecking(reminder.getProgramItem());
-      if (minutes != -31) {
+      if (minutes != DONT_REMIND_AGAIN) {
         Program program = reminder.getProgram();
         mGlobalReminderList.add(program, new ReminderContent(minutes, reminder
             .getComment()));
@@ -560,8 +581,17 @@ System.out.println(remainingMinutesMax + " " +runningMinutes);
     return -1;
   }
 
-  public static int getMinutesForValue(final int index) {
-    return REMIND_VALUE_ARR[index + 1];
+  public static int getMinutesForValue(final String value) {
+    int minutes = 0;
+    
+    for(int i = 0; i < REMIND_MSG_ARR.length; i++) {
+      if(value.equals(REMIND_MSG_ARR[i])) {
+        minutes = REMIND_VALUE_ARR[i];
+        break;
+      }
+    }
+    
+    return minutes;
   }
 
 
