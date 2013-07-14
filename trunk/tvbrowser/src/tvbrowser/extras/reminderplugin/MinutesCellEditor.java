@@ -38,7 +38,7 @@ public class MinutesCellEditor extends AbstractCellEditor implements TableCellEd
 
   // Implement the one CellEditor method that AbstractCellEditor doesn't.
   public Object getCellEditorValue() {
-    return ReminderFrame.getMinutesForValue(mComboBox.getSelectedIndex());
+    return ReminderFrame.getMinutesForValue((String)mComboBox.getSelectedItem());
   }
 
   public boolean isCellEditable(EventObject evt) {

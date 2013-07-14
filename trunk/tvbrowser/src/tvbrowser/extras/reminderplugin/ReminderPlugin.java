@@ -716,7 +716,7 @@ public class ReminderPlugin {
    * <p>
    * @param prog The program to remove.
    * @return The reminder minutes of the program
-   * or -31 if the program was not in the list.
+   * or ReminderFrame.DONT_REMIND_AGAIN if the program was not in the list.
    */
   public int removeProgram(Program prog) {
     ReminderListItem item = null;
@@ -731,7 +731,7 @@ public class ReminderPlugin {
       return item.getMinutes();
     }
 
-    return -31;
+    return ReminderFrame.DONT_REMIND_AGAIN;
   }
 
   /**
@@ -759,7 +759,7 @@ public class ReminderPlugin {
    * Gets the reminder minutes for the given program.
    * <p>
    * @param prog The program to get the reminder minutes for.
-   * @return The reminder minutes of the program or -31 if the
+   * @return The reminder minutes of the program or ReminderFrame.DONT_REMIND_AGAIN if the
    * program is not in the reminder list
    * @since 2.7
    */
@@ -774,7 +774,7 @@ public class ReminderPlugin {
       return item.getMinutes();
     }
 
-    return -31;
+    return ReminderFrame.DONT_REMIND_AGAIN;
   }
 
   /**

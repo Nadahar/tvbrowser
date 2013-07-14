@@ -70,10 +70,15 @@ public class ReminderDialog extends JDialog implements WindowClosingIf {
 
   static {
     // use the same entries as the ReminderFrame but without "don't remind me"
-    System.arraycopy(ReminderFrame.REMIND_MSG_ARR, 1, SMALL_REMIND_MSG_ARR, 0,
-        SMALL_REMIND_MSG_ARR.length);
-    System.arraycopy(ReminderFrame.REMIND_VALUE_ARR, 1, SMALL_REMIND_VALUE_ARR,
-        0, SMALL_REMIND_VALUE_ARR.length);
+    System.arraycopy(ReminderFrame.REMIND_MSG_ARR, 0, SMALL_REMIND_MSG_ARR, 0,
+        5);
+    System.arraycopy(ReminderFrame.REMIND_MSG_ARR, 6, SMALL_REMIND_MSG_ARR, 5,
+        ReminderFrame.REMIND_MSG_ARR.length-6);
+    
+    System.arraycopy(ReminderFrame.REMIND_VALUE_ARR, 0, SMALL_REMIND_VALUE_ARR,
+        0, 5);
+    System.arraycopy(ReminderFrame.REMIND_VALUE_ARR, 6, SMALL_REMIND_VALUE_ARR, 5,
+        ReminderFrame.REMIND_MSG_ARR.length-6);
   }
 
   private String[] mRemindMessages;
