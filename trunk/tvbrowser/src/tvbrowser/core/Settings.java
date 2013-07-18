@@ -1933,6 +1933,9 @@ public class Settings {
   public static final StringArrayProperty propDisabledCenterPanelArr = new StringArrayProperty(
       mProp, "disabledCenterPanelArr", new String[0]);
   
+  public static final BooleanProperty propProgramTableAutoChangeDate = new BooleanProperty(
+      mProp, "autoScrollToNextDay", true);
+  
   /**
    * Sets the window position and size for the given window with the values of
    * the given id.
