@@ -16,6 +16,12 @@ public interface DateSelector {
   void markPreviousDate();
 
   void markNextDate();
+  
+  /** @since 3.3.2 */
+  void markPreviousDate(Runnable callback);
+
+  /** @since 3.3.2 */
+  void markNextDate(Runnable callback);
 
   void markNextWeek();
 

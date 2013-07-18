@@ -126,6 +126,8 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
   private JLabel mForegroundLabel;
   
   private JCheckBox mTypeAsYouFind;
+  
+  private JCheckBox mAutoChangeDate;
 
   public void actionPerformed(ActionEvent event) {
     Object source = event.getSource();
@@ -398,6 +400,8 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     layout.appendRow(RowSpec.decode("pref"));
     layout.appendRow(RowSpec.decode("3dlu"));
     layout.appendRow(RowSpec.decode("pref"));
+    layout.appendRow(RowSpec.decode("3dlu"));
+    layout.appendRow(RowSpec.decode("pref"));
     
     
     // Miscellaneous *********************************************
@@ -437,6 +441,11 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     mAutoScrollCb.setSelected(Settings.propProgramTableMouseAutoScroll
         .getBoolean());
     mSettingsPn.add(mAutoScrollCb, cc.xyw(2, (currentRow += 2), 6));
+    
+    mAutoChangeDate = new JCheckBox(mLocalizer.msg("mouseAutoChangeDate",
+        "Automatically change date when scrolling with mouse wheel against top and bottom"));
+    mAutoChangeDate.setSelected(Settings.propProgramTableAutoChangeDate.getBoolean());
+    mSettingsPn.add(mAutoChangeDate, cc.xyw(2, (currentRow += 2), 6));
     
     mSettingsPn.add(DefaultComponentFactory.getInstance().createSeparator(
         mLocalizer.msg("misc", "Misc")), cc.xyw(1,
@@ -548,7 +557,8 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     Settings.propProgramTableEndOfDay.setInt(minutes);
 
     Settings.propProgramTableMouseOver.setBoolean(mMouseOverCb.isSelected());
-
+    Settings.propProgramTableAutoChangeDate.setBoolean(mAutoChangeDate.isSelected());
+    
     Settings.propProgramTableMouseOverColor.setColor(mMouseOverColorLb.getColor());
     Settings.propProgramTableCutTitle.setBoolean(mCutLongTitlesCB.isSelected());
     Settings.propProgramTableCutTitleLines

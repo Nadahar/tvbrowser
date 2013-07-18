@@ -2148,8 +2148,12 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     mProgramTableScrollPane.deSelectItem(false);
     mFinderPanel.markDate(date,true);
   }
-
+  
   public void goToNextDay() {
+    goToNextDay(null);
+  }
+
+  public void goToNextDay(Runnable callback) {
     final Program selected = mProgramTableScrollPane.deSelectItem(true);
     
     if(selected != null) {
@@ -2173,15 +2177,19 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
         selectProgram(next,true);
       }
       else if(!found) {
-        mFinderPanel.markNextDate();
+        mFinderPanel.markNextDate(callback);
       }
     }
     else {
-      mFinderPanel.markNextDate();
+      mFinderPanel.markNextDate(callback);
     }
   }
-
+  
   public void goToPreviousDay() {
+    goToPreviousDay(null);
+  }
+
+  public void goToPreviousDay(Runnable callback) {
     final Program selected = mProgramTableScrollPane.deSelectItem(true);
     
     if(selected != null) {
@@ -2205,11 +2213,11 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
         selectProgram(next,true);
       }
       else if(!found) {
-        mFinderPanel.markPreviousDate();
+        mFinderPanel.markPreviousDate(callback);
       }
     }
     else {
-      mFinderPanel.markPreviousDate();
+      mFinderPanel.markPreviousDate(callback);
     }
   }
 

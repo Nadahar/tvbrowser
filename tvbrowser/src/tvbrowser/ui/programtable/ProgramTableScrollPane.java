@@ -45,6 +45,7 @@ import java.util.Calendar;
 import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -55,6 +56,7 @@ import tvbrowser.ui.programtable.background.BackgroundPainter;
 import util.ui.persona.Persona;
 import devplugin.Channel;
 import devplugin.ContextMenuIf;
+import devplugin.Date;
 import devplugin.Program;
 
 /**
@@ -75,7 +77,9 @@ public class ProgramTableScrollPane extends JScrollPane implements ProgramTableM
   private int mScrolledTime = -1;
   
   private KeyListener mKeyListener;
-
+  
+  private long mLastScrollTime;
+  
   /**
    * Creates a new instance of ProgramTableScrollPane.
    * 
@@ -167,7 +171,7 @@ public class ProgramTableScrollPane extends JScrollPane implements ProgramTableM
 
       public void componentShown(ComponentEvent e) {
       }});
-
+    
     // whenever the vertical scroll bar is moved, reset the current time
     getVerticalScrollBar().addAdjustmentListener(new AdjustmentListener() {
 
@@ -345,7 +349,34 @@ public class ProgramTableScrollPane extends JScrollPane implements ProgramTableM
   public void tableCellUpdated(int col, int row) {
   }
 
-  public void mouseWheelMoved(MouseWheelEvent e) {
+  public void mouseWheelMoved(final MouseWheelEvent e) {
+    if(Settings.propProgramTableAutoChangeDate.getBoolean()) {
+      if(getVerticalScrollBar().getValue() + getVerticalScrollBar().getVisibleAmount() >= getVerticalScrollBar().getMaximum() || getVerticalScrollBar().getValue() == getVerticalScrollBar().getMinimum()) {
+        if(System.currentTimeMillis()-mLastScrollTime <= 500 && System.currentTimeMillis()-mLastScrollTime >= 200) {
+          if(getVerticalScrollBar().getValue() == getVerticalScrollBar().getMinimum()) {
+            MainFrame.getInstance().goToPreviousDay(new Runnable() {
+              public void run() {
+                getVerticalScrollBar().setValue(getVerticalScrollBar().getMaximum());
+              }
+            });
+          }
+          else {
+            MainFrame.getInstance().goToNextDay(new Runnable() {
+              public void run() {
+                MainFrame.getInstance().scrollToTime(Settings.propProgramTableEndOfDay.getInt());
+              }
+            });
+          }
+          
+          e.consume();
+          return;
+        }
+        else if(System.currentTimeMillis()-mLastScrollTime > 500) {
+          mLastScrollTime = System.currentTimeMillis();
+        }
+      }
+    }
+    
     JScrollBar scrollBar = null;
     int amount = 0;
     
