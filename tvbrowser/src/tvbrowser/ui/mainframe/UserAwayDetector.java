@@ -18,6 +18,7 @@ package tvbrowser.ui.mainframe;
 
 import java.awt.MouseInfo;
 import java.awt.Point;
+import java.awt.PointerInfo;
 
 public class UserAwayDetector {
 
@@ -29,13 +30,20 @@ public class UserAwayDetector {
   }
 
   public boolean isAway() {
-    Point mousePos = MouseInfo.getPointerInfo().getLocation();
-    long currentTime = System.currentTimeMillis();
-    if (!mousePos.equals(mLastMousePos)) {
-      mAwaySince = currentTime;
+    PointerInfo info = MouseInfo.getPointerInfo();
+    
+    if(info != null) {
+      Point mousePos = info.getLocation();
+      long currentTime = System.currentTimeMillis();
+      if (!mousePos.equals(mLastMousePos)) {
+        mAwaySince = currentTime;
+      }
+      mLastMousePos = mousePos;
+    
+      return (currentTime - mAwaySince > 1800.0 * 1000.0);
     }
-    mLastMousePos = mousePos;
-    return (currentTime - mAwaySince > 1800.0 * 1000.0);
+    
+    return true;
   }
 
 }
