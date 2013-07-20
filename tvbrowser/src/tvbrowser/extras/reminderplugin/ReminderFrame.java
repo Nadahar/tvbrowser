@@ -37,6 +37,7 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
 import java.util.AbstractList;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -87,42 +88,34 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
 
   public static final int DONT_REMIND_AGAIN = -31; 
   
-  /**
-   * The UI texts for the choosable options how long before a program start the
-   * reminder should appear.
-   */
-  static final String[] REMIND_MSG_ARR = {
-    mLocalizer.msg("remind.-30","Remind me when the program runs 30 minutes"),
-    mLocalizer.msg("remind.-20","Remind me when the program runs 20 minutes"),
-    mLocalizer.msg("remind.-10","Remind me when the program runs 10 minutes"),
-    mLocalizer.msg("remind.-5","Remind me when the program runs 5 minutes"),
-    mLocalizer.msg("remind.-1","Remind me when the program runs one minute"),
-    mLocalizer.msg("remind."+String.valueOf(DONT_REMIND_AGAIN), "Don't remind me"),
-    mLocalizer.msg("remind.0", "Remind me when the program begins"),
-    mLocalizer.msg("remind.1", "Remind me one minute before"),
-    mLocalizer.msg("remind.2", "Remind me 2 minutes before"),
-    mLocalizer.msg("remind.3", "Remind me 3 minutes before"),
-    mLocalizer.msg("remind.5", "Remind me 5 minutes before"),
-    mLocalizer.msg("remind.10", "Remind me 10 minutes before"),
-    mLocalizer.msg("remind.15", "Remind me 15 minutes before"),
-    mLocalizer.msg("remind.30", "Remind me 30 minutes before"),
-    mLocalizer.msg("remind.60", "Remind me one hour before"),
-    mLocalizer.msg("remind.90", "Remind me 1.5 hours before"),
-    mLocalizer.msg("remind.120", "Remind me 2 hours before"),
-    mLocalizer.msg("remind.240", "Remind me 4 hours before"),
-    mLocalizer.msg("remind.480", "Remind me 8 hours before"),
-    mLocalizer.msg("remind.720", "Remind me 12 hours before"),
-    mLocalizer.msg("remind.1440", "Remind me one day before"),
-    mLocalizer.msg("remind.week", "Remind me one week before"),
+  static final RemindValue DONT_REMIND_AGAIN_VALUE = new RemindValue(DONT_REMIND_AGAIN);
+
+  static final RemindValue[] REMIND_AFTER_VALUE_ARR = {
+    new RemindValue(-30),
+    new RemindValue(-20),
+    new RemindValue(-10),
+    new RemindValue(-5),
+    new RemindValue(-1),
   };
 
-  /**
-   * The values for the selectable options how long before a program start the
-   * reminder should appear.
-   */
-  static final int[] REMIND_VALUE_ARR
-    = { -30, -20, -10, -5, -1, DONT_REMIND_AGAIN, 0, 1, 2, 3, 5, 10, 15, 30, 60,
-      90, 120, 240, 480, 720, 1440, 7 * 1440 };
+  static final RemindValue[] REMIND_BEFORE_VALUE_ARR = {
+    new RemindValue(0),
+    new RemindValue(1),
+    new RemindValue(2),
+    new RemindValue(3),
+    new RemindValue(5),
+    new RemindValue(10),
+    new RemindValue(15),
+    new RemindValue(30),
+    new RemindValue(60),
+    new RemindValue(90),
+    new RemindValue(120),
+    new RemindValue(240),
+    new RemindValue(480),
+    new RemindValue(720),
+    new RemindValue(1440),
+    new RemindValue(7 * 1440),
+  };
 
   /**
    * The frame that shows this reminder. The reminder is shown in a frame if
@@ -333,18 +326,18 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
     
     int i=0;
     
-    while (i < 5 && runningMinutes >= 0 && runningMinutes-Math.abs(REMIND_VALUE_ARR[i]) < 0) {
-      mReminderCB.addItem(REMIND_MSG_ARR[i++]);
+    while (i < REMIND_AFTER_VALUE_ARR.length && runningMinutes >= 0 && runningMinutes-Math.abs(REMIND_AFTER_VALUE_ARR[i].getMinutes()) < 0) {
+      mReminderCB.addItem(REMIND_AFTER_VALUE_ARR[i++]);
     }
     
-    mReminderCB.addItem(REMIND_MSG_ARR[5]);
-    mReminderCB.setSelectedItem(REMIND_MSG_ARR[5]);
+    mReminderCB.addItem(DONT_REMIND_AGAIN_VALUE);
+    mReminderCB.setSelectedItem(DONT_REMIND_AGAIN_VALUE);
     
-    i = 6;
+    i = 0;
     
-    while (i < REMIND_VALUE_ARR.length
-        && REMIND_VALUE_ARR[i] < remainingMinutesMax) {
-      mReminderCB.addItem(REMIND_MSG_ARR[i++]);
+    while (i < REMIND_BEFORE_VALUE_ARR.length
+        && REMIND_BEFORE_VALUE_ARR[i].getMinutes() < remainingMinutesMax) {
+      mReminderCB.addItem(REMIND_BEFORE_VALUE_ARR[i++]);
     }
     // don't show reminder selection if it contains only the
     // entry "don't remind me"
@@ -523,14 +516,7 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
   }
 
   public void close() {
-    int minutes = DONT_REMIND_AGAIN;
-    
-    for(int i = 0; i < REMIND_MSG_ARR.length; i++) {
-      if(mReminderCB.getSelectedItem().equals(REMIND_MSG_ARR[i])) {
-        minutes = REMIND_VALUE_ARR[i];
-        break;
-      }
-    }
+    int minutes = ((RemindValue)mReminderCB.getSelectedItem()).getMinutes();
     
     for (ReminderListItem reminder : mReminderItems) {
       mGlobalReminderList.removeWithoutChecking(reminder.getProgramItem());
@@ -562,16 +548,26 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
   }
 
   public static String getStringForMinutes(final int minutes) {
-    for (int i = 0; i < REMIND_VALUE_ARR.length; i++) {
-      if(REMIND_VALUE_ARR[i] == minutes) {
-        return REMIND_MSG_ARR[i];
+    if(minutes == DONT_REMIND_AGAIN) {
+      return DONT_REMIND_AGAIN_VALUE.toString();
+    }
+    
+    for (int i = 0; i < REMIND_BEFORE_VALUE_ARR.length; i++) {
+      if(REMIND_BEFORE_VALUE_ARR[i].getMinutes() == minutes) {
+        return REMIND_BEFORE_VALUE_ARR[i].toString();
       }
     }
 
+    for (int i = 0; i < REMIND_AFTER_VALUE_ARR.length; i++) {
+      if(REMIND_AFTER_VALUE_ARR[i].getMinutes() == minutes) {
+        return REMIND_AFTER_VALUE_ARR[i].toString();
+      }
+    }
+    
     return null;
   }
 
-  public static int getValueForMinutes(final int minutes) {
+ /* public static int getValueForMinutes(final int minutes) {
     for(int i = 0; i < REMIND_VALUE_ARR.length; i++) {
       if(REMIND_VALUE_ARR[i] == minutes) {
         return i - 1;
@@ -579,9 +575,9 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
     }
 
     return -1;
-  }
+  }*/
 
-  public static int getMinutesForValue(final String value) {
+ /* public static int getMinutesForValue(final String value) {
     int minutes = 0;
     
     for(int i = 0; i < REMIND_MSG_ARR.length; i++) {
@@ -592,7 +588,7 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
     }
     
     return minutes;
-  }
+  }*/
 
 
   public void stateChanged(final ChangeEvent e) {

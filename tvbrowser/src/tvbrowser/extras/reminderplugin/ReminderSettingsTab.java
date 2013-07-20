@@ -244,11 +244,11 @@ public class ReminderSettingsTab implements SettingsTab {
     secondsLabel.setEnabled(mCloseOnTime.isSelected() && mReminderWindowChB.isSelected());
 
     String defaultReminderEntryStr = (String)mSettings.get("defaultReminderEntry");
-    mDefaultReminderEntryList =new JComboBox(ReminderDialog.SMALL_REMIND_MSG_ARR);
+    mDefaultReminderEntryList =new JComboBox(ReminderFrame.REMIND_BEFORE_VALUE_ARR);
     if (defaultReminderEntryStr != null) {
       try {
         int inx = Integer.parseInt(defaultReminderEntryStr);
-        if (inx < ReminderDialog.SMALL_REMIND_MSG_ARR.length) {
+        if (inx < ReminderFrame.REMIND_BEFORE_VALUE_ARR.length) {
           mDefaultReminderEntryList.setSelectedIndex(inx);
         }
       }catch(NumberFormatException e) {
@@ -494,7 +494,7 @@ public class ReminderSettingsTab implements SettingsTab {
     mSettings.setProperty("autoCloseBehaviour", mCloseOnEnd.isSelected() ? "onEnd" : mCloseNever.isSelected() ? "never" : "onTime");
 
     mSettings.setProperty("autoCloseReminderTime", mAutoCloseReminderTimeSp.getValue().toString());
-    mSettings.setProperty("defaultReminderEntry", String.valueOf(ReminderFrame.getMinutesForValue((String)mDefaultReminderEntryList.getSelectedItem())));
+    mSettings.setProperty("defaultReminderEntry", String.valueOf(mDefaultReminderEntryList.getSelectedIndex()));
     mSettings.setProperty("showTimeSelectionDialog", String.valueOf(mShowTimeSelectionDlg.isSelected()));
     mSettings.setProperty("showRemovedDialog", String.valueOf(mShowRemovedDlg.isSelected()));
 
