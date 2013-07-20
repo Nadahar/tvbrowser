@@ -537,15 +537,14 @@ public class ReminderPlugin {
     if (settings.getProperty("usemsgbox") == null) {
       settings.setProperty("usemsgbox", "true");
     }
-    if (settings.getProperty("numberofremindoptions") == null && settings.getProperty("defaultReminderEntry") != null) {      
-      int defaultRemind = Integer.parseInt(settings.getProperty("defaultReminderEntry")) + 5;
+    if (settings.getProperty("numberofremindoptions") != null && settings.getProperty("defaultReminderEntry") != null) {      
+      int defaultRemind = Integer.parseInt(settings.getProperty("defaultReminderEntry")) - 5;
       
       settings.setProperty("defaultReminderEntry", String.valueOf(defaultRemind));
-      settings.setProperty("numberofremindoptions", String.valueOf(ReminderDialog.SMALL_REMIND_MSG_ARR.length));
+      settings.remove("numberofremindoptions");
     }
     else if(settings.getProperty("defaultReminderEntry") == null) {
-      settings.setProperty("defaultReminderEntry", String.valueOf(5));
-      settings.setProperty("numberofremindoptions", String.valueOf(ReminderDialog.SMALL_REMIND_MSG_ARR.length));
+      settings.setProperty("defaultReminderEntry", String.valueOf(0));
     }
     
     mSettings = settings;
@@ -584,24 +583,14 @@ public class ReminderPlugin {
   }
 
   protected ActionMenu getContextMenuActions(final Frame parentFrame,
-                                          final Program program) {
+                                          final Program program) {try {
     if (mReminderList.contains(program)) {
-      int remainingMinutes = getTimeToProgramStart(program);
-      if (remainingMinutes < 0) {
-        remainingMinutes = 1;
-      }
-      int maxIndex = 1;
-      for (int i=1; i < ReminderFrame.REMIND_VALUE_ARR.length; i++) {
-        if (ReminderFrame.REMIND_VALUE_ARR[i] < remainingMinutes) {
-          maxIndex = i;
-        }
-      }
       final ReminderListItem item = mReminderList.getReminderItem(program);
-      String[] entries = ReminderFrame.REMIND_MSG_ARR;
+      RemindValue[] values = calculatePossibleReminders(program);
+      
+      ArrayList<ActionMenu> actions = new ArrayList<ActionMenu>(values.length + 3);
 
-      ArrayList<ActionMenu> actions = new ArrayList<ActionMenu>(maxIndex + 2);
-
-      actions.add(new ActionMenu(new AbstractAction(entries[0]) {
+      actions.add(new ActionMenu(new AbstractAction(ReminderFrame.DONT_REMIND_AGAIN_VALUE.toString()) {
         public void actionPerformed(ActionEvent e) {
           mReminderList.removeWithoutChecking(program);
           updateRootNode(true);
@@ -609,15 +598,15 @@ public class ReminderPlugin {
       }));
       actions.add(new ActionMenu(ContextMenuSeparatorAction.getInstance()));
 
-      for (int i = 1; i <= maxIndex; i++) {
-        final int minutes = ReminderFrame.REMIND_VALUE_ARR[i];
-        actions.add(new ActionMenu(new AbstractAction(entries[i]) {
+      for(final RemindValue value : values) {
+        actions.add(new ActionMenu(new AbstractAction(value.toString()) {
+          @Override
           public void actionPerformed(ActionEvent e) {
-            item.setMinutes(minutes);
+            item.setMinutes(value.getMinutes());
           }
-        }, minutes == item.getMinutes()));
+        }, item.getMinutes() == value.getMinutes()));
       }
-
+      
       actions.add(new ActionMenu(ContextMenuSeparatorAction.getInstance()));
       actions.add(new ActionMenu(new AbstractAction(mLocalizer.msg("comment",
           "Change comment"), TVBrowserIcons.edit(TVBrowserIcons.SIZE_SMALL)) {
@@ -676,7 +665,7 @@ public class ReminderPlugin {
         }
       });
       return new ActionMenu(action);
-    }
+    }}catch(Throwable t) {t.printStackTrace();}return null;
   }
 
   /**
@@ -691,8 +680,8 @@ public class ReminderPlugin {
     if (defaultReminderEntryStr != null) {
       try {
         int inx = Integer.parseInt(defaultReminderEntryStr);
-        if (inx < ReminderDialog.SMALL_REMIND_VALUE_ARR.length) {
-          minutes = ReminderDialog.SMALL_REMIND_VALUE_ARR[inx];
+        if (inx < ReminderFrame.REMIND_BEFORE_VALUE_ARR.length) {
+          minutes = ReminderFrame.REMIND_BEFORE_VALUE_ARR[inx].getMinutes();
         }
       } catch (NumberFormatException e) {
         // ignore
@@ -1139,5 +1128,37 @@ public class ReminderPlugin {
     if(mReminderListPanel != null) {
       mReminderListPanel.installTableModel(false);
     }
+  }
+  
+  public static RemindValue[] calculatePossibleReminders(Program program) {
+    int remainingMinutes = ReminderPlugin.getTimeToProgramStart(program);
+    
+    if(program.isExpired()) {
+      remainingMinutes = ReminderFrame.DONT_REMIND_AGAIN;
+    }
+    else if(program.isOnAir()) {
+      if(program.getStartTime() > IOUtilities.getMinutesAfterMidnight()) {
+        remainingMinutes = program.getStartTime() - 1440 - IOUtilities.getMinutesAfterMidnight();
+      }
+      else {
+        remainingMinutes = program.getStartTime() - IOUtilities.getMinutesAfterMidnight();
+      }
+    }
+    
+    ArrayList<RemindValue> valueList = new ArrayList<RemindValue>();
+    
+    for(RemindValue value : ReminderFrame.REMIND_AFTER_VALUE_ARR)  {
+      if(value.getMinutes() < remainingMinutes) {
+        valueList.add(value);
+      }
+    }
+    
+    for(RemindValue value : ReminderFrame.REMIND_BEFORE_VALUE_ARR)  {
+      if(value.getMinutes() < remainingMinutes) {
+        valueList.add(value);
+      }
+    }
+    
+    return valueList.toArray(new RemindValue[valueList.size()]);
   }
 }

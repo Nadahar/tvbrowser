@@ -4,24 +4,36 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.EventObject;
 
 import javax.swing.AbstractCellEditor;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JTable;
 import javax.swing.table.TableCellEditor;
+
+import devplugin.Program;
 
 public class MinutesCellEditor extends AbstractCellEditor implements TableCellEditor, ActionListener {
   private JComboBox mComboBox;
   
   public MinutesCellEditor() {
-    mComboBox = new JComboBox(ReminderDialog.SMALL_REMIND_MSG_ARR);
+    mComboBox = new JComboBox(new RemindValue[0]);
     mComboBox.putClientProperty("JComboBox.isTableCellEditor", Boolean.TRUE);
   }
 
   private void setValue(ReminderListItem item) {
-    mComboBox.setSelectedIndex(ReminderFrame.getValueForMinutes(item
-        .getMinutes()));
+    DefaultComboBoxModel model = (DefaultComboBoxModel)mComboBox.getModel();
+    model.removeAllElements();
+    
+    for(RemindValue value : ReminderPlugin.calculatePossibleReminders(item.getProgram())) {
+      model.addElement(value);
+      
+      if(value.getMinutes() == item.getMinutes()) {
+        mComboBox.setSelectedItem(value);
+      }
+    }
   }
   
   public boolean stopCellEditing() {
@@ -38,7 +50,7 @@ public class MinutesCellEditor extends AbstractCellEditor implements TableCellEd
 
   // Implement the one CellEditor method that AbstractCellEditor doesn't.
   public Object getCellEditorValue() {
-    return ReminderFrame.getMinutesForValue((String)mComboBox.getSelectedItem());
+    return ((RemindValue)mComboBox.getSelectedItem()).getMinutes();
   }
 
   public boolean isCellEditable(EventObject evt) {

@@ -301,7 +301,7 @@ public class ReminderListPanel extends JPanel implements PersonaListener, Progra
         TableColumn column = super.getColumn(n);
         
         if(n == 1) {
-          column.setMaxWidth(mTable.getFontMetrics(mTable.getFont()).stringWidth(ReminderFrame.REMIND_MSG_ARR[1])+20);
+          column.setMaxWidth(mTable.getFontMetrics(mTable.getFont()).stringWidth(ReminderFrame.REMIND_AFTER_VALUE_ARR[ReminderFrame.REMIND_AFTER_VALUE_ARR.length-1].toString())+20);
           column.setPreferredWidth(column.getMaxWidth());
         }
         
