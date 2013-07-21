@@ -1148,7 +1148,7 @@ public class ReminderPlugin {
     ArrayList<RemindValue> valueList = new ArrayList<RemindValue>();
     
     for(RemindValue value : ReminderFrame.REMIND_AFTER_VALUE_ARR)  {
-      if(value.getMinutes() < remainingMinutes) {
+      if(value.getMinutes() < remainingMinutes && Math.abs(value.getMinutes()) < program.getLength()) {
         valueList.add(value);
       }
     }
