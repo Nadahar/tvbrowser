@@ -1063,6 +1063,11 @@ public class ReminderPlugin {
 
   protected void handleTvDataUpdateFinished() {
     mReminderList.removeExpiredItems();
+    
+    if(mReminderListPanel != null) {
+      mReminderListPanel.updateTableEntries();
+    }
+    
     updateRootNode(false);
   }
 
