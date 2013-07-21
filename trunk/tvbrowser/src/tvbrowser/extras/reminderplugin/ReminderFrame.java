@@ -37,7 +37,6 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
 import java.util.AbstractList;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -219,11 +218,15 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
     programsPanel.setRow(3);
     int remainingMinutesMax = 0;
     int runningMinutes = 0;
+    int maxLength = 0;
 
     ArrayList<ProgramPanel> panels = new ArrayList<ProgramPanel>(reminders.size());
 
     for (ReminderListItem reminder : reminders) {
       Program program = reminder.getProgram();
+      
+      maxLength = Math.max(maxLength,program.getLength());
+      
       mGlobalReminderList.blockProgram(program);
       // text label
       String msg;
@@ -326,8 +329,12 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
     
     int i=0;
     
-    while (i < REMIND_AFTER_VALUE_ARR.length && runningMinutes >= 0 && runningMinutes-Math.abs(REMIND_AFTER_VALUE_ARR[i].getMinutes()) < 0) {
-      mReminderCB.addItem(REMIND_AFTER_VALUE_ARR[i++]);
+    while (i < REMIND_AFTER_VALUE_ARR.length && runningMinutes-Math.abs(REMIND_AFTER_VALUE_ARR[i].getMinutes()) < 0) {
+      if(runningMinutes >= 0 && Math.abs(REMIND_AFTER_VALUE_ARR[i].getMinutes()) < maxLength) {
+        mReminderCB.addItem(REMIND_AFTER_VALUE_ARR[i]);
+      }
+      
+      i++;
     }
     
     mReminderCB.addItem(DONT_REMIND_AGAIN_VALUE);
