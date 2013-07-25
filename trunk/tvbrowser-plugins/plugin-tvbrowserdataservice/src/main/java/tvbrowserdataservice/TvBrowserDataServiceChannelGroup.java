@@ -310,9 +310,11 @@ public class TvBrowserDataServiceChannelGroup extends ChannelGroupImpl {
       File file = new File(mDataDir, getId() + "_summary.gz");
       try {
         mLocalSummary.writeToFile(file);
-      } catch (FileFormatException e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
+      } catch (Exception e) {
+        mLog.log(Level.WARNING, "Could not save local summary file "+file.getName());
+        if (file != null) {
+          file.delete();
+        }
       }
     }
   }

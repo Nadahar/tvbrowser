@@ -433,6 +433,9 @@ public class SummaryFile extends AbstractFile {
      */
     public int getDaysCount(int startDays) {
       // NOTE: mStartDaysSince1970 may be after startDays
+      if (mVersionList == null) {
+        return 0;
+      }
       return mVersionList.size() + (mStartDaysSince1970 - startDays);
     }
 
