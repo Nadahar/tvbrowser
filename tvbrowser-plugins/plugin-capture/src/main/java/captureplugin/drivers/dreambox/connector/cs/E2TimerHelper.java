@@ -285,7 +285,8 @@ public class E2TimerHelper {
       }
     }
     mLog.fine(" getTimers(" + (mTimers == null ? "null" : mTimers.size()) + ") " + mConfig.getDreamboxAddress());
-    return mTimers;
+    
+    return mTimers != null ? mTimers : new ArrayList<Map<String,String>>(0);
   }
 
   /**
