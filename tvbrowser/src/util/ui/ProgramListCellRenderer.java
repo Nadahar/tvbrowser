@@ -244,20 +244,24 @@ public class ProgramListCellRenderer extends DefaultListCellRenderer {
 
       return mMainPanel;
     }
-    else if(value instanceof String) {
-      JPanel separator = new JPanel(new FormLayout("0dlu:grow,default,0dlu:grow","5dlu,default,5dlu"));
-      separator.setBorder(BorderFactory.createMatteBorder(2, 0, 2, 0, UIManager.getColor("Label.foreground")));
+    else if(value instanceof String && list.getModel().getSize() > index +1) {
+      Object nextValue = list.getModel().getElementAt(index + 1);
       
-      if(list.getModel().getSize() > index + 1) {
-        JLabel date = new JLabel(((Program)list.getModel().getElementAt(index + 1)).getDateString());
-        date.setFont(date.getFont().deriveFont(date.getFont().getSize2D() + 4).deriveFont(Font.BOLD));
+      if(nextValue instanceof Program) {
+        JPanel separator = new JPanel(new FormLayout("0dlu:grow,default,0dlu:grow","5dlu,default,5dlu"));
+        separator.setBorder(BorderFactory.createMatteBorder(2, 0, 2, 0, UIManager.getColor("Label.foreground")));
         
-        separator.add(date, new CellConstraints().xy(2, 2));
-        
-        return separator;
+        if(list.getModel().getSize() > index + 1) {
+          JLabel date = new JLabel(((Program)nextValue).getDateString());
+          date.setFont(date.getFont().deriveFont(date.getFont().getSize2D() + 4).deriveFont(Font.BOLD));
+          
+          separator.add(date, new CellConstraints().xy(2, 2));
+          
+          return separator;
+        }
       }
     }
-
+    
     return label;
   }
 
