@@ -3,6 +3,7 @@ package tvbrowser.extras.reminderplugin;
 import java.awt.Component;
 import java.awt.Font;
 import java.awt.Rectangle;
+import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -537,8 +538,7 @@ public class ReminderListPanel extends JPanel implements PersonaListener, Progra
     
     if(column == 0 && mLastEditorClosing + Plugin.SINGLE_CLICK_WAITING_TIME + 50 < System.currentTimeMillis()) {
       int row = mTable.rowAtPoint(e.getPoint());
-
-      mTable.changeSelection(row, 0, false, false);
+      
       Program p = (Program) mTable.getModel().getValueAt(row, 0);
       
       return p;
