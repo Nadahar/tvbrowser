@@ -77,6 +77,8 @@ public class TvDataBase {
   private TvDataInventory mTvDataInventory;
   private boolean mPendingPluginInformationAboutChangedData;
   private Hashtable<ChannelDayKey, Object> mSendToTvDataListener;
+  
+  private MutableChannelDayProgram mCurrentAddedDayProgram;
 
   private TvDataBase() {
     mPendingPluginInformationAboutChangedData = false;
@@ -291,10 +293,8 @@ public class TvDataBase {
   }
 
   public void setDayProgramWasChangedByPlugin(Date date, Channel channel) {
-    OnDemandDayProgramFile progFile = getCacheEntry(date, channel, false, false);
-
-    if(progFile != null) {
-      progFile.getDayProgram().setWasChangedByPlugin();
+    if(mCurrentAddedDayProgram != null && mCurrentAddedDayProgram.getDate().equals(date) && mCurrentAddedDayProgram.getChannel().equals(channel)) {
+      mCurrentAddedDayProgram.setWasChangedByPlugin();
     }
   }
 
@@ -610,14 +610,14 @@ public class TvDataBase {
       int knownStatus = mTvDataInventory.getKnownStatus(date, channel, version);
 
       OnDemandDayProgramFile oldProgFile = getCacheEntry(date, channel, false, false);
-      MutableChannelDayProgram checkProg = (MutableChannelDayProgram)getDayProgram(date,channel,true);
+      mCurrentAddedDayProgram = (MutableChannelDayProgram)getDayProgram(date,channel,true);
 
-      boolean somethingChanged = calculateMissingLengths(checkProg);
+      boolean somethingChanged = calculateMissingLengths(mCurrentAddedDayProgram);
 
       Object oldProg = mNewDayProgramsAfterUpdate.remove(key);
       
       // fire day program added to give plugins a chance to change programs
-      fireDayProgramAdded(checkProg);
+      fireDayProgramAdded(mCurrentAddedDayProgram);
       /*if((oldProg = mNewDayProgramsAfterUpdate.remove(key)) != null) {
         // Inform the listeners about deleting the old program
         if (oldProg instanceof ChannelDayProgram) {
@@ -631,7 +631,7 @@ public class TvDataBase {
         fireDayProgramAdded(checkProg);
       }*/
 
-      if (checkProg.getAndResetChangedByPluginState() || somethingChanged) {
+      if (mCurrentAddedDayProgram.getAndResetChangedByPluginState() || somethingChanged) {
         // Some missing lengths could now be calculated
         // -> Try to save the changes
 
@@ -640,7 +640,7 @@ public class TvDataBase {
         try {
           // Try to save the changed program
           OnDemandDayProgramFile newProgFile = new OnDemandDayProgramFile(
-              tempFile, checkProg);
+              tempFile, mCurrentAddedDayProgram);
           newProgFile.saveDayProgram();
 
           // Saving the changed version succeed -> Delete the original
@@ -696,6 +696,8 @@ public class TvDataBase {
 
       file.delete();
     }
+    
+    mCurrentAddedDayProgram = null;
   }
 
 
