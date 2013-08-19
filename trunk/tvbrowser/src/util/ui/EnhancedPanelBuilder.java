@@ -76,7 +76,7 @@ public class EnhancedPanelBuilder extends PanelBuilder {
       appendRow(FormSpecs.NARROW_LINE_GAP_ROWSPEC);
     }
     appendRow(FormSpecs.DEFAULT_ROWSPEC);
-    incrementRowNumber();
+    incrementRowNumber(true);
     if (label != null && !label.isEmpty()) {
       return addSeparator(label);
     }
@@ -91,12 +91,24 @@ public class EnhancedPanelBuilder extends PanelBuilder {
    * @return the builder
    */
   public PanelBuilder addRow() {
-    return addRow(FormSpecs.DEFAULT_ROWSPEC.encode());
+    return addRow(true);
+  }
+  
+  /**
+   * Add a new standard layout row to the builders layout.
+   * It is separated from the preceding row with a LINE_GAP if parameter withGap is <code>true</code>. Use {@link #getRow()} to address this line
+   * afterwards.
+   * 
+   * @param withGap If the LINE_GAP should be added
+   * @return the builder
+   */
+  public PanelBuilder addRow(boolean withGap) {
+    return addRow(FormSpecs.DEFAULT_ROWSPEC.encode(),withGap);
   }
 
-  private void incrementRowNumber() {
+  private void incrementRowNumber(boolean lineGap) {
     // there is no line number zero, therefore only add one row, if we are still in the first line
-    if (getRow() == 1) {
+    if (getRow() == 1 || !lineGap) {
       nextRow();
     }
     else {
@@ -110,9 +122,20 @@ public class EnhancedPanelBuilder extends PanelBuilder {
    * @return the builder
    */
   public PanelBuilder addGrowingRow() {
-    return addRow("fill:default:grow");
+    return addGrowingRow(true);
   }
 
+
+  /**
+   * Add a new growing layout row to the builders layout.
+   * It is separated from the preceding row by LINE_GAP if parameter withGap is <code>true</code> and will grow to take the available space.
+   * @param withGap If the LINE_GAP should be added
+   * @return the builder
+   */
+  public PanelBuilder addGrowingRow(boolean withGap) {
+    return addRow("fill:default:grow", withGap);
+  }
+  
   /**
    * Add a new layout row with the given height to the builders layout.
    * It is separated from the preceding row with a LINE_GAP.
@@ -123,9 +146,26 @@ public class EnhancedPanelBuilder extends PanelBuilder {
    * @return the builder
    */
   public PanelBuilder addRow(final String rowHeightCode) {
-    appendRow(RowSpec.decode("5dlu"));
+    return addRow(rowHeightCode, true);
+  }
+  
+  /**
+   * Add a new layout row with the given height to the builders layout.
+   * It is separated from the preceding row with a LINE_GAP if parameter withGap is <code>true</code>.
+   * Use {@link #getRow()} to address this line afterwards.<br>
+   * This method should normally not be used! Use {@link #addRow()} or {@link #addGrowingRow()} instead.
+   * The necessary sizes for rows will be calculated by the PanelBuilder.
+   * @param rowHeightCode row height
+   * @param withGap If the LINE_GAP should be added
+   * @return the builder
+   */
+  public PanelBuilder addRow(final String rowHeightCode, boolean withGap) {
+    if(withGap) {
+      appendRow(RowSpec.decode("5dlu"));
+    }
+    
     appendRow(rowHeightCode);
-    incrementRowNumber();
+    incrementRowNumber(withGap);
     return this;
   }
 }

@@ -25,7 +25,6 @@
  */
 package util.ui;
 
-import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dialog;
@@ -35,12 +34,16 @@ import java.awt.Rectangle;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.Icon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
@@ -52,6 +55,7 @@ import javax.swing.event.ListDataListener;
 
 import tvbrowser.core.Settings;
 import tvbrowser.core.TvDataUpdater;
+import tvbrowser.core.filters.FilterManagerImpl;
 import tvbrowser.extras.searchplugin.SearchDialog;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.exc.ErrorHandler;
@@ -61,8 +65,11 @@ import util.settings.ProgramPanelSettings;
 
 import com.jgoodies.forms.builder.ButtonBarBuilder;
 import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.factories.CC;
+import com.jgoodies.forms.layout.FormLayout;
 
 import devplugin.Program;
+import devplugin.ProgramFilter;
 import devplugin.ProgramSearcher;
 import devplugin.ProgressMonitor;
 
@@ -90,6 +97,8 @@ public class SearchHelper {
   private JDialog mDialog = null;
 
   private JScrollPane mProgramListScrollPane;
+  
+  private JComboBox mFilterSelection;
 
   /** Private Constructor */
   private SearchHelper() {
@@ -210,6 +219,8 @@ public class SearchHelper {
               }
             });
           } else {
+            mFilterSelection.setEnabled(true);
+            
             if(!showDialog) {
               String title = mLocalizer.msg("hitsTitle", "Programs with {0}", searcherSettings.getSearchText());
 
@@ -297,9 +308,10 @@ public class SearchHelper {
 
     });
 
-    JPanel main = new JPanel(new BorderLayout());
-    main.setBorder(Borders.DLU4);
-    dlg.setContentPane(main);
+    EnhancedPanelBuilder pb = new EnhancedPanelBuilder("default:grow");
+    pb.border(Borders.DIALOG);
+    
+    dlg.setContentPane(pb.getPanel());
 
 
     // Find first program that is not expired
@@ -347,16 +359,55 @@ public class SearchHelper {
         }
       };
 
-      main.add(mProgressBar, BorderLayout.NORTH);
+      pb.addRow();
+      pb.add(mProgressBar, CC.xy(1, pb.getRow()));
     }
-
+    
+    mFilterSelection = new JComboBox(FilterManagerImpl.getInstance().getAvailableFilters());
+    mFilterSelection.setSelectedItem(FilterManagerImpl.getInstance().getAllFilter());
+    mFilterSelection.setEnabled(false);
+    
+    mFilterSelection.addItemListener(new ItemListener() {
+      private Program[] mPrograms;
+      
+      @Override
+      public void itemStateChanged(ItemEvent e) {
+        if(e.getStateChange() == ItemEvent.SELECTED) {
+          if(mPrograms == null) {
+            mPrograms = new Program[mListModel.size()];
+            mListModel.copyInto(mPrograms);
+          }
+          
+          mListModel.clear();
+          
+          ProgramFilter progFilter = (ProgramFilter)e.getItem();
+          
+          for(Program p : mPrograms) {
+            if(progFilter.accept(p)) {
+              mListModel.addElement(p);
+            }
+          }
+        }
+      }
+    });
+    
+    JPanel filter = new JPanel(new FormLayout("default,3dlu,default:grow","default"));
+    
+    filter.add(new JLabel("Filter:"), CC.xy(1, 1));
+    filter.add(mFilterSelection, CC.xy(3, 1));
+    
+    pb.addRow(false);
+    pb.add(filter, CC.xy(1, pb.getRow()));
+    
     mProgramList = new ProgramList(mListModel, pictureSettings);
 
-    mProgramList.addMouseListeners(null);
+    mProgramList.addMouseAndKeyListeners(null);
 
     mProgramListScrollPane = new JScrollPane(mProgramList);
 
-    main.add(mProgramListScrollPane, BorderLayout.CENTER);
+    pb.addGrowingRow();
+    pb.add(mProgramListScrollPane, CC.xy(1, pb.getRow()));
+        
     if (curPos >= 0) {
       mProgramList.setSelectedValue(programArr[curPos], true);
     }
@@ -430,7 +481,9 @@ public class SearchHelper {
 
     builder.addGlue();
     builder.addFixed(closeBt);
-    main.add(builder.getPanel(), BorderLayout.SOUTH);
+    
+    pb.addRow();
+    pb.add(builder.getPanel(), CC.xy(1, pb.getRow()));
 
     dlg.getRootPane().setDefaultButton(closeBt);
 
