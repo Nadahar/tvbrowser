@@ -495,7 +495,7 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction, Tree
 
     mProgramListModel = new DefaultListModel();
     mProgramList = new ProgramList(mProgramListModel, new ProgramPanelSettings(new PluginPictureSettings(PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE), false, ProgramPanelSettings.X_AXIS));
-    mProgramList.addMouseListeners(null);
+    mProgramList.addMouseAndKeyListeners(null);
 
     mProgramList.addKeyListener(new KeyAdapter() {
         public void keyPressed(KeyEvent e) {
