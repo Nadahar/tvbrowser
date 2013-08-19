@@ -122,13 +122,13 @@ public class SoundReminder extends Plugin {
   }
   
   public static Version getVersion() {
-    return new Version(0,11,0,true);
+    return new Version(0,11,1,true);
   }
   
   public PluginInfo getInfo() {
     return new PluginInfo(SoundReminder.class, mLocalizer.msg("title",
         "Sound reminder"), mLocalizer.msg("description",
-        "Playes a sound for title of programs"), "Ren\u00e9 Mach", "GPL 3");
+        "Playes a sound for title of programs"), "Ren\u00e9 Mach", "GPLv3");
   }
   
   public ThemeIcon getMarkIconFromTheme() {
@@ -482,8 +482,10 @@ public class SoundReminder extends Plugin {
         
         if(!soundFound) {
           synchronized (mPlayList) {
-            if(mDefaultEntry != null && !mPlayList.contains(mDefaultEntry)) {
-              mPlayList.add(mDefaultEntry);
+            if(mDefaultEntry != null) {
+              if(!mPlayList.contains(mDefaultEntry)) {
+                mPlayList.add(mDefaultEntry);
+              }
             }
             else {
               SoundEntry entry = mSoundEntryList.get(0);
