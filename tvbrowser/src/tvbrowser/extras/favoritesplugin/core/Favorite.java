@@ -357,8 +357,7 @@ public abstract class Favorite {
     }
     mExclusionList.add(exclusion);
     try {
-      refreshPrograms(ManageFavoritesDialog.getInstance() != null
-          && FavoritesPlugin.getInstance().isShowingNewFoundPrograms());
+      refreshPrograms(FavoritesPlugin.getInstance().isShowingNewFoundPrograms());
       FavoritesPlugin.getInstance().updateRootNode(true);
     } catch (final TvBrowserException exc) {
       ErrorHandler.handle("Could not update favorites.", exc);
@@ -702,10 +701,8 @@ public abstract class Favorite {
     }
   }
 
-  private void updateManageDialog() {
-    if(ManageFavoritesDialog.getInstance() != null) {
-      ManageFavoritesDialog.getInstance().favoriteSelectionChanged();
-    }
+  private void updateManageDialog() {    
+    FavoritesPlugin.getInstance().favoriteSelectionChanged();
   }
 
   /**

@@ -689,6 +689,8 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction, Tree
       } else {
         changeProgramList((Favorite)mFavoritesList.getSelectedValue(),scrollToFirst);
       }
+      
+      mFavoritesList.paintImmediately(mFavoritesList.getCellBounds(selection, selection));
     }
     else {
       if(mFavoriteTree != null && mFavoriteTree.getSelectionPath() != null) {

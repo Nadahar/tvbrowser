@@ -160,6 +160,7 @@ public class FavoritesPlugin {
   private static UpdateInfoThread mUpdateInfoThread;
   private Thread mUpdateThread;
   private AfterDataUpdateInfoPanel mInfoPanel;
+  private ManageFavoritesPanel panel;
 
   private ExecutorService mThreadPool;
   private JPanel mCenterPanel;
@@ -1302,13 +1303,14 @@ public class FavoritesPlugin {
     public void run() {
       if(newFavoritesFound()) {
         synchronized (mFavorites) {
-          final ManageFavoritesPanel panel = new ManageFavoritesPanel(mFavorites, getIntegerSetting(mSettings, "splitpanePosition",200), true, null, true);
-        
+          panel = new ManageFavoritesPanel(mFavorites, getIntegerSetting(mSettings, "splitpanePosition",200), true, null, true);
+          
           mInfoPanel = new AfterDataUpdateInfoPanel() {
             @Override
             public void closed() {
               panel.close();
               mInfoPanel = null;
+              panel = null;
             }
           };
           mInfoPanel.setLayout(new BorderLayout());
@@ -1418,11 +1420,7 @@ public class FavoritesPlugin {
   }
   
   public boolean isShowingNewFoundPrograms() {
-    if(ManageFavoritesDialog.getInstance() != null && ManageFavoritesDialog.getInstance().isVisible()) {
-      return ManageFavoritesDialog.getInstance().isShowingNewFoundPrograms();
-    }
-    
-    return mMangePanel != null ? mMangePanel.isShowingNewFoundPrograms() : false;
+    return panel != null;
   }
   
   public void newFolder(FavoriteNode parent) {
@@ -1435,6 +1433,10 @@ public class FavoritesPlugin {
   }
   
   public void favoriteSelectionChanged() {
+    if(panel != null) {
+      panel.favoriteSelectionChanged();
+    }
+    
     if(ManageFavoritesDialog.getInstance() != null && ManageFavoritesDialog.getInstance().isVisible()) {
       ManageFavoritesDialog.getInstance().favoriteSelectionChanged();
     }
