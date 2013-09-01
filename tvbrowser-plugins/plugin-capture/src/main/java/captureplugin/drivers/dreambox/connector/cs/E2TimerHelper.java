@@ -434,7 +434,7 @@ public class E2TimerHelper {
   public Map<String, String> createRecTimer(DreamboxChannel dreamboxChannel, ProgramTime prgTime, int afterEvent,
       int repeated, TimeZone timezone, String location, String tags, boolean useHdService) {
 
-    Map<String, String> timer = new TreeMap<String, String>();
+    Map<String, String> timer = new DefaultValueReturnMap<String, String>("");
 
     final String trenner = " / ";
     final String keineBeschreibung = "Diese Sendung hat noch keine Beschreibung.";
@@ -519,7 +519,7 @@ public class E2TimerHelper {
    */
   public Map<String, String> createZapBeforeTimer(Map<String, String> timer) {
 
-    Map<String, String> zapTimer = new TreeMap<String, String>(timer);
+    Map<String, String> zapTimer = new DefaultValueReturnMap<String, String>(timer,"");
 
     zapTimer.put(SERVICEREFERENCE, timer.get(SERVICEREFERENCE)); // Kanal
     String timeBegin = Long.toString(Long.parseLong(timer.get(TIMEBEGIN)) - 60);
@@ -543,7 +543,7 @@ public class E2TimerHelper {
    */
   public Map<String, String> createZapAfterTimer(Map<String, String> timer) {
 
-    Map<String, String> zap2Timer = new TreeMap<String, String>(timer);
+    Map<String, String> zap2Timer = new DefaultValueReturnMap<String, String>(timer,"");
 
     zap2Timer.put(SERVICEREFERENCE, E2ServiceHelper.getServiceRef(timer.get(SERVICEREFERENCE), false)); // Kanal
     zap2Timer.put(TIMEBEGIN, timer.get(TIMEEND)); // Anfangszeit in sec
