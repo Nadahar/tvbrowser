@@ -37,7 +37,7 @@ import devplugin.Version;
 
 public class PersonaHandler extends Plugin implements PersonaListener {
   private final static Localizer mLocalizer = Localizer.getLocalizerFor(PersonaHandler.class);
-  private static Version mVersion = new Version(0,13,0,true);
+  private static Version mVersion = new Version(0,13,2,true);
   private PluginInfo mPluginInfo;
   
   private static PersonaHandler mInstance;
@@ -204,7 +204,7 @@ try{
     String iconURL = "iconURL";
     
     while(m.find(lastPos)) {
-      String persona = StringEscapeUtils.unescapeJava(m.group(1).replace("{","").replace("}",""));
+      String persona = StringEscapeUtils.unescapeJava(StringEscapeUtils.unescapeHtml4(m.group(1).replace("{","").replace("}","")));
       StringBuffer buff = new StringBuffer(persona.replace("&quot;","\"").replace("&amp;","&").replace("&lt;","<").replace("&gt;",">").replace("&#34;","\""));
       
       boolean openQuote = false; 
