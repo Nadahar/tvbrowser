@@ -94,11 +94,12 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
   private MarkListTableModel mModel;
   private JEditorPane mHelpLabel;
   private JCheckBox mShowDeletedPrograms;
+  private JCheckBox mShowDateSeparators;
   private ArrayList<MarkList> mMarkLists;
 
   public JPanel createSettingsPanel() {
     JPanel panel = new JPanel(new FormLayout("5dlu,default:grow,5dlu",
-        "default,5dlu,fill:default:grow,3dlu,pref,10dlu,pref,5dlu"));
+        "default,default,3dlu,fill:default:grow,3dlu,pref,10dlu,pref,5dlu"));
     CellConstraints cc = new CellConstraints();
 
     mShowDeletedPrograms = new JCheckBox(SimpleMarkerPlugin.getLocalizer().msg(
@@ -106,7 +107,18 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
         "Inform about program that were deleted during a data update"),
         SimpleMarkerPlugin.getInstance().getSettings().showDeletedPrograms());
 
-    panel.add(mShowDeletedPrograms, cc.xy(2,1));
+    mShowDateSeparators = new JCheckBox(SimpleMarkerPlugin.getLocalizer().msg(
+        "settings.showDateSeparator",
+        "Show date separator in marked programs list"),
+        SimpleMarkerPlugin.getInstance().getSettings().isShowingDateSeperators());
+    
+    int y = 1;
+    
+    panel.add(mShowDeletedPrograms, cc.xy(2,y));
+    
+    y += 1;
+    
+    panel.add(mShowDateSeparators, cc.xy(2,y));
 
     mMarkLists = new ArrayList<MarkList>();
     MarkList[] lists = SimpleMarkerPlugin.getInstance().getMarkLists();
@@ -159,7 +171,9 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
 
     JScrollPane pane = new JScrollPane(mListTable);
 
-    panel.add(pane, cc.xy(2, 3));
+    y += 2;
+    
+    panel.add(pane, cc.xy(2, y));
 
     JPanel south = new JPanel();
     south.setLayout(new BoxLayout(south, BoxLayout.X_AXIS));
@@ -180,7 +194,9 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
     south.add(Box.createHorizontalGlue());
     south.add(mDelete);
 
-    panel.add(south, cc.xy(2, 5));
+    y += 2;
+    
+    panel.add(south, cc.xy(2, y));
 
     mHelpLabel = UiUtilities.createHtmlHelpTextArea(SimpleMarkerPlugin.getLocalizer().msg("settings.prioHelp","The mark priority is used for selecting the marking color. The marking colors of the priorities can be change in the <a href=\"#link\">program panel settings</a>. If a program is marked by more than one plugin/list the color with the highest priority given by the marking plugins/lists is used."), new HyperlinkListener() {
       public void hyperlinkUpdate(HyperlinkEvent e) {
@@ -197,7 +213,9 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
       }
     });
 
-    panel.add(mHelpLabel, cc.xy(2,7));
+    y += 2;
+    
+    panel.add(mHelpLabel, cc.xy(2,y));
 
 
     JPanel p = new JPanel(new FormLayout("default:grow","5dlu,fill:default:grow"));
@@ -209,6 +227,8 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
   public void saveSettings() {
     SimpleMarkerPlugin.getInstance().getSettings().setShowDeletedPrograms(
         mShowDeletedPrograms.isSelected());
+    SimpleMarkerPlugin.getInstance().getSettings().setShowingDateSeperators(
+        mShowDateSeparators.isSelected());
 
     if (mListTable.isEditing()) {
       mListTable.getCellEditor().stopCellEditing();

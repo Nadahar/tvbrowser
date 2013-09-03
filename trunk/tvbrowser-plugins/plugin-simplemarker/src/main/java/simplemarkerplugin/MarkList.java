@@ -121,16 +121,6 @@ public class MarkList extends Vector<Program> {
         Date programDate = Date.readData(in);
         String progId = (String) in.readObject();
         mProgramItems.add(new MarkListProgramItem(programDate, progId));
-
-//        Program program = Plugin.getPluginManager().getProgram(programDate,
-//            progId);
-//
-//        // Only add items that were able to load their program
-//        if (program != null) {
-//          addElement(program);
-//          program.mark(SimpleMarkerPlugin.getInstance());
-//          program.validateMarking();
-//        }
       }
 
       mMarkIconPath = (String) in.readObject();
