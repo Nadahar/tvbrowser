@@ -33,6 +33,7 @@ public final class SimpleMarkerSettings extends PropertyBasedSettings{
 
   private static final String KEY_SHOW_DELETED_PROGRAM = "showDeletedProgram";
   private static final String KEY_SPLIT_POSITION = "splitPosition";
+  private static final String KEY_SHOW_DATE_SEPARATORS = "showDateSeparator";
   /**
    * show plugin nodes by title and date
    */
@@ -127,6 +128,19 @@ public final class SimpleMarkerSettings extends PropertyBasedSettings{
    */
   public boolean isGroupingByDate() {
     return isGrouping(GROUPING_BY_DATE);
+  }
+  
+  void setShowingDateSeperators(boolean show) {
+    set(KEY_SHOW_DATE_SEPARATORS, show);
+  }
+  
+  /**
+   * Gets if the date separators should be shown in the program list.
+   * <p>
+   * @return If the date separators should be shown in the program list.
+   */
+  public boolean isShowingDateSeperators() {
+    return get(KEY_SHOW_DATE_SEPARATORS, true);
   }
 
 }

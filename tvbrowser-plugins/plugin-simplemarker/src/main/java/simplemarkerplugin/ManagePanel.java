@@ -21,9 +21,9 @@
  */
 package simplemarkerplugin;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -33,6 +33,8 @@ import java.util.Hashtable;
 import java.util.LinkedList;
 
 import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
@@ -48,6 +50,7 @@ import javax.swing.UIManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import util.exc.TvBrowserException;
 import util.settings.PluginPictureSettings;
 import util.settings.ProgramPanelSettings;
 import util.ui.ProgramList;
@@ -59,8 +62,8 @@ import util.ui.persona.PersonaListener;
 
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.Sizes;
 
 import devplugin.Plugin;
 import devplugin.Program;
@@ -133,7 +136,7 @@ public class ManagePanel extends JPanel implements PersonaListener {
     
     setBorder(Borders.createEmptyBorder("6dlu,6dlu,5dlu,6dlu"));
 
-    FormLayout layout = new FormLayout("default:grow",
+    FormLayout layout = new FormLayout("fill:default:grow",
     "pref,pref,4dlu,fill:default:grow,4dlu,pref");
 
     setLayout(layout);
@@ -174,7 +177,7 @@ public class ManagePanel extends JPanel implements PersonaListener {
       add(innerPanel, cc.xy(1,4));
     }
 
-    add(getButtonPanel(cc), cc.xy(1,6));
+    add(getButtonPanel(cc), cc.xyw(1,6,1));
 
     mShowPrograms.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -299,12 +302,14 @@ public class ManagePanel extends JPanel implements PersonaListener {
 
       send.setVisible(true);
     }
-
   }
 
   synchronized void selectPrograms(boolean scroll) {
+    mProgramsList.clearSelection();
     mProgramListModel.clear();
 
+    mProgramListModel = new DefaultListModel();
+    
     MarkList list = (MarkList)mMarkListsList.getSelectedValue();
     int index = -1;
 
@@ -320,6 +325,16 @@ public class ManagePanel extends JPanel implements PersonaListener {
           }
         }
       }
+      
+      mProgramsList.setModel(mProgramListModel);
+      
+      if(!mProgramListModel.isEmpty() && SimpleMarkerPlugin.getInstance().getSettings().isShowingDateSeperators()) {
+        try {
+          mProgramsList.addDateSeparators();
+        } catch (Throwable e) {
+          e.printStackTrace();
+        }
+      }
     } else {
       Hashtable<String, LinkedList<Program>> table = list.getSortedPrograms();
       Enumeration<String> keys = table.keys();
@@ -327,24 +342,12 @@ public class ManagePanel extends JPanel implements PersonaListener {
       while (keys.hasMoreElements()) {
         mProgramListModel.addElement(keys.nextElement());
       }
+      
+      mProgramsList.setModel(mProgramListModel);
     }
-
-    final int scrollIndex = index;
-
+    
     if(scroll) {
-      SwingUtilities.invokeLater(new Runnable() {
-        public void run() {
-          mProgramsScrollPane.getVerticalScrollBar().setValue(0);
-          mProgramsScrollPane.getHorizontalScrollBar().setValue(0);
-
-          if(scrollIndex != -1) {
-            Rectangle cellBounds = mProgramsList.getCellBounds(scrollIndex,scrollIndex);
-            cellBounds.setLocation(cellBounds.x, cellBounds.y + mProgramsScrollPane.getHeight() - cellBounds.height);
-
-            mProgramsList.scrollRectToVisible(cellBounds);
-          }
-        }
-      });
+      scroll(mProgramsList.getNewIndexForOldIndex(index));
     }
 
     mSend.setEnabled(mProgramListModel.size() > 0);
@@ -354,6 +357,22 @@ public class ManagePanel extends JPanel implements PersonaListener {
     if (isVisible()) {
       mMarkListsList.repaint();
     }
+  }
+  
+  private void scroll(final int scrollIndex) {
+    SwingUtilities.invokeLater(new Runnable() {
+      public void run() {
+        mProgramsScrollPane.getVerticalScrollBar().setValue(0);
+        mProgramsScrollPane.getHorizontalScrollBar().setValue(0);
+
+        if(scrollIndex != -1) {
+          Rectangle cellBounds = mProgramsList.getCellBounds(scrollIndex,scrollIndex);
+          cellBounds.setLocation(cellBounds.x, cellBounds.y + mProgramsScrollPane.getHeight() - cellBounds.height);
+
+          mProgramsList.scrollRectToVisible(cellBounds);
+        }
+      }
+    });
   }
 
   private void delete() {
@@ -413,23 +432,52 @@ public class ManagePanel extends JPanel implements PersonaListener {
   }
 
   private JPanel getButtonPanel(CellConstraints cc) {
-    FormLayout layout = new FormLayout("pref,5dlu,pref,5dlu,pref",
-        "pref");
-    JPanel p = new JPanel();
-    p.setOpaque(false);
-
+    JPanel buttons = new JPanel();
+    buttons.setOpaque(false);
+    buttons.setLayout(new BoxLayout(buttons, BoxLayout.X_AXIS));
+    
+    int pixel7 = Sizes.dialogUnitXAsPixel(7, buttons);
+    int pixel2 = Sizes.dialogUnitXAsPixel(2, buttons);
+    
     if(mClose != null) {
-      layout.insertColumn(1, ColumnSpec.decode("5dlu"));
-      layout.insertColumn(1, ColumnSpec.decode("pref"));
-      
       mSettings = new JButton(TVBrowserIcons.preferences(TVBrowserIcons.SIZE_SMALL));
       mSettings.setToolTipText(SimpleMarkerPlugin.getLocalizer().msg("tooltip.settings","Open settings"));
-      p.add(mSettings, cc.xy(1, 1));
+      buttons.add(mSettings);
+      buttons.add(Box.createRigidArea(new Dimension(pixel7,0)));
     }
-    else {
-      layout.insertColumn(1, ColumnSpec.decode("0dlu"));
-      layout.insertColumn(1, ColumnSpec.decode("0dlu"));      
-    }
+    
+    JButton scrollToPreviousDay = new JButton(TVBrowserIcons.left(TVBrowserIcons.SIZE_SMALL));
+    scrollToPreviousDay.setToolTipText(ProgramList.getPreviousActionTooltip());
+    scrollToPreviousDay.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        mProgramsList.scrollToPreviousDayIfAvailable();
+      }
+    });
+    
+    JButton scrollToNextDay = new JButton(TVBrowserIcons.right(TVBrowserIcons.SIZE_SMALL));
+    scrollToNextDay.setToolTipText(ProgramList.getNextActionTooltip());
+    scrollToNextDay.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        mProgramsList.scrollToNextDayIfAvailable();
+      }
+    });
+    
+    JButton scrollToFirstNotExpiredIndex = new JButton(TVBrowserIcons.scrollToNow(TVBrowserIcons.SIZE_SMALL));
+    scrollToFirstNotExpiredIndex.setToolTipText(SimpleMarkerPlugin.getLocalizer().msg("scrollToFirstNotExpired","Scroll to first not expired program."));
+    scrollToFirstNotExpiredIndex.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        for(int i = 0; i < mProgramListModel.getSize(); i++) {
+          if(mProgramListModel.getElementAt(i) instanceof Program && 
+              !((Program)mProgramListModel.getElementAt(i)).isExpired()) {
+            scroll(mProgramsList.getNewIndexForOldIndex(i));
+            break;
+          }
+        }
+      }
+    });
     
     mSend = new JButton(TVBrowserIcons.copy(TVBrowserIcons.SIZE_SMALL));
     mSend.setToolTipText(SimpleMarkerPlugin.getLocalizer().msg("tooltip.send","Send  programs to other plugins"));
@@ -442,21 +490,25 @@ public class ManagePanel extends JPanel implements PersonaListener {
     mUndo.setToolTipText(SimpleMarkerPlugin.getLocalizer().msg("tooltip.undo","Undo"));
     mUndo.setEnabled(false);
     
-    p.add(mSend, cc.xy(3, 1));
-    p.add(mDelete, cc.xy(5, 1));
-    p.add(mUndo, cc.xy(7, 1));
-
-    JPanel buttons = new JPanel(new BorderLayout());
-    buttons.setOpaque(false);
-
-    buttons.add(p, BorderLayout.WEST);
+    buttons.add(scrollToPreviousDay);
+    buttons.add(Box.createRigidArea(new Dimension(pixel2,0)));
+    buttons.add(scrollToNextDay);
+    buttons.add(Box.createRigidArea(new Dimension(pixel2,0)));
+    buttons.add(scrollToFirstNotExpiredIndex);
+    buttons.add(Box.createRigidArea(new Dimension(pixel7,0)));
+    buttons.add(mSend);
+    buttons.add(Box.createRigidArea(new Dimension(pixel2,0)));
+    buttons.add(mDelete);
+    buttons.add(Box.createRigidArea(new Dimension(pixel7,0)));
+    buttons.add(mUndo);
+    buttons.add(Box.createHorizontalGlue());
     
     if(mClose != null) {
-      JPanel close = new JPanel(new FormLayout("default","fill:0dlu:grow,default,fill:0dlu:grow"));
-      close.add(mClose, cc.xy(1,2));
-      buttons.add(close, BorderLayout.EAST);
+      mClose.setPreferredSize(new Dimension(mClose.getPreferredSize().width, mUndo.getPreferredSize().height));
+      
+      buttons.add(mClose);
     }
-
+    
     return buttons;
   }
 
