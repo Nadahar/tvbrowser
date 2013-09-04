@@ -574,7 +574,7 @@ public class ProgramList extends JList implements ChangeListener,
    */
   public int getNewIndexForOldIndex(int index) {
     if(mSeparatorsCreated) {
-      for(int i = 0; i < index; i++) {
+      for(int i = 0; i < Math.min(index,mPrograms.size()); i++) {
         if(getModel().getElementAt(i) instanceof String) {
           index++;
         }
