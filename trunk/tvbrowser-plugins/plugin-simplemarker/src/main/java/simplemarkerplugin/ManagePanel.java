@@ -27,6 +27,8 @@ import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -36,9 +38,12 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
@@ -49,6 +54,8 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.event.PopupMenuEvent;
+import javax.swing.event.PopupMenuListener;
 
 import util.exc.TvBrowserException;
 import util.settings.PluginPictureSettings;
@@ -61,12 +68,15 @@ import util.ui.persona.Persona;
 import util.ui.persona.PersonaListener;
 
 import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.factories.CC;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.Sizes;
 
+import devplugin.FilterManager;
 import devplugin.Plugin;
 import devplugin.Program;
+import devplugin.ProgramFilter;
 
 /**
  * SimpleMarkerPlugin 1.4 Plugin for TV-Browser since version 2.3 to only mark
@@ -99,6 +109,8 @@ public class ManagePanel extends JPanel implements PersonaListener {
   private MarkList mLastDeletingList;
 
   private JSplitPane mSplitPane;
+  
+  private JComboBox mFilterSelection;
 
   /**
    * Creates an instance of this panel.
@@ -134,6 +146,38 @@ public class ManagePanel extends JPanel implements PersonaListener {
     mMarkListsScrolPane.setBorder(null);
     mProgramsScrollPane.setBorder(null);
     
+    mFilterSelection = new JComboBox(SimpleMarkerPlugin.getPluginManager().getFilterManager().getAvailableFilters());
+    
+    SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        mFilterSelection.setSelectedItem(SimpleMarkerPlugin.getPluginManager().getFilterManager().getAllFilter());
+      }
+    });
+    
+    mFilterSelection.addPopupMenuListener(new PopupMenuListener() {
+      @Override
+      public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
+        fillFilterBox();
+      }
+      
+      @Override
+      public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {}
+      
+      @Override
+      public void popupMenuCanceled(PopupMenuEvent e) {}
+    });
+    mFilterSelection.addItemListener(new ItemListener() {
+      @Override
+      public void itemStateChanged(ItemEvent e) {
+        if(ItemEvent.SELECTED == e.getStateChange()) {
+          try {
+            selectPrograms(true);
+          }catch(Throwable t) {/* Ignore until release of TV-Browser 3.3.3 */}
+        }
+      }
+    });
+    
     setBorder(Borders.createEmptyBorder("6dlu,6dlu,5dlu,6dlu"));
 
     FormLayout layout = new FormLayout("fill:default:grow",
@@ -145,7 +189,14 @@ public class ManagePanel extends JPanel implements PersonaListener {
 
     add(mShowPrograms, cc.xy(1,1));
     add(mShowTitles, cc.xy(1,2));
+    
+    JPanel rightComponent = new JPanel(new FormLayout("default,3dlu,default:grow","default,5dlu,fill:default:grow"));
+    rightComponent.setOpaque(false);
 
+    rightComponent.add(new JLabel(SimpleMarkerPlugin.getLocalizer().msg("filter", "Filter:")), CC.xy(1,1));
+    rightComponent.add(mFilterSelection, CC.xy(3, 1));
+    rightComponent.add(mProgramsScrollPane, CC.xyw(1, 3, 3));
+    
     if(markListVector.size() > 1) {
       mSplitPane = new JSplitPane();
       
@@ -154,7 +205,7 @@ public class ManagePanel extends JPanel implements PersonaListener {
       }
       
       mSplitPane.setLeftComponent(mMarkListsScrolPane);
-      mSplitPane.setRightComponent(mProgramsScrollPane);
+      mSplitPane.setRightComponent(rightComponent);
       mSplitPane.setOpaque(false);
       mSplitPane.setContinuousLayout(true);
       mSplitPane.setBorder(BorderFactory.createEmptyBorder());
@@ -239,6 +290,38 @@ public class ManagePanel extends JPanel implements PersonaListener {
     selectPrograms(true);
   }
   
+  private synchronized void fillFilterBox() {
+    for (ProgramFilter filter : SimpleMarkerPlugin.getPluginManager().getFilterManager().getAvailableFilters()) {
+      boolean found = false;
+
+      for (int i = 0; i < mFilterSelection.getItemCount(); i++) {
+        if (filter != null && filter.getName().equals(((ProgramFilter)mFilterSelection.getItemAt(i)).getName())) {
+          found = true;
+          break;
+        }
+      }
+
+      if (!found) {
+        mFilterSelection.addItem(filter);
+      }
+    }
+
+    for (int i = mFilterSelection.getItemCount() - 1; i >= 0; i--) {
+      boolean found = false;
+
+      for (ProgramFilter filter : SimpleMarkerPlugin.getPluginManager().getFilterManager().getAvailableFilters()) {
+        if (filter.getName().equals(((ProgramFilter)mFilterSelection.getItemAt(i)).getName())) {
+          found = true;
+          break;
+        }
+      }
+
+      if (!found) {
+        mFilterSelection.removeItemAt(i);
+      }
+    }
+  }
+  
   JButton getDefaultButton() {
     return mClose;
   }
@@ -303,7 +386,7 @@ public class ManagePanel extends JPanel implements PersonaListener {
       send.setVisible(true);
     }
   }
-
+  
   synchronized void selectPrograms(boolean scroll) {
     mProgramsList.clearSelection();
     mProgramListModel.clear();
@@ -317,7 +400,7 @@ public class ManagePanel extends JPanel implements PersonaListener {
       for (int i = 0; i < list.size(); i++) {
         Program prog = list.get(i);
 
-        if(prog != null) {
+        if(prog != null && ((ProgramFilter)mFilterSelection.getSelectedItem()).accept(prog)) {
           mProgramListModel.addElement(prog);
 
           if(!list.get(i).isExpired() && index == -1) {
