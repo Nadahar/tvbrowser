@@ -97,6 +97,7 @@
     <module>plugin-programlist</module>
     <module>plugin-radiotimesdataservice</module>
     <module>plugin-recommendation</module>
+    <module>plugin-rememberme</module>
     <module>plugin-schedulesdirectdataservice</module>
     <module>plugin-sharedchannelautoupdate</module>
     <module>plugin-shareddataservice</module>
