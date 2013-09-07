@@ -118,7 +118,7 @@ public class ProgramListPanel extends JPanel implements PersonaListener {
     final ProgramListSettings mSettings = ProgramListPlugin.getInstance().getSettings();
     
     setLayout(new BorderLayout(0,10));
-    setBorder(Borders.DIALOG_BORDER);
+    setBorder(Borders.DIALOG);
     setOpaque(false);
     
     
