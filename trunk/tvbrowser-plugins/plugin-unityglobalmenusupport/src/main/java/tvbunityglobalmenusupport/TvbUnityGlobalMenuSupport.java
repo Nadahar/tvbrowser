@@ -32,7 +32,7 @@ import devplugin.Version;
  */
 public class TvbUnityGlobalMenuSupport extends Plugin {  
   public static Version getVersion() {
-    return new Version(0,12,false);
+    return new Version(0,12,1,false);
   }
   
   public PluginInfo getInfo() {
