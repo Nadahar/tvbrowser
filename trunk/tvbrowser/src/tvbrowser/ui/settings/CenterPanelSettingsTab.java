@@ -27,6 +27,7 @@ import java.util.ArrayList;
 
 import javax.swing.Icon;
 import javax.swing.JCheckBox;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import com.jgoodies.forms.builder.PanelBuilder;
@@ -39,9 +40,12 @@ import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.extras.common.InternalPluginProxyIf;
 import tvbrowser.extras.common.InternalPluginProxyList;
+import tvbrowser.ui.DontShowAgainOptionBox;
 import tvbrowser.ui.mainframe.MainFrame;
+import util.ui.DontShowAgainMessageBox;
 import util.ui.Localizer;
 import util.ui.OrderChooser;
+import util.ui.UiUtilities;
 import util.ui.customizableitems.SelectableItemList;
 import util.ui.customizableitems.SortableItemList;
 
@@ -134,6 +138,14 @@ public class CenterPanelSettingsTab implements SettingsTab {
       if(o != null) {
         mAllPanelList.remove(o);
         idList.add(((PluginCenterPanel)o).getId());
+      }
+    }
+    
+    if(!idList.contains(MainFrame.getInstance().getProgramTableScrollPaneWrapper().getId())) {
+      String[] options = new String[] {mLocalizer.msg("programTableTabKeepDeactivated", "Keep deactivated"),mLocalizer.msg("programTableTabActivate", "Activate program table tab again")};
+      
+      if(DontShowAgainOptionBox.showOptionDialog("CenterPanelSettings.programTableTabdeselected", UiUtilities.getLastModalChildOf(MainFrame.getInstance()), mLocalizer.msg("programTableDeselected", "You have deselected the program table you might miss some programs in the future.\nAre you sure?"),mLocalizer.msg("programTableDeselectedTitle", "Program table deselected"),JOptionPane.QUESTION_MESSAGE,JOptionPane.YES_NO_OPTION,options,options[1],null) == JOptionPane.NO_OPTION) {
+        idList.add(0, MainFrame.getInstance().getProgramTableScrollPaneWrapper().getId());
       }
     }
     
