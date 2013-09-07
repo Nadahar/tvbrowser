@@ -27,7 +27,6 @@ import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Stroke;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
@@ -39,14 +38,14 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import timelineplugin.format.TextFormatter;
-import tvbrowser.extras.programinfo.ProgramInfo;
 import util.program.ProgramUtilities;
+import util.programmouseevent.ProgramMouseAndContextMenuListener;
+import util.programmouseevent.ProgramMouseEventHandler;
 import devplugin.Plugin;
-import devplugin.PluginManager;
 import devplugin.Program;
 
 public class ProgramLabel extends JComponent implements ChangeListener,
-		MouseListener {
+		ProgramMouseAndContextMenuListener {
 	private static final long serialVersionUID = 1L;
 
 	private transient Program mProgram;
@@ -56,10 +55,23 @@ public class ProgramLabel extends JComponent implements ChangeListener,
 
 	public ProgramLabel(final Program program) {
 	  mIsSelected = false;
-		addMouseListener(this);
 		setCursor(new Cursor(Cursor.HAND_CURSOR));
 		setToolTipText(" ");
 		setProgram(program);
+		
+		ProgramMouseEventHandler mouseEventHandler = new ProgramMouseEventHandler(this, null) {
+		  public void mouseEntered(final MouseEvent e) {
+		    mMouseOver = true;
+		    repaint();
+		  }
+
+		  public void mouseExited(final MouseEvent e) {
+		    mMouseOver = false;
+		    repaint();
+		  }
+		};
+		
+		addMouseListener(mouseEventHandler);
 		
 		AbstractBorder lineBorder = new AbstractBorder() {
 	    public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
@@ -92,50 +104,6 @@ public class ProgramLabel extends JComponent implements ChangeListener,
 		} else {
 			return null;
 		}
-	}
-
-	public void mouseClicked(final MouseEvent e) {
-	}
-
-	public void mouseEntered(final MouseEvent e) {
-	  mMouseOver = true;
-	  repaint();
-	}
-
-	public void mouseExited(final MouseEvent e) {
-	  mMouseOver = false;
-	  repaint();
-	}
-
-	public void mousePressed(final MouseEvent e) {
-		if (e.isPopupTrigger()) {
-			showPopup(e);
-		}
-	}
-
-	public void mouseReleased(final MouseEvent e) {
-		final PluginManager mng = Plugin.getPluginManager();
-
-		mProgram.addChangeListener(this);
-
-		if (e.isPopupTrigger()) {
-			showPopup(e);
-		} else if (e.getButton() == MouseEvent.BUTTON2) {
-			mng.handleProgramMiddleClick(mProgram, TimelinePlugin.getInstance());
-		} else if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 2) {
-			mng.handleProgramDoubleClick(mProgram, TimelinePlugin.getInstance());
-		} else if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 1) {
-			mng.handleProgramSingleClick(mProgram, TimelinePlugin.getInstance());
-		} else {
-			mProgram.removeChangeListener(this);
-		}
-	}
-
-	private void showPopup(final MouseEvent e) {
-	  TimelinePlugin.getInstance().deselectProgram();
-		final JPopupMenu menu = Plugin.getPluginManager().createPluginContextMenu(
-				mProgram, TimelinePlugin.getInstance());
-		menu.show(this, e.getX() - 15, e.getY() - 15);
 	}
 
 	protected void processMouseEvent(final MouseEvent e) {
@@ -262,4 +230,22 @@ public class ProgramLabel extends JComponent implements ChangeListener,
 		destination.dispatchEvent(SwingUtilities.convertMouseEvent(source, e,
 				destination));
 	}
+
+  @Override
+  public Program getProgramForMouseEvent(MouseEvent e) {
+    return mProgram;
+  }
+
+  @Override
+  public void mouseEventActionFinished() {
+    repaint();
+  }
+
+  @Override
+  public void showContextMenu(MouseEvent e) {
+    TimelinePlugin.getInstance().deselectProgram();
+    final JPopupMenu menu = Plugin.getPluginManager().createPluginContextMenu(
+        mProgram, TimelinePlugin.getInstance());
+    menu.show(this, e.getX() - 15, e.getY() - 15);
+  }
 }
