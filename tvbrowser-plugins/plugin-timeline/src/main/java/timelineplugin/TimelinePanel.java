@@ -30,6 +30,8 @@ import java.util.TimerTask;
 import java.util.Vector;
 
 import javax.swing.AbstractAction;
+import javax.swing.ActionMap;
+import javax.swing.InputMap;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -223,7 +225,7 @@ public class TimelinePanel extends JPanel implements PersonaListener {
     mMainPane.updateProgram();
   }
   
-  public void addKeyboardAction(JRootPane rootPane) {
+  public void addKeyboardAction(JRootPane rootPane) {    
     // Debug Info
     rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
         KeyStroke.getKeyStroke(KeyEvent.VK_F12, 0), "debugInfo");
