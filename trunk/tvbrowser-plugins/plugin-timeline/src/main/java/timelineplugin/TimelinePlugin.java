@@ -33,13 +33,18 @@ import java.util.Properties;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.ActionMap;
 import javax.swing.BorderFactory;
+import javax.swing.InputMap;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+import javax.swing.event.AncestorEvent;
+import javax.swing.event.AncestorListener;
 
 import timelineplugin.format.TextFormatter;
 import util.ui.UiUtilities;
@@ -112,7 +117,7 @@ public final class TimelinePlugin extends devplugin.Plugin {
 	}
 
 	public static Version getVersion() {
-		return new Version(1, 13, 0, false);
+		return new Version(1, 13, 1, false);
 	}
 
 	public SettingsTab getSettingsTab() {
@@ -215,7 +220,42 @@ public final class TimelinePlugin extends devplugin.Plugin {
           @Override
           public void run() {
             mTimelinePanel = new TimelinePanel(mSettings.startWithNow(),mSettings.showHeaderPanel());
-            mTimelinePanel.addKeyboardAction(((JFrame)getParentFrame()).getRootPane());
+            mCenterPanelWrapper.addAncestorListener(new AncestorListener() {
+              private InputMap mDefaultInputMap;
+              private ActionMap mDefaultActionMap;
+              
+              @Override
+              public void ancestorRemoved(AncestorEvent e) {
+                for(KeyStroke keyStroke : mDefaultInputMap.keys()) {
+                  ((JFrame)getParentFrame()).getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(keyStroke, mDefaultInputMap.get(keyStroke));
+                }
+                
+                for(Object o : mDefaultActionMap.keys()) {
+                  ((JFrame)getParentFrame()).getRootPane().getActionMap().put(o, mDefaultActionMap.get(o));
+                }
+              }
+              
+              @Override
+              public void ancestorMoved(AncestorEvent e) {}
+              
+              @Override
+              public void ancestorAdded(AncestorEvent e) {
+                if(mDefaultInputMap == null) {
+                  mDefaultInputMap = new InputMap();
+                  mDefaultActionMap = new ActionMap();
+                  
+                  for(KeyStroke keyStroke : ((JFrame)getParentFrame()).getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).keys()) {
+                    mDefaultInputMap.put(keyStroke, ((JFrame)getParentFrame()).getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).get(keyStroke));
+                  }
+                  
+                  for(Object o : ((JFrame)getParentFrame()).getRootPane().getActionMap().keys()) {
+                    mDefaultActionMap.put(o, ((JFrame)getParentFrame()).getRootPane().getActionMap().get(o));
+                  }
+                }
+                
+                mTimelinePanel.addKeyboardAction(((JFrame)getParentFrame()).getRootPane());
+              }
+            });
             
             Persona.getInstance().registerPersonaListener(mTimelinePanel);
 
