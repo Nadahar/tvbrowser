@@ -85,7 +85,9 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
   private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(ReminderFrame.class);
 
-  public static final int DONT_REMIND_AGAIN = -31; 
+  public static final int DONT_REMIND_AGAIN = -31;
+  
+  public static final int NO_REMINDER = -42;
   
   static final RemindValue DONT_REMIND_AGAIN_VALUE = new RemindValue(DONT_REMIND_AGAIN);
 

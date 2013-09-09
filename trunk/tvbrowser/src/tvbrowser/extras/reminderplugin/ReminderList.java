@@ -134,7 +134,7 @@ public class ReminderList implements ActionListener {
   }
 
   private void add(final Program program, final int minutes, final int referenceCount) {
-    if (!program.isExpired()) {
+    if (!program.isExpired() && minutes != ReminderFrame.NO_REMINDER) {
       ReminderListItem item = getReminderItem(program);
 
       if (item != null) {
@@ -154,7 +154,7 @@ public class ReminderList implements ActionListener {
   }
 
   private void add(Program program, ReminderContent reminderContent, int referenceCount) {
-    if (!program.isExpired()) {
+    if (!program.isExpired() && reminderContent.getReminderMinutes() != ReminderFrame.NO_REMINDER) {
       ReminderListItem item = getReminderItem(program);
 
       if (item != null) {

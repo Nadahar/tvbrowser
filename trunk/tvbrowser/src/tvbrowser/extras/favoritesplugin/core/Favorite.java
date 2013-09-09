@@ -54,6 +54,7 @@ import devplugin.Channel;
 import devplugin.Date;
 import devplugin.Plugin;
 import devplugin.Program;
+import devplugin.ProgramFieldType;
 import devplugin.ProgramReceiveTarget;
 import devplugin.ProgramSearcher;
 
@@ -68,7 +69,7 @@ public abstract class Favorite {
   private ProgramReceiveTarget[] mForwardPluginArr;
   protected SearchFormSettings mSearchFormSettings;
 
-  private HashMap<String,Integer> mRemovedPrograms;
+  private HashMap<String,ReminderInfo> mRemovedPrograms;
   private ArrayList<Program> mRemovedBlacklistPrograms;
   private boolean mNewProgramsWasRequested;
 
@@ -82,7 +83,7 @@ public abstract class Favorite {
     mLimitationConfiguration = new LimitationConfiguration();
     mPrograms = new ArrayList<Program>(0);
     mNewPrograms = new ArrayList<Program>(0);
-    mRemovedPrograms = new HashMap<String,Integer>(0);
+    mRemovedPrograms = new HashMap<String,ReminderInfo>(0);
     mRemovedBlacklistPrograms = new ArrayList<Program>(0);
     mExclusionList = null; // defer initialisation until needed, save memory
     mBlackList = null; // defer initialization until needed
@@ -150,7 +151,7 @@ public abstract class Favorite {
     mPrograms = programList;
 
     mNewPrograms = new ArrayList<Program>(0);
-    mRemovedPrograms = new HashMap<String, Integer>(0);
+    mRemovedPrograms = new HashMap<String, ReminderInfo>(0);
   }
 
   /**
@@ -624,7 +625,7 @@ public abstract class Favorite {
       p.mark(FavoritesPluginProxy.getInstance());
       String[] reminderServices = getReminderConfiguration().getReminderServices();
       for (String reminderService : reminderServices) {
-        if (ReminderConfiguration.REMINDER_DEFAULT.equals(reminderService) && reminderMinutes != -42) {
+        if (ReminderConfiguration.REMINDER_DEFAULT.equals(reminderService)) {
           ReminderPlugin.getInstance().addProgram(p,reminderMinutes);
         }
       }
@@ -636,7 +637,7 @@ public abstract class Favorite {
       p.unmark(FavoritesPluginProxy.getInstance());
     }
 
-    int reminderMinutes = -32;
+    int reminderMinutes = ReminderFrame.NO_REMINDER;
 
     String[] reminderServices = getReminderConfiguration().getReminderServices();
     for (String reminderService : reminderServices) {
@@ -856,7 +857,7 @@ public abstract class Favorite {
 
           int pos = mPrograms.indexOf(p);
 
-          Integer listMinutes = null;
+          ReminderInfo info = null;
 
           if (pos >= 0) {
             // Item was in list, remove old item, add new one
@@ -869,10 +870,17 @@ public abstract class Favorite {
           boolean wasOnList = false;
 
           synchronized(mRemovedPrograms) {
-            if((listMinutes = mRemovedPrograms.remove(getProgramKeyFor(p))) != null){
+            if((info = mRemovedPrograms.remove(getProgramKeyFor(p))) != null){
               // Item was in list, but was already removed before
               mPrograms.add(p);
-              markProgram(p,listMinutes);
+              
+              int reminderMinutes = info.getReminderMinutes();
+              
+              if(reminderMinutes == ReminderFrame.NO_REMINDER && !info.equals(p)) {
+                reminderMinutes = ReminderFrame.DONT_REMIND_AGAIN;
+              }
+              
+              markProgram(p,reminderMinutes);
               wasOnList = true;
             }
           }
@@ -938,7 +946,7 @@ public abstract class Favorite {
         wasInList = true;
 
         synchronized(mRemovedPrograms) {
-          mRemovedPrograms.put(getProgramKeyFor(p),reminderMinutes);
+          mRemovedPrograms.put(getProgramKeyFor(p),new ReminderInfo(p.getTitle(), p.getTextField(ProgramFieldType.EPISODE_TYPE), reminderMinutes));
         }
       }
     }
@@ -970,7 +978,7 @@ public abstract class Favorite {
    * @since 2.7
    */
   public void clearRemovedPrograms() {
-    mRemovedPrograms = new HashMap<String,Integer>(0);
+    mRemovedPrograms = new HashMap<String,ReminderInfo>(0);
     mRemovedBlacklistPrograms = new ArrayList<Program>(0);
   }
 
@@ -1025,5 +1033,32 @@ public abstract class Favorite {
         }
       }
     }.start();
+  }
+  
+  private class ReminderInfo {
+    private String mTitle;
+    private String mEpisode;
+    private int mMinutes;
+    
+    public ReminderInfo(String title, String episode, int minutes) {
+      mTitle = title;
+      mEpisode = episode;
+      mMinutes = minutes;
+    }
+    
+    public int getReminderMinutes() {
+      return mMinutes;
+    }
+    
+    public boolean equals(Object o) {
+      if(o instanceof Program) {
+        Program test = (Program)o;
+        
+        return !(!test.getTitle().trim().equalsIgnoreCase(mTitle.trim()) || (test.hasFieldValue(ProgramFieldType.EPISODE_TYPE) && mEpisode != null && !test.getTextField(ProgramFieldType.EPISODE_TYPE).equalsIgnoreCase(mEpisode))
+            || (!test.hasFieldValue(ProgramFieldType.EPISODE_TYPE) && mEpisode != null));
+      }
+      
+      return this == o;
+    }
   }
 }
