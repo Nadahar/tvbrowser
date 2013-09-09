@@ -64,12 +64,35 @@ public interface PluginManager {
   public Program getProgram(Date date, String progID);
   
   /**
+   * Gets programs.
+   * (Well this is stupid but if programs start at the same
+   * time on the same channel on the same date they have the same id.)
+   *
+   * @param date The date when the programs are shown.
+   * @param progID The ID of the programs.
+   * @return The programs or <code>null</code> if there are no such programs.
+   * @since 3.3.3
+   */
+  public Program[] getPrograms(Date date, String progID);
+  
+  /**
    * Gets a program.
    *
    * @param uniqueID The unique ID ({@link Program#getUniqueID()}) of this program.
    * @return The program or <code>null</code> if there is no such program.
    */
   public Program getProgram(String uniqueID);
+  
+  /**
+   * Gets programs.
+   * (Well this is stupid but if programs start at the same time on
+   *  the same channel on the same date they have the same UniqueID.)
+   * 
+   * @param uniqueID The unique ID ({@link Program#getUniqueID()}) of the programs.
+   * @return The programs or <code>null</code> if there are no such programs.
+   * @since 3.3.3
+   */
+  public Program[] getPrograms(String uniqueID);
 
   /**
    * Gets all channels the user has subscribed.

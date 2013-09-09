@@ -48,12 +48,23 @@ public interface ChannelDayProgram {
   public Date getDate();
 
   /**
-   * Returns the program object having the specified ID.
+   * Returns the first program object having the specified ID.
    *
    * @param progID The ID of the wanted program.
    * @return  the program object having the specified ID.
    */
   public Program getProgram(String progID);
+  
+  /**
+   * Returns all program objects having the specified ID.
+   * (Well this is stupid but if programs start at the same
+   * time on the same channel on the same date they have the same id.)
+   * 
+   * @param progID The ID of the wanted programs.
+   * @return The array with the program objects having the specified ID.
+   * @since 3.3.3
+   */
+  public Program[] getPrograms(String progID);
 
   /**
    * Gets the number of programs in this list.

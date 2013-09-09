@@ -261,7 +261,16 @@ public abstract class Favorite {
       Program test = mNewPrograms.get(i);
 
       if(test != null) {
-        Program newProg = Plugin.getPluginManager().getProgram(mNewPrograms.get(i).getUniqueID());
+        Program[] newProgs = Plugin.getPluginManager().getPrograms(mNewPrograms.get(i).getUniqueID());
+        
+        Program newProg = null;
+        
+        for(Program check : newProgs) {
+          if(check.getTitle().equals(test.getTitle())) {
+            newProg = check;
+            break;
+          }
+        }
 
         if(newProg != null && newProg.getProgramState() == Program.IS_VALID_STATE) {
           mNewPrograms.set(i,newProg);

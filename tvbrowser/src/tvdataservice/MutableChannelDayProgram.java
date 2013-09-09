@@ -97,6 +97,20 @@ public class MutableChannelDayProgram implements ChannelDayProgram {
     return mDate;
   }
 
+  @Override
+  public Program getProgram(String progID) {
+    Program[] programs = getPrograms(progID,true);
+    
+    if(programs != null && programs.length > 0) {
+      return programs[0];
+    }
+    
+    return null;
+  }
+
+  public Program[] getPrograms(String progID) {
+    return getPrograms(progID,false);
+  }
 
 
   /**
@@ -105,7 +119,7 @@ public class MutableChannelDayProgram implements ChannelDayProgram {
    * @param progID The ID of the wanted program.
    * @return  the program object having the specified ID.
    */
-  public Program getProgram(String progID) {
+  private Program[] getPrograms(String progID, boolean onlyFirst) {
     progID = ProgramUtilities.getTimeZoneCorrectedProgramId(progID);
     
     // avoid split operation
@@ -117,11 +131,18 @@ public class MutableChannelDayProgram implements ChannelDayProgram {
       }
     }
 
+    ArrayList<Program> foundPrograms = new ArrayList<Program>();
+    
     for(Program prog : mProgramList) {
       String id = prog.getID();
       if (idlength > 4) {
         if (progID.compareTo(id) == 0) {
-          return prog;
+          if(onlyFirst) {
+            return new Program[] {prog};
+          }
+          else {
+            foundPrograms.add(prog);
+          }
         }
       }
       else if(idlength < 4) {
@@ -137,6 +158,10 @@ public class MutableChannelDayProgram implements ChannelDayProgram {
       
     }
 
+    if(!foundPrograms.isEmpty()) {
+      return foundPrograms.toArray(new Program[foundPrograms.size()]);
+    }
+    
     // nothing found
     return null;
   }
@@ -319,6 +344,4 @@ public class MutableChannelDayProgram implements ChannelDayProgram {
     }
     return true; // everything checked, so they are the same
   }
-
-
 }
