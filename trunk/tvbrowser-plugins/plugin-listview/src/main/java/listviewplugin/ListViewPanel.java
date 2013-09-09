@@ -29,9 +29,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -71,6 +68,8 @@ import devplugin.SettingsItem;
 
 import util.io.IOUtilities;
 import util.program.ProgramUtilities;
+import util.programmouseevent.ProgramMouseAndContextMenuListener;
+import util.programmouseevent.ProgramMouseEventHandler;
 import util.ui.CaretPositionCorrector;
 import util.ui.ChannelLabel;
 import util.ui.Localizer;
@@ -79,7 +78,7 @@ import util.ui.UiUtilities;
 import util.ui.persona.Persona;
 import util.ui.persona.PersonaListener;
 
-public class ListViewPanel extends JPanel implements PersonaListener {
+public class ListViewPanel extends JPanel implements PersonaListener, ProgramMouseAndContextMenuListener {
   private static final Localizer mLocalizer = ListViewDialog.mLocalizer;
   
 
@@ -121,12 +120,6 @@ public class ListViewPanel extends JPanel implements PersonaListener {
   /** Timer for Updates */
   private Timer mTimer;
 
-  private Thread mLeftClickThread;
-  private boolean mPerformingSingleClick;
-
-  private Thread mMiddleSingleClickThread;
-  private boolean mPerformingMiddleSingleClick;
-
   private JComboBox mFilterBox;
   private ProgramFilter mCurrentFilter;
   
@@ -143,7 +136,6 @@ public class ListViewPanel extends JPanel implements PersonaListener {
     mPlugin = plugin;
     mTimes = Plugin.getPluginManager().getTvBrowserSettings().getTimeButtonTimes();
     mModel = new ListTableModel();
-    mPerformingSingleClick = false;
     mCurrentFilter = Plugin.getPluginManager().getFilterManager().getCurrentFilter();    
 
     generateList(new Date(), getCurrentTime());
@@ -180,7 +172,7 @@ public class ListViewPanel extends JPanel implements PersonaListener {
 
     mBox = new JComboBox(data);
     UiUtilities.addSeparatorsAfterIndexes(mBox, separators.toArray(new Integer[separators.size()]));
-
+    
     mBox.addActionListener(new ActionListener() {
 
       public void actionPerformed(ActionEvent e) {
@@ -363,37 +355,18 @@ public class ListViewPanel extends JPanel implements PersonaListener {
     mProgramTable.getTableHeader().setReorderingAllowed(false);
     mProgramTable.getTableHeader().setResizingAllowed(false);
     mProgramTable.setToolTipText("");
-
-    mProgramTable.addMouseListener(new MouseAdapter() {
-      @Override
-      public void mousePressed(MouseEvent evt) {
-        if (evt.isPopupTrigger()) {
-          showPopup(evt);
-        }
-      }
-
-      @Override
-      public void mouseReleased(MouseEvent evt) {
-        if (evt.isPopupTrigger()) {
-          showPopup(evt);
-        }
-      }
-
-      @Override
-      public void mouseClicked(MouseEvent e) {
-        mouseClickedOnTable(e);
-      }
-
-    });
+    
+    ProgramMouseEventHandler handler = new ProgramMouseEventHandler(this, null);
+    mProgramTable.addMouseListener(handler);
 
     // Dispatch the KeyEvent to the RootPane for Closing the Dialog.
     // Needed for Java 1.4.
-    mProgramTable.addKeyListener(new KeyAdapter() {
+  /*  mProgramTable.addKeyListener(new KeyAdapter() {
       @Override
       public void keyPressed(KeyEvent e) {
         mProgramTable.getRootPane().dispatchEvent(e);
       }
-    });
+    });*/
 
     setTableColumProperties();
 
@@ -667,75 +640,6 @@ public class ListViewPanel extends JPanel implements PersonaListener {
   }
 
   /**
-   * Called when a Mouse-Event occurs
-   *
-   * @param e Event
-   */
-  private void mouseClickedOnTable(final MouseEvent e) {
-    final Program prg = getProgramByClick(e);
-
-    if (prg == null) {
-      return;
-    }
-    if (SwingUtilities.isLeftMouseButton(e) && (e.getClickCount() == 1) && e.getModifiersEx() == 0) {
-      mLeftClickThread = new Thread("Single left click") {
-        @Override
-        public void run() {
-          try {
-            mPerformingSingleClick = false;
-            sleep(Plugin.SINGLE_CLICK_WAITING_TIME);
-            mPerformingSingleClick = true;
-
-            Plugin.getPluginManager().handleProgramSingleClick(prg, mPlugin);
-            mPerformingSingleClick = false;
-          } catch (InterruptedException e) { // ignore
-          }
-        }
-      };
-
-      mLeftClickThread.setPriority(Thread.MIN_PRIORITY);
-      mLeftClickThread.start();
-    }
-    else if (SwingUtilities.isLeftMouseButton(e) && (e.getClickCount() == 2) && e.getModifiersEx() == 0) {
-      if(!mPerformingSingleClick && mLeftClickThread != null && mLeftClickThread.isAlive()) {
-        mLeftClickThread.interrupt();
-      }
-      
-      if(!mPerformingSingleClick) {
-        devplugin.Plugin.getPluginManager().handleProgramDoubleClick(prg, mPlugin);
-      }
-    }
-    else if (SwingUtilities.isMiddleMouseButton(e) && (e.getClickCount() == 1)) {
-      mMiddleSingleClickThread = new Thread("Single click") {
-        @Override
-        public void run() {
-          try {
-            mPerformingMiddleSingleClick = false;
-            sleep(Plugin.SINGLE_CLICK_WAITING_TIME);
-            mPerformingMiddleSingleClick = true;
-
-            Plugin.getPluginManager().handleProgramMiddleClick(prg, mPlugin);
-            mPerformingMiddleSingleClick = false;
-          } catch (InterruptedException e) { // ignore
-          }
-        }
-      };
-
-      mMiddleSingleClickThread.setPriority(Thread.MIN_PRIORITY);
-      mMiddleSingleClickThread.start();
-    }
-    else if (SwingUtilities.isMiddleMouseButton(e) && (e.getClickCount() == 2)) {
-      if(!mPerformingMiddleSingleClick && mMiddleSingleClickThread != null && mMiddleSingleClickThread.isAlive()) {
-        mMiddleSingleClickThread.interrupt();
-      }
-      
-      if(!mPerformingMiddleSingleClick) {
-        devplugin.Plugin.getPluginManager().handleProgramMiddleDoubleClick(prg, mPlugin);
-      }
-    }
-  }
-
-  /**
    * Gets the Program the User has clicked on
    * @param e MouseEvent to determine the Program
    * @return Program the User has clicked on
@@ -754,21 +658,6 @@ public class ListViewPanel extends JPanel implements PersonaListener {
     }
 
     return prg;
-  }
-
-  /**
-   * Shows the Popup
-   * @param e Mouse-Event
-   */
-  private void showPopup(MouseEvent e) {
-    Program prg = getProgramByClick(e);
-
-    if (prg == null) {
-      return;
-    }
-
-    JPopupMenu menu = devplugin.Plugin.getPluginManager().createPluginContextMenu(prg, mPlugin);
-    menu.show(mProgramTable, e.getX() - 15, e.getY() - 15);
   }
 
   /**
@@ -972,5 +861,25 @@ public class ListViewPanel extends JPanel implements PersonaListener {
     }
     
     return it;
+  }
+
+  @Override
+  public Program getProgramForMouseEvent(MouseEvent e) {
+    return getProgramByClick(e);
+  }
+
+  @Override
+  public void mouseEventActionFinished() {}
+
+  @Override
+  public void showContextMenu(MouseEvent e) {
+    Program prg = getProgramByClick(e);
+
+    if (prg == null) {
+      return;
+    }
+
+    JPopupMenu menu = devplugin.Plugin.getPluginManager().createPluginContextMenu(prg, mPlugin);
+    menu.show(mProgramTable, e.getX() - 15, e.getY() - 15);
   }
 }
