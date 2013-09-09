@@ -720,7 +720,7 @@ public class ReminderPlugin {
       return item.getMinutes();
     }
 
-    return ReminderFrame.DONT_REMIND_AGAIN;
+    return ReminderFrame.NO_REMINDER;
   }
 
   /**
