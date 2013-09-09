@@ -185,15 +185,28 @@ public class PluginManagerImpl implements PluginManager {
     }
     return mInstance;
   }
-
-  /**
-   * Gets a program.
-   *
-   * @param date The date when the program is shown.
-   * @param progID The ID of the program.
-   * @return The program or <code>null</code> if there is no such program.
-   */
+  
+  @Override
   public Program getProgram(Date date, String progID) {
+    ChannelDayProgram dayProg = getDayProgram(date,progID);
+    
+    if (dayProg != null) {
+      Program prog = dayProg.getProgram(progID);
+      if (prog != null) {
+        return prog;
+      }
+      else {
+        mLog.warning("could not find program with id '"+progID+"' (date: "+date+")");
+      }
+    }
+    else {
+      mLog.warning("day program not found: "+progID+"; "+date);
+    }
+
+    return null;
+  }
+  
+  private ChannelDayProgram getDayProgram(Date date, String progID) {
     TvDataBase db = TvDataBase.getInstance();
     
     Channel ch = getChannelFromProgId(progID);
@@ -257,22 +270,35 @@ public class PluginManagerImpl implements PluginManager {
         }
       }
       
-      ChannelDayProgram dayProg = db.getDayProgram(date, ch);
-      
-      if (dayProg != null) {
-        Program prog = dayProg.getProgram(progID);
-        if (prog != null) {
-          return prog;
-        }
-        else {
-          mLog.warning("could not find program with id '"+progID+"' (date: "+date+")");
-        }
-      }
-      else {
-        mLog.warning("day program not found: "+progID+"; "+date);
-      }
+      return db.getDayProgram(date, ch);
     }else{
       mLog.warning("channel for program '"+progID+"' not found or not a subscribed channel");
+    }
+
+    return null;
+  }
+
+  /**
+   * Gets a program.
+   *
+   * @param date The date when the program is shown.
+   * @param progID The ID of the program.
+   * @return The program or <code>null</code> if there is no such program.
+   */
+  public Program[] getPrograms(Date date, String progID) {     
+    ChannelDayProgram dayProg = getDayProgram(date,progID);
+    
+    if (dayProg != null) {
+      Program[] progs = dayProg.getPrograms(progID);
+      if (progs != null) {
+        return progs;
+      }
+      else {
+        mLog.warning("could not find program with id '"+progID+"' (date: "+date+")");
+      }
+    }
+    else {
+      mLog.warning("day program not found: "+progID+"; "+date);
     }
 
     return null;
@@ -280,6 +306,12 @@ public class PluginManagerImpl implements PluginManager {
   
   /** {@inheritDoc} */
   public Program getProgram(String uniqueID) {
+    Object[] values = getDateAndProgIDforUniqueID(uniqueID);
+    
+    return getProgram((Date)values[0], (String)values[1]);
+  }
+
+  private Object[] getDateAndProgIDforUniqueID(String uniqueID) {
     String[] id = uniqueID.split("_");
     Date progDate;
     try {
@@ -292,10 +324,15 @@ public class PluginManagerImpl implements PluginManager {
       return null;
     }
     
-    String progID = new StringBuilder(id[0]).append('_').append(id[1]).append('_').append(id[2]).append('_').append(id[3]).append('_').append(id[5]).toString();
-    return getProgram(progDate, progID);
+    return new Object[] { progDate,new StringBuilder(id[0]).append('_').append(id[1]).append('_').append(id[2]).append('_').append(id[3]).append('_').append(id[5]).toString()};    
   }
 
+  @Override
+  public Program[] getPrograms(String uniqueID) {
+    Object[] values = getDateAndProgIDforUniqueID(uniqueID);
+    
+    return getPrograms((Date)values[0], (String)values[1]);
+  }
 
   private Channel getChannelFromProgId(String progId) {
     // try to avoid the split operation as it is costly

@@ -46,6 +46,7 @@ import devplugin.Channel;
 import devplugin.ChannelDayProgram;
 import devplugin.Date;
 import devplugin.Program;
+import devplugin.ProgramFieldType;
 import devplugin.ProgressMonitor;
 
 /**
@@ -334,7 +335,7 @@ public class TvDataBase {
     correctDayProgramFile(date, channel);
   }
 
-  public synchronized void setDayProgram(MutableChannelDayProgram prog) {
+  public void setDayProgram(MutableChannelDayProgram prog) {
     Date date = prog.getDate();
     Channel channel = prog.getChannel();
     String key = getDayProgramKey(date, channel);
@@ -343,10 +344,13 @@ public class TvDataBase {
       prog.setLastProgramHadEndOnUpdate(prog.getProgramAt(prog.getProgramCount() - 1).getLength() > 0);
     }
     
+    OnDemandDayProgramFile oldProgFile = getCacheEntry(date, channel, true, false);
+    ChannelDayProgram oldProg = null;
+    
     // Create a backup (Rename the old file if it exists)
     File file = getDayProgramFile(date, channel);
     File backupFile = null;
-    ChannelDayProgram oldProg = getDayProgram(date, channel, false);
+    
     if (file.exists()) {
       backupFile = new File(file.getAbsolutePath() + ".backup");
       if (!file.renameTo(backupFile)) {
@@ -354,10 +358,10 @@ public class TvDataBase {
         backupFile = null;
       }
     }
-
+    
     // Invalidate the old program file from the cache
-    OnDemandDayProgramFile oldProgFile = getCacheEntry(date, channel, false, false);
     if (oldProgFile != null) {
+      oldProg = oldProgFile.getDayProgram();
       oldProgFile.setValid(false);
 
       // Remove the old entry from the cache (if it exists)
@@ -610,7 +614,7 @@ public class TvDataBase {
       int knownStatus = mTvDataInventory.getKnownStatus(date, channel, version);
 
       OnDemandDayProgramFile oldProgFile = getCacheEntry(date, channel, false, false);
-      mCurrentAddedDayProgram = (MutableChannelDayProgram)getDayProgram(date,channel,true);
+      mCurrentAddedDayProgram = oldProgFile.getDayProgram();
 
       boolean somethingChanged = calculateMissingLengths(mCurrentAddedDayProgram);
 
@@ -922,14 +926,19 @@ public class TvDataBase {
       if (prog.getLength() <= 0) {
         // Try to get the next program
         Program nextProgram = null;
-        if ((progIdx + 1) < channelProg.getProgramCount()) {
-          // Try to get it from this ChannelDayProgram
-          nextProgram = channelProg.getProgramAt(progIdx + 1);
-        } else {
-          // This is the last program -> Try to get the first program of the
-          // next ChannelDayProgram
-          nextProgram = getFirstNextDayProgram(channelProg);
-        }
+        int addCount = 1;
+        
+        // If next program and current program have the same start time, find next program that has another start time.
+        do {
+          if ((progIdx + addCount) < channelProg.getProgramCount()) {
+            // Try to get it from this ChannelDayProgram
+            nextProgram = channelProg.getProgramAt(progIdx + addCount++);
+          } else {
+            // This is the last program -> Try to get the first program of the
+            // next ChannelDayProgram
+            nextProgram = getFirstNextDayProgram(channelProg);
+          }
+        }while(nextProgram != null && nextProgram.getStartTime() == prog.getStartTime());
 
         somethingChanged = calculateLength(prog, nextProgram) || somethingChanged;
       } else if (progIdx + 1 == channelProg.getProgramCount() && !channelProg.getLastProgramHadEndOnUpdate()) {
@@ -967,6 +976,11 @@ public class TvDataBase {
 
       if ((startTime + first.getLength()) != endTime) {
         int length = endTime - startTime;
+        
+        if(first.hasFieldValue(ProgramFieldType.NET_PLAYING_TIME_TYPE) && first.getIntField(ProgramFieldType.NET_PLAYING_TIME_TYPE) > length) {
+          length = first.getIntField(ProgramFieldType.NET_PLAYING_TIME_TYPE);
+        }
+        
         // Only allow a maximum length of 15 hours
         if (length < 15 * 60) {
           first.setLength(length);
