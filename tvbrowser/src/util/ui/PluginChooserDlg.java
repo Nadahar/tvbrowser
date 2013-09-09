@@ -340,8 +340,10 @@ public class PluginChooserDlg extends JDialog implements WindowClosingIf {
 
               final ProgramReceiveIf plugin = (ProgramReceiveIf) pluginItem
                   .getItem();
-              mCurrentTargets = plugin.getProgramReceiveTargets();
-
+              ProgramReceiveTarget[] pluginTargets = plugin.getProgramReceiveTargets();
+              
+              mCurrentTargets = Arrays.copyOf(pluginTargets,pluginTargets.length);
+              
               if (mCurrentTargets != null) {
                 Arrays.sort(mCurrentTargets);
                 ArrayList<ProgramReceiveTarget> targets = mReceiveTargetTable
