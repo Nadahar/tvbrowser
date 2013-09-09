@@ -92,8 +92,11 @@ public final class CalendarTableCellRenderer implements
     }
     else {
       mPanel.setBackground(table.getBackground());
-      mLabel.setText(value.toString());
-      mLabel.setEnabled(true);
+      
+      if(value != null) {
+        mLabel.setText(value.toString());
+        mLabel.setEnabled(true);
+      }
     }
     return mPanel;
   }
