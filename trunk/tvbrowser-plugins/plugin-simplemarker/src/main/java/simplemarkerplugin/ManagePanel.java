@@ -38,7 +38,6 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -57,7 +56,6 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 
-import util.exc.TvBrowserException;
 import util.settings.PluginPictureSettings;
 import util.settings.ProgramPanelSettings;
 import util.ui.ProgramList;
@@ -73,7 +71,6 @@ import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.Sizes;
 
-import devplugin.FilterManager;
 import devplugin.Plugin;
 import devplugin.Program;
 import devplugin.ProgramFilter;
@@ -139,7 +136,7 @@ public class ManagePanel extends JPanel implements PersonaListener {
     mMarkListsList.setCellRenderer(new MarkListCellRenderer());
 
     mProgramsList = new ProgramList(mProgramListModel,new ProgramPanelSettings(new PluginPictureSettings(PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE), false, ProgramPanelSettings.X_AXIS));
-    mProgramsList.addMouseListeners(null);
+    mProgramsList.addMouseAndKeyListeners(null);
 
     mMarkListsScrolPane = new JScrollPane(mMarkListsList);
     mProgramsScrollPane = new JScrollPane(mProgramsList);
@@ -460,7 +457,7 @@ public class ManagePanel extends JPanel implements PersonaListener {
 
   private void delete() {
     if (mProgramsList.getSelectedIndex() == -1) {
-      mProgramsList.setSelectionInterval(0, mProgramListModel.getSize()-1);
+      mProgramsList.setSelectionInterval(0, mProgramsList.getModel().getSize()-1);
     }
 
     mLastDeletingList =(MarkList) mMarkListsList.getSelectedValue();
