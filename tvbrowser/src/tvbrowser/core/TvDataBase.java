@@ -335,7 +335,7 @@ public class TvDataBase {
     correctDayProgramFile(date, channel);
   }
 
-  public void setDayProgram(MutableChannelDayProgram prog) {
+  public synchronized void setDayProgram(MutableChannelDayProgram prog) {
     Date date = prog.getDate();
     Channel channel = prog.getChannel();
     String key = getDayProgramKey(date, channel);
