@@ -182,7 +182,7 @@ public class E2TimerHelper {
     Map<String, Map<String, String>> mapTimers = new TreeMap<String, Map<String, String>>();
     for (Map<String, String> timer : timers) {
 
-      int e2repeated = Integer.parseInt(timer.get(REPEATED));
+      int e2repeated = timer.get(REPEATED).toLowerCase().equals("false") ? 0 : timer.get(REPEATED).toLowerCase().equals("true") ? 1 :Integer.parseInt(timer.get(REPEATED));
       int e2justplay = Integer.parseInt(timer.get(JUSTPLAY));
       if ((e2repeated > 0) && (e2justplay == 0)) {
         for (int i = 0; i < 7; i++) {
