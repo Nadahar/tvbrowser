@@ -937,6 +937,7 @@ public class TvDataBase {
             // This is the last program -> Try to get the first program of the
             // next ChannelDayProgram
             nextProgram = getFirstNextDayProgram(channelProg);
+            break;
           }
         }while(nextProgram != null && nextProgram.getStartTime() == prog.getStartTime());
 

@@ -76,6 +76,7 @@ import util.ui.Localizer;
 import util.ui.UIThreadRunner;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
+import util.ui.progress.ProgressBarProgressMonitor;
 import util.ui.progress.ProgressMonitorGroup;
 import devplugin.AfterDataUpdateInfoPanel;
 import devplugin.AfterDataUpdateInfoPanel.AfterDataUpdateInfoPanelListener;
@@ -275,10 +276,12 @@ public class TvDataUpdater {
     mIsDownloading = false;
 
     checkLocalDateUsingNTP();
-
-    ProgressMonitor monitor = monitorGroup.getNextProgressMonitor(mRecalculatePrograms.size()+1);
+    
+    ProgressBarProgressMonitor monitor = new ProgressBarProgressMonitor(progressBar, label);
     monitor.setMessage(mLocalizer.msg("calculateEntries","Calculating new entries in the database"));
-    monitor.setMaximum(mRecalculatePrograms.size()+1);
+    monitor.setMaximum(mRecalculatePrograms.size());
+    monitor.setValue(0);
+    
     int value = 0;
     
     for ( Iterator<ChannelDay> i = mRecalculatePrograms.iterator(); i.hasNext(); ) {
