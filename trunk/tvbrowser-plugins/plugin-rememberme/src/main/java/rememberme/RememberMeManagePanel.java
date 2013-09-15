@@ -44,11 +44,14 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 import javax.swing.event.ChangeListener;
 
 import tvbrowser.extras.searchplugin.SearchPluginProxy;
 import util.ui.TVBrowserIcons;
 import util.ui.menu.MenuUtil;
+import util.ui.persona.Persona;
+import util.ui.persona.PersonaListener;
 
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.Sizes;
@@ -62,12 +65,13 @@ import devplugin.PluginAccess;
 import devplugin.Program;
 import devplugin.ProgramFieldType;
 
-public class RememberMeManagePanel extends JPanel {
+public class RememberMeManagePanel extends JPanel implements PersonaListener {
   private ArrayList<RememberedProgram> mPrograms;
   private JList mList;
   private DefaultListModel mModel;
   private JComboBox mDayFilter;
   private DayFilter mCurrentFilter;
+  private JLabel mFilterLabel;
   
   public RememberMeManagePanel(ArrayList<RememberedProgram> programs, final RememberMe rMe) {
     mPrograms = programs;
@@ -128,7 +132,9 @@ public class RememberMeManagePanel extends JPanel {
     filterPanel.setLayout(new BoxLayout(filterPanel, BoxLayout.X_AXIS));
     filterPanel.setOpaque(false);
     
-    filterPanel.add(new JLabel(RememberMe.mLocalizer.msg("filterDays", "Filter:")));
+    mFilterLabel = new JLabel(RememberMe.mLocalizer.msg("filterDays", "Filter:"));
+    
+    filterPanel.add(mFilterLabel);
     filterPanel.add(Box.createRigidArea(new Dimension(Sizes.dialogUnitXAsPixel(5, filterPanel),0)));
     filterPanel.add(mDayFilter);
     
@@ -544,6 +550,18 @@ public class RememberMeManagePanel extends JPanel {
       }
       
       return value;
+    }
+  }
+
+  @Override
+  public void updatePersona() {
+    if(mFilterLabel != null) {
+      if(Persona.getInstance().getHeaderImage() != null) {
+        mFilterLabel.setForeground(Persona.getInstance().getTextColor());
+      }
+      else {
+        mFilterLabel.setForeground(UIManager.getDefaults().getColor("Label.foreground"));
+      }
     }
   }
 }
