@@ -19,18 +19,25 @@
 package rememberme;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
@@ -44,6 +51,7 @@ import util.ui.TVBrowserIcons;
 import util.ui.menu.MenuUtil;
 
 import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.layout.Sizes;
 
 import devplugin.ActionMenu;
 import devplugin.Channel;
@@ -58,10 +66,31 @@ public class RememberMeManagePanel extends JPanel {
   private ArrayList<RememberedProgram> mPrograms;
   private JList mList;
   private DefaultListModel mModel;
+  private JComboBox mDayFilter;
+  private DayFilter mCurrentFilter;
   
   public RememberMeManagePanel(ArrayList<RememberedProgram> programs, final RememberMe rMe) {
     mPrograms = programs;
     mModel = new DefaultListModel();
+    
+    mCurrentFilter = new DayFilter(RememberMe.mLocalizer.msg("all", "All available days"), 0, 0);
+    
+    DayFilter[] filterValues = {mCurrentFilter,
+                                new DayFilter(RememberMe.mLocalizer.msg("last3", "Last 3 days"),0,-3),
+                                new DayFilter(RememberMe.mLocalizer.msg("last7", "Last 7 days"),0,-7),
+                                new DayFilter(RememberMe.mLocalizer.msg("last8to14", "Last 8-14 days"),-8,-14)
+                               };
+    
+    mDayFilter = new JComboBox(filterValues);
+    mDayFilter.addItemListener(new ItemListener() {
+      @Override
+      public void itemStateChanged(ItemEvent e) {
+        if(e.getStateChange() == ItemEvent.SELECTED) {
+          mCurrentFilter = (DayFilter)e.getItem();
+          updatePanel(rMe);
+        }
+      }
+    });
     
     mList = new JList(mModel);
     mList.addMouseListener(new MouseAdapter() {
@@ -95,7 +124,16 @@ public class RememberMeManagePanel extends JPanel {
       }
     });
     
+    JPanel filterPanel = new JPanel();
+    filterPanel.setLayout(new BoxLayout(filterPanel, BoxLayout.X_AXIS));
+    filterPanel.setOpaque(false);
+    
+    filterPanel.add(new JLabel(RememberMe.mLocalizer.msg("filterDays", "Filter:")));
+    filterPanel.add(Box.createRigidArea(new Dimension(Sizes.dialogUnitXAsPixel(5, filterPanel),0)));
+    filterPanel.add(mDayFilter);
+    
     setLayout(new BorderLayout(0,5));
+    add(filterPanel, BorderLayout.NORTH);
     add(new JScrollPane(mList), BorderLayout.CENTER);
     setBorder(Borders.DIALOG);
     setOpaque(false);
@@ -447,7 +485,9 @@ public class RememberMeManagePanel extends JPanel {
     for(RememberedProgram prog : mPrograms) {
       if(prog.isExpired() && prog.isValid()) {
         if(!containsProgram(prog)) {
-          mModel.addElement(prog);
+          if(mCurrentFilter.accept(prog)) {
+            mModel.addElement(prog);
+          }
         }
         else if(!prog.hasProgram()){
           toRemove.add(prog);
@@ -474,5 +514,36 @@ public class RememberMeManagePanel extends JPanel {
     }
     
     return false;
+  }
+  
+  private static class DayFilter {
+    private String mLabel;
+    private int mStartDay;
+    private int mEndDay;
+    
+    public DayFilter(String label, int startDay, int endDay) {
+      mLabel = label;
+      mStartDay = startDay;
+      mEndDay = endDay;
+    }
+    
+    public String toString() {
+      return mLabel;
+    }
+    
+    public boolean accept(RememberedProgram prog) {
+      boolean value = false;
+      
+      if(prog != null) {
+        value = (mStartDay == mEndDay);
+        
+        Date startDate = Date.getCurrentDate().addDays(mStartDay);
+        Date endDate = Date.getCurrentDate().addDays(mEndDay);
+        
+        value = value || (prog.getDate().compareTo(startDate) <= 0 && prog.getDate().compareTo(endDate) >= 0);
+      }
+      
+      return value;
+    }
   }
 }
