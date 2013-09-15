@@ -19,7 +19,6 @@
 package rememberme;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
@@ -32,8 +31,6 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import javax.swing.Box;
-import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -54,7 +51,8 @@ import util.ui.persona.Persona;
 import util.ui.persona.PersonaListener;
 
 import com.jgoodies.forms.factories.Borders;
-import com.jgoodies.forms.layout.Sizes;
+import com.jgoodies.forms.factories.CC;
+import com.jgoodies.forms.layout.FormLayout;
 
 import devplugin.ActionMenu;
 import devplugin.Channel;
@@ -64,33 +62,55 @@ import devplugin.Plugin;
 import devplugin.PluginAccess;
 import devplugin.Program;
 import devplugin.ProgramFieldType;
+import devplugin.ProgramReceiveTarget;
 
 public class RememberMeManagePanel extends JPanel implements PersonaListener {
   private ArrayList<RememberedProgram> mPrograms;
   private JList mList;
   private DefaultListModel mModel;
   private JComboBox mDayFilter;
-  private DayFilter mCurrentFilter;
+  private JComboBox mTagFilter;
+  private DayFilter mCurrentDayFilter;
+  private TagFilter mCurrentTagFilter;
   private JLabel mFilterLabel;
+  private JLabel mTagLabel;
   
   public RememberMeManagePanel(ArrayList<RememberedProgram> programs, final RememberMe rMe) {
     mPrograms = programs;
     mModel = new DefaultListModel();
     
-    mCurrentFilter = new DayFilter(RememberMe.mLocalizer.msg("all", "All available days"), 0, 0);
+    mCurrentDayFilter = new DayFilter(RememberMe.mLocalizer.msg("all", "All available days"), 0, 0);
+    mCurrentTagFilter = new TagFilter(null);
     
-    DayFilter[] filterValues = {mCurrentFilter,
+    DayFilter[] filterValues = {mCurrentDayFilter,
                                 new DayFilter(RememberMe.mLocalizer.msg("last3", "Last 3 days"),0,-3),
                                 new DayFilter(RememberMe.mLocalizer.msg("last7", "Last 7 days"),0,-7),
                                 new DayFilter(RememberMe.mLocalizer.msg("last8to14", "Last 8-14 days"),-8,-14)
                                };
-    
+    mTagFilter = new JComboBox(rMe.getProgramReceiveTargets());
+    mTagFilter.addItemListener(new ItemListener() {
+      @Override
+      public void itemStateChanged(ItemEvent e) {
+        if(e.getStateChange() == ItemEvent.SELECTED) {
+          ProgramReceiveTarget target = (ProgramReceiveTarget)e.getItem();
+          
+          if(mTagFilter.getSelectedIndex() == 0) {
+            mCurrentTagFilter = new TagFilter(null);
+          }
+          else {
+            mCurrentTagFilter = new TagFilter(target.getTargetName());
+          }
+          
+          updatePanel(rMe);
+        }
+      }
+    });
     mDayFilter = new JComboBox(filterValues);
     mDayFilter.addItemListener(new ItemListener() {
       @Override
       public void itemStateChanged(ItemEvent e) {
         if(e.getStateChange() == ItemEvent.SELECTED) {
-          mCurrentFilter = (DayFilter)e.getItem();
+          mCurrentDayFilter = (DayFilter)e.getItem();
           updatePanel(rMe);
         }
       }
@@ -128,15 +148,16 @@ public class RememberMeManagePanel extends JPanel implements PersonaListener {
       }
     });
     
-    JPanel filterPanel = new JPanel();
-    filterPanel.setLayout(new BoxLayout(filterPanel, BoxLayout.X_AXIS));
+    JPanel filterPanel = new JPanel(new FormLayout("default,3dlu,default:grow","default,3dlu,default"));
     filterPanel.setOpaque(false);
     
-    mFilterLabel = new JLabel(RememberMe.mLocalizer.msg("filterDays", "Filter:"));
+    mFilterLabel = new JLabel(RememberMe.mLocalizer.msg("filterDays", "Filter days:"));
+    mTagLabel = new JLabel(RememberMe.mLocalizer.msg("filterTags", "Filter tags:"));
     
-    filterPanel.add(mFilterLabel);
-    filterPanel.add(Box.createRigidArea(new Dimension(Sizes.dialogUnitXAsPixel(5, filterPanel),0)));
-    filterPanel.add(mDayFilter);
+    filterPanel.add(mFilterLabel, CC.xy(1, 1));
+    filterPanel.add(mTagLabel, CC.xy(1, 3));
+    filterPanel.add(mDayFilter, CC.xy(3, 1));
+    filterPanel.add(mTagFilter, CC.xy(3, 3));
     
     setLayout(new BorderLayout(0,5));
     add(filterPanel, BorderLayout.NORTH);
@@ -491,7 +512,7 @@ public class RememberMeManagePanel extends JPanel implements PersonaListener {
     for(RememberedProgram prog : mPrograms) {
       if(prog.isExpired() && prog.isValid()) {
         if(!containsProgram(prog)) {
-          if(mCurrentFilter.accept(prog)) {
+          if(mCurrentDayFilter.accept(prog) && mCurrentTagFilter.accept(prog)) {
             mModel.addElement(prog);
           }
         }
@@ -550,6 +571,18 @@ public class RememberMeManagePanel extends JPanel implements PersonaListener {
       }
       
       return value;
+    }
+  }
+  
+  private static class TagFilter {
+    private String mTag;
+    
+    public TagFilter(String tag) {
+      mTag = tag;
+    }
+    
+    public boolean accept(RememberedProgram prog) {
+      return mTag == null || (prog != null && prog.getTag().equals(mTag));
     }
   }
 
