@@ -50,7 +50,7 @@ import devplugin.ThemeIcon;
 import devplugin.Version;
 
 public class RememberMe extends Plugin {
-  private static final Version mVersion = new Version(0,13,false);
+  private static final Version mVersion = new Version(0,14,true);
   static final Localizer mLocalizer = Localizer.getLocalizerFor(RememberMe.class);
   private static final String TARGET_ID = "###REMEMBERME###";
   
