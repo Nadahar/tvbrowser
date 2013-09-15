@@ -35,6 +35,7 @@ import javax.swing.event.AncestorListener;
 
 import util.ui.Localizer;
 import util.ui.UiUtilities;
+import util.ui.persona.Persona;
 import devplugin.ActionMenu;
 import devplugin.ContextMenuAction;
 import devplugin.Plugin;
@@ -49,7 +50,7 @@ import devplugin.ThemeIcon;
 import devplugin.Version;
 
 public class RememberMe extends Plugin {
-  private static final Version mVersion = new Version(0,12,false);
+  private static final Version mVersion = new Version(0,13,false);
   static final Localizer mLocalizer = Localizer.getLocalizerFor(RememberMe.class);
   private static final String TARGET_ID = "###REMEMBERME###";
   
@@ -264,7 +265,12 @@ public class RememberMe extends Plugin {
   public void onDeactivation() {
     mTimer.stop();
     mTimer = null;
-    mCenterPanelWrapper.remove(mMangePanel);
+    
+    if(mMangePanel != null) {
+      mCenterPanelWrapper.remove(mMangePanel);
+      Persona.getInstance().registerPersonaListener(mMangePanel);
+    }
+    
     mMangePanel = null;
   }
     
@@ -277,7 +283,7 @@ public class RememberMe extends Plugin {
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
         mMangePanel = new RememberMeManagePanel(mRememberedPrograms, RememberMe.this);
-        
+        Persona.getInstance().registerPersonaListener(mMangePanel);
         mCenterPanelWrapper.add(mMangePanel,BorderLayout.CENTER);
         mCenterPanelWrapper.updateUI();
       }
