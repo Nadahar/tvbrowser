@@ -272,7 +272,6 @@ public class MarkedProgramsList {
    * Revalidate program markings
    */
   public void revalidatePrograms() {
-    System.out.println("REVALIDATE MARKINGS");
     synchronized(mMarkedPrograms) {
       Iterator<Set<MutableProgram>> marked = mMarkedPrograms.values().iterator();
       

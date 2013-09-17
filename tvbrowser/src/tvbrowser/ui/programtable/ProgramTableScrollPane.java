@@ -56,7 +56,6 @@ import tvbrowser.ui.programtable.background.BackgroundPainter;
 import util.ui.persona.Persona;
 import devplugin.Channel;
 import devplugin.ContextMenuIf;
-import devplugin.Date;
 import devplugin.Program;
 
 /**
@@ -66,7 +65,7 @@ import devplugin.Program;
 public class ProgramTableScrollPane extends JScrollPane implements ProgramTableModelListener,
     MouseWheelListener, ChangeListener {
 
-  private static final double SCROLL_OFFSET_FROM_TOP = 0.15;
+  private static final double SCROLL_OFFSET_FROM_TOP = 1/4.;
 
   private ProgramTable mProgramTable;
 

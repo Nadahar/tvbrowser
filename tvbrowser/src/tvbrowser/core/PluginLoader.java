@@ -240,8 +240,22 @@ public class PluginLoader {
       }
 
       if(plugin != null) {
+        String version = null;
+        
+        if(plugin instanceof Plugin) {
+          try {
+            Method m = plugin.getClass().getMethod("getVersion", new Class<?>[0]);
+            Object o = m.invoke(plugin, new Object[0]);
+            
+            if(o instanceof Version) {
+              version = ((Version)o).toString();
+            }
+            
+          }catch(Exception e1) {}
+        }
+        
         mSuccessfullyLoadedPluginFiles.add(lcFileName);
-        mLog.info("Loaded plugin "+pluginFile.getAbsolutePath());
+        mLog.info("Loaded plugin "+pluginFile.getAbsolutePath() + (version != null ? " - " + version : ""));
       }
     }catch (Throwable thr) {
       mLog.log(Level.WARNING, "Loading plugin file failed: "

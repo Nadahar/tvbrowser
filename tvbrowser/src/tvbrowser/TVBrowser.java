@@ -267,7 +267,7 @@ public class TVBrowser {
   public static void main(String[] args) {
     // Read the command line parameters
     parseCommandline(args);
-
+    
     try {
       Toolkit.getDefaultToolkit().setDynamicLayout((Boolean) Toolkit.getDefaultToolkit().getDesktopProperty("awt.dynamicLayoutSupported"));
     } catch (Exception e) {

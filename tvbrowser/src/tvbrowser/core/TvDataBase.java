@@ -73,11 +73,11 @@ public class TvDataBase {
   /** Contains date objects for each date for which we have a TV listing */
   private HashSet<Date> mAvailableDateSet;
 
-  private Hashtable<String, Object> mNewDayProgramsAfterUpdate;
+  private Hashtable<String, UpdateData> mNewDayProgramsAfterUpdate;
 
   private TvDataInventory mTvDataInventory;
   private boolean mPendingPluginInformationAboutChangedData;
-  private Hashtable<ChannelDayKey, Object> mSendToTvDataListener;
+  private Hashtable<ChannelDayKey, UpdateData> mSendToTvDataListener;
   
   private MutableChannelDayProgram mCurrentAddedDayProgram;
 
@@ -86,8 +86,8 @@ public class TvDataBase {
     mTvDataHash = new SoftReferenceCache<String, OnDemandDayProgramFile>();
     mListenerList = new ArrayList<TvDataBaseListener>();
     mAvailableDateSet = new HashSet<Date>();
-    mNewDayProgramsAfterUpdate = new Hashtable<String, Object>();
-    mSendToTvDataListener = new Hashtable<ChannelDayKey, Object>();
+    mNewDayProgramsAfterUpdate = new Hashtable<String, UpdateData>();
+    mSendToTvDataListener = new Hashtable<ChannelDayKey, UpdateData>();
     updateAvailableDateSet();
 
 /* Uncommend testwise.
@@ -216,8 +216,10 @@ public class TvDataBase {
             // Inform the listeners
             mLog.info("Day program was changed by third party: " + date + " on "
                 + channel.getName());
-            ChannelDayProgram newDayProg = getDayProgram(date, channel, false);
-            if (newDayProg != null) {
+            //ChannelDayProgram newDayProg = getDayProgram(date, channel, false);
+            OnDemandDayProgramFile newDayProg = getCacheEntry(date, channel, true, false);
+            
+            if (newDayProg != null && newDayProg.getDayProgram() != null) {
               handleKnownStatus(knownStatus, newDayProg, version);
             }
 
@@ -248,12 +250,12 @@ public class TvDataBase {
     if(mPendingPluginInformationAboutChangedData) {
       mPendingPluginInformationAboutChangedData = false;
 
-      Collection<Object> dayPrograms = mNewDayProgramsAfterUpdate.values();
+      Collection<UpdateData> dayPrograms = mNewDayProgramsAfterUpdate.values();
 
-      for(Object dayProgram : dayPrograms) {
+      for(UpdateData dayProgram : dayPrograms) {        
         if(dayProgram instanceof ChannelDayProgram) {
-          fireDayProgramTouched(null,(ChannelDayProgram)dayProgram);
-          fireDayProgramAdded((ChannelDayProgram)dayProgram);
+          fireDayProgramTouched(dayProgram.getRemoved().getDayProgram(),dayProgram.getAdded().getDayProgram());
+          fireDayProgramAdded(dayProgram.getAdded().getDayProgram());
         }
       }
 
@@ -391,10 +393,10 @@ public class TvDataBase {
       }
 
       // save the value for informing the listeners later
-      if(oldProg != null) {
-        mNewDayProgramsAfterUpdate.put(key, oldProg);
+      if(oldProgFile != null) {
+        mNewDayProgramsAfterUpdate.put(key, new UpdateData(newProgFile, oldProgFile));
       } else {
-        mNewDayProgramsAfterUpdate.put(key, "null");
+        mNewDayProgramsAfterUpdate.put(key, new UpdateData(newProgFile, null));
       }
 
       // Set the new program to 'known'
@@ -613,12 +615,20 @@ public class TvDataBase {
       int version = (int) file.length();
       int knownStatus = mTvDataInventory.getKnownStatus(date, channel, version);
 
-      OnDemandDayProgramFile oldProgFile = getCacheEntry(date, channel, false, false);
+      UpdateData updateData = mNewDayProgramsAfterUpdate.remove(key);
+      
+      OnDemandDayProgramFile oldProgFile = null;
+      
+      if(updateData != null) {
+        oldProgFile = updateData.getAdded();//getCacheEntry(date, channel, false, false);
+      }
+      else {
+        oldProgFile = getCacheEntry(date, channel, false, false);
+      }
+      
       mCurrentAddedDayProgram = oldProgFile.getDayProgram();
 
       boolean somethingChanged = calculateMissingLengths(mCurrentAddedDayProgram);
-
-      Object oldProg = mNewDayProgramsAfterUpdate.remove(key);
       
       // fire day program added to give plugins a chance to change programs
       fireDayProgramAdded(mCurrentAddedDayProgram);
@@ -675,7 +685,9 @@ public class TvDataBase {
           // Remove the old entry from the cache (if it exists)
           removeCacheEntry(key);
         }
-
+        
+        updateData = new UpdateData(progFile, updateData != null ? updateData.getRemoved() : null);
+        
         // Put the new program file in the real cache
         addCacheEntry(key, progFile);
       } else if(oldProgFile != null) {
@@ -683,16 +695,16 @@ public class TvDataBase {
       }
 
       // Inform the listeners about adding the new program
-      if(oldProg != null || somethingChanged) {
+      if(updateData != null || somethingChanged) {
         ChannelDayKey dayKey = new ChannelDayKey(channel, date);
 //        OnDemandDayProgramFile dayProgramFile = getCacheEntry(date, channel, true, false);
-        
-        if(oldProg instanceof ChannelDayProgram) {
-          mSendToTvDataListener.put(dayKey, oldProg);
-        }
+                
+//        if(oldProg instanceof ChannelDayProgram) {
+          mSendToTvDataListener.put(dayKey, updateData);
+  /*      }
         else {
           mSendToTvDataListener.put(dayKey, "dummy");
-        }
+        }*/
       }
     } catch (Exception exc) {
       mLog.log(Level.WARNING, "Loading program for " + channel + " from "
@@ -864,9 +876,11 @@ public class TvDataBase {
     }
   }
 
-  private void handleKnownStatus(int knownStatus, ChannelDayProgram newDayProg,
+  private void handleKnownStatus(int knownStatus, OnDemandDayProgramFile newDayProgFile,
       int version) {
     if (knownStatus != TvDataInventory.KNOWN) {
+      MutableChannelDayProgram newDayProg = newDayProgFile.getDayProgram();
+      
       Date date = newDayProg.getDate();
       Channel channel = newDayProg.getChannel();
 
@@ -888,7 +902,7 @@ public class TvDataBase {
       // save the value for informing the listeners later
       if (isValidDate(date)) {
         mNewDayProgramsAfterUpdate.put(getDayProgramKey(date, channel),
-            newDayProg);
+            new UpdateData(newDayProgFile, null));
       }
     }
   }
@@ -1067,22 +1081,23 @@ public class TvDataBase {
     Enumeration<ChannelDayKey> keys = mSendToTvDataListener.keys();
     while(keys.hasMoreElements()) {
       ChannelDayKey key = keys.nextElement();
-      Object oldProg = mSendToTvDataListener.remove(key);
+      UpdateData updateData = mSendToTvDataListener.remove(key);
+      //Object oldProg = mSendToTvDataListener.remove(key);
     
-      OnDemandDayProgramFile dayProgramFile = getCacheEntry(key.getDate(), key.getChannel(), true, false);
+    //  OnDemandDayProgramFile dayProgramFile = updateData.getAdded();//getCacheEntry(key.getDate(), key.getChannel(), true, false);
     
-      ChannelDayProgram dayProgram = dayProgramFile.getDayProgram();
+    //  ChannelDayProgram dayProgram = dayProgramFile.getDayProgram();
       
-      if(oldProg instanceof ChannelDayProgram) {
+      if(updateData.getRemoved() != null) {
         //validateProgramState((ChannelDayProgram)oldProg,dayProgram);
-        fireDayProgramTouched((ChannelDayProgram)oldProg,dayProgram);
-        fireDayProgramDeleted((ChannelDayProgram)oldProg);
+        fireDayProgramTouched(updateData.getRemoved().getDayProgram(),updateData.getAdded().getDayProgram()/*dayProgram*/);
+        fireDayProgramDeleted(updateData.getRemoved().getDayProgram());
       }
       else {
-        fireDayProgramTouched(null,dayProgram);
+        fireDayProgramTouched(null,updateData.getAdded().getDayProgram()/*dayProgram*/);
       }
   
-      fireDayProgramAdded(dayProgram);
+      fireDayProgramAdded((ChannelDayProgram)updateData.getAdded().getDayProgram()/*dayProgram*/);
     }
   }
   
@@ -1101,6 +1116,24 @@ public class TvDataBase {
     
     public Date getDate() {
       return mDate;
+    }
+  }
+  
+  private static class UpdateData {
+    private OnDemandDayProgramFile mAdded;
+    private OnDemandDayProgramFile mRemoved;
+    
+    public UpdateData(OnDemandDayProgramFile added, OnDemandDayProgramFile removed) {
+      mAdded = added;
+      mRemoved = removed;
+    }
+    
+    public OnDemandDayProgramFile getAdded() {
+      return mAdded;
+    }
+    
+    public OnDemandDayProgramFile getRemoved() {
+      return mRemoved;
     }
   }
 }
