@@ -2866,7 +2866,6 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
       mSouthPanel.add(mStatusBar, BorderLayout.SOUTH);
     } else if (contentPane.isAncestorOf(mStatusBar)) {
       mSouthPanel.remove(mStatusBar);
-      System.out.println("hier");
     }
 
     contentPane.invalidate();
