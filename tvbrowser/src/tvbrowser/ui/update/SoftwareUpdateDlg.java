@@ -68,9 +68,11 @@ import javax.swing.WindowConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import tvbrowser.TVBrowser;
 import tvbrowser.core.Settings;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.extras.common.InternalPluginProxyIf;
+import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.mainframe.SoftwareUpdater;
 import util.browserlauncher.Launch;
 import util.exc.TvBrowserException;
@@ -535,7 +537,18 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
         setCursor(cursor);
       }
       if (successfullyDownloadedItems > 0 && !mIsVersionChange && mDialogType != SoftwareUpdater.ONLY_DATA_SERVICE_TYPE) {
-        JOptionPane.showMessageDialog(null, mLocalizer.msg("restartprogram", "please restart tvbrowser before..."));
+    	if (TVBrowser.restartEnabled()) {
+    		String[] options = {"",""};
+    		options[0] = mLocalizer.msg("restartnow", "restart");
+    		options[1] = mLocalizer.msg("restartlater", "later");
+    		if (JOptionPane.showOptionDialog(null,  mLocalizer.msg("restartplugin", "plugins has been installed.\nrestart TV-Browser?"),
+    				mLocalizer.msg("restartdialog","restart"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null,options ,options[0])==0){
+    	        TVBrowser.addRestart();
+    	        MainFrame.getInstance().quit();
+    		}
+    	} else {
+    		JOptionPane.showMessageDialog(null, mLocalizer.msg("restartprogram", "please restart tvbrowser before..."));
+    	}
         setVisible(false);
       }
       else if(mIsVersionChange || mDialogType == SoftwareUpdater.ONLY_DATA_SERVICE_TYPE) {

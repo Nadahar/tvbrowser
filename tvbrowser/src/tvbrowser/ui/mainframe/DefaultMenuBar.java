@@ -33,6 +33,8 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
 
+import tvbrowser.TVBrowser;
+
 /**
  * menu bar for non Mac systems
  *
@@ -44,6 +46,8 @@ public class DefaultMenuBar extends MenuBar {
 
     JMenu fileMenu = createMenu("menu.main", "&File", true);
     add(fileMenu);
+    if (TVBrowser.restartEnabled()) fileMenu.add(mRestartMI);
+    fileMenu.addSeparator();
     fileMenu.add(mQuitMI);
 
     createCommonMenus();

@@ -28,6 +28,7 @@ import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -99,7 +100,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 
 	private MainFrame mMainFrame;
 
-  protected JMenuItem mQuitMI, mToolbarMI, mSettingsMI, mAboutMI; // these are accessed in MacOS menu sub class
+  protected JMenuItem mQuitMI, mRestartMI, mToolbarMI, mSettingsMI, mAboutMI; // these are accessed in MacOS menu sub class
   protected JMenu mPluginsMenu, mHelpMenu; // these are accessed in common menu sub class
 
 	private JMenuItem mStatusbarMI,
@@ -162,6 +163,11 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 				.quit(TVBrowserIcons.SIZE_SMALL));
 		mQuitMI.addActionListener(this);
 		new MenuHelpTextAdapter(mQuitMI, mLocalizer.msg("menuinfo.quit", ""),
+				mLabel);
+		mRestartMI = createMenuItem("menuitem.restart", "Restart", TVBrowserIcons
+				.restart(TVBrowserIcons.SIZE_SMALL));
+		mRestartMI.addActionListener(this);
+		new MenuHelpTextAdapter(mRestartMI, mLocalizer.msg("menuinfo.restart", ""),
 				mLabel);
 
 		mToolbarMenu = createMenu("menuitem.viewToolbar", "Toolbar");
@@ -977,6 +983,9 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 		if (source == mTimeBtnsMI) {
 			mMainFrame.setShowTimeButtons(mTimeBtnsMI.isSelected());
 		} else if (source == mQuitMI) {
+			mMainFrame.quit();
+		} else if (source == mRestartMI) {
+			TVBrowser.addRestart();
 			mMainFrame.quit();
 		} else if (source == mToolbarMI) {
 			mMainFrame.setShowToolbar(mToolbarMI.isSelected());
