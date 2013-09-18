@@ -214,6 +214,15 @@ public class TVBrowserIcons {
   }
 
   /**
+   * restart icon
+   * @param size
+   * @return restart icon
+   */
+  public static ImageIcon restart(int size) {
+    return icon("actions", "system-restart", size);
+  }
+
+  /**
    * full screen icon
    * @param size
    * @return full screen icon

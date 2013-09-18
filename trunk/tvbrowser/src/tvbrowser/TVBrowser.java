@@ -41,6 +41,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.RandomAccessFile;
 import java.io.StringWriter;
+import java.lang.management.ManagementFactory;
 import java.lang.reflect.InvocationTargetException;
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;
@@ -48,6 +49,7 @@ import java.nio.channels.FileLock;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
@@ -261,6 +263,11 @@ public class TVBrowser {
   private static boolean mIgnoreJVM = false;
 
   /**
+   * restart functionality
+   */
+  private static String[] restartCMD = null;
+  
+  /**
    * Entry point of the application
    * @param args The arguments given in the command line.
    */
@@ -325,6 +332,9 @@ public class TVBrowser {
         System.exit(1);
       }
     }
+    
+    restartCMD = generateRestartCMD();
+    
 
     // Load the settings
     Settings.loadSettings();
@@ -697,6 +707,82 @@ public class TVBrowser {
       }
      });
   }
+  
+  private static String[] generateRestartCMD(){
+		try {
+		final String SUN_JAVA_COMMAND = "sun.java.command";
+		// init the command to execute, add the vm args
+		final List<String> cmd = new ArrayList<String>();
+		// java binary
+		String java = System.getProperty("java.home");
+		if (java==null) return null;
+		java = java.concat("/bin/java");
+		cmd.add(java);
+		// vm arguments
+		List<String> vmArguments = ManagementFactory.getRuntimeMXBean().getInputArguments();
+		for (String arg : vmArguments) {
+			// if it's the agent argument : we ignore it otherwise the
+			// address of the old application and the new one will be in
+			// conflict
+			if (!arg.contains("-agentlib")) {
+				cmd.add(arg);
+			}
+		}
+
+		// program main and program arguments
+		if (System.getProperty(SUN_JAVA_COMMAND) == null) return null;
+		String[] mainCommand = System.getProperty(SUN_JAVA_COMMAND).split(" ");
+		// program main is a jar
+		if (mainCommand[0].endsWith(".jar")) {
+			// if it's a jar, add -jar mainJar
+			cmd.add("-jar");
+			cmd.add(new File(mainCommand[0]).getPath());
+		} else {
+			// else it's a .class, add the classpath and mainClass
+			if (System.getProperty("java.class.path")==null) return null;
+			cmd.add("-cp");
+			cmd.add(System.getProperty("java.class.path"));
+			cmd.add(mainCommand[0]);
+		}
+		// finally add program arguments
+		for (int i = 1; i < mainCommand.length; i++) {
+			cmd.add(mainCommand[i]);
+		}		
+		String[] cmdarr = new String[cmd.size()];
+		for(int i=0;i<cmd.size();++i){
+			cmdarr[i] = cmd.get(i);
+		}
+		return cmdarr;
+		} catch (Exception e) {			// something went wrong
+			e.printStackTrace();
+			return null;
+		}
+	  
+  }
+  
+  public static boolean restartEnabled(){
+	  return (restartCMD!=null);
+  }
+  
+	public static void addRestart() {
+		try{
+			// execute the command in a shutdown hook, to be sure that all the
+			// resources have been disposed before restarting the application
+			Runtime.getRuntime().addShutdownHook(new Thread() {
+				public void run() {
+					try {
+						Thread.sleep(250);
+						Runtime.getRuntime().exec(restartCMD);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			});
+		} catch (Exception e) {			// something went wrong
+			e.printStackTrace();
+		}
+
+	}
 
   private static boolean isJavaImplementationSupported() {
     if (mIgnoreJVM) {
