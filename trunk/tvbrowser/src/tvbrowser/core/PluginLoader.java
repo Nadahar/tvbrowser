@@ -242,7 +242,7 @@ public class PluginLoader {
       if(plugin != null) {
         String version = null;
         
-        if(plugin instanceof Plugin) {
+        if(plugin instanceof Plugin || plugin instanceof devplugin.AbstractTvDataService) {
           try {
             Method m = plugin.getClass().getMethod("getVersion", new Class<?>[0]);
             Object o = m.invoke(plugin, new Object[0]);
