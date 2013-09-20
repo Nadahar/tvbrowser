@@ -347,7 +347,6 @@ public class TvDataBase {
     }
     
     OnDemandDayProgramFile oldProgFile = getCacheEntry(date, channel, true, false);
-    ChannelDayProgram oldProg = null;
     
     // Create a backup (Rename the old file if it exists)
     File file = getDayProgramFile(date, channel);
@@ -363,7 +362,6 @@ public class TvDataBase {
     
     // Invalidate the old program file from the cache
     if (oldProgFile != null) {
-      oldProg = oldProgFile.getDayProgram();
       oldProgFile.setValid(false);
 
       // Remove the old entry from the cache (if it exists)
@@ -617,16 +615,16 @@ public class TvDataBase {
 
       UpdateData updateData = mNewDayProgramsAfterUpdate.remove(key);
       
-      OnDemandDayProgramFile oldProgFile = null;
+      OnDemandDayProgramFile checkProg = null;
       
       if(updateData != null) {
-        oldProgFile = updateData.getAdded();//getCacheEntry(date, channel, false, false);
+        checkProg = updateData.getAdded();//getCacheEntry(date, channel, false, false);
       }
       else {
-        oldProgFile = getCacheEntry(date, channel, false, false);
+        checkProg = getCacheEntry(date, channel, true, true);//getCacheEntry(date, channel, false, false);
       }
       
-      mCurrentAddedDayProgram = oldProgFile.getDayProgram();
+      mCurrentAddedDayProgram = checkProg.getDayProgram();
 
       boolean somethingChanged = calculateMissingLengths(mCurrentAddedDayProgram);
       
@@ -679,8 +677,8 @@ public class TvDataBase {
         progFile.loadDayProgram(false);
 
         // Invalidate the old program file from the cache
-        if (oldProgFile != null) {
-          oldProgFile.setValid(false);
+        if (checkProg != null) {
+          checkProg.setValid(false);
 
           // Remove the old entry from the cache (if it exists)
           removeCacheEntry(key);
@@ -690,8 +688,8 @@ public class TvDataBase {
         
         // Put the new program file in the real cache
         addCacheEntry(key, progFile);
-      } else if(oldProgFile != null) {
-        oldProgFile.calculateTimeLimits();
+      } else if(checkProg != null) {
+        checkProg.calculateTimeLimits();
       }
 
       // Inform the listeners about adding the new program
