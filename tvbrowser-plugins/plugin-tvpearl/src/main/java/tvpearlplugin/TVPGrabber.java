@@ -60,6 +60,20 @@ public class TVPGrabber
       .compile("<a href=\"([^\"]*?)\"[^>]*>N\u00e4chste</a>");
 
   /**
+   * regular expression to grab post count
+   */
+  private static final Pattern PATTERN_POST_COUNT = Pattern
+	  .compile("<div class=\"pagination\">\\s*?(0|[1-9][0-9]*)\\s*?Beitr\u00e4ge");
+  
+  /**
+   * regular expression to grab page start
+   */
+  private static final Pattern PATTERN_PAGE_START = Pattern
+	  .compile("start=(0|[1-9][0-9]*)");
+  
+  private static final int LASTPOSTREAD = 100;
+  
+  /**
    * format of the post create date
    */
   private static final SimpleDateFormat FORMAT_CREATE_DATE = new SimpleDateFormat(
@@ -169,6 +183,24 @@ public class TVPGrabber
 		if (matcher.find())
 		{
 			resultUrl = matcher.group(1).trim();
+			
+			final Matcher postcnt_matcher = PATTERN_POST_COUNT.matcher(content);
+				if (postcnt_matcher.find())
+				{
+					int startpost = Integer.parseInt(postcnt_matcher.group(1).trim()) - LASTPOSTREAD ;
+					if (startpost<0) startpost = 0;
+					final Matcher pagestart_matcher = PATTERN_PAGE_START.matcher(resultUrl);
+					int pagestart = 0;
+					if (pagestart_matcher.find()){
+						pagestart = Integer.parseInt(pagestart_matcher.group(1).trim());
+						if (pagestart < startpost) {
+							resultUrl = pagestart_matcher.replaceFirst("start=" + Integer.toString(startpost));
+						}
+					} else {
+						resultUrl = resultUrl + "&start=" + Integer.toString(startpost);
+					}
+					
+				}
 		}
 
 		return resultUrl;
