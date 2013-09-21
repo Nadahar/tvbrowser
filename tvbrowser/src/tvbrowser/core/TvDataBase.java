@@ -37,6 +37,8 @@ import java.util.Hashtable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.apache.commons.codec.language.bm.Languages.SomeLanguages;
+
 import tvbrowser.core.data.OnDemandDayProgramFile;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvdataservice.MutableChannelDayProgram;
@@ -317,7 +319,7 @@ public class TvDataBase {
    * @param days The number of days to recalculate
    * @param progressMonitor display status of the recalculation
    */
-  public synchronized void reCalculateTvData(int days, ProgressMonitor progressMonitor) {
+ /* public synchronized void reCalculateTvData(int days, ProgressMonitor progressMonitor) {
     Channel[] channels = ChannelList.getSubscribedChannels();
 
     progressMonitor.setMaximum(channels.length + 1);
@@ -331,7 +333,7 @@ public class TvDataBase {
       }
     }
     mNewDayProgramsAfterUpdate.clear();
-  }
+  }*/
   
   public synchronized void reCalculateTvData(Channel channel, Date date) {
     correctDayProgramFile(date, channel);
@@ -602,6 +604,7 @@ public class TvDataBase {
 
   private synchronized void correctDayProgramFile(Date date,
       Channel channel) {
+    mLog.info(new java.util.Date(System.currentTimeMillis()) + ": CorrectDayProgramFile " + date + " " + channel);
     File file = getDayProgramFile(date, channel);
     String key = getDayProgramKey(date, channel);
     if (!file.exists()) {
@@ -626,8 +629,10 @@ public class TvDataBase {
       
       mCurrentAddedDayProgram = checkProg.getDayProgram();
 
+      mLog.info(new java.util.Date(System.currentTimeMillis()) + ": START calculate missing length");
       boolean somethingChanged = calculateMissingLengths(mCurrentAddedDayProgram);
-      
+      mLog.info(new java.util.Date(System.currentTimeMillis()) + ": END calculate missing length");
+      mLog.info(new java.util.Date(System.currentTimeMillis()) + ": FIRE DAY PROGRAM ADDED");
       // fire day program added to give plugins a chance to change programs
       fireDayProgramAdded(mCurrentAddedDayProgram);
       /*if((oldProg = mNewDayProgramsAfterUpdate.remove(key)) != null) {
@@ -642,7 +647,7 @@ public class TvDataBase {
       else if(somethingChanged){
         fireDayProgramAdded(checkProg);
       }*/
-
+      mLog.info(new java.util.Date(System.currentTimeMillis()) + ": SOMETHING CHANGED: " + somethingChanged);
       if (mCurrentAddedDayProgram.getAndResetChangedByPluginState() || somethingChanged) {
         // Some missing lengths could now be calculated
         // -> Try to save the changes
@@ -1079,6 +1084,7 @@ public class TvDataBase {
     Enumeration<ChannelDayKey> keys = mSendToTvDataListener.keys();
     while(keys.hasMoreElements()) {
       ChannelDayKey key = keys.nextElement();
+      mLog.info(new java.util.Date(System.currentTimeMillis()) + ": SEND TO PLUGINS " + key);
       UpdateData updateData = mSendToTvDataListener.remove(key);
       //Object oldProg = mSendToTvDataListener.remove(key);
     
@@ -1114,6 +1120,10 @@ public class TvDataBase {
     
     public Date getDate() {
       return mDate;
+    }
+    
+    public String toString() {
+      return mDate + " " + mChannel;
     }
   }
   
