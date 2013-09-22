@@ -37,8 +37,6 @@ import java.util.Hashtable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.apache.commons.codec.language.bm.Languages.SomeLanguages;
-
 import tvbrowser.core.data.OnDemandDayProgramFile;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvdataservice.MutableChannelDayProgram;
@@ -49,7 +47,6 @@ import devplugin.ChannelDayProgram;
 import devplugin.Date;
 import devplugin.Program;
 import devplugin.ProgramFieldType;
-import devplugin.ProgressMonitor;
 
 /**
  *
