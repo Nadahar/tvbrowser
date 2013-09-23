@@ -56,6 +56,7 @@ public class DefaultMenuBar extends MenuBar {
     mHelpMenu.add(mAboutMI);
 
     mQuitMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F4, InputEvent.ALT_DOWN_MASK));
+    mRestartMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F4, InputEvent.ALT_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK));
     mSettingsMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, Toolkit.getDefaultToolkit()
         .getMenuShortcutKeyMask()));
   }
