@@ -1061,9 +1061,8 @@ public class TVBrowser {
           boolean dataAvailable = TvDataBase.getInstance().dataAvailable(new Date());
           if (!automaticDownloadStarted && (! dataAvailable) && (ChannelList.getNumberOfSubscribedChannels() > 0)) {
             mainFrame.askForDataUpdateNoDataAvailable();
-          } else {
-            mainFrame.scrollToNowFirst();
           }
+          mainFrame.scrollToNowFirst();
         }
       });
     }
