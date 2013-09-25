@@ -1135,6 +1135,32 @@ public class ReminderPlugin {
     }
   }
   
+  public static int getStartIndexForBeforeReminders(Program program) {
+    int remainingMinutes = ReminderPlugin.getTimeToProgramStart(program);
+    
+    if(program.isExpired()) {
+      remainingMinutes = ReminderFrame.DONT_REMIND_AGAIN;
+    }
+    else if(program.isOnAir()) {
+      if(program.getStartTime() > IOUtilities.getMinutesAfterMidnight()) {
+        remainingMinutes = program.getStartTime() - 1440 - IOUtilities.getMinutesAfterMidnight();
+      }
+      else {
+        remainingMinutes = program.getStartTime() - IOUtilities.getMinutesAfterMidnight();
+      }
+    }
+    
+    int index = 0;
+    
+    for(RemindValue value : ReminderFrame.REMIND_AFTER_VALUE_ARR)  {
+      if(value.getMinutes() < remainingMinutes && Math.abs(value.getMinutes()) < program.getLength()) {
+          index++;
+        }
+      }
+      
+      return index;
+  }
+  
   public static RemindValue[] calculatePossibleReminders(Program program) {
     int remainingMinutes = ReminderPlugin.getTimeToProgramStart(program);
     
