@@ -299,9 +299,10 @@ public class MarkedProgramsList {
   
   private MutableProgram checkProgram(MutableProgram programInList, Program[] testProgs) {
     boolean titleWasChangedToMuch = false;
+    MutableProgram testProg = null;
     
     if(testProgs != null && testProgs.length > 0) {
-      MutableProgram testProg = (MutableProgram)testProgs[0];
+      testProg = (MutableProgram)testProgs[0];
       
       if(testProgs.length > 1) {
         for(Program prog : testProgs) {
@@ -323,62 +324,62 @@ public class MarkedProgramsList {
           }
         }
       }
+    }
 
-      if(testProg != null && testProg.getTitle() != null && programInList.getTitle() != null
-          && programInList.getTitle().toLowerCase().compareTo(testProg.getTitle().toLowerCase()) != 0) {
-        String[] titleParts = programInList.getTitle().toLowerCase().replaceAll("\\p{Punct}"," ").replaceAll("\\s+"," ").split(" ");
-        String compareTitle = testProg.getTitle().toLowerCase();
-  
-        for(String titlePart : titleParts) {
-          if(compareTitle.indexOf(titlePart) == -1) {
-            titleWasChangedToMuch = true;
-            break;
-          }
+    if(testProg != null && testProg.getTitle() != null && programInList.getTitle() != null
+        && programInList.getTitle().toLowerCase().compareTo(testProg.getTitle().toLowerCase()) != 0) {
+      String[] titleParts = programInList.getTitle().toLowerCase().replaceAll("\\p{Punct}"," ").replaceAll("\\s+"," ").split(" ");
+      String compareTitle = testProg.getTitle().toLowerCase();
+
+      for(String titlePart : titleParts) {
+        if(compareTitle.indexOf(titlePart) == -1) {
+          titleWasChangedToMuch = true;
+          break;
         }
       }
-  
-      if(testProg == null || titleWasChangedToMuch) {
-        programInList.setMarkerArr(MutableProgram.EMPTY_MARKER_ARR);
-        programInList.setProgramState(Program.WAS_DELETED_STATE);
+    }
+
+    if(testProg == null || titleWasChangedToMuch) {
+      programInList.setMarkerArr(MutableProgram.EMPTY_MARKER_ARR);
+      programInList.setProgramState(Program.WAS_DELETED_STATE);
+    }
+    else if(testProg != programInList) {
+      Marker[] testMarkerArr = testProg.getMarkerArr();
+      Marker[] currentMarkerArr = programInList.getMarkerArr();
+
+      if(testMarkerArr == MutableProgram.EMPTY_MARKER_ARR) {
+        testProg.setMarkerArr(currentMarkerArr);
+        testProg.setMarkPriority(programInList.getMarkPriority());
       }
-      else if(testProg != programInList) {
-        Marker[] testMarkerArr = testProg.getMarkerArr();
-        Marker[] currentMarkerArr = programInList.getMarkerArr();
-  
-        if(testMarkerArr == MutableProgram.EMPTY_MARKER_ARR) {
-          testProg.setMarkerArr(currentMarkerArr);
-          testProg.setMarkPriority(programInList.getMarkPriority());
+      else if(currentMarkerArr != MutableProgram.EMPTY_MARKER_ARR) {
+        ArrayList<Marker> newMarkerList = new ArrayList<Marker>();
+
+        for(Marker marker : testMarkerArr) {
+          newMarkerList.add(marker);
         }
-        else if(currentMarkerArr != MutableProgram.EMPTY_MARKER_ARR) {
-          ArrayList<Marker> newMarkerList = new ArrayList<Marker>();
-  
-          for(Marker marker : testMarkerArr) {
+
+        for(Marker marker : currentMarkerArr) {
+          if(!newMarkerList.contains(marker)) {
             newMarkerList.add(marker);
           }
-  
-          for(Marker marker : currentMarkerArr) {
-            if(!newMarkerList.contains(marker)) {
-              newMarkerList.add(marker);
-            }
-          }
-  
-          java.util.Collections.sort(newMarkerList,new Comparator<Marker>() {
-            public int compare(Marker o1, Marker o2) {
-              return o1.getId().compareTo(o2.getId());
-            }
-          });
-  
-          testProg.setMarkerArr(newMarkerList.toArray(new Marker[newMarkerList.size()]));
-          testProg.setMarkPriority(Math.max(testProg.getMarkPriority(),programInList.getMarkPriority()));
         }
-  
-        programInList.setMarkerArr(MutableProgram.EMPTY_MARKER_ARR);
-        programInList.setMarkPriority(-1);
-        programInList.setProgramState(Program.WAS_UPDATED_STATE);
-        return testProg;
-      } else {
-        return programInList;
+
+        java.util.Collections.sort(newMarkerList,new Comparator<Marker>() {
+          public int compare(Marker o1, Marker o2) {
+            return o1.getId().compareTo(o2.getId());
+          }
+        });
+
+        testProg.setMarkerArr(newMarkerList.toArray(new Marker[newMarkerList.size()]));
+        testProg.setMarkPriority(Math.max(testProg.getMarkPriority(),programInList.getMarkPriority()));
       }
+
+      programInList.setMarkerArr(MutableProgram.EMPTY_MARKER_ARR);
+      programInList.setMarkPriority(-1);
+      programInList.setProgramState(Program.WAS_UPDATED_STATE);
+      return testProg;
+    } else {
+      return programInList;
     }
     
     return null;
