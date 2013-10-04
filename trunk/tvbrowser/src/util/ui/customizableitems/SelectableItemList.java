@@ -80,8 +80,8 @@ public class SelectableItemList extends JPanel implements ListSelectionListener{
   private JScrollPane mScrollPane;
   
 
-  protected JPanel editorComp = null; 
-  protected int editingIndex = -1; 
+  private JPanel mEditorComp = null; 
+  private int mEditingIndex = -1; 
 
   /**
    * Creates the SelectableItemList without the selection buttons.
@@ -221,8 +221,8 @@ public class SelectableItemList extends JPanel implements ListSelectionListener{
   }
   
   private void handleItemSelectionChanged() {
-    JCheckBox cb = ((JCheckBox) editorComp.getComponent(0));
-    cb.setSelected(((SelectableItem) mListModel.getElementAt(editingIndex)).isSelected());
+    JCheckBox cb = ((JCheckBox) mEditorComp.getComponent(0));
+    cb.setSelected(((SelectableItem) mListModel.getElementAt(mEditingIndex)).isSelected());
     ListSelectionListener[] listeners = mList.getListSelectionListeners();
     if(listeners != null) {
       for(ListSelectionListener listener : listeners) {
@@ -448,14 +448,14 @@ public class SelectableItemList extends JPanel implements ListSelectionListener{
    */
   private void removeEditor() {
     mList.invalidate();
-    if (editorComp != null) {
-      editorComp.setVisible(false);
-      editorComp.setEnabled(false);
-      mList.remove(editorComp);
+    if (mEditorComp != null) {
+      mEditorComp.setVisible(false);
+      mEditorComp.setEnabled(false);
+      mList.remove(mEditorComp);
     }
 
-    editingIndex = -1;
-    editorComp = null;
+    mEditingIndex = -1;
+    mEditorComp = null;
     mList.validate();
     mList.repaint();
   }
@@ -469,9 +469,9 @@ public class SelectableItemList extends JPanel implements ListSelectionListener{
   private boolean addEditor(int index) {
     // vertical correction
     int blockcorrection = 0;
-    if (editorComp != null) {
-      if (editingIndex < index) {
-        blockcorrection = mList.getCellBounds(editingIndex, editingIndex).height - mList.getCellBounds(index, index).height;
+    if (mEditorComp != null) {
+      if (mEditingIndex < index) {
+        blockcorrection = mList.getCellBounds(mEditingIndex, mEditingIndex).height - mList.getCellBounds(index, index).height;
       }
       // remove old Editor
       removeEditor();
@@ -481,27 +481,26 @@ public class SelectableItemList extends JPanel implements ListSelectionListener{
       return false;
     mList.validate();
 
-    editorComp = mItemRenderer.getListCellComponent(mList, mListModel.getElementAt(index), index, true, true);
-    ;
-    editorComp.validate();
+    mEditorComp = mItemRenderer.getListCellComponent(mList, mListModel.getElementAt(index), index, true, true);
+    mEditorComp.validate();
     Rectangle cb = mList.getCellBounds(index, index);
     if (blockcorrection > 0) {
       cb.y -= blockcorrection;
     }
-    editorComp.setBounds(cb);
-    editingIndex = index;
-    mList.add(editorComp);
+    mEditorComp.setBounds(cb);
+    mEditingIndex = index;
+    mList.add(mEditorComp);
 
     mList.validate();
-    ((JCheckBox) editorComp.getComponent(0)).addItemListener(new ItemListener(){
+    ((JCheckBox) mEditorComp.getComponent(0)).addItemListener(new ItemListener(){
       public void itemStateChanged(ItemEvent arg0) {
-        JCheckBox cb = ((JCheckBox) editorComp.getComponent(0));
-        ((SelectableItem) mListModel.getElementAt(editingIndex)).setSelected(cb.isSelected());
+        JCheckBox cb = ((JCheckBox) mEditorComp.getComponent(0));
+        ((SelectableItem) mListModel.getElementAt(mEditingIndex)).setSelected(cb.isSelected());
         handleItemSelectionChanged();
       }
       
     });
-    editorComp.repaint();
+    mEditorComp.repaint();
 
     return true;
   }
