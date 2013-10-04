@@ -253,7 +253,7 @@ public class TvDataBase {
 
       for(UpdateData dayProgram : dayPrograms) {        
         if(dayProgram instanceof ChannelDayProgram) {
-          fireDayProgramTouched(dayProgram.getRemoved().getDayProgram(),dayProgram.getAdded().getDayProgram());
+          fireDayProgramTouched(dayProgram.getRemoved(),dayProgram.getAdded().getDayProgram());
           fireDayProgramAdded(dayProgram.getAdded().getDayProgram());
         }
       }
@@ -391,7 +391,7 @@ public class TvDataBase {
 
       // save the value for informing the listeners later
       if(oldProgFile != null) {
-        mNewDayProgramsAfterUpdate.put(key, new UpdateData(newProgFile, oldProgFile));
+        mNewDayProgramsAfterUpdate.put(key, new UpdateData(newProgFile, oldProgFile.getDayProgram()));
       } else {
         mNewDayProgramsAfterUpdate.put(key, new UpdateData(newProgFile, null));
       }
@@ -1091,8 +1091,8 @@ public class TvDataBase {
       
       if(updateData.getRemoved() != null) {
         //validateProgramState((ChannelDayProgram)oldProg,dayProgram);
-        fireDayProgramTouched(updateData.getRemoved().getDayProgram(),updateData.getAdded().getDayProgram()/*dayProgram*/);
-        fireDayProgramDeleted(updateData.getRemoved().getDayProgram());
+        fireDayProgramTouched(updateData.getRemoved(),updateData.getAdded().getDayProgram()/*dayProgram*/);
+        fireDayProgramDeleted(updateData.getRemoved());
       }
       else {
         fireDayProgramTouched(null,updateData.getAdded().getDayProgram()/*dayProgram*/);
@@ -1126,9 +1126,9 @@ public class TvDataBase {
   
   private static class UpdateData {
     private OnDemandDayProgramFile mAdded;
-    private OnDemandDayProgramFile mRemoved;
+    private ChannelDayProgram mRemoved;
     
-    public UpdateData(OnDemandDayProgramFile added, OnDemandDayProgramFile removed) {
+    public UpdateData(OnDemandDayProgramFile added, ChannelDayProgram removed) {
       mAdded = added;
       mRemoved = removed;
     }
@@ -1137,7 +1137,7 @@ public class TvDataBase {
       return mAdded;
     }
     
-    public OnDemandDayProgramFile getRemoved() {
+    public ChannelDayProgram getRemoved() {
       return mRemoved;
     }
   }

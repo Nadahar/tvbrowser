@@ -2312,9 +2312,6 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
         } finally {
           SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-              // revalidate markings again
-              MarkedProgramsList.getInstance().revalidatePrograms();
-              
               onDownloadDone();
               newTvDataAvailable(scroll);
 
