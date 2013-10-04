@@ -27,6 +27,8 @@
 package util.ui.customizableitems;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -37,9 +39,11 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.AbstractListModel;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -57,23 +61,29 @@ import com.jgoodies.forms.layout.FormLayout;
  * A class that provides a list that contains selectable items.
  * 
  * @author René Mach
+ * @param <E> ItemType
  * 
  */
-public class SelectableItemList extends JPanel {
+public class SelectableItemList<E extends SelectableItem> extends JPanel implements ListSelectionListener{
   
   private static final long serialVersionUID = 1L;
 
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(SelectableItemList.class);
   
-  private SelectableItemListModel mListModel;
-  private SelectableItemRenderer mItemRenderer;
+  private SelectableItemListModel<E> mListModel;
+  private SelectableItemRenderer<E> mItemRenderer;
   
   private JButton mSelectAllBt;
   private JButton mDeSelectAllBt;
   
-  private JList mList;
+  private JList<E> mList;
+  private Component[] mComponents;
   private boolean mIsEnabled = true;
   private JScrollPane mScrollPane;
+  
+
+  protected JPanel editorComp = null; 
+  protected int editingIndex = -1; 
 
   /**
    * Creates the SelectableItemList without the selection buttons.
@@ -123,11 +133,11 @@ public class SelectableItemList extends JPanel {
   public SelectableItemList(Object[] currSelection, Object[] allItems, boolean showSelectionButtons, Object[] notSelectableItems) {
     setLayout(new BorderLayout(0,3));
     
-    mListModel = new SelectableItemListModel();
+    mListModel = new SelectableItemListModel<E>();
     setEntries(currSelection,allItems,notSelectableItems);
     
-    mList = new JList(mListModel);
-    mList.setCellRenderer(mItemRenderer = new SelectableItemRenderer());
+    mList = new JList<E>(mListModel);
+    mList.setCellRenderer(mItemRenderer = new SelectableItemRenderer<E>());
     
     mScrollPane = new JScrollPane(mList);
     
@@ -138,28 +148,32 @@ public class SelectableItemList extends JPanel {
     
     add(mScrollPane, BorderLayout.CENTER);
     
+    mList.addListSelectionListener(this);
+    
     mList.addMouseListener(new MouseAdapter() {
       public void mousePressed(MouseEvent evt) {
-        if (evt.getX() < mItemRenderer.getSelectionWidth() && mIsEnabled) {
-          int index = mList.locationToIndex(evt.getPoint());
-             
-          if (index != -1) {
-            if(mList.getCellBounds(index,index).contains(evt.getPoint())) {
-              SelectableItem item = (SelectableItem) mListModel.getElementAt(index);
-              if(item.isSelectable()) {
-                item.setSelected(! item.isSelected());
-                handleItemSelectionChanged();
-                mList.repaint();
+
+        int index = mList.locationToIndex(evt.getPoint());
+           
+        if (index != -1) {
+          if (evt.getX() < mItemRenderer.getSelectionWidth() && mIsEnabled) {
+              if(mList.getCellBounds(index,index).contains(evt.getPoint())) {
+                SelectableItem item = (SelectableItem) mListModel.getElementAt(index);
+                if(item.isSelectable()) {
+                  item.setSelected(! item.isSelected());
+                  handleItemSelectionChanged();
+                }
               }
             }
+          calculateSize();
+          addEditor(index);
           }
-        }
       }
     });
     mList.addKeyListener(new KeyAdapter(){
       public void keyPressed(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-          Object[] objs = mList.getSelectedValues();
+          List<E> objs = mList.getSelectedValuesList();
           for (Object obj : objs) {
             if (obj instanceof SelectableItem) {
               SelectableItem item = (SelectableItem) obj;
@@ -169,10 +183,12 @@ public class SelectableItemList extends JPanel {
           handleItemSelectionChanged();
           mList.repaint();
         }
+        addEditor(mList.getSelectedIndex());
       }
       
       public void keyReleased(KeyEvent e) {
         calculateSize();
+        addEditor(mList.getSelectedIndex());
       }
     });
     
@@ -207,6 +223,8 @@ public class SelectableItemList extends JPanel {
   }
   
   private void handleItemSelectionChanged() {
+    JCheckBox cb = ((JCheckBox) editorComp.getComponent(0));
+    cb.setSelected(((SelectableItem) mListModel.getElementAt(editingIndex)).isSelected());
     ListSelectionListener[] listeners = mList.getListSelectionListeners();
     if(listeners != null) {
       for(ListSelectionListener listener : listeners) {
@@ -251,18 +269,19 @@ public class SelectableItemList extends JPanel {
    * @return Current selected Items in the List
    */
   public Object[] getListSelection() {
-    Object[] values = mList.getSelectedValues();
+    List<E> values = mList.getSelectedValuesList();
     
-    Object[] items = new Object[values.length];
+    Object[] items = new Object[values.size()];
     
-    int max = values.length;
+    int max = values.size();
     for (int i=0;i< max;i++) {
-      items[i] = ((SelectableItem)values[0]).getItem();
+      items[i] = ((SelectableItem)values.get(0)).getItem();
     }
     
     return items;
   }
   
+  @SuppressWarnings("unchecked")
   private void setEntries(Object[] currSelection, Object[] allItems, Object[] disabledItems) {
     mListModel.removeAllElements();
     
@@ -274,7 +293,7 @@ public class SelectableItemList extends JPanel {
     
     for (int i = 0; i < allItems.length; i++) {
       SelectableItem item = new SelectableItem(allItems[i], selectionList.remove(allItems[i]),!arrayContainsItem(disabledItems,allItems[i]));
-      mListModel.addElement(item);
+      mListModel.addElement((E) item);
     }
   }
   
@@ -322,6 +341,7 @@ public class SelectableItemList extends JPanel {
    * Invert the selection
    */
   public void invertSelection() {
+    removeEditor();
     if(mIsEnabled) {
       mListModel.invertSelection();
       mList.repaint();
@@ -332,6 +352,7 @@ public class SelectableItemList extends JPanel {
    * Select all items.
    */
   public void selectAll() {
+    removeEditor();
     if(mIsEnabled) {
       mListModel.selectAll();
       mList.repaint();
@@ -342,6 +363,7 @@ public class SelectableItemList extends JPanel {
    * Clear the selection.
    */
   public void clearSelection() {
+    removeEditor();
     if(mIsEnabled) {
       mListModel.clearSelection();
       mList.repaint();
@@ -377,7 +399,7 @@ public class SelectableItemList extends JPanel {
    * @since 2.7
    */
 
-  public void addCenterRendererComponent(Class clazz, SelectableItemRendererCenterComponentIf component) {
+  public void addCenterRendererComponent(Class<?> clazz, SelectableItemRendererCenterComponentIf component) {
     mItemRenderer.setCenterRendererComponent(clazz,component);
   }
   
@@ -418,27 +440,94 @@ public class SelectableItemList extends JPanel {
    * @param filterBox The combo box with the ItemFilters.
    * @since 2.7
    */
-  public void setFilterComboBox(JComboBox filterBox) {
+  public void setFilterComboBox(JComboBox<E> filterBox) {
     mListModel.setComboBox(filterBox);
   }
+
+  /**
+   * Removes the editor for selected cell
+   * <p>
+   * @since 3.3.3
+   */
+  private void removeEditor() {
+    mList.invalidate();
+    if (editorComp != null) {
+      editorComp.setVisible(false);
+      editorComp.setEnabled(false);
+      mList.remove(editorComp);
+    }
+
+    editingIndex = -1;
+    editorComp = null;
+    mList.validate();
+    mList.repaint();
+  }
+
+  /**
+   * Adds the editor for selected cell
+   * <p>
+   * @since 3.3.3
+   */
+
+  private boolean addEditor(int index) {
+    // vertical correction
+    int blockcorrection = 0;
+    if (editorComp != null) {
+      if (editingIndex < index) {
+        blockcorrection = mList.getCellBounds(editingIndex, editingIndex).height - mList.getCellBounds(index, index).height;
+      }
+      // remove old Editor
+      removeEditor();
+    }
+    mList.repaint();
+    if (index < 0 || index >= mListModel.getSize())
+      return false;
+    mList.validate();
+
+    editorComp = mItemRenderer.getListCellComponent(mList, mListModel.getElementAt(index), index, true, true);
+    ;
+    editorComp.validate();
+    Rectangle cb = mList.getCellBounds(index, index);
+    if (blockcorrection > 0) {
+      cb.y -= blockcorrection;
+    }
+    editorComp.setBounds(cb);
+    editingIndex = index;
+    mList.add(editorComp);
+
+    mList.validate();
+    ((JCheckBox) editorComp.getComponent(0)).addItemListener(new ItemListener(){
+      public void itemStateChanged(ItemEvent arg0) {
+        JCheckBox cb = ((JCheckBox) editorComp.getComponent(0));
+        ((SelectableItem) mListModel.getElementAt(editingIndex)).setSelected(cb.isSelected());
+        handleItemSelectionChanged();
+      }
+      
+    });
+    editorComp.repaint();
+
+    return true;
+  }
   
-  private static class SelectableItemListModel extends AbstractListModel {
-    private JComboBox mFilterBox;
+  @SuppressWarnings("hiding")
+  private class SelectableItemListModel<E> extends AbstractListModel<E> {
+    private JComboBox<E> mFilterBox;
     
-    private ArrayList<Object> mFullList = new ArrayList<Object>();
-    private ArrayList<Object> mFilteredList = new ArrayList<Object>();
+    private ArrayList<E> mFullList = new ArrayList<E>();
+    private ArrayList<E> mFilteredList = new ArrayList<E>();
     
-    protected void setComboBox(JComboBox filterBox) {
+    protected void setComboBox(JComboBox<E> filterBox) {
       mFilterBox = filterBox;
       
       mFilterBox.addItemListener(new ItemListener() {
         public void itemStateChanged(ItemEvent e) {
           if(e.getStateChange() == ItemEvent.SELECTED) {
             mFilteredList.clear();
+            removeEditor();
             
             Object filter = mFilterBox.getSelectedItem();
             
-            for(Object o : mFullList) {
+            for(E o : mFullList) {
               if(filter instanceof ItemFilter) {
                 if((((ItemFilter)filter).accept(((SelectableItem)o).getItem()))) {
                   mFilteredList.add(o);
@@ -457,7 +546,7 @@ public class SelectableItemList extends JPanel {
       });
     }
 
-    protected void addElement(Object o) {
+    protected void addElement(E o) {
       mFullList.add(o);
       
       if(mFilterBox != null) {
@@ -477,7 +566,7 @@ public class SelectableItemList extends JPanel {
       }
     }
 
-    public Object getElementAt(int index) {
+    public E getElementAt(int index) {
       return mFilteredList.get(index);
     }
 
@@ -485,6 +574,7 @@ public class SelectableItemList extends JPanel {
       return mFilteredList.size();
     }
     
+    @SuppressWarnings("unused")
     protected int size() {
       return getSize();
     }
@@ -543,5 +633,12 @@ public class SelectableItemList extends JPanel {
    */
   public void setVerticalScrollBarBlockIncrement(int value) {
     mScrollPane.getVerticalScrollBar().setBlockIncrement(value);
+  }
+
+  public void valueChanged(ListSelectionEvent arg0) {
+    for(int i = arg0.getFirstIndex(); i<= arg0.getLastIndex();++i){
+      this.mComponents[i] = mItemRenderer.getListCellRendererComponent(mList, mListModel.getElementAt(i), i, mList.isSelectedIndex(i), true); 
+    }
+    
   }
 }
