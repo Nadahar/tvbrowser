@@ -45,8 +45,9 @@ import devplugin.Channel;
  * A ListCellRenderer for SelectableItems.
  * 
  * @author René Mach
+ * @param <E> ItemType
  */
-public class SelectableItemRenderer implements ListCellRenderer {
+public class SelectableItemRenderer<E extends SelectableItem> implements ListCellRenderer<E> {
   private int mSelectionWidth;
   private boolean mIsEnabled = true;
   
@@ -54,14 +55,14 @@ public class SelectableItemRenderer implements ListCellRenderer {
   
   private JScrollPane mParentScrollPane;
   
-  public Component getListCellRendererComponent(JList list, Object value,
+  public JPanel getListCellComponent(JList<E> list, E value,
   int index, boolean isSelected, boolean cellHasFocus) {
+
+    E selectableItem = value;
+    JCheckBox cb = new JCheckBox("",selectableItem.isSelected());
+    
     JPanel p = new JPanel(new BorderLayout(2,0));
     try { p.setBorder(BorderFactory.createEmptyBorder(0,2,0,0));
-    
-    SelectableItem selectableItem = (SelectableItem) value;
-
-    JCheckBox cb = new JCheckBox("",selectableItem.isSelected());
     mSelectionWidth = cb.getPreferredSize().width;
     
     p.add(cb, BorderLayout.WEST);
@@ -144,11 +145,17 @@ public class SelectableItemRenderer implements ListCellRenderer {
    * @param component The render component.
    * @since 2.7
    */
-  public void setCenterRendererComponent(Class clazz, SelectableItemRendererCenterComponentIf component) {
+  public void setCenterRendererComponent(Class<?> clazz, SelectableItemRendererCenterComponentIf component) {
     mCenterComponentMap.put(clazz,component);
   }
 
   protected void setScrollPane(JScrollPane parentScrollPane) {
     mParentScrollPane = parentScrollPane;
+  }
+
+  @SuppressWarnings("unchecked")
+  public Component getListCellRendererComponent(JList<? extends E> list, E value, int index, boolean isSelected,
+      boolean cellHasFocus) {
+      return getListCellComponent((JList<E>) list, value, index, isSelected, cellHasFocus);
   }
 }

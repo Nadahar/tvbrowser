@@ -46,7 +46,7 @@ public interface SelectableItemRendererCenterComponentIf {
    * @param leftColumnWidth The width of the check box area until the text starts.
    * @return The JPanel with the rendered item.
    */
-  public JPanel createCenterPanel(JList list, Object value, int index, boolean isSelected, boolean isEnabled, JScrollPane parentScrollPane, int leftColumnWidth);
+  public JPanel createCenterPanel(JList<?> list, Object value, int index, boolean isSelected, boolean isEnabled, JScrollPane parentScrollPane, int leftColumnWidth);
 
   /**
    * Calculates the size of the content pane used to paint the whole item.
@@ -55,5 +55,5 @@ public interface SelectableItemRendererCenterComponentIf {
    * @param index The index if the currently rendered item.
    * @param contentPane The content pane with all components used to paint the item in the list.
    */
-  public void calculateSize(JList list, int index, JPanel contentPane);
+  public void calculateSize(JList<?> list, int index, JPanel contentPane);
 }
