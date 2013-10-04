@@ -45,9 +45,8 @@ import devplugin.Channel;
  * A ListCellRenderer for SelectableItems.
  * 
  * @author René Mach
- * @param <E> ItemType
  */
-public class SelectableItemRenderer<E extends SelectableItem> implements ListCellRenderer<E> {
+public class SelectableItemRenderer implements ListCellRenderer {
   private int mSelectionWidth;
   private boolean mIsEnabled = true;
   
@@ -55,10 +54,10 @@ public class SelectableItemRenderer<E extends SelectableItem> implements ListCel
   
   private JScrollPane mParentScrollPane;
   
-  public JPanel getListCellComponent(JList<E> list, E value,
+  public JPanel getListCellComponent(JList list, Object value,
   int index, boolean isSelected, boolean cellHasFocus) {
 
-    E selectableItem = value;
+    SelectableItem selectableItem = (SelectableItem) value;
     JCheckBox cb = new JCheckBox("",selectableItem.isSelected());
     
     JPanel p = new JPanel(new BorderLayout(2,0));
@@ -153,9 +152,8 @@ public class SelectableItemRenderer<E extends SelectableItem> implements ListCel
     mParentScrollPane = parentScrollPane;
   }
 
-  @SuppressWarnings("unchecked")
-  public Component getListCellRendererComponent(JList<? extends E> list, E value, int index, boolean isSelected,
+  public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
       boolean cellHasFocus) {
-      return getListCellComponent((JList<E>) list, value, index, isSelected, cellHasFocus);
+      return getListCellComponent( list, value, index, isSelected, cellHasFocus);
   }
 }

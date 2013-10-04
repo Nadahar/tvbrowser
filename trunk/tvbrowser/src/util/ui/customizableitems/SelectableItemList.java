@@ -39,7 +39,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
-import java.util.List;
 
 import javax.swing.AbstractListModel;
 import javax.swing.JButton;
@@ -61,22 +60,21 @@ import com.jgoodies.forms.layout.FormLayout;
  * A class that provides a list that contains selectable items.
  * 
  * @author René Mach
- * @param <E> ItemType
  * 
  */
-public class SelectableItemList<E extends SelectableItem> extends JPanel implements ListSelectionListener{
+public class SelectableItemList extends JPanel implements ListSelectionListener{
   
   private static final long serialVersionUID = 1L;
 
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(SelectableItemList.class);
   
-  private SelectableItemListModel<E> mListModel;
-  private SelectableItemRenderer<E> mItemRenderer;
+  private SelectableItemListModel mListModel;
+  private SelectableItemRenderer mItemRenderer;
   
   private JButton mSelectAllBt;
   private JButton mDeSelectAllBt;
   
-  private JList<E> mList;
+  private JList mList;
   private Component[] mComponents;
   private boolean mIsEnabled = true;
   private JScrollPane mScrollPane;
@@ -133,11 +131,11 @@ public class SelectableItemList<E extends SelectableItem> extends JPanel impleme
   public SelectableItemList(Object[] currSelection, Object[] allItems, boolean showSelectionButtons, Object[] notSelectableItems) {
     setLayout(new BorderLayout(0,3));
     
-    mListModel = new SelectableItemListModel<E>();
+    mListModel = new SelectableItemListModel();
     setEntries(currSelection,allItems,notSelectableItems);
     
-    mList = new JList<E>(mListModel);
-    mList.setCellRenderer(mItemRenderer = new SelectableItemRenderer<E>());
+    mList = new JList(mListModel);
+    mList.setCellRenderer(mItemRenderer = new SelectableItemRenderer());
     
     mScrollPane = new JScrollPane(mList);
     
@@ -173,7 +171,7 @@ public class SelectableItemList<E extends SelectableItem> extends JPanel impleme
     mList.addKeyListener(new KeyAdapter(){
       public void keyPressed(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-          List<E> objs = mList.getSelectedValuesList();
+          Object[] objs = mList.getSelectedValues();
           for (Object obj : objs) {
             if (obj instanceof SelectableItem) {
               SelectableItem item = (SelectableItem) obj;
@@ -269,19 +267,18 @@ public class SelectableItemList<E extends SelectableItem> extends JPanel impleme
    * @return Current selected Items in the List
    */
   public Object[] getListSelection() {
-    List<E> values = mList.getSelectedValuesList();
+    Object[] values = mList.getSelectedValues();
     
-    Object[] items = new Object[values.size()];
+    Object[] items = new Object[values.length];
     
-    int max = values.size();
+    int max = values.length;
     for (int i=0;i< max;i++) {
-      items[i] = ((SelectableItem)values.get(0)).getItem();
+      items[i] = ((SelectableItem)values[0]).getItem();
     }
     
     return items;
   }
   
-  @SuppressWarnings("unchecked")
   private void setEntries(Object[] currSelection, Object[] allItems, Object[] disabledItems) {
     mListModel.removeAllElements();
     
@@ -293,7 +290,7 @@ public class SelectableItemList<E extends SelectableItem> extends JPanel impleme
     
     for (int i = 0; i < allItems.length; i++) {
       SelectableItem item = new SelectableItem(allItems[i], selectionList.remove(allItems[i]),!arrayContainsItem(disabledItems,allItems[i]));
-      mListModel.addElement((E) item);
+      mListModel.addElement(item);
     }
   }
   
@@ -440,7 +437,7 @@ public class SelectableItemList<E extends SelectableItem> extends JPanel impleme
    * @param filterBox The combo box with the ItemFilters.
    * @since 2.7
    */
-  public void setFilterComboBox(JComboBox<E> filterBox) {
+  public void setFilterComboBox(JComboBox filterBox) {
     mListModel.setComboBox(filterBox);
   }
 
@@ -509,14 +506,13 @@ public class SelectableItemList<E extends SelectableItem> extends JPanel impleme
     return true;
   }
   
-  @SuppressWarnings("hiding")
-  private class SelectableItemListModel<E> extends AbstractListModel<E> {
-    private JComboBox<E> mFilterBox;
+  private class SelectableItemListModel extends AbstractListModel {
+    private JComboBox mFilterBox;
     
-    private ArrayList<E> mFullList = new ArrayList<E>();
-    private ArrayList<E> mFilteredList = new ArrayList<E>();
+    private ArrayList<SelectableItem> mFullList = new ArrayList<SelectableItem>();
+    private ArrayList<SelectableItem> mFilteredList = new ArrayList<SelectableItem>();
     
-    protected void setComboBox(JComboBox<E> filterBox) {
+    protected void setComboBox(JComboBox filterBox) {
       mFilterBox = filterBox;
       
       mFilterBox.addItemListener(new ItemListener() {
@@ -527,9 +523,9 @@ public class SelectableItemList<E extends SelectableItem> extends JPanel impleme
             
             Object filter = mFilterBox.getSelectedItem();
             
-            for(E o : mFullList) {
+            for(SelectableItem o : mFullList) {
               if(filter instanceof ItemFilter) {
-                if((((ItemFilter)filter).accept(((SelectableItem)o).getItem()))) {
+                if((((ItemFilter)filter).accept(o.getItem()))) {
                   mFilteredList.add(o);
                 }
               }
@@ -546,14 +542,14 @@ public class SelectableItemList<E extends SelectableItem> extends JPanel impleme
       });
     }
 
-    protected void addElement(E o) {
+    protected void addElement(SelectableItem o) {
       mFullList.add(o);
       
       if(mFilterBox != null) {
         Object filter = mFilterBox.getSelectedItem();
         
         if(filter instanceof ItemFilter) {
-          if((((ItemFilter)filter).accept(((SelectableItem)o).getItem()))) {
+          if((((ItemFilter)filter).accept(o.getItem()))) {
             mFilteredList.add(o);
           }
         }
@@ -566,7 +562,7 @@ public class SelectableItemList<E extends SelectableItem> extends JPanel impleme
       }
     }
 
-    public E getElementAt(int index) {
+    public SelectableItem getElementAt(int index) {
       return mFilteredList.get(index);
     }
 
@@ -587,7 +583,7 @@ public class SelectableItemList<E extends SelectableItem> extends JPanel impleme
     protected Object[] getSelection() {
       ArrayList<Object> objList = new ArrayList<Object>();
       for (int i = 0; i < mFullList.size(); i++) {
-        SelectableItem item = (SelectableItem) mFullList.get(i);
+        SelectableItem item = mFullList.get(i);
         if (item.isSelected()) {
           objList.add(item.getItem());
         }
