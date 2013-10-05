@@ -281,6 +281,7 @@ public class SelectableItemList extends JPanel implements ListSelectionListener{
   
   private void setEntries(Object[] currSelection, Object[] allItems, Object[] disabledItems) {
     mListModel.removeAllElements();
+    mComponents = new Component[allItems.length];
     
     ArrayList<Object> selectionList = new ArrayList<Object>();
     
@@ -630,9 +631,9 @@ public class SelectableItemList extends JPanel implements ListSelectionListener{
     mScrollPane.getVerticalScrollBar().setBlockIncrement(value);
   }
 
-  public void valueChanged(ListSelectionEvent arg0) {
-    for(int i = arg0.getFirstIndex(); i<= arg0.getLastIndex();++i){
-      this.mComponents[i] = mItemRenderer.getListCellRendererComponent(mList, mListModel.getElementAt(i), i, mList.isSelectedIndex(i), true); 
+  public void valueChanged(ListSelectionEvent e) {
+    for(int i = e.getFirstIndex(); i<= e.getLastIndex();++i){
+      mComponents[i] = mItemRenderer.getListCellRendererComponent(mList, mListModel.getElementAt(i), i, mList.isSelectedIndex(i), true); 
     }
     
   }
