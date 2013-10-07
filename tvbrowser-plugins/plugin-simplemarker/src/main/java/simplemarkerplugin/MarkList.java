@@ -73,6 +73,7 @@ public class MarkList extends Vector<Program> {
   private int mMarkPriority;
   private byte mProgramImportance;
   private ArrayList<ProgramReceiveTarget> mReceiveTargets = new ArrayList<ProgramReceiveTarget>();
+  private boolean mShowDeletedPrograms;
 
   private static class MarkListProgramItem {
     private final String mProgramId;
@@ -189,6 +190,13 @@ public class MarkList extends Vector<Program> {
     else {
       mProgramImportance = Program.DEFAULT_PROGRAM_IMPORTANCE;
     }
+    
+    if(version >= 7) {
+      mShowDeletedPrograms = in.readBoolean();
+    }
+    else {
+      mShowDeletedPrograms = true;
+    }
   }
 
 
@@ -207,6 +215,7 @@ public class MarkList extends Vector<Program> {
     mId = name + System.currentTimeMillis();
     mMarkPriority = Program.MIN_MARK_PRIORITY;
     mProgramImportance = Program.DEFAULT_PROGRAM_IMPORTANCE;
+    mShowDeletedPrograms = true;
   }
 
   /**
@@ -481,8 +490,8 @@ public class MarkList extends Vector<Program> {
         addElement(markedProgram);
         break;
       case Program.WAS_DELETED_STATE:
-        // show dialog only for programs after todays program table start time
-        if (markedProgram.getDate().compareTo(Date.getCurrentDate()) >= 0
+        // show dialog only for programs after todays program table start time and only if selected for this list.
+        if (mShowDeletedPrograms && markedProgram.getDate().compareTo(Date.getCurrentDate()) >= 0
             && markedProgram.getStartTime() >= Plugin.getPluginManager().getTvBrowserSettings()
                 .getProgramTableStartOfDay() && !deletedPrograms.contains(markedProgram)) {
           deletedPrograms.add(markedProgram);
@@ -660,6 +669,24 @@ public class MarkList extends Vector<Program> {
    */
   public void setProgramImportance(byte value) {
     mProgramImportance = value;
+  }
+  
+  /**
+   * Sets the show state for deleted programs at data update.
+   * 
+   * @param showDeletedPrograms If deleted programs should be shown.
+   */
+  public void setShowDeletedPrograms(boolean showDeletedPrograms) {
+    mShowDeletedPrograms = showDeletedPrograms;
+  }
+  
+  /**
+   * Gets if the deleted programs should be shown after data update.
+   * <p>
+   * @return <code>true</code> if the deleted programs should be shown, <code>false</code> otherwise.
+   */
+  public boolean isShowingDeletedPrograms() {
+    return mShowDeletedPrograms;
   }
 
   /**

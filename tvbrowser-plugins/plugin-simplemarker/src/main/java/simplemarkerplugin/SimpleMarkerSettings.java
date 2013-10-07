@@ -30,8 +30,6 @@ import util.settings.PropertyBasedSettings;
  *
  */
 public final class SimpleMarkerSettings extends PropertyBasedSettings{
-
-  private static final String KEY_SHOW_DELETED_PROGRAM = "showDeletedProgram";
   private static final String KEY_SPLIT_POSITION = "splitPosition";
   private static final String KEY_SHOW_DATE_SEPARATORS = "showDateSeparator";
   /**
@@ -50,19 +48,6 @@ public final class SimpleMarkerSettings extends PropertyBasedSettings{
 
   SimpleMarkerSettings(final Properties properties) {
     super(properties);
-  }
-
-  boolean showDeletedPrograms() {
-    return get(KEY_SHOW_DELETED_PROGRAM, true);
-  }
-
-  /**
-   * Sets the show deleted program after update value.
-   * <p>
-   * @param show If the deleted programs should be shown.
-   */
-  public void setShowDeletedPrograms(boolean show) {
-    set(KEY_SHOW_DELETED_PROGRAM, show);
   }
 
   /**
