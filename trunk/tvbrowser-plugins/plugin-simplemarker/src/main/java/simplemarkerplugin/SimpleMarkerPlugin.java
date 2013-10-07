@@ -25,6 +25,8 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -38,6 +40,7 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 
@@ -78,7 +81,7 @@ import devplugin.Version;
  * @author René Mach
  */
 public class SimpleMarkerPlugin extends Plugin {
-  private static final Version mVersion = new Version(3,22,1,true);
+  private static final Version mVersion = new Version(3,23,1,true);
 
   /** The localizer for this class. */
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(SimpleMarkerPlugin.class);
@@ -325,7 +328,7 @@ public class SimpleMarkerPlugin extends Plugin {
         list.revalidateContainingPrograms(deletedPrograms);
       }
       
-      if (!deletedPrograms.isEmpty() && mSettings.showDeletedPrograms()) {
+      if (!deletedPrograms.isEmpty()) {
         mInfoPanel = new SimpleMarkerUpdateInfoPanel(deletedPrograms.toArray(new Program[deletedPrograms.size()]));
       }
     }
@@ -642,10 +645,27 @@ public class SimpleMarkerPlugin extends Plugin {
   }
   
   private class SimpleMarkerUpdateInfoPanel extends AfterDataUpdateInfoPanel {
+    private ProgramList mDeletedProgramList;
+    
     public SimpleMarkerUpdateInfoPanel(Program[] progArr) {
-      ProgramList deletedProgramList = new ProgramList(progArr, new ProgramPanelSettings(new PluginPictureSettings(PluginPictureSettings.NO_PICTURE_TYPE),true,true));
+      mDeletedProgramList = new ProgramList(progArr, new ProgramPanelSettings(new PluginPictureSettings(PluginPictureSettings.NO_PICTURE_TYPE),true,true));
+      mDeletedProgramList.addMouseListener(new MouseAdapter() {
+        @Override
+        public void mouseReleased(MouseEvent e) {
+          if(e.isPopupTrigger()) {
+            showPopup(e);
+          }
+        }
+        
+        @Override
+        public void mousePressed(MouseEvent e) {
+          if(e.isPopupTrigger()) {
+            showPopup(e);
+          }
+        }
+      });
       
-      JScrollPane scroll = new JScrollPane(deletedProgramList);
+      JScrollPane scroll = new JScrollPane(mDeletedProgramList);
       scroll.setMaximumSize(new Dimension(2048,200));
       
       setLayout(new FormLayout("default:grow","default,5dlu,fill:default:grow,5dlu,default"));
@@ -655,6 +675,22 @@ public class SimpleMarkerPlugin extends Plugin {
       add(scroll, cc.xy(1,3));
       
       setPreferredSize(new Dimension(200,200));
+    }
+    
+    /**
+     * Shows the Popup
+     * 
+     * @param e Mouse-Event
+     */
+    private void showPopup(MouseEvent e) {
+      int row = mDeletedProgramList.locationToIndex(e.getPoint());
+
+      mDeletedProgramList.setSelectedIndex(row);
+
+      Program p = (Program) mDeletedProgramList.getSelectedValue();
+      
+      JPopupMenu menu = Plugin.getPluginManager().createRemovedProgramContextMenu(p);
+      menu.show(mDeletedProgramList, e.getX(), e.getY());
     }
     
     @Override

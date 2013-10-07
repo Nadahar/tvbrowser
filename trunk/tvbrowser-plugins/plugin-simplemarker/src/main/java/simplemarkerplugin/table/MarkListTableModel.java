@@ -52,12 +52,12 @@ public class MarkListTableModel extends DefaultTableModel implements Serializabl
   }
 
   public boolean isCellEditable(int rowIndex, int columnIndex) {
-    return columnIndex != 1;
+    return columnIndex != 1 && columnIndex != 5;
   }
 
   @Override
   public int getColumnCount() {
-    return 5;
+    return 6;
   }
 
   @Override
@@ -76,6 +76,7 @@ public class MarkListTableModel extends DefaultTableModel implements Serializabl
       case 2: return SimpleMarkerPlugin.getLocalizer().msg("settings.markPriority", "Highlighting priority");
       case 3: return SimpleMarkerPlugin.getLocalizer().msg("settings.programImportance", "Program importance");
       case 4: return SimpleMarkerPlugin.getLocalizer().msg("settings.sendToPlugin", "Send to plugin");
+      case 5: return SimpleMarkerPlugin.getLocalizer().msg("settings.informDelProgramsForList", "Show removed programs*");
     }
 
     return null;
@@ -98,6 +99,7 @@ public class MarkListTableModel extends DefaultTableModel implements Serializabl
       case 2: mLists.get(row).setMarkPriority((Integer)aValue); break;
       case 3: mLists.get(row).setProgramImportance((Byte)aValue); break;
       case 4: mLists.get(row).setPluginTargets((Collection<ProgramReceiveTarget>) aValue); break;
+      case 5: mLists.get(row).setShowDeletedPrograms((Boolean) aValue); break;
     }
 
     fireTableChanged(new TableModelEvent(this));

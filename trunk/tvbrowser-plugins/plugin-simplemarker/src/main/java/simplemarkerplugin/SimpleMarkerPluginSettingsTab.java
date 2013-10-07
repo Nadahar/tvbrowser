@@ -21,6 +21,7 @@
  */
 package simplemarkerplugin;
 
+import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
@@ -53,6 +54,7 @@ import javax.swing.event.HyperlinkListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import simplemarkerplugin.table.DeleteShowSelectionRenderer;
 import simplemarkerplugin.table.MarkListPriorityCellEditor;
 import simplemarkerplugin.table.MarkListProgramImportanceCellEditor;
 import simplemarkerplugin.table.MarkListSendToPluginCellEditor;
@@ -93,30 +95,20 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
   private JButton mAdd, mDelete;
   private MarkListTableModel mModel;
   private JEditorPane mHelpLabel;
-  private JCheckBox mShowDeletedPrograms;
   private JCheckBox mShowDateSeparators;
   private ArrayList<MarkList> mMarkLists;
 
-  public JPanel createSettingsPanel() {
+  public JPanel createSettingsPanel() {try {
     JPanel panel = new JPanel(new FormLayout("5dlu,default:grow,5dlu",
-        "default,default,3dlu,fill:default:grow,3dlu,pref,10dlu,pref,5dlu"));
+        "default,3dlu,fill:default:grow,default,3dlu,pref,10dlu,pref,5dlu"));
     CellConstraints cc = new CellConstraints();
-
-    mShowDeletedPrograms = new JCheckBox(SimpleMarkerPlugin.getLocalizer().msg(
-        "settings.informAboutDeletedPrograms",
-        "Inform about program that were deleted during a data update"),
-        SimpleMarkerPlugin.getInstance().getSettings().showDeletedPrograms());
-
+    
     mShowDateSeparators = new JCheckBox(SimpleMarkerPlugin.getLocalizer().msg(
         "settings.showDateSeparator",
         "Show date separator in marked programs list"),
         SimpleMarkerPlugin.getInstance().getSettings().isShowingDateSeperators());
     
     int y = 1;
-    
-    panel.add(mShowDeletedPrograms, cc.xy(2,y));
-    
-    y += 1;
     
     panel.add(mShowDateSeparators, cc.xy(2,y));
 
@@ -132,6 +124,7 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
     mListTable.getTableHeader().setReorderingAllowed(false);
     mListTable.getTableHeader().setResizingAllowed(false);
     mListTable.getColumnModel().getColumn(0).setCellRenderer(new MarkerIDRenderer());
+    mListTable.getColumnModel().getColumn(0).setMinWidth(100);
     mListTable.getColumnModel().getColumn(1).setCellRenderer(new MarkerIconRenderer());
 
     int columnWidth = UiUtilities.getStringWidth(mListTable.getFont(),mModel.getColumnName(1)) + 10;
@@ -153,6 +146,12 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
     mListTable.getColumnModel().getColumn(4).setMaxWidth(columnWidth);
     mListTable.getColumnModel().getColumn(4).setMinWidth(columnWidth);
 
+    mListTable.getColumnModel().getColumn(5).setCellRenderer(new DeleteShowSelectionRenderer());
+    columnWidth = UiUtilities.getStringWidth(mListTable.getFont(),mModel.getColumnName(5)) + 10;
+    mListTable.getColumnModel().getColumn(5).setMaxWidth(columnWidth);
+    mListTable.getColumnModel().getColumn(5).setPreferredWidth(columnWidth);
+    mListTable.getColumnModel().getColumn(5).setMinWidth(30);
+    
     mListTable.setRowHeight(25);
 
     mListTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
@@ -174,6 +173,10 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
     y += 2;
     
     panel.add(pane, cc.xy(2, y));
+    
+    y++;
+    
+    panel.add(UiUtilities.createHtmlHelpTextArea(SimpleMarkerPlugin.getLocalizer().msg("settings.informAboutDeletedPrograms","*Inform about programs of that list that were deleted during a data update")), cc.xy(2, y));
 
     JPanel south = new JPanel();
     south.setLayout(new BoxLayout(south, BoxLayout.X_AXIS));
@@ -197,7 +200,7 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
     y += 2;
     
     panel.add(south, cc.xy(2, y));
-
+    
     mHelpLabel = UiUtilities.createHtmlHelpTextArea(SimpleMarkerPlugin.getLocalizer().msg("settings.prioHelp","The mark priority is used for selecting the marking color. The marking colors of the priorities can be change in the <a href=\"#link\">program panel settings</a>. If a program is marked by more than one plugin/list the color with the highest priority given by the marking plugins/lists is used."), new HyperlinkListener() {
       public void hyperlinkUpdate(HyperlinkEvent e) {
         if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
@@ -218,15 +221,18 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
     panel.add(mHelpLabel, cc.xy(2,y));
 
 
-    JPanel p = new JPanel(new FormLayout("default:grow","5dlu,fill:default:grow"));
+    JPanel p = new JPanel(new FormLayout("450dlu:grow","5dlu,fill:default:grow"));
     p.add(panel, cc.xy(1,2));
 
     return p;
+  }catch(Throwable t) {
+    t.printStackTrace();
+  }
+  
+  return new JPanel();
   }
 
   public void saveSettings() {
-    SimpleMarkerPlugin.getInstance().getSettings().setShowDeletedPrograms(
-        mShowDeletedPrograms.isSelected());
     SimpleMarkerPlugin.getInstance().getSettings().setShowingDateSeperators(
         mShowDateSeparators.isSelected());
 
@@ -247,10 +253,18 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
   }
 
   public void mouseClicked(MouseEvent e) {
-    if (SwingUtilities.isLeftMouseButton(e)
-        && mListTable.columnAtPoint(e.getPoint()) == 1
-        && e.getClickCount() >= 2) {
+    if (SwingUtilities.isLeftMouseButton(e)) {
+      final int column = mListTable.columnAtPoint(e.getPoint());
+      
+      if(column == 1 && e.getClickCount() >= 2) {
       chooseIcon(mListTable.rowAtPoint(e.getPoint()));
+      }
+      else if(column == 5) {
+        final int row = mListTable.rowAtPoint(e.getPoint());
+        
+        mListTable.getModel().setValueAt(!((MarkList)mListTable.getValueAt(row,column)).isShowingDeletedPrograms(),row,5);
+        mListTable.repaint();
+      }
     }
   }
 
@@ -305,8 +319,16 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
       deleteSelectedRows();
       e.consume();
     }
-    if(e.getKeyCode() == KeyEvent.VK_F2 && mListTable.getSelectedColumn() == 1) {
+    else if(e.getKeyCode() == KeyEvent.VK_F2 && mListTable.getSelectedColumn() == 1) {
       chooseIcon(mListTable.getSelectedRow());
+    }
+    else if(e.getKeyCode() == KeyEvent.VK_F2 || e.getKeyCode() == KeyEvent.VK_SPACE) {
+      final int row = mListTable.getSelectedRow();
+      
+      if(mListTable.getSelectedColumn() == 5) {
+        mListTable.getModel().setValueAt(!((MarkList)mListTable.getValueAt(mListTable.getSelectedRow(),5)).isShowingDeletedPrograms(),row,5);
+        mListTable.repaint();
+      }
     }
   }
 
