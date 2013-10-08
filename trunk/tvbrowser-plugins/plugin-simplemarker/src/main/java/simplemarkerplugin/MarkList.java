@@ -244,7 +244,7 @@ public class MarkList extends Vector<Program> {
    * @throws IOException if something went wrong with writing the data
    */
   protected void writeData(final ObjectOutputStream out) throws IOException {
-    out.writeInt(6); // Version
+    out.writeInt(7); // Version
     out.writeInt(mMarkPriority);
     out.writeObject(mName);
     out.writeUTF(mId);
@@ -263,6 +263,7 @@ public class MarkList extends Vector<Program> {
     }
 
     out.writeByte(mProgramImportance);
+    out.writeBoolean(mShowDeletedPrograms);
   }
 
   /**
