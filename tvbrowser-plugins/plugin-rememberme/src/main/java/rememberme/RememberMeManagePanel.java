@@ -65,7 +65,7 @@ import devplugin.ProgramFieldType;
 import devplugin.ProgramReceiveTarget;
 
 public class RememberMeManagePanel extends JPanel implements PersonaListener {
-  private ArrayList<RememberedProgram> mPrograms;
+  private RememberedProgramsList<RememberedProgram> mPrograms;
   private JList mList;
   private DefaultListModel mModel;
   private JComboBox mDayFilter;
@@ -75,7 +75,7 @@ public class RememberMeManagePanel extends JPanel implements PersonaListener {
   private JLabel mFilterLabel;
   private JLabel mTagLabel;
   
-  public RememberMeManagePanel(ArrayList<RememberedProgram> programs, final RememberMe rMe) {
+  public RememberMeManagePanel(RememberedProgramsList<RememberedProgram> programs, final RememberMe rMe) {
     mPrograms = programs;
     mModel = new DefaultListModel();
     
@@ -485,19 +485,19 @@ public class RememberMeManagePanel extends JPanel implements PersonaListener {
   }
   
   private void removeSelection(RememberMe rMe) {
-    int[] remove = mList.getSelectedIndices();
+    Object[] remove = mList.getSelectedValues();
     
     if(remove.length == 0) {
-      remove = new int[mList.getModel().getSize()];
+      remove = new RememberedProgram[mList.getModel().getSize()];
       
       for(int i = 0; i < mList.getModel().getSize(); i++) {
-        remove[i] = i;
+        remove[i] = mList.getModel().getElementAt(i);
       }
     }
     
     for(int i = remove.length-1; i >= 0; i--) {
-      RememberedProgram prog = mPrograms.remove(remove[i]);
-      prog.unmark(rMe);
+      RememberedProgram prog = (RememberedProgram)remove[i];
+      mPrograms.remove(prog,rMe);
     }
     
     updatePanel(rMe);
@@ -526,8 +526,7 @@ public class RememberMeManagePanel extends JPanel implements PersonaListener {
     }
     
     for(RememberedProgram prog : toRemove) {
-      mPrograms.remove(prog);
-      prog.unmark(rMe);
+      mPrograms.remove(prog,rMe);
     }
   }
   
