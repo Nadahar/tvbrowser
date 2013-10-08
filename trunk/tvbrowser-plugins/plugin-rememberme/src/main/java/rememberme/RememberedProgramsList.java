@@ -18,14 +18,29 @@ public class RememberedProgramsList<E> extends ArrayList<E> {
     return super.contains(o);
   }
   
-  @Override
-  public boolean remove(Object o) {
+  public boolean remove(Object o, RememberMe rMe) {
     if(o instanceof Program) {
       for(int i = 0; i < size(); i++) {
         if(get(i).equals(o)) {
-          remove(i);
+          RememberedProgram removedProg = (RememberedProgram)remove(i);
+          removedProg.unmark(rMe);
           return true;
         }
+      }
+    }
+    else if(o instanceof RememberedProgram) {
+      boolean removed = false;
+      
+      for(int i = size()-1; i >= 0; i--) {
+        if(((RememberedProgram)o).equalsForRemove(get(i))) {
+          RememberedProgram removedProg = (RememberedProgram)remove(i);
+          removedProg.unmark(rMe);
+          removed = true;
+        }
+      }
+      
+      if(removed) {
+        return true;
       }
     }
     

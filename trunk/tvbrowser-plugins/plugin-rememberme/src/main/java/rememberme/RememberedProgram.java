@@ -151,6 +151,19 @@ public class RememberedProgram implements Comparable<RememberedProgram> {
     return value;
   }
   
+  public boolean equalsForRemove(Object o) {
+    if(o instanceof RememberedProgram) {
+      RememberedProgram other = (RememberedProgram)o;
+      
+      if((other.mProgram == null || other.mProgram.isExpired()) &&
+          (mProgram == null || mProgram.isExpired())) {
+        return mProgramTitle.equals(other.mProgramTitle) && mTag.equals(other.mTag) && mProgramDate.equals(other.mProgramDate);
+      }
+    }
+    
+    return equals(o);
+  }
+  
   @Override
   public boolean equals(Object obj) {
     if(obj instanceof Program) {

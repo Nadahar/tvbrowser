@@ -50,7 +50,7 @@ import devplugin.ThemeIcon;
 import devplugin.Version;
 
 public class RememberMe extends Plugin {
-  private static final Version mVersion = new Version(0,14,true);
+  private static final Version mVersion = new Version(0,15,true);
   static final Localizer mLocalizer = Localizer.getLocalizerFor(RememberMe.class);
   private static final String TARGET_ID = "###REMEMBERME###";
   
@@ -159,7 +159,7 @@ public class RememberMe extends Plugin {
     if(mRememberedPrograms.contains(program)) {
       action = new ContextMenuAction(mLocalizer.msg("forgetMe", "Forget me now!"),createImageIcon(getMarkIconFromTheme())) {
         public void actionPerformed(ActionEvent e) {
-          mRememberedPrograms.remove(program);
+          mRememberedPrograms.remove(program,RememberMe.this);
           program.unmark(RememberMe.this);
           getRootNode().removeProgram(program);
           getRootNode().update();
