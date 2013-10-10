@@ -157,7 +157,7 @@ public class RememberedProgram implements Comparable<RememberedProgram> {
       
       if((other.mProgram == null || other.mProgram.isExpired()) &&
           (mProgram == null || mProgram.isExpired())) {
-        return mProgramTitle.equals(other.mProgramTitle) && mTag.equals(other.mTag) && mProgramDate.equals(other.mProgramDate);
+        return mProgramTitle.equals(other.mProgramTitle) && mTag.equals(other.mTag) && mProgramDate.equals(other.mProgramDate) && ((mEpisodeTitle == null && other.mEpisodeTitle == null) || (mEpisodeTitle != null && other.mEpisodeTitle != null && mEpisodeTitle.equals(other.mEpisodeTitle)));
       }
     }
     
