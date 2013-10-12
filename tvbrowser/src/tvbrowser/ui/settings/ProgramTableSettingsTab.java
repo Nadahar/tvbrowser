@@ -129,6 +129,10 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
   
   private JCheckBox mAutoChangeDate;
 
+  private ColorLabel mLightColorLb,mDarkColorLb;
+  private ColorButton mLight, mDark;
+  private JCheckBox mShowScrollHighlight;
+  
   public void actionPerformed(ActionEvent event) {
     Object source = event.getSource();
     if (source == mDefaultBtn) {
@@ -403,6 +407,15 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     layout.appendRow(RowSpec.decode("3dlu"));
     layout.appendRow(RowSpec.decode("pref"));
     
+    // scroll markings
+    layout.appendRow(RowSpec.decode("10dlu"));
+    layout.appendRow(RowSpec.decode("pref"));
+    layout.appendRow(RowSpec.decode("5dlu"));
+    layout.appendRow(RowSpec.decode("pref"));
+    layout.appendRow(RowSpec.decode("3dlu"));
+    layout.appendRow(RowSpec.decode("pref"));
+    layout.appendRow(RowSpec.decode("3dlu"));
+    layout.appendRow(RowSpec.decode("pref"));
     
     // Miscellaneous *********************************************
     layout.appendRow(RowSpec.decode("10dlu"));
@@ -446,6 +459,46 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
         "Automatically change date when scrolling with mouse wheel against top and bottom"));
     mAutoChangeDate.setSelected(Settings.propProgramTableAutoChangeDate.getBoolean());
     mSettingsPn.add(mAutoChangeDate, cc.xyw(2, (currentRow += 2), 6));
+    
+    mShowScrollHighlight = new JCheckBox(mLocalizer.msg("activated","Activated"), Settings.propScrollToTimeMarkingActivated.getBoolean());
+    
+    mLightColorLb = new ColorLabel(Settings.propScrollToTimeProgramsLightBackground.getColor());
+    mLightColorLb.setStandardColor(Settings.propScrollToTimeProgramsLightBackground.getDefaultColor());
+    mLightColorLb.setEnabled(mShowScrollHighlight.isSelected());
+    mDarkColorLb = new ColorLabel(Settings.propScrollToTimeProgramsDarkBackground.getColor());
+    mDarkColorLb.setStandardColor(Settings.propScrollToTimeProgramsDarkBackground.getDefaultColor());
+    mDarkColorLb.setEnabled(mShowScrollHighlight.isSelected());
+    
+    mLight = new ColorButton(mLightColorLb);
+    mLight.setEnabled(mShowScrollHighlight.isSelected());
+    
+    mDark = new ColorButton(mDarkColorLb);
+    mDark.setEnabled(mShowScrollHighlight.isSelected());
+    
+    final JLabel mLightDesc = new JLabel(TrayBaseSettingsTab.mLocalizer.msg("progressLight", "Background color"));
+    final JLabel mDarkDesc = new JLabel(TrayBaseSettingsTab.mLocalizer.msg("progressDark", "Progress color"));
+    
+    mShowScrollHighlight.addItemListener(new ItemListener() {
+      @Override
+      public void itemStateChanged(ItemEvent e) {
+        mLightColorLb.setEnabled(e.getStateChange() == ItemEvent.SELECTED);
+        mDarkColorLb.setEnabled(mLightColorLb.isEnabled());
+        mLight.setEnabled(mLightColorLb.isEnabled());
+        mDark.setEnabled(mLightColorLb.isEnabled());
+        mLightDesc.setEnabled(mLightColorLb.isEnabled());
+        mDarkDesc.setEnabled(mLightColorLb.isEnabled());
+      }
+    });
+    
+    mSettingsPn.add(DefaultComponentFactory.getInstance().createSeparator(
+        mLocalizer.msg("scrollToTimeTitle", "Highlight programs running at jump time")), cc.xyw(1,
+        (currentRow += 2), 8));
+    
+    mSettingsPn.add(mShowScrollHighlight, cc.xyw(2, (currentRow += 2), 2));
+    mSettingsPn.add(mLightDesc, cc.xy(2, (currentRow += 2)));
+    mSettingsPn.add(mLightColorLb, cc.xy(4, currentRow));
+    mSettingsPn.add(mDarkDesc, cc.xy(2, (currentRow += 2)));
+    mSettingsPn.add(mDarkColorLb, cc.xy(4, currentRow));    
     
     mSettingsPn.add(DefaultComponentFactory.getInstance().createSeparator(
         mLocalizer.msg("misc", "Misc")), cc.xyw(1,
@@ -571,6 +624,9 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
         .isSelected());
     Settings.propProgramPanelShortDurationMinutes
         .setInt((Integer) mShortProgramsMinutes.getValue());
+    Settings.propScrollToTimeMarkingActivated.setBoolean(mShowScrollHighlight.isSelected());
+    Settings.propScrollToTimeProgramsLightBackground.setColor(mLightColorLb.getColor());
+    Settings.propScrollToTimeProgramsDarkBackground.setColor(mDarkColorLb.getColor());
     Settings.propTypeAsYouFindEnabled.setBoolean(mTypeAsYouFind.isSelected());
   }
 

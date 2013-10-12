@@ -461,7 +461,7 @@ public class ContextMenuManager {
       public void actionPerformed(ActionEvent e) {
         MainFrame.getInstance().goTo(program.getDate());
         MainFrame.getInstance().showChannel(program.getChannel());
-        MainFrame.getInstance().scrollToTime(program.getStartTime());
+        MainFrame.getInstance().scrollToTime(program.getStartTime(),false);
         MainFrame.getInstance().showProgramTableTabIfAvailable();
       }
     });

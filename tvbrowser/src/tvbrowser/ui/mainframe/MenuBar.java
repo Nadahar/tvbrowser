@@ -641,7 +641,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 				+ (min < 10 ? "0" : "") + min);
 		item.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				mMainFrame.scrollToTime(time);
+				mMainFrame.scrollToTime(time,true);
 			}
 		});
 		return item;

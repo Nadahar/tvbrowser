@@ -297,7 +297,7 @@ public class DefaultToolBarModel implements ToolBarModel, DateListener {
               "actions", "scroll-to-specific-time", 22), ToolBar.BUTTON_ACTION,
           new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-              MainFrame.getInstance().scrollToTime(timeMinutes);
+              MainFrame.getInstance().scrollToTime(timeMinutes,true);
             }
           });
     }
@@ -772,7 +772,7 @@ public class DefaultToolBarModel implements ToolBarModel, DateListener {
 
     item.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        MainFrame.getInstance().scrollToTime(time);
+        MainFrame.getInstance().scrollToTime(time,true);
         btn.setSelected(false);
         MainFrame.getInstance().updateToolbar();
       }

@@ -1214,6 +1214,15 @@ public class Settings {
 
   public static final ColorProperty propTrayOnTimeProgramsLightBackground = new ColorProperty(
       mProp, "trayOnTimeProgramsLightBackground", new Color(255, 150, 0, 40));
+  
+  public static final BooleanProperty propScrollToTimeMarkingActivated = new BooleanProperty(
+      mProp, "scrollToTimeMarkingActivated", true);
+  
+  public static final ColorProperty propScrollToTimeProgramsDarkBackground = new ColorProperty(
+      mProp, "scrollToTimeProgramsDarkBackground", new Color(255, 150, 0, 80));
+
+  public static final ColorProperty propScrollToTimeProgramsLightBackground = new ColorProperty(
+      mProp, "scrollToTimeProgramsLightBackground", new Color(255, 150, 0, 40));
 
   /*
    * Settings for the NOW_TYPE of the ProgramMenuItem.

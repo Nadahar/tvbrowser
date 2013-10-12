@@ -528,12 +528,12 @@ public class PluginLoader {
 
     try {
       URL[] urls = new URL[] { jarFile.toURI().toURL() };
-      classLoader = URLClassLoader.newInstance(urls, ClassLoader.getSystemClassLoader());
+      classLoader = /*URLClassLoader.newInstance(urls, */new TestLoader(urls);/*);*/
 
       try {
         if(!new File(PLUGIN_DIRECTORY).equals(jarFile.getParentFile()) && new File(PLUGIN_DIRECTORY,jarFile.getName()).isFile()) {
           urls = new URL[] { new File(PLUGIN_DIRECTORY, jarFile.getName()).toURI().toURL() };
-          classLoader2 = URLClassLoader.newInstance(urls, ClassLoader.getSystemClassLoader());
+          classLoader2 = /*URLClassLoader.newInstance(urls,*/ new TestLoader(urls);/*);*/
         }
       } catch (MalformedURLException exc) {}
     } catch (MalformedURLException exc) {

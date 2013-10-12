@@ -1065,7 +1065,7 @@ public class PluginManagerImpl implements PluginManager {
    * @since 2.5
    */
   public void scrollToTime(int time) {
-    MainFrame.getInstance().scrollToTime(time);
+    MainFrame.getInstance().scrollToTime(time,true);
     MainFrame.getInstance().showProgramTableTabIfAvailable();
   }
   
