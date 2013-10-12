@@ -54,6 +54,7 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.border.EmptyBorder;
 
 import tvbrowser.core.Settings;
+import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.settings.tablebackgroundstyles.DayTimeBackgroundStyle;
 import tvbrowser.ui.settings.tablebackgroundstyles.SingleColorBackgroundStyle;
 import tvbrowser.ui.settings.tablebackgroundstyles.SingleImageBackgroundStyle;
@@ -497,8 +498,10 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     mSettingsPn.add(mShowScrollHighlight, cc.xyw(2, (currentRow += 2), 2));
     mSettingsPn.add(mLightDesc, cc.xy(2, (currentRow += 2)));
     mSettingsPn.add(mLightColorLb, cc.xy(4, currentRow));
+    mSettingsPn.add(mLight, cc.xy(6, currentRow));
     mSettingsPn.add(mDarkDesc, cc.xy(2, (currentRow += 2)));
     mSettingsPn.add(mDarkColorLb, cc.xy(4, currentRow));    
+    mSettingsPn.add(mDark, cc.xy(6, currentRow));
     
     mSettingsPn.add(DefaultComponentFactory.getInstance().createSeparator(
         mLocalizer.msg("misc", "Misc")), cc.xyw(1,
@@ -628,6 +631,8 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     Settings.propScrollToTimeProgramsLightBackground.setColor(mLightColorLb.getColor());
     Settings.propScrollToTimeProgramsDarkBackground.setColor(mDarkColorLb.getColor());
     Settings.propTypeAsYouFindEnabled.setBoolean(mTypeAsYouFind.isSelected());
+    
+    MainFrame.getInstance().getProgramTableScrollPane().getProgramTable().clearTimeMarkings();
   }
 
   /**
