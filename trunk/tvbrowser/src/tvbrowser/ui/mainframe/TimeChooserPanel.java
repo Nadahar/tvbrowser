@@ -130,7 +130,7 @@ public class TimeChooserPanel extends JPanel implements ChangeListener, MouseLis
         mGridPn.add(btn);
         btn.addActionListener(new ActionListener(){
           public void actionPerformed(ActionEvent arg0) {
-            mParent.scrollToTime(time);
+            mParent.scrollToTime(time,true);
           }
         });
         btn.addMouseListener(this);

@@ -362,7 +362,7 @@ public class ProgramTableScrollPane extends JScrollPane implements ProgramTableM
           else {
             MainFrame.getInstance().goToNextDay(new Runnable() {
               public void run() {
-                MainFrame.getInstance().scrollToTime(Settings.propProgramTableEndOfDay.getInt());
+                MainFrame.getInstance().scrollToTime(Settings.propProgramTableEndOfDay.getInt(),false);
               }
             });
           }

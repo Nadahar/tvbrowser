@@ -1889,10 +1889,14 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     }
   }
 
-  public void scrollToTime(int time) {
+  public void scrollToTime(int time, boolean mark) {
     mProgramTableScrollPane.deSelectItem(false);
     mProgramTableScrollPane.scrollToTime(time);
     mProgramTableScrollPane.requestFocusInWindow();
+    
+    if(mark) {
+      mProgramTableScrollPane.getProgramTable().markTime(time);
+    }
     
     for(PluginCenterPanelWrapper wrapper : mCenterPanelWrapperList) {
       wrapper.scrolledToTime(time);
@@ -1906,6 +1910,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     devplugin.Date day = new devplugin.Date();
     scrollTo(day, hour * 60 + cal.get(Calendar.MINUTE));
     mProgramTableScrollPane.requestFocusInWindow();
+    mProgramTableScrollPane.getProgramTable().clearTimeMarkings();
     
     for(PluginCenterPanelWrapper wrapper : mCenterPanelWrapperList) {
       wrapper.scrolledToNow();
@@ -1930,6 +1935,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
 
   private void scrollTo(Date day, int minute, final Runnable callback) {
     mProgramTableScrollPane.deSelectItem(false);
+    mProgramTableScrollPane.getProgramTable().clearTimeMarkings();
     // Choose the day.
     // NOTE: If its early in the morning before the set "day start" we should
     // stay at the last day - otherwise the user won't see the current

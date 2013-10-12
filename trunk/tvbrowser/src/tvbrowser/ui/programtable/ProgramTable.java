@@ -47,6 +47,7 @@ import java.awt.dnd.DragSourceListener;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
+import java.util.ArrayList;
 
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -128,6 +129,8 @@ public class ProgramTable extends JPanel
   private Point mDraggingPointOnScreen;
   
   private ProgramMouseEventHandler mProgramMouseEventHandler;
+  
+  private ArrayList<ProgramPanel> mTimeMarkings;
 
   /**
    * Creates a new instance of ProgramTable.
@@ -138,6 +141,8 @@ public class ProgramTable extends JPanel
     setToolTipText("");
     setProgramTableLayout(null);
     addKeyListener(keyListener);
+    
+    mTimeMarkings = new ArrayList<ProgramPanel>(0);
     
     mCurrentCol = -1;
     mCurrentRow = -1;
@@ -473,6 +478,33 @@ public class ProgramTable extends JPanel
   }
 
 
+  public void markTime(int time) {
+    clearTimeMarkings();
+    
+    if(Settings.propScrollToTimeMarkingActivated.getBoolean()) {
+      for(int column = 0; column < mModel.getColumnCount(); column++) {
+        for(int row = 0; row < mModel.getRowCount(column); row++) {
+          ProgramPanel panel = mModel.getProgramPanel(column, row);
+          
+          if(panel.getProgram().getStartTime() <= time && (panel.getProgram().getStartTime() + panel.getProgram().getLength()) > time) {
+            panel.setMarkTime(time);
+            panel.getProgram().validateMarking();
+            mTimeMarkings.add(panel);
+          }
+        }
+      }
+    }
+  }
+  
+  public void clearTimeMarkings() {
+    for(ProgramPanel panel : mTimeMarkings) {
+      panel.setMarkTime(-1);
+      panel.getProgram().validateMarking();
+    }
+    
+    mTimeMarkings.clear();
+  }
+  
 
   public Program getProgramAt(int x, int y) {
     int col = x / mColumnWidth;

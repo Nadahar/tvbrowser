@@ -37,8 +37,6 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Stroke;
-import java.awt.event.InputEvent;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.io.Reader;
@@ -64,7 +62,6 @@ import tvbrowser.extras.common.InternalPluginProxyList;
 import tvbrowser.extras.favoritesplugin.FavoritesPluginProxy;
 import tvbrowser.extras.favoritesplugin.core.Favorite;
 import tvbrowser.extras.favoritesplugin.dlgs.FavoriteTreeModel;
-import tvbrowser.ui.mainframe.MainFrame;
 import util.io.IOUtilities;
 import util.misc.StringPool;
 import util.program.ProgramUtilities;
@@ -99,6 +96,8 @@ public class ProgramPanel extends JComponent implements ChangeListener, PluginSt
   private static final Composite PALE_COMPOSITE = AlphaComposite.getInstance(
       AlphaComposite.SRC_OVER, 0.5F);
 
+  private int mMarkTime;
+  
   /** The title font. */
   private static Font mTitleFont;
   /** The time font. */
@@ -203,6 +202,7 @@ public class ProgramPanel extends JComponent implements ChangeListener, PluginSt
     setToolTipText("");
     mSettings = settings;
     mAxis = settings.getAxis();
+    mMarkTime = -1;
 
     if (mTitleFont == null) {
       updateFonts();
@@ -472,6 +472,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
   public void setProgram(Program program, int maxHeight) {
     Program oldProgram = mProgram;
     mProgram = program;
+   // mMarkTime = -1;
 
     if (Settings.propProgramTableCutTitle.getBoolean()) {
       mTitleIcon.setMaximumLineCount(Settings.propProgramTableCutTitleLines
@@ -702,10 +703,20 @@ private static Font getDynamicFontSize(Font font, int offset) {
       grp.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
           RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
     }
-
+    
+    Color lightBackground = Settings.propProgramTableColorOnAirLight.getColor();
+    Color darkBackground = Settings.propProgramTableColorOnAirDark.getColor();
+    int minutesAfterMidnight = IOUtilities.getMinutesAfterMidnight();
+    
+    if(mMarkTime >= 0 && Settings.propScrollToTimeMarkingActivated.getBoolean()) {
+      minutesAfterMidnight = mMarkTime;
+      lightBackground = Settings.propScrollToTimeProgramsLightBackground.getColor();
+      darkBackground = Settings.propScrollToTimeProgramsDarkBackground.getColor();
+    }
+    
     // Draw the background if this program is on air
-    if (mProgram.isOnAir()) {
-      int minutesAfterMidnight = IOUtilities.getMinutesAfterMidnight();
+    if (mProgram.isOnAir() || mMarkTime >= 0 && Settings.propScrollToTimeMarkingActivated.getBoolean()) {
+     // int minutesAfterMidnight = IOUtilities.getMinutesAfterMidnight();
       int progLength = mProgram.getLength();
       int startTime = mProgram.getStartTime();
       int elapsedMinutes = minutesAfterMidnight - startTime;
@@ -734,14 +745,14 @@ private static Font getDynamicFontSize(Font font, int offset) {
           progressX = elapsedMinutes * width / progLength;
         }
 
-        Color c = Settings.propProgramTableColorOnAirDark.getColor();
+        Color c = darkBackground;
         grp.setColor(new Color(c.getRed(), c.getGreen(), c.getBlue(), (int)(c.getAlpha()*mProgramImportance/10.)));
 
         int fillWidth = progressX - borderWidth;
         if (fillWidth > 0) {
           grp.fillRect(borderWidth, borderWidth, fillWidth, height - borderWidth);
         }
-        c = Settings.propProgramTableColorOnAirLight.getColor();
+        c = lightBackground;
         grp.setColor(new Color(c.getRed(), c.getGreen(), c.getBlue(), (int)(c.getAlpha()*mProgramImportance/10.)));
 
         fillWidth = width - progressX - borderWidth * 2;
@@ -756,7 +767,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
           progressY = elapsedMinutes * height / progLength;
         }
 
-        Color c = Settings.propProgramTableColorOnAirDark.getColor();
+        Color c = darkBackground;
         grp.setColor(new Color(c.getRed(), c.getGreen(), c.getBlue(), (int)(c.getAlpha()*mProgramImportance/10.)));
 
         int fillHeight = progressY - borderWidth;
@@ -770,7 +781,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
           grp.fillRect(borderWidth, borderWidth, width - borderWidth * 2, fillHeight);
         }
 
-        c = Settings.propProgramTableColorOnAirLight.getColor();
+        c = lightBackground;
         grp.setColor(new Color(c.getRed(), c.getGreen(), c.getBlue(), (int)(c.getAlpha()*mProgramImportance/10.)));
 
         fillHeight = height - progressY - borderWidth;
@@ -1327,5 +1338,8 @@ private static Font getDynamicFontSize(Font font, int offset) {
     }
   }
 
+  public void setMarkTime(int time) {
+    mMarkTime = time;
+  }
 
 }
