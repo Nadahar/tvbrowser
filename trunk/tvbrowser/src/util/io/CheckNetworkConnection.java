@@ -63,6 +63,7 @@ class CheckNetworkConnection {
   private JDialog mWaitingDialog;
 
   private final static String[] CHECK_URLS = {
+    "https://duckduckgo.com/",
     "http://www.google.com/",
     "http://www.yahoo.com/",
     "http://www.bing.com/"
