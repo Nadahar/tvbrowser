@@ -375,6 +375,8 @@ public class ProgramFieldType {
    * index into the int/Object storage field of MutablePrograms
    */
   private int mStorageIndex;
+  
+  private static boolean mNameWasSet = false;
 
 
 
@@ -523,4 +525,20 @@ public class ProgramFieldType {
     mLocalizer = Localizer.getLocalizerFor(ProgramFieldType.class);
   }
 
+  /**
+   * Sets the name of the custom field type
+   * 
+   * @param name The name of the free field type
+   * @return If the name could be set (the name can only be set once).
+   * @since 3.3.3
+   */
+  public static boolean setLocalizedCustomFieldName(String name) {
+    if(!mNameWasSet) {
+      CUSTOM_TYPE.mLocalizedName = name;
+      mNameWasSet = true;
+      return true;
+    }
+    
+    return false;
+  }
 }
