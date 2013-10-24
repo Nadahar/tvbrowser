@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.LinkedList;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -19,7 +20,7 @@ public class DownloadManager {
   
   private LinkedList<DownloadJob> mJobList;
   
-  private int mActiveThreadCount;
+  private AtomicInteger mActiveThreadCount;
   
   private Thread mWaitingThread;
 
@@ -64,7 +65,8 @@ public class DownloadManager {
   
   
   public void runDownload() {
-    mActiveThreadCount = 0;
+    mActiveThreadCount = new AtomicInteger(0);
+    
     if (mConcurrentDownloads < 1) {
       mConcurrentDownloads = 1;
     }
@@ -91,11 +93,11 @@ public class DownloadManager {
     boolean isFinished;
     do {
       try {
-        Thread.sleep(Long.MAX_VALUE);
+        Thread.sleep(5000);
       } catch (InterruptedException exc) {}
       
       synchronized (mJobList) {
-        isFinished = mJobList.isEmpty() && (mActiveThreadCount == 0);
+        isFinished = mJobList.isEmpty() && (mActiveThreadCount.get() == 0);
       }
       
     } while (! isFinished);
@@ -104,7 +106,7 @@ public class DownloadManager {
 
 
   private void downloadThreadRun() {
-    mActiveThreadCount++;
+    mActiveThreadCount.getAndIncrement();
 
     boolean isFinished = false;
     do {
@@ -156,7 +158,7 @@ public class DownloadManager {
       }
     } while (! isFinished);
     
-    mActiveThreadCount--;
+    mActiveThreadCount.getAndDecrement();
 
     mWaitingThread.interrupt();
   }
