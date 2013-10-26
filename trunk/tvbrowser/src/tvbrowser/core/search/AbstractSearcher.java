@@ -37,6 +37,7 @@ import org.apache.commons.lang3.text.StrBuilder;
 
 import tvbrowser.core.Settings;
 import tvbrowser.core.TvDataBase;
+import util.io.IOUtilities;
 import util.program.ProgramUtilities;
 import devplugin.Channel;
 import devplugin.ChannelDayProgram;
@@ -131,6 +132,10 @@ public abstract class AbstractSearcher implements ProgramSearcher {
         return prog.getTextField(fieldType);
       }
       else if (fieldType.getFormat() == ProgramFieldType.INT_FORMAT) {
+        if(fieldType.equals(ProgramFieldType.EPISODE_NUMBER_TYPE) && prog.hasFieldValue(ProgramFieldType.EPISODE_NUMBER_TYPE)) {
+          return IOUtilities.decodeSingleFieldValueToMultipleEpisodeString(prog.getIntField(fieldType));
+        }
+        
         return prog.getIntFieldAsString(fieldType);
       }
       else if (fieldType.getFormat() == ProgramFieldType.TIME_FORMAT) {
@@ -155,7 +160,12 @@ public abstract class AbstractSearcher implements ProgramSearcher {
           value = prog.getTextField(fieldType);
         }
         else if (fieldType.getFormat() == ProgramFieldType.INT_FORMAT) {
-          value = prog.getIntFieldAsString(fieldType);
+          if(fieldType.equals(ProgramFieldType.EPISODE_NUMBER_TYPE) && prog.hasFieldValue(ProgramFieldType.EPISODE_NUMBER_TYPE)) {
+            value = IOUtilities.decodeSingleFieldValueToMultipleEpisodeString(prog.getIntField(fieldType));
+          }
+          else {
+            value = prog.getIntFieldAsString(fieldType);
+          }
         }
         else if (fieldType.getFormat() == ProgramFieldType.TIME_FORMAT) {
           if (fieldType == ProgramFieldType.START_TIME_TYPE) {
