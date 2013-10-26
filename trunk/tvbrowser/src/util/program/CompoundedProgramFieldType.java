@@ -23,6 +23,7 @@
  */
 package util.program;
 
+import util.io.IOUtilities;
 import devplugin.Program;
 import devplugin.ProgramFieldType;
 
@@ -98,7 +99,12 @@ public class CompoundedProgramFieldType {
           formattedValue = prog.getTextField(mFieldTypes[i]);
         }
         else if(mFieldTypes[i].getFormat() == ProgramFieldType.INT_FORMAT) {
-          formattedValue = prog.getIntFieldAsString(mFieldTypes[i]);
+          if(mFieldTypes[i].equals(ProgramFieldType.EPISODE_NUMBER_TYPE) && prog.hasFieldValue(ProgramFieldType.EPISODE_NUMBER_TYPE)) {
+            formattedValue = IOUtilities.decodeSingleFieldValueToMultipleEpisodeString(prog.getIntField(mFieldTypes[i]));
+          }
+          else {
+            formattedValue = prog.getIntFieldAsString(mFieldTypes[i]);
+          }
         }
         else if(mFieldTypes[i].getFormat() == ProgramFieldType.TIME_FORMAT) {
           formattedValue = prog.getTimeFieldAsString(mFieldTypes[i]);
@@ -127,7 +133,12 @@ public class CompoundedProgramFieldType {
           currentValue = prog.getTextField(mFieldTypes[i]);
         }
         else if(mFieldTypes[i].getFormat() == ProgramFieldType.INT_FORMAT) {
-          currentValue = prog.getIntFieldAsString(mFieldTypes[i]);
+          if(mFieldTypes[i].equals(ProgramFieldType.EPISODE_NUMBER_TYPE) && prog.hasFieldValue(ProgramFieldType.EPISODE_NUMBER_TYPE)) {
+            currentValue = IOUtilities.decodeSingleFieldValueToMultipleEpisodeString(prog.getIntField(mFieldTypes[i]));
+          }
+          else {
+            currentValue = prog.getIntFieldAsString(mFieldTypes[i]);
+          }
         }
         else if(mFieldTypes[i].getFormat() == ProgramFieldType.TIME_FORMAT) {
           currentValue = prog.getTimeFieldAsString(mFieldTypes[i]);
