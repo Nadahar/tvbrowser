@@ -905,5 +905,114 @@ public class IOUtilities {
             return bis;
         }
     }
+    
+    /**
+     * Convert an array with episode numbers into a single integer value.
+     * The array can have a length of 1 to 5 and must be sorted ascended, the first value can be at maximum 32767
+     * and between each entry is a maximum difference of 16 possible.
+     * <p>
+     * @param episodeNumbers The array with the episode number to encode.
+     * @return The encoded episode number or <code>0</code> if the values didn't meet the conditions.
+     * @since 3.3.3.
+     */
+    public static int encodeMultipleEpisodeNumersToSingleFieldValue(int[] episodeNumbers) {
+      int returnValue = 0;
+      
+      if(episodeNumbers.length == 1) {
+        returnValue = episodeNumbers[0];
+      }
+      else if(episodeNumbers.length > 1 && episodeNumbers.length <= 5 && episodeNumbers[0] <= 32767) {
+        int encoded = episodeNumbers[0] & 0x7FFF;
+        
+        for(int i = 1; i < episodeNumbers.length; i++) {
+          int diff = episodeNumbers[i] - episodeNumbers[i-1];
+          
+          if(diff <= 0 || diff > 32) {
+            return returnValue; 
+          }
+          else {
+            diff = (diff & 0xF) << (15 + ((i-1) * 4));
+            
+            encoded = encoded | diff;
+          }
+        }
+        
+        returnValue = encoded | 0x80000000;
+      }
+      
+      return returnValue;
+    }
 
+    /**
+     * Decode the given value into an array of episode numbers.
+     * <p>
+     * @param fieldValue The field value to decode.
+     * @return An array with the contained episode numbers.
+     * @since 3.3.3.
+     */
+    public static int[] decodeSingleFieldValueToMultipleEpisodeNumers(int fieldValue) {
+      if((fieldValue & 0x80000000) == 0) {
+        return new int[] {fieldValue};
+      }
+      else {
+        int first = fieldValue & 0x7FFF;
+        int second = (fieldValue >> (15)) & 0xF;
+        int third = (fieldValue >> (15 + 4)) & 0xF;
+        int fourth = (fieldValue >> (15 + 2 * 4)) & 0xF;
+        int fifth = (fieldValue >> (15 + 3 * 4)) & 0xF;
+        
+        if(second == 0) {
+          return new int[] {first};
+        }
+        else {
+          second += first;
+        }
+        
+        if(third == 0) {
+          return new int[] {first,second}; 
+        }
+        else {
+          third += second;
+        }
+        
+        if(fourth == 0) {
+          return new int[] {first,second,third};
+        }
+        else {
+          fourth += third;
+        }
+        
+        if(fifth == 0) {
+          return new int[] {first,second,third,fourth};
+        }
+        else {
+          fifth += fourth;
+          
+          return new int[] {first,second,third,fourth,fifth};
+        }
+      }
+    }
+    
+    /**
+     * Decode the given value into a String of episode numbers.
+     * <p>
+     * @param fieldValue The field value to decode.
+     * @return A String of episode numbers.
+     * @since 3.3.3.
+     */
+    public static String decodeSingleFieldValueToMultipleEpisodeString(int fieldValue) {
+      int[] episodes = decodeSingleFieldValueToMultipleEpisodeNumers(fieldValue);
+      
+      StringBuilder epis = new StringBuilder();
+      
+      for(int episode : episodes) {
+        epis.append(episode).append("|");
+      }
+      
+      if(epis.length() > 0) {
+        epis.deleteCharAt(epis.length()-1);
+      }
+      
+      return epis.toString();
+    }
 }
