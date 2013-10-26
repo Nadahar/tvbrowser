@@ -45,6 +45,8 @@ public final class CapturePluginData implements Cloneable {
 
     private int mMarkPriority = Program.MIN_MARK_PRIORITY;
     
+    private boolean mShowAdditionalCommandsOnTop = false;
+    
     /**
      * All Devices
      */
@@ -82,9 +84,10 @@ public final class CapturePluginData implements Cloneable {
      * @throws IOException problems while writing
      */
     public void writeData(ObjectOutputStream out) throws IOException {
-        out.writeInt(3);
+        out.writeInt(4);
         
         out.writeInt(mMarkPriority);
+        out.writeBoolean(mShowAdditionalCommandsOnTop);
         out.writeInt(mDevices.size());
         
         DeviceFileHandling writer = new DeviceFileHandling();
@@ -115,6 +118,10 @@ public final class CapturePluginData implements Cloneable {
         
         if(version >= 3) {
           mMarkPriority = in.readInt();
+        }
+        
+        if(version >= 4) {
+          mShowAdditionalCommandsOnTop = in.readBoolean();
         }
         
         int num = in.readInt();
@@ -198,5 +205,25 @@ public final class CapturePluginData implements Cloneable {
           }
         }
       }
+    }
+    
+    /**
+     * Gets if the additional commands should be on top of context menu
+     * <p>
+     * @return If the additional commands should be on top of context menu.
+     * @since 3.14
+     */
+    public boolean showAdditionalCommandsOnTop() {
+      return mShowAdditionalCommandsOnTop;
+    }
+    
+    /**
+     * Sets the value for additional commands on top of context menu
+     * <p>
+     * @param value If the additional commands should be on top of context menu.
+     * @since 3.14
+     */
+    public void setShowAdditionalCommandsOnTop(boolean value) {
+      mShowAdditionalCommandsOnTop = value;
     }
 }
