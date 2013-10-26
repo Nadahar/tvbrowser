@@ -28,8 +28,14 @@ package captureplugin;
 import java.awt.BorderLayout;
 import java.awt.Window;
 
+import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
+
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.factories.CC;
+import com.jgoodies.forms.layout.FormLayout;
 
 import util.ui.DefaultMarkingPrioritySelectionPanel;
 import util.ui.Localizer;
@@ -50,11 +56,15 @@ public class CapturePluginPanel extends JPanel {
     protected static final int TAB_DEVICELIST = 1;
     /** Tab for Marking */
     public static final int TAB_MARKING = 2;
+    /** Tab for Global settings */
+    public static final int TAB_GLOBAL_SETTINGS = 3;
 
     /** GUI */
     private JTabbedPane mTabPane;
     
     private DefaultMarkingPrioritySelectionPanel mMarkingPriorityPanel;
+    
+    private JCheckBox mShowAdditionalCommandsOnTop;
     
     /**
      * Creates the Panel
@@ -74,6 +84,15 @@ public class CapturePluginPanel extends JPanel {
         mMarkingPriorityPanel = DefaultMarkingPrioritySelectionPanel.createPanel(data.getMarkPriority(),false,true);
         mTabPane.addTab(DefaultMarkingPrioritySelectionPanel.getTitle(), mMarkingPriorityPanel);
 
+        mShowAdditionalCommandsOnTop = new JCheckBox(mLocalizer.msg("showOnTop", "Show additional commands (if any) on top of context menu."), data.showAdditionalCommandsOnTop());
+        
+        PanelBuilder pb = new PanelBuilder(new FormLayout("default","default"));
+        pb.border(Borders.DIALOG);
+        
+        pb.add(mShowAdditionalCommandsOnTop, CC.xy(1, 1));
+        
+        mTabPane.addTab(mLocalizer.msg("Global", "Global Settings"), pb.getPanel());
+        
         this.add(mTabPane, BorderLayout.CENTER);
     }
 
@@ -100,5 +119,6 @@ public class CapturePluginPanel extends JPanel {
      */
     public void saveMarkingSettings() {
       CapturePlugin.getInstance().getCapturePluginData().setMarkPriority(mMarkingPriorityPanel.getSelectedPriority());
+      CapturePlugin.getInstance().getCapturePluginData().setShowAdditionalCommandsOnTop(mShowAdditionalCommandsOnTop.isSelected());
     }
 }

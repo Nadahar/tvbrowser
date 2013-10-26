@@ -79,7 +79,7 @@ import devplugin.Version;
  *         adopted by fishhead
  */
 public class CapturePlugin extends devplugin.Plugin {
-  private static final Version mVersion = new Version(3,13,6,false);
+  private static final Version mVersion = new Version(3,14,0,false);
 
     /**
      * Translator
@@ -214,7 +214,11 @@ public class CapturePlugin extends devplugin.Plugin {
 
         for (final DeviceIf dev : devices) {
             ArrayList<AbstractAction> commandList = new ArrayList<AbstractAction>();
-
+            
+            if(getCapturePluginData().showAdditionalCommandsOnTop()) {
+              addAdditionalCommandsToMenu(dev, program, commandList);
+            }
+            
             if (dev.isAbleToAddAndRemovePrograms()) {
                 final Program test = dev.getProgramForProgramInList(program);
 
@@ -239,30 +243,12 @@ public class CapturePlugin extends devplugin.Plugin {
                     caction.putValue(Action.NAME, mLocalizer.msg("record", "record"));
                     commandList.add(caction);
                 }
-
             }
-
-            String[] commands = dev.getAdditionalCommands();
-
-            if (commands != null) {
-              for (int y = 0; y < commands.length; y++) {
-
-                  final int num = y;
-
-                  AbstractAction caction = new AbstractAction() {
-
-                      public void actionPerformed(ActionEvent evt) {
-                          dev.executeAdditionalCommand(parent, num, program);
-                          // fishhead ---------------------------------
-                          updateMarkedPrograms();
-                          // fishhead ---------------------------------
-                      }
-                  };
-                  caction.putValue(Action.NAME, commands[y]);
-                  commandList.add(caction);
-              }
+            
+            if(!getCapturePluginData().showAdditionalCommandsOnTop()) {
+              addAdditionalCommandsToMenu(dev, program, commandList);
             }
-
+            
             if (!commandList.isEmpty()) {
               actionList.add(new ActionMenu(dev.getName(), commandList.toArray(new Action[commandList.size()])));
             }
@@ -293,6 +279,29 @@ public class CapturePlugin extends devplugin.Plugin {
         }
 
         return new ActionMenu(menuText, menuIcon, actions);
+    }
+    
+    private void addAdditionalCommandsToMenu(final DeviceIf dev, final Program program, ArrayList<AbstractAction> commandList) {
+      String[] commands = dev.getAdditionalCommands();
+
+      if (commands != null) {
+        for (int y = 0; y < commands.length; y++) {
+
+            final int num = y;
+
+            AbstractAction caction = new AbstractAction() {
+
+                public void actionPerformed(ActionEvent evt) {
+                    dev.executeAdditionalCommand(getParentFrame(), num, program);
+                    // fishhead ---------------------------------
+                    updateMarkedPrograms();
+                    // fishhead ---------------------------------
+                }
+            };
+            caction.putValue(Action.NAME, commands[y]);
+            commandList.add(caction);
+        }
+      }
     }
 
     /**
