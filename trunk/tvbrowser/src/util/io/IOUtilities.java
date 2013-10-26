@@ -49,6 +49,7 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import javax.activation.UnsupportedDataTypeException;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
@@ -909,17 +910,16 @@ public class IOUtilities {
     /**
      * Convert an array with episode numbers into a single integer value.
      * The array can have a length of 1 to 5 and must be sorted ascended, the first value can be at maximum 32767
-     * and between each entry is a maximum difference of 16 possible.
+     * and between each entry is a maximum difference of 15 possible.
      * <p>
      * @param episodeNumbers The array with the episode number to encode.
-     * @return The encoded episode number or <code>0</code> if the values didn't meet the conditions.
+     * @return The encoded episode number.
+     * @throws UnsupportedDataTypeException Is thrown if the given array didn't match the given conditions. 
      * @since 3.3.3.
      */
-    public static int encodeMultipleEpisodeNumersToSingleFieldValue(int[] episodeNumbers) {
-      int returnValue = 0;
-      
+    public static int encodeMultipleEpisodeNumersToSingleFieldValue(int[] episodeNumbers) throws UnsupportedDataTypeException {
       if(episodeNumbers.length == 1) {
-        returnValue = episodeNumbers[0];
+        return episodeNumbers[0];
       }
       else if(episodeNumbers.length > 1 && episodeNumbers.length <= 5 && episodeNumbers[0] <= 32767) {
         int encoded = episodeNumbers[0] & 0x7FFF;
@@ -927,8 +927,8 @@ public class IOUtilities {
         for(int i = 1; i < episodeNumbers.length; i++) {
           int diff = episodeNumbers[i] - episodeNumbers[i-1];
           
-          if(diff <= 0 || diff > 32) {
-            return returnValue; 
+          if(diff <= 0 || diff > 15) {
+            throw new UnsupportedDataTypeException("Array not sorted ascended or difference not in range."); 
           }
           else {
             diff = (diff & 0xF) << (15 + ((i-1) * 4));
@@ -937,10 +937,10 @@ public class IOUtilities {
           }
         }
         
-        returnValue = encoded | 0x80000000;
+        return (encoded | 0x80000000);
       }
       
-      return returnValue;
+      throw new UnsupportedDataTypeException("Array size not in range or first value to big.");
     }
 
     /**
