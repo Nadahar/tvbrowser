@@ -29,6 +29,8 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 
+import util.io.IOUtilities;
+
 import devplugin.Program;
 import devplugin.ProgramFieldType;
 
@@ -168,7 +170,12 @@ public class MultipleFieldReader extends Reader {
           fieldValue = mProgram.getTimeFieldAsString(fieldType);
         }
         else if (fieldType.getFormat() == ProgramFieldType.INT_FORMAT) {
-          fieldValue = mProgram.getIntFieldAsString(fieldType);
+          if(fieldType.equals(ProgramFieldType.EPISODE_NUMBER_TYPE) && mProgram.hasFieldValue(ProgramFieldType.EPISODE_NUMBER_TYPE)) {
+            fieldValue = IOUtilities.decodeSingleFieldValueToMultipleEpisodeString(mProgram.getIntField(fieldType));
+          }
+          else {
+            fieldValue = mProgram.getIntFieldAsString(fieldType);
+          }
         }
         
         if (fieldValue == null) {
