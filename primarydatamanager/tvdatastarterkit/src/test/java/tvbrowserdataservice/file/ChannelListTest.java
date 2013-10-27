@@ -57,7 +57,7 @@ public class ChannelListTest {
     assertEquals("AXN", list.getChannelAt(2).getName());
     assertEquals("W\u00f6hnungss\u00fcche", list.getChannelAt(3).getName());
     assertEquals("K\u00fcchendi\u00dfteln", list.getChannelAt(4).getName());
-    assertEquals("\u00c4lbert \u7360", list.getChannelAt(5).getName());
+    assertEquals("\u00c4lbert", list.getChannelAt(5).getName());
 
     ByteArrayOutputStream stream = new ByteArrayOutputStream();
     list.writeToStream(stream);
@@ -67,7 +67,7 @@ public class ChannelListTest {
         "de;GMT+01:00;AXN;AXN;(c) by AXN;http://www.axntv.de;;273;\"AXN\";de\n" +
         "de;GMT+01:00;DMAXPUNNY;DMAX PUNNY;(c) by DMAX;http://www.dmaxtv.de/;http://sender.wannawork.de/logos/DMAX.png;257;\"W&ouml;hnungss&uuml;che\";de;DMAX\n" +
         "de;GMT+01:00;EUROSPORTPUNNY;Eurosport PUNNY;(c) by Eurosport;;;0;\"K&uuml;chendi&szlig;teln\";de\n" +
-        "de;GMT+01:00;AXNPUNNY;AXN PUNNY;(c) by AXN;http://www.axntv.de;;273;\"&Auml;lbert &#29536;\";de",
+        "de;GMT+01:00;AXNPUNNY;AXN PUNNY;(c) by AXN;http://www.axntv.de;;273;\"&Auml;lbert\";de",
         toString(new GZIPInputStream(new ByteArrayInputStream(stream.toByteArray()))));
   }
 
