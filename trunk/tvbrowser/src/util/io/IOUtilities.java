@@ -43,6 +43,7 @@ import java.io.Writer;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
@@ -909,8 +910,11 @@ public class IOUtilities {
     
     /**
      * Convert an array with episode numbers into a single integer value.
-     * The array can have a length of 1 to 5 and must be sorted ascended, the first value can be at maximum 32767
-     * and between each entry is a maximum difference of 15 possible.
+     * The array can have a length of 1,
+     * or 2 to 4 with a maximum difference between episodes of 31,
+     * or a length of 5 with a maximum difference of 15,
+     * or a length of 6 to 9 with a maximum difference of 3,
+     * must be sorted ascended and the first value can be at maximum 16384.
      * <p>
      * @param episodeNumbers The array with the episode number to encode.
      * @return The encoded episode number.
@@ -921,23 +925,41 @@ public class IOUtilities {
       if(episodeNumbers.length == 1) {
         return episodeNumbers[0];
       }
-      else if(episodeNumbers.length > 1 && episodeNumbers.length <= 5 && episodeNumbers[0] <= 32767) {
-        int encoded = episodeNumbers[0] & 0x7FFF;
+      else if(episodeNumbers.length > 1 && episodeNumbers.length <= 9 && episodeNumbers[0] <= 16384) {
+        int encoded = episodeNumbers[0] & 0x3FFF;
+        
+        int andMask = 0x1F;
+        int shiftMask = 5;
+        int encodingMask = 1 << 30;
+        int diffTest = 31;
+        
+        if(episodeNumbers.length == 5) {
+          andMask = 0xF;
+          shiftMask = 4;
+          encodingMask = 2 << 30;
+          diffTest = 15;
+        }
+        else if(episodeNumbers.length > 5) {
+          andMask = 0x3;
+          shiftMask = 2;
+          encodingMask = 3 << 30;
+          diffTest = 3;
+        }
         
         for(int i = 1; i < episodeNumbers.length; i++) {
           int diff = episodeNumbers[i] - episodeNumbers[i-1];
           
-          if(diff <= 0 || diff > 15) {
+          if(diff <= 0 || diff > diffTest) {
             throw new UnsupportedDataTypeException("Array not sorted ascended or difference not in range."); 
           }
           else {
-            diff = (diff & 0xF) << (15 + ((i-1) * 4));
+            diff = (diff & andMask) << (14 + ((i-1) * shiftMask));
             
             encoded = encoded | diff;
           }
         }
         
-        return (encoded | 0x80000000);
+        return (encoded | encodingMask);
       }
       
       throw new UnsupportedDataTypeException("Array size not in range or first value to big.");
@@ -950,46 +972,45 @@ public class IOUtilities {
      * @return An array with the contained episode numbers.
      * @since 3.3.3.
      */
-    public static int[] decodeSingleFieldValueToMultipleEpisodeNumers(int fieldValue) {
-      if((fieldValue & 0x80000000) == 0) {
-        return new int[] {fieldValue};
+    public static Integer[] decodeSingleFieldValueToMultipleEpisodeNumers(int fieldValue) {
+      int encodingMask = (fieldValue >> 30) & 0x3;
+      
+      if(encodingMask == 0) {
+        return new Integer[] {fieldValue};
       }
       else {
-        int first = fieldValue & 0x7FFF;
-        int second = (fieldValue >> (15)) & 0xF;
-        int third = (fieldValue >> (15 + 4)) & 0xF;
-        int fourth = (fieldValue >> (15 + 2 * 4)) & 0xF;
-        int fifth = (fieldValue >> (15 + 3 * 4)) & 0xF;
+        int andMask = 0x1F;
+        int shiftMask = 5;
+        int maxNum = 3;
         
-        if(second == 0) {
-          return new int[] {first};
+        if(encodingMask == 2) {
+          andMask = 0xF;
+          shiftMask = 4;
+          maxNum = 4;
         }
-        else {
-          second += first;
-        }
-        
-        if(third == 0) {
-          return new int[] {first,second}; 
-        }
-        else {
-          third += second;
+        else if(encodingMask == 3) {
+          andMask = 0x3;
+          shiftMask = 2;
+          maxNum = 8;
         }
         
-        if(fourth == 0) {
-          return new int[] {first,second,third};
-        }
-        else {
-          fourth += third;
-        }
+        int last = fieldValue & 0x3FFF;
         
-        if(fifth == 0) {
-          return new int[] {first,second,third,fourth};
-        }
-        else {
-          fifth += fourth;
+        ArrayList<Integer> valueList = new ArrayList<Integer>();
+        valueList.add(last);
+        
+        for(int i = 0; i < maxNum; i++) {
+          int testValue = (fieldValue >> (14 + i * shiftMask)) & andMask;
           
-          return new int[] {first,second,third,fourth,fifth};
+          if(testValue == 0) {
+            break;
+          }
+          
+          last += testValue;
+          valueList.add(last);
         }
+        
+        return valueList.toArray(new Integer[valueList.size()]);
       }
     }
     
@@ -1001,7 +1022,7 @@ public class IOUtilities {
      * @since 3.3.3.
      */
     public static String decodeSingleFieldValueToMultipleEpisodeString(int fieldValue) {
-      int[] episodes = decodeSingleFieldValueToMultipleEpisodeNumers(fieldValue);
+      Integer[] episodes = decodeSingleFieldValueToMultipleEpisodeNumers(fieldValue);
       
       StringBuilder epis = new StringBuilder();
       
