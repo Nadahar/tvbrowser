@@ -41,7 +41,7 @@ import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import primarydatamanager.primarydataservice.PrimaryDataService;
 import tvbrowserdataservice.file.ChannelList;
