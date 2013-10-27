@@ -412,7 +412,12 @@ public class ProgramTextCreator {
           StringBuilder value = new StringBuilder();
 
           String textField = prog.getTextField(ProgramFieldType.PICTURE_COPYRIGHT_TYPE);
+          
           if (textField != null) {
+            if(textField.toLowerCase().startsWith("(c)")) {
+              textField = "\u00A9" + textField.substring(3);
+            }
+            
             value.append(textField);
           }
 

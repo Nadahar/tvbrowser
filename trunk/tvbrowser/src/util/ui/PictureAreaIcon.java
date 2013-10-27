@@ -117,7 +117,13 @@ public class PictureAreaIcon implements Icon {
       }
     }
 
-    mCopyrightText = new TextAreaIcon(p.getTextField(ProgramFieldType.PICTURE_COPYRIGHT_TYPE),f.deriveFont((float)(f.getSize() * 0.9)),width-6);
+    String copyright = p.getTextField(ProgramFieldType.PICTURE_COPYRIGHT_TYPE);
+    
+    if(copyright.toLowerCase().startsWith("(c)")) {
+      copyright = "\u00A9" + copyright.substring(3);
+    }
+    
+    mCopyrightText = new TextAreaIcon(copyright,f.deriveFont((float)(f.getSize() * 0.9)),width-6);
     String pictureText = showDescription ? p.getTextField(ProgramFieldType.PICTURE_DESCRIPTION_TYPE) : "";
     if (StringUtils.isNotEmpty(pictureText)) {
       mDescriptionText = new TextAreaIcon(pictureText,f,width-6);
