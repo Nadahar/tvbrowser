@@ -170,6 +170,10 @@ public class Channel implements Comparable<Channel> {
       mAllCountries = new String[] {mBaseCountry};
     }
     
+    if(copyrightNotice != null && copyrightNotice.toLowerCase().startsWith("(c)")) {
+      copyrightNotice = "\u00A9" + copyrightNotice.substring(3);
+    }
+    
     mCopyrightNotice = StringPool.getString(copyrightNotice);
     mWebpage = StringPool.getString(webpage);
     mGroup = group;
