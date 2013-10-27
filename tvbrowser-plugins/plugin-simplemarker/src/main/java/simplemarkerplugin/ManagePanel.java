@@ -285,6 +285,8 @@ public class ManagePanel extends JPanel implements PersonaListener {
 
     mMarkListsList.setSelectedIndex(0);
     selectPrograms(true);
+    
+    updatePersona();
   }
   
   private synchronized void fillFilterBox() {
