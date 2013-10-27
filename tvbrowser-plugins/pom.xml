@@ -146,7 +146,7 @@
       	<groupId>org.tvbrowser</groupId>
       	<artifactId>tvbrowser</artifactId>
       	<scope>provided</scope>
-      	<version>3.3.2</version>
+      	<version>3.3.2.50</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
