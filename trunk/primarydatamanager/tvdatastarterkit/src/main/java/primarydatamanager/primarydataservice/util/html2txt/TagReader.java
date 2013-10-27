@@ -30,8 +30,8 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 
-import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
 
 
 /**
@@ -298,7 +298,7 @@ class HTMLTag implements Tag {
       result = new StringBuffer(line.toString());
     }
 
-    return new StringBuffer(StringEscapeUtils.unescapeHtml(result.toString()));
+    return new StringBuffer(StringEscapeUtils.unescapeHtml4(result.toString()));
   }
 
 

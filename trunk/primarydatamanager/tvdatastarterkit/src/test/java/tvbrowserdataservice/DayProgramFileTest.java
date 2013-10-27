@@ -28,10 +28,9 @@ package tvbrowserdataservice;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Random;
 
 import junit.framework.TestCase;
-
-import org.apache.commons.lang.math.RandomUtils;
 
 import tvbrowserdataservice.file.DayProgramFile;
 import tvbrowserdataservice.file.ProgramField;
@@ -52,7 +51,7 @@ public class DayProgramFileTest extends TestCase {
     // Test binary field
     byte[] testBinary = new byte[100];
     for (int i = 0; i < testBinary.length; i++) {
-      testBinary[i] = (byte) RandomUtils.nextInt(256);
+      testBinary[i] = (byte) new Random().nextInt(256);
     }
     field.setBinaryData(testBinary);
     byte[] readBinary = field.getBinaryData();
@@ -91,7 +90,7 @@ public class DayProgramFileTest extends TestCase {
     ProgramField field = new ProgramField();
 
     // Test int field
-    int testInt = RandomUtils.nextInt(Integer.MAX_VALUE);
+    int testInt = new Random().nextInt(Integer.MAX_VALUE);
     field.setIntData(testInt);
     int readInt = field.getIntData();
     assertEquals(testInt, readInt);
@@ -115,7 +114,7 @@ public class DayProgramFileTest extends TestCase {
     ProgramField field = new ProgramField();
 
     // Test time field
-    int testTime = RandomUtils.nextInt(Integer.MAX_VALUE);
+    int testTime = new Random().nextInt(Integer.MAX_VALUE);
     field.setTimeData(testTime);
     int readTime = field.getTimeData();
     assertEquals(testTime, readTime);
