@@ -910,11 +910,11 @@ public class IOUtilities {
     
     /**
      * Convert an array with episode numbers into a single integer value.
-     * The array can have a length of 1,
-     * or 2 to 4 with a maximum difference between episodes of 31,
-     * or a length of 5 with a maximum difference of 15,
-     * or a length of 6 to 9 with a maximum difference of 3,
-     * must be sorted ascended and the first value can be at maximum 16384.
+     * The array can have a length of 1 with a maximum number of 536870912,
+     * or a length of 2 with a maximum number of 16384 for the first and second episode,
+     * or a length of 3 with a maximum number of 16384 for the first episode and a maximum difference of 128 between following episodes,
+     * or a length of 4 with a maximum number of 16384 for the first episode and a maximum difference of 16 between following episodes,
+     * or a length of 5 with a maximum number of 16384 for the first episode and a maximum difference of 8 between following episodes.
      * <p>
      * @param episodeNumbers The array with the episode number to encode.
      * @return The encoded episode number.
@@ -925,35 +925,52 @@ public class IOUtilities {
       if(episodeNumbers.length == 1) {
         return episodeNumbers[0];
       }
-      else if(episodeNumbers.length > 1 && episodeNumbers.length <= 9 && episodeNumbers[0] <= 16384) {
+      else if(episodeNumbers.length == 2) {
         int encoded = episodeNumbers[0] & 0x3FFF;
         
-        int andMask = 0x1F;
-        int shiftMask = 5;
-        int encodingMask = 1 << 30;
-        int diffTest = 31;
+        int diff = (episodeNumbers[1] & 0x7FFF) << 14;
         
-        if(episodeNumbers.length == 5) {
+        encoded = (encoded | diff);
+        encoded = (encoded | (1 << 29));
+        
+        return encoded;
+      }
+      else if(episodeNumbers.length > 2 && episodeNumbers.length <= 5 && episodeNumbers[0] <= 16384) {
+        int encoded = episodeNumbers[0] & 0x3FFF;
+        
+        int andMask = 0xFF;
+        int shiftMask = 8;
+        int encodingMask = 1 << 30;
+        int diffTest = 128;
+        
+        if(episodeNumbers.length == 4) {
+          andMask = 0x1F;
+          shiftMask = 5;
+          encodingMask = 2 << 30;
+          diffTest = 16;
+        }
+        else if(episodeNumbers.length == 5) {
           andMask = 0xF;
           shiftMask = 4;
-          encodingMask = 2 << 30;
-          diffTest = 15;
-        }
-        else if(episodeNumbers.length > 5) {
-          andMask = 0x3;
-          shiftMask = 2;
           encodingMask = 3 << 30;
-          diffTest = 3;
+          diffTest = 8;
         }
         
         for(int i = 1; i < episodeNumbers.length; i++) {
           int diff = episodeNumbers[i] - episodeNumbers[i-1];
+          int diffAbs = Math.abs(diff);
           
-          if(diff <= 0 || diff > diffTest) {
-            throw new UnsupportedDataTypeException("Array not sorted ascended or difference not in range."); 
+          if(diff == 0 || diffAbs > diffTest) {
+            throw new UnsupportedDataTypeException("Episode difference not in range."); 
           }
           else {
-            diff = (diff & andMask) << (14 + ((i-1) * shiftMask));
+            diffAbs--;
+            
+            if(diff < 0) {
+              diffAbs = diffAbs | 1 << (shiftMask-1);
+            }
+            
+            diff = ((diffAbs & andMask) << (14 + ((i-1) * shiftMask)));
             
             encoded = encoded | diff;
           }
@@ -976,22 +993,33 @@ public class IOUtilities {
       int encodingMask = (fieldValue >> 30) & 0x3;
       
       if(encodingMask == 0) {
-        return new Integer[] {fieldValue};
+        if(((fieldValue >> 29) & 0x1) == 0x1) {
+          int first = fieldValue & 0x3FFF;
+          int second = (fieldValue >> 14) & 0x7FFF;
+          
+          return new Integer[] {first,second};
+        }
+        else {
+          return new Integer[] {fieldValue};
+        }
       }
       else {
-        int andMask = 0x1F;
-        int shiftMask = 5;
-        int maxNum = 3;
-        
-        if(encodingMask == 2) {
-          andMask = 0xF;
-          shiftMask = 4;
-          maxNum = 4;
+        int andMask = 0xFF;
+        int valueMask = 0x7F;
+        int shiftMask = 8;
+        int num = 2;
+                
+        if(encodingMask == 2) {          
+          andMask = 0x1F;
+          valueMask = 0xF;
+          shiftMask = 5;
+          num = 3;
         }
         else if(encodingMask == 3) {
-          andMask = 0x3;
-          shiftMask = 2;
-          maxNum = 8;
+          andMask = 0xF;
+          valueMask = 0x7;
+          shiftMask = 4;
+          num = 4;
         }
         
         int last = fieldValue & 0x3FFF;
@@ -999,14 +1027,15 @@ public class IOUtilities {
         ArrayList<Integer> valueList = new ArrayList<Integer>();
         valueList.add(last);
         
-        for(int i = 0; i < maxNum; i++) {
+        for(int i = 0; i < num; i++) {
           int testValue = (fieldValue >> (14 + i * shiftMask)) & andMask;
+          int absValue = (testValue & valueMask) + 1;
           
-          if(testValue == 0) {
-            break;
+          if(((testValue >> shiftMask -1) & 0x1) == 0x1) {
+            absValue = absValue * -1;
           }
           
-          last += testValue;
+          last += absValue;
           valueList.add(last);
         }
         
