@@ -44,6 +44,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Locale;
 
 import javax.swing.BorderFactory;
@@ -191,6 +193,13 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
   }
 
   private void createGui(String downloadUrl, int dialogType, SoftwareUpdateItem[] itemArr, Window parent) {
+    Arrays.sort(itemArr, new Comparator<SoftwareUpdateItem>() {
+      @Override
+      public int compare(SoftwareUpdateItem item1, SoftwareUpdateItem item2) {
+        return item1.getName().compareToIgnoreCase(item2.getName());
+      }
+    });
+    
     mDownloadUrl = downloadUrl;
     setTitle(mLocalizer.msg("title", "Download plugins"));
 
