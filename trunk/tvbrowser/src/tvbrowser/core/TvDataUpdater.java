@@ -177,7 +177,7 @@ public class TvDataUpdater {
     mIsUpdating = true;
     
     // Inform the listeners
-    fireTvDataUpdateStarted();
+    fireTvDataUpdateStarted(Date.getCurrentDate().addDays(daysToDownload));
 
     // Add two day to the daysToDownload for yesterday and today
     daysToDownload += 2;
@@ -525,12 +525,12 @@ public class TvDataUpdater {
   }
 
 
-  void fireTvDataUpdateStarted() {
+  void fireTvDataUpdateStarted(Date until) {
     synchronized(mListenerList) {
       for (int i = 0; i < mListenerList.size(); i++) {
         TvDataUpdateListener lst = mListenerList.get(i);
         try {
-          lst.tvDataUpdateStarted();
+          lst.tvDataUpdateStarted(until);
         } catch(Throwable thr) {
           mLog.log(Level.WARNING, "Firing event 'TV data update started' failed", thr);
         }

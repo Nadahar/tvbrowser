@@ -17,6 +17,7 @@ import devplugin.ActionMenu;
 import devplugin.AfterDataUpdateInfoPanel;
 import devplugin.Channel;
 import devplugin.ChannelDayProgram;
+import devplugin.Date;
 import devplugin.ImportanceValue;
 import devplugin.Plugin;
 import devplugin.PluginCenterPanelWrapper;
@@ -315,7 +316,7 @@ public class BeanShellPluginProxy extends AbstractPluginProxy {
     }
 
     @Override
-    public void handleTvDataUpdateStarted() {
+    public void handleTvDataUpdateStarted(Date until) {
       // TODO Auto-generated method stub
       
     }

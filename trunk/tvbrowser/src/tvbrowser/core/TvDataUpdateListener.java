@@ -25,17 +25,21 @@
  */
 package tvbrowser.core;
 
+import devplugin.Date;
+
 /**
  * A listener that listens for TV update events.
  * 
  * @author Til Schneider, www.murfman.de
  */
-public interface TvDataUpdateListener {
-
+public interface TvDataUpdateListener {  
   /**
    * Is called when a the TV data update has started.
+   * <p>
+   * @param until The last date that will be updated.
+   * @since 3.3.3
    */
-  public void tvDataUpdateStarted();
+  public void tvDataUpdateStarted(Date until);
 
   /**
    * Is called when a the TV data update has finished.

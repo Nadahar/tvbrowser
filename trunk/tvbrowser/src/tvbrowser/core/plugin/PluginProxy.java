@@ -33,6 +33,7 @@ import devplugin.ActionMenu;
 import devplugin.AfterDataUpdateInfoPanel;
 import devplugin.Channel;
 import devplugin.ChannelDayProgram;
+import devplugin.Date;
 import devplugin.ImportanceValue;
 import devplugin.InfoIf;
 import devplugin.PluginAccess;
@@ -263,7 +264,8 @@ public interface PluginProxy extends PluginAccess, InfoIf {
   
   /**
    * Is called when a TV data update is started.
-   * @since 3.2
+   * @param until The last date the data is updated for.
+   * @since 3.3.3
    */
-  public void handleTvDataUpdateStarted();
+  public void handleTvDataUpdateStarted(Date until);
 }

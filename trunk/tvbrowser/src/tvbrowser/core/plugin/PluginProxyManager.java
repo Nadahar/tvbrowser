@@ -54,6 +54,7 @@ import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
 import devplugin.ChannelDayProgram;
 import devplugin.ContextMenuIf;
+import devplugin.Date;
 import devplugin.PluginsProgramFilter;
 import devplugin.Program;
 
@@ -164,28 +165,6 @@ public class PluginProxyManager {
     public abstract void run();
   }
   
-  private class TvDataUpdateStartedThreadPoolMethod extends ThreadPoolMethod {
-
-    public TvDataUpdateStartedThreadPoolMethod() {
-      super("handleTvDataUpdateStarted");
-    }
-
-    @Override
-    public void run() {
-      for (PluginListItem item : getPluginListCopy()) {
-        if (item.getPlugin().isActivated()) {
-          final AbstractPluginProxy plugin = item.getPlugin();
-          try {
-            plugin.handleTvDataUpdateStarted();
-          }catch(Throwable t) {
-            /* Catch all possible not catched errors that occur in the plugin method*/
-            mLog.log(Level.WARNING, "A not catched error occured in 'handleTvDataUpdateStarted' of Plugin '" + plugin +"'.", t);
-          }
-        }
-      }
-    }
-  }
-
   private class TvDataUpdateFinishedThreadPoolMethod extends ThreadPoolMethod {
 
     public TvDataUpdateFinishedThreadPoolMethod() {
@@ -378,8 +357,8 @@ public class PluginProxyManager {
     });
 
     TvDataUpdater.getInstance().addTvDataUpdateListener(new TvDataUpdateListener() {
-      public void tvDataUpdateStarted() {
-        fireTvDataUpdateStarted();
+      public void tvDataUpdateStarted(Date until) {
+        fireTvDataUpdateStarted(until);
       }
 
       public void tvDataUpdateFinished() {
@@ -1285,13 +1264,23 @@ public class PluginProxyManager {
   }
   
   /**
-   * Calls for every subscribed plugin the handleTvDataUpdateFinished() method,
-   * so the plugin can react on the new data.
+   * Calls for every subscribed plugin the handleTvDataUpdateFinished(Date until) method,
+   * so the plugin can react on the new data/prepare for data update.
    *
-   * @see PluginProxy#handleTvDataUpdateFinished()
+   * @see PluginProxy#handleTvDataUpdateFinished(Date until)
    */
-  private void fireTvDataUpdateStarted() {
-    runWithThreadPool(new TvDataUpdateStartedThreadPoolMethod());
+  private void fireTvDataUpdateStarted(Date until) {
+    for (PluginListItem item : getPluginListCopy()) {
+      if (item.getPlugin().isActivated()) {
+        final AbstractPluginProxy plugin = item.getPlugin();
+        try {
+          plugin.handleTvDataUpdateStarted(until);
+        }catch(Throwable t) {
+          /* Catch all possible not catched errors that occur in the plugin method*/
+          mLog.log(Level.WARNING, "A not catched error occured in 'handleTvDataUpdateStarted' of Plugin '" + plugin +"'.", t);
+        }
+      }
+    } 
   }
 
   private void runWithThreadPool(final ThreadPoolMethod threadPoolMethod) {

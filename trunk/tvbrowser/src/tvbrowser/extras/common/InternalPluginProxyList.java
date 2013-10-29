@@ -57,7 +57,7 @@ public class InternalPluginProxyList {
     TvDataUpdater.getInstance().addTvDataUpdateListener(new TvDataUpdateListener() {
 
       @Override
-      public void tvDataUpdateStarted() {
+      public void tvDataUpdateStarted(devplugin.Date until) {
       }
 
       @Override

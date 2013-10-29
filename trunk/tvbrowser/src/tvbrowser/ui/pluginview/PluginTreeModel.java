@@ -62,7 +62,7 @@ public class PluginTreeModel extends DefaultTreeModel {
         mDisableUpdate = false;
       }
 
-      public void tvDataUpdateStarted() {
+      public void tvDataUpdateStarted(devplugin.Date until) {
         mDisableUpdate = true;
       }
     });

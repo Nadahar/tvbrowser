@@ -246,7 +246,7 @@ public class FavoritesPlugin {
     });
 
     TvDataUpdater.getInstance().addTvDataUpdateListener(new TvDataUpdateListener() {
-      public void tvDataUpdateStarted() {
+      public void tvDataUpdateStarted(devplugin.Date until) {
         mHasRightToSave = false;
         mSendPluginsTable.clear();
 
