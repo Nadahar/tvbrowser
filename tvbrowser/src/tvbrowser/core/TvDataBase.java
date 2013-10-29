@@ -209,7 +209,7 @@ public class TvDataBase {
           if (isValidDate(date)) {
             if (!somethingChanged) {
               // This is the first changed day program -> fire update start
-              TvDataUpdater.getInstance().fireTvDataUpdateStarted();
+              TvDataUpdater.getInstance().fireTvDataUpdateStarted(Date.getCurrentDate().addDays(28));
             }
 
             // Inform the listeners

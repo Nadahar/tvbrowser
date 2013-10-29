@@ -56,6 +56,7 @@ import devplugin.AfterDataUpdateInfoPanel;
 import devplugin.Channel;
 import devplugin.ChannelDayProgram;
 import devplugin.ContextMenuAction;
+import devplugin.Date;
 import devplugin.ImportanceValue;
 import devplugin.Plugin;
 import devplugin.PluginCenterPanelWrapper;
@@ -673,9 +674,9 @@ public class JavaPluginProxy extends AbstractPluginProxy {
   }
 
   @Override
-  public void handleTvDataUpdateStarted() {
+  public void handleTvDataUpdateStarted(Date until) {
     if(mPlugin != null) {
-      mPlugin.handleTvDataUpdateStarted();
+      mPlugin.handleTvDataUpdateStarted(until);
     }
   }
 }

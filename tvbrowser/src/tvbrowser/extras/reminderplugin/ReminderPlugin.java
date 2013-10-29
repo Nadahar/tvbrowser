@@ -196,7 +196,7 @@ public class ReminderPlugin {
         new TvDataUpdateListener() {
           private boolean mCanCreateInfoPanel;
           
-          public void tvDataUpdateStarted() {
+          public void tvDataUpdateStarted(Date until) {
             mCanCreateInfoPanel = false;
             mHasRightToSave = false;
             mInfoCreationThread = new Thread() {

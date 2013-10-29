@@ -157,7 +157,7 @@ public class PluginTreeNode implements Comparable<PluginTreeNode> {
     final RemovedProgramsHandler removedProgramsHandler = new RemovedProgramsHandler();
 
     TvDataUpdater.getInstance().addTvDataUpdateListener(new TvDataUpdateListener() {
-      public void tvDataUpdateStarted() {
+      public void tvDataUpdateStarted(Date until) {
         removedProgramsHandler.clear();
       }
 

@@ -1027,8 +1027,18 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
   /**
    * Is called when a TV data update is started.
    * @since 3.2
+   * @deprecated since 3.3.3
+   * Use {@link #handleTvDataUpdateStarted(Date)} instead
    */
   public void handleTvDataUpdateStarted() {
     
+  }
+  
+  /**
+   * Is called when a TV data update is started.
+   * @since 3.3.3
+   */
+  public void handleTvDataUpdateStarted(Date until) {
+    handleTvDataUpdateStarted();
   }
 }
