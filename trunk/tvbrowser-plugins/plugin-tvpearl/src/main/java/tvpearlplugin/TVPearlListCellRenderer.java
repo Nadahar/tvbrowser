@@ -23,11 +23,38 @@ import java.awt.Component;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.UIManager;
 
 public class TVPearlListCellRenderer extends DefaultListCellRenderer {
   private static final long serialVersionUID = 1L;
 
-  private static final Color SECOND_ROW_COLOR = new Color(230, 230, 230);
+  private static Color SECOND_ROW_COLOR = null;
+  
+  public TVPearlListCellRenderer() {
+    if(SECOND_ROW_COLOR == null) {
+      Color background = UIManager.getDefaults().getColor("List.background");
+      
+      double test = (0.2126 * background.getRed()) + (0.7152 * background.getGreen()) + (0.0722 * background.getBlue());
+      
+      if(test < 20) {
+        background = background.brighter().brighter().brighter().brighter().brighter().brighter().brighter().brighter().brighter();
+      }
+      else if(test < 40) {
+        background = background.brighter().brighter().brighter();
+      }
+      else if(test < 80) {
+        background = background.brighter().brighter();
+      }
+      else if(test < 180) {
+        background = background.brighter();
+      }
+      else {
+        background = background.darker();
+      }
+      
+      SECOND_ROW_COLOR = background;
+    }
+  }
 
   public Component getListCellRendererComponent(final JList list, final Object value, final int index,
       final boolean isSelected, final boolean cellHasFocus) {

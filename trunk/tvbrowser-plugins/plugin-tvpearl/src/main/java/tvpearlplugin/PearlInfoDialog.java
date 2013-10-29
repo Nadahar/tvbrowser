@@ -33,6 +33,7 @@ import javax.swing.JDialog;
 import javax.swing.JEditorPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.UIManager;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
@@ -83,7 +84,7 @@ public final class PearlInfoDialog extends JDialog implements WindowClosingIf
 		main.setPreferredSize(new Dimension(500, 350));
 		setContentPane(main);
 
-		mInfoPane = new JEditorPane();
+		mInfoPane = UiUtilities.createHtmlHelpTextArea("",UIManager.getDefaults().getColor("List.background"));
 		mInfoPane.setEditorKit(new ExtendedHTMLEditorKit());
 		mInfoPane.setEditable(false);
 		mInfoPane.addHyperlinkListener(new HyperlinkListener()
@@ -102,6 +103,7 @@ public final class PearlInfoDialog extends JDialog implements WindowClosingIf
 		});
 		mScrollPane = new JScrollPane(mInfoPane);
 		main.add(mScrollPane, BorderLayout.CENTER);
+		mScrollPane.getViewport().setBackground(UIManager.getDefaults().getColor("List.background"));
 
 		final JPanel buttonPn = new JPanel(new FlowLayout(FlowLayout.TRAILING));
 		main.add(buttonPn, BorderLayout.SOUTH);
@@ -138,7 +140,8 @@ public final class PearlInfoDialog extends JDialog implements WindowClosingIf
 		{
 		  final ExtendedHTMLDocument doc = (ExtendedHTMLDocument) mInfoPane
           .getDocument();
-			mInfoPane.setText(createHtmlText(doc, mProgram));
+			//mInfoPane.setText(createHtmlText(doc, mProgram));
+			UiUtilities.updateHtmlHelpTextArea(mInfoPane, createHtmlText(doc, mProgram), UIManager.getDefaults().getColor("List.background"));
 			mScrollPane.getVerticalScrollBar().setValue(0);
 		}
 		toFront();

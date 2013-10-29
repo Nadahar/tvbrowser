@@ -17,7 +17,9 @@
  */
 package tvpearlplugin;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.Frame;
 import java.awt.Point;
 import java.awt.Window;
 import java.awt.datatransfer.Clipboard;
@@ -43,6 +45,8 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 import util.misc.StringPool;
 import util.paramhandler.ParamParser;
@@ -51,6 +55,8 @@ import util.ui.Localizer;
 import util.ui.UiUtilities;
 import devplugin.ActionMenu;
 import devplugin.ContextMenuAction;
+import devplugin.PluginCenterPanel;
+import devplugin.PluginCenterPanelWrapper;
 import devplugin.PluginInfo;
 import devplugin.PluginTreeNode;
 import devplugin.PluginsFilterComponent;
@@ -66,7 +72,7 @@ public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
 {
 
 	private static final boolean PLUGIN_IS_STABLE = true;
-  private static final Version PLUGIN_VERSION = new Version(0, 22, PLUGIN_IS_STABLE);
+  private static final Version PLUGIN_VERSION = new Version(0, 23, PLUGIN_IS_STABLE);
 
   private static final String TARGET_PEARL_COPY = "pearlCopy";
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer
@@ -89,6 +95,10 @@ public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
 
   private TVPearlSettings mSettings;
   private boolean mUpdating = false;
+  
+  private PluginCenterPanelWrapper mWrapper;
+  private JPanel mCenterPanelWrapper;
+  private PearlPanel mMangePanel;
 
 	public TVPearlPlugin()
 	{
@@ -130,7 +140,35 @@ public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
 	{
 		mTVPearls = new TVPearl();
 		mComposerFilter = new Vector<String>();
+		
+		SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        mCenterPanelWrapper = UiUtilities.createPersonaBackgroundPanel();
+        
+        mWrapper = new PluginCenterPanelWrapper() {
+          @Override
+          public PluginCenterPanel[] getCenterPanels() {
+            return new PluginCenterPanel[] {new PearlCenterPanel()};
+          }
+        };
+        
+        addCenterPanel();
+      }
+    });
 	}
+	
+  private void addCenterPanel() {
+    SwingUtilities.invokeLater(new Runnable() {
+      public void run() {
+        mMangePanel = new PearlPanel(null);
+        //Persona.getInstance().registerPersonaListener(mMangePanel);
+        
+        mCenterPanelWrapper.add(mMangePanel,BorderLayout.CENTER);
+        mCenterPanelWrapper.updateUI();
+      }
+    });    
+  }
 
 	public ActionMenu getButtonAction()
 	{
@@ -335,6 +373,10 @@ public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
 	void updateChanges()
 	{
 		mTVPearls.updateTVB();
+		
+		if(mMangePanel != null) {
+		  mMangePanel.updateProgramList();
+		}
 	}
 
 	ImageIcon getSmallIcon()
@@ -470,6 +512,9 @@ public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
       {
       	mDialog.updateProgramList();
       }
+      if (mMangePanel != null) {
+        mMangePanel.updateProgramList();
+      }
     } finally {
       mUpdating = false;
     }
@@ -477,7 +522,12 @@ public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
 
 	public void updateDialog()
 	{
-		mDialog.update();
+	  if(mDialog != null) {
+	    mDialog.update();
+	  }
+	  if(mMangePanel != null) {
+	    mMangePanel.update();
+	  }
 	}
 
 	@Override
@@ -640,4 +690,24 @@ public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
 	public static String poolString(String input) {
 		return StringPool.getString(input);
 	}
+	
+	public Frame getSuperFrame() {
+	  return getParentFrame();
+	}
+	
+  public PluginCenterPanelWrapper getPluginCenterPanelWrapper() {
+    return mWrapper;
+  }
+	
+  private class PearlCenterPanel extends PluginCenterPanel {
+    @Override
+    public String getName() {
+      return getInfo().getName();
+    }
+
+    @Override
+    public JPanel getPanel() {
+      return mCenterPanelWrapper;
+    }
+  }
 }
