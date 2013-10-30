@@ -17,6 +17,8 @@
  */
 package tvpearlplugin;
 
+import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -28,21 +30,25 @@ import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
+import javax.swing.JTextField;
 
 import tvbrowser.ui.mainframe.MainFrame;
 import util.ui.MarkPriorityComboBoxRenderer;
 import util.ui.PluginChooserDlg;
+import util.ui.PluginProgramConfigurationPanel;
 import util.ui.ScrollableJPanel;
 import util.ui.UiUtilities;
 
 import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.factories.CC;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.FormSpecs;
@@ -68,17 +74,29 @@ public final class TVPearlPluginSettingsTab implements SettingsTab
 	private JRadioButton mFilterShowNot;
 	private JTextArea mFilterComposer;
 	private JLabel mPluginLabel;
+	
+	private JTextField mUserName;
+	private JPasswordField mUserPassword;
 
 	private ProgramReceiveTarget[] mClientPluginTargets;
 
   private TVPearlSettings mSettings;
-
+  
+  private JTabbedPane mTabbedPane;
+  
+  private static int mSelectedPane;
+  
+  private PluginProgramConfigurationPanel mFormatingPanel;
+  
   public TVPearlPluginSettingsTab(final TVPearlSettings settings) {
     mSettings = settings;
+    mSelectedPane = 0;
   }
 
 	public JPanel createSettingsPanel()
 	{
+	  mTabbedPane = new JTabbedPane();
+	  
 	  final FormLayout layout = new FormLayout(
         "5dlu, pref, 3dlu, fill:pref:grow, 5dlu",
         "5dlu");
@@ -86,7 +104,7 @@ public final class TVPearlPluginSettingsTab implements SettingsTab
 	  final PanelBuilder builder = new PanelBuilder(layout,
         new ScrollableJPanel());
 		// builder.setDefaultDialogBorder();
-		builder.setBorder(null);
+		//builder.setBorder(null);
 
 		final CellConstraints cc = new CellConstraints();
 
@@ -131,14 +149,9 @@ public final class TVPearlPluginSettingsTab implements SettingsTab
 				{
 				  final Window w = UiUtilities.getLastModalChildOf(MainFrame
               .getInstance());
-          PluginChooserDlg chooser = null;
-          if (w instanceof JDialog) {
-            chooser = new PluginChooserDlg((JDialog) w, mClientPluginTargets,
-                null, TVPearlPlugin.getInstance());
-          } else {
-            chooser = new PluginChooserDlg((JFrame) w, mClientPluginTargets,
-                null, TVPearlPlugin.getInstance());
-          }
+				  
+          PluginChooserDlg chooser = new PluginChooserDlg(w, mClientPluginTargets, null, TVPearlPlugin.getInstance(), null);
+          
 					chooser.setVisible(true);
 
 					if (chooser.getReceiveTargets() != null)
@@ -231,15 +244,48 @@ public final class TVPearlPluginSettingsTab implements SettingsTab
 		builder.nextRow(2);
 
 		final JScrollPane scrollPane = new JScrollPane(builder.getPanel());
-		scrollPane.setBorder(null);
+		scrollPane.setBorder(Borders.DIALOG);
 		scrollPane.setViewportBorder(null);
-
-		final JPanel scrollPanel = new JPanel(new FormLayout("default:grow",
-        "default"));
-		scrollPanel.setBorder(null);
-		scrollPanel.add(scrollPane, cc.xy(1, 1));
-
-		return scrollPanel;
+		
+		mTabbedPane.addTab(mLocalizer.msg("tabPearlDisplay", "TV Pearl Display"), scrollPane);
+		
+		JPanel tabPanel = new JPanel(new BorderLayout());
+		tabPanel.setBorder(Borders.createEmptyBorder("5dlu,5dlu,0dlu,5dlu"));
+		
+		tabPanel.add(mTabbedPane, BorderLayout.CENTER);
+		
+		PanelBuilder creationPanel = new PanelBuilder(new FormLayout("5dlu,default,3dlu,min:grow",
+		    "5dlu,default,3dlu,default,default,10dlu,default,5dlu,fill:150dlu:grow"));
+		
+		
+		mUserName = new JTextField(mSettings.getForumUserName());
+		mUserPassword = new JPasswordField(mSettings.getForumPassword());
+		
+		mFormatingPanel = new PluginProgramConfigurationPanel(TVPearlPlugin.getInstance().getSelectedPluginProgramFormatings(), TVPearlPlugin.getInstance().getAvailableLocalPluginProgramFormatings(), null,false,false);
+		
+		int y = 2;
+		
+		creationPanel.addLabel(mLocalizer.msg("forumUser","Message board user name:"), CC.xy(2, y));
+		creationPanel.add(mUserName, CC.xy(4, y++));
+    creationPanel.addLabel(mLocalizer.msg("forumPassword","Message board user password:"), CC.xy(2, ++y));
+    creationPanel.add(mUserPassword, CC.xy(4, y++));
+    creationPanel.add(UiUtilities.createHtmlHelpTextArea(mLocalizer.msg("forumPasswortWarning", "Not suggested to store it, because it is saved in plain text")), CC.xy(4, y++));
+    creationPanel.addSeparator(mLocalizer.msg("formatings","Program formatings"), CC.xyw(1,++y,4));
+    
+    y++;
+    
+    creationPanel.add(mFormatingPanel, cc.xyw(2,++y,3));
+    creationPanel.getPanel().setPreferredSize(new Dimension(200, 200));
+    
+    final JScrollPane scrollPane2 = new JScrollPane(creationPanel.getPanel());
+    scrollPane2.setBorder(Borders.DIALOG);
+    scrollPane2.setViewportBorder(null);
+    scrollPane2.setPreferredSize(new Dimension(200, 200));
+    
+		mTabbedPane.addTab(mLocalizer.msg("tabPearlCreation", "TV Pearl Creation"), scrollPane2);
+		mTabbedPane.setSelectedIndex(mSelectedPane);
+		
+		return tabPanel;
 	}
 
   private void addSeparator(final PanelBuilder builder, final String label) {
@@ -265,9 +311,12 @@ public final class TVPearlPluginSettingsTab implements SettingsTab
 	{
 		return null;
 	}
+	
+	
 
 	public void saveSettings()
 	{
+	  mSelectedPane = mTabbedPane.getSelectedIndex();
 		mSettings.setUpdatePearlsAfterStart(mUpdateAtStart.isSelected());
     mSettings.setUpdatePearlsAfterDataUpdate(mUpdateAfterUpdateFinished
         .isSelected());
@@ -291,6 +340,9 @@ public final class TVPearlPluginSettingsTab implements SettingsTab
       mSettings.setFilterExcluding();
     }
 		
+    mSettings.setForumUserName(mUserName.getText());
+    mSettings.setForumUserPassword(new String(mUserPassword.getPassword()));
+    
 		TVPearlPlugin.getInstance().setClientPluginsTargets(mClientPluginTargets);
 		
 		final Vector<String> composers = new Vector<String>();
@@ -304,6 +356,9 @@ public final class TVPearlPluginSettingsTab implements SettingsTab
 		}
 		TVPearlPlugin.getInstance().setComposers(composers);
 
+		TVPearlPlugin.getInstance().setAvailableLocalPluginProgramFormatings(mFormatingPanel.getAvailableLocalPluginProgramFormatings());
+		TVPearlPlugin.getInstance().setSelectedPluginProgramFormatings(mFormatingPanel.getSelectedPluginProgramFormatings());
+		
 		TVPearlPlugin.getInstance().updateChanges();
 	}
 

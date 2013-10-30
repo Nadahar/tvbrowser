@@ -39,6 +39,8 @@ public class TVPearlSettings {
   private static final String KEY_SHOW_ENABLE_FILTER = "ShowEnableFilter";
   private static final String KEY_UPDATE_MANUAL = "UpdateManual";
   private static final String KEY_SHOW_FILTER = "ShowFilter";
+  private static final String KEY_FORUM_USER_NAME = "ForumUserName";
+  private static final String KEY_FORUM_USER_PASSWORD = "ForumUserPassword";
   private static final String DEFAULT_URL = "http://hilfe.tvbrowser.org/viewtopic.php?t=1470";
   
   private final static int SHOW_ALL_PEARLS = 1;
@@ -251,5 +253,21 @@ public class TVPearlSettings {
 
   public void setFilterExcluding() {
     setPropertyShowFilter(FILTER_EXCLUDING);
+  }
+  
+  public void setForumUserName(String userName) {
+    mProperties.setProperty(KEY_FORUM_USER_NAME, userName);
+  }
+  
+  public void setForumUserPassword(String userPassword) {
+    mProperties.setProperty(KEY_FORUM_USER_PASSWORD, userPassword);
+  }
+
+  public String getForumUserName() {
+    return mProperties.getProperty(KEY_FORUM_USER_NAME, "");
+  }
+  
+  public String getForumPassword() {
+    return mProperties.getProperty(KEY_FORUM_USER_PASSWORD, "");
   }
 }
