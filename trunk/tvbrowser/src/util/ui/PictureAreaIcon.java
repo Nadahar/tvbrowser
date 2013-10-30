@@ -26,12 +26,13 @@ import java.awt.image.FilteredImageSource;
 import java.awt.image.ImageFilter;
 import java.awt.image.RGBImageFilter;
 
-import javax.swing.GrayFilter;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.UIManager;
 
 import org.apache.commons.lang3.StringUtils;
+
+import com.l2fprod.util.ColorFillFilter;
 
 import tvbrowser.core.Settings;
 import devplugin.Program;
@@ -175,7 +176,7 @@ public class PictureAreaIcon implements Icon {
     x += 3;
 
     if(mIsGrayFilter && !mIsExpired && mProgram.isExpired()) {
-      ImageFilter filter = new GrayFilter(true, 60);
+      ImageFilter filter = new ColorFillFilter(new Color(70,70,70));
       mScaledIcon.setImage(c.createImage(new FilteredImageSource(mScaledIcon.getImage().getSource(),filter)));
       mIsExpired = true;
     }
