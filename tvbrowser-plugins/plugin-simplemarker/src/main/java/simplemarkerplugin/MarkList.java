@@ -291,7 +291,7 @@ public class MarkList extends Vector<Program> {
               }
               createNodes(mRootNode, true);
               SimpleMarkerPlugin.getInstance().refreshManageDialog(false);
-              SimpleMarkerPlugin.getInstance().save();
+              SimpleMarkerPlugin.getInstance().save(false);
             }
           });
         } catch (InterruptedException e1) {

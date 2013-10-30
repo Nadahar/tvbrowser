@@ -21,7 +21,6 @@
  */
 package simplemarkerplugin;
 
-import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
@@ -241,7 +240,7 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
     }
 
     SimpleMarkerPlugin.getInstance().setMarkLists(mMarkLists.toArray(new MarkList[mMarkLists.size()]));
-    SimpleMarkerPlugin.getInstance().save();
+    SimpleMarkerPlugin.getInstance().save(true);
   }
 
   public Icon getIcon() {

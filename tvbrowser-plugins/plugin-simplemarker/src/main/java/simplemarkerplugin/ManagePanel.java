@@ -108,6 +108,7 @@ public class ManagePanel extends JPanel implements PersonaListener {
   private JSplitPane mSplitPane;
   
   private JComboBox mFilterSelection;
+  private JLabel mFilterLabel;
 
   /**
    * Creates an instance of this panel.
@@ -190,7 +191,9 @@ public class ManagePanel extends JPanel implements PersonaListener {
     JPanel rightComponent = new JPanel(new FormLayout("default,3dlu,default:grow","default,5dlu,fill:default:grow"));
     rightComponent.setOpaque(false);
 
-    rightComponent.add(new JLabel(SimpleMarkerPlugin.getLocalizer().msg("filter", "Filter:")), CC.xy(1,1));
+    mFilterLabel = new JLabel(SimpleMarkerPlugin.getLocalizer().msg("filter", "Filter:"));
+    
+    rightComponent.add(mFilterLabel, CC.xy(1,1));
     rightComponent.add(mFilterSelection, CC.xy(3, 1));
     rightComponent.add(mProgramsScrollPane, CC.xyw(1, 3, 3));
     
@@ -284,6 +287,7 @@ public class ManagePanel extends JPanel implements PersonaListener {
     });
 
     mMarkListsList.setSelectedIndex(0);
+    
     selectPrograms(true);
     
     updatePersona();
@@ -389,21 +393,23 @@ public class ManagePanel extends JPanel implements PersonaListener {
   synchronized void selectPrograms(boolean scroll) {
     mProgramsList.clearSelection();
     mProgramListModel.clear();
-
+    
     mProgramListModel = new DefaultListModel();
     
     MarkList list = (MarkList)mMarkListsList.getSelectedValue();
     int index = -1;
-
+    int added = 0;
+    
     if (mShowPrograms.isSelected()) {
       for (int i = 0; i < list.size(); i++) {
         Program prog = list.get(i);
 
         if(prog != null && ((ProgramFilter)mFilterSelection.getSelectedItem()).accept(prog)) {
           mProgramListModel.addElement(prog);
-
+          added++;
+          
           if(!list.get(i).isExpired() && index == -1) {
-            index = i;
+            index = added;
           }
         }
       }
@@ -609,9 +615,12 @@ public class ManagePanel extends JPanel implements PersonaListener {
   @Override
   public void updatePersona() {
     if(Persona.getInstance().getHeaderImage() != null) {
-      mShowPrograms.setForeground(Persona.getInstance().getTextColor());    }
+      mFilterLabel.setForeground(Persona.getInstance().getTextColor());
+      mShowPrograms.setForeground(Persona.getInstance().getTextColor());    
+    }
     else {
       mShowPrograms.setForeground(UIManager.getColor("Label.foreground"));
+      mFilterLabel.setForeground(UIManager.getColor("Label.foreground"));
     }
     
     mShowTitles.setForeground(mShowPrograms.getForeground());
