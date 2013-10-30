@@ -83,7 +83,7 @@ public class MarkListTableModel extends DefaultTableModel implements Serializabl
   }
 
   @Override
-  public Object getValueAt(int row, int column) {
+  public Object getValueAt(int row, int column) {System.out.println("x " + row + " " + column);
     if (row < 0 || row > mLists.size()) {
       return null;
     }

@@ -81,7 +81,7 @@ import devplugin.Version;
  * @author René Mach
  */
 public class SimpleMarkerPlugin extends Plugin {
-  private static final Version mVersion = new Version(3,23,3,true);
+  private static final Version mVersion = new Version(3,23,4,true);
 
   /** The localizer for this class. */
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(SimpleMarkerPlugin.class);
@@ -133,7 +133,7 @@ public class SimpleMarkerPlugin extends Plugin {
   public void onActivation() {
     mInfoCounter = 1;
     mMarkListVector = new MarkListsVector();
-    updateTree();
+    updateTree(true);
     
     SwingUtilities.invokeLater(new Runnable() {
       @Override
@@ -279,7 +279,7 @@ public class SimpleMarkerPlugin extends Plugin {
       }
     }
     targetList.updateNode();
-    save();
+    save(false);
 
     return true;
   }
@@ -384,7 +384,7 @@ public class SimpleMarkerPlugin extends Plugin {
     }
 
     mHasRightToUpdate = true;
-    updateTree();
+    updateTree(true);
     if (mHasToUpdate) {
       handleTvDataUpdateFinished();
     }
@@ -452,11 +452,15 @@ public class SimpleMarkerPlugin extends Plugin {
     node.addActionMenu(new ActionMenu(mLocalizer
         .msg("grouping.grouping", "Grouping"), groupActions));
   }
+  
+  protected void updateTree() {
+    updateTree(false);
+  }
 
   /**
    * Updates the plugin tree.
    */
-  protected void updateTree() {
+  protected void updateTree(boolean scroll) {
     if (!mStartFinished) {
       return;
     }
@@ -489,7 +493,7 @@ public class SimpleMarkerPlugin extends Plugin {
     root.update();
     
     if(mMangePanel != null) {
-      mMangePanel.selectPrograms(false);
+      mMangePanel.selectPrograms(scroll);
     }
   }
 
@@ -513,7 +517,7 @@ public class SimpleMarkerPlugin extends Plugin {
 
     }
     updateTree();
-    save();
+    save(false);
   }
 
   protected MarkList[] getMarkLists() {
@@ -601,8 +605,10 @@ public class SimpleMarkerPlugin extends Plugin {
     return mSettings;
   }
 
-  protected void save() {
-    updateCenterPanel();
+  protected void save(boolean updateCenterPanel) {
+    if(updateCenterPanel) {
+      updateCenterPanel();
+    }
     
     if(mMangePanel != null) {
       mMangePanel.selectPrograms(false);
@@ -713,7 +719,7 @@ public class SimpleMarkerPlugin extends Plugin {
             sleep(2000);
           } catch (InterruptedException e) {
           }
-          System.out.println("nbnnn");
+          
           mInfoPanel = null;
           mInfoCounter = 1;
         }
