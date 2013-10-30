@@ -26,6 +26,7 @@ import tvbrowser.core.filters.filtercomponents.ChannelFilterComponent;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.ui.filter.dlgs.EditFilterComponentDlg;
 import tvbrowser.ui.mainframe.MainFrame;
+import devplugin.FilterChangeListener;
 import devplugin.FilterManager;
 import devplugin.PluginsProgramFilter;
 import devplugin.ProgramFilter;
@@ -101,10 +102,11 @@ public class FilterManagerImpl implements FilterManager {
    * @param filter The filter to add.
    * @return True if the filter could be added.
    */
-  public boolean addFilter(PluginsProgramFilter filter) {
+  public boolean addFilter(PluginsProgramFilter filter) {System.out.println("ccc c " + filter);
     if(FilterList.getInstance().getFilterByName(filter.getName()) == null) {
       FilterList.getInstance().addProgramFilter(filter);
       MainFrame.getInstance().updateFilterMenu();
+      
       return true;
     }
       
@@ -124,6 +126,7 @@ public class FilterManagerImpl implements FilterManager {
       FilterList.getInstance().remove(filter);
       FilterList.getInstance().store();
       MainFrame.getInstance().updateFilterMenu();
+      
       return true;
     }
       
@@ -179,5 +182,15 @@ public class FilterManagerImpl implements FilterManager {
     FilterComponentList.getInstance().store();
     
     return rule.getName();
+  }
+  
+  @Override
+  public void registerFilterChangeListener(FilterChangeListener listener) {
+    FilterList.getInstance().getFilterTreeModel().registerFilterChangeListener(listener);
+  }
+
+  @Override
+  public void unregisterFilterChangeListener(FilterChangeListener listener) {
+    FilterList.getInstance().getFilterTreeModel().unregisterFilterChangeListener(listener);
   }
 }

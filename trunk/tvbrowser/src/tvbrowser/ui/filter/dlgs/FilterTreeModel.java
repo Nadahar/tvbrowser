@@ -26,6 +26,7 @@ package tvbrowser.ui.filter.dlgs;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.Enumeration;
 
 import javax.swing.JMenu;
@@ -35,6 +36,7 @@ import javax.swing.tree.TreePath;
 
 import org.apache.commons.lang3.StringUtils;
 
+import devplugin.FilterChangeListener;
 import devplugin.PluginAccess;
 import devplugin.PluginsProgramFilter;
 import devplugin.ProgramFilter;
@@ -46,9 +48,12 @@ public class FilterTreeModel extends DefaultTreeModel {
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(FilterTreeModel.class);
   private static FilterTreeModel mInstance;
   
+  private static ArrayList<FilterChangeListener> CHANGE_LISTENER_LIST;
+  
   public FilterTreeModel(TreeNode root) {
     super(root,true);
-    // TODO Auto-generated constructor stub
+    
+    CHANGE_LISTENER_LIST = new ArrayList<FilterChangeListener>(0);
   }
 
   public static FilterTreeModel initInstance(ProgramFilter[] filterArr) {
@@ -127,6 +132,7 @@ public class FilterTreeModel extends DefaultTreeModel {
         } else if(child.containsFilter() || child.containsSeparator()) {
           if(child.contains(filter) && child.isDeletingAllowed()) {
             node.remove(child);
+            fireFilterRemoved(filter);
           }
         }
       }
@@ -161,6 +167,8 @@ public class FilterTreeModel extends DefaultTreeModel {
         parent = (FilterNode) getRoot();
       }
       FilterNode newNode = parent.addFilter(filter);
+      System.out.println(filter);
+      fireFilterAdded(filter);
       if(tree != null) {
         reload(tree,parent);
       }
@@ -250,5 +258,31 @@ public class FilterTreeModel extends DefaultTreeModel {
     } else {
       tree.collapsePath(new TreePath((tree.getModel()).getPathToRoot(node)));
     }
+  }
+  
+  void fireFilterAdded(ProgramFilter filter) {
+    for(FilterChangeListener listener : CHANGE_LISTENER_LIST) {
+      listener.filterAdded(filter);
+    }
+  }
+
+  void fireFilterRemoved(ProgramFilter filter) {
+    for(FilterChangeListener listener : CHANGE_LISTENER_LIST) {
+      listener.filterRemoved(filter);
+    }
+  }
+  
+  void fireFilterTouched(ProgramFilter filter) {
+    for(FilterChangeListener listener : CHANGE_LISTENER_LIST) {
+      listener.filterTouched(filter);
+    }
+  }
+  
+  public void registerFilterChangeListener(FilterChangeListener listener) {
+    CHANGE_LISTENER_LIST.add(listener);
+  }
+  
+  public void unregisterFilterChangeListener(FilterChangeListener listener) {
+    CHANGE_LISTENER_LIST.remove(listener);
   }
 }

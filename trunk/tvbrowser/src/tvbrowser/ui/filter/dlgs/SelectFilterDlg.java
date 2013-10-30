@@ -290,7 +290,10 @@ public class SelectFilterDlg extends JDialog implements ActionListener, WindowCl
   }
   
   void editSelectedFilter(FilterNode node) {
-    new EditFilterDlg(this, FilterList.getInstance(), (UserFilter)node.getFilter());
+    UserFilter filter = (UserFilter)node.getFilter();
+    new EditFilterDlg(this, FilterList.getInstance(), filter);
+    
+    mFilterTree.getModel().fireFilterTouched(filter);
     mFilterTree.updateUI();
     updateBtns();
   }
@@ -315,8 +318,14 @@ public class SelectFilterDlg extends JDialog implements ActionListener, WindowCl
           MainFrame.getInstance().setProgramFilter(FilterManagerImpl.getInstance().getAllFilter());
         }
         
+        ProgramFilter[] filters = node.getAllFilters();
+        
         mFilterTree.getModel().removeNodeFromParent(node);
         mFilterTree.updateUI();
+        
+        for(ProgramFilter filter : filters) {
+          mFilterTree.getModel().fireFilterRemoved(filter);
+        }
         //TODO
       }
       else if(node.getUserObject() instanceof String) {
@@ -346,6 +355,8 @@ public class SelectFilterDlg extends JDialog implements ActionListener, WindowCl
       } else {
         ((FilterNode)parent.getParent()).insert(node,parent.getParent().getIndex(parent));
       }
+      
+      mFilterTree.getModel().fireFilterAdded(filter);
       
       mFilterTree.reload((FilterNode)node.getParent());
       mFilterTree.setSelectionRows(rows);
