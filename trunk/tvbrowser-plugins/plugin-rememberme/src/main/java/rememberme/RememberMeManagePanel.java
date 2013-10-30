@@ -590,9 +590,11 @@ public class RememberMeManagePanel extends JPanel implements PersonaListener {
     if(mFilterLabel != null) {
       if(Persona.getInstance().getHeaderImage() != null) {
         mFilterLabel.setForeground(Persona.getInstance().getTextColor());
+        mTagLabel.setForeground(Persona.getInstance().getTextColor());
       }
       else {
         mFilterLabel.setForeground(UIManager.getDefaults().getColor("Label.foreground"));
+        mTagLabel.setForeground(UIManager.getDefaults().getColor("Label.foreground"));
       }
     }
   }
