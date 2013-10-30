@@ -43,6 +43,7 @@ import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 import javax.swing.event.MenuEvent;
@@ -59,6 +60,7 @@ import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.extras.common.InternalPluginProxyIf;
 import tvbrowser.extras.common.InternalPluginProxyList;
+import tvbrowser.ui.DontShowAgainOptionBox;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvdataservice.MarkedProgramsList;
 import util.io.IOUtilities;
@@ -219,7 +221,13 @@ public class SystemTray {
           if (Settings.propOnlyMinimizeWhenWindowClosing.getBoolean()) {
             toggleShowHide();
           } else {
-            MainFrame.getInstance().quit();
+            if(DontShowAgainOptionBox.showOptionDialog("minimizeToTrayClickQuestion", UiUtilities.getLastModalChildOf(MainFrame.getInstance()), mLocalizer.msg("minimizeToTray","Should TV-Browser be closed in future on click instead of beeing mimimized to tray?"),mLocalizer.msg("minimizeToTrayTitle","Close TV-Browser?"), JOptionPane.QUESTION_MESSAGE, JOptionPane.YES_NO_OPTION, null, null, null) == JOptionPane.NO_OPTION) {
+              Settings.propOnlyMinimizeWhenWindowClosing.setBoolean(true);
+              toggleShowHide();
+            }
+            else {
+              MainFrame.getInstance().quit();
+            }
           }
         }
 
