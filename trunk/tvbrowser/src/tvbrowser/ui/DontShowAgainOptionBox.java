@@ -75,7 +75,7 @@ public class DontShowAgainOptionBox {
 
     int result = JOptionPane.showOptionDialog(parent, shownObjects, title, optionType, messageType, null, options, initialValue);
 
-    if (result == JOptionPane.YES_OPTION && askAgain.isSelected()) {
+    if (askAgain.isSelected()) {
       Settings.propHiddenMessageBoxes.addItem(messageBoxId);
     }
 
