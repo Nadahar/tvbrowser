@@ -114,7 +114,8 @@ public class TVPearl {
           try {
             SwingUtilities.invokeAndWait(new Runnable() {
               public void run() {
-                updateTVB();
+                //updateTVB();
+                TVPearlPlugin.getInstance().updateChanges();
               }
             });
           } catch (InterruptedException e) {
@@ -286,11 +287,9 @@ public class TVPearl {
     }
   }
 
-  public void readData(final ObjectInputStream in) throws IOException, ClassNotFoundException {
+  public void readData(final ObjectInputStream in, final int version) throws IOException, ClassNotFoundException {
     final Calendar limit = getViewLimit();
-
-    final int version = in.readInt();
-
+    
     if (version == 1 || version == 2) {
       mLastUpdate = Calendar.getInstance();
       mLastUpdate.setTime((Date) in.readObject());
@@ -317,7 +316,7 @@ public class TVPearl {
       if (version == 2) {
         TVPearlPlugin.getInstance().setComposers((Vector<String>) in.readObject());
       }
-    } else if (version == 3) {
+    } else if (version >= 3) {
       mLastUpdate = Calendar.getInstance();
       mLastUpdate.setTime((Date) in.readObject());
 
@@ -363,7 +362,6 @@ public class TVPearl {
   }
 
   public void writeData(final ObjectOutputStream out) throws IOException {
-    out.writeInt(3); // version
     out.writeObject(mLastUpdate.getTime());
     out.writeInt(mProgramList.size());
     for (TVPProgram program : mProgramList) {

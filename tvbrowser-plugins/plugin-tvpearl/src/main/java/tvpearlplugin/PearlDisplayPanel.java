@@ -1,3 +1,25 @@
+/*
+ * TV-Pearl improvement by René Mach
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ * 
+ * SVN information:
+ *     $Date$
+ *   $Author$
+ * $Revision$
+ */
 package tvpearlplugin;
 
 import java.awt.BorderLayout;
@@ -41,7 +63,7 @@ import devplugin.Plugin;
 import devplugin.PluginManager;
 import devplugin.Program;
 
-public class PearlPanel extends JPanel {
+public class PearlDisplayPanel extends JPanel {
   private static final Localizer mLocalizer = PearlDialog.mLocalizer;
   
   private JScrollPane mScrollPane;
@@ -51,7 +73,7 @@ public class PearlPanel extends JPanel {
   private JButton mUpdateBn;
   private DefaultListModel mProgramList;
   
-  public PearlPanel(PearlDialog dialog) {
+  public PearlDisplayPanel(PearlDialog dialog) {
     createGUI(dialog);
   }
   
@@ -191,7 +213,7 @@ public class PearlPanel extends JPanel {
         }
       }
     });
-
+    
     mScrollPane = new JScrollPane(mDataList);
     add(mScrollPane, BorderLayout.CENTER);
 
@@ -380,6 +402,7 @@ public class PearlPanel extends JPanel {
     int index = -1;
 
     mProgramList.clear();
+    
     for (TVPProgram item : TVPearlPlugin.getInstance().getProgramList())
     {
       mProgramList.addElement(item);
@@ -399,6 +422,7 @@ public class PearlPanel extends JPanel {
     }
     mDataList.revalidate();
     mDataList.repaint();
+    
     if (mProgramList.getSize() > 0)
     {
       mDataList.setSelectedIndex(0);

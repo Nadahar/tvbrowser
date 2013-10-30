@@ -50,11 +50,13 @@ import javax.swing.SwingUtilities;
 
 import util.misc.StringPool;
 import util.paramhandler.ParamParser;
+import util.program.AbstractPluginProgramFormating;
 import util.program.LocalPluginProgramFormating;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 import devplugin.ActionMenu;
 import devplugin.ContextMenuAction;
+import devplugin.Plugin;
 import devplugin.PluginCenterPanel;
 import devplugin.PluginCenterPanelWrapper;
 import devplugin.PluginInfo;
@@ -72,7 +74,7 @@ public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
 {
 
 	private static final boolean PLUGIN_IS_STABLE = true;
-  private static final Version PLUGIN_VERSION = new Version(0, 23, PLUGIN_IS_STABLE);
+  private static final Version PLUGIN_VERSION = new Version(0, 24, PLUGIN_IS_STABLE);
 
   private static final String TARGET_PEARL_COPY = "pearlCopy";
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer
@@ -96,14 +98,31 @@ public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
   private TVPearlSettings mSettings;
   private boolean mUpdating = false;
   
-  private PluginCenterPanelWrapper mWrapper;
-  private JPanel mCenterPanelWrapper;
-  private PearlPanel mMangePanel;
+  private PluginCenterPanelWrapper mDisplayWrapper;
+  private JPanel mCenterPanelDisplayWrapper;
+  private PearlDisplayPanel mMangePanel;
+  private PearlCreationJPanel mPearlCreationPanel;
+  
+  private JPanel mCenterPanelCreationWrappper;
 
+  private AbstractPluginProgramFormating[] mConfigs = null;
+  private LocalPluginProgramFormating[] mLocalFormatings = null;
+  
+  private PearlCreationTableModel mCreationTableModel = null;
+  
+  private static final LocalPluginProgramFormating DEFAULT_FORMAT = new LocalPluginProgramFormating(
+      mLocalizer.msg("name", "TV Pearl"),
+      "{title}",
+      "{start_day_of_week}, {start_day}. {start_month_name}, {leadingZero(start_hour,\"2\")}:{leadingZero(start_minute,\"2\")}, {channel_name}\n{title}\n\n{genre}",
+      "UTF-8");
+  
 	public TVPearlPlugin()
 	{
+	  mCreationTableModel = new PearlCreationTableModel();
 		mInstance = this;
 		mClientPluginTargets = new ProgramReceiveTarget[0];
+		setAvailableLocalPluginProgramFormatings(null);
+		setSelectedPluginProgramFormatings(null);
 	}
 
 	public static TVPearlPlugin getInstance()
@@ -144,12 +163,13 @@ public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
 		SwingUtilities.invokeLater(new Runnable() {
       @Override
       public void run() {
-        mCenterPanelWrapper = UiUtilities.createPersonaBackgroundPanel();
+        mCenterPanelDisplayWrapper = UiUtilities.createPersonaBackgroundPanel();
+        mCenterPanelCreationWrappper = UiUtilities.createPersonaBackgroundPanel();
         
-        mWrapper = new PluginCenterPanelWrapper() {
+        mDisplayWrapper = new PluginCenterPanelWrapper() {
           @Override
           public PluginCenterPanel[] getCenterPanels() {
-            return new PluginCenterPanel[] {new PearlCenterPanel()};
+            return new PluginCenterPanel[] {new PearlCenterPanel(),new PearlCreationPanel()};
           }
         };
         
@@ -160,12 +180,17 @@ public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
 	
   private void addCenterPanel() {
     SwingUtilities.invokeLater(new Runnable() {
-      public void run() {
-        mMangePanel = new PearlPanel(null);
+      public void run() {try {
+        mMangePanel = new PearlDisplayPanel(null);
+        mPearlCreationPanel = new PearlCreationJPanel(mCreationTableModel,mSettings);
         //Persona.getInstance().registerPersonaListener(mMangePanel);
         
-        mCenterPanelWrapper.add(mMangePanel,BorderLayout.CENTER);
-        mCenterPanelWrapper.updateUI();
+        mCenterPanelDisplayWrapper.add(mMangePanel,BorderLayout.CENTER);
+        mCenterPanelDisplayWrapper.updateUI();
+        
+        mCenterPanelCreationWrappper.add(mPearlCreationPanel, BorderLayout.CENTER);
+        mCenterPanelCreationWrappper.updateUI();
+      }catch(Throwable t) {t.printStackTrace();}
       }
     });    
   }
@@ -259,7 +284,7 @@ public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
 	{
 	  final TVPProgram p = getPearl(program);
 
-		if (p != null || program.getID() == null)
+		if (p != null)
 		{
 		  final ContextMenuAction menu = new ContextMenuAction();
 			menu.setText(mLocalizer.msg("comment", "TV Pearl comment"));
@@ -275,10 +300,47 @@ public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
 
 			return new ActionMenu(menu);
 		}
-		else
-		{
-			return null;
+		else if(program != null && ((!program.isExpired() && !program.isOnAir()) || program.getID() == null)) {
+		  final AbstractPluginProgramFormating[] selected = getSelectedPluginProgramFormatings();
+		  
+		  if(selected.length == 1) {
+		    final ContextMenuAction menu = new ContextMenuAction();
+	      menu.setText(mLocalizer.msg("context.single", "Create new TV pearl as '{0}'", selected[0].getName()));
+	      menu.setSmallIcon(getSmallIcon());
+	      menu.setActionListener(new ActionListener() {
+          @Override
+          public void actionPerformed(ActionEvent e) {
+            mCreationTableModel.addRowSorted(new TVPearlCreation(program, selected[0]));
+          }
+        });
+	      
+	      return new ActionMenu(menu);
+		  }
+		  else {
+		    final ContextMenuAction menu = new ContextMenuAction();
+        menu.setText(mLocalizer.msg("context.multiple", "Create new TV pearl"));
+        menu.setSmallIcon(getSmallIcon());
+       
+        Action[] subMenu = new Action[selected.length];
+        
+        for(int i = 0; i < selected.length; i++) {
+          final AbstractPluginProgramFormating formating = selected[i];
+          
+          AbstractAction action = new AbstractAction(formating.getName()) {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+              mCreationTableModel.addRowSorted(new TVPearlCreation(program, formating));
+            }
+          };
+          
+          subMenu[i] = action;
+        }
+        
+        return new ActionMenu(mLocalizer.msg("context.multiple", "Create new TV pearl"), getSmallIcon(), subMenu);
+		  }
 		}
+		
+		return null;
 	}
 
 	public Icon[] getMarkIconsForProgram(final Program p)
@@ -326,12 +388,143 @@ public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
 	public void readData(final ObjectInputStream in) throws IOException,
       ClassNotFoundException
 	{
-		mTVPearls.readData(in);
+	  int version = in.readInt();
+	  
+		mTVPearls.readData(in, version);
+		
+		if(version >= 4) {
+		  int count = in.readInt();
+
+      ArrayList<AbstractPluginProgramFormating> list = new ArrayList<AbstractPluginProgramFormating>(count);
+
+      for(int i = 0; i < count; i++) {
+        AbstractPluginProgramFormating value = AbstractPluginProgramFormating.readData(in);
+
+        if(value != null) {
+          list.add(value);
+        }
+      }
+
+      mConfigs = list.toArray(new AbstractPluginProgramFormating[Math.min(count,list.size())]);
+
+      count = in.readInt();
+      ArrayList<LocalPluginProgramFormating> listLocal = new ArrayList<LocalPluginProgramFormating>(count);
+
+      for(int i = 0; i < count; i++) {
+        LocalPluginProgramFormating value = (LocalPluginProgramFormating) AbstractPluginProgramFormating.readData(in);
+
+        if(value != null) {
+          LocalPluginProgramFormating loadedInstance = getInstanceOfFormatingFromSelected(value);
+          if (loadedInstance != null) {
+            listLocal.add(loadedInstance);
+          }
+          else {
+            listLocal.add(value);
+          }
+        }
+      }
+      mLocalFormatings = listLocal.toArray(new LocalPluginProgramFormating[Math.min(count,list.size())]);
+		}
+		
+		if(mConfigs.length == 0) {
+		  mConfigs = Plugin.getPluginManager().getAvailableGlobalPuginProgramFormatings();
+		}
 	}
+	
+  public boolean canReceiveProgramsWithTarget() {
+    return true;
+  }
+
+  public ProgramReceiveTarget[] getProgramReceiveTargets() {
+    ArrayList<ProgramReceiveTarget> list = new ArrayList<ProgramReceiveTarget>();
+    
+    for(AbstractPluginProgramFormating selected : getSelectedPluginProgramFormatings()) {
+      if(selected != null && selected.isValid()) {
+        list.add(new ProgramReceiveTarget(this, selected.getName(), selected.getId()));
+      }
+    }
+    
+    list.add(new ProgramReceiveTarget(this,
+        mLocalizer.msg("programTarget", "Copy as TV pearl to clipboard"),
+        TARGET_PEARL_COPY));
+    
+    return list.toArray(new ProgramReceiveTarget[list.size()]);
+  }
+	
+  private LocalPluginProgramFormating getInstanceOfFormatingFromSelected(LocalPluginProgramFormating value) {
+    for(AbstractPluginProgramFormating config : mConfigs) {
+      if(config.equals(value)) {
+        return (LocalPluginProgramFormating)config;
+      }
+    }
+
+    return null;
+  }
+  
+  protected LocalPluginProgramFormating[] getAvailableLocalPluginProgramFormatings() {
+    return mLocalFormatings;
+  }
+
+  protected void setAvailableLocalPluginProgramFormatings(LocalPluginProgramFormating[] value) {
+    if(value == null || value.length < 1) {
+      mLocalFormatings = new LocalPluginProgramFormating[1];
+      mLocalFormatings[0] = DEFAULT_FORMAT;
+    } else {
+      mLocalFormatings = value;
+    }
+  }
+
+  protected AbstractPluginProgramFormating[] getSelectedPluginProgramFormatings() {
+    return mConfigs;
+  }
+
+  protected void setSelectedPluginProgramFormatings(AbstractPluginProgramFormating[] value) {
+    if(value == null || value.length < 1) {
+      mConfigs = new LocalPluginProgramFormating[1];
+      mConfigs[0] = DEFAULT_FORMAT;
+    } else {
+      mConfigs = value;
+    }
+  }
 
 	public void writeData(final ObjectOutputStream out) throws IOException
 	{
+	  out.writeInt(4);
 		mTVPearls.writeData(out);
+		
+		if(mConfigs != null) {
+      ArrayList<AbstractPluginProgramFormating> list = new ArrayList<AbstractPluginProgramFormating>();
+
+      for(AbstractPluginProgramFormating config : mConfigs) {
+        if(config != null) {
+          list.add(config);
+        }
+      }
+      
+      out.writeInt(list.size());
+
+      for(AbstractPluginProgramFormating config : list) {
+        config.writeData(out);
+      }
+    } else {
+      out.writeInt(0);
+    }
+
+    if(mLocalFormatings != null) {
+      ArrayList<AbstractPluginProgramFormating> list = new ArrayList<AbstractPluginProgramFormating>();
+
+      for(AbstractPluginProgramFormating config : mLocalFormatings) {
+        if(config != null) {
+          list.add(config);
+        }
+      }
+
+      out.writeInt(list.size());
+
+      for(AbstractPluginProgramFormating config : list) {
+        config.writeData(out);
+      }
+    }
 	}
 
 	public void handleTvBrowserStartFinished()
@@ -512,9 +705,6 @@ public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
       {
       	mDialog.updateProgramList();
       }
-      if (mMangePanel != null) {
-        mMangePanel.updateProgramList();
-      }
     } finally {
       mUpdating = false;
     }
@@ -570,46 +760,46 @@ public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
   public static TVPearlSettings getSettings() {
     return getInstance().mSettings;
   }
-
-  @Override
-  public boolean canReceiveProgramsWithTarget() {
-    return true;
-  }
-
-  @Override
-  public ProgramReceiveTarget[] getProgramReceiveTargets() {
-    return new ProgramReceiveTarget[] { new ProgramReceiveTarget(this,
-        mLocalizer.msg("programTarget", "Copy as TV pearl to clipboard"),
-        TARGET_PEARL_COPY) };
-  }
-
+  
   @Override
   public boolean receivePrograms(final Program[] programArr,
       final ProgramReceiveTarget receiveTarget) {
-    if (receiveTarget.getTargetId().equals(TARGET_PEARL_COPY)) {
-      final LocalPluginProgramFormating format = new LocalPluginProgramFormating(
-          mLocalizer.msg("name", "TV Pearl"),
-          "{title}",
-          "{start_day_of_week}, {start_day}. {start_month_name}, {leadingZero(start_hour,\"2\")}:{leadingZero(start_minute,\"2\")}, {channel_name}\n{title}\n\n{genre}",
-          "UTF-8");
-      final ParamParser parser = new ParamParser();
-      final StringBuilder buffer = new StringBuilder();
-      for (Program program : programArr) {
-        final String programText = parser.analyse(format.getContentValue(),
-            program);
-        if (programText != null) {
-          buffer.append(programText);
-          buffer.append("\n\n");
+    if(programArr != null) {
+      if (receiveTarget.isReceiveTargetWithIdOfProgramReceiveIf(this, TARGET_PEARL_COPY)) {
+        final ParamParser parser = new ParamParser();
+        final StringBuilder buffer = new StringBuilder();
+        for (Program program : programArr) {
+          if(!program.isExpired() && !program.isOnAir()) {
+            final String programText = parser.analyse(DEFAULT_FORMAT.getContentValue(),
+                program);
+            if (programText != null) {
+              buffer.append(programText);
+              buffer.append("\n\n");
+            }
+          }
+        }
+        final String text = buffer.toString();
+        if (text.length() > 0) {
+          final Clipboard clip = java.awt.Toolkit.getDefaultToolkit()
+              .getSystemClipboard();
+          clip.setContents(new StringSelection(text), null);
+        }
+        return true;
+      }
+      
+      for(AbstractPluginProgramFormating formating : mConfigs) {
+        if(receiveTarget.isReceiveTargetWithIdOfProgramReceiveIf(this, formating.getId())) {
+          for(Program program : programArr) {
+            if(!program.isExpired() && !program.isOnAir()) {
+              mCreationTableModel.addRowSorted(new TVPearlCreation(program, formating));
+            }
+          }
+          
+          return true;
         }
       }
-      final String text = buffer.toString();
-      if (text.length() > 0) {
-        final Clipboard clip = java.awt.Toolkit.getDefaultToolkit()
-            .getSystemClipboard();
-        clip.setContents(new StringSelection(text), null);
-      }
-      return true;
     }
+    
     return false;
   }
 
@@ -696,18 +886,30 @@ public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
 	}
 	
   public PluginCenterPanelWrapper getPluginCenterPanelWrapper() {
-    return mWrapper;
+    return mDisplayWrapper;
   }
 	
   private class PearlCenterPanel extends PluginCenterPanel {
     @Override
     public String getName() {
-      return getInfo().getName();
+      return TVPearlPluginSettingsTab.mLocalizer.msg("tabPearlDisplay", "TV Pearl Display");
     }
 
     @Override
     public JPanel getPanel() {
-      return mCenterPanelWrapper;
+      return mCenterPanelDisplayWrapper;
+    }
+  }
+  
+  private class PearlCreationPanel extends PluginCenterPanel {
+    @Override
+    public String getName() {
+      return TVPearlPluginSettingsTab.mLocalizer.msg("tabPearlCreation", "TV Pearl Creation");
+    }
+
+    @Override
+    public JPanel getPanel() {
+      return mCenterPanelCreationWrappper;
     }
   }
 }

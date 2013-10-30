@@ -18,44 +18,12 @@
 package tvpearlplugin;
 
 import java.awt.BorderLayout;
-import java.awt.Cursor;
 import java.awt.Dialog;
 import java.awt.Frame;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.util.Calendar;
 
-import javax.swing.BorderFactory;
-import javax.swing.DefaultListModel;
-import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JList;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
-import javax.swing.JToolTip;
-import javax.swing.ListSelectionModel;
-import javax.swing.SwingUtilities;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-
-import tvbrowser.core.icontheme.IconLoader;
-import util.ui.Localizer;
-import util.ui.SearchFormSettings;
-import util.ui.SearchHelper;
-import util.ui.SendToPluginDialog;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
-import util.ui.menu.MenuUtil;
-
-import com.jgoodies.forms.builder.ButtonBarBuilder;
-
-import devplugin.Plugin;
-import devplugin.PluginManager;
-import devplugin.Program;
 
 public final class PearlDialog extends JDialog implements WindowClosingIf
 {
@@ -64,7 +32,7 @@ public final class PearlDialog extends JDialog implements WindowClosingIf
 	static final util.ui.Localizer mLocalizer = util.ui.Localizer
       .getLocalizerFor(TVPearlPlugin.class);
 
-	private PearlPanel mPanel;
+	private PearlDisplayPanel mPanel;
 
 	public PearlDialog(final Dialog dialog)
 	{
@@ -86,7 +54,7 @@ public final class PearlDialog extends JDialog implements WindowClosingIf
 
 	private void createGUI() {
 	  setLayout(new BorderLayout());
-	  mPanel = new PearlPanel(this);
+	  mPanel = new PearlDisplayPanel(this);
 	  add(mPanel, BorderLayout.CENTER);
 	  pack();
 	}
