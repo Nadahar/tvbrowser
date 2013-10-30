@@ -100,4 +100,20 @@ public interface FilterManager {
    * @since 3.2.1
    */
   public String addNewChannelFilterComponent();
+  
+  /**
+   * Registers the given FilterChangeListener.
+   * <p>
+   * @param listener The listener to register.
+   * @since 3.3.3
+   */
+  public void registerFilterChangeListener(FilterChangeListener listener);
+  
+  /**
+   * Unregisters the given FilterChangeListener.
+   * <p>
+   * @param listener The listener to remove.
+   * @since 3.3.3
+   */
+  public void unregisterFilterChangeListener(FilterChangeListener listener);
 }
