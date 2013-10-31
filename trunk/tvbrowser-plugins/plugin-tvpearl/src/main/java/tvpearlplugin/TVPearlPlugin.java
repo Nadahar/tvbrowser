@@ -74,7 +74,7 @@ public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
 {
 
 	private static final boolean PLUGIN_IS_STABLE = true;
-  private static final Version PLUGIN_VERSION = new Version(0, 24, 2, PLUGIN_IS_STABLE);
+  private static final Version PLUGIN_VERSION = new Version(0, 24, 3, PLUGIN_IS_STABLE);
 
   private static final String TARGET_PEARL_COPY = "pearlCopy";
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer
@@ -777,7 +777,7 @@ public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
             final String programText = parser.analyse(DEFAULT_FORMAT.getContentValue(),
                 program);
             if (programText != null) {
-              buffer.append(programText);
+              buffer.append(programText.trim());
               buffer.append("\n\n");
             }
           }
