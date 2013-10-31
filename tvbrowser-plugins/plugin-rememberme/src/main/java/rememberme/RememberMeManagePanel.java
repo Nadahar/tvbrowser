@@ -181,6 +181,7 @@ public class RememberMeManagePanel extends JPanel implements PersonaListener {
     add(buttons, BorderLayout.SOUTH);
     
     updatePanel(rMe);
+    updatePersona();
   }
   
   public void showContextMenu(MouseEvent e, final RememberMe rMe) {
