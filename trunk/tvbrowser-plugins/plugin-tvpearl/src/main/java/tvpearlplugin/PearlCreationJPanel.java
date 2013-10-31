@@ -175,6 +175,10 @@ public class PearlCreationJPanel extends JPanel {
     send.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
+        if(mTable.isEditing()) {
+          mTable.getCellEditor().stopCellEditing();
+        }
+        
         final StringBuilder message = new StringBuilder();
         final ParamParser parser = new ParamParser();
         
