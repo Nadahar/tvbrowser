@@ -51,7 +51,7 @@ public class PearlCreationTableModel extends DefaultTableModel {
   
   @Override
   public boolean isCellEditable(int row, int column) {
-    return column == 1;
+    return column == 1 || column == 2;
   }
   
   @Override
