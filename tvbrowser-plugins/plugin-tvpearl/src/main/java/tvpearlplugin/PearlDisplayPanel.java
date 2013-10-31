@@ -401,38 +401,39 @@ public class PearlDisplayPanel extends JPanel {
     }
   }
 
-  public void updateProgramList()
-  {
+  public synchronized void updateProgramList() {
     final Calendar now = Calendar.getInstance();
     int index = -1;
 
     mProgramList.clear();
     
-    for (TVPProgram item : TVPearlPlugin.getInstance().getProgramList())
-    {
-      mProgramList.addElement(item);
-      if (index == -1)
-      {
-        final Program program = item.getProgram();
-        // find next pearl or first still running program
-        if ((now.compareTo(item.getStart()) < 0) || (program != null && !program.isExpired()))
-        {
-          index = mProgramList.size() - 1;
+    TVPProgram[] list = TVPearlPlugin.getInstance().getProgramList();
+    
+    for (TVPProgram item : list) {
+      if(item != null) {
+        mProgramList.addElement(item);
+        
+        if (index == -1) {
+          final Program program = item.getProgram();
+          // find next pearl or first still running program
+          if ((now.compareTo(item.getStart()) < 0) || (program != null && !program.isExpired())) {
+            index = mProgramList.size() - 1;
+          }
         }
       }
     }
-    if (mUpdateBn != null)
-    {
+    
+    if (mUpdateBn != null) {
       mUpdateBn.setEnabled(true);
     }
+    
     mDataList.revalidate();
     mDataList.repaint();
     
-    if (mProgramList.getSize() > 0)
-    {
+    if (mDataList.getModel().getSize() > 0) {
       mDataList.setSelectedIndex(0);
-      if (mProgramList.getSize() > index)
-      {
+      
+      if (mProgramList.getSize() > index) {
         mDataList.setSelectedIndex(index);
         mDataList.ensureIndexIsVisible(index);
       }

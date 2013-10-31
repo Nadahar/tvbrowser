@@ -293,7 +293,7 @@ public class TVPearl {
     if (version == 1 || version == 2) {
       mLastUpdate = Calendar.getInstance();
       mLastUpdate.setTime((Date) in.readObject());
-
+      
       final int size = in.readInt();
       for (int i = 0; i < size; i++) {
         final String author = (String) in.readObject();
@@ -319,7 +319,7 @@ public class TVPearl {
     } else if (version >= 3) {
       mLastUpdate = Calendar.getInstance();
       mLastUpdate.setTime((Date) in.readObject());
-
+      
       final int size = in.readInt();
       for (int i = 0; i < size; i++) {
         final String author = (String) in.readObject();
