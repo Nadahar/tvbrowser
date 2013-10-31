@@ -115,7 +115,7 @@ public class TVPGrabber
 			{
 				if (workingUrl.length() > 0)
 				{
-					lastUrl = workingUrl;
+					lastUrl = workingUrl.replaceFirst("\\&sid=.*?\\&", "\\&");
 				}
 				final String webContent = downloadUrl(workingUrl);
 
