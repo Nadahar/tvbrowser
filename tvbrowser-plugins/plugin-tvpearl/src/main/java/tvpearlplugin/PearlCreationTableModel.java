@@ -46,7 +46,7 @@ public class PearlCreationTableModel extends DefaultTableModel {
   
   @Override
   public int getColumnCount() {
-    return 2;
+    return 3;
   }
   
   @Override
@@ -60,7 +60,8 @@ public class PearlCreationTableModel extends DefaultTableModel {
     
     switch(column){
       case 0: value = Localizer.getLocalization(Localizer.I18N_PROGRAMS);break;
-      case 1: value = PearlCreationJPanel.mLocalizer.msg("formating", "Formating");break;
+      case 1: value = PearlCreationJPanel.mLocalizer.msg("comment", "Comment");break;
+      case 2: value = PearlCreationJPanel.mLocalizer.msg("formating", "Formating");break;
     }
     
     return value;
@@ -74,7 +75,8 @@ public class PearlCreationTableModel extends DefaultTableModel {
     
     switch(column) {
       case 0: return mTVPearlCreationList.get(row).getProgram();
-      case 1: return mTVPearlCreationList.get(row).getFormating();
+      case 1: return mTVPearlCreationList.get(row).getComment();
+      case 2: return mTVPearlCreationList.get(row).getFormating();
     }
 
     return null;
@@ -83,7 +85,8 @@ public class PearlCreationTableModel extends DefaultTableModel {
   @Override
   public void setValueAt(Object aValue, int row, int column) {
     switch(column) {
-      case 1: mTVPearlCreationList.get(row).setFormating((AbstractPluginProgramFormating)aValue);break;
+      case 1: mTVPearlCreationList.get(row).setComment((String)aValue);break;
+      case 2: mTVPearlCreationList.get(row).setFormating((AbstractPluginProgramFormating)aValue);break;
     }
 
     fireTableChanged(new TableModelEvent(this));

@@ -29,6 +29,7 @@ import devplugin.Program;
 public class TVPearlCreation {
   private Program mProgram;
   private AbstractPluginProgramFormating mFormating;
+  private String mComment;
   
   public TVPearlCreation(Program prog, AbstractPluginProgramFormating formating) {
     mProgram = prog;
@@ -59,5 +60,13 @@ public class TVPearlCreation {
   
   public Program getProgram() {
     return mProgram;
+  }
+  
+  public void setComment(String comment) {
+    mComment = comment;
+  }
+  
+  public String getComment() {
+    return mComment == null ? "" : mComment;
   }
 }
