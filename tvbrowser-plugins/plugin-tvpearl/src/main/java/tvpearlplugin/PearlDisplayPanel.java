@@ -63,6 +63,11 @@ import devplugin.Plugin;
 import devplugin.PluginManager;
 import devplugin.Program;
 
+/**
+ * A panel with a list of TV pearls.
+ * 
+ * @author René Mach
+ */
 public class PearlDisplayPanel extends JPanel {
   private static final Localizer mLocalizer = PearlDialog.mLocalizer;
   
