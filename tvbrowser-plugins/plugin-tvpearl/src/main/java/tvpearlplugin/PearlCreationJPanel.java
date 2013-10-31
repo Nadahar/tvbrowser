@@ -66,6 +66,7 @@ import util.program.AbstractPluginProgramFormating;
 import util.ui.Localizer;
 import util.ui.TVBrowserIcons;
 import util.ui.UiUtilities;
+import util.ui.html.HTMLTextHelper;
 
 import com.jgoodies.forms.builder.ButtonBarBuilder;
 import com.jgoodies.forms.builder.PanelBuilder;
@@ -181,16 +182,19 @@ public class PearlCreationJPanel extends JPanel {
           }
         }
         
-        boolean success = false;
+        ForenAnswer answer = null;
         
         if(message.length() > 0) {
-          success = postPearls(message.toString(), userName.getText().trim(), new String(password.getPassword()).trim());
+          answer = postPearls(message.toString(), userName.getText().trim(), new String(password.getPassword()).trim());
         }
         
-        if(success) {
+        if(answer != null && answer.wasSuccessfull()) {
           JOptionPane.showMessageDialog(dialog, mLocalizer.msg("success", "TV pearls were posted successfully."));
           mCreationTableModel.clear();
           TVPearlPlugin.getInstance().run();
+        }
+        else if(answer != null) {
+          JOptionPane.showMessageDialog(dialog, answer.getAnswer(), Localizer.getLocalization(Localizer.I18N_ERROR), JOptionPane.ERROR_MESSAGE);
         }
         else {
           JOptionPane.showMessageDialog(dialog, mLocalizer.msg("noSuccess", "TV pearls could not be posted.\nPlease check your user name and password and Internet connection."), Localizer.getLocalization(Localizer.I18N_ERROR), JOptionPane.ERROR_MESSAGE);
@@ -247,8 +251,11 @@ public class PearlCreationJPanel extends JPanel {
   }
   
 
-  private boolean postPearls(String text, String userName, String password) {
-    boolean success = false;
+  private ForenAnswer postPearls(String text, String userName, String password) {
+    String errorUnknown = mLocalizer.msg("errorUnknown", "Reason unknown.");
+    String errrorInfo = mLocalizer.msg("errorInfo", "\n\nPlease check your user name and password and Internet connection.");
+    
+    ForenAnswer answer = new ForenAnswer(false,mLocalizer.msg("noSuccess","TV pearls could not be posted:\n\n'{0}'{1}",errorUnknown,errrorInfo));
     
     try {
       HttpGet loginForm = new HttpGet("http://hilfe.tvbrowser.org/ucp.php?mode=login");
@@ -364,6 +371,10 @@ public class PearlCreationJPanel extends JPanel {
         
         lastPos = 0;
         
+        System.out.println("Formular entries: ");
+        System.out.print("      ");
+        System.out.println("message = " + text);
+        
         test.addTextBody("message", new String(text.getBytes(),Charset.forName("UTF-8")), ContentType.create("text/plain", Charset.forName("UTF-8")));
         
         while(m.find(lastPos)) {
@@ -372,14 +383,20 @@ public class PearlCreationJPanel extends JPanel {
             String value = m.group(3);
             
             if(name.equals("lastclick")) {
-              value = String.valueOf(Integer.parseInt(value) - 3000);
+              value = String.valueOf(Integer.parseInt(value));
             }
             
             if(value == null) {
               value = "";
             }
             
+            System.out.print("      ");
+            System.out.println(name + " = " + value);
+
             test.addTextBody(name,new String(value.getBytes(),Charset.forName("UTF-8")),ContentType.create("text/plain", Charset.forName("UTF-8")));
+          }
+          else {
+            System.out.println(" NOT USED INPUT " + m.group(2) + " = " + m.group(3));
           }
           
           lastPos = m.end();
@@ -395,14 +412,44 @@ public class PearlCreationJPanel extends JPanel {
         post.setHeader("Referer", postURL);
         post.setEntity(form);
         
+        Thread t = new Thread("WAIT_BEFORE_POST") {
+          public void run() {
+            try {
+              sleep(2000);
+            } catch (InterruptedException e) {}
+          }
+        };
+        
+        t.start();
+        
+        try {
+          t.join();
+        }catch(InterruptedException e) {}
+        
         response = client.execute(post);
         
         result = response.getEntity();
         
         content = EntityUtils.toString(result);
+        System.out.println(content);
         
-        if(content.contains("Der Beitrag wurde erfolgreich gespeichert.") || content.contains("This message has been posted successfully.")) {
-          success = true;
+        Pattern checkError = Pattern.compile("<p class=\"error\">(.*?)</p>");
+        m = checkError.matcher(content);
+        
+        if(m.find()) {
+          answer = new ForenAnswer(false, mLocalizer.msg("noSuccess","TV pearls could not be posted:\n\n'{0}'{1}",HTMLTextHelper.convertHtmlToText(m.group(1)),""));
+        }
+        else {
+          Pattern checkSuccess = Pattern.compile("<div\\s+class=\"panel\"\\s+id=\"message\">.*?<h2>.*?<p>(.*?)<",Pattern.DOTALL);
+          m = checkSuccess.matcher(content);
+          
+          if(m.find()) {
+            String value = m.group(1);
+            
+            if(value.equals("Der Beitrag wurde erfolgreich gespeichert.") || value.equals("This message has been posted successfully.")) {
+              answer = new ForenAnswer(true,value);
+            }
+          }
         }
                 
         EntityUtils.consume(result);
@@ -423,6 +470,24 @@ public class PearlCreationJPanel extends JPanel {
       e.printStackTrace();
     }
     
-    return success;
+    return answer;
+  }
+  
+  private class ForenAnswer {
+    boolean mSuccess;
+    String mAnswer;
+    
+    public ForenAnswer(boolean success, String answer) {
+      mSuccess = success;
+      mAnswer = answer;
+    }
+    
+    public String getAnswer() {
+      return mAnswer;
+    }
+    
+    public boolean wasSuccessfull() {
+      return mSuccess;
+    }
   }
 }
