@@ -74,7 +74,7 @@ public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
 {
 
 	private static final boolean PLUGIN_IS_STABLE = true;
-  private static final Version PLUGIN_VERSION = new Version(0, 24, PLUGIN_IS_STABLE);
+  private static final Version PLUGIN_VERSION = new Version(0, 24, 1, PLUGIN_IS_STABLE);
 
   private static final String TARGET_PEARL_COPY = "pearlCopy";
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer
@@ -113,7 +113,7 @@ public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
   private static final LocalPluginProgramFormating DEFAULT_FORMAT = new LocalPluginProgramFormating(
       mLocalizer.msg("name", "TV Pearl"),
       "{title}",
-      "{start_day_of_week}, {start_day}. {start_month_name}, {leadingZero(start_hour,\"2\")}:{leadingZero(start_minute,\"2\")}, {channel_name}\n{title}\n\n{genre}",
+      "{start_day_of_week}, {start_day}. {start_month_name}, {leadingZero(start_hour,\"2\")}:{leadingZero(start_minute,\"2\")}, {channel_name}\n{title}\n\n{genre}\n\n",
       "UTF-8");
   
 	public TVPearlPlugin()
