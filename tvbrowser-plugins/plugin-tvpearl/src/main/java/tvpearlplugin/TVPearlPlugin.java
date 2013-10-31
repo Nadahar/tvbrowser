@@ -74,7 +74,7 @@ public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
 {
 
 	private static final boolean PLUGIN_IS_STABLE = true;
-  private static final Version PLUGIN_VERSION = new Version(0, 25, 2, PLUGIN_IS_STABLE);
+  private static final Version PLUGIN_VERSION = new Version(0, 25, 3, PLUGIN_IS_STABLE);
 
   private static final String TARGET_PEARL_COPY = "pearlCopy";
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer
@@ -773,7 +773,9 @@ public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
         final ParamParser parser = new ParamParser();
         final StringBuilder buffer = new StringBuilder();
         for (Program program : programArr) {
-          if(!program.isExpired() && !program.isOnAir()) {
+          final TVPProgram test = mTVPearls.getPearl(program);
+          
+          if(test == null && !program.isExpired() && !program.isOnAir()) {
             final String programText = parser.analyse(DEFAULT_FORMAT.getContentValue(),
                 program);
             if (programText != null) {
@@ -794,7 +796,9 @@ public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
       for(AbstractPluginProgramFormating formating : mConfigs) {
         if(receiveTarget.isReceiveTargetWithIdOfProgramReceiveIf(this, formating.getId())) {
           for(Program program : programArr) {
-            if(!program.isExpired() && !program.isOnAir()) {
+            final TVPProgram test = mTVPearls.getPearl(program);
+            
+            if(test == null && !program.isExpired() && !program.isOnAir()) {
               mCreationTableModel.addRowSorted(new TVPearlCreation(program, formating));
             }
           }
