@@ -177,7 +177,7 @@ public class PearlCreationJPanel extends JPanel {
           if(!program.isExpired() && !program.isOnAir()) {
             final String programText = parser.analyse(formating.getContentValue(), program);
             if (programText != null) {
-              message.append(programText);
+              message.append(programText.trim());
               message.append("\n\n");
             }
           }
