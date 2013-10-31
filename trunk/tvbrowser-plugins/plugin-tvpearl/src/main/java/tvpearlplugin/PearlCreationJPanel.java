@@ -178,6 +178,7 @@ public class PearlCreationJPanel extends JPanel {
             final String programText = parser.analyse(formating.getContentValue(), program);
             if (programText != null) {
               message.append(programText);
+              message.append("\n\n");
             }
           }
         }
@@ -240,14 +241,22 @@ public class PearlCreationJPanel extends JPanel {
     dialog.setVisible(true);
   }
   
-  public void updateFormatingEditor(AbstractPluginProgramFormating[] values) {
-    JComboBox comboBox = new JComboBox();
-    
-    for(AbstractPluginProgramFormating formating : values) {
-      comboBox.addItem(formating);
+  public synchronized void updateFormatingEditor(AbstractPluginProgramFormating[] values) {
+    if(values != null) {
+      final JComboBox comboBox = new JComboBox();
+      
+      for(final AbstractPluginProgramFormating formating : values) {
+        if(comboBox != null && formating != null && formating.toString() != null && formating.getContentValue() != null && formating.getEncodingValue() != null && formating.getName() != null) {
+          try {
+            comboBox.addItem(formating);
+          }catch(Exception e) {e.printStackTrace();}
+        }
+      }
+      
+      if(comboBox != null) {
+        mTable.getColumnModel().getColumn(1).setCellEditor(new DefaultCellEditor(comboBox));
+      }
     }
-    
-    mTable.getColumnModel().getColumn(1).setCellEditor(new DefaultCellEditor(comboBox));
   }
   
 
@@ -256,16 +265,18 @@ public class PearlCreationJPanel extends JPanel {
     String errrorInfo = mLocalizer.msg("errorInfo", "\n\nPlease check your user name and password and Internet connection.");
     
     ForenAnswer answer = new ForenAnswer(false,mLocalizer.msg("noSuccess","TV pearls could not be posted:\n\n'{0}'{1}",errorUnknown,errrorInfo));
+    Charset utf8 = Charset.forName("UTF-8");
     
     try {
       HttpGet loginForm = new HttpGet("http://hilfe.tvbrowser.org/ucp.php?mode=login");
       
       CloseableHttpClient client = HttpClients.createDefault();
+     
       CloseableHttpResponse response = client.execute(loginForm);
       
       HttpEntity result = response.getEntity();
 
-      String content = EntityUtils.toString(result);
+      String content = new String(EntityUtils.toString(result).getBytes(utf8),utf8);
       
       int loginIndex = content.indexOf("id=\"login\"");
       
@@ -287,13 +298,13 @@ public class PearlCreationJPanel extends JPanel {
           String value = m.group(2);
           
           if(name.equals("password")) {
-            value = password;
+            value = new String(password.getBytes(utf8),utf8);
           }
           else if(name.equals("username")) {
-            value = userName;
+            value = new String(userName.getBytes(utf8),utf8);
           }
           else if(name.equals("sid")) {
-            SID = value;
+            SID = new String(value.getBytes(utf8),utf8);
           }
           
           if(value == null) {
@@ -319,7 +330,7 @@ public class PearlCreationJPanel extends JPanel {
       if(response.getStatusLine().getStatusCode() == 200) {
         result = response.getEntity();
         
-        content = EntityUtils.toString(result);
+        content = new String(EntityUtils.toString(result).getBytes(utf8),utf8);
         
         Pattern logout = Pattern.compile("class=\"icon-logout\"><a href=\"(.*?)\"");
         m = logout.matcher(content);
@@ -342,7 +353,7 @@ public class PearlCreationJPanel extends JPanel {
         response = client.execute(testPost);
         result = response.getEntity();
         
-        content = EntityUtils.toString(result);
+        content = new String(EntityUtils.toString(result).getBytes(utf8),utf8);
         
         
         int formIndex = content.indexOf("form id=\"postform\"");
@@ -363,7 +374,7 @@ public class PearlCreationJPanel extends JPanel {
         postAction = StringEscapeUtils.unescapeHtml4(postAction);
                     
         MultipartEntityBuilder test = MultipartEntityBuilder.create();
-       // test.setCharset(Charset.forName("UTF-8"));
+        //test.setCharset(Charset.forName("UTF-8"));
         
         getInputs = Pattern.compile("<input.*?type=\"(.*?)\".*?name=\"(.*?)\".*?(?:value=\"(.*?)\"|/>)");
         
@@ -375,7 +386,7 @@ public class PearlCreationJPanel extends JPanel {
         System.out.print("      ");
         System.out.println("message = " + text);
         
-        test.addTextBody("message", new String(text.getBytes(),Charset.forName("UTF-8")), ContentType.create("text/plain", Charset.forName("UTF-8")));
+        test.addTextBody("message", new String(text.getBytes(utf8),utf8), ContentType.create("text/plain", Charset.forName("UTF-8")));
         
         while(m.find(lastPos)) {
           if(m.group(1).equals("text") || m.group(1).equals("hidden") || (m.group(1).equals("submit") && m.group(2).equals("post"))) {
@@ -393,7 +404,7 @@ public class PearlCreationJPanel extends JPanel {
             System.out.print("      ");
             System.out.println(name + " = " + value);
 
-            test.addTextBody(name,new String(value.getBytes(),Charset.forName("UTF-8")),ContentType.create("text/plain", Charset.forName("UTF-8")));
+            test.addTextBody(name,new String(value.getBytes(utf8),utf8),ContentType.create("text/plain", Charset.forName("UTF-8")));
           }
           else {
             System.out.println(" NOT USED INPUT " + m.group(2) + " = " + m.group(3));
@@ -430,7 +441,7 @@ public class PearlCreationJPanel extends JPanel {
         
         result = response.getEntity();
         
-        content = EntityUtils.toString(result);
+        content = new String(EntityUtils.toString(result).getBytes(utf8),utf8);
         System.out.println(content);
         
         Pattern checkError = Pattern.compile("<p class=\"error\">(.*?)</p>");
