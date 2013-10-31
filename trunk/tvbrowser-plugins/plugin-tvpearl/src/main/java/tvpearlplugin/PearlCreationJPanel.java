@@ -101,10 +101,18 @@ public class PearlCreationJPanel extends JPanel {
     mTable = new JTable(mCreationTableModel);
     updateFormatingEditor(TVPearlPlugin.getInstance().getSelectedPluginProgramFormatings());
     
+    mTable.getTableHeader().setReorderingAllowed(false);
+    
+    mTable.getColumnModel().getColumn(0).setMinWidth(200);
+    mTable.getColumnModel().getColumn(0).setPreferredWidth(300);
+    mTable.getColumnModel().getColumn(0).setMaxWidth(300);
+    
     mTable.getColumnModel().getColumn(1).setMinWidth(200);
-    mTable.getColumnModel().getColumn(1).setMaxWidth(200);
+    
+    mTable.getColumnModel().getColumn(2).setMinWidth(200);
+    mTable.getColumnModel().getColumn(2).setMaxWidth(200);
     mTable.getColumnModel().getColumn(0).setCellRenderer(renderer);
-    mTable.getColumnModel().getColumn(1).setCellRenderer(renderer);
+    mTable.getColumnModel().getColumn(2).setCellRenderer(renderer);
     
     JScrollPane scroll = new JScrollPane(mTable);
     scroll.getViewport().setBackground(UIManager.getDefaults().getColor("List.background"));
@@ -172,12 +180,20 @@ public class PearlCreationJPanel extends JPanel {
         
         for(int row = 0; row < mCreationTableModel.getRowCount(); row++) {
           final Program program = (Program)mCreationTableModel.getValueAt(row, 0);
-          final AbstractPluginProgramFormating formating = (AbstractPluginProgramFormating)mCreationTableModel.getValueAt(row, 1);
+          final String comment = ((String)mCreationTableModel.getValueAt(row, 1)).trim();
+          
+          final AbstractPluginProgramFormating formating = (AbstractPluginProgramFormating)mCreationTableModel.getValueAt(row, 2);
         
           if(!program.isExpired() && !program.isOnAir()) {
             final String programText = parser.analyse(formating.getContentValue(), program);
             if (programText != null) {
               message.append(programText.trim());
+              
+              if(comment.length() > 0) {
+                message.append("\n");
+                message.append(comment);
+              }
+              
               message.append("\n\n");
             }
           }
@@ -254,7 +270,7 @@ public class PearlCreationJPanel extends JPanel {
       }
       
       if(comboBox != null) {
-        mTable.getColumnModel().getColumn(1).setCellEditor(new DefaultCellEditor(comboBox));
+        mTable.getColumnModel().getColumn(2).setCellEditor(new DefaultCellEditor(comboBox));
       }
     }
   }
