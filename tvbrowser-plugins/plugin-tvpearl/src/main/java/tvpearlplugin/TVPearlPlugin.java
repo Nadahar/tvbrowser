@@ -74,7 +74,7 @@ public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
 {
 
 	private static final boolean PLUGIN_IS_STABLE = true;
-  private static final Version PLUGIN_VERSION = new Version(0, 25, 3, PLUGIN_IS_STABLE);
+  private static final Version PLUGIN_VERSION = new Version(0, 25, 4, PLUGIN_IS_STABLE);
 
   private static final String TARGET_PEARL_COPY = "pearlCopy";
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer
@@ -139,7 +139,7 @@ public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
 	{
 	  final String name = mLocalizer.msg("name", "TV Pearl");
     final String desc = mLocalizer.msg("description",
-        "Shows the TV Pearls from the TV-Browser forum.");
+        "Shows the TV Pearls from the TV-Browser forum.") + " This product includes software developed at The Apache Software Foundation (http://www.apache.org/).";
     final String author = "Reinhard Lehrbaum";
 
 		return new PluginInfo(TVPearlPlugin.class, name, desc, author);
