@@ -100,6 +100,7 @@ public class PearlCreationJPanel extends JPanel {
     
     mTable = new JTable(mCreationTableModel);
     updateFormatingEditor(TVPearlPlugin.getInstance().getSelectedPluginProgramFormatings());
+    updateCommentEditor(TVPearlPlugin.getSettings().getCommentValues());
     
     mTable.getTableHeader().setReorderingAllowed(false);
     
@@ -182,9 +183,15 @@ public class PearlCreationJPanel extends JPanel {
         final StringBuilder message = new StringBuilder();
         final ParamParser parser = new ParamParser();
         
+        ArrayList<String> commentList = new ArrayList<String>();
+        
         for(int row = 0; row < mCreationTableModel.getRowCount(); row++) {
           final Program program = (Program)mCreationTableModel.getValueAt(row, 0);
           final String comment = ((String)mCreationTableModel.getValueAt(row, 1)).trim();
+          
+          if(comment.trim().length() > 0 && !commentList.contains(comment)) {
+            commentList.add(comment);
+          }
           
           final AbstractPluginProgramFormating formating = (AbstractPluginProgramFormating)mCreationTableModel.getValueAt(row, 2);
         
@@ -203,14 +210,26 @@ public class PearlCreationJPanel extends JPanel {
           }
         }
         
+        String[] currentComments = TVPearlPlugin.getSettings().getCommentValues();
+        
+        for(String comment : currentComments) {
+          if(!commentList.contains(comment)) {
+            commentList.add(comment);
+          }
+        }
+        
         ForenAnswer answer = null;
         
         if(message.length() > 0) {
           answer = postPearls(message.toString(), userName.getText().trim(), new String(password.getPassword()).trim());
+                    
+          TVPearlPlugin.getSettings().setCommentValues(commentList.toArray(new String[commentList.size()]));
+          updateCommentEditor(TVPearlPlugin.getSettings().getCommentValues());
         }
         
         if(answer != null && answer.wasSuccessfull()) {
           JOptionPane.showMessageDialog(dialog, mLocalizer.msg("success", "TV pearls were posted successfully."));
+          
           mCreationTableModel.clear();
           TVPearlPlugin.getInstance().run();
         }
@@ -259,6 +278,25 @@ public class PearlCreationJPanel extends JPanel {
         
     dialog.setLocationRelativeTo(this);
     dialog.setVisible(true);
+  }
+  
+  private void updateCommentEditor(String[] values) {
+    if(values != null) {
+      final JComboBox comboBox = new JComboBox();
+      comboBox.setEditable(true);
+      
+      for(final String formating : values) {
+        if(comboBox != null && formating != null) {
+          try {
+            comboBox.addItem(formating);
+          }catch(Exception e) {e.printStackTrace();}
+        }
+      }
+      
+      if(comboBox != null) {
+        mTable.getColumnModel().getColumn(1).setCellEditor(new DefaultCellEditor(comboBox));
+      }
+    }
   }
   
   public synchronized void updateFormatingEditor(AbstractPluginProgramFormating[] values) {
