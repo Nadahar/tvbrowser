@@ -74,7 +74,7 @@ public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
 {
 
 	private static final boolean PLUGIN_IS_STABLE = true;
-  private static final Version PLUGIN_VERSION = new Version(0, 25, 5, PLUGIN_IS_STABLE);
+  private static final Version PLUGIN_VERSION = new Version(0, 25, 6, PLUGIN_IS_STABLE);
 
   private static final String TARGET_PEARL_COPY = "pearlCopy";
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer
@@ -297,31 +297,60 @@ public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
 					showPearlInfo(getPearl(program));
 				}
 			});
-
-			return new ActionMenu(menu);
+			
+			if(!p.getAuthor().equals(mSettings.getForumUserName())) {
+			  return new ActionMenu(getInfo().getName(), getCreatePearlMenu(program,menu));
+			}
+			else {
+			  return new ActionMenu(menu);
+			}
 		}
-		else if(program != null && ((!program.isExpired() && !program.isOnAir()) || program.getID() == null)) {
-		  final AbstractPluginProgramFormating[] selected = getSelectedPluginProgramFormatings();
+		else {
+		  Action[] test = getCreatePearlMenu(program,null);
 		  
-		  if(selected.length == 1) {
-		    final ContextMenuAction menu = new ContextMenuAction();
-	      menu.setText(mLocalizer.msg("context.single", "Create new TV pearl as '{0}'", selected[0].getName()));
-	      menu.setSmallIcon(getSmallIcon());
-	      menu.setActionListener(new ActionListener() {
+		  if(test.length == 1) {
+		    return new ActionMenu(test[0]);
+		  }
+		  else {
+		    return new ActionMenu(mLocalizer.msg("context.multiple", "Create new TV pearl"), getSmallIcon(), test);
+		  }
+		}
+	}
+	
+	private Action[] getCreatePearlMenu(final Program program, Action show) {
+	  if(program != null && ((!program.isExpired() && !program.isOnAir()) || program.getID() == null)) {
+      final AbstractPluginProgramFormating[] selected = getSelectedPluginProgramFormatings();
+      
+      if(selected.length == 1) {
+        final ContextMenuAction menu = new ContextMenuAction();
+        menu.setText(mLocalizer.msg("context.single", "Create new TV pearl as '{0}'", selected[0].getName()));
+        menu.setSmallIcon(getSmallIcon());
+        menu.setActionListener(new ActionListener() {
           @Override
           public void actionPerformed(ActionEvent e) {
             mCreationTableModel.addRowSorted(new TVPearlCreation(program, selected[0]));
           }
         });
-	      
-	      return new ActionMenu(menu);
-		  }
-		  else {
-		    final ContextMenuAction menu = new ContextMenuAction();
+        
+        if(show == null) {
+          return new Action[] {menu};
+        }
+        else {
+          return new Action[] {show,menu};
+        }
+      }
+      else {
+        final ContextMenuAction menu = new ContextMenuAction();
         menu.setText(mLocalizer.msg("context.multiple", "Create new TV pearl"));
         menu.setSmallIcon(getSmallIcon());
        
-        Action[] subMenu = new Action[selected.length];
+        int offset = show == null ? 0 : 1;
+        
+        Action[] subMenu = new Action[selected.length + offset];
+        
+        if(show != null) {
+          subMenu[0] = show;
+        }
         
         for(int i = 0; i < selected.length; i++) {
           final AbstractPluginProgramFormating formating = selected[i];
@@ -333,14 +362,14 @@ public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
             }
           };
           
-          subMenu[i] = action;
+          subMenu[i+offset] = action;
         }
         
-        return new ActionMenu(mLocalizer.msg("context.multiple", "Create new TV pearl"), getSmallIcon(), subMenu);
-		  }
-		}
-		
-		return null;
+        return subMenu;
+      }
+    }
+	  
+	  return null;
 	}
 
 	public Icon[] getMarkIconsForProgram(final Program p)
