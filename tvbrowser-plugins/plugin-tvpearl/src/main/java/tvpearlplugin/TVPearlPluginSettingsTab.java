@@ -35,9 +35,11 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
+import javax.swing.JSpinner;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.SpinnerNumberModel;
 
 import tvbrowser.ui.mainframe.MainFrame;
 import util.ui.MarkPriorityComboBoxRenderer;
@@ -87,6 +89,8 @@ public final class TVPearlPluginSettingsTab implements SettingsTab
   private static int mSelectedPane;
   
   private PluginProgramConfigurationPanel mFormatingPanel;
+  
+  private JSpinner mCommentCount;
   
   public TVPearlPluginSettingsTab(final TVPearlSettings settings) {
     mSettings = settings;
@@ -239,34 +243,35 @@ public final class TVPearlPluginSettingsTab implements SettingsTab
 		builder.add(mFilterShowNot, cc.xyw(2, builder.getRow(), 3));
     
     newLine(builder);
-		builder.add(scrollComposer, cc.xyw(2, builder.getRow(), 3));
+    builder.add(scrollComposer, cc.xyw(2, builder.getRow(), 3));
     
-		builder.nextRow(2);
+	builder.nextRow(2);
 
-		final JScrollPane scrollPane = new JScrollPane(builder.getPanel());
-		scrollPane.setBorder(Borders.DIALOG);
-		scrollPane.setViewportBorder(null);
+	final JScrollPane scrollPane = new JScrollPane(builder.getPanel());
+	scrollPane.setBorder(Borders.DIALOG);
+	scrollPane.setViewportBorder(null);
 		
-		mTabbedPane.addTab(mLocalizer.msg("tabPearlDisplay", "TV Pearl Display"), scrollPane);
+	mTabbedPane.addTab(mLocalizer.msg("tabPearlDisplay", "TV Pearl Display"), scrollPane);
 		
-		JPanel tabPanel = new JPanel(new BorderLayout());
-		tabPanel.setBorder(Borders.createEmptyBorder("5dlu,5dlu,0dlu,5dlu"));
+	JPanel tabPanel = new JPanel(new BorderLayout());
+	tabPanel.setBorder(Borders.createEmptyBorder("5dlu,5dlu,0dlu,5dlu"));
 		
-		tabPanel.add(mTabbedPane, BorderLayout.CENTER);
+	tabPanel.add(mTabbedPane, BorderLayout.CENTER);
 		
-		PanelBuilder creationPanel = new PanelBuilder(new FormLayout("5dlu,default,3dlu,min:grow",
-		    "5dlu,default,3dlu,default,default,10dlu,default,5dlu,fill:150dlu:grow"));
+	PanelBuilder creationPanel = new PanelBuilder(new FormLayout("5dlu,default,3dlu,min:grow",
+		    "5dlu,default,3dlu,default,default,10dlu,default,5dlu,fill:150dlu:grow,10dlu,default,5dlu,default"));
 		
+	mUserName = new JTextField(mSettings.getForumUserName());
+	mUserPassword = new JPasswordField(mSettings.getForumPassword());
 		
-		mUserName = new JTextField(mSettings.getForumUserName());
-		mUserPassword = new JPasswordField(mSettings.getForumPassword());
+	mFormatingPanel = new PluginProgramConfigurationPanel(TVPearlPlugin.getInstance().getSelectedPluginProgramFormatings(), TVPearlPlugin.getInstance().getAvailableLocalPluginProgramFormatings(), null,false,false);
+	
+	mCommentCount = new JSpinner(new SpinnerNumberModel(mSettings.getCommentCount(),5,50,1));
+	
+	int y = 2;
 		
-		mFormatingPanel = new PluginProgramConfigurationPanel(TVPearlPlugin.getInstance().getSelectedPluginProgramFormatings(), TVPearlPlugin.getInstance().getAvailableLocalPluginProgramFormatings(), null,false,false);
-		
-		int y = 2;
-		
-		creationPanel.addLabel(mLocalizer.msg("forumUser","Message board user name:"), CC.xy(2, y));
-		creationPanel.add(mUserName, CC.xy(4, y++));
+	creationPanel.addLabel(mLocalizer.msg("forumUser","Message board user name:"), CC.xy(2, y));
+	creationPanel.add(mUserName, CC.xy(4, y++));
     creationPanel.addLabel(mLocalizer.msg("forumPassword","Message board user password:"), CC.xy(2, ++y));
     creationPanel.add(mUserPassword, CC.xy(4, y++));
     creationPanel.add(UiUtilities.createHtmlHelpTextArea(mLocalizer.msg("forumPasswortWarning", "Not suggested to store it, because it is saved in plain text")), CC.xy(4, y++));
@@ -277,16 +282,25 @@ public final class TVPearlPluginSettingsTab implements SettingsTab
     creationPanel.add(mFormatingPanel, cc.xyw(2,++y,3));
     creationPanel.getPanel().setPreferredSize(new Dimension(200, 200));
     
+    y += 2;
+    
+    JPanel countPanel = new JPanel(new FormLayout("default","default"));
+    countPanel.add(mCommentCount, cc.xy(1, 1));
+    
+    creationPanel.addSeparator(mLocalizer.msg("commentSeparator","Comments"), cc.xyw(1, y++, 4));
+    creationPanel.addLabel(mLocalizer.msg("saveComments", "Save comments:"), cc.xy(2, ++y));
+    creationPanel.add(countPanel, cc.xy(4, y));
+    
     final JScrollPane scrollPane2 = new JScrollPane(creationPanel.getPanel());
     scrollPane2.setBorder(Borders.DIALOG);
     scrollPane2.setViewportBorder(null);
     scrollPane2.setPreferredSize(new Dimension(200, 200));
     
-		mTabbedPane.addTab(mLocalizer.msg("tabPearlCreation", "TV Pearl Creation"), scrollPane2);
-		mTabbedPane.setSelectedIndex(mSelectedPane);
-		
-		return tabPanel;
-	}
+	mTabbedPane.addTab(mLocalizer.msg("tabPearlCreation", "TV Pearl Creation"), scrollPane2);
+	mTabbedPane.setSelectedIndex(mSelectedPane);
+	
+	return tabPanel;
+  }
 
   private void addSeparator(final PanelBuilder builder, final String label) {
     builder.appendRow(FormSpecs.PARAGRAPH_GAP_ROWSPEC);
@@ -298,8 +312,9 @@ public final class TVPearlPluginSettingsTab implements SettingsTab
   private PanelBuilder newLine(final PanelBuilder builder) {
     builder.appendRow(FormSpecs.LINE_GAP_ROWSPEC);
     builder.appendRow(FormSpecs.PREF_ROWSPEC);
-		builder.nextRow(2);
-		return builder;
+	builder.nextRow(2);
+	
+	return builder;
   }
 
 	public Icon getIcon()
@@ -360,6 +375,8 @@ public final class TVPearlPluginSettingsTab implements SettingsTab
 		TVPearlPlugin.getInstance().setSelectedPluginProgramFormatings(mFormatingPanel.getSelectedPluginProgramFormatings());
 		
 		TVPearlPlugin.getInstance().updateChanges();
+		
+		mSettings.setCommentCount((Integer)mCommentCount.getValue());
 	}
 
 	private Vector<String> getViewOption()

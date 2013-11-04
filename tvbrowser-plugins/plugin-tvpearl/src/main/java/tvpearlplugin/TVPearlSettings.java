@@ -41,6 +41,8 @@ public class TVPearlSettings {
   private static final String KEY_SHOW_FILTER = "ShowFilter";
   private static final String KEY_FORUM_USER_NAME = "ForumUserName";
   private static final String KEY_FORUM_USER_PASSWORD = "ForumUserPassword";
+  private static final String KEY_COMMENT_VALUES = "KEY_COMMENT_VALUES";
+  private static final String KEY_COMMENT_SIZE = "KEY_COMMENT_SIZE";
   private static final String DEFAULT_URL = "http://hilfe.tvbrowser.org/viewtopic.php?t=1470";
   
   private final static int SHOW_ALL_PEARLS = 1;
@@ -269,5 +271,37 @@ public class TVPearlSettings {
   
   public String getForumPassword() {
     return mProperties.getProperty(KEY_FORUM_USER_PASSWORD, "");
+  }
+  
+  public void setCommentCount(int value) {
+    setProperty(KEY_COMMENT_SIZE, value);
+  }
+  
+  public int getCommentCount() {
+    return getPropertyInteger(KEY_COMMENT_SIZE, 10);
+  }
+  
+  public String[] getCommentValues() {
+    String comments = mProperties.getProperty(KEY_COMMENT_VALUES,"");
+    
+    if(comments.length() > 0) {
+      return comments.split(";##;");
+    }
+    
+    return new String[0];
+  }
+  
+  public void setCommentValues(String[] values) {
+    StringBuilder comments = new StringBuilder();
+    
+    for(int count = 0; count < Math.min(getPropertyInteger(KEY_COMMENT_SIZE, 10), values.length); count++) {
+      comments.append(values[count]).append(";##;");
+    }
+    
+    if(comments.length() > 0) {
+      comments.delete(comments.length()-4, comments.length());
+    }
+    
+    mProperties.setProperty(KEY_COMMENT_VALUES, comments.toString());
   }
 }
