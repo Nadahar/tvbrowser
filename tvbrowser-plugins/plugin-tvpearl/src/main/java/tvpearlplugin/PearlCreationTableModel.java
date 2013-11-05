@@ -22,10 +22,15 @@
  */
 package tvpearlplugin;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
 import javax.swing.event.TableModelEvent;
 import javax.swing.table.DefaultTableModel;
+
+import devplugin.Program;
 
 import util.program.AbstractPluginProgramFormating;
 import util.program.ProgramUtilities;
@@ -111,21 +116,64 @@ public class PearlCreationTableModel extends DefaultTableModel {
     
     mTVPearlCreationList.add(insertIndex,item);
     
+    item.getProgram().mark(TVPearlPlugin.getInstance());
+    
     fireTableRowsInserted(insertIndex, insertIndex);}catch(Throwable t) {t.printStackTrace();}
   }
 
   @Override
   public void removeRow(int row) {
-    mTVPearlCreationList.remove(row);
+    TVPearlCreation pearl = mTVPearlCreationList.remove(row);
+    
+    pearl.getProgram().unmark(TVPearlPlugin.getInstance());
+    
     fireTableRowsDeleted(row, row);
   }
   
   public void clear() {
     int maxIndex = mTVPearlCreationList.size() - 1;
     
+    for(int row = mTVPearlCreationList.size() - 1; row >= 0; row--) {
+      TVPearlCreation pearl = mTVPearlCreationList.remove(row);
+      pearl.getProgram().unmark(TVPearlPlugin.getInstance());
+    }
+    
     if(maxIndex >= 0) {
-      mTVPearlCreationList.clear();
       fireTableRowsDeleted(0, maxIndex);
     }
+  }
+  
+  public boolean contains(Program program) {
+    for(TVPearlCreation pearl : mTVPearlCreationList) {
+      if(pearl.equals(program)) {
+        return true;
+      }
+    }
+    
+    return false;
+  }
+  
+  public void writeData(ObjectOutputStream out) throws IOException {
+    out.writeInt(mTVPearlCreationList.size());
+    
+    for(TVPearlCreation pearl : mTVPearlCreationList) {
+      pearl.writeData(out);
+    }
+  }
+  
+  public static PearlCreationTableModel readData(ObjectInputStream in, int version) throws IOException, ClassNotFoundException {
+    int size = in.readInt();
+    
+    PearlCreationTableModel model = new PearlCreationTableModel();
+    
+    for(int i = 0; i < size; i++) {
+      TVPearlCreation pearl = TVPearlCreation.readData(in, version);
+      
+      if(pearl.isValid()) {
+        model.addRowSorted(pearl);
+      }
+    }
+    
+    return model;
   }
 }

@@ -22,18 +22,43 @@
  */
 package tvpearlplugin;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+
 import util.paramhandler.ParamParser;
 import util.program.AbstractPluginProgramFormating;
+import devplugin.Plugin;
 import devplugin.Program;
 
 public class TVPearlCreation {
   private Program mProgram;
   private AbstractPluginProgramFormating mFormating;
   private String mComment;
+  private boolean mIsValid;
+  
+  public static TVPearlCreation readData(ObjectInputStream in, int version) throws IOException, ClassNotFoundException {    
+    String uniqueID = in.readUTF();
+    String comment = in.readUTF();
+    AbstractPluginProgramFormating formating = AbstractPluginProgramFormating.readData(in);
+    
+    Program prog = Plugin.getPluginManager().getProgram(uniqueID);
+    
+    TVPearlCreation pearl = new TVPearlCreation(prog, formating);
+    
+    pearl.mComment = comment;
+    
+    return pearl;
+  }
   
   public TVPearlCreation(Program prog, AbstractPluginProgramFormating formating) {
     mProgram = prog;
     mFormating = formating;
+    mIsValid = prog != null && formating.isValid();
+  }
+  
+  public boolean isValid() {
+    return mIsValid;
   }
   
   public boolean equals(Object o) {
@@ -68,5 +93,11 @@ public class TVPearlCreation {
   
   public String getComment() {
     return mComment == null ? "" : mComment;
+  }
+  
+  public void writeData(ObjectOutputStream out) throws IOException {
+    out.writeUTF(mProgram.getUniqueID());
+    out.writeUTF(getComment());
+    mFormating.writeData(out);
   }
 }
