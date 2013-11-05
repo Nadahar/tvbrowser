@@ -74,7 +74,7 @@ public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
 {
 
 	private static final boolean PLUGIN_IS_STABLE = true;
-  private static final Version PLUGIN_VERSION = new Version(0, 25, 8, PLUGIN_IS_STABLE);
+  private static final Version PLUGIN_VERSION = new Version(0, 26, 0, PLUGIN_IS_STABLE);
 
   private static final String TARGET_PEARL_COPY = "pearlCopy";
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer
@@ -323,7 +323,7 @@ public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
 	}
 	
 	private Action[] getCreatePearlMenu(final Program program, Action show) {
-	  if(program != null && ((!program.isExpired() && !program.isOnAir()) || program.getID() == null)) {
+	  if(program != null && ((!program.isExpired() && !program.isOnAir()) || program.getID() == null) && !mCreationTableModel.contains(program)) {
       final AbstractPluginProgramFormating[] selected = getSelectedPluginProgramFormatings();
       
       if(selected.length == 1) {
@@ -379,7 +379,17 @@ public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
 
 	public Icon[] getMarkIconsForProgram(final Program p)
 	{
-		return new Icon[] { getSmallIcon() };
+	  if(p.isExpired() || mTVPearls.getPearl(p) != null) {
+	    if(mCreationTableModel.contains(p)) {
+	      return new Icon[] { getSmallIcon(),getNewPearlIcon() };
+	    }
+	    else {
+	      return new Icon[] { getSmallIcon() };
+	    }
+	  }
+	  else {
+	    return new Icon[] { getNewPearlIcon() };
+	  }
 	}
 
 	public PluginTreeNode getRootNode()
@@ -463,6 +473,10 @@ public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
 		if(mConfigs.length == 0) {
 		  mConfigs = Plugin.getPluginManager().getAvailableGlobalPuginProgramFormatings();
 		}
+		
+		if(version >= 5) {
+		  mCreationTableModel = PearlCreationTableModel.readData(in, version);
+		}
 	}
 	
   public boolean canReceiveProgramsWithTarget() {
@@ -527,7 +541,7 @@ public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
 
 	public void writeData(final ObjectOutputStream out) throws IOException
 	{
-	  out.writeInt(4);
+	  out.writeInt(5);
 		mTVPearls.writeData(out);
 		
 		if(mConfigs != null) {
@@ -563,6 +577,8 @@ public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
         config.writeData(out);
       }
     }
+    
+    mCreationTableModel.writeData(out);
 	}
 
 	public void handleTvBrowserStartFinished()
@@ -613,6 +629,10 @@ public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
 	ImageIcon getSmallIcon()
 	{
 		return createImageIcon("actions", "pearl", 16);
+	}
+	
+	ImageIcon getNewPearlIcon() {
+	  return createImageIcon("actions", "pearl-new", 16);
 	}
 
 	ImageIcon getProgramIcon(boolean knownProgram)
@@ -761,7 +781,11 @@ public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
 	@Override
 	public int getMarkPriorityForProgram(final Program p)
 	{
-		return mSettings.getMarkPriority();
+	  if(mTVPearls.getPearl(p) != null) {
+	    return mSettings.getMarkPriority();
+	  }
+	  
+	  return Program.NO_MARK_PRIORITY;
 	}
 
 	public boolean hasPluginTarget()
