@@ -74,7 +74,7 @@ public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
 {
 
 	private static final boolean PLUGIN_IS_STABLE = true;
-  private static final Version PLUGIN_VERSION = new Version(0, 25, 6, PLUGIN_IS_STABLE);
+  private static final Version PLUGIN_VERSION = new Version(0, 25, 7, PLUGIN_IS_STABLE);
 
   private static final String TARGET_PEARL_COPY = "pearlCopy";
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer
@@ -827,7 +827,7 @@ public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
           for(Program program : programArr) {
             final TVPProgram test = mTVPearls.getPearl(program);
             
-            if(test == null && !program.isExpired() && !program.isOnAir()) {
+            if((test == null || !test.getAuthor().equals(mSettings.getForumUserName())) && !program.isExpired() && !program.isOnAir()) {
               mCreationTableModel.addRowSorted(new TVPearlCreation(program, formating));
             }
           }
