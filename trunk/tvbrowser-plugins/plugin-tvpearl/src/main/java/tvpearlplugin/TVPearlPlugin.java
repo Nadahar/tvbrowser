@@ -74,7 +74,7 @@ public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
 {
 
 	private static final boolean PLUGIN_IS_STABLE = true;
-  private static final Version PLUGIN_VERSION = new Version(0, 25, 7, PLUGIN_IS_STABLE);
+  private static final Version PLUGIN_VERSION = new Version(0, 25, 8, PLUGIN_IS_STABLE);
 
   private static final String TARGET_PEARL_COPY = "pearlCopy";
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer
@@ -297,9 +297,11 @@ public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
 					showPearlInfo(getPearl(program));
 				}
 			});
+						
+			Action[] test = getCreatePearlMenu(program,menu);
 			
-			if(!p.getAuthor().equals(mSettings.getForumUserName())) {
-			  return new ActionMenu(getInfo().getName(), getCreatePearlMenu(program,menu));
+			if(test != null && !p.getAuthor().equals(mSettings.getForumUserName())) {
+			  return new ActionMenu(getInfo().getName(), test);
 			}
 			else {
 			  return new ActionMenu(menu);
@@ -308,7 +310,10 @@ public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
 		else {
 		  Action[] test = getCreatePearlMenu(program,null);
 		  
-		  if(test.length == 1) {
+		  if(test == null) {
+		    return null;
+		  }
+		  else if(test.length == 1) {
 		    return new ActionMenu(test[0]);
 		  }
 		  else {

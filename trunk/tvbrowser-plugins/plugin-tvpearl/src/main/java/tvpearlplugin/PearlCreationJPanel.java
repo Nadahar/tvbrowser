@@ -228,6 +228,7 @@ public class PearlCreationJPanel extends JPanel {
         }
         
         if(answer != null && answer.wasSuccessfull()) {
+          mSettings.setForumUserName(userName.getText().trim());
           JOptionPane.showMessageDialog(dialog, mLocalizer.msg("success", "TV pearls were posted successfully."));
           
           mCreationTableModel.clear();
