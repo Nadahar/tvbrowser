@@ -125,7 +125,9 @@ public class PearlCreationTableModel extends DefaultTableModel {
   public void removeRow(int row) {
     TVPearlCreation pearl = mTVPearlCreationList.remove(row);
     
-    pearl.getProgram().unmark(TVPearlPlugin.getInstance());
+    if(TVPearlPlugin.getInstance().getPearl(pearl.getProgram()) == null) {
+      pearl.getProgram().unmark(TVPearlPlugin.getInstance());
+    }
     
     fireTableRowsDeleted(row, row);
   }
@@ -135,7 +137,10 @@ public class PearlCreationTableModel extends DefaultTableModel {
     
     for(int row = mTVPearlCreationList.size() - 1; row >= 0; row--) {
       TVPearlCreation pearl = mTVPearlCreationList.remove(row);
-      pearl.getProgram().unmark(TVPearlPlugin.getInstance());
+      
+      if(TVPearlPlugin.getInstance().getPearl(pearl.getProgram()) == null) {
+        pearl.getProgram().unmark(TVPearlPlugin.getInstance());
+      }
     }
     
     if(maxIndex >= 0) {
