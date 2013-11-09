@@ -290,7 +290,9 @@ public class ManagePanel extends JPanel implements PersonaListener {
     
     selectPrograms(true);
     
-    updatePersona();
+    if(close == null) {
+      updatePersona();
+    }
   }
   
   private synchronized void fillFilterBox() {
