@@ -1070,6 +1070,18 @@ public class PluginManagerImpl implements PluginManager {
   }
   
   /**
+   * Let TV-Browser scroll to the given time.
+   * 
+   * @param time The time to scroll to in minutes after midnight.
+   * @param highlight If programs at scroll time should be highlighted (if scroll highlighting is enabled.)
+   * @since 3.3.3
+   */
+  public void scrollToTime(int time, boolean highlight) {
+    MainFrame.getInstance().scrollToTime(time,highlight);
+    MainFrame.getInstance().showProgramTableTabIfAvailable();
+  }
+  
+  /**
    * Let TV-Browser scroll to the given channel.
    * 
    * @param channel The channel to scroll to.
