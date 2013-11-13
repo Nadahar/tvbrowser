@@ -26,6 +26,7 @@ import java.awt.image.FilteredImageSource;
 import java.awt.image.ImageFilter;
 import java.awt.image.RGBImageFilter;
 
+import javax.swing.GrayFilter;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.UIManager;
@@ -176,7 +177,7 @@ public class PictureAreaIcon implements Icon {
     x += 3;
 
     if(mIsGrayFilter && !mIsExpired && mProgram.isExpired()) {
-      ImageFilter filter = new ColorFillFilter(new Color(70,70,70));
+      ImageFilter filter = UIManager.getDefaults().getColor("List.background").equals(Color.black) ? new ColorFillFilter(new Color(50,50,50)) : new GrayFilter(true, 60);
       mScaledIcon.setImage(c.createImage(new FilteredImageSource(mScaledIcon.getImage().getSource(),filter)));
       mIsExpired = true;
     }
