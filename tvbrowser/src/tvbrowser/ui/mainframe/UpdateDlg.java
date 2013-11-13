@@ -297,7 +297,10 @@ public class UpdateDlg extends JDialog implements ActionListener, WindowClosingI
 
       //if (mStartUpdate != null) {
         if (mAutoUpdate.isSelected()) {
-          Settings.propAutoDownloadType.setString("daily");
+          if(Settings.propAutoDownloadType.getString().equals("never")) {
+            Settings.propAutoDownloadType.setString(Settings.propAutoDownloadType.getDefault());
+          }
+          
           Settings.propAutoDownloadPeriod.setInt(mResult);
         }
         else {
