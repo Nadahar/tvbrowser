@@ -121,7 +121,7 @@ public class PictureAreaIcon implements Icon {
 
     String copyright = p.getTextField(ProgramFieldType.PICTURE_COPYRIGHT_TYPE);
     
-    if(copyright.toLowerCase().startsWith("(c)")) {
+    if(copyright != null && copyright.toLowerCase().startsWith("(c)")) {
       copyright = "\u00A9" + copyright.substring(3);
     }
     
