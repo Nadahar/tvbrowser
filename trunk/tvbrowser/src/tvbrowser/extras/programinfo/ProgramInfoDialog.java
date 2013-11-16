@@ -150,6 +150,7 @@ class ProgramInfoDialog {
   private TaskMenuAction mTextSearch;
 
   private boolean mShowSettings;
+  private static long mLastClosed = 0;
 
   private static ProgramInfoDialog instance;
   private Action mUpAction, mDownAction;
@@ -310,6 +311,7 @@ class ProgramInfoDialog {
   }
 
   private void init(Dimension pluginsSize, boolean showSettings) {
+    mLastClosed = 0;
     mShowSettings = showSettings;
     mFunctionGroup = new JTaskPaneGroup();
     mFunctionGroup.setTitle(mLocalizer.msg("functions", "Functions"));
@@ -884,6 +886,8 @@ class ProgramInfoDialog {
     ProgramInfo.getInstance().getSettings().setShowSearch(
         mFindAsYouType.isAlwaysVisible());
     mDialog.dispose();
+    
+    mLastClosed = System.currentTimeMillis();
   }
 
   private void addActionsToRootPane() {
@@ -1035,6 +1039,7 @@ class ProgramInfoDialog {
       return false;
     }
     mDialog.setVisible(false);
+    mLastClosed = System.currentTimeMillis();
     return true;
   }
 
@@ -1050,5 +1055,9 @@ class ProgramInfoDialog {
 
   protected static boolean isShowing() {
     return mDialog != null && mDialog.isVisible();
+  }
+  
+  static boolean wasClosedRecently() {
+    return System.currentTimeMillis() - mLastClosed < 100;
   }
 }

@@ -61,6 +61,7 @@ import tvbrowser.core.Settings;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.core.plugin.PluginStateListener;
+import tvbrowser.extras.programinfo.ProgramInfo;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.programtable.background.BackgroundPainter;
 import tvbrowser.ui.programtable.background.OneImageBackPainter;
@@ -722,7 +723,8 @@ public class ProgramTable extends JPanel
   private void handleMouseExited(MouseEvent evt) {
     if (Settings.propProgramTableMouseOver.getBoolean()) {
       JViewport viewport = (JViewport) getParent();
-      if (((mPopupMenu == null) || (!mPopupMenu.isVisible())) && !viewport.getViewRect().contains(evt.getPoint())) {
+      
+      if (!ProgramInfo.getInstance().dialogWasClosedRecently() && ((mPopupMenu == null) || (!mPopupMenu.isVisible())) && !viewport.getViewRect().contains(evt.getPoint())) {
         repaintCell(mMouseMatrix);
         mMouse = null;
         mMouseMatrix = new Point(-1, -1);
