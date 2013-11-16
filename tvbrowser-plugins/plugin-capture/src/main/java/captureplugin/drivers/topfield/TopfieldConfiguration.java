@@ -19,6 +19,7 @@ import captureplugin.drivers.utils.IDGenerator;
 import captureplugin.utils.ConfigIf;
 import captureplugin.utils.ExternalChannelIf;
 import devplugin.Channel;
+import devplugin.Plugin;
 import devplugin.ProgramReceiveTarget;
 
 /**
@@ -27,7 +28,7 @@ import devplugin.ProgramReceiveTarget;
  * @author Wolfgang Reh
  */
 public final class TopfieldConfiguration implements ConfigIf, Cloneable {
-  private static final int CONFIGURATION_VERSION = 2;
+  private static final int CONFIGURATION_VERSION = 3;
   private static final String USER_NAME_PROPERTY = "user.name";
   private static final String HTTP_PROTOCOL = "http://";
 
@@ -60,8 +61,7 @@ public final class TopfieldConfiguration implements ConfigIf, Cloneable {
   /**
    * Clone the configuration.
    * 
-   * @param configuration
-   *          The configuration to clone
+   * @param configuration The configuration to clone
    */
   public TopfieldConfiguration(TopfieldConfiguration configuration) {
     configurationID = configuration.configurationID;
@@ -86,12 +86,10 @@ public final class TopfieldConfiguration implements ConfigIf, Cloneable {
   /**
    * Create a configuration object from an object stream.
    * 
-   * @param stream
-   *          The object stream
-   * @throws IOException
-   *           If the stream could not be read
-   * @throws ClassNotFoundException
-   *           If a class in the stream could not be instantiated
+   * @param stream The object stream
+   * @throws IOException If the stream could not be read
+   * @throws ClassNotFoundException If a class in the stream could not be
+   *           instantiated
    */
   public TopfieldConfiguration(ObjectInputStream stream) throws IOException, ClassNotFoundException {
     readFromStream(stream);
@@ -164,14 +162,16 @@ public final class TopfieldConfiguration implements ConfigIf, Cloneable {
   /**
    * Read the configuration from a stream.
    * 
-   * @param stream
-   *          The stream to read
-   * @throws IOException
-   *           If reading the stream fails
-   * @throws ClassNotFoundException
-   *           If a saved class could not be instantiated
+   * @param stream The stream to read
+   * @throws IOException If reading the stream fails
+   * @throws ClassNotFoundException If a saved class could not be instantiated
    */
   private void readFromStream(ObjectInputStream stream) throws IOException, ClassNotFoundException {
+    HashMap<String, Channel> subscribedChannels = new HashMap<String, Channel>();
+    for (Channel browserChannel : Plugin.getPluginManager().getSubscribedChannels()) {
+      subscribedChannels.put(browserChannel.getUniqueId(), browserChannel);
+    }
+
     deviceChannels.clear();
     deviceChannelMap.clear();
     browserChannelMap.clear();
@@ -197,10 +197,18 @@ public final class TopfieldConfiguration implements ConfigIf, Cloneable {
     }
 
     for (int assigmentCount = stream.readInt(); assigmentCount > 0; assigmentCount--) {
-      Channel browserChannel = Channel.readData(stream, true);
+      Channel browserChannel = null;
+
+      if (version < 3) {
+        browserChannel = Channel.readData(stream, true);
+      } else {
+        browserChannel = subscribedChannels.get(stream.readUTF());
+      }
       TopfieldServiceInfo service = deviceChannels.get(stream.readUTF());
-      deviceChannelMap.put(service, browserChannel);
-      browserChannelMap.put(browserChannel, service);
+      if ((browserChannel != null) && (service != null)) {
+        deviceChannelMap.put(service, browserChannel);
+        browserChannelMap.put(browserChannel, service);
+      }
     }
 
     receiveTargets = new ProgramReceiveTarget[stream.readInt()];
@@ -220,10 +228,8 @@ public final class TopfieldConfiguration implements ConfigIf, Cloneable {
   /**
    * Write the configuration to a stream.
    * 
-   * @param stream
-   *          The stream to write to
-   * @throws IOException
-   *           If writing to the stream fails
+   * @param stream The stream to write to
+   * @throws IOException If writing to the stream fails
    */
   public void writeToStream(ObjectOutputStream stream) throws IOException {
     saveTimestamp = System.currentTimeMillis();
@@ -256,7 +262,7 @@ public final class TopfieldConfiguration implements ConfigIf, Cloneable {
     stream.writeInt(assignmentCount);
     for (Channel browserChannel : browserChannelMap.keySet()) {
       if ((browserChannel != null) && (browserChannelMap.get(browserChannel) != null)) {
-        browserChannel.writeData(stream);
+        stream.writeUTF(browserChannel.getUniqueId());
         stream.writeUTF(browserChannelMap.get(browserChannel).getKey());
       }
     }
@@ -277,8 +283,7 @@ public final class TopfieldConfiguration implements ConfigIf, Cloneable {
   /**
    * Get the channel specific preroll time.
    * 
-   * @param subscribedChannel
-   *          The channel for which to get the preroll time
+   * @param subscribedChannel The channel for which to get the preroll time
    * @return The preroll time
    */
   public Integer getChannelPreroll(Channel subscribedChannel) {
@@ -293,8 +298,7 @@ public final class TopfieldConfiguration implements ConfigIf, Cloneable {
   /**
    * Get the channel specific postroll time.
    * 
-   * @param subscribedChannel
-   *          The channel for which to get the postroll time
+   * @param subscribedChannel The channel for which to get the postroll time
    * @return The postroll time
    */
   public Integer getChannelPostroll(Channel subscribedChannel) {
@@ -309,8 +313,7 @@ public final class TopfieldConfiguration implements ConfigIf, Cloneable {
   /**
    * Set the channels currently tuned on the device.
    * 
-   * @param services
-   *          The list of services
+   * @param services The list of services
    */
   protected void setDeviceChannels(List<TopfieldServiceInfo> services) {
     deviceChannels.clear();
@@ -330,8 +333,7 @@ public final class TopfieldConfiguration implements ConfigIf, Cloneable {
   }
 
   /**
-   * @param deviceAddress
-   *          the deviceAddress to set
+   * @param deviceAddress the deviceAddress to set
    */
   public void setDeviceAddress(String deviceAddress) {
     this.deviceAddress = deviceAddress;
@@ -345,8 +347,7 @@ public final class TopfieldConfiguration implements ConfigIf, Cloneable {
   }
 
   /**
-   * @param username
-   *          the username to set
+   * @param username the username to set
    */
   public void setUsername(String username) {
     this.username = username;
@@ -360,8 +361,7 @@ public final class TopfieldConfiguration implements ConfigIf, Cloneable {
   }
 
   /**
-   * @param password
-   *          the password to set
+   * @param password the password to set
    */
   public void setPassword(String password) {
     this.password = password;
@@ -389,8 +389,7 @@ public final class TopfieldConfiguration implements ConfigIf, Cloneable {
   }
 
   /**
-   * @param defaultPreroll
-   *          the defaultPreroll to set
+   * @param defaultPreroll the defaultPreroll to set
    */
   public void setDefaultPreroll(int defaultPreroll) {
     this.defaultPreroll = defaultPreroll;
@@ -404,16 +403,14 @@ public final class TopfieldConfiguration implements ConfigIf, Cloneable {
   }
 
   /**
-   * @param defaultPostroll
-   *          the defaultPostroll to set
+   * @param defaultPostroll the defaultPostroll to set
    */
   public void setDefaultPostroll(int defaultPostroll) {
     this.defaultPostroll = defaultPostroll;
   }
 
   /**
-   * @param useTuner4
-   *          the useTuner4 to set
+   * @param useTuner4 the useTuner4 to set
    */
   public void setUseTuner4(boolean useTuner4) {
     this.useTuner4 = useTuner4;
@@ -434,16 +431,14 @@ public final class TopfieldConfiguration implements ConfigIf, Cloneable {
   }
 
   /**
-   * @param correctTime
-   *          the correctTime to set
+   * @param correctTime the correctTime to set
    */
   public void setCorrectTime(boolean correctTime) {
     this.correctTime = correctTime;
   }
 
   /**
-   * @param receiveTargets
-   *          the receiveTargets to set
+   * @param receiveTargets the receiveTargets to set
    */
   public void setReceiveTargets(ProgramReceiveTarget[] receiveTargets) {
     this.receiveTargets = receiveTargets;
@@ -457,8 +452,7 @@ public final class TopfieldConfiguration implements ConfigIf, Cloneable {
   }
 
   /**
-   * @param recordingsLocal
-   *          the recordingsLocal to set
+   * @param recordingsLocal the recordingsLocal to set
    */
   public void setRecordingsLocal(boolean recordingsLocal) {
     this.recordingsLocal = recordingsLocal;
@@ -483,8 +477,7 @@ public final class TopfieldConfiguration implements ConfigIf, Cloneable {
   }
 
   /**
-   * @param deviceUnreachable
-   *          the deviceUnreachable to set
+   * @param deviceUnreachable the deviceUnreachable to set
    */
   public void setDeviceUnreachable(boolean deviceUnreachable) {
     this.deviceUnreachable = deviceUnreachable;
@@ -498,16 +491,14 @@ public final class TopfieldConfiguration implements ConfigIf, Cloneable {
   }
 
   /**
-   * @param channelSortKey
-   *          the channelSortKey to set
+   * @param channelSortKey the channelSortKey to set
    */
   public void setChannelSortKey(TopfieldChannelSortKey channelSortKey) {
     this.channelSortKey = channelSortKey;
   }
 
   /**
-   * @param connectionTimeout
-   *          the connectionTimeout to set
+   * @param connectionTimeout the connectionTimeout to set
    */
   public void setConnectionTimeout(int connectionTimeout) {
     this.connectionTimeout = connectionTimeout;
@@ -523,10 +514,8 @@ public final class TopfieldConfiguration implements ConfigIf, Cloneable {
   /**
    * Get a TVBrowser channel for device service parameters.
    * 
-   * @param number
-   *          The device service number
-   * @param isTV
-   *          Is this a TV service?
+   * @param number The device service number
+   * @param isTV Is this a TV service?
    * @return The TVBrowser channel
    */
   public Channel getChannelForService(int number, boolean isTV) {
@@ -542,8 +531,7 @@ public final class TopfieldConfiguration implements ConfigIf, Cloneable {
   /**
    * Add a timer entry to the list.
    * 
-   * @param entry
-   *          The entry to add
+   * @param entry The entry to add
    */
   public void addTimerEntry(TopfieldTimerEntry entry) {
     timerEntries.add(entry);
@@ -552,8 +540,7 @@ public final class TopfieldConfiguration implements ConfigIf, Cloneable {
   /**
    * Remove an entry from the timer list.
    * 
-   * @param entry
-   *          The entry to remove
+   * @param entry The entry to remove
    */
   public void removeTimerEntry(TopfieldTimerEntry entry) {
     timerEntries.remove(entry);
@@ -567,13 +554,19 @@ public final class TopfieldConfiguration implements ConfigIf, Cloneable {
   }
 
   /**
-   * @param entries
-   *          The list of timers to set
+   * @param entries The list of timers to set
    */
   public void setTimerEntries(List<TopfieldTimerEntry> entries) {
     timerEntries = new ArrayList<TopfieldTimerEntry>(entries);
   }
 
+  /**
+   * Get the URL for a specific page.
+   * 
+   * @param page The requested page
+   * @return The URL to contact the device
+   * @throws MalformedURLException If the URL could not be generated
+   */
   public URL getDeviceURL(String page) throws MalformedURLException {
     String urlString = getDeviceAddress() + page;
     if (!urlString.toLowerCase().startsWith(HTTP_PROTOCOL.toLowerCase())) {
