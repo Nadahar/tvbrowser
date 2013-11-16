@@ -493,4 +493,7 @@ public class ProgramInfo {
     mLocalizer = Localizer.getLocalizerFor(ProgramInfo.class);
   }
 
+  public boolean dialogWasClosedRecently() {
+    return ProgramInfoDialog.wasClosedRecently();
+  }
 }
