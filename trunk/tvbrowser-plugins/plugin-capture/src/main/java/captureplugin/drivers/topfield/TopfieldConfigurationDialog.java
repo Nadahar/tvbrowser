@@ -11,8 +11,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
@@ -58,10 +56,11 @@ import devplugin.Plugin;
  * @author Wolfgang Reh
  */
 public class TopfieldConfigurationDialog extends JDialog implements WindowClosingIf {
+  private static final long serialVersionUID = 1L;
   private static final Localizer localizer = Localizer.getLocalizerFor(TopfieldConfigurationDialog.class); // @jve:decl-index=0:
   private static final Font BORDER_FONT = new Font("SansSerif", Font.BOLD, 12);
   private static final Color BORDER_COLOR = new Color(59, 59, 59);
-  private static final String DRIVER_VERSION = "1.1";
+  private static final String DRIVER_VERSION = "1.2";
   private static final String DRIVER_AUTHOR = "Wolfgang Reh";
 
   private static final String DIALOG_TITLE = "title"; // @jve:decl-index=0:
@@ -179,12 +178,9 @@ public class TopfieldConfigurationDialog extends JDialog implements WindowClosin
   /**
    * Configure a Topfield device.
    * 
-   * @param parent
-   *          The parent window
-   * @param device
-   *          The device to use
-   * @param configuration
-   *          The configuration to modify
+   * @param parent The parent window
+   * @param device The device to use
+   * @param configuration The configuration to modify
    */
   public TopfieldConfigurationDialog(Window parent, TopfieldDevice device, TopfieldConfiguration configuration) {
     super(parent);
@@ -280,8 +276,7 @@ public class TopfieldConfigurationDialog extends JDialog implements WindowClosin
   /**
    * Normalizes a channel name. Lower case and no spaces.
    * 
-   * @param name
-   *          channel name
+   * @param name channel name
    * @return normalized channel name
    */
   private String normalizeName(String name) {
