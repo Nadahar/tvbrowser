@@ -116,7 +116,7 @@ public class PluginAutoUpdater {
           IOUtilities.download(new URL(url + (url.endsWith("/") ? "" : "/") + name), new File(Settings.getUserSettingsDirName(), name));
         } catch(Exception ee) {}
         
-        MainFrame.getInstance().updatePlugins(url, SoftwareUpdater.ONLY_UPDATE_TYPE, infoLabel, Settings.propAutoUpdatePlugins.getBoolean());
+        MainFrame.getInstance().updatePlugins(url, SoftwareUpdater.ONLY_UPDATE_TYPE, infoLabel, !Settings.propAutoUpdatePlugins.getBoolean());
       }
     }.start();
   }
