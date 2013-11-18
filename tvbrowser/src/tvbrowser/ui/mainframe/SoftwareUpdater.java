@@ -192,9 +192,6 @@ public final class SoftwareUpdater {
               mBlockRequestingPluginId = blocked.getId();
               Settings.propBlockedPluginArray.addBlockedPlugin(this, mBlockRequestingPluginId, blocked.getMaximumVersion(), blocked.getRequiredVersion());
               mBlockRequestingPluginId = null;
-            }
-
-            if(item.getVersion().compareTo(required) <= 0 && item.getVersion().compareTo(maximum) >= 0) {
               it.remove();
               continue;
             }
