@@ -154,10 +154,12 @@ public final class BlockedPluginArrayProperty extends Property {
    * @return If the given id was already blocked.
    */
   private boolean checkAndRemoveValueFromOld(BlockedPlugin plugin) {
-    for(int i = 0; i < mOldValue.length; i++) {
-      if(mOldValue[i] != null && mOldValue[i].equals(plugin)) {
-        mOldValue[i] = null;
-        return true;
+    if(mOldValue != null) {
+      for(int i = 0; i < mOldValue.length; i++) {
+        if(mOldValue[i] != null && mOldValue[i].equals(plugin)) {
+          mOldValue[i] = null;
+          return true;
+        }
       }
     }
 
