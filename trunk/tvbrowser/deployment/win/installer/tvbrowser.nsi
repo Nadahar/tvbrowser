@@ -660,7 +660,20 @@ Section "Uninstall"
 
   # Remove start menu shortcuts, but only if we successfully read the registry
   ${If} "$8" != ""
-    RMDir /r "$SMPROGRAMS\$8"
+    Delete "$SMPROGRAMS\$8\${PROG_NAME}.lnk"
+    Delete "$SMPROGRAMS\$8\$(MISC_DIR)\$(LICENSE_TXT).lnk" 
+	Delete "$SMPROGRAMS\$8\$(MISC_DIR)\$(WITHOUT_DIRECTX).lnk"
+    Delete "$SMPROGRAMS\$8\$(MISC_DIR)\$(WITHOUT_DIRECTX) - Info.lnk"
+    Delete "$SMPROGRAMS\$8\$(MISC_DIR)\Website"
+    Delete "$SMPROGRAMS\$8\$(MISC_DIR)\Forum"
+    Delete "$SMPROGRAMS\$8\$(MISC_DIR)\Deutsches Handbuch"
+	Delete "$SMPROGRAMS\$8\$(MISC_DIR)\English Manual"
+	Delete "$SMPROGRAMS\$8\$(MISC_DIR)\$(UNINSTALL_TXT).lnk"
+    Delete "$SMPROGRAMS\$8\${PROG_NAME}.lnk"
+    
+    # delete start menu directories if empty
+    RMDir "$SMPROGRAMS\$8\$(MISC_DIR)" 
+    RMDir "$SMPROGRAMS\$8"
   ${EndIf}
 
   noDeleteStartMenu:
