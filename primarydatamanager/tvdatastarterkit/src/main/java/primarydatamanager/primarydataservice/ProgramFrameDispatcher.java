@@ -90,6 +90,14 @@ public class ProgramFrameDispatcher {
     
   }
   
+  public void putDayProgramFile(DayProgramFile file) {
+    mDayPrograms.put(file.getDate(),file);
+  }
+  
+  public DayProgramFile removeDayProgramFile(devplugin.Date date) {
+    return mDayPrograms.remove(date);
+  }
+  
   private void dumpFrame(ProgramFrame progFrame) {
     ProgramField timeField=progFrame.getProgramFieldOfType(ProgramFieldType.START_TIME_TYPE);
     ProgramField titleField=progFrame.getProgramFieldOfType(ProgramFieldType.TITLE_TYPE);
@@ -120,7 +128,15 @@ public class ProgramFrameDispatcher {
       }
       
       
-      f.writeToFile(new File(directory,f.getProgramFileName()));
+      File oldFile = new File(directory,f.getProgramFileName());
+      File tmpFile = new File(directory,f.getProgramFileName()+".tmp");
+      try {
+        f.writeToFile(tmpFile);
+        oldFile.delete();
+        tmpFile.renameTo(oldFile);
+      } finally {
+        tmpFile.delete();
+      }
     }
   }
   
