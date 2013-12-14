@@ -122,7 +122,7 @@ public class SoundReminder extends Plugin {
   }
   
   public static Version getVersion() {
-    return new Version(0,11,1,true);
+    return new Version(0,11,2,true);
   }
   
   public PluginInfo getInfo() {
@@ -672,7 +672,7 @@ public class SoundReminder extends Plugin {
       mSoundEntryList = mTableModel.getChangedList();
     }
   }
-  
+    
   private String selectAudioFile(String soundFName) {
 	  final String[] extArr = { ".wav", ".aif", ".rmf", ".au", ".mid" };
 	  final String msg = mLocalizer.msg("settings.soundFileFilter",
@@ -686,6 +686,13 @@ public class SoundReminder extends Plugin {
 	  
 	  if(soundFName != null && new File(soundFName).isFile()) {
 	    fileChooser.setSelectedFile(new File(soundFName));
+	  }
+	  else if(mDefaultEntry != null && mDefaultEntry.getPath() != null && mDefaultEntry.getPath().trim().length() > 0) {
+	    File dir = new File(mDefaultEntry.getPath()).getParentFile();
+	        
+	    if(dir.isDirectory()) {
+	      fileChooser.setCurrentDirectory(dir);
+	    }
 	  }
 	  
 	  if(fileChooser.showOpenDialog(UiUtilities.getLastModalChildOf(getParentFrame())) == JFileChooser.APPROVE_OPTION) {
