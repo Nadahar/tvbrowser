@@ -1,6 +1,6 @@
 /*
  * SoundReminder - Plugin for TV-Browser
- * Copyright (C) 2009 René Mach
+ * Copyright (C) 2009 Renï¿½ Mach
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -32,7 +32,7 @@ import javax.swing.table.AbstractTableModel;
 /**
  * The settings table for the value settings.
  * 
- * @author René Mach
+ * @author Renï¿½ Mach
  */
 public class SoundReminderSettingsTableModel extends AbstractTableModel {
   private ArrayList<SoundSettingsEntry> mData = new ArrayList<SoundSettingsEntry>(0);
@@ -89,9 +89,9 @@ public class SoundReminderSettingsTableModel extends AbstractTableModel {
   /**
    * Adds a new row to this table.
    */
-  public void addRow() {
-    mData.add(new SoundSettingsEntry(new SoundEntry("DUMMY-ENTRY",true,"DUMMY-FILE")));
-    fireTableRowsInserted(mData.size()-1,mData.size()-1);
+  public void addRow() {try {
+    mData.add(new SoundSettingsEntry(new SoundEntry(SoundEntry.DUMMY_ENTRY,true,SoundEntry.DUMMY_FILE)));
+    fireTableRowsInserted(mData.size()-1,mData.size()-1);}catch(Throwable t) {t.printStackTrace();}
   }
   
   /**
@@ -212,7 +212,7 @@ public class SoundReminderSettingsTableModel extends AbstractTableModel {
         test = mNewSearchText.replaceAll("\\*+","\\*").trim();
       }
       
-      return test.length() > 0 && !test.equals("DUMMY-ENTRY") 
+      return test.length() > 0 && !test.equals(SoundEntry.DUMMY_ENTRY) 
         && !test.equals("*") && mNewPath != null && new File(mNewPath).isFile();
     }
     

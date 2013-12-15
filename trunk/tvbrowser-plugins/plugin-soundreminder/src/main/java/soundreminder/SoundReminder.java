@@ -92,6 +92,8 @@ import devplugin.Version;
  * @author René Mach
  */
 public class SoundReminder extends Plugin {
+  private static final Version VERSION = new Version(0,11,3,true);
+  
   protected static final Localizer mLocalizer = Localizer
       .getLocalizerFor(SoundReminder.class);
   private static final String PLAY_TARGET = "####PLAY####MUSIC#####";
@@ -122,7 +124,7 @@ public class SoundReminder extends Plugin {
   }
   
   public static Version getVersion() {
-    return new Version(0,11,2,true);
+    return VERSION;
   }
   
   public PluginInfo getInfo() {
@@ -157,7 +159,7 @@ public class SoundReminder extends Plugin {
   }
   
   public void writeData(final ObjectOutputStream out) throws IOException {
-    out.writeInt(3); // write version
+    out.writeInt(4); // write version
     out.writeInt(mSoundEntryList.size());
     
     for(SoundEntry entry : mSoundEntryList) {
@@ -238,9 +240,7 @@ public class SoundReminder extends Plugin {
         layout.setColumnGroups(new int[][] {{2,4}});
         
         final CellConstraints cc = new CellConstraints();
-        final PanelBuilder pb = new PanelBuilder(layout,
-            (JPanel) exclusionListDlg
-            .getContentPane());
+        final PanelBuilder pb = new PanelBuilder(layout);
         pb.border(Borders.DIALOG);
         
         JPanel settingsPanel = mSettings.createSettingsPanel();
@@ -250,6 +250,10 @@ public class SoundReminder extends Plugin {
         pb.addSeparator("", cc.xyw(1,3,4));
         pb.add(ok, cc.xy(2,5));
         pb.add(cancel, cc.xy(4,5));
+        
+        pb.getPanel().setOpaque(true);
+        
+        exclusionListDlg.setContentPane(pb.getPanel());
         
         layoutWindow("soundListDlg", exclusionListDlg, new Dimension(600,
             450));
