@@ -50,6 +50,7 @@ import javax.swing.JOptionPane;
 
 import util.ui.Localizer;
 import util.ui.UiUtilities;
+import devplugin.Plugin;
 import devplugin.Program;
 
 /**
@@ -58,6 +59,9 @@ import devplugin.Program;
  * @author René Mach
  */
 public class SoundEntry {
+  static final String DUMMY_ENTRY = "DUMMY-ENTRY";
+  static final String DUMMY_FILE = "DUMMY-FILE"; 
+  
   private String mSearchText;
   private String mPath;
 
@@ -75,6 +79,10 @@ public class SoundEntry {
       throws IOException {
     mSearchText = in.readUTF();
     mPath = in.readUTF();
+    
+    if(version < 4) {
+      mPath = checkForRelativePath(mPath);
+    }
 
     if(in.readBoolean()) {
       mPreSearchPart = in.readUTF();
@@ -86,9 +94,47 @@ public class SoundEntry {
   protected String getSearchText() {
     return mSearchText;
   }
+  
+  private static String translateRelativePath(String path) {
+    if(path.startsWith("..") || path.startsWith(".")) {
+      if(path.startsWith("./")) {
+        path = path.substring(2);
+      }
+      
+      String[] pathParts = path.replace("\\", "/").split("/");
+      String[] homeParts = Plugin.getPluginManager().getTvBrowserSettings().getTvBrowserUserHome().replace("\\", "/").split("/");
+      
+      int homePartsToUse = homeParts.length;
+      int i = 0;
+      
+      while(i < pathParts.length && pathParts[i].equals("..")) {
+        i++;
+        homePartsToUse--;
+      }
+      
+      if(homePartsToUse >= 0 && pathParts.length > i) {
+        StringBuilder pathToUse = new StringBuilder();
+        
+        for(int j = 0; j < homePartsToUse; j++) {
+          pathToUse.append(homeParts[j]).append("/");
+        }
+        for(int j = i; j < pathParts.length; j++) {
+          pathToUse.append(pathParts[j]).append("/");
+        }
+        
+        if(pathToUse.length() > 1 && pathToUse.toString().endsWith("/")) {
+          pathToUse.deleteCharAt(pathToUse.length()-1);
+          
+          path = pathToUse.toString();
+        }
+      }
+    }
+    
+    return path;
+  }
 
   protected String getPath() {
-    return mPath;
+    return translateRelativePath(mPath);
   }
 
   /* Copied from IDontWant2SeeListEntry */
@@ -96,12 +142,51 @@ public class SoundEntry {
     return mCaseSensitive;
   }
 
+  private String checkForRelativePath(String path) {
+    if((path.contains("\\") || path.contains("/"))) {
+      File audioPath = new File(path);
+      
+      String[] homeParts = Plugin.getPluginManager().getTvBrowserSettings().getTvBrowserUserHome().replace("\\", "/").split("/");
+      String[] pathParts = audioPath.getParent().replace("\\", "/").split("/");
+      
+      int i = 0;
+      
+      while(homeParts.length > i && pathParts.length > i && homeParts[i].equals(pathParts[i])) {
+        i++;
+      }
+      
+      if(i > 0) {
+        StringBuilder relativeValue = new StringBuilder();
+        
+        if(i < homeParts.length) {
+          for(int j = i; j < homeParts.length; j++) {
+            relativeValue.append("../");
+          }
+        }
+        else {
+          relativeValue.append("./");
+        }
+        
+        for(int j = i; j < pathParts.length; j++) {
+          relativeValue.append(pathParts[j]).append("/");
+        }
+        
+        relativeValue.append(audioPath.getName());
+        
+        return relativeValue.toString();
+      }
+    }
+    
+    return path;
+  }
+  
   /* Copied from IDontWant2SeeListEntry */
   protected void setValues(final String searchText,
       final boolean caseSensitive, final String path) {
     mPreSearchPart = null;
     mSearchPattern = null;
-    mPath = path;
+    
+    mPath = checkForRelativePath(path);
 
     mSearchText = searchText;
     mCaseSensitive = caseSensitive;
@@ -179,7 +264,9 @@ public class SoundEntry {
   }
 
   /* Copied from ReminderPlugin */
-  protected static Object playSound(final String fileName) {
+  protected static Object playSound(String fileName) {
+    fileName = translateRelativePath(fileName);
+    
     try {
       if (fileName.toLowerCase().endsWith(".mid")) {
         final Sequencer sequencer = MidiSystem.getSequencer();
