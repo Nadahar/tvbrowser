@@ -165,6 +165,17 @@ public class E2TimerHelper {
   public static String getAsSeconds(Calendar cal) {
     return Long.toString(cal.getTimeInMillis() / 1000);
   }
+  
+  private int getIntBoolean(String value) {
+    if(value.toLowerCase().equals("false")) {
+      return 0;
+    }
+    else if(value.toLowerCase().equals("true")) {
+      return 1;
+    }
+    
+    return Integer.parseInt(value);
+  }
 
   /**
    * Wiederholende Timer erzeugen
@@ -182,8 +193,8 @@ public class E2TimerHelper {
     Map<String, Map<String, String>> mapTimers = new TreeMap<String, Map<String, String>>();
     for (Map<String, String> timer : timers) {
 
-      int e2repeated = timer.get(REPEATED).toLowerCase().equals("false") ? 0 : timer.get(REPEATED).toLowerCase().equals("true") ? 1 : Integer.parseInt(timer.get(REPEATED));
-      int e2justplay = timer.get(JUSTPLAY).toLowerCase().equals("false") ? 0 : timer.get(JUSTPLAY).toLowerCase().equals("true") ? 1 : Integer.parseInt(timer.get(JUSTPLAY));
+      int e2repeated = getIntBoolean(timer.get(REPEATED));
+      int e2justplay = getIntBoolean(timer.get(JUSTPLAY));
       if ((e2repeated > 0) && (e2justplay == 0)) {
         for (int i = 0; i < 7; i++) {
           Calendar calB = getAsCalendar(timer.get(TIMEBEGIN));
@@ -242,7 +253,7 @@ public class E2TimerHelper {
     }
     // Hinzufuegen und sortieren der Timer ueber TreeMap
     for (Map<String, String> timer : timers) {
-      int e2justplay = Integer.parseInt(timer.get(JUSTPLAY));
+      int e2justplay = getIntBoolean(timer.get(JUSTPLAY));
       if (e2justplay == 0) {
         String key = getTimerKey(timer);
         mapTimers.put(key, timer);
