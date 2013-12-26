@@ -31,16 +31,23 @@ import java.awt.event.AWTEventListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.io.ByteArrayOutputStream;
 import java.io.DataOutput;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.zip.GZIPOutputStream;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -49,20 +56,27 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JRootPane;
+import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
 
 import util.ui.Localizer;
+import util.ui.TVBrowserIcons;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 
 import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.factories.CC;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
@@ -86,9 +100,10 @@ import devplugin.Version;
  * @author René Mach
  */
 public final class IDontWant2See extends Plugin implements AWTEventListener {
-
+  private static final String DONT_WANT_TO_SEE_SYNC_ADDRESS = "http://android.tvbrowser.org/data/scripts/syncDontWantToSee.php";
+  
   private static final boolean PLUGIN_IS_STABLE = true;
-  private static final Version PLUGIN_VERSION = new Version(0, 14, PLUGIN_IS_STABLE);
+  private static final Version PLUGIN_VERSION = new Version(0, 15, PLUGIN_IS_STABLE);
 
   private static final String RECEIVE_TARGET_EXCLUDE_EXACT = "target_exclude_exact";
 
@@ -144,6 +159,7 @@ public final class IDontWant2See extends Plugin implements AWTEventListener {
     mInstance = this;
     mSettings = new IDontWant2SeeSettings();
     mDateWasSet = false;
+    System.out.println(getClass().getCanonicalName());
   }
 
   static IDontWant2See getInstance() {
@@ -342,10 +358,199 @@ public final class IDontWant2See extends Plugin implements AWTEventListener {
         }
       }
     });
+    
+    ContextMenuAction export = new ContextMenuAction(mLocalizer.msg("menu.export","Export 'I don't want to see!' exclusion list to TV-Browser server"),createImageIcon("apps", "idontwant2see-android", TVBrowserIcons.SIZE_SMALL));
+    export.putValue(Plugin.BIG_ICON, createImageIcon("apps", "idontwant2see-android", TVBrowserIcons.SIZE_LARGE));
+    export.setActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        if(mSettings.getUserName().trim().length() == 0 || mSettings.getPassword().trim().length() == 0) {
+          JPanel message = new JPanel(new FormLayout("5dlu,default,3dlu,150dlu","default,5dlu,default,2dlu,default"));
+          
+          JTextField userName = new JTextField(mSettings.getUserName());
+          JPasswordField userPassword = new JPasswordField(mSettings.getPassword());
+          
+          message.add(new JLabel(mLocalizer.msg("menu.export.message","You need to enter your AndroidSync user name and password:")), CC.xyw(1, 1, 4));
+          message.add(new JLabel(mLocalizer.msg("settings.userName"," User name:")), CC.xy(2, 3));
+          message.add(userName, CC.xy(4, 3));
+          message.add(new JLabel(mLocalizer.msg("settings.passWord","Password:")), CC.xy(2, 5));
+          message.add(userPassword, CC.xy(4, 5));
+          
+          if(JOptionPane.showConfirmDialog(getParentFrame(), message, mLocalizer.msg("settings.synchronization", "Android synchronization"), JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null) == JOptionPane.OK_OPTION) {
+            mSettings.setUserName(userName.getText().trim());
+            mSettings.setPassword(new String(userPassword.getPassword()).trim());
+            
+            exportAndroid();
+          }
+        }
+        else {
+          exportAndroid();
+        }
+      }
+    });
 
     return new ActionMenu(mLocalizer.msg(
         "name", "I don't want to see!"), createImageIcon("apps",
-        "idontwant2see", 16),new Action[] {openExclusionList,undo});
+        "idontwant2see", 16),new Action[] {openExclusionList,undo,export});
+  }
+  
+  private void exportAndroid() {
+    upload(getExclusions());
+  }
+  
+  private byte[] getCompressedData(byte[] uncompressed) {
+    ByteArrayOutputStream bytesOut = new ByteArrayOutputStream();
+    
+    try {
+      GZIPOutputStream out = new GZIPOutputStream(bytesOut);
+      
+      // SEND THE IMAGE
+      int index = 0;
+      int size = 1024;
+      do {
+          if ((index + size) > uncompressed.length) {
+              size = uncompressed.length - index;
+          }
+          out.write(uncompressed, index, size);
+          index += size;
+      } while (index < uncompressed.length);
+      
+      out.flush();
+      out.close();
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    
+    return bytesOut.toByteArray();
+  }
+  
+  private void upload(String value) {
+    String car = mSettings.getUserName();
+    String bicycle = mSettings.getPassword();
+    String CrLf = "\r\n";
+    
+    if(car != null && bicycle != null) {
+      URLConnection conn = null;
+      OutputStream os = null;
+      InputStream is = null;
+
+      try {
+          URL url = new URL(DONT_WANT_TO_SEE_SYNC_ADDRESS);
+          System.out.println("url:" + url);
+          conn = url.openConnection();
+          
+          String getmethere = car.trim() + ":" + bicycle.trim();
+          
+          conn.setRequestProperty  ("Authorization", "Basic " + new String(Base64.encodeBase64(getmethere.getBytes())));
+          
+          conn.setDoOutput(true);
+
+          String postData = "";
+          
+          byte[] xmlData = getCompressedData(value.getBytes());
+          
+          String message1 = "";
+          message1 += "-----------------------------4664151417711" + CrLf;
+          message1 += "Content-Disposition: form-data; name=\"uploadedfile\"; filename=\""+car+".gz\""
+                  + CrLf;
+          message1 += "Content-Type: text/plain" + CrLf;
+          message1 += CrLf;
+
+          // the image is sent between the messages in the multipart message.
+
+          String message2 = "";
+          message2 += CrLf + "-----------------------------4664151417711--"
+                  + CrLf;
+
+          conn.setRequestProperty("Content-Type",
+                  "multipart/form-data; boundary=---------------------------4664151417711");
+          // might not need to specify the content-length when sending chunked
+          // data.
+          conn.setRequestProperty("Content-Length", String.valueOf((message1
+                  .length() + message2.length() + xmlData.length)));
+
+          System.out.println("open os");
+          os = conn.getOutputStream();
+
+          System.out.println(message1);
+          os.write(message1.getBytes());
+          
+          // SEND THE IMAGE
+          int index = 0;
+          int size = 1024;
+          do {
+              System.out.println("write:" + index);
+              if ((index + size) > xmlData.length) {
+                  size = xmlData.length - index;
+              }
+              os.write(xmlData, index, size);
+              index += size;
+          } while (index < xmlData.length);
+          
+          System.out.println("written:" + index);
+
+          System.out.println(message2);
+          os.write(message2.getBytes());
+          os.flush();
+
+          System.out.println("open is");
+          is = conn.getInputStream();
+
+          char buff = 512;
+          int len;
+          byte[] data = new byte[buff];
+          do {
+              System.out.println("READ");
+              len = is.read(data);
+
+              if (len > 0) {
+                  System.out.println(new String(data, 0, len));
+              }
+          } while (len > 0);
+
+          System.out.println("DONE");
+          
+          JOptionPane.showMessageDialog(getParentFrame(), mLocalizer.msg("success", "The data were send successfully."), mLocalizer.msg("successTitle", "Success"), JOptionPane.INFORMATION_MESSAGE);
+      } catch (Exception e) {
+        int response = 0;
+        
+        if(conn != null) {
+          try {
+            response = ((HttpURLConnection)conn).getResponseCode();
+          } catch (IOException e1) {
+            // TODO Auto-generated catch block
+            e1.printStackTrace();
+          }
+        }
+        
+        switch (response) {
+          case 404: JOptionPane.showMessageDialog(getParentFrame(), mLocalizer.msg("userError", "Username or password were not accepted. Please check them."), mLocalizer.msg("serverError", "Error in server connection"), JOptionPane.ERROR_MESSAGE);break;
+          case 415: JOptionPane.showMessageDialog(getParentFrame(), mLocalizer.msg("wrongFileError", "Server didn't accepted upload data. This should not happen. Please contact TV-Browser team."), mLocalizer.msg("serverError", "Error in server connection"), JOptionPane.ERROR_MESSAGE);break;
+          case 500: JOptionPane.showMessageDialog(getParentFrame(), mLocalizer.msg("serverFileError", "Server could not store data. Please try again, if this continues please contact TV-Browser team."), mLocalizer.msg("serverError", "Error in server connection"), JOptionPane.ERROR_MESSAGE);break;
+          
+          default: JOptionPane.showMessageDialog(getParentFrame(), mLocalizer.msg("unknowError", "Something went wrong with the connection to the server. Reason unknown."), mLocalizer.msg("serverError", "Error in server connection"), JOptionPane.ERROR_MESSAGE);break;
+        }
+      
+        e.printStackTrace();
+      } finally {
+          System.out.println("Close connection");
+          try {
+              os.close();
+          } catch (Exception e) {
+          }
+          try {
+              is.close();
+          } catch (Exception e) {
+          }
+          try {
+
+          } catch (Exception e) {
+          }
+      }
+  }
+    else {
+      JOptionPane.showMessageDialog(getParentFrame(), mLocalizer.msg("setupFirst", "You have to enter user name and password first."), mLocalizer.msg("noUser", "No user name and/or password"), JOptionPane.ERROR_MESSAGE);
+    }
   }
 
   public ActionMenu getContextMenuActions(final Program p) {
@@ -559,6 +764,10 @@ public final class IDontWant2See extends Plugin implements AWTEventListener {
       else {
         mSettings.setProgramImportance(Program.DEFAULT_PROGRAM_IMPORTANCE);
       }
+      if(version >= 8) {
+        mSettings.setUserName(in.readUTF());
+        mSettings.setPassword(in.readUTF());
+      }
     }
   }
 
@@ -571,7 +780,7 @@ public final class IDontWant2See extends Plugin implements AWTEventListener {
       }
     });
 
-    out.writeInt(7); //version
+    out.writeInt(8); //version
     out.writeInt(mSettings.getSearchList().size());
 
     for(IDontWant2SeeListEntry entry : mSettings.getSearchList()) {
@@ -586,6 +795,9 @@ public final class IDontWant2See extends Plugin implements AWTEventListener {
     mSettings.getLastUsedDate().writeData((DataOutput)out);
 
     out.writeByte(mSettings.getProgramImportance());
+    
+    out.writeUTF(mSettings.getUserName());
+    out.writeUTF(mSettings.getPassword());
   }
 
   public SettingsTab getSettingsTab() {
@@ -665,5 +877,16 @@ public final class IDontWant2See extends Plugin implements AWTEventListener {
     //Plugin.OTHER_CATEGORY
     return "misc";
   }
-
+  
+  private String getExclusions() {
+    StringBuilder value = new StringBuilder();
+    
+    ArrayList<IDontWant2SeeListEntry> entryList = mSettings.getSearchList();
+    
+    for(IDontWant2SeeListEntry entry : entryList) {
+      value.append(entry.getSearchText()).append(";;").append(entry.isCaseSensitive() ? "1" : "0").append("\n");
+    }
+    
+    return value.toString();
+  }
 }

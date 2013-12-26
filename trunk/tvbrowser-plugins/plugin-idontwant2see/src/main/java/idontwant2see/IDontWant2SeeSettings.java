@@ -39,10 +39,14 @@ public class IDontWant2SeeSettings {
   private String mLastEnteredExclusionString = "";
   private Date mLastUsedDate = Date.getCurrentDate();
   private ArrayList<IDontWant2SeeListEntry> mSearchList = new ArrayList<IDontWant2SeeListEntry>();
+  private String mUserName;
+  private String mPassword;
   
   private byte mProgramImportance = Program.DEFAULT_PROGRAM_IMPORTANCE;
 
   public IDontWant2SeeSettings() {
+    mUserName = "";
+    mPassword = "";
   }
 
   public void setSimpleMenu(final boolean value) {
@@ -95,10 +99,27 @@ public class IDontWant2SeeSettings {
     mProgramImportance = programImportance;
   }
 
-	public void showAgain(Program program) {
+  public void showAgain(Program program) {
     final int index = IDontWant2See.getInstance().getSearchTextIndexForProgram(program);
-    if (index >= 0) {
-    	getSearchList().remove(index);
+    
+    if(index >= 0) {
+      getSearchList().remove(index);
     }
-	}
+  }
+  
+  public void setUserName(String userName) {
+    mUserName = userName;
+  }
+  
+  public void setPassword(String password) {
+    mPassword = password;
+  }
+  
+  public String getUserName() {
+    return mUserName;
+  }
+  
+  public String getPassword() {
+    return mPassword;
+  }
 }
