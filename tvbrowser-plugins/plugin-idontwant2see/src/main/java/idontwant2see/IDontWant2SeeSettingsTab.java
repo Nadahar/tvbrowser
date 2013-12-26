@@ -28,8 +28,10 @@ import javax.swing.ButtonGroup;
 import javax.swing.Icon;
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 
 import util.ui.DefaultProgramImportanceSelectionPanel;
 import util.ui.Localizer;
@@ -55,6 +57,9 @@ public class IDontWant2SeeSettingsTab implements SettingsTab {
   private DefaultProgramImportanceSelectionPanel mProgramImportancePanel;
   private IDontWant2SeeSettings mSettings;
   
+  private JTextField mUserName;
+  private JPasswordField mUserPassword;
+  
   /**
    * Create an instance of this class.
    * 
@@ -68,12 +73,15 @@ public class IDontWant2SeeSettingsTab implements SettingsTab {
     final CellConstraints cc = new CellConstraints();
     final PanelBuilder pb = new PanelBuilder(
         new FormLayout("5dlu,default,0dlu:grow,default,5dlu",
-            "default,10dlu,default,5dlu,default,5dlu,default,5dlu,fill:default:grow,10dlu,fill:default:grow"),
+            "default,10dlu,default,5dlu,default,1dlu,default,10dlu,default,5dlu,default,5dlu,default,5dlu,fill:default:grow,10dlu,fill:default:grow"),
             new ScrollableJPanel());
 
     final PanelBuilder pb2 = new PanelBuilder(new FormLayout(
-        "default,2dlu,default", "default,1dlu,default,default"));
+        "default,2dlu,0dlu:grow", "default,1dlu,default,default"));
 
+    mUserName = new JTextField(mSettings.getUserName());
+    mUserPassword = new JPasswordField(mSettings.getPassword());
+        
     mSimpleContextMenu = new JRadioButton(mLocalizer.msg(
         "settings.menu.simple", "Direct in the context menu:"), mSettings
         .isSimpleMenu());
@@ -89,36 +97,70 @@ public class IDontWant2SeeSettingsTab implements SettingsTab {
     bg.add(mSimpleContextMenu);
     bg.add(mCascadedContextMenu);
 
-    pb2.add(mSimpleContextMenu, cc.xy(1, 1));
+    int y = 1;
+    
+    pb2.add(mSimpleContextMenu, cc.xy(1, y));
     pb2.addLabel("-"
         + mLocalizer.msg("name", "I don't want to see!")
         + " ("
         + mLocalizer.msg("menu.completeCaseSensitive",
-            "Instant exclusion with title") + ")", cc.xy(3, 1));
+            "Instant exclusion with title") + ")", cc.xy(3, y));
 
-    pb2.add(mCascadedContextMenu, cc.xy(1, 3));
+    y += 2;
+    
+    pb2.add(mCascadedContextMenu, cc.xy(1, y));
     pb2.addLabel("-"
         + mLocalizer.msg("menu.completeCaseSensitive",
-            "Instant exclusion with title"), cc.xy(3, 3));
+            "Instant exclusion with title"), cc.xy(3, y++));
     pb2.addLabel(
         "-" + mLocalizer.msg("menu.userEntered", "User entered value"), cc.xy(
-            3, 4));
+            3, y));
 
     mAutoSwitchToMyFilter = new JCheckBox(mLocalizer.msg("settings.autoFilter",
         "Automatically activate filter on adding/removing"), mSettings
         .isSwitchToMyFilter());
+    
+    y = 1;
 
-    pb.add(mAutoSwitchToMyFilter, cc.xyw(2, 1, 3));
+    pb.add(mAutoSwitchToMyFilter, cc.xyw(2, y, 3));
+    
+    y += 2;
+    
+    pb.addSeparator(mLocalizer.msg("settings.synchronization","Android synchronization"), cc.xyw(1, y, 5));
+    
+    y += 2;
+    
+    pb.addLabel(mLocalizer.msg("settings.userName","User name:") + " ", cc.xy(2, y));
+    pb.add(mUserName, cc.xy(3,y));
+    
+    y += 2;
+    
+    pb.addLabel(mLocalizer.msg("settings.passWord","Password:") + " ", cc.xy(2, y));
+    pb.add(mUserPassword, cc.xy(3,y));
+    
+    y += 2;
+    
     pb.addSeparator(mLocalizer.msg("settings.contextMenu", "Context menu"), cc
-        .xyw(1, 3, 5));
-    pb.add(pb2.getPanel(), cc.xyw(2, 5, 3));
+        .xyw(1, y, 5));
+    
+    y += 2;
+    
+    pb.add(pb2.getPanel(), cc.xyw(2, y, 3));
+    
+    y += 2;
+    
     pb.addSeparator(mLocalizer.msg("settings.search", "Search"), cc
-        .xyw(1, 7, 5));
-    pb.add(mExclusionPanel = new ExclusionTablePanel(mSettings), cc.xyw(2, 9, 3));
+        .xyw(1, y, 5));
+    
+    y += 2;
+    
+    pb.add(mExclusionPanel = new ExclusionTablePanel(mSettings), cc.xyw(2, y, 3));
 
     mProgramImportancePanel = DefaultProgramImportanceSelectionPanel.createPanel(mSettings.getProgramImportance(),true,false);
 
-    pb.add(mProgramImportancePanel, cc.xyw(2,11,3));
+    y += 2;
+    
+    pb.add(mProgramImportancePanel, cc.xyw(2,y,3));
     
     final JPanel p = new JPanel(new FormLayout("0dlu,0dlu:grow",
         "5dlu,fill:default:grow"));
@@ -144,6 +186,8 @@ public class IDontWant2SeeSettingsTab implements SettingsTab {
     mSettings.setSimpleMenu(mSimpleContextMenu.isSelected());
     mSettings.setSwitchToMyFilter(mAutoSwitchToMyFilter.isSelected());
     mSettings.setProgramImportance(mProgramImportancePanel.getSelectedImportance());
+    mSettings.setUserName(mUserName.getText());
+    mSettings.setPassword(new String(mUserPassword.getPassword()));
     
     mExclusionPanel.saveSettings(mSettings);
   }
