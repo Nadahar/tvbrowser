@@ -50,7 +50,7 @@ import devplugin.ThemeIcon;
 import devplugin.Version;
 
 public class RememberMe extends Plugin {
-  private static final Version mVersion = new Version(0,16,1,true);
+  private static final Version mVersion = new Version(0,16,3,true);
   static final Localizer mLocalizer = Localizer.getLocalizerFor(RememberMe.class);
   private static final String TARGET_ID = "###REMEMBERME###";
   
@@ -182,28 +182,30 @@ public class RememberMe extends Plugin {
   @Override
   public boolean receivePrograms(Program[] programArr,
       ProgramReceiveTarget receiveTarget) {
-    if(programArr != null) {      
-      for(ProgramReceiveTarget target : mReceiveTargets) {
-        if(receiveTarget.isReceiveTargetWithIdOfProgramReceiveIf(this, target.getTargetId())) {
-          for(Program prog : programArr) {
-            RememberedProgram newProg = new RememberedProgram(prog, receiveTarget.isReceiveTargetWithIdOfProgramReceiveIf(this, TARGET_ID) ? "" : receiveTarget.getTargetName());
-            
-            if(!mRememberedPrograms.contains(newProg)) {
-              mRememberedPrograms.add(newProg);
+    if(mMangePanel != null) {
+      if(programArr != null) {
+        for(ProgramReceiveTarget target : mReceiveTargets) {
+          if(receiveTarget.isReceiveTargetWithIdOfProgramReceiveIf(this, target.getTargetId())) {
+            for(Program prog : programArr) {
+              RememberedProgram newProg = new RememberedProgram(prog, receiveTarget.isReceiveTargetWithIdOfProgramReceiveIf(this, TARGET_ID) ? "" : receiveTarget.getTargetName());
               
-              prog.mark(RememberMe.this);
-              getRootNode().addProgram(prog);
+              if(!mRememberedPrograms.contains(newProg)) {
+                mRememberedPrograms.add(newProg);
+                
+                prog.mark(RememberMe.this);
+                getRootNode().addProgram(prog);
+              }
             }
           }
         }
       }
+      
+      getRootNode().update();
+      
+      Collections.sort(mRememberedPrograms);
+      
+      mMangePanel.updatePanel(RememberMe.this);
     }
-    
-    getRootNode().update();
-    
-    Collections.sort(mRememberedPrograms);
-    
-    mMangePanel.updatePanel(RememberMe.this);
     
     return true;
   }

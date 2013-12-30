@@ -486,19 +486,21 @@ public class RememberMeManagePanel extends JPanel implements PersonaListener {
   }
   
   private void removeSelection(RememberMe rMe) {
-    Object[] remove = mList.getSelectedValues();
-    
-    if(remove.length == 0) {
-      remove = new RememberedProgram[mList.getModel().getSize()];
+    synchronized (mPrograms) {
+      Object[] remove = mList.getSelectedValues();
       
-      for(int i = 0; i < mList.getModel().getSize(); i++) {
-        remove[i] = mList.getModel().getElementAt(i);
+      if(remove.length == 0) {
+        remove = new RememberedProgram[mList.getModel().getSize()];
+        
+        for(int i = 0; i < mList.getModel().getSize(); i++) {
+          remove[i] = mList.getModel().getElementAt(i);
+        }
       }
-    }
-    
-    for(int i = remove.length-1; i >= 0; i--) {
-      RememberedProgram prog = (RememberedProgram)remove[i];
-      mPrograms.remove(prog,rMe);
+      
+      for(int i = remove.length-1; i >= 0; i--) {
+        RememberedProgram prog = (RememberedProgram)remove[i];
+        mPrograms.remove(prog,rMe);
+      }
     }
     
     updatePanel(rMe);
@@ -506,37 +508,41 @@ public class RememberMeManagePanel extends JPanel implements PersonaListener {
 
   
   public synchronized void updatePanel(RememberMe rMe) {
-    mModel.clear();
+    synchronized (mPrograms) {
+      mModel.clear();
     
-    ArrayList<RememberedProgram> toRemove = new ArrayList<RememberedProgram>();
-    
-    for(RememberedProgram prog : mPrograms) {
-      if(prog.isExpired() && prog.isValid()) {
-        if(!containsProgram(prog)) {
-          if(mCurrentDayFilter.accept(prog) && mCurrentTagFilter.accept(prog)) {
-            mModel.addElement(prog);
+      ArrayList<RememberedProgram> toRemove = new ArrayList<RememberedProgram>();
+      
+      for(RememberedProgram prog : mPrograms) {
+        if(prog.isExpired() && prog.isValid()) {
+          if(!containsProgram(prog)) {
+            if(mCurrentDayFilter.accept(prog) && mCurrentTagFilter.accept(prog)) {
+              mModel.addElement(prog);
+            }
+          }
+          else if(!prog.hasProgram()){
+            toRemove.add(prog);
           }
         }
-        else if(!prog.hasProgram()){
+        else if(!prog.isValid()) {
           toRemove.add(prog);
         }
       }
-      else if(!prog.isValid()) {
-        toRemove.add(prog);
+      
+      for(RememberedProgram prog : toRemove) {
+        mPrograms.remove(prog,rMe);
       }
-    }
-    
-    for(RememberedProgram prog : toRemove) {
-      mPrograms.remove(prog,rMe);
     }
   }
   
   private boolean containsProgram(RememberedProgram toCheck) {
-    for(int i = 0; i < mModel.size(); i++) {
-      RememberedProgram prog = (RememberedProgram)mModel.get(i);
-      
-      if(toCheck.getDate().equals(prog.getDate()) && toCheck.getTitle().equals(prog.getTitle())) {
-        return (toCheck.getTag().equals(prog.getTag()) && (toCheck.getEpisodeTitle() == null && prog.getEpisodeTitle() == null) || (toCheck.getEpisodeTitle() != null && prog.getEpisodeTitle() != null && toCheck.getEpisodeTitle().equals(prog.getEpisodeTitle()))); 
+    synchronized (mModel) {
+      for(int i = 0; i < mModel.size(); i++) {
+        RememberedProgram prog = (RememberedProgram)mModel.get(i);
+        
+        if(toCheck.getDate().equals(prog.getDate()) && toCheck.getTitle().equals(prog.getTitle())) {
+          return (toCheck.getTag().equals(prog.getTag()) && (toCheck.getEpisodeTitle() == null && prog.getEpisodeTitle() == null) || (toCheck.getEpisodeTitle() != null && prog.getEpisodeTitle() != null && toCheck.getEpisodeTitle().equals(prog.getEpisodeTitle()))); 
+        }
       }
     }
     
