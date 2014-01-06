@@ -36,8 +36,10 @@ import javax.swing.JTextField;
 import util.ui.DefaultProgramImportanceSelectionPanel;
 import util.ui.Localizer;
 import util.ui.ScrollableJPanel;
+import util.ui.UiUtilities;
 
 import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.factories.CC;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
@@ -73,7 +75,7 @@ public class IDontWant2SeeSettingsTab implements SettingsTab {
     final CellConstraints cc = new CellConstraints();
     final PanelBuilder pb = new PanelBuilder(
         new FormLayout("5dlu,default,0dlu:grow,default,5dlu",
-            "default,10dlu,default,5dlu,default,1dlu,default,10dlu,default,5dlu,default,5dlu,default,5dlu,fill:default:grow,10dlu,fill:default:grow"),
+            "default,10dlu,default,5dlu,default,1dlu,default,7dlu,default,10dlu,default,5dlu,default,5dlu,default,5dlu,fill:default:grow,10dlu,fill:default:grow"),
             new ScrollableJPanel());
 
     final PanelBuilder pb2 = new PanelBuilder(new FormLayout(
@@ -137,6 +139,10 @@ public class IDontWant2SeeSettingsTab implements SettingsTab {
     
     pb.addLabel(mLocalizer.msg("settings.passWord","Password:") + " ", cc.xy(2, y));
     pb.add(mUserPassword, cc.xy(3,y));
+    
+    y += 2;
+    
+    pb.add(UiUtilities.createHtmlHelpTextArea("The Android robot is reproduced or modified from work created and shared by Google and used according to terms described in the Creative Commons 3.0 Attribution License."), CC.xyw(2, y, 4));
     
     y += 2;
     
