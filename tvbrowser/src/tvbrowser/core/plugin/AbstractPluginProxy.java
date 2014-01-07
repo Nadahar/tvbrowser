@@ -43,6 +43,7 @@ import devplugin.Channel;
 import devplugin.ChannelDayProgram;
 import devplugin.ContextMenuIf;
 import devplugin.ImportanceValue;
+import devplugin.PluginCommunication;
 import devplugin.PluginInfo;
 import devplugin.PluginTreeNode;
 import devplugin.PluginsFilterComponent;
@@ -1022,4 +1023,16 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
    * @since 3.0
    */
   protected abstract ImportanceValue doGetImportanceValueForProgram(Program p);
+  
+  public PluginCommunication getCommunicationClass() {
+    try {
+      return doGetCommunicationClass();
+    } catch (Throwable exc) {
+      handlePluginException(exc);
+    }
+    
+    return null;
+  }
+  
+  public abstract PluginCommunication doGetCommunicationClass();
 }

@@ -60,6 +60,7 @@ import devplugin.Date;
 import devplugin.ImportanceValue;
 import devplugin.Plugin;
 import devplugin.PluginCenterPanelWrapper;
+import devplugin.PluginCommunication;
 import devplugin.PluginInfo;
 import devplugin.PluginTreeNode;
 import devplugin.PluginsFilterComponent;
@@ -678,5 +679,14 @@ public class JavaPluginProxy extends AbstractPluginProxy {
     if(mPlugin != null) {
       mPlugin.handleTvDataUpdateStarted(until);
     }
+  }
+
+  @Override
+  public PluginCommunication doGetCommunicationClass() {
+    if(mPlugin != null) {
+      return mPlugin.getCommunicationClass();
+    }
+    
+    return null;
   }
 }

@@ -1041,4 +1041,15 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
   public void handleTvDataUpdateStarted(Date until) {
     handleTvDataUpdateStarted();
   }
+  
+  /**
+   * If you want to grant access to functions of your Plugin for other
+   * Plugins provide a communication class for you Plugin.
+   * <p>
+   * @return The class that grants Plugin communication to your Plugin.
+   * @since 3.3.4
+   */
+  public PluginCommunication getCommunicationClass() {
+    return null;
+  }
 }
