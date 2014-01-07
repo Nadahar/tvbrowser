@@ -21,6 +21,7 @@ import devplugin.Date;
 import devplugin.ImportanceValue;
 import devplugin.Plugin;
 import devplugin.PluginCenterPanelWrapper;
+import devplugin.PluginCommunication;
 import devplugin.PluginInfo;
 import devplugin.PluginTreeNode;
 import devplugin.PluginsFilterComponent;
@@ -319,5 +320,11 @@ public class BeanShellPluginProxy extends AbstractPluginProxy {
     public void handleTvDataUpdateStarted(Date until) {
       // TODO Auto-generated method stub
       
+    }
+
+    @Override
+    public PluginCommunication doGetCommunicationClass() {
+      // TODO Auto-generated method stub
+      return null;
     }
  }

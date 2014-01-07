@@ -128,4 +128,12 @@ public interface PluginAccess extends ButtonActionIf,Marker,ProgramReceiveIf,Con
    */
   public ProgramRatingIf[] getProgramRatingIfs();
 
+  /**
+   * If this Plugin grants access to functions it will provide a communication class for other Plugins to use.
+   * <p>
+   * @return The communication class of this Plugin or <code>null</code>
+   * if there is no communication class for this Plugin.
+   * @since 3.3.4
+   */
+  public PluginCommunication getCommunicationClass();
 }
