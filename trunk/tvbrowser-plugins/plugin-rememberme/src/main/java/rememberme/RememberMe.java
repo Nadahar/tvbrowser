@@ -50,7 +50,7 @@ import devplugin.ThemeIcon;
 import devplugin.Version;
 
 public class RememberMe extends Plugin {
-  private static final Version mVersion = new Version(0,16,3,true);
+  private static final Version mVersion = new Version(0,16,4,true);
   static final Localizer mLocalizer = Localizer.getLocalizerFor(RememberMe.class);
   private static final String TARGET_ID = "###REMEMBERME###";
   
@@ -66,9 +66,12 @@ public class RememberMe extends Plugin {
   
   private Timer mTimer;
   
+  private boolean mAddingPanel;
+  
   public RememberMe() {
     mRememberedPrograms = new RememberedProgramsList<RememberedProgram>();
     mReceiveTargets = new ProgramReceiveTarget[] {new ProgramReceiveTarget(this, mLocalizer.msg("name", "Forget me not!"), TARGET_ID)};
+    mAddingPanel = false;
   }
   
   public static Version getVersion() {
@@ -88,9 +91,11 @@ public class RememberMe extends Plugin {
     
     ArrayList<RememberedProgram> saveProgs = new ArrayList<RememberedProgram>();
     
-    for(RememberedProgram prog : mRememberedPrograms) {
-      if(prog.isValid()) {
-        saveProgs.add(prog);
+    synchronized (mRememberedPrograms) {
+      for(RememberedProgram prog : mRememberedPrograms) {
+        if(prog.isValid()) {
+          saveProgs.add(prog);
+        }
       }
     }
     
@@ -123,10 +128,15 @@ public class RememberMe extends Plugin {
     int n = in.readInt();
     
     for(int i = 0; i < n; i++) {
-      mRememberedPrograms.add(RememberedProgram.readData(in, version, this));
+      synchronized (mRememberedPrograms) {
+        mRememberedPrograms.add(RememberedProgram.readData(in, version, this));
+      }
     }
     
-    Collections.sort(mRememberedPrograms);
+    synchronized (mRememberedPrograms) {
+      Collections.sort(mRememberedPrograms);  
+    }
+    
     getRootNode().update();
     
     if(version > 1) {
@@ -155,20 +165,25 @@ public class RememberMe extends Plugin {
         receivePrograms(new Program[] {program}, mReceiveTargets[0]);
       }
     };
-
-    if(mRememberedPrograms.contains(program)) {
-      action = new ContextMenuAction(mLocalizer.msg("forgetMe", "Forget me now!"),createImageIcon(getMarkIconFromTheme())) {
-        public void actionPerformed(ActionEvent e) {
-          mRememberedPrograms.remove(program,RememberMe.this);
-          program.unmark(RememberMe.this);
-          getRootNode().removeProgram(program);
-          getRootNode().update();
-          
-          if(mMangePanel != null) {
-            mMangePanel.updatePanel(RememberMe.this);
+    
+    synchronized (mRememberedPrograms) {
+      if(mRememberedPrograms.contains(program)) {
+        action = new ContextMenuAction(mLocalizer.msg("forgetMe", "Forget me now!"),createImageIcon(getMarkIconFromTheme())) {
+          public void actionPerformed(ActionEvent e) {
+            synchronized (mRememberedPrograms) {
+              mRememberedPrograms.remove(program,RememberMe.this);
+            }
+            
+            program.unmark(RememberMe.this);
+            getRootNode().removeProgram(program);
+            getRootNode().update();
+            
+            if(mMangePanel != null) {
+              mMangePanel.updatePanel(RememberMe.this);
+            }
           }
-        }
-      };
+        };
+      }
     }
     
     return new ActionMenu(action);
@@ -189,11 +204,13 @@ public class RememberMe extends Plugin {
             for(Program prog : programArr) {
               RememberedProgram newProg = new RememberedProgram(prog, receiveTarget.isReceiveTargetWithIdOfProgramReceiveIf(this, TARGET_ID) ? "" : receiveTarget.getTargetName());
               
-              if(!mRememberedPrograms.contains(newProg)) {
-                mRememberedPrograms.add(newProg);
-                
-                prog.mark(RememberMe.this);
-                getRootNode().addProgram(prog);
+              synchronized (mRememberedPrograms) {
+                if(!mRememberedPrograms.contains(newProg)) {
+                  mRememberedPrograms.add(newProg);
+                  
+                  prog.mark(RememberMe.this);
+                  getRootNode().addProgram(prog);
+                }
               }
             }
           }
@@ -202,7 +219,9 @@ public class RememberMe extends Plugin {
       
       getRootNode().update();
       
-      Collections.sort(mRememberedPrograms);
+      synchronized (mRememberedPrograms) {
+        Collections.sort(mRememberedPrograms);
+      }
       
       mMangePanel.updatePanel(RememberMe.this);
     }
@@ -284,10 +303,14 @@ public class RememberMe extends Plugin {
   private void addCenterPanel() {
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
-        mMangePanel = new RememberMeManagePanel(mRememberedPrograms, RememberMe.this);
-        Persona.getInstance().registerPersonaListener(mMangePanel);
-        mCenterPanelWrapper.add(mMangePanel,BorderLayout.CENTER);
-        mCenterPanelWrapper.updateUI();
+        if(!mAddingPanel) {
+          mAddingPanel = true;
+          mMangePanel = new RememberMeManagePanel(mRememberedPrograms, RememberMe.this);
+          Persona.getInstance().registerPersonaListener(mMangePanel);
+          mCenterPanelWrapper.add(mMangePanel,BorderLayout.CENTER);
+          mCenterPanelWrapper.updateUI();
+          mAddingPanel = false;
+        }
       }
     });    
   }
