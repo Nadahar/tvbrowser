@@ -75,7 +75,6 @@ import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 
 import com.jgoodies.forms.builder.PanelBuilder;
-import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.factories.CC;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
@@ -103,7 +102,7 @@ public final class IDontWant2See extends Plugin implements AWTEventListener {
   private static final String DONT_WANT_TO_SEE_SYNC_ADDRESS = "http://android.tvbrowser.org/data/scripts/syncDontWantToSee.php";
   
   private static final boolean PLUGIN_IS_STABLE = true;
-  private static final Version PLUGIN_VERSION = new Version(0, 15, 1, PLUGIN_IS_STABLE);
+  private static final Version PLUGIN_VERSION = new Version(0, 15, 2, PLUGIN_IS_STABLE);
 
   private static final String RECEIVE_TARGET_EXCLUDE_EXACT = "target_exclude_exact";
 
@@ -447,7 +446,7 @@ public final class IDontWant2See extends Plugin implements AWTEventListener {
 
           String postData = "";
           
-          byte[] xmlData = getCompressedData(value.getBytes());
+          byte[] xmlData = getCompressedData(value.getBytes("UTF-8"));
           
           String message1 = "";
           message1 += "-----------------------------4664151417711" + CrLf;
