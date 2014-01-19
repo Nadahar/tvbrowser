@@ -21,6 +21,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.TimeZone;
 
 import javax.xml.parsers.SAXParser;
@@ -36,6 +37,7 @@ import tvdataservice.MutableProgram;
 import tvdataservice.TvDataUpdateManager;
 import devplugin.Channel;
 import devplugin.Date;
+import devplugin.Program;
 import devplugin.ProgramFieldType;
 
 public class BBCProgrammesParser extends DefaultHandler {
@@ -160,7 +162,7 @@ public class BBCProgrammesParser extends DefaultHandler {
         }
       } else if ("short_synopsis".equalsIgnoreCase(qName)) {
         mProgram.setShortInfo(text);
-      } else if ("pid".equalsIgnoreCase(qName)) {
+      } else if ("pid".equalsIgnoreCase(qName) && mProgram != null) {
         if (text.length() > 0) {
           String url = "http://www.bbc.co.uk/programmes/" + text;
           String oldUrl = mProgram.getTextField(ProgramFieldType.URL_TYPE);
@@ -177,12 +179,28 @@ public class BBCProgrammesParser extends DefaultHandler {
           dayProgram = new MutableChannelDayProgram(date, mChannel);
           mDayPrograms.put(date, dayProgram);
         }
-        dayProgram.addProgram(mProgram);
+        addOnlyNewProgram(mProgram,dayProgram);
       }
     } catch (Exception e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
+  }
+  
+  private void addOnlyNewProgram(MutableProgram program, MutableChannelDayProgram dayProgram) {
+    
+    Iterator<Program> it = dayProgram.getPrograms();
+    if (it != null) {
+      while (it.hasNext()) {
+        Program oldProgram = it.next();
+        if (oldProgram.getStartTime() == program.getStartTime()
+            &&  oldProgram.getTitle().equals(program.getTitle())) {
+          //program already in day
+          return;
+        }
+      }
+    }
+    dayProgram.addProgram(program);
   }
 
   private int extractTime(final String dateTime) {
@@ -214,11 +232,12 @@ public class BBCProgrammesParser extends DefaultHandler {
     try {
       Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("WET"));
       if (time.endsWith("Z")) {
-       
+        DATE_FORMAT_ZULU.setCalendar(calendar);
         calendar.setTime(DATE_FORMAT_ZULU.parse(time.substring(0, time.indexOf("Z"))));
         return calendar;
       }
       String withoutSeparator = time.substring(0, 22) + time.substring(23);
+      DATE_FORMAT.setCalendar(calendar);
       calendar.setTime(DATE_FORMAT.parse(withoutSeparator));
       return calendar;
     } catch (ParseException e) {
