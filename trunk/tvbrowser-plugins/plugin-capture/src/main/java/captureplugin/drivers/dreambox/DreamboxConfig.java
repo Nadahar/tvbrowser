@@ -28,6 +28,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -159,7 +160,7 @@ public final class DreamboxConfig implements ConfigIf, Cloneable {
      * @throws IOException io errors
      */
     public void writeData(ObjectOutputStream stream) throws IOException {
-        stream.writeInt(7);
+        stream.writeInt(8);
         stream.writeUTF(getId());
 
         stream.writeUTF(mDreamboxAddress);
@@ -168,20 +169,19 @@ public final class DreamboxConfig implements ConfigIf, Cloneable {
             channel.writeData(stream);
         }
 
-        int max = 0;
+        ArrayList<Channel> channelList = new ArrayList<Channel>();
+        
         for (Channel channel : mChannels.keySet()) {
-            if (mChannels.get(channel) != null) {
-                max++;
+            if (channel != null && mChannels.get(channel) != null) {
+                channelList.add(channel);
             }
         }
 
-        stream.writeInt(max);
+        stream.writeInt(channelList.size());
 
-        for (Channel channel : mChannels.keySet()) {
-            if ((channel != null) && (mChannels.get(channel) != null)) {
-                channel.writeData(stream);
-                stream.writeUTF(mChannels.get(channel).getReference());
-            }
+        for (Channel channel : channelList) {
+            channel.writeData(stream);
+            stream.writeUTF(mChannels.get(channel).getReference());
         }
 
         stream.writeInt(mBefore);
@@ -234,8 +234,14 @@ public final class DreamboxConfig implements ConfigIf, Cloneable {
         for (int i = 0; i < count; i++) {
             Channel ch = Channel.readData(stream, true);
             DreamboxChannel dch = getDreamboxChannelForRef(stream.readUTF());
-            mChannels.put(ch, dch);
-            mDChannels.put(dch, ch);
+            
+            if(ch != null) {
+              mChannels.put(ch, dch);
+            }
+            
+            if(dch != null) {
+              mDChannels.put(dch, ch);
+            }
         }
 
 
