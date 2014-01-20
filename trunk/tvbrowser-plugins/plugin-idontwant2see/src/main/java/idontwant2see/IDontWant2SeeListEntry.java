@@ -195,4 +195,25 @@ public class IDontWant2SeeListEntry {
   protected Date getLastMatchedDate() {
     return mLastMatchedDate;
   }
+
+  public boolean equals(Object other) {
+    if(other instanceof IDontWant2SeeListEntry) {
+      IDontWant2SeeListEntry o = (IDontWant2SeeListEntry)other;
+      
+      return mSearchText.equals(o.mSearchText) && mCaseSensitive == o.mCaseSensitive;
+    }
+    else if(other instanceof String) {
+      String o = (String)other;
+      
+      if(o.contains(";;")) {
+        String[] parts = o.split(";;");
+        
+        boolean oCaseSensitive = parts[1].equals("1");
+        
+        return mSearchText.equals(parts[0]) && mCaseSensitive == oCaseSensitive;
+      }
+    }
+    
+    return false;
+  }
 }
