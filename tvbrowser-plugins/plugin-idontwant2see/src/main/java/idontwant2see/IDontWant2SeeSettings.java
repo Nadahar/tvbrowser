@@ -38,7 +38,7 @@ public class IDontWant2SeeSettings {
   private boolean mSwitchToMyFilter = true;
   private String mLastEnteredExclusionString = "";
   private Date mLastUsedDate = Date.getCurrentDate();
-  private ArrayList<IDontWant2SeeListEntry> mSearchList = new ArrayList<IDontWant2SeeListEntry>();
+  private ArrayList<IDontWant2SeeListEntry> mSearchList = new IDontWant2SeeEntryList<IDontWant2SeeListEntry>();
   private String mUserName;
   private String mPassword;
   

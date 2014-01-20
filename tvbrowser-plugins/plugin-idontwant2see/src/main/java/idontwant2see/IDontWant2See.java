@@ -31,16 +31,19 @@ import java.awt.event.AWTEventListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutput;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -69,6 +72,7 @@ import javax.swing.event.AncestorListener;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
 
+import util.io.IOUtilities;
 import util.ui.Localizer;
 import util.ui.TVBrowserIcons;
 import util.ui.UiUtilities;
@@ -100,9 +104,10 @@ import devplugin.Version;
  */
 public final class IDontWant2See extends Plugin implements AWTEventListener {
   private static final String DONT_WANT_TO_SEE_SYNC_ADDRESS = "http://android.tvbrowser.org/data/scripts/syncDontWantToSee.php";
+  private static final String DONT_WANT_TO_SEE_IMPORT_SYNC_ADDRESS = "http://android.tvbrowser.org/data/scripts/hurtzAndroidDontWantToSee.php";
   
   private static final boolean PLUGIN_IS_STABLE = true;
-  private static final Version PLUGIN_VERSION = new Version(0, 15, 2, PLUGIN_IS_STABLE);
+  private static final Version PLUGIN_VERSION = new Version(0, 15, 3, PLUGIN_IS_STABLE);
 
   private static final String RECEIVE_TARGET_EXCLUDE_EXACT = "target_exclude_exact";
 
@@ -386,10 +391,82 @@ public final class IDontWant2See extends Plugin implements AWTEventListener {
         }
       }
     });
+    
+    ContextMenuAction importExclusions = new ContextMenuAction(mLocalizer.msg("menu.import","Add exclusions from the TV-Browser server to the exclusion list of 'I don't want to see!'"),createImageIcon("apps", "idontwant2see-android", TVBrowserIcons.SIZE_SMALL));
+    importExclusions.putValue(Plugin.BIG_ICON, createImageIcon("apps", "idontwant2see-android", TVBrowserIcons.SIZE_LARGE));
+    importExclusions.setActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        if(mSettings.getUserName().trim().length() == 0 || mSettings.getPassword().trim().length() == 0) {
+          JPanel message = new JPanel(new FormLayout("5dlu,default,3dlu,150dlu","default,5dlu,default,2dlu,default"));
+          
+          JTextField userName = new JTextField(mSettings.getUserName());
+          JPasswordField userPassword = new JPasswordField(mSettings.getPassword());
+          
+          message.add(new JLabel(mLocalizer.msg("menu.export.message","You need to enter your AndroidSync user name and password:")), CC.xyw(1, 1, 4));
+          message.add(new JLabel(mLocalizer.msg("settings.userName"," User name:")), CC.xy(2, 3));
+          message.add(userName, CC.xy(4, 3));
+          message.add(new JLabel(mLocalizer.msg("settings.passWord","Password:")), CC.xy(2, 5));
+          message.add(userPassword, CC.xy(4, 5));
+          
+          if(JOptionPane.showConfirmDialog(getParentFrame(), message, mLocalizer.msg("settings.synchronization", "Android synchronization"), JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null) == JOptionPane.OK_OPTION) {
+            mSettings.setUserName(userName.getText().trim());
+            mSettings.setPassword(new String(userPassword.getPassword()).trim());
+            
+            importAndroid();
+          }
+        }
+        else {
+          importAndroid();
+        }
+      }
+    });
 
     return new ActionMenu(mLocalizer.msg(
         "name", "I don't want to see!"), createImageIcon("apps",
-        "idontwant2see", 16),new Action[] {openExclusionList,undo,export});
+        "idontwant2see", 16),new Action[] {openExclusionList,undo,export,importExclusions});
+  }
+  
+  private void importAndroid() {
+    String car = mSettings.getUserName();
+    String bicycle = mSettings.getPassword();
+        
+    if(car != null && bicycle != null) {
+      URLConnection conn = null;
+      BufferedReader read = null;
+
+      try {
+        URL url = new URL(DONT_WANT_TO_SEE_IMPORT_SYNC_ADDRESS);
+        System.out.println("url:" + url);
+        conn = url.openConnection();
+        
+        String getmethere = car.trim() + ":" + bicycle.trim();
+        
+        conn.setRequestProperty  ("Authorization", "Basic " + new String(Base64.encodeBase64(getmethere.getBytes())));
+        
+        read = new BufferedReader(new InputStreamReader(IOUtilities.openSaveGZipInputStream(conn.getInputStream()),"UTF-8"));
+        
+        String dateValue = read.readLine();
+        
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
+        java.util.Date syncDate = dateFormat.parse(dateValue.trim());
+        
+        if(syncDate.getTime() > System.currentTimeMillis()) {
+          String line = null;
+                      
+          ArrayList<String> importExclusions = new ArrayList<String>();
+          
+          while((line = read.readLine()) != null) {
+            if(line.contains(";;")) {
+              importExclusions.add(line);
+            }
+          }
+          
+          if(!importExclusions.isEmpty()) {
+            updateExclusions(importExclusions.toArray(new String[importExclusions.size()]));
+          }
+        }
+      }catch(Exception e) {}
+    }
   }
   
   private void exportAndroid() {
@@ -875,6 +952,28 @@ public final class IDontWant2See extends Plugin implements AWTEventListener {
   public String getPluginCategory() {
     //Plugin.OTHER_CATEGORY
     return "misc";
+  }
+  
+  private void updateExclusions(String[] exclusions) {
+    ArrayList<IDontWant2SeeListEntry> entryList = mSettings.getSearchList();
+    
+    boolean changed = false;;
+    
+    for(String exclusion : exclusions) {
+      String[] parts = exclusion.split(";;");
+      
+      IDontWant2SeeListEntry entry = new IDontWant2SeeListEntry(parts[0], parts[1].equals("1"));
+      
+      if(!entryList.contains(entry)) {
+        changed = true;
+        entryList.add(entry);
+      }
+    }
+    
+    if(changed) {
+      updateFilter(!mSettings.isSwitchToMyFilter());
+      exportAndroid();
+    }
   }
   
   private String getExclusions() {
