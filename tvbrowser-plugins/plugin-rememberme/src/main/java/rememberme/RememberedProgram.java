@@ -208,4 +208,12 @@ public class RememberedProgram implements Comparable<RememberedProgram> {
       rMe.getRootNode().update();
     }
   }
+  
+  public void mark(RememberMe rMe) {
+    if(mProgram != null) {
+      mProgram.mark(rMe);
+      rMe.getRootNode().addProgram(mProgram);
+      rMe.getRootNode().update();
+    }
+  }
 }
