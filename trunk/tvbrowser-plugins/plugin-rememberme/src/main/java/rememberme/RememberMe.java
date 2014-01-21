@@ -27,6 +27,7 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
@@ -50,7 +51,7 @@ import devplugin.ThemeIcon;
 import devplugin.Version;
 
 public class RememberMe extends Plugin {
-  private static final Version mVersion = new Version(0,16,4,true);
+  private static final Version mVersion = new Version(0,17,0,true);
   static final Localizer mLocalizer = Localizer.getLocalizerFor(RememberMe.class);
   private static final String TARGET_ID = "###REMEMBERME###";
   
@@ -134,7 +135,7 @@ public class RememberMe extends Plugin {
     }
     
     synchronized (mRememberedPrograms) {
-      Collections.sort(mRememberedPrograms);  
+      Collections.sort(mRememberedPrograms);
     }
     
     getRootNode().update();

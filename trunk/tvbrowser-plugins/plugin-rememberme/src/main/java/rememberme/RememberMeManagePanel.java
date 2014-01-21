@@ -29,6 +29,7 @@ import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 
 import javax.swing.DefaultListModel;
@@ -74,9 +75,12 @@ public class RememberMeManagePanel extends JPanel implements PersonaListener {
   private TagFilter mCurrentTagFilter;
   private JLabel mFilterLabel;
   private JLabel mTagLabel;
+  private JButton mUndo;
+  private RememberedProgramsList<RememberedProgram> mUndoPrograms;
   
   public RememberMeManagePanel(RememberedProgramsList<RememberedProgram> programs, final RememberMe rMe) {
     mPrograms = programs;
+    mUndoPrograms = new RememberedProgramsList<RememberedProgram>();
     mModel = new DefaultListModel();
     
     mCurrentDayFilter = new DayFilter(RememberMe.mLocalizer.msg("all", "All available days"), 0, 0);
@@ -166,7 +170,7 @@ public class RememberMeManagePanel extends JPanel implements PersonaListener {
     setOpaque(false);
     
     JButton remove = new JButton(TVBrowserIcons.delete(TVBrowserIcons.SIZE_SMALL));
-    remove.setToolTipText(RememberMe.mLocalizer.msg("remove", "Remove from list (cannot be undone)"));
+    remove.setToolTipText(RememberMe.mLocalizer.msg("remove", "Remove from list"));
     remove.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -174,9 +178,35 @@ public class RememberMeManagePanel extends JPanel implements PersonaListener {
       }
     });
     
-    JPanel buttons = new JPanel(new BorderLayout());
+    mUndo = new JButton(rMe.createImageIcon("actions", "edit-undo", 16));
+    mUndo.setToolTipText(RememberMe.mLocalizer.msg("undo", "Undo delete"));
+    mUndo.setEnabled(false);
+    mUndo.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        for(RememberedProgram prog : mUndoPrograms) {
+          if(prog.isValid() && !mPrograms.contains(prog)) {
+            mPrograms.add(prog);
+            
+            prog.mark(rMe);
+          }
+        }
+        
+        synchronized (mPrograms) {
+          Collections.sort(mPrograms);
+        }
+        
+        updatePanel(rMe);
+        
+        mUndoPrograms.clear();
+        mUndo.setEnabled(false);
+      }
+    });
+    
+    JPanel buttons = new JPanel(new FormLayout("default,5dlu,default","default"));
     buttons.setOpaque(false);
-    buttons.add(remove, BorderLayout.WEST);
+    buttons.add(remove, CC.xy(1, 1));
+    buttons.add(mUndo, CC.xy(3, 1));
     
     add(buttons, BorderLayout.SOUTH);
     
@@ -487,6 +517,7 @@ public class RememberMeManagePanel extends JPanel implements PersonaListener {
   
   private void removeSelection(RememberMe rMe) {
     synchronized (mPrograms) {
+      mUndoPrograms.clear();
       Object[] remove = mList.getSelectedValues();
       
       if(remove.length == 0) {
@@ -499,8 +530,11 @@ public class RememberMeManagePanel extends JPanel implements PersonaListener {
       
       for(int i = remove.length-1; i >= 0; i--) {
         RememberedProgram prog = (RememberedProgram)remove[i];
+        mUndoPrograms.add(prog);
         mPrograms.remove(prog,rMe);
       }
+      
+      mUndo.setEnabled(!mUndoPrograms.isEmpty());
     }
     
     updatePanel(rMe);
