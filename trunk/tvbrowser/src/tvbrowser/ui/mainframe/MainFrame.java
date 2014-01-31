@@ -1052,9 +1052,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     addKeyAction(KeyEvent.VK_F6, ContextMenuManager.NO_MOUSE_MODIFIER_EX, new AbstractAction() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        if(getProgramFilter() != FilterManagerImpl.getInstance().getDefaultFilter()) {
-          setShowChannellist(!mChannelChooser.isVisible());
-        }
+        setShowChannellist(!mChannelChooser.isVisible());
       }
     });
     
@@ -1101,8 +1099,9 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     
     addKeyAction(KeyEvent.VK_P, InputEvent.CTRL_DOWN_MASK, TVBrowserActions.goToPreviousDay);
     
-    addKeyAction(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK, new KeyboardAction(mProgramTableScrollPane,
-        KeyboardAction.KEY_DESELECT));
+    //collides with open settings panel!
+    //TODO: Decide if Necessary - take care about collisions of shortcuts
+    //addKeyAction(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK, new KeyboardAction(mProgramTableScrollPane, KeyboardAction.KEY_DESELECT));
     
     // return from full screen using ESCAPE
     addKeyAction(KeyEvent.VK_ESCAPE, ContextMenuManager.NO_MOUSE_MODIFIER_EX, new AbstractAction() {
@@ -1184,12 +1183,14 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
       });
     }
     
-    addKeyAction(KeyEvent.VK_0, InputEvent.CTRL_DOWN_MASK, new AbstractAction() {
+    //also used for restore view!
+    //TODO: Decide if Necessary - take care about collisions of shortcuts
+  /*  addKeyAction(KeyEvent.VK_0, InputEvent.CTRL_DOWN_MASK, new AbstractAction() {
       @Override
       public void actionPerformed(ActionEvent e) {
         showTabForIndex(9);
       }
-    });
+    });*/
     
     i = 0;
     
@@ -1204,12 +1205,13 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
       });
     }
     
-    addKeyAction(KeyEvent.VK_NUMPAD0, InputEvent.CTRL_DOWN_MASK, new AbstractAction() {
+    // also used for restore view!
+   /* addKeyAction(KeyEvent.VK_NUMPAD0, InputEvent.CTRL_DOWN_MASK, new AbstractAction() {
       @Override
       public void actionPerformed(ActionEvent e) {
         showTabForIndex(9);
       }
-    });
+    });*/
         
     addProgramMouseActionKeys(ProgramKeyEventHandler.LEFT_SINGLE_KEY, Settings.propLeftSingleClickIfArray.getContextMenuMouseActionArray());
     addProgramMouseActionKeys(ProgramKeyEventHandler.LEFT_DOUBLE_KEY, Settings.propLeftDoubleClickIfArray.getContextMenuMouseActionArray());
