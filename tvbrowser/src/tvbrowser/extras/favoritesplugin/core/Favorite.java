@@ -43,7 +43,6 @@ import tvbrowser.extras.favoritesplugin.FavoriteConfigurator;
 import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
 import tvbrowser.extras.favoritesplugin.FavoritesPluginProxy;
 import tvbrowser.extras.favoritesplugin.dlgs.FavoriteTreeModel;
-import tvbrowser.extras.favoritesplugin.dlgs.ManageFavoritesDialog;
 import tvbrowser.extras.reminderplugin.ReminderFrame;
 import tvbrowser.extras.reminderplugin.ReminderPlugin;
 import util.exc.ErrorHandler;
@@ -72,6 +71,8 @@ public abstract class Favorite {
   private HashMap<String,ReminderInfo> mRemovedPrograms;
   private ArrayList<Program> mRemovedBlacklistPrograms;
   private boolean mNewProgramsWasRequested;
+  private boolean mProvideFilter;
+  private long mFilterKey;
 
   /**
    * unsorted list of blacklisted (non-favorite) programs
@@ -88,6 +89,7 @@ public abstract class Favorite {
     mExclusionList = null; // defer initialisation until needed, save memory
     mBlackList = null; // defer initialization until needed
     mNewProgramsWasRequested = false;
+    mFilterKey = 0;
 
     mForwardPluginArr = new ProgramReceiveTarget[0];
     handleNewGlobalReceiveTargets(new ProgramReceiveTarget[0]);
@@ -152,6 +154,15 @@ public abstract class Favorite {
 
     mNewPrograms = new ArrayList<Program>(0);
     mRemovedPrograms = new HashMap<String, ReminderInfo>(0);
+    
+    if(version > 4) {
+      mProvideFilter = in.readBoolean();
+      mFilterKey = in.readLong();
+    }
+    else {
+      mFilterKey = 0;
+      mProvideFilter = false;
+    }
   }
 
   /**
@@ -307,7 +318,7 @@ public abstract class Favorite {
    * @throws IOException if something went wrong writing to the stream
    */
   public synchronized void writeData(final ObjectOutputStream out) throws IOException {
-    out.writeInt(4);  // version
+    out.writeInt(5);  // version
     out.writeObject(mName);
     mReminderConfiguration.store(out);
     mLimitationConfiguration.store(out);
@@ -348,6 +359,9 @@ public abstract class Favorite {
         out.writeObject(p.getID());
       }
     }
+    
+    out.writeBoolean(mProvideFilter);
+    out.writeLong(mFilterKey);
 
     internalWriteData(out);
   }
@@ -1060,5 +1074,33 @@ public abstract class Favorite {
       
       return this == o;
     }
+  }
+  
+  public void setProvideFilter(boolean provideFilter) {
+    if(provideFilter && !mProvideFilter) {
+      mFilterKey = System.currentTimeMillis();
+    }
+    
+    mProvideFilter = provideFilter;
+  }
+  
+  public boolean isProvidingFilter() {
+    return mProvideFilter;
+  }
+  
+  public boolean accept(Program p) {
+    if(mProvideFilter) {
+      return mPrograms.contains(p);
+    }
+    
+    return false;
+  }
+  
+  public boolean hasFilterForKey(long key) {
+    return mFilterKey == key;
+  }
+  
+  public long getFilterKey() {
+    return mFilterKey;
   }
 }

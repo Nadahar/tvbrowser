@@ -56,6 +56,7 @@ import tvbrowser.core.filters.SeparatorFilter;
 import tvbrowser.core.filters.ShowAllFilter;
 import tvbrowser.core.filters.UserFilter;
 import tvbrowser.core.icontheme.IconLoader;
+import tvbrowser.extras.favoritesplugin.core.FavoriteFilter;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.ui.ListDropAction;
 import util.ui.Localizer;
@@ -194,7 +195,7 @@ public class SelectFilterDlg extends JDialog implements ActionListener, WindowCl
         mDefaultFilterBtn.setEnabled(!((Settings.propDefaultFilter.getString().equals(id + "###" + name)) ||
             (Settings.propDefaultFilter.getString().trim().length() < 1 && node.getFilter() instanceof ShowAllFilter)));
         
-        mEditBtn.setEnabled(!(node.getFilter() instanceof ShowAllFilter || node.getFilter() instanceof PluginFilter || node.getFilter() instanceof PluginsProgramFilter || node.getFilter() instanceof InfoBitFilter));
+        mEditBtn.setEnabled(!(node.getFilter() instanceof FavoriteFilter || node.getFilter() instanceof ShowAllFilter || node.getFilter() instanceof PluginFilter || node.getFilter() instanceof PluginsProgramFilter || node.getFilter() instanceof InfoBitFilter));
       }
       else {
         mEditBtn.setEnabled(row > 0 && node.isDirectoryNode());

@@ -45,6 +45,8 @@ import tvbrowser.core.filters.PluginFilter;
 import tvbrowser.core.filters.SeparatorFilter;
 import tvbrowser.core.filters.ShowAllFilter;
 import tvbrowser.core.filters.UserFilter;
+import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
+import tvbrowser.extras.favoritesplugin.core.FavoriteFilter;
 import tvbrowser.ui.mainframe.MainFrame;
 
 import devplugin.PluginsProgramFilter;
@@ -57,6 +59,7 @@ import devplugin.ProgramFilter;
  * @since 3.0.2
  */
 public class FilterNode extends DefaultMutableTreeNode {
+  private static final String FAVORITE_FILTER_KEY = "FAVORITE_FILTER###";
   private static final String PLUGIN_FILTER_KEY = "PLUGIN_FILTER###";
   private static final String INFOBIT_FILTER_KEY = "INFOBIT_FILTER###";
   private boolean mWasExpanded;
@@ -127,6 +130,11 @@ public class FilterNode extends DefaultMutableTreeNode {
         userObject = pluginKey;
         setAllowsChildren(false);
       }
+      else if(name.startsWith(FAVORITE_FILTER_KEY)) {
+        String filterKey = name.substring(FAVORITE_FILTER_KEY.length());
+        
+        userObject = FavoritesPlugin.getInstance().getFilterForKeyValue(filterKey);
+      }
       else {
         File userFilterFile = new File(FilterList.getFilterDirectory(),name + ".filter");
         
@@ -143,7 +151,7 @@ public class FilterNode extends DefaultMutableTreeNode {
   }
   
   public boolean isValidFilter() {
-    if(userObject instanceof PluginsProgramFilter && ((PluginsProgramFilter)(userObject)).getPluginAccessOfFilter() == null) {
+    if(userObject instanceof PluginsProgramFilter && ((PluginsProgramFilter)(userObject)).getPluginAccessOfFilter() == null || userObject == null) {
       return false;
     }
     
@@ -193,6 +201,9 @@ public class FilterNode extends DefaultMutableTreeNode {
       }
       else if(userObject instanceof InfoBitFilter) {
         out.writeUTF(INFOBIT_FILTER_KEY + ((InfoBitFilter)userObject).getKey());
+      }
+      else if(userObject instanceof FavoriteFilter) {
+        out.writeUTF(FAVORITE_FILTER_KEY + ((FavoriteFilter)userObject).getKeyValue());
       }
     }
   }
