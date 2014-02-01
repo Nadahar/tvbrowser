@@ -46,14 +46,17 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
 
+import tvbrowser.core.filters.FilterList;
 import tvbrowser.extras.common.DayListCellRenderer;
 import tvbrowser.extras.common.LimitationConfiguration;
 import tvbrowser.extras.common.ReminderConfiguration;
 import tvbrowser.extras.favoritesplugin.FavoriteConfigurator;
 import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
 import tvbrowser.extras.favoritesplugin.core.Favorite;
+import tvbrowser.extras.favoritesplugin.core.FavoriteFilter;
 import tvbrowser.extras.reminderplugin.ReminderPlugin;
 import tvbrowser.extras.reminderplugin.ReminderPluginProxy;
+import tvbrowser.ui.mainframe.MainFrame;
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
 import util.ui.ChannelChooserDlg;
@@ -73,6 +76,7 @@ import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
 import devplugin.Channel;
+import devplugin.ProgramFilter;
 import devplugin.ProgramReceiveIf;
 import devplugin.ProgramReceiveTarget;
 
@@ -86,6 +90,8 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
   private Favorite mFavorite;
 
   private JCheckBox mReminderAfterDownloadCb;
+  
+  private JCheckBox mProvideFilter;
 
   private JCheckBox mUseReminderCb;
 
@@ -536,7 +542,7 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
 
   private JPanel createExtrasPanel() {
 
-    JPanel panel = new JPanel(new FormLayout("pref, pref:grow, pref", "pref,3dlu,pref"));
+    JPanel panel = new JPanel(new FormLayout("default, default:grow, default", "default,3dlu,default,3dlu,default"));
     CellConstraints cc = new CellConstraints();
 
     mPassProgramPlugins = mFavorite.getForwardPlugins();
@@ -558,13 +564,14 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
       }
     });
 
-    panel.add(mReminderAfterDownloadCb = new JCheckBox(mLocalizer.msg("autoAlert",
-        "Alert me, whenever a matching program is discovered")), cc.xyw(1, 1, 2));
-
-    panel.add(mPassProgramsCheckBox = new JCheckBox(mLocalizer.msg("passProgramsTo", "Pass programs to") +" "), cc.xy(1, 3));
-    panel.add(mPassProgramsLb, cc.xy(2, 3));
-    panel.add(mChangePassProgramsBtn, cc.xy(3, 3));
+    panel.add(mReminderAfterDownloadCb = new JCheckBox(mLocalizer.msg("autoAlert", "Alert me, whenever a matching program is discovered")), cc.xyw(1, 1, 2));
+    panel.add(mProvideFilter = new JCheckBox(mLocalizer.msg("provideFilter", "Create filter for this Favorite program")), cc.xyw(1, 3, 2));
+    panel.add(mPassProgramsCheckBox = new JCheckBox(mLocalizer.msg("passProgramsTo", "Pass programs to") +" "), cc.xy(1, 5));
+    panel.add(mPassProgramsLb, cc.xy(2, 5));
+    panel.add(mChangePassProgramsBtn, cc.xy(3, 5));
+    
     mReminderAfterDownloadCb.setSelected(mFavorite.isRemindAfterDownload());
+    mProvideFilter.setSelected(mFavorite.isProvidingFilter());
 
     mPassProgramsCheckBox.setSelected(mPassProgramPlugins != null && mPassProgramPlugins.length > 0 && !mPassProgramsLb.getText().equals(mLocalizer.msg("dontpass", "don't pass programs")));
     mPassProgramsCheckBox.setEnabled(FavoritesPlugin.getInstance().getClientPluginTargetIds().length == 0);
@@ -621,6 +628,7 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
     mFavorite.setExclusions(mExclusionPanel.getExclusions());
 
     mFavorite.setRemindAfterDownload(mReminderAfterDownloadCb.isSelected());
+    mFavorite.setProvideFilter(mProvideFilter.isSelected());
 
     boolean wasReminderEnabled = mFavorite.getReminderConfiguration().containsService(
         ReminderConfiguration.REMINDER_DEFAULT);
@@ -656,16 +664,29 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
 
     mOkWasPressed = true;
     setVisible(false);
-  }
-
-  private boolean arrayContains(ProgramReceiveTarget[] targetArr, ProgramReceiveTarget target) {
-    for(ProgramReceiveTarget arrayEntry : targetArr) {
-      if(arrayEntry.getReceiveIfId().equals(target.getReceiveIfId()) && arrayEntry.getTargetId().equals(target.getTargetId())) {
-        return true;
+    
+    ProgramFilter[] currentFilter = FilterList.getInstance().getFilterTreeModel().getAllFilters();
+    
+    FavoriteFilter test = new FavoriteFilter(mFavorite);
+    
+    FavoriteFilter found = null;
+    
+    for(ProgramFilter filter : currentFilter) {
+      if(filter.equals(test)) {
+        found = (FavoriteFilter)filter;
+        break;
       }
     }
-
-    return false;
+    
+    if(!mFavorite.isProvidingFilter() && found != null) {
+      FilterList.getInstance().getFilterTreeModel().deleteFilter(found);
+    }
+    else if(found == null && mFavorite.isProvidingFilter()) {
+      FilterList.getInstance().getFilterTreeModel().addFilter(test);
+    }
+    
+    FilterList.getInstance().store();
+    MainFrame.getInstance().updateFilterMenu();
   }
 
   public void close() {

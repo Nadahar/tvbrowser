@@ -74,6 +74,7 @@ import tvbrowser.extras.favoritesplugin.core.ActorsFavorite;
 import tvbrowser.extras.favoritesplugin.core.AdvancedFavorite;
 import tvbrowser.extras.favoritesplugin.core.Exclusion;
 import tvbrowser.extras.favoritesplugin.core.Favorite;
+import tvbrowser.extras.favoritesplugin.core.FavoriteFilter;
 import tvbrowser.extras.favoritesplugin.core.TitleFavorite;
 import tvbrowser.extras.favoritesplugin.core.TopicFavorite;
 import tvbrowser.extras.favoritesplugin.dlgs.EditFavoriteDialog;
@@ -1512,5 +1513,22 @@ public class FavoritesPlugin {
    */
   public void reValidateChannelLimitation() {
     ((FavoriteNode)FavoriteTreeModel.getInstance().getRoot()).reValidateChannelLimitations();
+  }
+  
+  public FavoriteFilter getFilterForKeyValue(String keyValue) {
+    try {
+      long key = Long.parseLong(keyValue);
+      
+      Favorite[] favorites = FavoriteTreeModel.getInstance().getFavoriteArr();
+      
+      for(Favorite fav : favorites) {
+        if(fav.hasFilterForKey(key)) {
+          return new FavoriteFilter(fav);
+        }
+      }
+      
+    }catch(NumberFormatException e) {}
+    
+    return null;
   }
 }

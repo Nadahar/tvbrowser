@@ -30,6 +30,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.ArrayList;
 import java.util.Calendar;
 
 import javax.swing.DefaultComboBoxModel;
@@ -49,6 +50,7 @@ import tvbrowser.extras.common.DayListCellRenderer;
 import tvbrowser.extras.common.LimitationConfiguration;
 import tvbrowser.extras.favoritesplugin.core.Exclusion;
 import tvbrowser.extras.favoritesplugin.core.Favorite;
+import tvbrowser.extras.favoritesplugin.core.FavoriteFilter;
 import tvbrowser.ui.filter.dlgs.SelectFilterDlg;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.ui.TimePeriodChooser;
@@ -191,7 +193,17 @@ public class ExcludeWizardStep extends AbstractWizardStep {
     mFilterCb = new JCheckBox(mFilterQuestion);
     mEditFilter = new JButton(SelectFilterDlg.mLocalizer.msg("title", "Edit Filters"));
     
-    mFilterChooser = new JComboBox(FilterManagerImpl.getInstance().getAvailableFilters());
+    ProgramFilter[] avilableFilter = FilterManagerImpl.getInstance().getAvailableFilters();
+    
+    ArrayList<ProgramFilter> useableFilter = new ArrayList<ProgramFilter>();
+    
+    for(ProgramFilter filter : avilableFilter) {
+      if(!(filter instanceof FavoriteFilter)) {
+        useableFilter.add(filter);
+      }
+    }
+    
+    mFilterChooser = new JComboBox(useableFilter.toArray(new ProgramFilter[useableFilter.size()]));
 
     mDayChooser = new JComboBox(new Object[] {
         LimitationConfiguration.DAYLIMIT_WEEKDAY,

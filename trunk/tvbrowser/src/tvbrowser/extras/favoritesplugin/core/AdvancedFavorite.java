@@ -340,7 +340,15 @@ public class AdvancedFavorite extends Favorite {
 
       panelBuilder.add(mSearchForm, cc.xyw(1, 1, 5));
       panelBuilder.add(mFilterCheckbox = new JCheckBox(mLocalizer.msg("useFilter","Use filter:")), cc.xy(1, 3));
-      panelBuilder.add(mFilterCombo = new JComboBox(Plugin.getPluginManager().getFilterManager().getAvailableFilters()), cc.xy(3, 3));
+      panelBuilder.add(mFilterCombo = new JComboBox(), cc.xy(3, 3));
+      
+      ProgramFilter[] availableFilter = Plugin.getPluginManager().getFilterManager().getAvailableFilters();
+      
+      for(ProgramFilter filter : availableFilter) {
+        if(!(filter instanceof FavoriteFilter)) {
+          ((DefaultComboBoxModel)mFilterCombo.getModel()).addElement(filter);
+        }
+      }
       
       mEditFilter = new JButton(SelectFilterDlg.mLocalizer.msg("title", "Edit Filters"));
       mEditFilter.addActionListener(new ActionListener() {
@@ -353,8 +361,12 @@ public class AdvancedFavorite extends Favorite {
           
           ((DefaultComboBoxModel)mFilterCombo.getModel()).removeAllElements();
           
-          for(ProgramFilter filter :Plugin.getPluginManager().getFilterManager().getAvailableFilters()) {
-            ((DefaultComboBoxModel)mFilterCombo.getModel()).addElement(filter);
+          ProgramFilter[] availableFilter = Plugin.getPluginManager().getFilterManager().getAvailableFilters();
+          
+          for(ProgramFilter filter : availableFilter) {
+            if(!(filter instanceof FavoriteFilter)) {
+              ((DefaultComboBoxModel)mFilterCombo.getModel()).addElement(filter);
+            }
           }
           
           mFilterCombo.setSelectedItem(selected);
@@ -380,8 +392,6 @@ public class AdvancedFavorite extends Favorite {
       });
 
       return panelBuilder.getPanel();
-
-
     }
 
     public void save() {
