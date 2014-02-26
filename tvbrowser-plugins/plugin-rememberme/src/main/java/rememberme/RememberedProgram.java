@@ -197,8 +197,8 @@ public class RememberedProgram implements Comparable<RememberedProgram> {
     return mProgram == null || mProgram.isExpired();
   }
   
-  public boolean isValid() {
-    return mProgramDate.compareTo(Date.getCurrentDate().addDays(-14)) >= 0 && !(mProgram == null && mProgramDate.compareTo(Date.getCurrentDate()) >= 0);
+  public boolean isValid(int dayCount) {
+    return mProgramDate.compareTo(Date.getCurrentDate().addDays(-dayCount)) >= 0 && !(mProgram == null && mProgramDate.compareTo(Date.getCurrentDate()) >= 0);
   }
   
   public void unmark(RememberMe rMe) {

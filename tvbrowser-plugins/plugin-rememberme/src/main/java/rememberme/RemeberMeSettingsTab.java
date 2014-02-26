@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import javax.swing.DefaultListModel;
 import javax.swing.Icon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -28,6 +29,14 @@ public class RemeberMeSettingsTab implements SettingsTab {
   private JList mTagList;
   private DefaultListModel mListModel;
   private RememberMe mRememberMe;
+  private JComboBox mTimeSelection;
+  
+  private static final int[] TIME_SELECTION_ARR = new int[] {
+    7,
+    14,
+    21,
+    28
+  };
   
   public RemeberMeSettingsTab(RememberMe rMe) {
     mRememberMe = rMe;
@@ -35,12 +44,36 @@ public class RemeberMeSettingsTab implements SettingsTab {
   
   @Override
   public JPanel createSettingsPanel() {
-    EnhancedPanelBuilder pb = new EnhancedPanelBuilder("5dlu,default,default:grow,default");
+    EnhancedPanelBuilder pb = new EnhancedPanelBuilder("5dlu,default,3dlu,default:grow,default");
     
     pb.appendRow("5dlu");
     pb.appendRow("default");
-    pb.addLabel(RememberMe.mLocalizer.msg("targets", "Export targets/tags"), CC.xyw(2, pb.getRowCount(), 3));
     
+    String[] timeSelectionValues = new String[] {
+        RememberMe.mLocalizer.msg("oneWeek", "One week"),
+        RememberMe.mLocalizer.msg("twoWeeks", "Two weeks"),
+        RememberMe.mLocalizer.msg("threeWeeks", "Three weeks"),
+        RememberMe.mLocalizer.msg("fourWeeks", "Four weeks"),
+    };
+    
+    mTimeSelection = new JComboBox(timeSelectionValues);
+    
+    for(int i = 0; i < TIME_SELECTION_ARR.length; i++) {
+      if(TIME_SELECTION_ARR[i] == mRememberMe.getDayCount()) {
+        mTimeSelection.setSelectedIndex(i);
+        break;
+      }
+    }
+    
+    pb.add(mTimeSelection, CC.xy(2,pb.getRowCount()));
+    pb.addLabel(RememberMe.mLocalizer.msg("keepText", "of data to keep"), CC.xy(4,pb.getRowCount()));
+    
+    pb.appendRow("10dlu");
+    pb.appendRow("default");
+    
+    pb.addSeparator(RememberMe.mLocalizer.msg("targets", "Export targets/tags"), CC.xyw(1, pb.getRowCount(), 5));
+    
+    pb.appendRow("5dlu");
     pb.appendRow("fill:default:grow");
     
     mListModel = new DefaultListModel();
@@ -53,7 +86,7 @@ public class RemeberMeSettingsTab implements SettingsTab {
       mListModel.addElement(target);
     }
     
-    pb.add(mTagList, CC.xyw(2, pb.getRowCount(), 3));
+    pb.add(mTagList, CC.xyw(2, pb.getRowCount(), 4));
     
     JButton add = new JButton(Localizer.getLocalization(Localizer.I18N_ADD), TVBrowserIcons.newIcon(TVBrowserIcons.SIZE_SMALL));
     add.addActionListener(new ActionListener() {
@@ -91,7 +124,7 @@ public class RemeberMeSettingsTab implements SettingsTab {
     pb.appendRow("5dlu");
     pb.appendRow("default");
     pb.add(add, CC.xy(2,pb.getRowCount()));
-    pb.add(delete, CC.xy(4, pb.getRowCount()));
+    pb.add(delete, CC.xy(5, pb.getRowCount()));
     
     return pb.getPanel();
   }
@@ -105,6 +138,7 @@ public class RemeberMeSettingsTab implements SettingsTab {
     }
     
     mRememberMe.setReceiveTargets(targets.toArray(new ProgramReceiveTarget[targets.size()]));
+    mRememberMe.setDayCount(TIME_SELECTION_ARR[mTimeSelection.getSelectedIndex()]);
   }
 
   @Override

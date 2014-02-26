@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -77,6 +78,7 @@ public class RememberMeManagePanel extends JPanel implements PersonaListener {
   private JLabel mTagLabel;
   private JButton mUndo;
   private RememberedProgramsList<RememberedProgram> mUndoPrograms;
+  private DefaultComboBoxModel mFilterModel;
   
   public RememberMeManagePanel(RememberedProgramsList<RememberedProgram> programs, final RememberMe rMe) {
     mPrograms = programs;
@@ -86,11 +88,8 @@ public class RememberMeManagePanel extends JPanel implements PersonaListener {
     mCurrentDayFilter = new DayFilter(RememberMe.mLocalizer.msg("all", "All available days"), 0, 0);
     mCurrentTagFilter = new TagFilter(null);
     
-    DayFilter[] filterValues = {mCurrentDayFilter,
-                                new DayFilter(RememberMe.mLocalizer.msg("last3", "Last 3 days"),0,-3),
-                                new DayFilter(RememberMe.mLocalizer.msg("last7", "Last 7 days"),0,-7),
-                                new DayFilter(RememberMe.mLocalizer.msg("last8to14", "Last 8-14 days"),-8,-14)
-                               };
+    mFilterModel = new DefaultComboBoxModel();
+    
     mTagFilter = new JComboBox(rMe.getProgramReceiveTargets());
     mTagFilter.addItemListener(new ItemListener() {
       @Override
@@ -109,7 +108,7 @@ public class RememberMeManagePanel extends JPanel implements PersonaListener {
         }
       }
     });
-    mDayFilter = new JComboBox(filterValues);
+    mDayFilter = new JComboBox(mFilterModel);
     mDayFilter.addItemListener(new ItemListener() {
       @Override
       public void itemStateChanged(ItemEvent e) {
@@ -119,6 +118,8 @@ public class RememberMeManagePanel extends JPanel implements PersonaListener {
         }
       }
     });
+    
+    updateFilters(rMe.getDayCount());
     
     mList = new JList(mModel);
     mList.addMouseListener(new MouseAdapter() {
@@ -185,7 +186,7 @@ public class RememberMeManagePanel extends JPanel implements PersonaListener {
       @Override
       public void actionPerformed(ActionEvent e) {
         for(RememberedProgram prog : mUndoPrograms) {
-          if(prog.isValid() && !mPrograms.contains(prog)) {
+          if(prog.isValid(rMe.getDayCount()) && !mPrograms.contains(prog)) {
             mPrograms.add(prog);
             
             prog.mark(rMe);
@@ -544,11 +545,11 @@ public class RememberMeManagePanel extends JPanel implements PersonaListener {
   public synchronized void updatePanel(RememberMe rMe) {
     synchronized (mPrograms) {
       mModel.clear();
-    
+
       ArrayList<RememberedProgram> toRemove = new ArrayList<RememberedProgram>();
       
       for(RememberedProgram prog : mPrograms) {
-        if(prog.isExpired() && prog.isValid()) {
+        if(prog.isExpired() && prog.isValid(rMe.getDayCount())) {
           if(!containsProgram(prog)) {
             if(mCurrentDayFilter.accept(prog) && mCurrentTagFilter.accept(prog)) {
               mModel.addElement(prog);
@@ -558,7 +559,7 @@ public class RememberMeManagePanel extends JPanel implements PersonaListener {
             toRemove.add(prog);
           }
         }
-        else if(!prog.isValid()) {
+        else if(!prog.isValid(rMe.getDayCount())) {
           toRemove.add(prog);
         }
       }
@@ -638,5 +639,38 @@ public class RememberMeManagePanel extends JPanel implements PersonaListener {
         mTagLabel.setForeground(UIManager.getDefaults().getColor("Label.foreground"));
       }
     }
+  }
+  
+  public void updateFilters(int dayCount) {try {
+    int selection = mDayFilter.getSelectedIndex();
+    
+    if(selection < 0) {
+      selection = 0;
+    }
+    
+    mFilterModel.removeAllElements();
+    
+    mFilterModel.addElement(mCurrentDayFilter);
+    mFilterModel.addElement(new DayFilter(RememberMe.mLocalizer.msg("last3", "Last 3 days"),0,-3));
+    mFilterModel.addElement(new DayFilter(RememberMe.mLocalizer.msg("last7", "Last 7 days"),0,-7));
+    
+    if(dayCount > 8) {
+      mFilterModel.addElement(new DayFilter(RememberMe.mLocalizer.msg("last8to14", "Last 8-14 days"),-8,-14));
+    }
+    
+    if(dayCount > 14) {
+      mFilterModel.addElement(new DayFilter(RememberMe.mLocalizer.msg("last15to21", "Last 15-21 days"),-15,-21));
+    }
+    
+    if(dayCount > 21) {
+      mFilterModel.addElement(new DayFilter(RememberMe.mLocalizer.msg("last22to28", "Last 22-28 days"),-22,-28));
+    }
+    
+    if(mFilterModel.getSize() > selection) {
+      mDayFilter.setSelectedIndex(selection);
+    }
+    else {
+      mDayFilter.setSelectedIndex(mFilterModel.getSize()-1);
+    }}catch(Exception e) {e.printStackTrace();}
   }
 }

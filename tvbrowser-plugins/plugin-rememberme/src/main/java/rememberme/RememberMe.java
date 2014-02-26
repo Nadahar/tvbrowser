@@ -50,7 +50,8 @@ import devplugin.ThemeIcon;
 import devplugin.Version;
 
 public class RememberMe extends Plugin {
-  private static final Version mVersion = new Version(0,17,0,true);
+  public static final int DEFAULT_DAY_COUNT = 14; 
+  private static final Version mVersion = new Version(0,18,0,true);
   static final Localizer mLocalizer = Localizer.getLocalizerFor(RememberMe.class);
   private static final String TARGET_ID = "###REMEMBERME###";
   
@@ -68,10 +69,13 @@ public class RememberMe extends Plugin {
   
   private boolean mAddingPanel;
   
+  private int mDayCount;
+  
   public RememberMe() {
     mRememberedPrograms = new RememberedProgramsList<RememberedProgram>();
     mReceiveTargets = new ProgramReceiveTarget[] {new ProgramReceiveTarget(this, mLocalizer.msg("name", "Forget me not!"), TARGET_ID)};
     mAddingPanel = false;
+    mDayCount = DEFAULT_DAY_COUNT;
   }
   
   public static Version getVersion() {
@@ -85,15 +89,17 @@ public class RememberMe extends Plugin {
   
   @Override
   public void writeData(ObjectOutputStream out) throws IOException {
-    int version = 2;
+    int version = 3;
     
     out.writeInt(version); // write version
+    
+    out.writeInt(mDayCount);
     
     ArrayList<RememberedProgram> saveProgs = new ArrayList<RememberedProgram>();
     
     synchronized (mRememberedPrograms) {
       for(RememberedProgram prog : mRememberedPrograms) {
-        if(prog.isValid()) {
+        if(prog.isValid(mDayCount)) {
           saveProgs.add(prog);
         }
       }
@@ -125,6 +131,11 @@ public class RememberMe extends Plugin {
   public void readData(ObjectInputStream in) throws IOException,
       ClassNotFoundException {
     int version = in.readInt();
+    
+    if(version > 2) {
+      mDayCount = in.readInt();
+    }
+    
     int n = in.readInt();
     
     for(int i = 0; i < n; i++) {
@@ -181,6 +192,8 @@ public class RememberMe extends Plugin {
             if(mMangePanel != null) {
               mMangePanel.updatePanel(RememberMe.this);
             }
+            
+            saveMe();
           }
         };
       }
@@ -225,6 +238,8 @@ public class RememberMe extends Plugin {
       
       mMangePanel.updatePanel(RememberMe.this);
     }
+    
+    saveMe();
     
     return true;
   }
@@ -338,5 +353,20 @@ public class RememberMe extends Plugin {
   
   void setReceiveTargets(ProgramReceiveTarget[] targets) {
     mReceiveTargets = targets;
+  }
+  
+  void setDayCount(int days) {
+    mDayCount = days;
+    
+    if(mMangePanel != null) {
+      mMangePanel.updateFilters(mDayCount);
+      mMangePanel.updatePanel(this);
+    }
+    
+    saveMe();
+  }
+  
+  int getDayCount() {
+    return mDayCount;
   }
 }
