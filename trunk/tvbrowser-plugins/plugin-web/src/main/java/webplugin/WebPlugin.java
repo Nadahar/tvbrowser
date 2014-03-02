@@ -64,7 +64,7 @@ import devplugin.Version;
  * A User can configure his favorite Search-Engines and search for the given Movie
  */
 public class WebPlugin extends Plugin {
-  private static final Version mVersion = new Version(3,10);
+  private static final Version mVersion = new Version(3,11);
 
   private static final Logger mLog = java.util.logging.Logger
   .getLogger(WebPlugin.class.getName());
@@ -96,11 +96,11 @@ public class WebPlugin extends Plugin {
       new WebAddress("Altavista", "http://de.altavista.com/web/results?q=%22{urlencode(" + WEBSEARCH_ALL + ", \"UTF-8\")}%22", null, false, true),
       new WebAddress("Yahoo", "http://search.yahoo.com/search?p={urlencode(" + WEBSEARCH_ALL + ", \"ISO-8859-1\")}", null, false, true),
       new WebAddress("Wikipedia (DE)", "http://de.wikipedia.org/wiki/Spezial:Search?search={urlencode(" + WEBSEARCH_ALL + ", \"ISO-8859-1\")}", null, false, Locale.getDefault().equals(Locale.GERMAN)),
-      new WebAddress("Wikipedia (EN)", "http://en.wikipedia.org/wiki/Spezial:Search?search={urlencode(" + WEBSEARCH_ALL + ", \"ISO-8859-1\")}", null, false, Locale.getDefault().equals(Locale.ENGLISH)),
+      new WebAddress("Wikipedia (EN)", "http://en.wikipedia.org/wiki/Special:Search?search={urlencode(" + WEBSEARCH_ALL + ", \"ISO-8859-1\")}", null, false, Locale.getDefault().equals(Locale.ENGLISH)),
       new WebAddress("moviepilot", 
-          "http://www.moviepilot.de/searches?q={urlencode(" + WEBSEARCH_ALL + ", \"UTF-8\")}", 
-          "http://www.moviepilot.de/searches?q={urlencode(" + WEBSEARCH_ALL + ", \"UTF-8\")}&type=movies", 
-          "http://www.moviepilot.de/searches?q={urlencode(" + WEBSEARCH_ALL + ", \"UTF-8\")}&type=people",          
+          "http://www.moviepilot.de/suche?q={urlencode(" + WEBSEARCH_ALL + ", \"UTF-8\")}", 
+          "http://www.moviepilot.de/suche?q={urlencode(" + WEBSEARCH_ALL + ", \"UTF-8\")}&type=movie", 
+          "http://www.moviepilot.de/suche?q={urlencode(" + WEBSEARCH_ALL + ", \"UTF-8\")}&type=person",          
           null, false, true),
       new WebAddress("omdb", 
           "http://www.omdb.org/search?search%5Btext%5D={urlencode(" + WEBSEARCH_ALL + ", \"UTF-8\")}", 
