@@ -597,8 +597,14 @@ public class ListViewPanel extends JPanel implements PersonaListener, ProgramMou
       else {
         Channel[] channels = mModel.getChannels();
         width = UiUtilities.getChannelIconWidth();
+        
         for (Channel channel : channels) {
-          ChannelLabel label = new ChannelLabel(true,true,false,false,true);
+          int channelLogoNameType = ListViewPlugin.getInstance().getChannelLogoNameType();
+          
+          boolean showLogo = channelLogoNameType == ListViewSettings.SHOW_CHANNEL_LOGO_AND_NAME || channelLogoNameType == ListViewSettings.SHOW_CHANNEL_LOGO;
+          boolean showName = channelLogoNameType == ListViewSettings.SHOW_CHANNEL_LOGO_AND_NAME || channelLogoNameType == ListViewSettings.SHOW_CHANNEL_NAME;
+          
+          ChannelLabel label = new ChannelLabel(showLogo,showName,false,false,true);
           label.setChannel(channel);
           label.validate();
           width = Math.max(width, (int)label.getPreferredSize().getWidth()+5);

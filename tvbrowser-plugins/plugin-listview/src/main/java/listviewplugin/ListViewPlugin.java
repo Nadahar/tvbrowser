@@ -56,7 +56,7 @@ import devplugin.Version;
  * @author bodo
  */
 public class ListViewPlugin extends Plugin {
-  private static final Version mVersion = new Version(3,25,true);
+  private static final Version mVersion = new Version(3,26,true);
 
     protected static final int PROGRAMTABLEWIDTH = 200;
   
@@ -301,7 +301,7 @@ public class ListViewPlugin extends Plugin {
       
       mSettings = settings;
 
-      mShowAtStartup = mSettings.getProperty("showAtStartup", "false").equals("true");
+      mShowAtStartup = mSettings.getProperty(ListViewSettings.SHOW_AT_STARTUP, "false").equals("true");
     }
     
     public void handleTvBrowserStartFinished() {
@@ -354,7 +354,11 @@ public class ListViewPlugin extends Plugin {
      * @since 2.6
      */
     protected PluginPictureSettings getPictureSettings() {
-      return new PluginPictureSettings(Integer.parseInt(mSettings.getProperty("pictureSettings",String.valueOf(PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE))));
+      return new PluginPictureSettings(Integer.parseInt(mSettings.getProperty(ListViewSettings.PICTURE_SETTINGS, String.valueOf(PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE))));
+    }
+    
+    int getChannelLogoNameType() {
+      return Integer.parseInt(mSettings.getProperty(ListViewSettings.CHANNEL_LOGO_NAME_TYPE, String.valueOf(ListViewSettings.SHOW_CHANNEL_LOGO_AND_NAME)));
     }
     
     public String getPluginCategory() {
@@ -380,6 +384,6 @@ public class ListViewPlugin extends Plugin {
     }
     
     public boolean provideTab() {
-      return mSettings.getProperty("provideTab", "true").equals("true");
+      return mSettings.getProperty(ListViewSettings.PROVIDE_TAB, "true").equals("true");
     }
 }

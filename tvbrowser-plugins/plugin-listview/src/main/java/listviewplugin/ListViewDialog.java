@@ -110,14 +110,14 @@ public class ListViewDialog extends JDialog implements WindowClosingIf {
     });
 
     final JCheckBox showAtStartup = new JCheckBox(mLocalizer.msg("showAtStart", "Show at start"));
-    showAtStartup.setSelected(mSettings.getProperty("showAtStartup", "false").equals("true"));
+    showAtStartup.setSelected(mSettings.getProperty(ListViewSettings.SHOW_AT_STARTUP, "false").equals("true"));
 
     showAtStartup.addChangeListener(new ChangeListener() {
       public void stateChanged(ChangeEvent e) {
         if (showAtStartup.isSelected()) {
-          mSettings.setProperty("showAtStartup", "true");
+          mSettings.setProperty(ListViewSettings.SHOW_AT_STARTUP, "true");
         } else {
-          mSettings.setProperty("showAtStartup", "false");
+          mSettings.setProperty(ListViewSettings.SHOW_AT_STARTUP, "false");
         }
       }
     });
