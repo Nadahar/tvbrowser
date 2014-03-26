@@ -135,8 +135,13 @@ public class ListTableCellRenderer extends DefaultTableCellRenderer {
 
     if (value instanceof Channel) {
       Channel channel = (Channel) value;
-
-      ChannelLabel channelLabel = new ChannelLabel(true,true,false,false,true);
+      
+      int channelLogoNameType = ListViewPlugin.getInstance().getChannelLogoNameType();
+      
+      boolean showLogo = channelLogoNameType == ListViewSettings.SHOW_CHANNEL_LOGO_AND_NAME || channelLogoNameType == ListViewSettings.SHOW_CHANNEL_LOGO;
+      boolean showName = channelLogoNameType == ListViewSettings.SHOW_CHANNEL_LOGO_AND_NAME || channelLogoNameType == ListViewSettings.SHOW_CHANNEL_NAME;
+      
+      ChannelLabel channelLabel = new ChannelLabel(showLogo,showName,false,false,true);
       
       channelLabel.setChannel(channel);
       channelLabel.setOpaque(label.isOpaque());
@@ -180,5 +185,4 @@ public class ListTableCellRenderer extends DefaultTableCellRenderer {
     
     return panel;
   }
-
 }
