@@ -105,6 +105,8 @@ public class AppleiCalExporter extends AbstractExporter {
           "\n");
 
         script.append("\n");
+        script.append("tell application \"iCal\" to run\n");
+        script.append("delay 1\n");
         script.append("tell application \"iCal\"\n");
         script.append("  if (exists (calendars whose title is myTVCalendar)) then\n");
         script.append("    set TVBrowserCalendar to first item of (calendars whose title is myTVCalendar)\n");
