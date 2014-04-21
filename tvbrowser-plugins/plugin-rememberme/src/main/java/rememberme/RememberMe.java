@@ -51,7 +51,7 @@ import devplugin.Version;
 
 public class RememberMe extends Plugin {
   public static final int DEFAULT_DAY_COUNT = 14; 
-  private static final Version mVersion = new Version(0,18,1,true);
+  private static final Version mVersion = new Version(0,18,2,true);
   static final Localizer mLocalizer = Localizer.getLocalizerFor(RememberMe.class);
   private static final String TARGET_ID = "###REMEMBERME###";
   
