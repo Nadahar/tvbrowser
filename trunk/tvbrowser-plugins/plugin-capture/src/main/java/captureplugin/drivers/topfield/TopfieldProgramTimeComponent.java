@@ -30,7 +30,7 @@ public class TopfieldProgramTimeComponent extends JPanel {
 
   private final TopfieldConfiguration configuration;
 
-  private JComboBox<TopfieldTimerMode> repeatSelector = null;
+  private JComboBox repeatSelector = null;
   private JLabel repeatLabel = null;
   private JCheckBox protectTimerCheck = null;
 
@@ -46,8 +46,7 @@ public class TopfieldProgramTimeComponent extends JPanel {
   /**
    * Constructor supplying the device configuration.
    * 
-   * @param config
-   *          The Device configuration
+   * @param config The Device configuration
    */
   public TopfieldProgramTimeComponent(TopfieldConfiguration config) {
     super();
@@ -89,9 +88,9 @@ public class TopfieldProgramTimeComponent extends JPanel {
    * 
    * @return javax.swing.JComboBox
    */
-  private JComboBox<TopfieldTimerMode> getRepeatSelector() {
+  private JComboBox getRepeatSelector() {
     if (repeatSelector == null) {
-      repeatSelector = new JComboBox<TopfieldTimerMode>();
+      repeatSelector = new JComboBox();
       for (TopfieldTimerMode mode : TopfieldTimerMode.values()) {
         repeatSelector.addItem(mode);
       }
