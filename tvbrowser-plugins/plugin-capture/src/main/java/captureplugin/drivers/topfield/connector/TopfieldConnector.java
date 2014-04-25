@@ -22,6 +22,9 @@ import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.swing.JOptionPane;
+
+import util.ui.Localizer;
 import captureplugin.drivers.topfield.TopfieldConfiguration;
 import captureplugin.drivers.topfield.TopfieldServiceInfo;
 import captureplugin.drivers.topfield.TopfieldTimerEntry;
@@ -69,12 +72,9 @@ public class TopfieldConnector {
     private final String name;
 
     /**
-     * @param index
-     *          The satellite index
-     * @param count
-     *          The number of services on this satellite
-     * @param name
-     *          The name of the satellite
+     * @param index The satellite index
+     * @param count The number of services on this satellite
+     * @param name The name of the satellite
      */
     public SatelliteInfo(int index, int count, String name) {
       this.index = index;
@@ -92,6 +92,7 @@ public class TopfieldConnector {
     /**
      * @return the serviceCount
      */
+    @SuppressWarnings("unused")
     public int getServiceCount() {
       return (serviceCount);
     }
@@ -117,7 +118,7 @@ public class TopfieldConnector {
   private static final String SWITCH_FORMAT = "RecordOnOff=0&Type=%d&Satellite=%d&Service=%d&Tuner=%d&Mode=%d&"
       + "DateDay=%d&DateMonth=%d&DateYear=%d&StartTimeHour=%d&StartTimeMinute=%d&DurationHour=%d&DurationMinute=%d";
   private static final String DELETE_FORMAT = "EntryNum=%d";
-  private static final String REPLY_ALERT = "alert(";
+  private static final Pattern ALERT_TEXT_PATTERN = Pattern.compile(".*alert\\(\\\"(.*)\\\".*");
   private static final Pattern TIMER_ENTRY_PATTERN = Pattern
       .compile("new\\s*CreateTimerEntry\\((\\d+),\\s*(\\d+),\\s*(\\d+),\\s*\\\"([^\\\"]*)\\\",\\s*\\\"((\\d+)\\.\\s*([^\\\"]*))\\\",\\s*(\\d+),\\s*(\\d+),\\s*(\\d+),\\s*(\\d+),\\s*(\\d+),\\s*(\\d+),\\s*(\\d+),\\s*(\\d+),\\s*\\\"([^\\\"]*)\\\"\\);");
   private static final Pattern RECEIVER_ADD_TIME_PATTERN = Pattern.compile("\\(-(\\d+)/\\+(\\d)\\)");
@@ -125,12 +126,20 @@ public class TopfieldConnector {
 
   private final TopfieldConfiguration configuration;
   private final ArrayList<TopfieldServiceInfo> channels = new ArrayList<TopfieldServiceInfo>();
+  private static final String ADD_FAILED_TITLE = "addTimerFailedTitle";
+  private static final String DEFAULT_ADD_FAILED_TITLE = "Setting timer failed";
+  private static final String TOPFIELD_ERROR_TEXT = "addTimerFailedMessage";
+  private static final String DEFAULT_TOPFIELD_ERROR_TEXT = "Receiver reported:";
+  private static final String NEW_LINE = "\n";
+  private static final String ALERT_NEW_LINE = "\\\\n";
+  private static final String PREFIX_SPACER = " - ";
+
+  private static final Localizer localizer = Localizer.getLocalizerFor(TopfieldConnector.class);
 
   /**
    * Create a connector.
    * 
-   * @param configuration
-   *          The configuration of the device
+   * @param configuration The configuration of the device
    */
   public TopfieldConnector(TopfieldConfiguration configuration) {
     this.configuration = configuration;
@@ -140,11 +149,9 @@ public class TopfieldConnector {
   /**
    * Read the contents of the given page.
    * 
-   * @param page
-   *          The page to read
+   * @param page The page to read
    * @return A <code>StringBuffer</code> containing the page contents
-   * @throws TopfieldConnectionException
-   *           If the device could not be contacted
+   * @throws TopfieldConnectionException If the device could not be contacted
    */
   private StringBuffer readDeviceData(String page) throws TopfieldConnectionException {
     try {
@@ -174,8 +181,7 @@ public class TopfieldConnector {
    * Get the channels from the device.
    * 
    * @return The list of currently tuned channels
-   * @throws TopfieldConnectionException
-   *           If the device could not be contacted
+   * @throws TopfieldConnectionException If the device could not be contacted
    */
   public ArrayList<TopfieldServiceInfo> getDeviceChannels() throws TopfieldConnectionException {
     StringBuffer content = readDeviceData(NEW_TIMER_FORM);
@@ -187,10 +193,8 @@ public class TopfieldConnector {
   /**
    * Collect the channels from the received content.
    * 
-   * @param webPage
-   *          The received content
-   * @param type
-   *          Collect TV or radio channel
+   * @param webPage The received content
+   * @param type Collect TV or radio channel
    */
   private void gatherChannels(StringBuffer webPage, TopfieldServiceType type) {
     ArrayList<SatelliteInfo> satellites = new ArrayList<SatelliteInfo>();
@@ -223,73 +227,59 @@ public class TopfieldConnector {
   /**
    * Add a R-timer.
    * 
-   * @param parent
-   *          The parent window calling this method
-   * @param service
-   *          The service to record
-   * @param recordTime
-   *          The time to record
-   * @param repeat
-   *          The repetition of the timer
+   * @param parent The parent window calling this method
+   * @param service The service to record
+   * @param recordTime The time to record
+   * @param repeat The repetition of the timer
+   * @param protectTimer <code>true</code> to add protection prefix to file name
    * @return <code>true</code> if the timer could be set
-   * @throws TopfieldConnectionException
-   *           If the device could not be contacted
-   * @throws TopfieldServiceException
-   *           If the service changed since last assignment
-   * @throws TopfieldTunerException
-   *           If no tuner could be found for the recording
+   * @throws TopfieldConnectionException If the device could not be contacted
+   * @throws TopfieldServiceException If the service changed since last
+   *           assignment
+   * @throws TopfieldTunerException If no tuner could be found for the recording
    */
   public boolean addRecording(Window parent, TopfieldServiceInfo service, ProgramTime recordTime,
-      TopfieldTimerMode repeat) throws TopfieldConnectionException, TopfieldServiceException, TopfieldTunerException {
-    return addTimer(parent, service, recordTime, true, repeat);
+      TopfieldTimerMode repeat, boolean protectTimer) throws TopfieldConnectionException, TopfieldServiceException,
+      TopfieldTunerException {
+    return addTimer(parent, service, recordTime, true, repeat, protectTimer);
   }
 
   /**
    * Add a P-timer.
    * 
-   * @param parent
-   *          The parent window calling this method
-   * @param service
-   *          The service to switch to
-   * @param switchTime
-   *          The time when to switch
+   * @param parent The parent window calling this method
+   * @param service The service to switch to
+   * @param switchTime The time when to switch
    * @return <code>true</code> if the timer could be set
-   * @throws TopfieldConnectionException
-   *           If the device could not be contacted
-   * @throws TopfieldServiceException
-   *           If the service changed since last assignment
-   * @throws TopfieldTunerException
-   *           If no tuner could be found for the timer
+   * @throws TopfieldConnectionException If the device could not be contacted
+   * @throws TopfieldServiceException If the service changed since last
+   *           assignment
+   * @throws TopfieldTunerException If no tuner could be found for the timer
    */
   public boolean addPTimer(Window parent, TopfieldServiceInfo service, ProgramTime switchTime)
       throws TopfieldConnectionException, TopfieldServiceException, TopfieldTunerException {
-    return addTimer(parent, service, switchTime, false, TopfieldTimerMode.ONE_TIME);
+    return addTimer(parent, service, switchTime, false, TopfieldTimerMode.ONE_TIME, false);
   }
 
   /**
    * Add a timer.
    * 
-   * @param parent
-   *          The parent window calling this method
-   * @param service
-   *          The service to record
-   * @param recordTime
-   *          The time to record
-   * @param record
-   *          <code>true</code> creates a recording, <code>false</code> a
+   * @param parent The parent window calling this method
+   * @param service The service to record
+   * @param recordTime The time to record
+   * @param record <code>true</code> creates a recording, <code>false</code> a
    *          P-timer
-   * @param repeat
-   *          The repetition of the timer
+   * @param repeat The repetition of the timer
+   * @param protectTimer <code>true</code> to add protection prefix to file name
    * @return <code>true</code> if the timer could be set
-   * @throws TopfieldConnectionException
-   *           If the device could not be contacted
-   * @throws TopfieldServiceException
-   *           If the service changed since last assignment
-   * @throws TopfieldTunerException
-   *           If no tuner could be found for the recording
+   * @throws TopfieldConnectionException If the device could not be contacted
+   * @throws TopfieldServiceException If the service changed since last
+   *           assignment
+   * @throws TopfieldTunerException If no tuner could be found for the recording
    */
   private boolean addTimer(Window parent, TopfieldServiceInfo service, ProgramTime recordTime, boolean record,
-      TopfieldTimerMode repeat) throws TopfieldConnectionException, TopfieldServiceException, TopfieldTunerException {
+      TopfieldTimerMode repeat, boolean protectTimer) throws TopfieldConnectionException, TopfieldServiceException,
+      TopfieldTunerException {
 
     // RecordOnOff ...... 0 = Switch on only, 1 = Record
     // Type ............. 0 = TV, 1 = Radio
@@ -322,16 +312,21 @@ public class TopfieldConnector {
       String request;
       try {
         if (record) {
-          request = String.format(RECORD_FORMAT, (service.isTV() ? 0 : 1), service.getSatelliteNumber(), service
-              .getChannelNumber(), tuner, repeat.toNumber(), recordStart.get(Calendar.DAY_OF_MONTH), recordStart
-              .get(Calendar.MONTH) + 1, recordStart.get(Calendar.YEAR), recordStart.get(Calendar.HOUR_OF_DAY),
-              recordStart.get(Calendar.MINUTE), recordTime.getLength() / 60, recordTime.getLength() % 60, URLEncoder
-                  .encode(recordTime.getTitle(), ENCODING_UTF8));
+          String fileName = recordTime.getTitle();
+          if (protectTimer) {
+            fileName = configuration.getAxProtectionPrefix() + PREFIX_SPACER + fileName;
+          }
+          request = String.format(RECORD_FORMAT, (service.isTV() ? 0 : 1), service.getSatelliteNumber(),
+              service.getChannelNumber(), tuner, repeat.toNumber(), recordStart.get(Calendar.DAY_OF_MONTH),
+              recordStart.get(Calendar.MONTH) + 1, recordStart.get(Calendar.YEAR),
+              recordStart.get(Calendar.HOUR_OF_DAY), recordStart.get(Calendar.MINUTE), recordTime.getLength() / 60,
+              recordTime.getLength() % 60, URLEncoder.encode(fileName, ENCODING_UTF8));
         } else {
-          request = String.format(SWITCH_FORMAT, (service.isTV() ? 0 : 1), service.getSatelliteNumber(), service
-              .getChannelNumber(), tuner, repeat.toNumber(), recordStart.get(Calendar.DAY_OF_MONTH), recordStart
-              .get(Calendar.MONTH) + 1, recordStart.get(Calendar.YEAR), recordStart.get(Calendar.HOUR_OF_DAY),
-              recordStart.get(Calendar.MINUTE), recordTime.getLength() / 60, recordTime.getLength() % 60);
+          request = String.format(SWITCH_FORMAT, (service.isTV() ? 0 : 1), service.getSatelliteNumber(),
+              service.getChannelNumber(), tuner, repeat.toNumber(), recordStart.get(Calendar.DAY_OF_MONTH),
+              recordStart.get(Calendar.MONTH) + 1, recordStart.get(Calendar.YEAR),
+              recordStart.get(Calendar.HOUR_OF_DAY), recordStart.get(Calendar.MINUTE), recordTime.getLength() / 60,
+              recordTime.getLength() % 60);
         }
 
         URL deviceURL = configuration.getDeviceURL(INSERT_TIMER_PAGE);
@@ -345,8 +340,10 @@ public class TopfieldConnector {
         BufferedReader in = new BufferedReader(new InputStreamReader(contentStream));
         boolean insertOK = true;
         String line;
+        Matcher errorMatcher = null;
         while ((line = in.readLine()) != null) {
-          if (line.contains(REPLY_ALERT)) {
+          errorMatcher = ALERT_TEXT_PATTERN.matcher(line);
+          if (errorMatcher.matches()) {
             insertOK = false;
             break;
           }
@@ -354,6 +351,11 @@ public class TopfieldConnector {
         in.close();
         getTimerList();
         configuration.setDeviceUnreachable(false);
+        if (!insertOK) {
+          JOptionPane.showMessageDialog(parent, localizer.msg(TOPFIELD_ERROR_TEXT, DEFAULT_TOPFIELD_ERROR_TEXT) +
+              NEW_LINE + errorMatcher.group(1).replaceAll(ALERT_NEW_LINE, NEW_LINE),
+              localizer.msg(ADD_FAILED_TITLE, DEFAULT_ADD_FAILED_TITLE), JOptionPane.ERROR_MESSAGE);
+        }
         return insertOK;
       } catch (MalformedURLException e) {
         configuration.setDeviceUnreachable(true);
@@ -371,10 +373,8 @@ public class TopfieldConnector {
    * Correct the time according to the set pre- and postroll time on the
    * receiver.
    * 
-   * @param formContent
-   *          The content of the new timer form
-   * @param recordTime
-   *          The time to modify
+   * @param formContent The content of the new timer form
+   * @param recordTime The time to modify
    */
   private void correctTime(StringBuffer formContent, ProgramTime recordTime) {
     Matcher timeMatcher = RECEIVER_ADD_TIME_PATTERN.matcher(formContent);
@@ -390,13 +390,10 @@ public class TopfieldConnector {
   /**
    * Select a tuner.
    * 
-   * @param service
-   *          The service to record
-   * @param recordTime
-   *          The time the recording should run
+   * @param service The service to record
+   * @param recordTime The time the recording should run
    * @return The selected tuner or <code>null</code> if no tuner found
-   * @throws TopfieldConnectionException
-   *           If the device could not be contacted
+   * @throws TopfieldConnectionException If the device could not be contacted
    */
   private Integer selectTuner(TopfieldServiceInfo service, ProgramTime recordTime) throws TopfieldConnectionException {
     if (configuration.isUseTuner4() && (service.getTuner() == 3)) {
@@ -406,10 +403,10 @@ public class TopfieldConnector {
       HashSet<Integer> usedTuners = new HashSet<Integer>();
       for (TopfieldTimerEntry timerEntry : configuration.getTimerEntries()) {
         if (((timerEntry.getProgram().getStart().compareTo(recordTime.getStart()) >= 0) && (timerEntry.getProgram()
-            .getStart().compareTo(recordTime.getEnd()) <= 0))
-            || ((timerEntry.getProgram().getEnd().compareTo(recordTime.getStart()) >= 0) && (timerEntry.getProgram()
-                .getEnd().compareTo(recordTime.getEnd()) <= 0))
-            || ((timerEntry.getProgram().getStart().compareTo(recordTime.getStart()) <= 0) && (timerEntry.getProgram()
+            .getStart().compareTo(recordTime.getEnd()) <= 0)) ||
+            ((timerEntry.getProgram().getEnd().compareTo(recordTime.getStart()) >= 0) && (timerEntry.getProgram()
+                .getEnd().compareTo(recordTime.getEnd()) <= 0)) ||
+            ((timerEntry.getProgram().getStart().compareTo(recordTime.getStart()) <= 0) && (timerEntry.getProgram()
                 .getEnd().compareTo(recordTime.getEnd()) >= 0))) {
           // This program overlaps with the new recording.
           usedTuners.add(timerEntry.getEntryTuner());
@@ -446,8 +443,7 @@ public class TopfieldConnector {
    * This method refreshes the list of currently set timer entries in the
    * configuration.
    * 
-   * @throws TopfieldConnectionException
-   *           If the device could not be contacted
+   * @throws TopfieldConnectionException If the device could not be contacted
    */
   public void getTimerList() throws TopfieldConnectionException {
     ArrayList<TopfieldTimerEntry> timerList = new ArrayList<TopfieldTimerEntry>();
@@ -575,13 +571,10 @@ public class TopfieldConnector {
   /**
    * Delete a timer.
    * 
-   * @param parent
-   *          The parent window calling this method
-   * @param entry
-   *          The entry to delete
+   * @param parent The parent window calling this method
+   * @param entry The entry to delete
    * @return <code>true</code> if the entry was successfully deleted
-   * @throws TopfieldConnectionException
-   *           If the device could not be contacted
+   * @throws TopfieldConnectionException If the device could not be contacted
    */
   public boolean deleteRecording(Window parent, TopfieldTimerEntry entry) throws TopfieldConnectionException {
     String request = String.format(DELETE_FORMAT, entry.getEntryNumber());
