@@ -28,7 +28,7 @@ import devplugin.ProgramReceiveTarget;
  * @author Wolfgang Reh
  */
 public final class TopfieldConfiguration implements ConfigIf, Cloneable {
-  private static final int CONFIGURATION_VERSION = 3;
+  private static final int CONFIGURATION_VERSION = 4;
   private static final String USER_NAME_PROPERTY = "user.name";
   private static final String HTTP_PROTOCOL = "http://";
 
@@ -44,6 +44,7 @@ public final class TopfieldConfiguration implements ConfigIf, Cloneable {
   private boolean recordingsLocal = true;
   private transient boolean deviceUnreachable = false;
   private int connectionTimeout = 3000;
+  private String axProtectionPrefix = "";
   private TopfieldChannelSortKey channelSortKey = TopfieldChannelSortKey.CHANNEL_NAME;
   private HashMap<String, TopfieldServiceInfo> deviceChannels = new HashMap<String, TopfieldServiceInfo>();
   private HashMap<TopfieldServiceInfo, Channel> deviceChannelMap = new HashMap<TopfieldServiceInfo, Channel>();
@@ -76,6 +77,7 @@ public final class TopfieldConfiguration implements ConfigIf, Cloneable {
     deviceUnreachable = configuration.deviceUnreachable;
     connectionTimeout = configuration.connectionTimeout;
     channelSortKey = configuration.channelSortKey;
+    axProtectionPrefix = configuration.axProtectionPrefix;
     deviceChannels = new HashMap<String, TopfieldServiceInfo>(configuration.deviceChannels);
     deviceChannelMap = new HashMap<TopfieldServiceInfo, Channel>(configuration.deviceChannelMap);
     browserChannelMap = new HashMap<Channel, TopfieldServiceInfo>(configuration.browserChannelMap);
@@ -217,11 +219,18 @@ public final class TopfieldConfiguration implements ConfigIf, Cloneable {
     }
 
     for (int timers = stream.readInt(); timers > 0; timers--) {
-      timerEntries.add(new TopfieldTimerEntry(stream));
+      TopfieldTimerEntry entry = new TopfieldTimerEntry(stream);
+      if (!entry.getProgram().checkIfRemovedOrUpdateInstead()) {
+        timerEntries.add(entry);
+      }
     }
 
     if (version > 1) {
       channelSortKey = (TopfieldChannelSortKey) stream.readObject();
+    }
+
+    if (version > 3) {
+      axProtectionPrefix = stream.readUTF();
     }
   }
 
@@ -278,6 +287,7 @@ public final class TopfieldConfiguration implements ConfigIf, Cloneable {
     }
 
     stream.writeObject(channelSortKey);
+    stream.writeUTF(axProtectionPrefix);
   }
 
   /**
@@ -495,6 +505,20 @@ public final class TopfieldConfiguration implements ConfigIf, Cloneable {
    */
   public void setChannelSortKey(TopfieldChannelSortKey channelSortKey) {
     this.channelSortKey = channelSortKey;
+  }
+
+  /**
+   * @return the axProtectionPrefix
+   */
+  public String getAxProtectionPrefix() {
+    return (axProtectionPrefix);
+  }
+
+  /**
+   * @param axProtectionPrefix the axProtectionPrefix to set
+   */
+  public void setAxProtectionPrefix(String axProtectionPrefix) {
+    this.axProtectionPrefix = axProtectionPrefix;
   }
 
   /**
