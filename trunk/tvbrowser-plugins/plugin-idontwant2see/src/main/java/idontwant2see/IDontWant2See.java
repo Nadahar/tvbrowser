@@ -107,7 +107,7 @@ public final class IDontWant2See extends Plugin implements AWTEventListener {
   private static final String DONT_WANT_TO_SEE_IMPORT_SYNC_ADDRESS = "http://android.tvbrowser.org/data/scripts/syncDpwn.php?type=dontWantToSee";
   
   private static final boolean PLUGIN_IS_STABLE = true;
-  private static final Version PLUGIN_VERSION = new Version(0, 15, 4, PLUGIN_IS_STABLE);
+  private static final Version PLUGIN_VERSION = new Version(0, 15, 6, PLUGIN_IS_STABLE);
 
   private static final String RECEIVE_TARGET_EXCLUDE_EXACT = "target_exclude_exact";
 
@@ -163,7 +163,6 @@ public final class IDontWant2See extends Plugin implements AWTEventListener {
     mInstance = this;
     mSettings = new IDontWant2SeeSettings();
     mDateWasSet = false;
-    System.out.println(getClass().getCanonicalName());
   }
 
   static IDontWant2See getInstance() {
@@ -680,7 +679,7 @@ public final class IDontWant2See extends Plugin implements AWTEventListener {
       public void actionPerformed(final ActionEvent e) {
         final JCheckBox caseSensitive = new JCheckBox(mLocalizer.msg(
             "caseSensitive",
-            "case sensitive"));
+            "case sensitive"), mSettings.isDefaultCaseSensitive());
         String title = p.getTitle();
         ArrayList<String> items = new ArrayList<String>();
         if (!StringUtils.isEmpty(part)) {
@@ -749,7 +748,7 @@ public final class IDontWant2See extends Plugin implements AWTEventListener {
     return new AbstractAction(mLocalizer.msg("menu.completeCaseSensitive",
         "Complete title case-sensitive")) {
       public void actionPerformed(final ActionEvent e) {
-        mSettings.getSearchList().add(new IDontWant2SeeListEntry(p.getTitle(), true));
+        mSettings.getSearchList().add(new IDontWant2SeeListEntry(p.getTitle(), mSettings.isDefaultCaseSensitive()));
         mSettings.setLastEnteredExclusionString(p.getTitle());
         updateFilter(!mSettings.isSwitchToMyFilter());
       }
@@ -844,6 +843,9 @@ public final class IDontWant2See extends Plugin implements AWTEventListener {
         mSettings.setUserName(in.readUTF());
         mSettings.setPassword(in.readUTF());
       }
+      if(version >= 9) {
+        mSettings.setDefaultCaseSensitive(in.readBoolean());
+      }
     }
   }
 
@@ -856,7 +858,7 @@ public final class IDontWant2See extends Plugin implements AWTEventListener {
       }
     });
 
-    out.writeInt(8); //version
+    out.writeInt(9); //version
     out.writeInt(mSettings.getSearchList().size());
 
     for(IDontWant2SeeListEntry entry : mSettings.getSearchList()) {
@@ -874,6 +876,8 @@ public final class IDontWant2See extends Plugin implements AWTEventListener {
     
     out.writeUTF(mSettings.getUserName());
     out.writeUTF(mSettings.getPassword());
+    
+    out.writeBoolean(mSettings.isDefaultCaseSensitive());
   }
 
   public SettingsTab getSettingsTab() {
