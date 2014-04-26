@@ -36,6 +36,7 @@ public class IDontWant2SeeSettings {
 
   private boolean mSimpleMenu = true;
   private boolean mSwitchToMyFilter = true;
+  private boolean mDefaultCaseSensitive = true;
   private String mLastEnteredExclusionString = "";
   private Date mLastUsedDate = Date.getCurrentDate();
   private ArrayList<IDontWant2SeeListEntry> mSearchList = new IDontWant2SeeEntryList<IDontWant2SeeListEntry>();
@@ -121,5 +122,13 @@ public class IDontWant2SeeSettings {
   
   public String getPassword() {
     return mPassword;
+  }
+  
+  public boolean isDefaultCaseSensitive() {
+    return mDefaultCaseSensitive;
+  }
+  
+  public void setDefaultCaseSensitive(boolean isCaseSensitive) {
+    mDefaultCaseSensitive = isCaseSensitive;
   }
 }

@@ -258,13 +258,13 @@ public class IDontWant2SeeSettingsTableModel extends AbstractTableModel {
     
     public int compareTo(final Object o) {
       if(o instanceof String) {
-        return mNewSearchText.compareToIgnoreCase((String)o);
+        return mNewSearchText.replace("*", "").compareToIgnoreCase(((String)o).replace("*", ""));
       }
       else if(o instanceof IDontWant2SeeSettingsTableEntry) {
-        return mNewSearchText.compareToIgnoreCase(((IDontWant2SeeSettingsTableEntry)o).mNewSearchText);
+        return mNewSearchText.replace("*", "").compareToIgnoreCase(((IDontWant2SeeSettingsTableEntry)o).mNewSearchText.replace("*", ""));
       }
       else if(o instanceof IDontWant2SeeListEntry) {
-        return mNewSearchText.compareToIgnoreCase(((IDontWant2SeeListEntry)o).getSearchText());
+        return mNewSearchText.replace("*", "").compareToIgnoreCase(((IDontWant2SeeListEntry)o).getSearchText().replace("*", ""));
       }
       
       return 0;

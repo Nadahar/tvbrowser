@@ -52,6 +52,8 @@ import devplugin.SettingsTab;
  */
 public class IDontWant2SeeSettingsTab implements SettingsTab {
   private JCheckBox mAutoSwitchToMyFilter;
+  private JCheckBox mAutoCaseSensitive;
+  
   private JRadioButton mSimpleContextMenu;
   private JRadioButton mCascadedContextMenu;
   private ExclusionTablePanel mExclusionPanel;
@@ -75,7 +77,7 @@ public class IDontWant2SeeSettingsTab implements SettingsTab {
     final CellConstraints cc = new CellConstraints();
     final PanelBuilder pb = new PanelBuilder(
         new FormLayout("5dlu,default,0dlu:grow,default,5dlu",
-            "default,10dlu,default,5dlu,default,1dlu,default,7dlu,default,10dlu,default,5dlu,default,5dlu,default,5dlu,fill:default:grow,10dlu,fill:default:grow"),
+            "default,2dlu,default,10dlu,default,5dlu,default,1dlu,default,7dlu,default,10dlu,default,5dlu,default,5dlu,default,5dlu,fill:default:grow,10dlu,fill:default:grow"),
             new ScrollableJPanel());
 
     final PanelBuilder pb2 = new PanelBuilder(new FormLayout(
@@ -122,9 +124,13 @@ public class IDontWant2SeeSettingsTab implements SettingsTab {
         "Automatically activate filter on adding/removing"), mSettings
         .isSwitchToMyFilter());
     
+    mAutoCaseSensitive = new JCheckBox(mLocalizer.msg("settings.autoCaseSensitive", "Case sensitive by default"),
+        mSettings.isDefaultCaseSensitive());
+    
     y = 1;
 
-    pb.add(mAutoSwitchToMyFilter, cc.xyw(2, y, 3));
+    pb.add(mAutoSwitchToMyFilter, cc.xyw(2, y++, 3));
+    pb.add(mAutoCaseSensitive, cc.xyw(2,++y,3));
     
     y += 2;
     
@@ -194,6 +200,7 @@ public class IDontWant2SeeSettingsTab implements SettingsTab {
     mSettings.setProgramImportance(mProgramImportancePanel.getSelectedImportance());
     mSettings.setUserName(mUserName.getText());
     mSettings.setPassword(new String(mUserPassword.getPassword()));
+    mSettings.setDefaultCaseSensitive(mAutoCaseSensitive.isSelected());
     
     mExclusionPanel.saveSettings(mSettings);
   }
