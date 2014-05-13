@@ -123,7 +123,7 @@ public class ParamLibrary {
    * @return List of possible Functions
    */
   public String[] getPossibleFunctions() {
-    String[] str = { "isset", "urlencode", "concat", "clean", "cleanLess", "leadingZero", "splitAt", "testparam", "maxlength" };
+    String[] str = { "isset", "urlencode", "concat", "clean", "cleanLess", "leadingZero", "splitAt", "testparam", "maxlength", "replace"};
     return str;
   }
 
@@ -439,6 +439,31 @@ public class ParamLibrary {
       }
 
       return result;
+    } else if(function.equalsIgnoreCase("replace")) {
+    	if(params.length != 2) {
+    		mError = true;
+            mErrorString = mLocalizer.msg("replace2Params", "replace needs 2 Parameters");
+            return null;
+    	}
+    	
+    	String haystack = params[0];
+    	
+    	String[] replaceValues = params[1].split(",");
+    	
+    	for(String replace : replaceValues) {
+    		if(!replace.contains("::")) {
+    		  mError = true;
+    		  mErrorString = mLocalizer.msg("replaceMissingColon", "Replace values need to contain two following colons");
+              
+    		  return null;
+    		}
+    		
+    		String[] parts = replace.split("::");
+    		
+    		haystack = haystack.replace(parts[0], parts[1]);
+    	}
+    	
+    	return haystack;
     }
 
     mError = true;
