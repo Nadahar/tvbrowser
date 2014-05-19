@@ -286,6 +286,11 @@ public class ReminderSettingsTab implements SettingsTab {
     if (defaultReminderEntryStr != null) {
       try {
         int inx = Integer.parseInt(defaultReminderEntryStr);
+        
+        if(inx < 0) {
+          inx = 0;
+        }
+        
         if (inx < ReminderFrame.REMIND_BEFORE_VALUE_ARR.length) {
           mDefaultReminderEntryList.setSelectedIndex(inx);
         }

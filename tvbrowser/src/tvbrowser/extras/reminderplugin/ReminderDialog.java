@@ -41,6 +41,8 @@ import java.awt.GridLayout;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
@@ -130,7 +132,7 @@ public class ReminderDialog extends JDialog implements WindowClosingIf {
         // ignore
       }
     }
-    System.out.println(reminderTime + " " + mRemindValueArr.length);
+    
     if (reminderTime>=0 && reminderTime<mRemindValueArr.length) {
       mList.setSelectedIndex(reminderTime);
     }
@@ -151,6 +153,17 @@ public class ReminderDialog extends JDialog implements WindowClosingIf {
     mRememberSettingsCb = new JCheckBox(mLocalizer.msg("rememberSetting", "Remember setting"));
     JPanel pn1 = new JPanel(new BorderLayout());
     pn1.add(mRememberSettingsCb, BorderLayout.NORTH);
+    
+    mList.addItemListener(new ItemListener() {
+      @Override
+      public void itemStateChanged(ItemEvent e) {
+        if(mRememberSettingsCb.isSelected() && ((RemindValue)mList.getSelectedItem()).getMinutes() < 0) {
+          mRememberSettingsCb.setSelected(false);
+        }
+        
+        mRememberSettingsCb.setEnabled(((RemindValue)mList.getSelectedItem()).getMinutes() >= 0);
+      }
+    });
 
     mDontShowDialog = new JCheckBox(mLocalizer.msg("dontShow","Don't show this dialog anymore"));
     pn1.add(mDontShowDialog, BorderLayout.CENTER);
