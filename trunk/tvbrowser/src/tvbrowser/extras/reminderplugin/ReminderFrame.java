@@ -387,8 +387,29 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
     
     mCloseBt.setText(mCloseBtText);
     mDialog.setAlwaysOnTop(ReminderPlugin.getInstance().getSettings().getProperty("alwaysOnTop","true").equalsIgnoreCase("true"));
-
-    UiUtilities.centerAndShow(mDialog);
+    
+    int windowLocation = Integer.parseInt(ReminderPropertyDefaults.getPropertyDefaults().getValueFromProperties(ReminderPropertyDefaults.REMINDER_WINDOW_POSITION, ReminderPlugin.getInstance().getSettings()));
+    
+    Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+    
+    switch(windowLocation) {
+      case 0: mDialog.setLocation(0, 0);break;
+      case 1: mDialog.setLocation(screenSize.width/2-mDialog.getWidth()/2, 0);break;
+      case 2: mDialog.setLocation(screenSize.width-mDialog.getWidth(), 0);break;
+      case 3: mDialog.setLocation(screenSize.width/4-mDialog.getWidth()/2, screenSize.height/4-mDialog.getHeight()/2);break;
+      case 4: mDialog.setLocation(screenSize.width/4*3-mDialog.getWidth()/2, screenSize.height/4-mDialog.getHeight()/2);break;
+      case 5: mDialog.setLocation(0, screenSize.height/2-mDialog.getHeight()/2);break;
+      case 6: mDialog.setLocation(screenSize.width/2-mDialog.getWidth()/2, screenSize.height/2-mDialog.getHeight()/2);break;
+      case 7: mDialog.setLocation(screenSize.width-mDialog.getWidth(), screenSize.height/2-mDialog.getHeight()/2);break;
+      case 8: mDialog.setLocation(screenSize.width/4-mDialog.getWidth()/2, screenSize.height/4*3-mDialog.getHeight()/2);break;
+      case 9: mDialog.setLocation(screenSize.width/4*3-mDialog.getWidth()/2, screenSize.height/4*3-mDialog.getHeight()/2);break;
+      case 10: mDialog.setLocation(0, screenSize.height-mDialog.getHeight());break;
+      case 11: mDialog.setLocation(screenSize.width/2-mDialog.getWidth()/2, screenSize.height-mDialog.getHeight());break;
+      case 12: mDialog.setLocation(screenSize.width-mDialog.getWidth(), screenSize.height-mDialog.getHeight());break;
+    }
+    
+    mDialog.setVisible(true);
+    
     mDialog.toFront();
 
     if(mDialog.isAlwaysOnTop()) {
