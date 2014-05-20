@@ -142,14 +142,14 @@ class CheckNetworkConnection {
   private void hideDialog() {
     mCheckRunning = false;
     if (mWaitingDialog != null) {
-      if(MainFrame.getInstance().isVisible()) {
+      if(MainFrame.getInstance().isVisible() && UiUtilities.getLastModalChildOf(MainFrame.getInstance()).equals(mWaitingDialog)) {
         mWaitingDialog.dispose();
       } else {
         new Thread("Hide network connection dialog") {
           public void run() {
             setPriority(Thread.MIN_PRIORITY);
             
-            while(!MainFrame.getInstance().isVisible()) {
+            while(!MainFrame.getInstance().isVisible() && !UiUtilities.getLastModalChildOf(MainFrame.getInstance()).equals(mWaitingDialog)) {
               try {
                 sleep(500);
               }catch(Exception e) {}
