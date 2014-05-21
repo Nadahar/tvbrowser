@@ -620,10 +620,20 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 
 	private JMenuItem createChannelMenuItem(final Channel channel) {
 		Icon icon = null;
+		
 		if (Settings.propShowChannelIconsInChannellist.getBoolean()) {
 			icon = UiUtilities.createChannelIcon(channel.getJointChannel() != null ? channel.getJointChannelIcon() : channel.getIcon());
 		}
-		JMenuItem item = new JMenuItem(channel.getJointChannel() != null ? channel.getJointChannelName() : channel.getName(), icon);
+		
+		StringBuilder text = new StringBuilder();
+		
+		if(Settings.propShowSortNumberInProgramLists.getBoolean() && channel.getSortNumber().trim().length() > 0) {
+		  text.append(channel.getSortNumber().trim()).append(". ");
+		}
+		
+		text.append(channel.getJointChannel() != null ? channel.getJointChannelName() : channel.getName());
+		
+		JMenuItem item = new JMenuItem(text.toString(), icon);
 				
 		item.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {

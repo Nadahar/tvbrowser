@@ -60,21 +60,30 @@ public class ChannelIconAndNameSettingsTab implements SettingsTab {
 
   private JCheckBox mShowTooltipInProgramTable;
   
+  private JCheckBox mShowSortNumberInProgramTable;
+  private JCheckBox mShowSortNumberInChannelLists;
+  
   /**
    * Creates the settings panel for this tab.
    */
   public JPanel createSettingsPanel() {
     CellConstraints cc = new CellConstraints();
     PanelBuilder pb = new PanelBuilder(new FormLayout("5dlu, default:grow, 5dlu",
-    "default,5dlu,default,default,default,5dlu,default,10dlu,default,5dlu,default,default,default"));
+    "default,5dlu,default,default,default,5dlu,default,default,10dlu,default,5dlu,default,default,default,5dlu,default"));
     pb.border(Borders.DIALOG);
 
-    pb.addSeparator(mLocalizer.msg("programTable","Program table"), cc.xyw(1,1,3));
-    pb.add(mShowIconAndNameInProgramTable = new JRadioButton(mLocalizer.msg("showIconAndName","Show channel icon and channel name"), Settings.propShowChannelIconsInProgramTable.getBoolean() && Settings.propShowChannelNamesInProgramTable.getBoolean()), cc.xy(2,3));
-    pb.add(mShowOnlyIconInProgramTable = new JRadioButton(mLocalizer.msg("showOnlyIcon","Show channel icon"), Settings.propShowChannelIconsInProgramTable.getBoolean() && !Settings.propShowChannelNamesInProgramTable.getBoolean()), cc.xy(2,4));
-    pb.add(mShowOnlyNameInProgramTable = new JRadioButton(mLocalizer.msg("showOnlyName","Show channel name"), Settings.propShowChannelNamesInProgramTable.getBoolean() && !Settings.propShowChannelIconsInProgramTable.getBoolean()), cc.xy(2,5));
-    pb.add(mShowTooltipInProgramTable = new JCheckBox(mLocalizer.msg("showToolTip","Show large channel icons in tooltip"), Settings.propShowChannelTooltipInProgramTable.getBoolean()), cc.xy(2,7));
-
+    int y = 1;
+    
+    pb.addSeparator(mLocalizer.msg("programTable","Program table"), cc.xyw(1,y++,3));
+    pb.add(mShowIconAndNameInProgramTable = new JRadioButton(mLocalizer.msg("showIconAndName","Show channel icon and channel name"), Settings.propShowChannelIconsInProgramTable.getBoolean() && Settings.propShowChannelNamesInProgramTable.getBoolean()), cc.xy(2,++y));
+    pb.add(mShowOnlyIconInProgramTable = new JRadioButton(mLocalizer.msg("showOnlyIcon","Show channel icon"), Settings.propShowChannelIconsInProgramTable.getBoolean() && !Settings.propShowChannelNamesInProgramTable.getBoolean()), cc.xy(2,++y));
+    pb.add(mShowOnlyNameInProgramTable = new JRadioButton(mLocalizer.msg("showOnlyName","Show channel name"), Settings.propShowChannelNamesInProgramTable.getBoolean() && !Settings.propShowChannelIconsInProgramTable.getBoolean()), cc.xy(2,++y));
+    
+    y += 2;
+    
+    pb.add(mShowSortNumberInProgramTable = new JCheckBox(mLocalizer.msg("showChannelNumber", "Show sort number"), Settings.propShowSortNumberInProgramTable.getBoolean()), cc.xy(2, y++));
+    pb.add(mShowTooltipInProgramTable = new JCheckBox(mLocalizer.msg("showToolTip","Show large channel icons in tooltip"), Settings.propShowChannelTooltipInProgramTable.getBoolean()), cc.xy(2,y));
+    
     mShowTooltipInProgramTable.setEnabled(!mShowOnlyNameInProgramTable.isSelected());
     
     mShowOnlyNameInProgramTable.addItemListener(new ItemListener() {
@@ -88,11 +97,17 @@ public class ChannelIconAndNameSettingsTab implements SettingsTab {
     programTable.add(mShowOnlyIconInProgramTable);
     programTable.add(mShowOnlyNameInProgramTable);
     
-    pb.addSeparator(mLocalizer.msg("channelLists","Channel lists"), cc.xyw(1,9,3));
-    pb.add(mShowIconAndNameInChannelLists = new JRadioButton(mLocalizer.msg("showIconAndName","Show channel icon and channel name"), Settings.propShowChannelIconsInChannellist.getBoolean() && Settings.propShowChannelNamesInChannellist.getBoolean()), cc.xy(2,11));
-    pb.add(mShowOnlyIconInChannelLists = new JRadioButton(mLocalizer.msg("showOnlyIcon","Show channel icon"), Settings.propShowChannelIconsInChannellist.getBoolean() && !Settings.propShowChannelNamesInChannellist.getBoolean()), cc.xy(2,12));
-    pb.add(mShowOnlyNameInChannelLists = new JRadioButton(mLocalizer.msg("showOnlyName","Show channel name"), Settings.propShowChannelNamesInChannellist.getBoolean() && !Settings.propShowChannelIconsInChannellist.getBoolean()), cc.xy(2,13));
-
+    y += 2;
+    
+    pb.addSeparator(mLocalizer.msg("channelLists","Channel lists"), cc.xyw(1,y++,3));
+    pb.add(mShowIconAndNameInChannelLists = new JRadioButton(mLocalizer.msg("showIconAndName","Show channel icon and channel name"), Settings.propShowChannelIconsInChannellist.getBoolean() && Settings.propShowChannelNamesInChannellist.getBoolean()), cc.xy(2,++y));
+    pb.add(mShowOnlyIconInChannelLists = new JRadioButton(mLocalizer.msg("showOnlyIcon","Show channel icon"), Settings.propShowChannelIconsInChannellist.getBoolean() && !Settings.propShowChannelNamesInChannellist.getBoolean()), cc.xy(2,++y));
+    pb.add(mShowOnlyNameInChannelLists = new JRadioButton(mLocalizer.msg("showOnlyName","Show channel name"), Settings.propShowChannelNamesInChannellist.getBoolean() && !Settings.propShowChannelIconsInChannellist.getBoolean()), cc.xy(2,++y));
+    
+    y += 2;
+    
+    pb.add(mShowSortNumberInChannelLists = new JCheckBox(mLocalizer.msg("showChannelNumber", "Show sort number"), Settings.propShowSortNumberInProgramLists.getBoolean()), cc.xy(2, y++));
+    
     ButtonGroup channelLists = new ButtonGroup();
     channelLists.add(mShowIconAndNameInChannelLists);
     channelLists.add(mShowOnlyIconInChannelLists);
@@ -111,7 +126,9 @@ public class ChannelIconAndNameSettingsTab implements SettingsTab {
     Settings.propShowChannelIconsInChannellist.setBoolean(mShowIconAndNameInChannelLists.isSelected() || mShowOnlyIconInChannelLists.isSelected());
     Settings.propShowChannelNamesInChannellist.setBoolean(mShowIconAndNameInChannelLists.isSelected() || mShowOnlyNameInChannelLists.isSelected());
 
+    Settings.propShowSortNumberInProgramTable.setBoolean(mShowSortNumberInProgramTable.isSelected());
     Settings.propShowChannelTooltipInProgramTable.setBoolean(mShowTooltipInProgramTable.isSelected());
+    Settings.propShowSortNumberInProgramLists.setBoolean(mShowSortNumberInChannelLists.isSelected());
   }
 
   /**

@@ -42,6 +42,7 @@ import tvbrowser.core.Settings;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.exc.ErrorHandler;
 import util.io.ExecutionHandler;
+import util.io.IOUtilities;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
@@ -96,7 +97,7 @@ public class Launch {
         return;
       }
     }
-    String browserExecutable = Settings.propUserDefinedWebbrowser.getString();
+    String browserExecutable = IOUtilities.translateRelativePath(Settings.propUserDefinedWebbrowser.getString());
     try {
       if (browserExecutable != null) {
         String params = Settings.propUserDefinedWebbrowserParams.getString().replace("{0}", url);

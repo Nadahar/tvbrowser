@@ -89,8 +89,12 @@ public class ChannelJList extends JList {
       buf.append("<b>").append(mLocalizer.msg("timezone", "Timezone")).append(" :</b> ").append(channel.getTimeZone().getDisplayName()).append("<br>");
       buf.append("<b>").append(mLocalizer.msg("category", "Category")).append(" :</b> ").append(ChannelUtil.getNameForCategories(channel.getCategories())).append("<br>");
       
-      if(channel.getUserChannelName() != null || channel.getUserIconFileName() != null || channel.getUserWebPage() != null || channel.isTimeLimited() || channel.getTimeZoneCorrectionMinutes() != 0) {
+      if(channel.getSortNumber().length() > 0 || channel.getUserChannelName() != null || channel.getUserIconFileName() != null || channel.getUserWebPage() != null || channel.isTimeLimited() || channel.getTimeZoneCorrectionMinutes() != 0) {
         buf.append("<b>").append(mLocalizer.msg("userSettings", "User defined settings")).append(" :</b> ");
+      }
+      
+      if(channel.getSortNumber().length() > 0) {
+        buf.append(mLocalizer.msg("sortNumber", "Sort number"));
       }
       
       if(channel.getUserChannelName() != null) {

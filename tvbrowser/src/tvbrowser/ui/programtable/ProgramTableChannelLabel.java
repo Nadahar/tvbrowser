@@ -35,7 +35,7 @@ public class ProgramTableChannelLabel extends ChannelLabel {
   private boolean mIsRollover;
   
   public ProgramTableChannelLabel(Channel ch,KeyListener keyListener) {
-    super(Settings.propShowChannelIconsInProgramTable.getBoolean(),Settings.propShowChannelNamesInProgramTable.getBoolean(),false,false,true,false);
+    super(Settings.propShowChannelIconsInProgramTable.getBoolean(),Settings.propShowChannelNamesInProgramTable.getBoolean(),false,false,true,false,Settings.propShowSortNumberInProgramTable.getBoolean());
     mChannel = ch;
     
     addKeyListener(keyListener);

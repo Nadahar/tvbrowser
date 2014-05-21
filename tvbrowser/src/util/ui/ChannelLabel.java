@@ -54,6 +54,8 @@ public class ChannelLabel extends JLabel {
   private boolean mShowService;
   private boolean mShowJointChanelInfo;
   private boolean mShowTimeLimitation;
+  
+  private boolean mShowSortNumber;
 
   private Channel mChannel;
   private static TimeFormatter mTimeFormatter;
@@ -62,7 +64,7 @@ public class ChannelLabel extends JLabel {
    * Creates the ChannelLabel
    */
   public ChannelLabel() {
-    this(Settings.propShowChannelIconsInChannellist.getBoolean(), Settings.propShowChannelNamesInChannellist.getBoolean(), false);
+    this(Settings.propShowChannelIconsInChannellist.getBoolean(), Settings.propShowChannelNamesInChannellist.getBoolean(), false, false, false, false, Settings.propShowSortNumberInProgramLists.getBoolean());
   }
 
   /**
@@ -150,12 +152,34 @@ public class ChannelLabel extends JLabel {
    * @since 3.2.1
    */
   public ChannelLabel(boolean channelIconsVisible, boolean textIsVisible, boolean showDefaultValues, boolean showCountry, boolean showJoinedChannelInfo, boolean showTimeLimitation) {
+    this(channelIconsVisible, textIsVisible, showDefaultValues, showCountry, showJoinedChannelInfo, showTimeLimitation, Settings.propShowSortNumberInProgramLists.getBoolean());
+  }
+  
+  /**
+   * Creates the ChanelLabel
+   * 
+   * @param channelIconsVisible
+   *          Should the Icon be visible
+   * @param textIsVisible
+   *          Should Text be visible ?
+   * @param showDefaultValues
+   *          Show the default channel icon and name.
+   * @param showCountry
+   *          Show information about the country
+   * @param showJoinedChannelInfo If the joined channel name and icon should be shown.
+   * @param showTimeLimitation If the time limitations should be shown.
+   * @param showSortNumber If the sort number (if available) should be shown.
+   * 
+   * @since 3.3.4
+   */
+  public ChannelLabel(boolean channelIconsVisible, boolean textIsVisible, boolean showDefaultValues, boolean showCountry, boolean showJoinedChannelInfo, boolean showTimeLimitation, boolean showSortNumber) {
     mChannelIconsVisible = channelIconsVisible;
     mTextIsVisible = textIsVisible;
     mShowDefaultValues = showDefaultValues;
     mShowCountry = showCountry;
     mShowJointChanelInfo = showJoinedChannelInfo;
     mShowTimeLimitation = showTimeLimitation;
+    mShowSortNumber = showSortNumber;
   }
 
 
@@ -177,8 +201,7 @@ public class ChannelLabel extends JLabel {
    * @since 2.2
    */
   public ChannelLabel(Channel channel, boolean channelIconsVisible, boolean textIsVisible) {
-    mChannelIconsVisible = channelIconsVisible;
-    mTextIsVisible = textIsVisible;
+    this(channelIconsVisible,textIsVisible);
     setChannel(channel);
   }
   
@@ -232,9 +255,17 @@ public class ChannelLabel extends JLabel {
       if (mShowCountry || mShowService || mShowTimeLimitation) {
         text.append(")");
       }
+      
+      if(mShowSortNumber && channel.getSortNumber().trim().length() > 0) {
+        text.insert(0, channel.getSortNumber().trim() + ". ");
+      }
 
       setText(text.toString());
     }
+    else if(mShowSortNumber&& channel.getSortNumber().trim().length() > 0) {
+      setText(channel.getSortNumber().trim() + ". ");
+    }
+    
     setMinimumSize(new Dimension(42,22));
     setToolTipText(channel.getName());
   }

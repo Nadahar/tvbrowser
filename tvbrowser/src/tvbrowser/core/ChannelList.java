@@ -47,6 +47,7 @@ import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
 import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
 import tvbrowser.ui.mainframe.MainFrame;
+import util.io.IOUtilities;
 import util.io.stream.ObjectInputStreamProcessor;
 import util.io.stream.ObjectOutputStreamProcessor;
 import util.io.stream.StreamUtilities;
@@ -167,6 +168,8 @@ public class ChannelList {
   private static final String FILENAME_CHANNEL_WEBPAGES = "channel_webpages.txt";
 
   private static final String FILENAME_CHANNEL_TIME_LIMIT = "channelTimeLimit.dat";
+  
+  private static final String FILENAME_CHANNEL_SORT_NUMBERS = "channel_sort_numbers.txt";
 
   private static final Logger mLog = Logger
       .getLogger(ChannelList.class.getName());
@@ -189,7 +192,7 @@ public class ChannelList {
   private static Thread mCompleteChannelThread;
 
   private static HashMap<String, String> mChannelIconMap, mChannelNameMap,
-      mChannelWebpagesMap, mChannelDayLightCorrectionMap;
+      mChannelWebpagesMap, mChannelDayLightCorrectionMap, mChannelSortNumberMap;
 
   private static Channel mCurrentChangeChannel = null;
 
@@ -277,6 +280,7 @@ public class ChannelList {
   public static void storeAllSettings() {try {
     storeDayLightSavingTimeCorrections();
     storeChannelIcons();
+    storeSortNumbers();
     storeChannelNames();
     storeChannelWebPages();
     storeChannelTimeLimits();}catch(Throwable t) {t.printStackTrace();}
@@ -316,6 +320,10 @@ public class ChannelList {
       if (!mChannelIconMap.isEmpty()) {
         setChannelIconForChannel(channel);
       }
+      
+      if(!mChannelSortNumberMap.isEmpty()) {
+        setChannelSortNumberForChannel(channel);
+      }
 
       if (!mChannelNameMap.isEmpty()) {
         setChannelNameForChannel(channel);
@@ -340,6 +348,8 @@ public class ChannelList {
   private static void loadChannelMaps() {
     mChannelIconMap = createMap(new File(Settings.getUserSettingsDirName(),
         FILENAME_CHANNEL_ICONS));
+    mChannelSortNumberMap = createMap(new File(Settings.getUserSettingsDirName(),
+        FILENAME_CHANNEL_SORT_NUMBERS));
     mChannelNameMap = createMap(new File(Settings.getUserSettingsDirName(),
         FILENAME_CHANNEL_NAMES));
     mChannelWebpagesMap = createMap(new File(Settings.getUserSettingsDirName(),
@@ -629,6 +639,12 @@ public class ChannelList {
       }
     }
   }
+  
+  private static void setChannelSortNumberForChannel(Channel channel) {
+    String value = getMapValueForChannel(channel, mChannelSortNumberMap);
+    
+    channel.setSortNumber(value);
+  }
 
   /**
    * Sets the name for the given channel.
@@ -696,7 +712,7 @@ public class ChannelList {
       out = new PrintWriter(fw);
       Channel[] channels = getSubscribedChannels();
       for (Channel channel : channels) {
-        String filename = channel.getUserIconFileName();
+        String filename = IOUtilities.checkForRelativePath(channel.getUserIconFileName());
         if ((filename != null) && (filename.trim().length() > 0)) {
           out.println(createPropertyForChannel(channel, channel
               .isUsingUserIcon()
@@ -712,6 +728,42 @@ public class ChannelList {
             out.print(key);
             out.print("=");
             out.println(mChannelIconMap.get(key));
+          }
+        }
+      }
+    } catch (IOException e) {
+      // ignore
+    }
+    if (out != null) {
+      out.close();
+    }
+  }
+  
+  private static void storeSortNumbers() {
+    File f = new File(Settings.getUserSettingsDirName(), FILENAME_CHANNEL_SORT_NUMBERS);
+
+    FileWriter fw;
+    PrintWriter out = null;
+
+    try {
+      fw = new FileWriter(f);
+      out = new PrintWriter(fw);
+      for (Channel channel : getSubscribedChannels()) {
+        String sortNumber = channel.getSortNumber();
+        
+        if ((sortNumber != null) && (sortNumber.trim().length() > 0)) {
+          out.println(createPropertyForChannel(channel, sortNumber.trim()));
+        }
+      }
+      
+      if(mChannelSortNumberMap != null) {
+        Set<String> keys = mChannelSortNumberMap.keySet();
+
+        for(String key : keys) {
+          if(!isSubscribedChannel(getChannelForKey(key))) {
+            out.print(key);
+            out.print("=");
+            out.println(mChannelSortNumberMap.get(key));
           }
         }
       }

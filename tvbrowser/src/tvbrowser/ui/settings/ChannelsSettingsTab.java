@@ -58,7 +58,9 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSpinner;
 import javax.swing.JTextField;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
@@ -96,6 +98,7 @@ import util.ui.customizableitems.SortableItemList;
 import util.ui.progress.Progress;
 import util.ui.progress.ProgressWindow;
 
+import com.jgoodies.forms.factories.CC;
 import com.jgoodies.forms.factories.DefaultComponentFactory;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
@@ -282,6 +285,16 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
     listBoxPnRight.add(new JScrollPane(mSubscribedChannels),
         BorderLayout.CENTER);
 
+    final JButton setSortNumbers = new JButton(mLocalizer.msg("setSortNumbers", "Set sort numbers"));
+    setSortNumbers.setEnabled(false);
+    
+    setSortNumbers.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent arg0) {
+        setSortNumbers();
+      }
+    });
+    
     final JButton configureChannels = new JButton(mLocalizer.msg(
         "configSelectedChannels", "Configure selected channels"));
     configureChannels.setEnabled(false);
@@ -291,13 +304,15 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
         configChannels();
       }
     });
-
+    
     mSubscribedChannels.addListSelectionListener(new ListSelectionListener() {
       public void valueChanged(ListSelectionEvent e) {
         if (mSubscribedChannels.getSelectedValues().length > 0) {
           configureChannels.setEnabled(true);
+          setSortNumbers.setEnabled(true);
         } else {
           configureChannels.setEnabled(false);
+          setSortNumbers.setEnabled(false);
         }
       }
     });
@@ -371,7 +386,12 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
     });
 
     southPn.add(refreshList, BorderLayout.WEST);
-    southPn.add(configureChannels, BorderLayout.EAST);
+    
+    JPanel buttons = new JPanel(new FormLayout("default,3dlu,default","default"));
+    buttons.add(setSortNumbers, CC.xy(1, 1));
+    buttons.add(configureChannels, CC.xy(3, 1));
+    
+    southPn.add(buttons, BorderLayout.EAST);
 
     mListUpdating = true;
     updateFilterPanel();
@@ -1027,6 +1047,46 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
     List<Channel> channelsAfter = Arrays.asList(channelsAfterArr);
     ChannelListChangesDialog.showChannelChanges(SettingsDialog.getInstance().getDialog(), channelsBefore, channelsAfter);
   }
+  
+  private void setSortNumbers() {
+    int smallest = mSubscribedChannels.getSelectedIndex();
+    
+    if(smallest > 1) {
+      Channel ch = (Channel)mSubscribedChannels.getModel().getElementAt(smallest-1);
+      
+      if(ch.getSortNumber().trim().length() > 0) {
+        smallest = Integer.parseInt(ch.getSortNumber());
+      }
+    }
+    
+    smallest++;
+    
+    JSpinner start = new JSpinner(new SpinnerNumberModel(smallest, 1, 10000, 1));
+    
+    Object[] message = new Object[] {mLocalizer.msg("numberChannels", "Create channel numbers (up), start with:"),start};
+    
+    if(JOptionPane.showConfirmDialog(UiUtilities.getLastModalChildOf(MainFrame.getInstance()), message, mLocalizer.msg("setSortNumbers", "Set sort numbers"), JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE) == JOptionPane.OK_OPTION) {
+      Object[] channels = mSubscribedChannels.getSelectedValues();
+      
+      int value = (Integer)start.getValue();
+      
+      Channel previous = null;
+      
+      for(Object channel : channels) {
+        if(previous != null && (previous.getJointChannel() != null && previous.getJointChannel().equals(channel))) {
+          value--;
+        }
+        
+        ((Channel)channel).setSortNumber(String.valueOf(value++));
+        
+        previous = (Channel)channel;
+      }
+      
+      mSubscribedChannels.repaint();
+      MainFrame.getInstance().getProgramTableScrollPane().updateChannelPanel();
+      MainFrame.getInstance().updateChannelChooser();
+    }
+  }
 
   /**
    * Display the Config-Channel
@@ -1053,7 +1113,10 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
 
       Window parent = UiUtilities.getBestDialogParent(mAllChannels);
       dialog = new MultiChannelConfigDlg(parent, channelList);
-      dialog.centerAndShow();
+      
+      Settings.layoutWindow("multiChannelConfigDlg", dialog);
+      
+      dialog.setVisible(true);
     }
 
     mSubscribedChannels.repaint();

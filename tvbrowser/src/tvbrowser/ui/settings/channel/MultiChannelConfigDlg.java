@@ -85,7 +85,7 @@ public class MultiChannelConfigDlg extends JDialog implements ActionListener, Wi
     JPanel panel = (JPanel) getContentPane();
 
     panel.setLayout(new FormLayout("default, 3dlu, fill:default:grow",
-        "default, 3dlu, default, 3dlu:grow, default, 3dlu"));
+        "default, 3dlu, fill:0dlu:grow, 3dlu, default, 3dlu"));
 
     CellConstraints cc = new CellConstraints();
 
@@ -99,8 +99,6 @@ public class MultiChannelConfigDlg extends JDialog implements ActionListener, Wi
     panel.add(mCorrectionCB, cc.xy(3, 1));
 
     JTextArea txt = UiUtilities.createHelpTextArea(mLocalizer.msg("DLSTNote", ""));
-    // Hack because of growing JTextArea in FormLayout
-    txt.setMinimumSize(new Dimension(200, 20));
     panel.add(txt, cc.xyw(1, 3, 3));
 
     ButtonBarBuilder builder = new ButtonBarBuilder();
@@ -128,16 +126,6 @@ public class MultiChannelConfigDlg extends JDialog implements ActionListener, Wi
     builder.addButton(new JButton[] { mOKBt, mCloseBt });
 
     panel.add(builder.getPanel(), cc.xyw(1, 5, 3));
-
-    pack();
-
-    if (getWidth() < 400) {
-      setSize(400, getHeight());
-    }
-    if (getHeight() < 150) {
-      setSize(getWidth(), 150);
-    }
-
   }
 
   /**
@@ -145,13 +133,6 @@ public class MultiChannelConfigDlg extends JDialog implements ActionListener, Wi
    */
   private void resetToDefaults() {
     mCorrectionCB.setSelectedIndex(mCorrectionCB.getItemCount() / 2);
-  }
-
-  /**
-   * Center and Show the Dialog
-   */
-  public void centerAndShow() {
-    UiUtilities.centerAndShow(this);
   }
 
   public void actionPerformed(ActionEvent e) {
