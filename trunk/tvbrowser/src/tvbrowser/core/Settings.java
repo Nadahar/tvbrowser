@@ -999,7 +999,8 @@ public class Settings {
 
     propArr = new Property[] {
         propShowChannelIconsInProgramTable, propShowChannelIconsInChannellist,
-        propShowChannelNamesInProgramTable, propShowChannelNamesInChannellist };
+        propShowChannelNamesInProgramTable, propShowChannelNamesInChannellist,
+        propShowSortNumberInProgramTable, propShowSortNumberInProgramLists};
     if (mProp.hasChanged(propArr)) {
       mainFrame.getProgramTableScrollPane().updateChannelPanel();
       mainFrame.updateChannelChooser();
@@ -1806,6 +1807,20 @@ public class Settings {
    */
   public static final StringArrayProperty propHiddenMessageBoxes = new StringArrayProperty(mProp, "hideMessageBox", new String[] {});
 
+  /**
+   * show sort number in program table?
+   * @since 3.3.4
+   */
+  public static final BooleanProperty propShowSortNumberInProgramTable = new BooleanProperty(
+      mProp, "showSortNumberInProgramTable", true);
+
+  /**
+   * show sort number in program lists?
+   * @since 3.3.4
+   */
+  public static final BooleanProperty propShowSortNumberInProgramLists = new BooleanProperty(
+      mProp, "showSortNumberInProgramLists", true);
+  
   /**
    * show tooltip with large channel icon
    * @since 2.7

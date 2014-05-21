@@ -39,6 +39,7 @@ public class ChannelUserSettings {
 
   private String mChannelName;
   private String mIconFileName;
+  private String mSortNumber;
   private boolean mUseUserIconFile;
   private String mWebPage;
   private int mStartTimeLimit;
@@ -105,8 +106,7 @@ public class ChannelUserSettings {
   public boolean useUserIconFile() {
     return mUseUserIconFile;
   }
-
-
+  
   public String getWebPage() {
     return mWebPage;
   }
@@ -170,5 +170,23 @@ public class ChannelUserSettings {
    */
   public boolean isTimeLimited() {
     return mStartTimeLimit != mEndTimeLimit;
+  }
+  
+  /**
+   * Gets the sort number of this channel.
+   * 
+   * @return The sort number of this channel.
+   */
+  public String getSortNumber() {
+    return mSortNumber == null ? "" : mSortNumber; 
+  }
+  
+  /**
+   * Sets the sort number of this channel to the given value.
+   * <p>
+   * @param number The sort number for this channel or <code>null</code> if channel has no sort number.
+   */
+  public void setSortNumber(String number) {
+    mSortNumber = number;
   }
 }

@@ -57,7 +57,7 @@ public class FilteredChannelListCellRenderer extends DefaultListCellRenderer {
     JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 
     if (mChannel == null) {
-      mChannel = new ChannelLabel(true, true);
+      mChannel = new ChannelLabel(true, true, false, false, false, true, true);
     }
 
     if (mChannelCounter == null) {

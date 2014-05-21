@@ -735,10 +735,18 @@ public class DefaultToolBarModel implements ToolBarModel, DateListener {
   private JMenuItem createChannelMenuItem(final Channel ch,
       final AbstractButton btn) {
     JMenuItem item = new JMenuItem();
-
-    if (Settings.propShowChannelNamesInChannellist.getBoolean()) {
-      item.setText(ch.getJointChannel() != null ? ch.getJointChannelName() : ch.getName());
+    
+    StringBuilder text = new StringBuilder();
+    
+    if(Settings.propShowSortNumberInProgramLists.getBoolean() && ch.getSortNumber().trim().length() > 0) {
+      text.append(ch.getSortNumber()).append(". ");
     }
+    
+    if (Settings.propShowChannelNamesInChannellist.getBoolean()) {
+      text.append(ch.getJointChannel() != null ? ch.getJointChannelName() : ch.getName());
+    }
+    
+    item.setText(text.toString());
 
     if (Settings.propShowChannelIconsInChannellist.getBoolean()) {
       item.setIcon(UiUtilities.createChannelIcon(ch.getJointChannel() != null ? ch.getJointChannelIcon() : ch.getIcon()));

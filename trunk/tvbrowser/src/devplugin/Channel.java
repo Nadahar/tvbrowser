@@ -46,6 +46,7 @@ import tvbrowser.core.ChannelUserSettings;
 import tvbrowser.core.tvdataservice.AbstractTvDataServiceProxy;
 import tvbrowser.core.tvdataservice.DefaultTvDataServiceProxy;
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
+import util.io.IOUtilities;
 import util.misc.StringPool;
 import util.ui.ImageUtilities;
 
@@ -720,7 +721,7 @@ public class Channel implements Comparable<Channel> {
 
   @Override
   public String toString() {
-    return getName();
+    return (getSortNumber().trim().length() > 0 ? getSortNumber() + ". " : "") + getName();
   }
 
   /**
@@ -794,7 +795,7 @@ public class Channel implements Comparable<Channel> {
    * @return null, if no user icon filename is specified
    */
   public String getUserIconFileName() {
-    return ChannelUserSettings.getSettings(this).getIconFileName();
+    return IOUtilities.translateRelativePath(ChannelUserSettings.getSettings(this).getIconFileName());
   }
 
   /**
@@ -1222,5 +1223,26 @@ public class Channel implements Comparable<Channel> {
     }
     
     return ch;
+  }
+  
+
+  /**
+   * Gets the sort number of this channel.
+   * 
+   * @return The sort number of this channel.
+   * @since 3.3.4
+   */
+  public String getSortNumber() {
+    return ChannelUserSettings.getSettings(this).getSortNumber();
+  }
+  
+  /**
+   * Sets the sort number of this channel to the given value.
+   * <p>
+   * @param number The sort number for this channel or <code>null</code> if channel has no sort number.
+   * @since 3.3.4
+   */
+  public void setSortNumber(String number) {
+    ChannelUserSettings.getSettings(this).setSortNumber(number);
   }
 }

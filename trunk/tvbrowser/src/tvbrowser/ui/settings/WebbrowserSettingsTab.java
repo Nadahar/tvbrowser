@@ -45,6 +45,7 @@ import org.apache.commons.lang3.StringUtils;
 import tvbrowser.core.Settings;
 import tvbrowser.core.icontheme.IconLoader;
 import util.browserlauncher.Launch;
+import util.io.IOUtilities;
 import util.misc.OperatingSystem;
 import util.ui.LinkButton;
 import util.ui.Localizer;
@@ -85,11 +86,11 @@ public class WebbrowserSettingsTab implements devplugin.SettingsTab {
     JButton testButton = new LinkButton(mLocalizer.msg("testBrowser", "Test Webbrowser"), "http://www.tvbrowser.org", SwingConstants.LEFT, false);
     testButton.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        String buffer = Settings.propUserDefinedWebbrowser.getString();
+        String buffer = IOUtilities.translateRelativePath(Settings.propUserDefinedWebbrowser.getString());
         String bufferParams = Settings.propUserDefinedWebbrowserParams.getString();
         saveSettings();
         Launch.openURL("http://www.tvbrowser.org");
-        Settings.propUserDefinedWebbrowser.setString(buffer);
+        Settings.propUserDefinedWebbrowser.setString(IOUtilities.checkForRelativePath(buffer));
         Settings.propUserDefinedWebbrowserParams.setString(bufferParams);
       }
     });
@@ -193,7 +194,7 @@ public class WebbrowserSettingsTab implements devplugin.SettingsTab {
     } else {
       webbrowser = null;
     }
-    Settings.propUserDefinedWebbrowser.setString(webbrowser);
+    Settings.propUserDefinedWebbrowser.setString(IOUtilities.checkForRelativePath(webbrowser));
   }
 
   /**
