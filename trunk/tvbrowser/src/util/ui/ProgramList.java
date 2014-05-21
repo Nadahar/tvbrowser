@@ -58,6 +58,7 @@ import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.core.plugin.PluginStateListener;
 import util.exc.TvBrowserException;
+import util.io.IOUtilities;
 import util.programkeyevent.ProgramKeyAndContextMenuListener;
 import util.programkeyevent.ProgramKeyEventHandler;
 import util.programmouseevent.ProgramMouseAndContextMenuListener;
@@ -493,6 +494,74 @@ public class ProgramList extends JList implements ChangeListener,
     mSeparatorsCreated = false;
     super.setModel(model);
   }
+  
+  /**
+   * Scrolls the list to given date (if date is available)
+   * <p>
+   * @param date The date to scroll to.
+   * @since 3.3.4
+   */
+  public void scrollToNextDateIfAvailable(Date date) {
+    for(int i = 0; i < super.getModel().getSize(); i++) {
+      Object test = super.getModel().getElementAt(i);
+      
+      if(test instanceof Program && date.compareTo(((Program)test).getDate()) == 0) {
+        Point p = indexToLocation(i-(mSeparatorsCreated ? 1 : 0));
+        super.scrollRectToVisible(new Rectangle(p.x,p.y,1,getVisibleRect().height));
+        repaint();
+        return;
+      }
+    }
+  }
+  
+  /**
+   * Scrolls the list to the first occurrence of the given time from the current view onward (if time is available)
+   * <p>
+   * @param time The time in minutes from midnight.
+   * @since 3.3.4
+   */
+  public void scrollToFirstOccurrenceOfTimeFromCurrentViewOnwardIfAvailable(int time) {
+    int index = locationToIndex(getVisibleRect().getLocation());
+    
+    if(index < getModel().getSize() - 1) {
+      Object o = super.getModel().getElementAt(index);
+      
+      if(o instanceof String) {
+        o = super.getModel().getElementAt(index+1);
+        index++;
+      }
+      
+      if(index < super.getModel().getSize() - 1) {
+        Date current = ((Program)o).getDate();
+        int minutesAfterMindnight = IOUtilities.getMinutesAfterMidnight();
+        
+        for(int i = index + 1; i < super.getModel().getSize(); i++) {
+          Object test = super.getModel().getElementAt(i);
+          
+          if(test instanceof Program) {
+            Program prog = (Program)test;
+            int startTime = prog.getStartTime();
+            
+            if(minutesAfterMindnight > time + 3 * 60) {
+              time += 1440;
+            }
+            
+            if(prog.getDate().compareTo(current) > 0) {
+              startTime += 1440;
+            }
+            
+            if(prog.getDate().compareTo(current) >= 0 && startTime >= time) {
+              Point p = indexToLocation(i-(mSeparatorsCreated ? 1 : 0));
+              super.scrollRectToVisible(new Rectangle(p.x,p.y,1,getVisibleRect().height));
+              repaint();
+              return;
+            }
+          }
+        }            
+      }
+    }
+  }
+  
   
   /**
    * Scrolls the list to next day from
