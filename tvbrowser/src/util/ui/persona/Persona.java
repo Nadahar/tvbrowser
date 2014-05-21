@@ -119,8 +119,18 @@ public final class Persona {
    * Remove the given listener.
    * <p>
    * @param listener The listener to remove.
+   * @deprecated since 3.3.4 because of typo use {@link #removePersonaListener(PersonaListener)} instead.
    */
   public void removePersonaListerner(PersonaListener listener) {
+    removePersonaListener(listener);
+  }
+  
+  /**
+   * Remove the given listener.
+   * <p>
+   * @param listener The listener to remove.
+   */
+  public void removePersonaListener(PersonaListener listener) {
     synchronized (mPersonaListenerList) {
       mPersonaListenerList.remove(listener);
     }

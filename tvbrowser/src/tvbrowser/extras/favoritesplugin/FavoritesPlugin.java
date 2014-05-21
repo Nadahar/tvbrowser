@@ -100,11 +100,13 @@ import devplugin.ActionMenu;
 import devplugin.AfterDataUpdateInfoPanel;
 import devplugin.ButtonAction;
 import devplugin.ChannelDayProgram;
+import devplugin.Date;
 import devplugin.PluginCenterPanel;
 import devplugin.PluginCenterPanelWrapper;
 import devplugin.PluginTreeNode;
 import devplugin.Program;
 import devplugin.ProgramFieldType;
+import devplugin.ProgramFilter;
 import devplugin.ProgramReceiveIf;
 import devplugin.ProgramReceiveTarget;
 import devplugin.ProgressMonitor;
@@ -174,11 +176,14 @@ public class FavoritesPlugin {
   
   private AncestorListener mAncestorListener;
   
+  private boolean mManagePanelVisible;
+  
   /**
    * Creates a new instance of FavoritesPlugin.
    */
   private FavoritesPlugin() {
     mInstance = this;
+    mManagePanelVisible = false;
     mDefaultProgramFieldTypeSelection = null;
     mRootNode = new PluginTreeNode(getName());
     mWrapper = new PluginCenterPanelWrapper() {  
@@ -186,6 +191,34 @@ public class FavoritesPlugin {
       @Override
       public PluginCenterPanel[] getCenterPanels() {
         return new PluginCenterPanel[] {centerPanel};
+      }
+      
+      @Override
+      public void scrolledToDate(Date date) {
+        if(mMangePanel != null) {
+          mMangePanel.scrollToDate(date);
+        }
+      }
+      
+      @Override
+      public void scrolledToNow() {
+        if(mMangePanel != null) {
+          mMangePanel.scrollToNow();
+        }
+      }
+      
+      @Override
+      public void scrolledToTime(int time) {
+        if(mMangePanel != null) {
+          mMangePanel.scrollToTime(time);
+        }
+      }
+      
+      @Override
+      public void filterSelected(ProgramFilter filter) {
+        if(mMangePanel != null) {
+          mMangePanel.selectFilter(filter);
+        }
       }
     };
     
@@ -397,6 +430,8 @@ public class FavoritesPlugin {
             int splitPanePosition = getIntegerSetting(mSettings, "splitpanePosition",200);
             
             mMangePanel = new ManageFavoritesPanel(null, splitPanePosition, false, null, true);
+            
+            
          /*   mMangePanel.addAncestorListener(new AncestorListener() {
               private boolean mCheck = false;
               @Override
@@ -420,7 +455,9 @@ public class FavoritesPlugin {
               private boolean mCheck = false;
               @Override
               public void ancestorRemoved(AncestorEvent event) {
-                Persona.getInstance().removePersonaListerner(mMangePanel);
+                mManagePanelVisible = false;
+                Persona.getInstance().removePersonaListener(mMangePanel);
+                mMangePanel.removePersonaListener();
                 mCenterPanel.remove(mMangePanel);
               }
               
@@ -430,14 +467,17 @@ public class FavoritesPlugin {
               @Override
               public void ancestorAdded(AncestorEvent event) {
                 Persona.getInstance().registerPersonaListener(mMangePanel);
+                mMangePanel.registerPersonaListener();
                 mCenterPanel.add(mMangePanel, BorderLayout.CENTER);
                 mCenterPanel.repaint();
                 mMangePanel.updatePersona();
+                
                 SwingUtilities.invokeLater(new Runnable() {
                   @Override
                   public void run() {
                     mMangePanel.scrollToFirstNotExpiredIndex(mCheck);
                     mCheck = true;
+                    mManagePanelVisible = true;
                   }
                 });
                             
@@ -452,7 +492,8 @@ public class FavoritesPlugin {
         }
         else {
           if(mMangePanel != null) {
-            Persona.getInstance().removePersonaListerner(mMangePanel);
+            Persona.getInstance().removePersonaListener(mMangePanel);
+            mMangePanel.removePersonaListener();
           }
           
           mCenterPanel.removeAncestorListener(mAncestorListener);
@@ -1506,6 +1547,10 @@ public class FavoritesPlugin {
   
   public void setShowDateSeparators(boolean show) {
     mSettings.put("showDateSeparators", String.valueOf(show));
+    
+    if(mMangePanel != null) {
+      mMangePanel.setShowDateSeparators(show);
+    }
   }
   
   /**

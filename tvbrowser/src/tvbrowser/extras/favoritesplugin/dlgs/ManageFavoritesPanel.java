@@ -76,7 +76,9 @@ import javax.swing.tree.TreePath;
 import com.jgoodies.forms.factories.Borders;
 
 import devplugin.Channel;
+import devplugin.Date;
 import devplugin.Program;
+import devplugin.ProgramFilter;
 import devplugin.SettingsItem;
 
 import tvbrowser.core.icontheme.IconLoader;
@@ -137,8 +139,7 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction, Tree
 
     String msg;
     Icon icon;
-
-
+    
     setLayout(new BorderLayout(5, 5));
     
     if(border) {
@@ -494,8 +495,7 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction, Tree
     scrollPane.setMinimumSize(new Dimension(200,100));
     mSplitPane.setLeftComponent(scrollPane);
     
-    mProgramListPanel = new FilterableProgramListPanel(new Program[0], true, FavoritesPlugin.getInstance().showDateSeparators(), new ProgramPanelSettings(new PluginPictureSettings(PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE), false, ProgramPanelSettings.X_AXIS));
-    
+    mProgramListPanel = new FilterableProgramListPanel(FilterableProgramListPanel.TYPE_NAME_AND_PROGRAM_FILTER, new Program[0], true, FavoritesPlugin.getInstance().showDateSeparators(), new ProgramPanelSettings(new PluginPictureSettings(PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE), false, ProgramPanelSettings.X_AXIS));
     mProgramListPanel.setBorder(Borders.DLU2);
     
     mProgramList = mProgramListPanel.getProgramList();
@@ -1208,5 +1208,33 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction, Tree
     else {
       mBlackListChb.setForeground(UIManager.getColor("Label.foreground"));
     }
+  }
+  
+  public void setShowDateSeparators(boolean showDateSeparators) {
+    mProgramListPanel.setShowDateSeparators(showDateSeparators);
+  }
+  
+  public void registerPersonaListener() {
+    Persona.getInstance().registerPersonaListener(mProgramListPanel);
+  }
+  
+  public void removePersonaListener() {
+    Persona.getInstance().removePersonaListener(mProgramListPanel);
+  }
+  
+  public void scrollToDate(Date date) {
+    mProgramList.scrollToNextDateIfAvailable(date);
+  }
+  
+  public void scrollToNow() {
+    mProgramListPanel.scrollToFirstNotExpiredIndex(false);
+  }
+  
+  public void scrollToTime(int time) {
+    mProgramList.scrollToFirstOccurrenceOfTimeFromCurrentViewOnwardIfAvailable(time);
+  }
+  
+  public void selectFilter(ProgramFilter filter) {
+    mProgramListPanel.selectFilter(filter);
   }
 }
