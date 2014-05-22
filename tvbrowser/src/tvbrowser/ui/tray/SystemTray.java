@@ -62,7 +62,7 @@ import tvbrowser.extras.common.InternalPluginProxyIf;
 import tvbrowser.extras.common.InternalPluginProxyList;
 import tvbrowser.ui.DontShowAgainOptionBox;
 import tvbrowser.ui.mainframe.MainFrame;
-import tvdataservice.MarkedProgramsList;
+import tvdataservice.MarkedProgramsMap;
 import util.io.IOUtilities;
 import util.misc.OperatingSystem;
 import util.program.ProgramUtilities;
@@ -517,7 +517,7 @@ public class SystemTray {
    * @return The filled menu menu.
    */
   private JComponent addToImportantMenu(JComponent menu) {
-    Program[] p = MarkedProgramsList.getInstance().getTimeSortedProgramsForTray(MainFrame.getInstance().getProgramFilter(), Settings.propTrayImportantProgramsPriority.getInt(),
+    Program[] p = MarkedProgramsMap.getInstance().getTimeSortedProgramsForTray(MainFrame.getInstance().getProgramFilter(), Settings.propTrayImportantProgramsPriority.getInt(),
         Settings.propTrayImportantProgramsSize.getInt(), !Settings.propTrayNowProgramsEnabled.getBoolean());
 
     boolean added = false;
