@@ -60,7 +60,7 @@ import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
 import tvbrowser.extras.reminderplugin.ReminderPluginProxy;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.settings.SettingsDialog;
-import tvdataservice.MarkedProgramsList;
+import tvdataservice.MarkedProgramsMap;
 import tvdataservice.MutableProgram;
 import util.exc.TvBrowserException;
 import util.program.AbstractPluginProgramFormating;
@@ -974,7 +974,7 @@ public class PluginManagerImpl implements PluginManager {
    * @since 2.2
    */
   public Program[] getMarkedPrograms() {
-    return MarkedProgramsList.getInstance().getMarkedPrograms();
+    return MarkedProgramsMap.getInstance().getMarkedPrograms();
   }
 
   /**

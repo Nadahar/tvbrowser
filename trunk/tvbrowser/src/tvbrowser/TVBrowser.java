@@ -101,7 +101,7 @@ import tvbrowser.ui.update.PluginAutoUpdater;
 import tvbrowser.ui.update.SoftwareUpdateDlg;
 import tvbrowser.ui.update.SoftwareUpdateItem;
 import tvbrowser.ui.update.TvBrowserVersionChangeDlg;
-import tvdataservice.MarkedProgramsList;
+import tvdataservice.MarkedProgramsMap;
 import util.browserlauncher.Launch;
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
@@ -448,8 +448,8 @@ public class TVBrowser {
     mLog.info("Deleting expired TV listings...");
     TvDataBase.getInstance().deleteExpiredFiles(TvDataBase.DEFAULT_DATA_LIFESPAN, false);
 
-    /* Initialize the MarkedProgramsList */
-    MarkedProgramsList.getInstance();
+    /* Initialize the MarkedProgramsMap */
+    MarkedProgramsMap.getInstance();
 
     /*Maybe there are tvdataservices to install (.jar.inst files)*/
     PluginLoader.getInstance().installPendingPlugins();

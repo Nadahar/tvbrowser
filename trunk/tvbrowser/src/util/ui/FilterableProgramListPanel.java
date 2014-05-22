@@ -17,9 +17,9 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  * SVN information:
- *     $Date: 2014-05-20 10:08:41 +0200 (Di, 20 Mai 2014) $
- *   $Author: ds10 $
- * $Revision: 8078 $
+ *     $Date$
+ *   $Author$
+ * $Revision$
  */
 package util.ui;
 
@@ -143,7 +143,7 @@ public class FilterableProgramListPanel extends JPanel implements FilterChangeLi
   }
   
   private void createGUI(int type, boolean showNumberOfPrograms) {
-    FormLayout layout = new FormLayout("default,3dlu,default:grow","default,3dlu,fill:default:grow");
+    FormLayout layout = new FormLayout("default,3dlu,100dlu:grow","default,3dlu,fill:default:grow");
     
     setLayout(layout);
     
@@ -157,7 +157,7 @@ public class FilterableProgramListPanel extends JPanel implements FilterChangeLi
     int y = 1;
     
     if(type == TYPE_NAME_AND_PROGRAM_FILTER || type == TYPE_PROGRAM_ONLY_FILTER) {
-      mProgramFilterBox = new JComboBox();
+      mProgramFilterBox = new WideComboBox();
       mProgramFilterBox.addItemListener(new ItemListener() {
         @Override
         public void itemStateChanged(ItemEvent e) {
@@ -179,7 +179,7 @@ public class FilterableProgramListPanel extends JPanel implements FilterChangeLi
     }
     
     if(type == TYPE_NAME_AND_PROGRAM_FILTER || type == TYPE_NAME_ONLY_FILTER) {
-      mTitleFilterBox = new JComboBox();
+      mTitleFilterBox = new WideComboBox();
       mTitleFilterBox.addItemListener(new ItemListener() {
         @Override
         public void itemStateChanged(ItemEvent e) {

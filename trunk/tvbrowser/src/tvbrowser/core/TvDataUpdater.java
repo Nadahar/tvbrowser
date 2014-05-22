@@ -66,7 +66,7 @@ import tvbrowser.extras.common.InternalPluginProxyList;
 import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
 import tvbrowser.ui.DontShowAgainOptionBox;
 import tvbrowser.ui.mainframe.MainFrame;
-import tvdataservice.MarkedProgramsList;
+import tvdataservice.MarkedProgramsMap;
 import tvdataservice.MutableChannelDayProgram;
 import tvdataservice.TvDataUpdateManager;
 import util.exc.ErrorHandler;
@@ -295,7 +295,7 @@ public class TvDataUpdater {
     
     mIsUpdating = false;
     
-    MarkedProgramsList.getInstance().revalidatePrograms();
+    MarkedProgramsMap.getInstance().revalidatePrograms();
 
     TvDataBase.getInstance().sendNewProgramsToTvDataListener();
     

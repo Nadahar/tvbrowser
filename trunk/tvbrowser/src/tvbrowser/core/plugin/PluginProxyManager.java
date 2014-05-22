@@ -48,7 +48,7 @@ import tvbrowser.core.contextmenu.ContextMenuManager;
 import tvbrowser.core.filters.FilterList;
 import tvbrowser.core.filters.FilterManagerImpl;
 import tvbrowser.ui.mainframe.MainFrame;
-import tvdataservice.MarkedProgramsList;
+import tvdataservice.MarkedProgramsMap;
 import tvdataservice.MutableChannelDayProgram;
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
@@ -769,7 +769,7 @@ public class PluginProxyManager {
         public void run() {
           setPriority(Thread.MIN_PRIORITY);
 
-          Program[] programs = MarkedProgramsList.getInstance().getMarkedPrograms();
+          Program[] programs = MarkedProgramsMap.getInstance().getMarkedPrograms();
           for (Program program : programs) {
             if(program != null) {
               program.unmark(plugin);

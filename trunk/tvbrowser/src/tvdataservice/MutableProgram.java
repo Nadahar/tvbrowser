@@ -29,7 +29,7 @@ package tvdataservice;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
+//import java.util.Comparator;
 import java.util.Iterator;
 import java.util.TimeZone;
 import java.util.Vector;
@@ -40,8 +40,8 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.EventListenerList;
 
 import tvbrowser.core.TvDataBase;
-import tvbrowser.core.TvDataUpdater;
-import tvbrowser.core.plugin.PluginProxy;
+/*import tvbrowser.core.TvDataUpdater;
+import tvbrowser.core.plugin.PluginProxy;*/
 import tvbrowser.core.plugin.PluginProxyManager;
 import util.io.IOUtilities;
 import util.misc.HashCodeUtilities;
@@ -81,10 +81,6 @@ public class MutableProgram implements Program {
   /** Contains all listeners that listen for events from this program. */
   private Vector<ChangeListener> mListenerList;
 
-  /** Contains all Plugins that mark this program. We use a simple array,
-   * because it takes less memory. */
-  private Marker[] mMarkerArr;
-
   /** Tracks if the program is current loading/ being created. */
   private boolean mIsLoading;
 
@@ -114,9 +110,6 @@ public class MutableProgram implements Program {
 
   /** Contains the title */
   protected String mTitle;
-
-  /** Contains the current mark priority of this program */
-  private byte mMarkPriority = Program.NO_MARK_PRIORITY;
 
   /**
    * storage for INT and TIME fields
@@ -179,7 +172,6 @@ public class MutableProgram implements Program {
     Arrays.fill(mIntValues, -1);
     mObjectValues = new Object[ProgramFieldType.getObjectFieldCount()];
     mListenerList = null; // defer initialization until needed, to save memory
-    mMarkerArr = EMPTY_MARKER_ARR;
     mIsLoading = isLoading;
 
     mTitle = null;
@@ -190,8 +182,7 @@ public class MutableProgram implements Program {
     
     // The title is not-null.
     setTextField(ProgramFieldType.TITLE_TYPE, "");
-
-    mMarkerArr = EMPTY_MARKER_ARR;
+    
     mState = IS_VALID_STATE;
   }
 
@@ -344,48 +335,8 @@ public class MutableProgram implements Program {
    * @param marker The plugin to mark the program for.
    */
   public final synchronized void mark(Marker marker) {
-    if(mState == Program.IS_VALID_STATE || TvDataUpdater.getInstance().isUpdating()) {
-      boolean alreadyMarked = getMarkedByPluginIndex(marker) != -1;
-      int oldCount = mMarkerArr.length;
-
-      if (! alreadyMarked) {
-        // Append the new plugin
-        Marker[] newArr = new Marker[oldCount + 1];
-        System.arraycopy(mMarkerArr, 0, newArr, 0, oldCount);
-        newArr[oldCount] = marker;
-        mMarkerArr = newArr;
-
-        Arrays.sort(mMarkerArr,new Comparator<Marker>() {
-          public int compare(Marker o1, Marker o2) {
-            return o1.getId().compareTo(o2.getId());
-          }
-        });
-
-        mMarkPriority = (byte) Math.max(mMarkPriority,marker.getMarkPriorityForProgram(this));
-
-        // add program to artificial plugin tree
-        if (marker instanceof PluginProxy) {
-          PluginProxy proxy = (PluginProxy) marker;
-          if (! proxy.canUseProgramTree() || proxy.hasArtificialPluginTree() ) {
-            if (proxy.getArtificialRootNode() == null || proxy.getArtificialRootNode().size() < 100) {
-              proxy.addToArtificialPluginTree(this);
-            }
-          }
-        }
-
-        fireStateChanged();
-      }
-
-      if(oldCount < 1) {
-        MarkedProgramsList.getInstance().addProgram(this);
-      }
-    }
-    else if(mState == Program.WAS_UPDATED_STATE) {
-      Program p = Plugin.getPluginManager().getProgram(getDate(), getID());
-
-      if(p != null && p.getProgramState() == Program.IS_VALID_STATE) {
-        p.mark(marker);
-      }
+    if(!MarkedProgramsMap.getInstance().addMarkerForProgram(this, marker)) {
+      fireStateChanged();
     }
   }
 
@@ -397,71 +348,14 @@ public class MutableProgram implements Program {
    * @param marker The plugin to remove the mark for.
    */
   public final synchronized void unmark(Marker marker) {
-    if(mState == Program.IS_VALID_STATE || TvDataUpdater.getInstance().isUpdating()) {
-      int idx = getMarkedByPluginIndex(marker);
-      if (idx != -1) {
-        if (mMarkerArr.length == 1) {
-          // This was the only plugin
-          mMarkerArr = EMPTY_MARKER_ARR;
-          mMarkPriority = Program.NO_MARK_PRIORITY;
-        }
-        else {
-          int oldCount = mMarkerArr.length;
-          Marker[] newArr = new Marker[oldCount - 1];
-          System.arraycopy(mMarkerArr, 0, newArr, 0, idx);
-          System.arraycopy(mMarkerArr, idx + 1, newArr, idx, oldCount - idx - 1);
-
-          mMarkPriority = Program.NO_MARK_PRIORITY;
-
-          for(Marker mark : newArr) {
-            mMarkPriority = (byte) Math.max(mMarkPriority,mark.getMarkPriorityForProgram(this));
-          }
-
-          mMarkerArr = newArr;
-        }
-
-        // remove from artificial plugin tree
-        if (marker instanceof PluginProxy) {
-          PluginProxy proxy = (PluginProxy) marker;
-          if (proxy.hasArtificialPluginTree() && proxy.getArtificialRootNode().size() < 100) {
-            proxy.getArtificialRootNode().removeProgram(this);
-          }
-        }
-
-        fireStateChanged();
-      }
-
-      if(mMarkerArr.length < 1) {
-        MarkedProgramsList.getInstance().removeProgram(this);
-      }
-    }
-    else if(mState == Program.WAS_UPDATED_STATE) {
-      Program p = Plugin.getPluginManager().getProgram(getDate(), getID());
-
-      if(p != null && p.getProgramState() == Program.IS_VALID_STATE) {
-        p.unmark(marker);
-      }
+    if(MarkedProgramsMap.getInstance().removeMarkerForProgram(this, marker)) {
+      fireStateChanged();
     }
   }
-
-
-
-  private int getMarkedByPluginIndex(Marker plugin) {
-    for (int i = 0; i < mMarkerArr.length; i++) {
-      if (mMarkerArr[i].getId().compareTo(plugin.getId()) == 0) {
-        return i;
-      }
-    }
-
-    return -1;
-  }
-
 
   public Marker[] getMarkerArr() {
-    return mMarkerArr;
+    return MarkedProgramsMap.getInstance().getMarkerForProgram(this);
   }
-
-
 
   /**
    * Gets whether this program is expired.
@@ -491,20 +385,6 @@ public class MutableProgram implements Program {
    * @return The ID of this program.
    */
   public /*synchronized*/ String getID() {
-   /* if (mId == null) {
-      if  (mChannel.getDataServiceProxy() != null) {
-        String dataServiceId = mChannel.getDataServiceProxy().getId();
-        String groupId = mChannel.getGroup().getId();
-        String channelId = mChannel.getId();
-        String country = mChannel.getCountry();
-
-        mId = (new StringBuilder(dataServiceId).append('_').append(groupId)
-            .append('_').append(country).append('_').append(channelId).append(
-                '_').append(getHours()).append(':').append(getMinutes())
-            .append(':').append(TimeZone.getDefault().getRawOffset() / 60000))
-            .toString();
-      }
-    }*/
     return mId;
   }
 
@@ -1165,29 +1045,9 @@ public class MutableProgram implements Program {
    * @since 2.2.2
    */
   public final void validateMarking() {
-    mMarkPriority = Program.NO_MARK_PRIORITY;
-
-    for(Marker mark : mMarkerArr) {
-      mMarkPriority = (byte) Math.max(mMarkPriority,mark.getMarkPriorityForProgram(this));
+    if(MarkedProgramsMap.getInstance().validateMarkingForProgram(this)) {
+      fireStateChanged();
     }
-
-    fireStateChanged();
-  }
-
-  /**
-   * Sets the marker array of this program.
-   *
-   * @param marker The marker array.
-   * @since 2.2.1
-   */
-  protected void setMarkerArr(Marker[] marker) {
-    if (marker.length == 0) {
-      mMarkerArr = EMPTY_MARKER_ARR;
-    }
-    else {
-      mMarkerArr = marker;
-    }
-    //fireStateChanged();
   }
 
   /**
@@ -1207,16 +1067,7 @@ public class MutableProgram implements Program {
    * @since 2.5.1
    */
   public int getMarkPriority() {
-    return mMarkPriority;
-  }
-
-  /**
-   * Sets the mark priority for this program
-   *
-   * @since 2.5.1
-   */
-  protected void setMarkPriority(int markPriority) {
-    mMarkPriority = (byte) markPriority;
+    return MarkedProgramsMap.getInstance().getMarkPriorityForProgram(this);
   }
 
   public boolean hasFieldValue(final ProgramFieldType type) {
