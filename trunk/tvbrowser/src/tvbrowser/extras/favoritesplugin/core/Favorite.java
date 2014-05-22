@@ -284,7 +284,7 @@ public abstract class Favorite {
           }
         }
 
-        if(newProg != null && newProg.getProgramState() == Program.IS_VALID_STATE) {
+        if(newProg != null && newProg.getProgramState() == Program.IS_VALID_STATE && !newProg.isExpired()) {
           mNewPrograms.set(i,newProg);
         }
         else {
