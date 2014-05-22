@@ -27,6 +27,7 @@
 package tvbrowser.core.filters;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -152,7 +153,6 @@ public class FilterComponentList {
       
       componentList.add(component);
     }
-    
     
     File filterCompFile=new File(tvbrowser.core.filters.FilterList.FILTER_DIRECTORY,"filter.comp");
     StreamUtilities.objectOutputStreamIgnoringExceptions(filterCompFile,
@@ -317,6 +317,8 @@ public class FilterComponentList {
 
   public void add(FilterComponent comp) {
     mComponentList.add(comp);
+    
+    store();
     //mComponentMap.put(comp.getName().toUpperCase(), comp);
   }
 
@@ -325,7 +327,21 @@ public class FilterComponentList {
     //return mComponentMap.containsKey(name.toUpperCase());
   }
   public void remove(String filterCompName) {
-    mComponentList.remove(getFilterComponentByName(filterCompName));
+    FilterComponent filterComp = getFilterComponentByName(filterCompName);
+    
+    if(mComponentList.remove(filterComp)) {
+      String key = filterComp.getClass().getCanonicalName();
+      
+      File componentFile = new File(tvbrowser.core.filters.FilterList.FILTER_DIRECTORY,"java."+key+".dat");
+      
+      if(componentFile.isFile()) {
+        if(!componentFile.delete()) {
+          componentFile.deleteOnExit();
+        }
+      }
+    }
+    
+    store();
     //mComponentMap.remove(filterCompName.toUpperCase());
   }
 
