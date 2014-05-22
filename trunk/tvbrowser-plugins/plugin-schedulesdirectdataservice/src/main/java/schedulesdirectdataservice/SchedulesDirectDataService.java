@@ -85,7 +85,7 @@ public class SchedulesDirectDataService extends AbstractTvDataService {
   private static final Logger mLog
     = Logger.getLogger(SchedulesDirectDataService.class.getName());
 
-  private static final Version VERSION = new Version(3,11,0);
+  private static final Version VERSION = new Version(3,12,0);
 
   private ChannelGroup mChannelGroup = new ChannelGroupImpl("SchedulesDirect", "SchedulesDirect", "SchedulesDirect", "SchedulesDirect");
 
@@ -164,9 +164,10 @@ public class SchedulesDirectDataService extends AbstractTvDataService {
             if (schedule.getHdtv()) {
               info |= Program.INFO_VISION_HD;
             }
+
             if (xtvdProgram.getColorCode() != null) {
               String code = xtvdProgram.getColorCode().toLowerCase();
-              if (code.contains("black") || code.contains("bw")) {
+              if (code.contains("black") || code.contains("bw") || code.contains("b & w")) {
                 info |= Program.INFO_VISION_BLACK_AND_WHITE;
               }
               else if (!code.equalsIgnoreCase("Color and B & W")) {
@@ -253,10 +254,12 @@ public class SchedulesDirectDataService extends AbstractTvDataService {
               StringBuilder advBuilder = new StringBuilder();
 
               for (MovieAdvisories advisory : xtvdProgram.getAdvisories()) {
-                if (advBuilder.length() > 0) {
-                  advBuilder.append(", ");
+                if (advisory != null) {
+                  if (advBuilder.length() > 0) {
+                    advBuilder.append(", ");
+                  }
+                  advBuilder.append(advisory.toString());
                 }
-                advBuilder.append(advisory.toString());
               }
               desc.append("\nAdvisories: ").append(advBuilder.toString());
             }
@@ -382,6 +385,10 @@ public class SchedulesDirectDataService extends AbstractTvDataService {
 
               }
               prog.setTextField(ProgramFieldType.GENRE_TYPE, genreStr.toString());
+            }
+            
+            if (schedule.getNew() && ((info & Program.INFO_CATEGORIE_NEWS) == 0)) {
+              info |= Program.INFO_NEW;
             }
 
             final String description = desc.toString().trim();
