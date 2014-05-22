@@ -446,7 +446,7 @@ public class TVBrowser {
     }
     
     mLog.info("Deleting expired TV listings...");
-    TvDataBase.getInstance().deleteExpiredFiles(1, false);
+    TvDataBase.getInstance().deleteExpiredFiles(TvDataBase.DEFAULT_DATA_LIFESPAN, false);
 
     /* Initialize the MarkedProgramsList */
     MarkedProgramsList.getInstance();
@@ -492,7 +492,7 @@ public class TVBrowser {
     splashRef.get().setMessage(mLocalizer.msg("startScreen.tvData", "Checking TV database..."));
 
     mLog.info("Checking TV listings inventory...");
-    TvDataBase.getInstance().checkTvDataInventory();
+    TvDataBase.getInstance().checkTvDataInventory(TvDataBase.DEFAULT_DATA_LIFESPAN);
 
     mLog.info("Starting up...");
     splashRef.get().setMessage(mLocalizer.msg("startScreen.ui", "Starting up..."));
