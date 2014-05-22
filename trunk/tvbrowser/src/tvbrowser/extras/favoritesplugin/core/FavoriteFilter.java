@@ -33,4 +33,9 @@ public class FavoriteFilter implements ProgramFilter {
   public String getKeyValue() {
     return String.valueOf(mFavorite.getFilterKey());
   }
+  
+  @Override
+  public String toString() {
+    return getName();
+  }
 }
