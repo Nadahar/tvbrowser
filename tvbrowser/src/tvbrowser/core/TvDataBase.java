@@ -79,6 +79,8 @@ public class TvDataBase {
   private Hashtable<ChannelDayKey, UpdateData> mSendToTvDataListener;
   
   private MutableChannelDayProgram mCurrentAddedDayProgram;
+  
+  public static final int DEFAULT_DATA_LIFESPAN = 1;
 
   private TvDataBase() {
     mPendingPluginInformationAboutChangedData = false;
@@ -133,13 +135,15 @@ public class TvDataBase {
     updateAvailableDateSet();
   }
 
-  public void checkTvDataInventory() {
+  public void checkTvDataInventory(int lifespan) {
     // Get the channel of the subscribed channels
     Channel[] channelArr = ChannelList.getSubscribedChannels();
     String[] channelIdArr = new String[channelArr.length];
     for (int i = 0; i < channelArr.length; i++) {
       channelIdArr[i] = getChannelKey(channelArr[i]);
     }
+    
+    Date cutoff = Date.getCurrentDate().addDays(-lifespan);
 
     // Inventory prüfen
     boolean somethingChanged = false;
@@ -169,14 +173,17 @@ public class TvDataBase {
         // Get the channel and date
         Channel channel = getChannelFromFileName(key, channelArr, channelIdArr);
         if ((channel != null) && (date != null)) {
-          mLog.info("Day program was deleted by third party: " + date + " on "
-              + channel.getName());
+          if(date.compareTo(cutoff) >= 0) {
+            mLog.info("Day program was deleted by third party: " + date + " on "
+                + channel.getName());
+          }
+          
           ChannelDayProgram dummyProg = new MutableChannelDayProgram(date,
               channel);
           //validateProgramState(dummyProg, null);
           fireDayProgramTouched(dummyProg, null);
           fireDayProgramDeleted(dummyProg);
-
+          
           mTvDataInventory.setUnknown(date, channel);
         }
         else {
@@ -511,6 +518,9 @@ public class TvDataBase {
     if (lifespan < 0) {
       return; // manually
     }
+    
+    Channel[] channelArr = ChannelList.getSubscribedChannels();
+    
     // remove the dates from the "available" set
     Date date = Date.getCurrentDate().addDays(-lifespan);
     while (dataAvailable(date)) {
@@ -546,7 +556,6 @@ public class TvDataBase {
     };
 
     // Get the subscribed channels
-    Channel[] channelArr = ChannelList.getSubscribedChannels();
     String[] channelIdArr = new String[channelArr.length];
     for (int i = 0; i < channelArr.length; i++) {
       channelIdArr[i] = getChannelKey(channelArr[i]);

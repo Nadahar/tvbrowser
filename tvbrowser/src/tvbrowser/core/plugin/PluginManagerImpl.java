@@ -188,6 +188,8 @@ public class PluginManagerImpl implements PluginManager {
   
   @Override
   public Program getProgram(Date date, String progID) {
+    Date cutoff = Date.getCurrentDate().addDays(-TvDataBase.DEFAULT_DATA_LIFESPAN);
+    
     ChannelDayProgram dayProg = getDayProgram(date,progID);
     
     if (dayProg != null) {
@@ -195,11 +197,11 @@ public class PluginManagerImpl implements PluginManager {
       if (prog != null) {
         return prog;
       }
-      else {
+      else if(date.compareTo(cutoff) >= 0) {
         mLog.warning("could not find program with id '"+progID+"' (date: "+date+")");
       }
     }
-    else {
+    else if(date.compareTo(cutoff) >= 0) {
       mLog.warning("day program not found: "+progID+"; "+date);
     }
 

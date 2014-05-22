@@ -1010,7 +1010,7 @@ public class Settings {
       TvDataServiceProxyManager.getInstance().setTvDataDir(new File(propTVDataDirectory.getString()));
 
       TvDataBase.getInstance().updateTvDataBase();
-      TvDataBase.getInstance().checkTvDataInventory();
+      TvDataBase.getInstance().checkTvDataInventory(TvDataBase.DEFAULT_DATA_LIFESPAN);
 
       MainFrame.getInstance().handleChangedTvDataDir();
     }
