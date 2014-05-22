@@ -176,14 +176,11 @@ public class FavoritesPlugin {
   
   private AncestorListener mAncestorListener;
   
-  private boolean mManagePanelVisible;
-  
   /**
    * Creates a new instance of FavoritesPlugin.
    */
   private FavoritesPlugin() {
     mInstance = this;
-    mManagePanelVisible = false;
     mDefaultProgramFieldTypeSelection = null;
     mRootNode = new PluginTreeNode(getName());
     mWrapper = new PluginCenterPanelWrapper() {  
@@ -455,7 +452,6 @@ public class FavoritesPlugin {
               private boolean mCheck = false;
               @Override
               public void ancestorRemoved(AncestorEvent event) {
-                mManagePanelVisible = false;
                 Persona.getInstance().removePersonaListener(mMangePanel);
                 mMangePanel.removePersonaListener();
                 mCenterPanel.remove(mMangePanel);
@@ -477,7 +473,6 @@ public class FavoritesPlugin {
                   public void run() {
                     mMangePanel.scrollToFirstNotExpiredIndex(mCheck);
                     mCheck = true;
-                    mManagePanelVisible = true;
                   }
                 });
                             
