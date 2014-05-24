@@ -90,9 +90,7 @@ public class MarkedProgramsMap {
     }
   }
   
-  synchronized boolean addMarkerForProgram(Program p, Marker marker) {
-    boolean alreadyMarked = true;
-    
+  synchronized void addMarkerForProgram(Program p, Marker marker) {
     synchronized (mMarkedMap) {
       MarkedHolder markedHolder = mMarkedMap.get(p.getUniqueID());
       
@@ -100,26 +98,20 @@ public class MarkedProgramsMap {
         markedHolder = new MarkedHolder(p);
         
         mMarkedMap.put(p.getUniqueID(), markedHolder);
-        
-        alreadyMarked = false;
       }
       
       markedHolder.addMarker(marker);
       
       handleFilterMarking(p);
     }
-    
-    return alreadyMarked;
   }
   
-  synchronized boolean removeMarkerForProgram(Program p, Marker marker) {
-    boolean removed = false;
-    
+  synchronized void removeMarkerForProgram(Program p, Marker marker) {
     synchronized (mMarkedMap) {
       MarkedHolder markedHolder = mMarkedMap.get(p.getUniqueID());
       
       if(markedHolder != null) {
-        removed = markedHolder.removeMarker(marker);
+        boolean removed = markedHolder.removeMarker(marker);
         
         if(removed) {
           mMarkedMap.remove(p.getUniqueID());
@@ -128,8 +120,6 @@ public class MarkedProgramsMap {
         handleFilterMarking(p);
       }
     }
-    
-    return removed;
   }
   
   Marker[] getMarkerForProgram(Program p) {
