@@ -335,9 +335,8 @@ public class MutableProgram implements Program {
    * @param marker The plugin to mark the program for.
    */
   public final synchronized void mark(Marker marker) {
-    if(!MarkedProgramsMap.getInstance().addMarkerForProgram(this, marker)) {
-      fireStateChanged();
-    }
+    MarkedProgramsMap.getInstance().addMarkerForProgram(this, marker);
+    fireStateChanged();
   }
 
   /**
@@ -348,9 +347,8 @@ public class MutableProgram implements Program {
    * @param marker The plugin to remove the mark for.
    */
   public final synchronized void unmark(Marker marker) {
-    if(MarkedProgramsMap.getInstance().removeMarkerForProgram(this, marker)) {
-      fireStateChanged();
-    }
+    MarkedProgramsMap.getInstance().removeMarkerForProgram(this, marker);
+    fireStateChanged();
   }
 
   public Marker[] getMarkerArr() {
