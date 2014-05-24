@@ -148,6 +148,7 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
     
     if(dialogType == SoftwareUpdater.DRAG_AND_DROP_TYPE || dialogType == SoftwareUpdater.ONLY_UPDATE_TYPE) {
       mSoftwareUpdateItemList.selectAll();
+      mDownloadBtn.setEnabled(mSoftwareUpdateItemList.getSelection().length > 0);
     }
   }
   
@@ -313,7 +314,7 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
 		}
     
     mDownloadBtn.setEnabled(!selectedItems.isEmpty());
-
+    
     mSoftwareUpdateItemList = new SelectableItemList(selectedItems.toArray(new SoftwareUpdateItem[selectedItems.size()]),itemArr,notSelectableItems.toArray(new SoftwareUpdateItem[notSelectableItems.size()]));
     mSoftwareUpdateItemList.addListSelectionListener(this);
     mSoftwareUpdateItemList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
