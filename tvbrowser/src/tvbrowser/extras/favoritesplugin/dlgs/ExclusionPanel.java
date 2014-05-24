@@ -28,6 +28,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Arrays;
 
 import javax.swing.DefaultListModel;
 import javax.swing.Icon;
@@ -87,10 +88,13 @@ public class ExclusionPanel extends JPanel{
 
     DefaultListModel listModel = new DefaultListModel();
     mExclusionsList = new JList(listModel);
+    
+    Arrays.sort(exclusions);
+    
     for (Exclusion exclusion : exclusions) {
       listModel.addElement(exclusion);
     }
-    mExclusionsList.setCellRenderer(new ExclusionListCellRenderer());
+   // mExclusionsList.setCellRenderer(new ExclusionListCellRenderer());
     
     mExclusionsList.addListSelectionListener(new ListSelectionListener() {
       public void valueChanged(ListSelectionEvent e) {
