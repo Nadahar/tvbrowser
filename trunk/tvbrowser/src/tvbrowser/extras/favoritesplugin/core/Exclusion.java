@@ -34,14 +34,16 @@ import java.util.Iterator;
 
 import tvbrowser.core.filters.FilterManagerImpl;
 import tvbrowser.extras.common.ChannelItem;
+import tvbrowser.extras.common.DayListCellRenderer;
 import tvbrowser.extras.common.LimitationConfiguration;
 import devplugin.Channel;
 import devplugin.Program;
 import devplugin.ProgramFieldType;
 import devplugin.ProgramFilter;
 
-public class Exclusion {
-
+public class Exclusion implements Comparable {
+  private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(Exclusion.class);
+  
   public static final int DAYLIMIT_DAILY = LimitationConfiguration.DAYLIMIT_DAILY;
   private static final int DAYLIMIT_WEEKEND = LimitationConfiguration.DAYLIMIT_WEEKEND;
   private static final int DAYLIMIT_SUNDAY = LimitationConfiguration.DAYLIMIT_SUNDAY;
@@ -343,5 +345,97 @@ public class Exclusion {
    */
   public boolean isInvalid() {
     return (mTitle == null && mTopic == null && mEpisodeTitle == null && !mChannel.isAvailableOrNullChannel() && mFilterName == null && mTimeFrom == -1 &&mTimeTo == -1 && mDayOfWeek == Exclusion.DAYLIMIT_DAILY) || !mChannel.isAvailableOrNullChannel();
+  }
+
+  @Override
+  public int compareTo(Object other) {
+    return toString().compareToIgnoreCase(other.toString());
+  }
+  
+  @Override
+  public String toString() {
+    StringBuilder textValue = new StringBuilder();
+    ProgramFilter filter = getFilter();
+    String timeMsg = createTimeMessage(getTimeLowerBound(), getTimeUpperBound(), getDayOfWeek());
+    
+    if(mTitle != null) {
+      textValue.append(mLocalizer.msg("exclude.title","Exclude all programs with title '")).append(mTitle).append("'");
+    }
+    if(mTitle != null && mTopic != null) {
+      textValue.append(" ").append(mLocalizer.msg("exclude.appendTopic","with topic '")).append(mTopic).append("'");
+    }
+    else if (mTopic != null) {
+      textValue.append(mLocalizer.msg("exclude.topic","Exclude all programs with topic '")).append(mTopic).append("'");
+    }
+    if(mEpisodeTitle != null && mTopic != null && mTitle != null) {
+      textValue.append(" ").append(mLocalizer.msg("exclude.appendEpisodeTitle","Exclude all programs with episode '")).append(mEpisodeTitle).append("'");
+    }
+    else if (mEpisodeTitle != null) {
+      textValue.append(mLocalizer.msg("exclude.episodeTitle","Exclude all programs with topic '")).append(mEpisodeTitle).append("'");
+    }      
+    if(filter != null && (mTitle != null || mTopic != null || mEpisodeTitle != null)) {
+      textValue.append(" ").append(mLocalizer.msg("exclude.appendFilter","of the filter '")).append(filter.getName()).append("'");
+    }
+    else if(filter != null) {
+      textValue.append(mLocalizer.msg("exclude.filter","Exclude all programs of the filter '")).append(filter.getName()).append("'");
+    }
+    if(mChannel.getChannel() != null && (mTitle != null || mTopic != null || mEpisodeTitle != null || filter != null)) {
+      textValue.append(" ").append(mLocalizer.msg("exclude.appendChannel","on channel '")).append(mChannel.getChannel().getName()).append("'");
+    }
+    else if(mChannel.getChannel() != null) {
+      textValue.append(mLocalizer.msg("exclude.channel","Exclude all programs on channel '")).append(mChannel.getChannel().getName()).append("'");
+    }
+    if(timeMsg != null && (mTitle != null || mTopic != null || mEpisodeTitle != null || filter != null || mChannel.getChannel() != null)) {
+      textValue.append(" ").append(timeMsg);
+    }
+    else if(timeMsg != null) {
+      textValue.append(mLocalizer.msg("exclude.time","Exclude all programs ")).append(timeMsg);
+    }
+    
+    if(textValue.length() < 1) {
+      textValue.append(mLocalizer.msg("exclude.invalid","<invalid>"));
+    }
+    else {
+      if(mLocalizer.msg("exclude.appendix",".").length() > 1) {
+        textValue.append(" ");
+      }
+      
+      textValue.append(mLocalizer.msg("exclude.appendix","."));
+    }
+    
+    return textValue.toString();
+  }
+  
+  private static String createTimeMessage(int lowBnd, int upBnd, int dayOfWeek) {
+    int mLow = lowBnd % 60;
+    int hLow = lowBnd / 60;
+    int mUp = upBnd % 60;
+    int hUp = upBnd / 60;
+
+    String lowTime = hLow + ":" + (mLow < 10 ? "0" : "") + mLow;
+    String upTime = hUp + ":" + (mUp < 10 ? "0" : "") + mUp;
+
+    if (dayOfWeek != Exclusion.DAYLIMIT_DAILY) {
+      String dayStr = DayListCellRenderer.getDayString(dayOfWeek);
+      if (lowBnd >= 0 && upBnd >= 0) {
+        return mLocalizer.msg("datetimestring.between", "on {0} between {1} and {2}", dayStr, lowTime, upTime);
+      } else if (lowBnd >= 0) {
+        return mLocalizer.msg("datetimestring.after", "on {0} after {1}", dayStr, lowTime);
+      } else if (upBnd >= 0) {
+        return mLocalizer.msg("datetimestring.before", "on {0} after {1}", dayStr, upTime);
+      } else {
+        return mLocalizer.msg("datetimestring.on", "on {0}", dayStr);
+      }
+    } else {
+      if (lowBnd >= 0 && upBnd >= 0) {
+        return mLocalizer.msg("timestring.between", "on {0} between {1} and {2}", lowTime, upTime);
+      } else if (lowBnd >= 0) {
+        return mLocalizer.msg("timestring.after", "on {0} after {1}", lowTime);
+      } else if (upBnd >= 0) {
+        return mLocalizer.msg("timestring.before", "on {0} after {1}", upTime);
+      } else {
+        return null;
+      }
+    }
   }
 }
