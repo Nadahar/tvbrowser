@@ -35,6 +35,9 @@ import java.util.ArrayList;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import com.jgoodies.forms.factories.CC;
+import com.jgoodies.forms.layout.FormLayout;
+
 import util.ui.Localizer;
 import util.ui.OrderChooser;
 import devplugin.Channel;
@@ -117,7 +120,7 @@ public class ChannelFilterComponent extends AbstractFilterComponent {
   }
 
   public JPanel getSettingsPanel() {
-    JPanel content = new JPanel(new BorderLayout());
+    JPanel content = new JPanel(new FormLayout("50dlu:grow","fill:default:grow"));
 
     Channel[] channels = tvbrowser.core.ChannelList.getSubscribedChannels();
     mList = new OrderChooser(mSelectedChannels, channels);
@@ -125,7 +128,7 @@ public class ChannelFilterComponent extends AbstractFilterComponent {
     mList.getUpButton().setVisible(false);
     mList.getDownButton().setVisible(false);
 
-    content.add(mList, BorderLayout.WEST);
+    content.add(mList, CC.xy(1, 1));
 
     return content;
   }

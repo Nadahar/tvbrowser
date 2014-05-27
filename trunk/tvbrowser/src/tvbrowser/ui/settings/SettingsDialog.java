@@ -267,6 +267,7 @@ public class SettingsDialog implements WindowClosingIf {
       public void windowClosed(WindowEvent e) {
         Settings.propSettingsDialogDividerLocation.setInt(splitPane
             .getDividerLocation());
+        mInstance = null;
       }
     });
   }
