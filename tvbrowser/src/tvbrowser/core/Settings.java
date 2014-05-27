@@ -880,7 +880,7 @@ public class Settings {
 
   public static void handleChangedSettings() {
     Property[] propArr;
-
+    
     MainFrame mainFrame = MainFrame.getInstance();
 
     propArr = new Property[] { propProgramTitleFont, propProgramInfoFont,

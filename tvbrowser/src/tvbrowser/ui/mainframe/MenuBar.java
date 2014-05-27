@@ -25,10 +25,10 @@
 package tvbrowser.ui.mainframe;
 
 import java.awt.Graphics;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -41,6 +41,7 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.InputMap;
 import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -571,8 +572,17 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 		menuItemAdd.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
-				EditFilterComponentDlg dlg = new EditFilterComponentDlg((JFrame)null, null,
-						ChannelFilterComponent.class);
+			  Window w = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
+			  
+				EditFilterComponentDlg dlg = null;
+				
+				if(w instanceof JDialog) {
+				  dlg = new EditFilterComponentDlg((JDialog)w, null, ChannelFilterComponent.class);
+				}
+				else {
+				  dlg = new EditFilterComponentDlg((JFrame)w, null, ChannelFilterComponent.class);
+				}
+				
 				FilterComponent rule = dlg.getFilterComponent();
 				if ((rule != null) && (rule instanceof ChannelFilterComponent)) {
 					FilterComponentList.getInstance().add(rule);

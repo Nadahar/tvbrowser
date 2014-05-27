@@ -24,12 +24,23 @@
 package tvbrowser.ui.programtable;
 
 import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
+import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import com.jgoodies.forms.factories.CC;
+import com.jgoodies.forms.layout.FormLayout;
+
+import tvbrowser.core.filters.FilterManagerImpl;
+import tvbrowser.core.plugin.PluginManagerImpl;
+import tvbrowser.ui.mainframe.MainFrame;
 import util.ui.Localizer;
 
 import devplugin.PluginCenterPanel;
+import devplugin.SettingsItem;
 
 /**
  * A wrapper class for the TV-Browser program table scroll pane,
@@ -39,11 +50,18 @@ import devplugin.PluginCenterPanel;
  * @since 3.2
  */
 public class ProgramTableScrollPaneWrapper extends PluginCenterPanel {
+  public static final int INFO_EMPTY_FILTER_RESULT = 0;
+  public static final int INFO_NO_CHANNELS_SUBSCRIBED = 1;
+  public static final int INFO_EMPTY_CHANNEL_GROUP = 2;
+  
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(ProgramTableScrollPaneWrapper.class);
   private ProgramTableScrollPane mProgramTableScrollPane;
   private JPanel mMainPanel;
   
+  private InfoPanel mInfoPanel;
+  
   public ProgramTableScrollPaneWrapper(ProgramTableScrollPane scrollPane) {
+    mInfoPanel = null;
     mProgramTableScrollPane = scrollPane;
     mMainPanel = new JPanel(new BorderLayout());
     mMainPanel.setOpaque(false);
@@ -60,4 +78,68 @@ public class ProgramTableScrollPaneWrapper extends PluginCenterPanel {
     return mMainPanel;
   }
 
+  public void showInfoPanel(int type, String name) {
+    mMainPanel.removeAll();
+    
+    mInfoPanel = new InfoPanel(type, name);
+    
+    mMainPanel.add(mInfoPanel, BorderLayout.CENTER);
+    mMainPanel.repaint();
+  }
+  
+  public void removeInfoPanel(int type) {
+    if(mInfoPanel != null && mInfoPanel.isType(type)) {
+      mMainPanel.removeAll();
+      mInfoPanel = null;
+      mMainPanel.add(mProgramTableScrollPane, BorderLayout.CENTER);
+      mMainPanel.repaint();
+    }
+  }
+  
+  private static final class InfoPanel extends JPanel {
+    private int mType;
+    
+    public InfoPanel(final int type, String name) {
+      mType = type;
+      
+      setLayout(new FormLayout("5dlu:grow,default,5dlu:grow","fill:5dlu:grow,default,5dlu,default,fill:5dlu:grow"));
+      
+      String infoText = null;
+      String buttonText = null;
+      
+      switch (type) {
+        case INFO_EMPTY_FILTER_RESULT: 
+          infoText = mLocalizer.msg("infoEmptyFilter", "The selected filter '{0}' doesn't accepts any programs.", name);
+          buttonText = mLocalizer.msg("buttonEmptyFilter", "Deactivate filter to show all programs");
+          break;
+        case INFO_NO_CHANNELS_SUBSCRIBED: 
+          infoText = mLocalizer.msg("infoNoChannels", "No channels are subscribed.");
+          buttonText = mLocalizer.msg("buttonNoChannels", "Select channels now");
+          break;
+        case INFO_EMPTY_CHANNEL_GROUP: 
+          infoText = mLocalizer.msg("infoEmptyChannelGroup", "The used channel group '{0}' seems to be empty.", name);
+          buttonText = mLocalizer.msg("buttonEmptyChanenlGroup", "Deactivate channel group");
+          break;
+      }
+      
+      JButton action = new JButton(buttonText);
+      action.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+          switch(type) {
+            case INFO_EMPTY_FILTER_RESULT: MainFrame.getInstance().setProgramFilter(FilterManagerImpl.getInstance().getAllFilter());break;
+            case INFO_NO_CHANNELS_SUBSCRIBED: PluginManagerImpl.getInstance().showSettings(SettingsItem.CHANNELS);break;
+            case INFO_EMPTY_CHANNEL_GROUP: MainFrame.getInstance().setChannelGroup(null);break;
+          }
+        }
+      });
+      
+      add(new JLabel(infoText), CC.xy(2, 2));
+      add(action, CC.xy(2, 4));
+    }
+    
+    boolean isType(int type) {
+      return mType == type;
+    }
+  }
 }
