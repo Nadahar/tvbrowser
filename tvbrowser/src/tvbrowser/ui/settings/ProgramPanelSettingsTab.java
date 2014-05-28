@@ -43,6 +43,8 @@ import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
 
 import tvbrowser.core.Settings;
+import tvbrowser.core.icontheme.InfoIconTheme;
+import tvbrowser.core.icontheme.InfoThemeLoader;
 import tvbrowser.core.plugin.PluginManagerImpl;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
@@ -207,7 +209,7 @@ public class ProgramPanelSettingsTab implements SettingsTab {
     final ArrayList<IconPlugin> list = new ArrayList<IconPlugin>();
 
     list.addAll(getFormatIconNames());
-    list.add(new IconPlugin(PICTURE_ICON_NAME, new ImageIcon("imgs/Info_HasPicture.png")));
+    list.add(new IconPlugin(PICTURE_ICON_NAME, InfoThemeLoader.getInstance().getIconThemeForIDOrDefault(Settings.propInfoIconThemeID.getString()).getInfoIcon(InfoIconTheme.INFO_HAS_PICTURE)));
 
     for (PluginProxy plugin : PluginProxyManager.getInstance().getActivatedPlugins()) {
       final String iconText = plugin.getProgramTableIconText();
@@ -250,10 +252,10 @@ public class ProgramPanelSettingsTab implements SettingsTab {
   private List<IconPlugin> getFormatIconNames() {
     if (mFormatIcons == null) {
       mFormatIcons = new ArrayList<IconPlugin>();
-      String[] iconFilenames = ProgramInfoHelper.getInfoIconFilenames();
+      //String[] iconFilenames = ProgramInfoHelper.getInfoIconFilenames();
       Icon[] infoIcons = ProgramInfoHelper.getInfoIcons();
       String[] infoMessages = ProgramInfoHelper.getInfoIconMessages();
-      for (int i = 0; i < iconFilenames.length; i++) {
+      for (int i = 0; i < infoIcons.length; i++) {
         if (infoIcons[i] != null) {
           mFormatIcons.add(new IconPlugin(mLocalizer.msg("formatIcon", "Format: {0}", infoMessages[i]), infoIcons[i]));
         }
@@ -353,10 +355,10 @@ public class ProgramPanelSettingsTab implements SettingsTab {
       } else if (mName != null && mName.compareTo(PICTURE_ICON_NAME) == 0) {
         return Settings.PICTURE_ID;
       } else {
-        String[] infoFilenames = ProgramInfoHelper.getInfoIconFilenames();
+     //   String[] infoFilenames = ProgramInfoHelper.getInfoIconFilenames();
         Icon[] infoIcons = ProgramInfoHelper.getInfoIcons();
         String[] infoMessages = ProgramInfoHelper.getInfoIconMessages();
-        for (int i = 0; i < infoFilenames.length; i++) {
+        for (int i = 0; i < infoIcons.length; i++) {
           if (infoIcons[i] != null) {
             if (mLocalizer.msg("formatIcon", "Format: {0}", infoMessages[i]).equals(mName)) {
               return "FORMAT_" + i;

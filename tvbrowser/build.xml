@@ -386,7 +386,17 @@
 
     <!-- Icon-Themes -->
     <mkdir dir="${tvbrowser-default.runtime.dir}/icons"/>
-
+    
+     <!-- Info-Icon-Themes -->
+    <mkdir dir="${tvbrowser-default.runtime.dir}/infothemes"/>
+    
+    <zip destfile="${tvbrowser-default.runtime.dir}/infothemes/tvb_default.zip">
+  		<zipfileset dir="images/infothemes/tvb_default"></zipfileset>
+  	</zip>
+    <zip destfile="${tvbrowser-default.runtime.dir}/infothemes/tvb_colored.zip">
+  		<zipfileset dir="images/infothemes/tvb_colored"></zipfileset>
+  	</zip>
+  	
   	<zip destfile="${tvbrowser-default.runtime.dir}/icons/Tango.zip">
   		<zipfileset dir="images/themes/tango"></zipfileset>
   	</zip>
