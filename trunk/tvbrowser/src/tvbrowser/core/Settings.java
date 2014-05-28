@@ -1960,6 +1960,9 @@ public class Settings {
   public static final BooleanProperty propProgramTableAutoChangeDate = new BooleanProperty(
       mProp, "autoScrollToNextDay", true);
   
+  public static final StringProperty propInfoIconThemeID = new StringProperty(
+      mProp, "infoIconThemeName", "tvb_default.zip");
+  
   /**
    * Sets the window position and size for the given window with the values of
    * the given id.

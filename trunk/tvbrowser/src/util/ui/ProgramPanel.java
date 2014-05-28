@@ -54,6 +54,8 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import tvbrowser.core.Settings;
+import tvbrowser.core.icontheme.InfoIconTheme;
+import tvbrowser.core.icontheme.InfoThemeLoader;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.core.plugin.PluginStateListener;
@@ -614,7 +616,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
         } else if (iconPluginArr[pluginIdx].equals(Settings.PICTURE_ID)) {
           // picture icon
           if (mProgram.hasFieldValue(ProgramFieldType.PICTURE_TYPE)) {
-            iconList.add(new ImageIcon("imgs/Info_HasPicture.png"));
+            iconList.add(InfoThemeLoader.getInstance().getIconThemeForIDOrDefault(Settings.propInfoIconThemeID.getString()).getInfoIcon(InfoIconTheme.INFO_HAS_PICTURE));
           }
         } else if (iconPluginArr[pluginIdx].startsWith("FORMAT")) {
           // new style format (each icon separately)
@@ -1251,15 +1253,14 @@ private static Font getDynamicFontSize(Font font, int offset) {
     int info = mProgram.getInfo();
     if (info > 0) {
       int[] infoBitArr = ProgramInfoHelper.getInfoBits();
-      String[] infoIconFileName = ProgramInfoHelper.getInfoIconFilenames();
+      Icon[] infoIcons = ProgramInfoHelper.getInfoIcons();
       String[] infoMsgArr = ProgramInfoHelper.getInfoIconMessages();
 
       for (int i = 0; i < infoBitArr.length; i++) {
         if (ProgramInfoHelper.bitSet(info, infoBitArr[i])) {
-          if (infoIconFileName[i] != null) {
-            buffer.append(
-                "<tr><td valign=\"middle\" align=\"center\"><img src=\"file:imgs/")
-                .append(infoIconFileName[i]).append("\"></td><td>&nbsp;")
+          if (infoIcons[i] != null) {
+            buffer.append("<tr><td valign=\"middle\" align=\"center\"><img src=\"")
+                .append(infoIcons[i]).append("\"></td><td>&nbsp;")
                 .append(infoMsgArr[i]).append("</td></tr>");
           }
         }

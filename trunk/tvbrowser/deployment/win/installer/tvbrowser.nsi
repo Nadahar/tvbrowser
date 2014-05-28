@@ -308,6 +308,9 @@ Section "$(STD_SECTION_NAME)" SEC_STANDARD
 
   SetOutPath "$INSTDIR\icons"
   File /r "${RUNTIME_DIR}\icons\*.*"
+  
+  SetOutPath "$INSTDIR\infothemes"
+  File /r "${RUNTIME_DIR}\infothemes\*.*"
 
   SetOutPath "$INSTDIR\themepacks"
   File "${RUNTIME_DIR}\themepacks\*.*"
@@ -591,6 +594,11 @@ Section "Uninstall"
   deleteIconsDir:
   RMDir /r "$INSTDIR\icons"
   noDeleteIconsDir:
+
+  IfFileExists "$INSTDIR\infothemes\tvb_default.zip" deleteInfoIconsDir noDeleteInfoIconsDir
+  deleteInfoIconsDir:
+  RMDir /r "$INSTDIR\infothemes"
+  noDeleteInfoIconsDir:
 
   IfFileExists "$INSTDIR\plugins\TvBrowserDataService.jar" deletePluginsDir noDeletePluginsDir
   deletePluginsDir:

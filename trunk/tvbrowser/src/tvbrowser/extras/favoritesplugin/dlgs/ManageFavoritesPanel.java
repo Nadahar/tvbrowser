@@ -1216,10 +1216,12 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction, Tree
   
   public void registerPersonaListener() {
     Persona.getInstance().registerPersonaListener(mProgramListPanel);
+    mProgramListPanel.updatePersona();
   }
   
   public void removePersonaListener() {
     Persona.getInstance().removePersonaListener(mProgramListPanel);
+    mProgramListPanel.updatePersona();
   }
   
   public void scrollToDate(Date date) {

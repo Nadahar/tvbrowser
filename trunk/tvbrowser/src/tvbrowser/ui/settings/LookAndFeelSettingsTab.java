@@ -47,6 +47,8 @@ import javax.swing.UIManager;
 import tvbrowser.core.Settings;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.icontheme.IconTheme;
+import tvbrowser.core.icontheme.InfoIconTheme;
+import tvbrowser.core.icontheme.InfoThemeLoader;
 import tvbrowser.ui.settings.looksSettings.JGoodiesLNFSettings;
 import tvbrowser.ui.settings.looksSettings.SkinLNFSettings;
 import util.ui.CustomComboBoxRenderer;
@@ -81,12 +83,15 @@ public final class LookAndFeelSettingsTab implements SettingsTab {
   private JComboBox mDateLayout;
   
   private JComboBox mPersonaSelection;
+  
+  private JComboBox mInfoIconThemes;
 
   private JTextArea mRestartMessage;
 
   private int mStartLookAndIndex;
   private int mStartIconIndex;
   private int mStartPluginViewPositionIndex;
+  private int mStartInfoIconThemeIndex;
 
   private String mJGoodiesStartTheme;
   private boolean mJGoodiesStartShadow;
@@ -94,7 +99,7 @@ public final class LookAndFeelSettingsTab implements SettingsTab {
   private String mSkinLFStartTheme;
 
   private boolean mSomethingChanged = false;
-
+  
   private static class LookAndFeelObj implements Comparable<LookAndFeelObj> {
     private UIManager.LookAndFeelInfo info;
 
@@ -294,13 +299,32 @@ public final class LookAndFeelSettingsTab implements SettingsTab {
     }
 
     mSettingsPn.add(mIconThemes, cc.xy(4, 11));
-
+    
+    layout.appendRow(RowSpec.decode("3dlu"));
+    layout.appendRow(RowSpec.decode("pref"));
+    
+    mSettingsPn.add(new JLabel(mLocalizer.msg("infoIcons", "Program info icons") + ":"), cc.xy(2, 13));
+    
+    InfoIconTheme[] infoIconThemes = InfoThemeLoader.getInstance().getAvailableInfoIconThemes();
+    String currentInfoIconTheme = Settings.propInfoIconThemeID.getString();
+    
+    mInfoIconThemes = new JComboBox(infoIconThemes);
+    
+    for(int i = 0; i < infoIconThemes.length; i++) {
+      if(infoIconThemes[i].getID().equals(currentInfoIconTheme)) {
+        mInfoIconThemes.setSelectedIndex(i);
+        break;
+      }
+    }
+    
+    mSettingsPn.add(mInfoIconThemes, cc.xy(4, 13));
+    
     layout.appendRow(RowSpec.decode("3dlu"));
     layout.appendRow(RowSpec.decode("pref"));
 
     mSettingsPn.add(new LinkButton(mLocalizer.msg("findMoreIcons","You can find more Icons on our Web-Page."),
-        "http://www.tvbrowser.org/iconthemes.php"), cc.xy(4, 13));
-
+        "http://www.tvbrowser.org/iconthemes.php"), cc.xy(4, 15));
+    
     layout.appendRow(RowSpec.decode("fill:3dlu:grow"));
     layout.appendRow(RowSpec.decode("pref"));
 
@@ -308,7 +332,7 @@ public final class LookAndFeelSettingsTab implements SettingsTab {
     mRestartMessage.setForeground(Color.RED);
     mRestartMessage.setVisible(mSomethingChanged);
 
-    mSettingsPn.add(mRestartMessage, cc.xyw(1, 15, 6));
+    mSettingsPn.add(mRestartMessage, cc.xyw(1, 17, 6));
 
     if(!mSomethingChanged) {
       mStartLookAndIndex = mLfComboBox.getSelectedIndex();
@@ -317,6 +341,7 @@ public final class LookAndFeelSettingsTab implements SettingsTab {
       mJGoodiesStartTheme = Settings.propJGoodiesTheme.getString();
       mJGoodiesStartShadow = Settings.propJGoodiesShadow.getBoolean();
       mSkinLFStartTheme = Settings.propSkinLFThemepack.getString();
+      mStartInfoIconThemeIndex = mInfoIconThemes.getSelectedIndex();
     }
 
     mIconThemes.addActionListener(new ActionListener() {
@@ -325,6 +350,12 @@ public final class LookAndFeelSettingsTab implements SettingsTab {
       }
     });
 
+    mInfoIconThemes.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        updateRestartMessage();
+      }
+    });
+    
     lookChanged();
 
     return mSettingsPn;
@@ -337,7 +368,8 @@ public final class LookAndFeelSettingsTab implements SettingsTab {
         mJGoodiesStartTheme.compareTo(Settings.propJGoodiesTheme.getString()) != 0 ||
         mJGoodiesStartShadow != Settings.propJGoodiesShadow.getBoolean() ||
         mSkinLFStartTheme.compareTo(Settings.propSkinLFThemepack.getString()) != 0 ||
-        mPluginViewPosition.getSelectedIndex() != mStartPluginViewPositionIndex);
+        mPluginViewPosition.getSelectedIndex() != mStartPluginViewPositionIndex ||
+        mStartInfoIconThemeIndex != mInfoIconThemes.getSelectedIndex());
   }
 
   void configTheme() {
@@ -385,6 +417,8 @@ public final class LookAndFeelSettingsTab implements SettingsTab {
       Settings.propRandomPersona.setBoolean(false);
       Settings.propSelectedPersona.setString(((PersonaInfo)mPersonaSelection.getSelectedItem()).getId());
     }
+    
+    Settings.propInfoIconThemeID.setString(((InfoIconTheme)mInfoIconThemes.getSelectedItem()).getID());
   }
 
   public Icon getIcon() {
