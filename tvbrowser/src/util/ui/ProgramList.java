@@ -539,10 +539,21 @@ public class ProgramList extends JList implements ChangeListener,
         
         int i = index + 1;
         
-        boolean down = time < ((Program)o).getStartTime();
+        boolean down = time <= ((Program)o).getStartTime();
         
         if(down) {
           i = index - 1;
+        }
+        
+        Point scrollPoint = null;
+        
+        if(down && ((Program)o).getStartTime() == time) {
+          if(i > 0 && (getModel().getElementAt(i) instanceof String) ) {
+            scrollPoint = indexToLocation(i);
+          }
+          else {
+            scrollPoint = indexToLocation(i+1);
+          }
         }
         
         while(down ? i >= 0 : i < super.getModel().getSize()) {
@@ -552,11 +563,27 @@ public class ProgramList extends JList implements ChangeListener,
             Program prog = (Program)test;
             int startTime = prog.getStartTime();
             
-            if(prog.getDate().compareTo(current) == 0 && (down ? startTime <= time : startTime >= time)) {
-              Point p = indexToLocation(i-(mSeparatorsCreated ? 1 : 0) + (down ? 1 : 0));
-              super.scrollRectToVisible(new Rectangle(p.x,p.y,1,getVisibleRect().height));
-              repaint();
-              return;
+            if(prog.getDate().compareTo(current) == 0) {
+              if((down ? startTime < time : startTime >= time)) {
+                if(scrollPoint == null) {
+                  if(i > 0 && (getModel().getElementAt(i-1) instanceof String) || startTime > time) {
+                    scrollPoint = indexToLocation(i - 1);
+                  }
+                  else {
+                    scrollPoint = indexToLocation(i);
+                  }
+                }
+                break;
+              }
+              else if(down && startTime == time) {
+                if(i > 0 && getModel().getElementAt(i-1) instanceof String) {
+                  scrollPoint = indexToLocation(i - 1);
+                  break;
+                }
+                else {
+                  scrollPoint = indexToLocation(i);
+                }
+              }
             }
           }
           
@@ -566,7 +593,12 @@ public class ProgramList extends JList implements ChangeListener,
           else {
             i++;
           }
-        }            
+        }
+        
+        if(scrollPoint != null) {
+          super.scrollRectToVisible(new Rectangle(scrollPoint.x,scrollPoint.y,1,getVisibleRect().height));
+          repaint();
+        }
       }
     }
   }
@@ -588,9 +620,12 @@ public class ProgramList extends JList implements ChangeListener,
         index++;
       }
       
-      if(index < super.getModel().getSize() - 1) {
+      if(index < super.getModel().getSize() - 1 && ((Program)o).getStartTime() != time) {
         Date current = ((Program)o).getDate();
-        int minutesAfterMindnight = IOUtilities.getMinutesAfterMidnight();
+                
+        if(((Program)o).getStartTime() > time) {
+          time += 1440;
+        }
         
         for(int i = index + 1; i < super.getModel().getSize(); i++) {
           Object test = super.getModel().getElementAt(i);
@@ -598,17 +633,18 @@ public class ProgramList extends JList implements ChangeListener,
           if(test instanceof Program) {
             Program prog = (Program)test;
             int startTime = prog.getStartTime();
-            
-            if(minutesAfterMindnight > time + 3 * 60) {
-              time += 1440;
-            }
-            
+                        
             if(prog.getDate().compareTo(current) > 0) {
               startTime += 1440;
             }
             
             if(prog.getDate().compareTo(current) >= 0 && startTime >= time) {
-              Point p = indexToLocation(i-(mSeparatorsCreated ? 1 : 0));
+              Point p = indexToLocation(i);
+              
+              if(i > 0 && (getModel().getElementAt(i-1) instanceof String) || startTime > time) {
+                p = indexToLocation(i - 1);
+              }
+              
               super.scrollRectToVisible(new Rectangle(p.x,p.y,1,getVisibleRect().height));
               repaint();
               return;
