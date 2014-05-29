@@ -343,6 +343,10 @@ public class ProgramTableScrollPane extends JScrollPane implements ProgramTableM
     if (Settings.propTableBackgroundStyle.getString().equals("timeBlock") && Settings.propTimeBlockShowWest.getBoolean()) {
       getRowHeader().getView().repaint();
     }
+    
+    if(callback != null) {
+      callback.run();
+    }
   }
 
   public void tableCellUpdated(int col, int row) {

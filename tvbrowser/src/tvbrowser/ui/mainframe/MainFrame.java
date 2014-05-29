@@ -1928,7 +1928,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     mProgramTableScrollPane.resetScrolledTime();
     Calendar cal = Calendar.getInstance();
     int hour = cal.get(Calendar.HOUR_OF_DAY);
-    devplugin.Date day = new devplugin.Date();
+    devplugin.Date day = Date.getCurrentDate();
     scrollTo(day, hour * 60 + cal.get(Calendar.MINUTE));
     mProgramTableScrollPane.requestFocusInWindow();
     mProgramTableScrollPane.getProgramTable().clearTimeMarkings();

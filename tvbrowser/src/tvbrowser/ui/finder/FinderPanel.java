@@ -211,9 +211,15 @@ public class FinderPanel extends AbstractDateSelector implements DateSelector,
   public void markDate(final Date d, Runnable callback, final boolean informPluginPanels) {
 
     if (d.equals(getSelectedDate())) {
-      if (callback != null) {
+      FinderItem item = (FinderItem)mList.getSelectedValue();
+      
+      if(item != null && item.isEnabled()) {
+        item.startProgress(mDateChangedListener, callback, informPluginPanels);
+      }
+      else if(callback != null) {
         callback.run();
       }
+      
       return;
     }
     

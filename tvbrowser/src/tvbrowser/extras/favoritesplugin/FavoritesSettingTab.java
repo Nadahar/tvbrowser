@@ -29,14 +29,18 @@ package tvbrowser.extras.favoritesplugin;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import javax.swing.ButtonGroup;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 
 import tvbrowser.extras.favoritesplugin.core.Favorite;
 import tvbrowser.extras.favoritesplugin.dlgs.ExclusionPanel;
@@ -49,7 +53,7 @@ import util.ui.UiUtilities;
 
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.factories.Borders;
-import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.factories.CC;
 import com.jgoodies.forms.layout.FormLayout;
 
 import devplugin.ProgramReceiveIf;
@@ -70,6 +74,7 @@ public class FavoritesSettingTab implements SettingsTab {
   private ProgramReceiveTarget[] mClientPluginTargets, mCurrentClientPluginTargets;
   private JLabel mPluginLabel;
   private JCheckBox mExpertMode, mShowRepetitions, mAutoSelectRemider, mProvideTab, mShowDateSeparators;
+  private JRadioButton mScrollTimeNext, mScrollTimeDay;
 
   private DefaultMarkingPrioritySelectionPanel mMarkingsPanel;
   private ExclusionPanel mExclusionPanel;
@@ -78,12 +83,11 @@ public class FavoritesSettingTab implements SettingsTab {
    * Creates the settings panel for this tab.
    */
   public JPanel createSettingsPanel() {
-    CellConstraints cc = new CellConstraints();
     PanelBuilder builder = new PanelBuilder(new FormLayout(
         "5dlu,min(150dlu;pref):grow,5dlu,pref,5dlu",
         "pref,5dlu,pref,10dlu,pref,5dlu,pref,10dlu,pref,5dlu," +
         "pref,10dlu,pref,5dlu,pref,10dlu,pref,5dlu,pref,10dlu," +
-        "pref,5dlu,default,default,10dlu,default,5dlu,default"));
+        "pref,5dlu,default,default,default,10dlu,default,5dlu,default"));
     builder.border(Borders.DIALOG);
 
     mPluginLabel = new JLabel();
@@ -128,25 +132,56 @@ public class FavoritesSettingTab implements SettingsTab {
       }
     });
 
-    builder.addSeparator(mLocalizer.msg("passTo", "Pass favorite programs to"), cc.xyw(1,1,5));
-    builder.add(mPluginLabel, cc.xy(2,3));
-    builder.add(choose, cc.xy(4,3));
-    builder.addSeparator(mLocalizer.msg("expertSettings","Expert mode"), cc.xyw(1,5,5));
-    builder.add(mExpertMode, cc.xyw(2,7,3));
-    builder.addSeparator(mLocalizer.msg("repetitionSettings","Repetitions"), cc.xyw(1,9,4));
-    builder.add(mShowRepetitions, cc.xyw(2,11,3));
-    builder.addSeparator(mLocalizer.msg("reminderSettings","Automatic reminder"), cc.xyw(1,13,4));
-    builder.add(mAutoSelectRemider, cc.xyw(2,15,3));
+    builder.addSeparator(mLocalizer.msg("passTo", "Pass favorite programs to"), CC.xyw(1,1,5));
+    builder.add(mPluginLabel, CC.xy(2,3));
+    builder.add(choose, CC.xy(4,3));
+    builder.addSeparator(mLocalizer.msg("expertSettings","Expert mode"), CC.xyw(1,5,5));
+    builder.add(mExpertMode, CC.xyw(2,7,3));
+    builder.addSeparator(mLocalizer.msg("repetitionSettings","Repetitions"), CC.xyw(1,9,4));
+    builder.add(mShowRepetitions, CC.xyw(2,11,3));
+    builder.addSeparator(mLocalizer.msg("reminderSettings","Automatic reminder"), CC.xyw(1,13,4));
+    builder.add(mAutoSelectRemider, CC.xyw(2,15,3));
 
-    builder.addSeparator(mLocalizer.msg("exclusions","Global exclusion criterions"), cc.xyw(1,17,4));
-    builder.add(mExclusionPanel = new ExclusionPanel(FavoritesPlugin.getInstance().getGlobalExclusions(), UiUtilities.getLastModalChildOf(MainFrame.getInstance()), null), cc.xyw(2,19,3));
+    builder.addSeparator(mLocalizer.msg("exclusions","Global exclusion criterions"), CC.xyw(1,17,4));
+    builder.add(mExclusionPanel = new ExclusionPanel(FavoritesPlugin.getInstance().getGlobalExclusions(), UiUtilities.getLastModalChildOf(MainFrame.getInstance()), null), CC.xyw(2,19,3));
 
-    builder.addSeparator(mLocalizer.msg("miscSettings","Miscellaneous"), cc.xyw(1,21,4));
-    builder.add(mShowDateSeparators, cc.xyw(2,23,3));
-    builder.add(mProvideTab, cc.xyw(2,24,3));
+    builder.addSeparator(mLocalizer.msg("miscSettings","Miscellaneous"), CC.xyw(1,21,4));
+    builder.add(mShowDateSeparators, CC.xyw(2,23,3));
+    builder.add(mProvideTab, CC.xyw(2,24,3));
     
-    builder.addSeparator(DefaultMarkingPrioritySelectionPanel.getTitle(), cc.xyw(1,26,4));
-    builder.add(mMarkingsPanel = DefaultMarkingPrioritySelectionPanel.createPanel(FavoritesPlugin.getInstance().getMarkPriority(),false,false), cc.xyw(2,28,3));
+    JPanel timeButtonSettings = new JPanel(new FormLayout("10dlu,default:grow","5dlu,default,5dlu,default,1dlu,default"));
+    
+    final JLabel timeButtonBehaviour = new JLabel(mLocalizer.msg("timeButtonBehaviour", "Time buttons behaviour:"));
+    
+    mScrollTimeNext = new JRadioButton(mLocalizer.msg("timeButtonScrollNext", "Scroll to next occurence of time from shown programs onward"), FavoritesPlugin.getInstance().timeButtonsScrollToNextTimeInTab());
+    mScrollTimeDay = new JRadioButton(mLocalizer.msg("timeButtonScrollDay", "Scroll to occurence of time on shown day in list"), !mScrollTimeNext.isSelected());
+    
+    ButtonGroup bg = new ButtonGroup();
+    
+    bg.add(mScrollTimeDay);
+    bg.add(mScrollTimeNext);
+    
+    timeButtonBehaviour.setEnabled(mProvideTab.isSelected());
+    mScrollTimeDay.setEnabled(mProvideTab.isSelected());
+    mScrollTimeNext.setEnabled(mProvideTab.isSelected());
+    
+    mProvideTab.addItemListener(new ItemListener() {
+      @Override
+      public void itemStateChanged(ItemEvent e) {
+        timeButtonBehaviour.setEnabled(e.getStateChange() == ItemEvent.SELECTED);
+        mScrollTimeDay.setEnabled(timeButtonBehaviour.isEnabled());
+        mScrollTimeNext.setEnabled(timeButtonBehaviour.isEnabled());
+      }
+    });
+    
+    timeButtonSettings.add(timeButtonBehaviour, CC.xy(2, 2));
+    timeButtonSettings.add(mScrollTimeNext, CC.xy(2, 4));
+    timeButtonSettings.add(mScrollTimeDay, CC.xy(2, 6));
+    
+    builder.add(timeButtonSettings, CC.xyw(2, 25, 3));
+    
+    builder.addSeparator(DefaultMarkingPrioritySelectionPanel.getTitle(), CC.xyw(1,27,4));
+    builder.add(mMarkingsPanel = DefaultMarkingPrioritySelectionPanel.createPanel(FavoritesPlugin.getInstance().getMarkPriority(),false,false), CC.xyw(2,29,3));
     
     return builder.getPanel();
   }
@@ -201,6 +236,7 @@ public class FavoritesSettingTab implements SettingsTab {
     FavoritesPlugin.getInstance().setMarkPriority(mMarkingsPanel.getSelectedPriority());
     FavoritesPlugin.getInstance().setShowDateSeparators(mShowDateSeparators.isSelected());
     FavoritesPlugin.getInstance().setProvideTab(mProvideTab.isSelected());
+    FavoritesPlugin.getInstance().setTimeButtonsScrollToNextTimeInTab(mScrollTimeNext.isSelected());
 
     if(mExclusionPanel.wasChanged()) {
       FavoritesPlugin.getInstance().setGlobalExclusions(mExclusionPanel.getExclusions(),mExclusionPanel.wasAdded() && !mExclusionPanel.wasEditedOrDeleted());

@@ -30,11 +30,7 @@ import java.awt.Container;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Vector;
@@ -46,13 +42,11 @@ import javax.swing.JList;
 import javax.swing.JPopupMenu;
 import javax.swing.KeyStroke;
 import javax.swing.ListModel;
-import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 
-import tvbrowser.core.Settings;
 import tvbrowser.core.contextmenu.ContextMenuManager;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
@@ -63,11 +57,9 @@ import util.programkeyevent.ProgramKeyAndContextMenuListener;
 import util.programkeyevent.ProgramKeyEventHandler;
 import util.programmouseevent.ProgramMouseAndContextMenuListener;
 import util.programmouseevent.ProgramMouseEventHandler;
-import util.settings.ContextMenuMouseActionSetting;
 import util.settings.PluginPictureSettings;
 import util.settings.ProgramPanelSettings;
 import devplugin.ContextMenuIf;
-import devplugin.ContextMenuSeparatorAction;
 import devplugin.Date;
 import devplugin.Plugin;
 import devplugin.PluginManager;
@@ -514,6 +506,63 @@ public class ProgramList extends JList implements ChangeListener,
     }
   }
   
+
+  /**
+   * Scrolls the list to the first occurrence of the given time from the current view
+   * backward if time is smaller than the current views first time, forward if time is
+   * bigger than the current views first time. 
+   * <p>
+   * @param time The time in minutes from midnight to scroll to.
+   * @since 3.3.4
+   */
+  public void scrollToTimeFromCurrentViewIfAvailable(int time) {
+    int index = locationToIndex(getVisibleRect().getLocation());
+    
+    if(index < getModel().getSize() - 1) {
+      Object o = super.getModel().getElementAt(index);
+      
+      if(o instanceof String) {
+        o = super.getModel().getElementAt(index+1);
+        index++;
+      }
+      
+      if(index < super.getModel().getSize() - 1) {
+        Date current = ((Program)o).getDate();
+        
+        int i = index + 1;
+        
+        boolean down = time < ((Program)o).getStartTime();
+        
+        if(down) {
+          i = index - 1;
+        }
+        
+        while(down ? i >= 0 : i < super.getModel().getSize()) {
+          Object test = super.getModel().getElementAt(i);
+          
+          if(test instanceof Program) {
+            Program prog = (Program)test;
+            int startTime = prog.getStartTime();
+            
+            if(prog.getDate().compareTo(current) == 0 && (down ? startTime <= time : startTime >= time)) {
+              Point p = indexToLocation(i-(mSeparatorsCreated ? 1 : 0) + (down ? 1 : 0));
+              super.scrollRectToVisible(new Rectangle(p.x,p.y,1,getVisibleRect().height));
+              repaint();
+              return;
+            }
+          }
+          
+          if(down) {
+            i--;
+          }
+          else {
+            i++;
+          }
+        }            
+      }
+    }
+  }
+  
   /**
    * Scrolls the list to the first occurrence of the given time from the current view onward (if time is available)
    * <p>
@@ -561,7 +610,6 @@ public class ProgramList extends JList implements ChangeListener,
       }
     }
   }
-  
   
   /**
    * Scrolls the list to next day from

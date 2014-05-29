@@ -20,11 +20,14 @@ import java.awt.BorderLayout;
 import java.awt.Font;
 import java.awt.Point;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableColumn;
@@ -74,6 +77,18 @@ public class CalendarTablePanel extends AbstractCalendarPanel implements ListSel
     addMouseListener(this);
     mTable.getSelectionModel().addListSelectionListener(this);
     mTable.getColumnModel().getSelectionModel().addListSelectionListener(this);
+    mTable.addMouseListener(new MouseAdapter() {
+      @Override
+      public void mouseClicked(MouseEvent e) {
+        int clickColumn = mTable.columnAtPoint(e.getPoint());
+        int clickRow = mTable.rowAtPoint(e.getPoint());
+        
+        if(mLastRow == clickRow && mLastColumn == clickColumn) {
+          Date date = (Date) mTable.getValueAt(mLastRow, mLastColumn);
+          markDate(date,true);
+        }
+      }
+    });
   }
 
   protected void rebuildControls() {
@@ -85,11 +100,16 @@ public class CalendarTablePanel extends AbstractCalendarPanel implements ListSel
       askForDataUpdate(date);
       return;
     }
+    
+    Thread thread = new Thread("Finder") {
+      public void run() {
+        mDateChangedListener.dateChanged(date, CalendarTablePanel.this, callback, informPluginPanels);
+      }
+    };
 
     if (date.equals(getSelectedDate())) {
-      if (callback != null) {
-        callback.run();
-      }
+      thread.start();
+      
       return;
     }
 
@@ -103,18 +123,22 @@ public class CalendarTablePanel extends AbstractCalendarPanel implements ListSel
       mAllowEvents = true;
       mTable.setRowSelectionInterval(position.y, position.y);
     }
+    
+    mLastColumn = mTable.getSelectedColumn();
+    mLastRow = mTable.getSelectedRow();
 
     if (mDateChangedListener == null) {
       return;
     }
-    repaint();
 
-    Thread thread = new Thread("Finder") {
-      public void run() {
-        mDateChangedListener.dateChanged(date, CalendarTablePanel.this, callback, informPluginPanels);
-      }
-    };
     thread.start();
+
+    SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        repaint();
+      }
+    });
   }
 
   public void updateItems() {

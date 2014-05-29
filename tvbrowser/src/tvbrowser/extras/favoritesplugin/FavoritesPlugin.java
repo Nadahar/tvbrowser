@@ -207,7 +207,7 @@ public class FavoritesPlugin {
       @Override
       public void scrolledToTime(int time) {
         if(mMangePanel != null) {
-          mMangePanel.scrollToTime(time);
+          mMangePanel.scrollToTime(time, timeButtonsScrollToNextTimeInTab());
         }
       }
       
@@ -1570,5 +1570,13 @@ public class FavoritesPlugin {
     }catch(NumberFormatException e) {}
     
     return null;
+  }
+  
+  public boolean timeButtonsScrollToNextTimeInTab() {
+    return mSettings.getProperty("timeButtonsScrollToNextTimeInTab", "true").equals("true");
+  }
+  
+  public void setTimeButtonsScrollToNextTimeInTab(boolean value) {
+    mSettings.setProperty("timeButtonsScrollToNextTimeInTab", String.valueOf(value));
   }
 }
