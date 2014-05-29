@@ -252,17 +252,21 @@ public class ProgramList extends JList implements ChangeListener,
 
   private void addToPrograms() {
     ListModel list = getModel();
-    addToPrograms(0, list.getSize() - 1);
+    
+    synchronized (list) {
+      addToPrograms(0, list.getSize() - 1, list);
+    }
   }
 
-  private void addToPrograms(int indexFirst, int indexLast) {
-    ListModel list = getModel();
-    for (int i = indexFirst; i <= indexLast; i++) {
-      Object element = list.getElementAt(i);
-      if (element instanceof Program) {
-        Program prg = (Program) element;
-        prg.addChangeListener(this);
-        mPrograms.add(prg);
+  private void addToPrograms(int indexFirst, int indexLast, ListModel list) {
+    if(list.getSize() > indexLast) {
+      for (int i = indexFirst; i <= indexLast; i++) {
+        Object element = list.getElementAt(i);
+        if (element instanceof Program) {
+          Program prg = (Program) element;
+          prg.addChangeListener(this);
+          mPrograms.add(prg);
+        }
       }
     }
   }
@@ -353,7 +357,11 @@ public class ProgramList extends JList implements ChangeListener,
   }
 
   public void intervalAdded(ListDataEvent e) {
-    addToPrograms(e.getIndex0(), e.getIndex1());
+    ListModel list = getModel();
+    
+    synchronized (list) {
+      addToPrograms(e.getIndex0(), e.getIndex1(), list);
+    }
   }
 
   public void intervalRemoved(ListDataEvent e) {
