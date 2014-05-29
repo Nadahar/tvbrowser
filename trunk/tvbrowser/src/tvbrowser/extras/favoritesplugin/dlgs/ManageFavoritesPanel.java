@@ -1232,8 +1232,13 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction, Tree
     mProgramListPanel.scrollToFirstNotExpiredIndex(false);
   }
   
-  public void scrollToTime(int time) {
-    mProgramList.scrollToFirstOccurrenceOfTimeFromCurrentViewOnwardIfAvailable(time);
+  public void scrollToTime(int time, boolean scrollToNext) {
+    if(scrollToNext) {
+      mProgramList.scrollToFirstOccurrenceOfTimeFromCurrentViewOnwardIfAvailable(time);
+    }
+    else {
+      mProgramList.scrollToTimeFromCurrentViewIfAvailable(time);
+    }
   }
   
   public void selectFilter(ProgramFilter filter) {
