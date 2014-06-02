@@ -172,9 +172,9 @@ public class InfoIconTheme implements Comparable<InfoIconTheme> {
     
     for(File icon : files) {
       try {
-        URL url = new URL("file://" + icon.getAbsolutePath());
+        URL url = new URL("file:///" + icon.getAbsolutePath().replace("\\", "/"));
         mapIcon(new ImageIcon(url), icon.getName());
-      } catch (IOException e) {}
+      } catch (IOException e) {e.printStackTrace();}
     }
   }
     
@@ -189,7 +189,7 @@ public class InfoIconTheme implements Comparable<InfoIconTheme> {
         
         if(iconEntry.getName().startsWith("Info_")) {
           try {
-            URL url = new URL("jar:file://" + zip.getAbsolutePath() + "!/" + iconEntry.getName());
+            URL url = new URL("jar:file:///" + zip.getAbsolutePath().replace("\\", "/") + "!/" + iconEntry.getName());
             mapIcon(new ImageIcon(url), iconEntry.getName());
           } catch (IOException e) {
             e.printStackTrace();
