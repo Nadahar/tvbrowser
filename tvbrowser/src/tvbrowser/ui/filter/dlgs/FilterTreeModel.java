@@ -167,7 +167,7 @@ public class FilterTreeModel extends DefaultTreeModel {
         parent = (FilterNode) getRoot();
       }
       FilterNode newNode = parent.addFilter(filter);
-      System.out.println(filter);
+      
       fireFilterAdded(filter);
       if(tree != null) {
         reload(tree,parent);
