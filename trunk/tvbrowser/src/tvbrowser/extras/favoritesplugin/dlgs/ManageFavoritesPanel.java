@@ -782,7 +782,7 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction, Tree
   }
   
   public void scrollInProgramListToIndex(final int index) {
-    mProgramListPanel.scrollToIndex(index);
+    mProgramListPanel.scrollToIndexWithoutDateSeparators(index);
   }
 
   private void enableButtons(boolean enabled) {

@@ -349,7 +349,7 @@ public class FilterableProgramListPanel extends JPanel implements FilterChangeLi
         Object test = mProgramListModel.getElementAt(i);
         
         if(test instanceof Program && !((Program)test).isExpired()) {
-          scrollToIndex(i);
+          scrollToIndexWithoutDateSeparators(i);
           break;
         }
       }catch(Throwable t) {t.printStackTrace();}
@@ -369,13 +369,9 @@ public class FilterableProgramListPanel extends JPanel implements FilterChangeLi
     
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
-        mProgramListScrollPane.getVerticalScrollBar().setValue(0);
-        mProgramListScrollPane.getHorizontalScrollBar().setValue(0);
-        
-        Rectangle cellBounds = mProgramList.getCellBounds(index,index);
-        if (cellBounds != null) {
-          cellBounds.setLocation(cellBounds.x, cellBounds.y + mProgramListScrollPane.getHeight() - cellBounds.height);
-          mProgramList.scrollRectToVisible(cellBounds);
+        Point p = mProgramList.indexToLocation(index);
+        if (p != null) {
+          mProgramList.scrollRectToVisible(new Rectangle(p.x,p.y,1,mProgramList.getVisibleRect().height));
         }
       }
     });

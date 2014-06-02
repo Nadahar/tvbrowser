@@ -102,7 +102,7 @@ public class FilterManagerImpl implements FilterManager {
    * @param filter The filter to add.
    * @return True if the filter could be added.
    */
-  public boolean addFilter(PluginsProgramFilter filter) {System.out.println("ccc c " + filter);
+  public boolean addFilter(PluginsProgramFilter filter) {
     if(FilterList.getInstance().getFilterByName(filter.getName()) == null) {
       FilterList.getInstance().addProgramFilter(filter);
       MainFrame.getInstance().updateFilterMenu();
