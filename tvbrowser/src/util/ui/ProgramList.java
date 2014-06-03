@@ -585,6 +585,29 @@ public class ProgramList extends JList implements ChangeListener,
                 }
               }
             }
+            else if(scrollPoint == null) {
+              if(down && i < getModel().getSize()-1) {
+                scrollPoint = indexToLocation(i+1);
+              }
+              else if(!down && i > 0) {
+                scrollPoint = indexToLocation(i-1);
+              }
+              else {
+                scrollPoint = indexToLocation(i);
+              }
+              
+              break;
+            }
+          }
+          else if(test instanceof String && scrollPoint == null) {
+            if(down || i == 0) {
+              scrollPoint = indexToLocation(i);
+            }
+            else {
+              scrollPoint = indexToLocation(i-1);
+            }
+            
+            break;
           }
           
           if(down) {
@@ -592,6 +615,19 @@ public class ProgramList extends JList implements ChangeListener,
           }
           else {
             i++;
+          }
+        }
+        
+        if(scrollPoint == null) {
+          if(down) {
+            if(getModel().getSize() > 0) {
+              scrollPoint = indexToLocation(0);
+            }
+          }
+          else {
+            if(getModel().getSize() > 0) {
+              scrollPoint = indexToLocation(getModel().getSize()-1);
+            }
           }
         }
         
