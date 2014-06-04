@@ -507,8 +507,11 @@ public class ProgramList extends JList implements ChangeListener,
       
       if(test instanceof Program && date.compareTo(((Program)test).getDate()) == 0) {
         Point p = indexToLocation(i-(mSeparatorsCreated ? 1 : 0));
-        super.scrollRectToVisible(new Rectangle(p.x,p.y,1,getVisibleRect().height));
-        repaint();
+        
+        if(getVisibleRect() != null) {
+          super.scrollRectToVisible(new Rectangle(p.x,p.y,1,getVisibleRect().height));
+          repaint();
+        }
         return;
       }
     }
@@ -631,7 +634,7 @@ public class ProgramList extends JList implements ChangeListener,
           }
         }
         
-        if(scrollPoint != null) {
+        if(scrollPoint != null && getVisibleRect() != null) {
           super.scrollRectToVisible(new Rectangle(scrollPoint.x,scrollPoint.y,1,getVisibleRect().height));
           repaint();
         }
@@ -681,8 +684,11 @@ public class ProgramList extends JList implements ChangeListener,
                 p = indexToLocation(i - 1);
               }
               
-              super.scrollRectToVisible(new Rectangle(p.x,p.y,1,getVisibleRect().height));
-              repaint();
+              if(getVisibleRect() != null) {
+                super.scrollRectToVisible(new Rectangle(p.x,p.y,1,getVisibleRect().height));
+                repaint();
+              }
+              
               return;
             }
           }
@@ -717,7 +723,11 @@ public class ProgramList extends JList implements ChangeListener,
           
           if(test instanceof Program && current.compareTo(((Program)test).getDate()) < 0) {
             Point p = indexToLocation(i-(mSeparatorsCreated ? 1 : 0));
-            super.scrollRectToVisible(new Rectangle(p.x,p.y,1,getVisibleRect().height));
+            
+            if(getVisibleRect() != null) {
+              super.scrollRectToVisible(new Rectangle(p.x,p.y,1,getVisibleRect().height));
+            }
+            
             return;
           }
         }            
