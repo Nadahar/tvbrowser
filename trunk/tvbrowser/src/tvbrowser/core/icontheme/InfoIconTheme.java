@@ -245,11 +245,11 @@ public class InfoIconTheme implements Comparable<InfoIconTheme> {
     else if(name.startsWith("Info_Movie")) {
       mIconMap.put(Byte.valueOf(INFO_MOVIE), icon);
     }
-    else if(name.startsWith("Info_New")) {
-      mIconMap.put(Byte.valueOf(INFO_NEW), icon);
-    }
     else if(name.startsWith("Info_News")) {
       mIconMap.put(Byte.valueOf(INFO_NEWS), icon);
+    }
+    else if(name.startsWith("Info_New")) {
+      mIconMap.put(Byte.valueOf(INFO_NEW), icon);
     }
     else if(name.startsWith("Info_OriginalWithSubtitle_EN")) {
       if(Locale.getDefault().getLanguage().equals("en")) {
