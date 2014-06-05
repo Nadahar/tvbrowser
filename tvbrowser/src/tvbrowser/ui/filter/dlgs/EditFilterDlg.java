@@ -25,6 +25,7 @@
  */
 package tvbrowser.ui.filter.dlgs;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -157,7 +158,7 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
     mFilterRuleTF.addCaretListener(this);  
     
     FormLayout layout = new FormLayout("5dlu,fill:min:grow,5dlu,default,5dlu","default,5dlu,default,10dlu,default,5dlu,default,default,5dlu,default,5dlu,fill:min:grow,5dlu,default,5dlu,default,5dlu,default");
-    PanelBuilder filterCreation = new PanelBuilder(layout,(JPanel)getContentPane());
+    PanelBuilder filterCreation = new PanelBuilder(layout);
     filterCreation.border(Borders.DIALOG);
     
     filterCreation.addSeparator(mLocalizer.msg("filterName", "Filter name:"), CC.xyw(1,1,5));
@@ -353,6 +354,11 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
     updateBtns();
 
     setMinimumSize(new Dimension(600,560));
+    
+    setLayout(new BorderLayout());
+    
+    add(filterCreation.getPanel(), BorderLayout.CENTER);
+    
     Settings.layoutWindow("editFilterDlg",this,getMinimumSize(),mParent);
     setVisible(true);
   }

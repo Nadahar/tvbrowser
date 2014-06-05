@@ -25,6 +25,7 @@
  */
 package util.ui;
 
+import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dialog;
@@ -311,9 +312,9 @@ public class SearchHelper {
     EnhancedPanelBuilder pb = new EnhancedPanelBuilder("default:grow");
     pb.border(Borders.DIALOG);
     
-    dlg.setContentPane(pb.getPanel());
-
-
+    dlg.setLayout(new BorderLayout());
+    dlg.add(pb.getPanel(), BorderLayout.CENTER);
+    
     // Find first program that is not expired
     int curPos = -1;
 

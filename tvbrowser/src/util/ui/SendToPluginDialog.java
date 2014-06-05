@@ -3,6 +3,7 @@
  */
 package util.ui;
 
+import java.awt.BorderLayout;
 import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Frame;
@@ -173,7 +174,7 @@ public class SendToPluginDialog extends JDialog implements WindowClosingIf {
     setTitle(mLocalizer.msg("title", "Send to other Plugin"));
 
     CellConstraints cc = new CellConstraints();
-    PanelBuilder pb = new PanelBuilder(new FormLayout("5dlu,0dlu:grow,5dlu","pref,5dlu,pref,5dlu,pref,5dlu,pref,fill:10dlu:grow,pref"), (JPanel)this.getContentPane());
+    PanelBuilder pb = new PanelBuilder(new FormLayout("5dlu,0dlu:grow,5dlu","pref,5dlu,pref,5dlu,pref,5dlu,pref,fill:10dlu:grow,pref"));
     pb.border(Borders.DIALOG);
     
     pb.addSeparator(mLocalizer.msg("sendTo", "Send {0} programs to", mPrograms.length), cc.xyw(1,1,3));
@@ -263,7 +264,10 @@ public class SendToPluginDialog extends JDialog implements WindowClosingIf {
     buttonBuilder.addButton(new JButton[] {sendButton, cancelButton});
     
     pb.add(buttonBuilder.getPanel(), cc.xyw(1,9,3));
-
+    
+    setLayout(new BorderLayout());
+    add(pb.getPanel(), BorderLayout.CENTER);
+    
     Settings.layoutWindow("util.sendToDialog", this, new Dimension(Sizes
         .dialogUnitXAsPixel(220, this), Sizes.dialogUnitYAsPixel(125, this)),parent);
 

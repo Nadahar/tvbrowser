@@ -27,7 +27,6 @@
 package tvbrowser.ui.filter.dlgs;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
@@ -138,7 +137,7 @@ public class EditFilterComponentDlg extends JDialog implements ActionListener, D
   private void init(Window parent, FilterComponent comp, Class<? extends FilterComponent> filterComponentClass) {
     UiUtilities.registerForClosing(this);
     setTitle(mLocalizer.msg("title", "Edit filter component"));
-    mContentPane = (JPanel)getContentPane();
+    mContentPane = new JPanel();
     
     mNameTF = new JTextField(new PlainDocument() {
       public void insertString(int offset, String str, AttributeSet a) throws BadLocationException {
@@ -261,6 +260,11 @@ public class EditFilterComponentDlg extends JDialog implements ActionListener, D
     pb.add(bottomBar.getPanel(), CC.xyw(1,15,5));
     
     updateOkBtn();
+    
+    setLayout(new BorderLayout());
+    
+    add(mContentPane, BorderLayout.CENTER);
+    
     setMinimumSize(new Dimension(500,550));
     Settings.layoutWindow("editFilterComponentDlg", this, getMinimumSize(), parent);
     setVisible(true);
