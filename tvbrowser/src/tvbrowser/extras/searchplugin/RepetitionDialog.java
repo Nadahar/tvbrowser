@@ -41,6 +41,7 @@ import javax.swing.JTextField;
 
 import tvbrowser.core.ChannelList;
 import tvbrowser.core.Settings;
+import tvbrowser.ui.mainframe.MainFrame;
 import util.settings.PluginPictureSettings;
 import util.ui.ChannelListCellRenderer;
 import util.ui.Localizer;
@@ -222,7 +223,7 @@ class RepetitionDialog extends JDialog implements WindowClosingIf {
 
     SearchFormSettings settings = getSearchSettings();
 
-    SearchHelper.search(getParent(), new PluginPictureSettings(
+    SearchHelper.search(UiUtilities.getLastModalChildOf(MainFrame.getInstance()), new PluginPictureSettings(
         PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE), settings, true);
   }
 
