@@ -26,6 +26,7 @@
 
 package tvbrowser.ui.filter.dlgs;
 
+import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dialog;
 import java.awt.Dimension;
@@ -88,7 +89,7 @@ public class SelectFilterDlg extends JDialog implements ActionListener, WindowCl
   
   public static SelectFilterDlg create(Window parent) {
     if(mInstance == null) {
-      new SelectFilterDlg(parent);
+      new SelectFilterDlg(MainFrame.getInstance());
     }
     
     return mInstance;
@@ -103,16 +104,16 @@ public class SelectFilterDlg extends JDialog implements ActionListener, WindowCl
     //super(parent, mLocalizer.msg("title", "Edit Filters"), true);
     mInstance = this;
     
+    FormLayout layout = new FormLayout("default,default:grow,default","default,4dlu,fill:default:grow,5dlu,default");
+    
+    PanelBuilder pb = new PanelBuilder(layout);
+    pb.border(Borders.DIALOG);
+    
     UiUtilities.registerForClosing(this);
 
     mFilterList = FilterList.getInstance();
     ProgramFilter defaultFilter = FilterManagerImpl.getInstance().getDefaultFilter();
     mDefaultFilterId = defaultFilter.getClass().getName() + "###" + defaultFilter.getName();
-
-    FormLayout layout = new FormLayout("default,default:grow,default","default,4dlu,fill:default:grow,5dlu,default");
-    
-    PanelBuilder pb = new PanelBuilder(layout, (JPanel)getContentPane());
-    pb.border(Borders.DIALOG);
     
     mFilterTree = new FilterTree();
     
@@ -163,6 +164,11 @@ public class SelectFilterDlg extends JDialog implements ActionListener, WindowCl
     pb.add(toolbarPn, CC.xyw(1,1,3)); 
     
     updateBtns();
+    
+    setLayout(new BorderLayout());
+    
+    add(pb.getPanel(), BorderLayout.CENTER);
+    
     Settings.layoutWindow("selectFilterDlg", this, new Dimension(500,500));
   }
 
