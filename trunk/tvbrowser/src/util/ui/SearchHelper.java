@@ -210,7 +210,7 @@ public class SearchHelper {
               public void run() {
                 String msg = mLocalizer.msg("nothingFound", "No programs found with {0}!",
                     searcherSettings.getSearchText());
-                JOptionPane.showMessageDialog(MainFrame.getInstance(), msg);
+                JOptionPane.showMessageDialog(UiUtilities.getLastModalChildOf(MainFrame.getInstance()), msg);
 
                 if (mDialog != null) {
                   mDialog.setVisible(false);
