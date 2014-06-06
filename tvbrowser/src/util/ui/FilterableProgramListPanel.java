@@ -61,6 +61,15 @@ import devplugin.ProgramFilter;
  * @since 3.3.4
  */
 public class FilterableProgramListPanel extends JPanel implements FilterChangeListener, PersonaListener {
+  /** Program filter combo box starts with Show all filter */
+  public static final int FILTER_START_ALL_TYPE = 0;
+  
+  /** Program filter combo box starts with default filter */
+  public static final int FILTER_START_DEFAULT_TYPE = 1;
+  
+  /** Program filter combo box starts with current filter */
+  public static final int FILTER_START_CURRENT_TYPE = 2;
+  
   private static final Localizer LOCALIZER = Localizer.getLocalizerFor(FilterableProgramListPanel.class);
   
   /** Type for filter for program title and program filter filtering */
@@ -96,14 +105,15 @@ public class FilterableProgramListPanel extends JPanel implements FilterChangeLi
    * @param showNumberOfPrograms Show a panel with the number of listed programs.
    * @param showDateSeparators Show date separators in the program list.
    * @param progPanelSettings The settings for the program panels in the program list.
+   * @param startType The start type of this panels program filter combo box.
    */
-  public FilterableProgramListPanel(int type, Program[] programs, boolean showNumberOfPrograms, boolean showDateSeparators, ProgramPanelSettings progPanelSettings) {
+  public FilterableProgramListPanel(int type, Program[] programs, boolean showNumberOfPrograms, boolean showDateSeparators, ProgramPanelSettings progPanelSettings, int startType) {
     mProgramListModel = new DefaultListModel();
     mProgramList = new ProgramList(mProgramListModel, progPanelSettings);
     mShowDateSeparators = showDateSeparators;
     
     FilterManagerImpl.getInstance().registerFilterChangeListener(this);
-    createGUI(type, showNumberOfPrograms);
+    createGUI(type, showNumberOfPrograms, startType);
     setPrograms(programs);
   }
   
@@ -142,7 +152,7 @@ public class FilterableProgramListPanel extends JPanel implements FilterChangeLi
     return mProgramList;
   }
   
-  private void createGUI(int type, boolean showNumberOfPrograms) {
+  private void createGUI(int type, boolean showNumberOfPrograms, int startType) {
     FormLayout layout = new FormLayout("default,3dlu,100dlu:grow","default,3dlu,fill:default:grow");
     
     setLayout(layout);
@@ -168,7 +178,7 @@ public class FilterableProgramListPanel extends JPanel implements FilterChangeLi
         }
       });
       
-      fillProgramFilterBox();
+      fillProgramFilterBox(startType);
       
       mProgramFilterLabel = new JLabel(LOCALIZER.msg("filterPrograms", "Program filter:"));
       
@@ -215,14 +225,20 @@ public class FilterableProgramListPanel extends JPanel implements FilterChangeLi
     add(mProgramListScrollPane, CC.xyw(1, y, 3));
   }
   
-  private void fillProgramFilterBox() {
+  private void fillProgramFilterBox(int startType) {
     ProgramFilter[] filters = FilterManagerImpl.getInstance().getAvailableFilters();
     
     for(ProgramFilter filter : filters) {
       mProgramFilterBox.addItem(filter);
     }
     
-    mProgramFilterBox.setSelectedItem(FilterManagerImpl.getInstance().getAllFilter());
+    switch (startType) {
+      case FILTER_START_DEFAULT_TYPE: mProgramFilterBox.setSelectedItem(FilterManagerImpl.getInstance().getDefaultFilter());break;
+      case FILTER_START_CURRENT_TYPE: mProgramFilterBox.setSelectedItem(FilterManagerImpl.getInstance().getCurrentFilter());break;
+      
+      default: mProgramFilterBox.setSelectedItem(FilterManagerImpl.getInstance().getAllFilter());break;
+    }
+    
   }
 
   @Override

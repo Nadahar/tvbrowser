@@ -48,6 +48,7 @@ import tvbrowser.extras.favoritesplugin.dlgs.FavoriteTreeModel;
 import tvbrowser.extras.reminderplugin.ReminderPluginProxy;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.ui.DefaultMarkingPrioritySelectionPanel;
+import util.ui.FilterableProgramListPanel;
 import util.ui.PluginChooserDlg;
 import util.ui.UiUtilities;
 
@@ -75,6 +76,8 @@ public class FavoritesSettingTab implements SettingsTab {
   private JLabel mPluginLabel;
   private JCheckBox mExpertMode, mShowRepetitions, mAutoSelectRemider, mProvideTab, mShowDateSeparators;
   private JRadioButton mScrollTimeNext, mScrollTimeDay;
+  private JRadioButton mFilterStartAll, mFilterStartDefault, mFilterStartCurrent;
+  private JCheckBox mFilterReactOnChange;
 
   private DefaultMarkingPrioritySelectionPanel mMarkingsPanel;
   private ExclusionPanel mExclusionPanel;
@@ -87,7 +90,7 @@ public class FavoritesSettingTab implements SettingsTab {
         "5dlu,min(150dlu;pref):grow,5dlu,pref,5dlu",
         "pref,5dlu,pref,10dlu,pref,5dlu,pref,10dlu,pref,5dlu," +
         "pref,10dlu,pref,5dlu,pref,10dlu,pref,5dlu,pref,10dlu," +
-        "pref,5dlu,default,default,default,10dlu,default,5dlu,default"));
+        "pref,5dlu,default,default,default,10dlu,default,5dlu,default,10dlu,default,5dlu,default"));
     builder.border(Borders.DIALOG);
 
     mPluginLabel = new JLabel();
@@ -180,8 +183,35 @@ public class FavoritesSettingTab implements SettingsTab {
     
     builder.add(timeButtonSettings, CC.xyw(2, 25, 3));
     
-    builder.addSeparator(DefaultMarkingPrioritySelectionPanel.getTitle(), CC.xyw(1,27,4));
-    builder.add(mMarkingsPanel = DefaultMarkingPrioritySelectionPanel.createPanel(FavoritesPlugin.getInstance().getMarkPriority(),false,false), CC.xyw(2,29,3));
+    int filterStartType = FavoritesPlugin.getInstance().getFilterStartType();
+    
+    JPanel filterSettingsPanel = new JPanel(new FormLayout("10dlu,default:grow","default,2dlu,default,1dlu,default,1dlu,default,3dlu,default"));
+    
+    mFilterStartAll = new JRadioButton(mLocalizer.msg("filterStartAll", "Show all filter"), filterStartType == FilterableProgramListPanel.FILTER_START_ALL_TYPE);
+    mFilterStartDefault = new JRadioButton(mLocalizer.msg("filterStartDefault", "Default filter"), filterStartType == FilterableProgramListPanel.FILTER_START_DEFAULT_TYPE);
+    mFilterStartCurrent = new JRadioButton(mLocalizer.msg("filterStartCurrent", "Current filter"), filterStartType == FilterableProgramListPanel.FILTER_START_CURRENT_TYPE);
+    
+    ButtonGroup filterStartGroup = new ButtonGroup();
+    
+    filterStartGroup.add(mFilterStartAll);
+    filterStartGroup.add(mFilterStartDefault);
+    filterStartGroup.add(mFilterStartCurrent);
+    
+    mFilterReactOnChange = new JCheckBox(mLocalizer.msg("filterReactOnChange", "React on changes of selected filter of TV-Browser"), FavoritesPlugin.getInstance().reactOnFilterChange());
+    
+    JLabel filterStartLabel = new JLabel(mLocalizer.msg("filterStart", "Start with:"));
+    
+    filterSettingsPanel.add(filterStartLabel, CC.xyw(1, 1, 2));
+    filterSettingsPanel.add(mFilterStartAll, CC.xy(2, 3));
+    filterSettingsPanel.add(mFilterStartDefault, CC.xy(2, 5));
+    filterSettingsPanel.add(mFilterStartCurrent, CC.xy(2, 7));
+    filterSettingsPanel.add(mFilterReactOnChange, CC.xyw(1, 9, 2));
+    
+    builder.addSeparator(mLocalizer.msg("filter", "Program Filter"), CC.xyw(1,27,4));
+    builder.add(filterSettingsPanel, CC.xyw(2,29,3));
+    
+    builder.addSeparator(DefaultMarkingPrioritySelectionPanel.getTitle(), CC.xyw(1,31,4));
+    builder.add(mMarkingsPanel = DefaultMarkingPrioritySelectionPanel.createPanel(FavoritesPlugin.getInstance().getMarkPriority(),false,false), CC.xyw(2,33,3));
     
     return builder.getPanel();
   }
@@ -237,6 +267,17 @@ public class FavoritesSettingTab implements SettingsTab {
     FavoritesPlugin.getInstance().setShowDateSeparators(mShowDateSeparators.isSelected());
     FavoritesPlugin.getInstance().setProvideTab(mProvideTab.isSelected());
     FavoritesPlugin.getInstance().setTimeButtonsScrollToNextTimeInTab(mScrollTimeNext.isSelected());
+    FavoritesPlugin.getInstance().setReactOnFilterChange(mFilterReactOnChange.isSelected());
+    
+    if(mFilterStartAll.isSelected()) {
+      FavoritesPlugin.getInstance().setFilterStartType(FilterableProgramListPanel.FILTER_START_ALL_TYPE);
+    }
+    else if(mFilterStartDefault.isSelected()) {
+      FavoritesPlugin.getInstance().setFilterStartType(FilterableProgramListPanel.FILTER_START_DEFAULT_TYPE);
+    }
+    else {
+      FavoritesPlugin.getInstance().setFilterStartType(FilterableProgramListPanel.FILTER_START_CURRENT_TYPE);
+    }
 
     if(mExclusionPanel.wasChanged()) {
       FavoritesPlugin.getInstance().setGlobalExclusions(mExclusionPanel.getExclusions(),mExclusionPanel.wasAdded() && !mExclusionPanel.wasEditedOrDeleted());

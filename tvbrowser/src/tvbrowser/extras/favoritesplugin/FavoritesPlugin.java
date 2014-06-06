@@ -213,7 +213,7 @@ public class FavoritesPlugin {
       
       @Override
       public void filterSelected(ProgramFilter filter) {
-        if(mMangePanel != null) {
+        if(mMangePanel != null && reactOnFilterChange()) {
           mMangePanel.selectFilter(filter);
         }
       }
@@ -1578,5 +1578,21 @@ public class FavoritesPlugin {
   
   public void setTimeButtonsScrollToNextTimeInTab(boolean value) {
     mSettings.setProperty("timeButtonsScrollToNextTimeInTab", String.valueOf(value));
+  }
+  
+  public boolean reactOnFilterChange() {
+    return mSettings.getProperty("reactOnFilterChange", "true").equals("true");
+  }
+  
+  public void setReactOnFilterChange(boolean value) {
+    mSettings.setProperty("reactOnFilterChange", String.valueOf(value));
+  }
+  
+  public int getFilterStartType() {
+    return Integer.parseInt(mSettings.getProperty("filterStartType", "0"));
+  }
+  
+  public void setFilterStartType(int type) {
+    mSettings.setProperty("filterStartType", String.valueOf(type));
   }
 }
