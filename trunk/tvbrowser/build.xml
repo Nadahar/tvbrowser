@@ -573,7 +573,7 @@
         todir="${public.dir}"
         package="tvbrowser"
         section="utils"
-        depends="sun-java6-jre | openjdk-6-jre | sun-java7-jre | openjdk-7-jre | default-jre"
+        depends="sun-java6-jre | openjdk-6-jre | sun-java7-jre | openjdk-7-jre | openjdk-8-jre | default-jre | java6-runtime | java7-runtime | java8-runtime "
   	    recommends="openjdk-6-jre">
 
         <version upstream="${tvbrowser.version}"/>
@@ -586,6 +586,7 @@
   	    	<include name="imgs/**"/>
   	    	<include name="plugins/**"/>
   	    	<include name="themepacks/**"/>
+  	    	<include name="infothemes/**"/>
   	    	<exclude name="tvbrowser.sh"/>
   	    	<exclude name="tvbrowser.desktop"/>
   	    	<include name="*"/>
