@@ -495,7 +495,7 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction, Tree
     scrollPane.setMinimumSize(new Dimension(200,100));
     mSplitPane.setLeftComponent(scrollPane);
     
-    mProgramListPanel = new FilterableProgramListPanel(FilterableProgramListPanel.TYPE_NAME_AND_PROGRAM_FILTER, new Program[0], true, FavoritesPlugin.getInstance().showDateSeparators(), new ProgramPanelSettings(new PluginPictureSettings(PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE), false, ProgramPanelSettings.X_AXIS));
+    mProgramListPanel = new FilterableProgramListPanel(FilterableProgramListPanel.TYPE_NAME_AND_PROGRAM_FILTER, new Program[0], true, FavoritesPlugin.getInstance().showDateSeparators(), new ProgramPanelSettings(new PluginPictureSettings(PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE), false, ProgramPanelSettings.X_AXIS),FavoritesPlugin.getInstance().getFilterStartType());
     mProgramListPanel.setBorder(Borders.DLU2);
     
     mProgramList = mProgramListPanel.getProgramList();
