@@ -277,7 +277,7 @@ public class FilterableProgramListPanel extends JPanel implements FilterChangeLi
       ArrayList<ProgramFilter> titleFilterValues = new ArrayList<ProgramFilter>();
       HashMap<String, String> titleMap = new HashMap<String, String>();
             
-      if(FilterManagerImpl.getInstance().getAllFilter().equals(filter)) {
+      if(FilterManagerImpl.getInstance().getAllFilter().equals(filter) && ((ProgramFilter)mProgramFilterBox.getSelectedItem()).equals(FilterManagerImpl.getInstance().getAllFilter())) {
         for(Program p : mAllPrograms) {
           model.addElement(p);
           
@@ -288,8 +288,14 @@ public class FilterableProgramListPanel extends JPanel implements FilterChangeLi
         }
       }
       else {
+        ProgramFilter check = FilterManagerImpl.getInstance().getAllFilter();
+        
+        if(filter instanceof SimpleTitleFilter || filter.equals(check)) {
+          check = (ProgramFilter)mProgramFilterBox.getSelectedItem();
+        }
+        
         for(Program p : mAllPrograms) {
-          if(filter.accept(p)) {
+          if(check.accept(p) && filter.accept(p)) {
             model.addElement(p);
             
             if(!fromTitleFilter && mTitleFilterBox != null && titleMap.get(p.getTitle().toLowerCase()) == null) {
