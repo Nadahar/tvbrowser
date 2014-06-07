@@ -98,7 +98,6 @@
     <module>plugin-radiotimesdataservice</module>
     <module>plugin-recommendation</module>
     <module>plugin-rememberme</module>
-    <module>plugin-schedulesdirectdataservice</module>
     <module>plugin-sharedchannelautoupdate</module>
     <module>plugin-shareddataservice</module>
     <module>plugin-simplemarker</module>
@@ -127,6 +126,7 @@
     <module>plugin-switch</module>
     <module>plugin-netcontrol</module>
     <module>plugin-infoserver</module>
+    <module>plugin-schedulesdirectdataservice</module>
   </modules>
   <dependencyManagement>
     <dependencies>
