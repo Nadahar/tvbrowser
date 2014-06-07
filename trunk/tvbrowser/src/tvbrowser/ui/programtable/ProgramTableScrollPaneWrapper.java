@@ -53,6 +53,7 @@ public class ProgramTableScrollPaneWrapper extends PluginCenterPanel {
   public static final int INFO_EMPTY_FILTER_RESULT = 0;
   public static final int INFO_NO_CHANNELS_SUBSCRIBED = 1;
   public static final int INFO_EMPTY_CHANNEL_GROUP = 2;
+  public static final int INFO_NO_DATA = 3;
   
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(ProgramTableScrollPaneWrapper.class);
   private ProgramTableScrollPane mProgramTableScrollPane;
@@ -120,6 +121,10 @@ public class ProgramTableScrollPaneWrapper extends PluginCenterPanel {
           infoText = mLocalizer.msg("infoEmptyChannelGroup", "The used channel group '{0}' seems to be empty.", name);
           buttonText = mLocalizer.msg("buttonEmptyChanenlGroup", "Deactivate channel group");
           break;
+        case INFO_NO_DATA: 
+          infoText = mLocalizer.msg("infoNoDate", "No data is available.");
+          buttonText = mLocalizer.msg("buttonLoadData", "Update data");
+          break;
       }
       
       JButton action = new JButton(buttonText);
@@ -130,6 +135,7 @@ public class ProgramTableScrollPaneWrapper extends PluginCenterPanel {
             case INFO_EMPTY_FILTER_RESULT: MainFrame.getInstance().setProgramFilter(FilterManagerImpl.getInstance().getAllFilter());break;
             case INFO_NO_CHANNELS_SUBSCRIBED: PluginManagerImpl.getInstance().showSettings(SettingsItem.CHANNELS);break;
             case INFO_EMPTY_CHANNEL_GROUP: MainFrame.getInstance().setChannelGroup(null);break;
+            case INFO_NO_DATA: MainFrame.getInstance().updateTvData();break;
           }
         }
       });
