@@ -2174,10 +2174,14 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
   private void checkFilterInfoPanel() {
     ProgramFilter filter = mProgramTableModel.getProgramFilter();
     
-    if(filter != null && !filter.equals(FilterManagerImpl.getInstance().getAllFilter()) && mProgramTableModel.getColumnCount() == 0 && mProgramTableModel.getAvailableChannelCount() > 0) {
+    if(!TvDataBase.getInstance().dataAvailable(mProgramTableModel.getDate()) && mProgramTableModel.getAvailableChannelCount() > 0) {
+      mScrollPaneWrapper.showInfoPanel(ProgramTableScrollPaneWrapper.INFO_NO_DATA,null);
+    }
+    else if(filter != null && !filter.equals(FilterManagerImpl.getInstance().getAllFilter()) && mProgramTableModel.getColumnCount() == 0 && mProgramTableModel.getAvailableChannelCount() > 0) {
       mScrollPaneWrapper.showInfoPanel(ProgramTableScrollPaneWrapper.INFO_EMPTY_FILTER_RESULT, filter.getName());
     }
     else {
+      mScrollPaneWrapper.removeInfoPanel(ProgramTableScrollPaneWrapper.INFO_NO_DATA);
       mScrollPaneWrapper.removeInfoPanel(ProgramTableScrollPaneWrapper.INFO_EMPTY_FILTER_RESULT);
       setChannelGroup(mProgramTableModel.getChannelGroup());
     }
