@@ -40,8 +40,9 @@ import devplugin.Channel;
 import devplugin.Program;
 import devplugin.ProgramFieldType;
 import devplugin.ProgramFilter;
+import devplugin.ProgramInfoHelper;
 
-public class Exclusion implements Comparable {
+public class Exclusion implements Comparable<Exclusion> {
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(Exclusion.class);
   
   public static final int DAYLIMIT_DAILY = LimitationConfiguration.DAYLIMIT_DAILY;
@@ -57,6 +58,7 @@ public class Exclusion implements Comparable {
   private int mTimeTo;
   private int mDayOfWeek;
   private String mFilterName;
+  private int mCategory;
 
   /**
    * Creates a new exclusion criteria.
@@ -68,8 +70,9 @@ public class Exclusion implements Comparable {
    * @param dayOfWeek The day of week to use.
    * @param filterName The name of the filter to use;
    * @param episodeTitle null, if any episode title is allowed
+   * @param category the category of the program or 0 if no category should be filtered
    */
-  public Exclusion(String title, String topic, Channel channel, int timeFrom, int timeTo, int dayOfWeek, String filterName, String episodeTitle) {
+  public Exclusion(String title, String topic, Channel channel, int timeFrom, int timeTo, int dayOfWeek, String filterName, String episodeTitle, int category) {
     mTitle = title;
     mTopic = topic;
     mChannel = new ChannelItem(channel);
@@ -78,6 +81,7 @@ public class Exclusion implements Comparable {
     mDayOfWeek = dayOfWeek;
     mFilterName = filterName;
     mEpisodeTitle = episodeTitle;
+    mCategory = category;
   }
 
   public Exclusion(ObjectInputStream in) throws ClassNotFoundException, IOException {
@@ -138,11 +142,15 @@ public class Exclusion implements Comparable {
         mEpisodeTitle = in.readUTF();
       }
     }
+    
+    if(version > 6) {
+      mCategory = in.readInt();
+    }
   }
 
 
   public void writeData(ObjectOutputStream out) throws IOException {
-    out.writeInt(6);  // version
+    out.writeInt(7);  // version
     out.writeBoolean(mChannel != null);
     if (mChannel != null) {
       mChannel.saveItem(out);
@@ -171,6 +179,8 @@ public class Exclusion implements Comparable {
     if(mEpisodeTitle != null) {
       out.writeUTF(mEpisodeTitle);
     }
+    
+    out.writeInt(mCategory);
   }
 
 
@@ -213,6 +223,10 @@ public class Exclusion implements Comparable {
   public int getDayOfWeek() {
     return mDayOfWeek;
   }
+  
+  public int getCategory() {
+    return mCategory;
+  }
 
 
   public boolean isProgramExcluded(Program prog) {
@@ -223,6 +237,7 @@ public class Exclusion implements Comparable {
     boolean dayExcl = false;
     boolean filterExclusion = false;
     boolean episodeTitleExcl = false;
+    boolean categoryExcl = false;
     
     if(isInvalid()) {
       return false;
@@ -335,7 +350,14 @@ public class Exclusion implements Comparable {
       episodeTitleExcl = true;
     }
     
-    return channelExcl && titleExcl && topicExcl && timeExcl && dayExcl && filterExclusion && episodeTitleExcl;
+    if(mCategory != 0) {
+      categoryExcl = ProgramInfoHelper.bitSet(prog.getInfo(),mCategory);
+    }
+    else {
+      categoryExcl = true;
+    }
+    
+    return channelExcl && titleExcl && topicExcl && timeExcl && dayExcl && filterExclusion && episodeTitleExcl && categoryExcl;
   }
   
   /**
@@ -348,7 +370,7 @@ public class Exclusion implements Comparable {
   }
 
   @Override
-  public int compareTo(Object other) {
+  public int compareTo(Exclusion other) {
     return toString().compareToIgnoreCase(other.toString());
   }
   
@@ -390,6 +412,15 @@ public class Exclusion implements Comparable {
     }
     else if(timeMsg != null) {
       textValue.append(mLocalizer.msg("exclude.time","Exclude all programs ")).append(timeMsg);
+    }
+    
+    if(mCategory != 0) {
+      if(timeMsg != null && (mTitle != null || mTopic != null || mEpisodeTitle != null || filter != null || mChannel.getChannel() != null)) {
+        textValue.append(" ").append(mLocalizer.msg("exclude.appendCategory","with category '")).append(ProgramInfoHelper.getMessageForBit(mCategory)).append("'");
+      }
+      else {
+        textValue.append(mLocalizer.msg("exclude.category","Exclude all programs with category '")).append(ProgramInfoHelper.getMessageForBit(mCategory)).append("'");
+      }
     }
     
     if(textValue.length() < 1) {
