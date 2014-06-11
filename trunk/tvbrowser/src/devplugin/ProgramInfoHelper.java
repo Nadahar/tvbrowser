@@ -150,5 +150,56 @@ public class ProgramInfoHelper {
     public static final String[] getInfoIconMessages() {
       return mInfoMsgArr.clone();
     }
+    
+    /**
+     * 
+     * @param bit The bit to get message for.
+     * @return The message for the given bit.
+     * @since 3.3.4
+     */
+    public static String getMessageForBit(int bit) {
+      int[] bits = ProgramInfoHelper.getInfoBits();
+      String[] names = ProgramInfoHelper.getInfoIconMessages();
+      
+      for(int i = 0; i < bits.length; i++) {
+        if(bits[i] == bit) {
+          return names[i];
+        }
+      }
+      
+      return "Unknown";
+    }
 
+    /**
+     * @param bit The bit to get the index for.
+     * @return The index of the bit or -1 if bit not found.
+     * @since 3.3.4
+     */
+    public static int getIndexForBit(int bit) {
+      int[] bits = ProgramInfoHelper.getInfoBits();
+      
+      for(int i = 0; i < bits.length; i++) {
+        if(bits[i] == bit) {
+          return i;
+        }
+      }
+      
+      return -1;
+    }
+    
+    /**
+     * 
+     * @param index The index to get the bit for.
+     * @return The bit for the index or 0 if index available.
+     * @since 3.3.4
+     */
+    public static int getBitForIndex(int index) {
+      int[] bits = ProgramInfoHelper.getInfoBits();
+      
+      if(index >= 0 && index < bits.length) {
+        return bits[index];
+      }
+      
+      return 0;
+    }
 }

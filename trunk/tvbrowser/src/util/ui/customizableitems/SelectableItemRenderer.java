@@ -38,6 +38,7 @@ import javax.swing.ListCellRenderer;
 import javax.swing.SwingConstants;
 
 import tvbrowser.core.Settings;
+import util.ui.Localizer;
 import util.ui.UiUtilities;
 import devplugin.Channel;
 
@@ -47,6 +48,8 @@ import devplugin.Channel;
  * @author René Mach
  */
 public class SelectableItemRenderer implements ListCellRenderer {
+  private static final Localizer LOCALIZER = Localizer.getLocalizerFor(SelectableItemRenderer.class);
+  
   private int mSelectionWidth;
   private boolean mIsEnabled = true;
   
@@ -103,10 +106,11 @@ public class SelectableItemRenderer implements ListCellRenderer {
       } else {
         l.setForeground(list.getForeground());
       }
+    } else if(selectableItem.getItem() instanceof String && selectableItem.getItem().equals("\n")) {
+      cb.setText(LOCALIZER.msg("lineFeed", "Line feed"));
     } else {
       cb.setText(selectableItem.getItem().toString());
     }
-    
     if (isSelected && mIsEnabled) {
       p.setOpaque(true);
       p.setBackground(list.getSelectionBackground());
