@@ -25,10 +25,14 @@
 package tvbrowser.ui.mainframe;
 
 import java.awt.Graphics;
+import java.awt.Toolkit;
 import java.awt.Window;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -47,11 +51,14 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JSeparator;
 import javax.swing.KeyStroke;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
+
+import com.l2fprod.common.demo.Main;
 
 import tvbrowser.TVBrowser;
 import tvbrowser.core.ChannelList;
@@ -101,7 +108,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 
 	private MainFrame mMainFrame;
 
-  protected JMenuItem mQuitMI, mRestartMI, mToolbarMI, mSettingsMI, mAboutMI; // these are accessed in MacOS menu sub class
+  protected JMenuItem mQuitMI, mRestartMI, mToolbarMI, mSettingsMI, mAboutMI, mDebugMI, mDonateMI; // these are accessed in MacOS menu sub class
   protected JMenu mPluginsMenu, mHelpMenu; // these are accessed in common menu sub class
 
 	private JMenuItem mStatusbarMI,
@@ -372,6 +379,17 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 				"menuinfo.pluginInfoDlg",
 				"Describes the Plugin functionality of TV-Browser."), mLabel);
 
+		mDebugMI = createMenuItem("menuitem.debug", "Create debug info", new ImageIcon(
+        "imgs/tvbrowser16.png"), false);
+		mDebugMI.addActionListener(this);
+		new MenuHelpTextAdapter(mDebugMI, mLocalizer.msg("menuinfo.debug", ""),
+        mLabel);
+		
+    mDonateMI = createMenuItem("menuitem.donate", "How to donate?", TVBrowserIcons.webBrowser(TVBrowserIcons.SIZE_SMALL), false);
+    mDonateMI.addActionListener(this);
+    new MenuHelpTextAdapter(mDonateMI, mLocalizer.msg("menuinfo.donate", ""),
+        mLabel);
+		
 		mAboutMI = createMenuItem("menuitem.about", "About", new ImageIcon(
 				"imgs/tvbrowser16.png"), false);
 		mAboutMI.addActionListener(this);
@@ -1059,6 +1077,46 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 			mMainFrame.showSettingsDialog(SettingsItem.TIMEBUTTONS);
 		} else if (source == mToolbarCustomizeMI) {
 			new ToolBarDragAndDropSettings();
+		} else if(source == mDebugMI) {
+		  StringBuilder infoBuilder = new StringBuilder();
+		  		  
+		  infoBuilder.append("System: ").append(System.getProperty("os.name")).append(" ").append(System.getProperty("os.version")).append(" ").append(System.getProperty("os.arch")).append(" ").append(System.getProperty("file.encoding"));
+		  infoBuilder.append("\nJava: ").append(System.getProperty("java.runtime.name")).append(" ").append(System.getProperty("java.version")).append(" ").append(System.getProperty("java.home"));
+		  infoBuilder.append("\nTV-Browser: ").append(TVBrowser.VERSION).append(" ").append(new File("").getAbsolutePath());
+		  infoBuilder.append("\nUser settings: ").append(System.getProperty("user.dir")).append(" ").append(System.getProperty("user.language")).append(" ").append(System.getProperty("user.country")).append(" ").append(System.getProperty("user.timezone"));
+		  infoBuilder.append("\n\nInstalled plugins:");
+		  
+		  PluginProxy[] plugins = PluginProxyManager.getInstance().getAllPlugins();
+		  
+		  for(PluginProxy plugin : plugins) {
+		    infoBuilder.append("\n  ").append(plugin.getId()).append(" ").append(plugin.isActivated());
+		  }
+		  
+		  infoBuilder.append("\n\nSubscribed channels:");
+		  
+		  Channel[] channels = ChannelList.getSubscribedChannels();
+		  
+		  for(Channel ch : channels) {
+		    infoBuilder.append("\n  ").append(ch.getName()).append(" ").append(ch.getDataServicePackageName());
+		  }
+		  
+		  infoBuilder.append("\n\nData available:");
+		  
+		  Date test = Date.getCurrentDate().addDays(-1);
+		  Date maxDate = TvDataBase.getInstance().getMaxSupportedDate();
+		  
+		  while(test.compareTo(maxDate) < 0) {
+		    infoBuilder.append("\n  ").append(test).append(" ").append(TvDataBase.getInstance().dataAvailable(test));
+		    test = test.addDays(1);
+		  }
+		  
+		  StringSelection stringSelection = new StringSelection (infoBuilder.toString());
+		  Clipboard clpbrd = Toolkit.getDefaultToolkit ().getSystemClipboard ();
+		  clpbrd.setContents (stringSelection, null);
+		  
+		  JOptionPane.showMessageDialog(UiUtilities.getLastModalChildOf(MainFrame.getInstance()), mLocalizer.msg("debugCopied", "Debug information copied to clipboard."), Localizer.getLocalization(Localizer.I18N_INFO), JOptionPane.INFORMATION_MESSAGE);
+		} else if(source == mDonateMI) {
+		  Launch.openURL("http://www.tvbrowser.org/index.php?id=donations");
 		}
 	}
 
