@@ -990,7 +990,7 @@ public class Settings {
     }
 
     propArr = new Property[] { propProgramTableIconPlugins,
-        propProgramInfoFields };
+        propProgramInfoFields, propProgramInfoFieldsSeparators };
     if (mProp.hasChanged(propArr)) {
       // Force a recreation of the table content
       DefaultProgramTableModel model = mainFrame.getProgramTableModel();
@@ -1479,6 +1479,13 @@ public class Settings {
           ProgramFieldType.GENRE_TYPE, ProgramFieldType.EPISODE_TYPE,
           ProgramFieldType.ORIGIN_TYPE, ProgramFieldType.PRODUCTION_YEAR_TYPE,
           ProgramFieldType.SHORT_DESCRIPTION_TYPE });
+  
+  /** Contains the separators for the selected program info filed of a program panel */
+  public static final StringArrayProperty propProgramInfoFieldsSeparators = new StringArrayProperty(
+      mProp, "programpanel.infoFieldsSeparators", new String[] {
+         " "," ",
+         " "," "
+      });
 
   public static final StringArrayProperty propProgramTableIconPlugins = new StringArrayProperty(
       mProp, "programpanel.iconPlugins", new String[] { PICTURE_ID,INFO_ID,
@@ -1962,6 +1969,9 @@ public class Settings {
   
   public static final StringProperty propInfoIconThemeID = new StringProperty(
       mProp, "infoIconThemeName", "tvb_default.zip");
+  
+  public static final BooleanProperty propVerboseLogging = new BooleanProperty(
+      mProp, "verboseLogging", false);
   
   /**
    * Sets the window position and size for the given window with the values of

@@ -610,7 +610,12 @@ public class TvDataBase {
 
   private synchronized void correctDayProgramFile(Date date,
       Channel channel) {
-    mLog.info(new java.util.Date(System.currentTimeMillis()) + ": CorrectDayProgramFile " + date + " " + channel);
+    boolean verbose = Settings.propVerboseLogging.getBoolean();
+    
+    if(verbose) {
+      mLog.info(new java.util.Date(System.currentTimeMillis()) + ": CorrectDayProgramFile " + date + " " + channel);
+    }
+    
     File file = getDayProgramFile(date, channel);
     String key = getDayProgramKey(date, channel);
     if (!file.exists()) {
@@ -635,10 +640,17 @@ public class TvDataBase {
       
       mCurrentAddedDayProgram = checkProg.getDayProgram();
 
-      mLog.info(new java.util.Date(System.currentTimeMillis()) + ": START calculate missing length");
+      if(verbose) {
+        mLog.info(new java.util.Date(System.currentTimeMillis()) + ": START calculate missing length");
+      }
+      
       boolean somethingChanged = calculateMissingLengths(mCurrentAddedDayProgram);
-      mLog.info(new java.util.Date(System.currentTimeMillis()) + ": END calculate missing length");
-      mLog.info(new java.util.Date(System.currentTimeMillis()) + ": FIRE DAY PROGRAM ADDED");
+      
+      if(verbose) {
+        mLog.info(new java.util.Date(System.currentTimeMillis()) + ": END calculate missing length");
+        mLog.info(new java.util.Date(System.currentTimeMillis()) + ": FIRE DAY PROGRAM ADDED");
+      }
+      
       // fire day program added to give plugins a chance to change programs
       fireDayProgramAdded(mCurrentAddedDayProgram);
       /*if((oldProg = mNewDayProgramsAfterUpdate.remove(key)) != null) {
@@ -653,7 +665,11 @@ public class TvDataBase {
       else if(somethingChanged){
         fireDayProgramAdded(checkProg);
       }*/
-      mLog.info(new java.util.Date(System.currentTimeMillis()) + ": SOMETHING CHANGED: " + somethingChanged);
+      
+      if(verbose) {
+        mLog.info(new java.util.Date(System.currentTimeMillis()) + ": SOMETHING CHANGED: " + somethingChanged);
+      }
+      
       if (mCurrentAddedDayProgram.getAndResetChangedByPluginState() || somethingChanged) {
         // Some missing lengths could now be calculated
         // -> Try to save the changes
@@ -1087,10 +1103,16 @@ public class TvDataBase {
   }*/
   
   void sendNewProgramsToTvDataListener() {
+    boolean verbose = Settings.propVerboseLogging.getBoolean();
     Enumeration<ChannelDayKey> keys = mSendToTvDataListener.keys();
+    
     while(keys.hasMoreElements()) {
       ChannelDayKey key = keys.nextElement();
-      mLog.info(new java.util.Date(System.currentTimeMillis()) + ": SEND TO PLUGINS " + key);
+      
+      if(verbose) {
+        mLog.info(new java.util.Date(System.currentTimeMillis()) + ": SEND TO PLUGINS " + key);
+      }
+      
       UpdateData updateData = mSendToTvDataListener.remove(key);
       //Object oldProg = mSendToTvDataListener.remove(key);
     
