@@ -97,6 +97,8 @@ public class FilterableProgramListPanel extends JPanel implements FilterChangeLi
   
   private boolean mShowDateSeparators;
   
+  private int mType;
+  
   /**
    * Create an new FilterableProgramListPanel.
    * <p>
@@ -108,6 +110,7 @@ public class FilterableProgramListPanel extends JPanel implements FilterChangeLi
    * @param startType The start type of this panels program filter combo box.
    */
   public FilterableProgramListPanel(int type, Program[] programs, boolean showNumberOfPrograms, boolean showDateSeparators, ProgramPanelSettings progPanelSettings, int startType) {
+    mType = type;
     mProgramListModel = new DefaultListModel();
     mProgramList = new ProgramList(mProgramListModel, progPanelSettings);
     mShowDateSeparators = showDateSeparators;
@@ -166,8 +169,9 @@ public class FilterableProgramListPanel extends JPanel implements FilterChangeLi
     
     int y = 1;
     
+    mProgramFilterBox = new WideComboBox();
+    
     if(type == TYPE_NAME_AND_PROGRAM_FILTER || type == TYPE_PROGRAM_ONLY_FILTER) {
-      mProgramFilterBox = new WideComboBox();
       mProgramFilterBox.addItemListener(new ItemListener() {
         @Override
         public void itemStateChanged(ItemEvent e) {
@@ -186,6 +190,9 @@ public class FilterableProgramListPanel extends JPanel implements FilterChangeLi
       add(mProgramFilterBox, CC.xy(3, y++));
       
       y++;
+    }
+    else {
+      mProgramFilterBox.addItem(FilterManagerImpl.getInstance().getAllFilter());
     }
     
     if(type == TYPE_NAME_AND_PROGRAM_FILTER || type == TYPE_NAME_ONLY_FILTER) {
@@ -243,25 +250,31 @@ public class FilterableProgramListPanel extends JPanel implements FilterChangeLi
 
   @Override
   public void filterAdded(ProgramFilter filter) {
-    mProgramFilterBox.addItem(filter);
+    if(mType == TYPE_NAME_AND_PROGRAM_FILTER || mType == TYPE_PROGRAM_ONLY_FILTER) {
+      mProgramFilterBox.addItem(filter);
+    }
   }
 
   @Override
   public void filterRemoved(ProgramFilter filter) {
-    if(mProgramFilterBox.getSelectedItem().equals(filter)) {
-      mProgramFilterBox.setSelectedItem(FilterManagerImpl.getInstance().getAllFilter());
+    if(mType == TYPE_NAME_AND_PROGRAM_FILTER || mType == TYPE_PROGRAM_ONLY_FILTER) {
+      if(mProgramFilterBox.getSelectedItem().equals(filter)) {
+        mProgramFilterBox.setSelectedItem(FilterManagerImpl.getInstance().getAllFilter());
+      }
+      
+      mProgramFilterBox.removeItem(filter);
     }
-    
-    mProgramFilterBox.removeItem(filter);
   }
 
   @Override
   public void filterTouched(ProgramFilter filter) {
-    if(mProgramFilterBox.getSelectedItem().equals(filter)) {
-      filterPrograms(filter);
+    if(mType == TYPE_NAME_AND_PROGRAM_FILTER || mType == TYPE_PROGRAM_ONLY_FILTER) {
+      if(mProgramFilterBox.getSelectedItem().equals(filter)) {
+        filterPrograms(filter);
+      }
+      
+      mProgramFilterBox.updateUI();
     }
-    
-    mProgramFilterBox.updateUI();
   }
   
   private void filterPrograms(ProgramFilter filter) {
@@ -412,20 +425,33 @@ public class FilterableProgramListPanel extends JPanel implements FilterChangeLi
   @Override
   public void updatePersona() {
     if(Persona.getInstance().getHeaderImage() != null) {
-      mProgramFilterLabel.setForeground(Persona.getInstance().getTextColor());
-      mTitleFilterLabel.setForeground(Persona.getInstance().getTextColor());
-      mNumberLabel.setForeground(Persona.getInstance().getTextColor());
+      if(mProgramFilterLabel != null) {
+        mProgramFilterLabel.setForeground(Persona.getInstance().getTextColor());
+      }
+      if(mTitleFilterLabel != null) {
+        mTitleFilterLabel.setForeground(Persona.getInstance().getTextColor());
+      }
+      if(mNumberLabel != null) {
+        mNumberLabel.setForeground(Persona.getInstance().getTextColor());
+      }
     }
     else {
-      mProgramFilterLabel.setForeground(UIManager.getColor("Label.foreground"));
-      mTitleFilterLabel.setForeground(UIManager.getColor("Label.foreground"));
-      mNumberLabel.setForeground(UIManager.getColor("Label.foreground"));
+      if(mProgramFilterLabel != null) {
+        mProgramFilterLabel.setForeground(UIManager.getColor("Label.foreground"));
+      }
+      if(mTitleFilterLabel != null) {
+        mTitleFilterLabel.setForeground(UIManager.getColor("Label.foreground"));
+      }
+      if(mNumberLabel != null) {
+        mNumberLabel.setForeground(UIManager.getColor("Label.foreground"));
+      }
     }
   }
   
-  /** Sets the filter to the given filter (only if type is {@value #TYPE_NAME_AND_PROGRAM_FILTER} or {@value #TYPE_PROGRAM_ONLY_FILTER} ) */
+  /** Sets the filter to the given filter (only if type is {@value #TYPE_NAME_AND_PROGRAM_FILTER} or {@value #TYPE_PROGRAM_ONLY_FILTER} ) 
+   * @param filter The filter to select in the program filter box*/
   public void selectFilter(ProgramFilter filter) {
-    if(mProgramFilterBox != null && filter != null) {
+    if((mType == TYPE_NAME_AND_PROGRAM_FILTER || mType == TYPE_PROGRAM_ONLY_FILTER) && filter != null) {
       mProgramFilterBox.setSelectedItem(filter);
     }
   }
