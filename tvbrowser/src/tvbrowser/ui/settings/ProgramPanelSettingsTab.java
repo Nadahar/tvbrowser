@@ -28,13 +28,15 @@ package tvbrowser.ui.settings;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -43,6 +45,7 @@ import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
 
 import tvbrowser.core.Settings;
+import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.icontheme.InfoIconTheme;
 import tvbrowser.core.icontheme.InfoThemeLoader;
 import tvbrowser.core.plugin.PluginManagerImpl;
@@ -53,6 +56,7 @@ import tvbrowser.ui.settings.util.ColorLabel;
 import util.ui.EnhancedPanelBuilder;
 import util.ui.Localizer;
 import util.ui.OrderChooser;
+import util.ui.TVBrowserIcons;
 import util.ui.UiUtilities;
 import util.ui.customizableitems.SelectableItemRendererCenterComponentIf;
 
@@ -142,11 +146,34 @@ public class ProgramPanelSettingsTab implements SettingsTab {
     // info text
     panel.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("infoText", "Info text")), cc
         .xyw(4, panel.getRowCount(), 2));
-
+    
     ProgramFieldType[] allTypeArr = getAvailableTypes();
     ProgramFieldType[] typeOrderArr = getSelectedTypes();
+    String[] separators = Settings.propProgramInfoFieldsSeparators.getStringArray();
+    
     mInfoTextOCh = new OrderChooser(typeOrderArr, allTypeArr);
-
+    
+    JButton addLineBreak = new JButton(IconLoader.getInstance().getIconFromTheme("actions", "add-line-break", TVBrowserIcons.SIZE_LARGE));
+    addLineBreak.setToolTipText(mLocalizer.msg("addLineBreakTooltip", "Adds line break"));
+    addLineBreak.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        mInfoTextOCh.addElement("\n",mInfoTextOCh.getSelectedIndex()+1,true);
+      }
+    });
+    
+    mInfoTextOCh.addButton(addLineBreak);
+    
+    for(int i = separators.length-1; i >= 0; i--) {
+      if(separators[i].replace(" ", "").length() > 0) {
+        String[] splitSeparators = separators[i].split(";#;");
+        
+        for(String sep : splitSeparators) {
+          mInfoTextOCh.addElement(sep, i+1, true);
+        }
+      }
+    }
+    
     panel.addGrowingRow();
     panel.add(mIconPluginOCh, cc.xy(2, panel.getRowCount()));
     panel.add(mInfoTextOCh, cc.xy(4, panel.getRowCount()));
@@ -296,15 +323,41 @@ public class ProgramPanelSettingsTab implements SettingsTab {
       pluginIdArr[i] = plugin.getId();
     }
     Settings.propProgramTableIconPlugins.setStringArray(pluginIdArr);
-
+    
     // info text
     Object[] infoFieldArr = mInfoTextOCh.getOrder();
-    ProgramFieldType[] typeArr = new ProgramFieldType[infoFieldArr.length];
-    for (int i = 0; i < typeArr.length; i++) {
-      typeArr[i] = (ProgramFieldType) infoFieldArr[i];
+    ArrayList<ProgramFieldType> fieldTypeList = new ArrayList<ProgramFieldType>();
+    ArrayList<String> separatorList = new ArrayList<String>();
+    
+    for (int i = 0; i < infoFieldArr.length; i++) {
+      if(infoFieldArr[i] instanceof ProgramFieldType) {
+        fieldTypeList.add((ProgramFieldType)infoFieldArr[i]);
+        
+        if(i < infoFieldArr.length-1 && infoFieldArr[i+1] instanceof String) {
+          i++;
+          
+          StringBuilder separator = new StringBuilder();
+          separator.append(infoFieldArr[i]);
+          
+          int j = i+1;
+          
+          while(j < infoFieldArr.length && infoFieldArr[j] instanceof String) {
+            separator.append(";#;").append(infoFieldArr[j]);
+            j++;
+            i++;
+          }
+          
+          separatorList.add(separator.toString());
+        }
+        else {
+          separatorList.add(" ");
+        }
+      }
     }
-    Settings.propProgramInfoFields.setProgramFieldTypeArray(typeArr);
-
+    
+    Settings.propProgramInfoFields.setProgramFieldTypeArray(fieldTypeList.toArray(new ProgramFieldType[fieldTypeList.size()]));
+    Settings.propProgramInfoFieldsSeparators.setStringArray(separatorList.toArray(new String[separatorList.size()]));
+    
     Settings.propProgramTableOnAirProgramsShowingBorder.setBoolean(mBorderForOnAirPrograms.isSelected());
 
     Settings.propProgramTableColorOnAirDark.setColor(mProgramItemProgressColorLb.getColor());

@@ -72,7 +72,7 @@ public class OrderChooser extends JPanel implements ListDropAction{
   private JButton mDeSelectAllBt;
   private boolean mIsEnabled = true;
   private JScrollPane mScrollPane;
-
+  private JPanel mButtonPanel;
 
   /**
    * Constructs an OrderChooser without selection Buttons.
@@ -108,7 +108,7 @@ public class OrderChooser extends JPanel implements ListDropAction{
   public OrderChooser(Object[] currOrder, Object[] allItems, boolean showSelectionButtons, final Class renderClass, final SelectableItemRendererCenterComponentIf renderComponent) {
     super(new BorderLayout());
 
-    JPanel p1, p2, p3, main;
+    JPanel p1, p3, main;
     
     main = new JPanel(new BorderLayout(0,3));
 
@@ -158,9 +158,9 @@ public class OrderChooser extends JPanel implements ListDropAction{
     
     p1 = new JPanel(new BorderLayout());
     p1.setBorder(BorderFactory.createEmptyBorder(0, Sizes.dialogUnitXAsPixel(3, p1), 0, 0));
-    p2 = new JPanel(new TabLayout(1));
+    mButtonPanel = new JPanel(new TabLayout(1));
     add(p1, BorderLayout.EAST);
-    p1.add(p2, BorderLayout.NORTH);
+    p1.add(mButtonPanel, BorderLayout.NORTH);
 
     mUpBt = new JButton(TVBrowserIcons.up(TVBrowserIcons.SIZE_LARGE));
     mUpBt.setToolTipText(mLocalizer.msg("tooltip.up", "Move selected rows up"));
@@ -169,7 +169,7 @@ public class OrderChooser extends JPanel implements ListDropAction{
         UiUtilities.moveSelectedItems(mList,-1);
       }
     });
-    p2.add(mUpBt);
+    mButtonPanel.add(mUpBt);
 
     mDownBt = new JButton(TVBrowserIcons.down(TVBrowserIcons.SIZE_LARGE));
     mDownBt.setToolTipText(mLocalizer.msg("tooltip.down", "Move selected rows down"));
@@ -178,7 +178,7 @@ public class OrderChooser extends JPanel implements ListDropAction{
         UiUtilities.moveSelectedItems(mList,1);
       }
     });
-    p2.add(mDownBt);
+    mButtonPanel.add(mDownBt);
     
     p3 = new JPanel(new BorderLayout());
     
@@ -438,5 +438,35 @@ public class OrderChooser extends JPanel implements ListDropAction{
    */
   public int getItemCount() {
     return mList.getModel().getSize();
+  }
+  
+  /**
+   * Adds a button to the button panel.
+   * <p>
+   * @param button The button to add to the panel.
+   * @since 3.3.4
+   */
+  public void addButton(JButton button) {
+    mButtonPanel.add(button);
+  }
+  
+  /**
+   * Adds an element to the list of items at the given index (or at the end if index not available).
+   * <p>
+   * @param value The element to add.
+   * @param index The index to insert the element.
+   * @param selected If the value should be selected.
+   */
+  public void addElement(Object value, int index, boolean selected) {
+    SelectableItem item = new SelectableItem(value,selected);
+    
+    if(index < mListModel.getSize()) {
+      mListModel.add(index, item);
+    }
+    else {
+      mListModel.addElement(item);
+    }
+    
+    mList.repaint();
   }
 }

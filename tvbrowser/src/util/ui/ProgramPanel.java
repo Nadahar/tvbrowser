@@ -531,7 +531,8 @@ private static Font getDynamicFontSize(Font font, int offset) {
         mDescriptionIcon.setMaximumLineCount(maxDescLines);
         ProgramFieldType[] infoFieldArr = Settings.propProgramInfoFields
             .getProgramFieldTypeArray();
-        Reader infoReader = new MultipleFieldReader(program, infoFieldArr);
+        String[] infoFieldSeparatorArr = Settings.propProgramInfoFieldsSeparators.getStringArray();
+        Reader infoReader = new MultipleFieldReader(program, infoFieldArr, infoFieldSeparatorArr);
         try {
           mDescriptionIcon.setText(infoReader);
         } catch (IOException exc) {

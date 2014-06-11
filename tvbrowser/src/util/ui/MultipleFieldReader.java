@@ -28,6 +28,7 @@ package util.ui;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
+import java.util.Arrays;
 
 import util.io.IOUtilities;
 
@@ -51,7 +52,7 @@ public class MultipleFieldReader extends Reader {
   private Program mProgram;
   
   /** The String to use for separating fields. */
-  private String mFieldSeparator;
+  private String[] mFieldSeparators;
 
   /** The fields that should be read. */
   private ProgramFieldType[] mInfoFieldArr;
@@ -76,7 +77,6 @@ public class MultipleFieldReader extends Reader {
     this (program, infoFieldArr, DEFAULT_FIELD_SEPARATOR);
   }
   
-  
   /**
    * Creates a new instance of MultipleFieldReader.
    * 
@@ -84,12 +84,30 @@ public class MultipleFieldReader extends Reader {
    * @param infoFieldArr The fields that should be read.
    * @param fieldSeparator The String to use for separating fields.
    */
-  public MultipleFieldReader(Program program, ProgramFieldType[] infoFieldArr,
-    String fieldSeparator)
-  {
+  public MultipleFieldReader(Program program, ProgramFieldType[] infoFieldArr, String fieldSeparator) {
+    String[] fieldSeparatorArr = new String[infoFieldArr.length];
+    
     mProgram = program;
     mInfoFieldArr = infoFieldArr;
-    mFieldSeparator = fieldSeparator;
+    mFieldSeparators = fieldSeparatorArr;
+    
+    Arrays.fill(mFieldSeparators, fieldSeparator);
+    
+    mCurrentField = -1;
+    mReadFieldCount = 0;
+  }
+  
+  /**
+   * Creates a new instance of MultipleFieldReader.
+   * 
+   * @param program The program to read the fields from.
+   * @param infoFieldArr The fields that should be read.
+   * @param fieldSeparatorArr An array with field separators after each field (not matching indices are ignored).
+   */
+  public MultipleFieldReader(Program program, ProgramFieldType[] infoFieldArr, String[] fieldSeparatorArr) {
+    mProgram = program;
+    mInfoFieldArr = infoFieldArr;
+    mFieldSeparators = fieldSeparatorArr;
     
     mCurrentField = -1;
     mReadFieldCount = 0;
@@ -182,10 +200,9 @@ public class MultipleFieldReader extends Reader {
           // This field has no value -> Go on with the next one
           checkFieldReader();
         } else {
-          if (mReadFieldCount > 0) {
-            fieldValue = mFieldSeparator + fieldValue;
+          if (mReadFieldCount > 0 && mFieldSeparators.length >= mCurrentField) {
+            fieldValue = mFieldSeparators[mCurrentField-1].replace(";#;","") + fieldValue;
           }
-          
           mCurrentFieldReader = new StringReader(fieldValue);
           
           mReadFieldCount++;
