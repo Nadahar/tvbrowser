@@ -81,7 +81,7 @@ public class ProgramFieldType {
   /**
    * number of int fields (INT and TIME format)
    */
-  private static final int INT_FIELDS_COUNT = 12;
+  private static final int INT_FIELDS_COUNT = 14;
 
   /**
    * sanity check to control that no int storage index is used twice
@@ -360,7 +360,13 @@ public class ProgramFieldType {
   = new ProgramFieldType(41, TEXT_FORMAT, true, "series",
                          "series", "Series", 27);
 
+  public static final ProgramFieldType PART_NUMBER_TYPE
+  = new ProgramFieldType(42, INT_FORMAT, true, "part number",
+                         "partNumber", "Part number", 12);
 
+  public static final ProgramFieldType PART_NUMBER_TOTAL_TYPE
+  = new ProgramFieldType(43, INT_FORMAT, true, "total number of parts",
+                         "totalPartNumber", "Total number of parts", 13);
   private int mTypeId;
 
   private String mName;
