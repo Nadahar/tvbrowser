@@ -53,6 +53,8 @@ public class DefaultMenuBar extends MenuBar {
     createCommonMenus();
 
     mHelpMenu.addSeparator();
+    mHelpMenu.add(mDonateMI);
+    mHelpMenu.add(mDebugMI);
     mHelpMenu.add(mAboutMI);
 
     mQuitMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F4, InputEvent.ALT_DOWN_MASK));
