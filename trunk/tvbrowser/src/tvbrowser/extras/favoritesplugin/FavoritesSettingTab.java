@@ -45,6 +45,7 @@ import javax.swing.JRadioButton;
 import tvbrowser.extras.favoritesplugin.core.Favorite;
 import tvbrowser.extras.favoritesplugin.dlgs.ExclusionPanel;
 import tvbrowser.extras.favoritesplugin.dlgs.FavoriteTreeModel;
+import tvbrowser.extras.favoritesplugin.dlgs.ManageFavoritesPanel;
 import tvbrowser.extras.reminderplugin.ReminderPluginProxy;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.ui.DefaultMarkingPrioritySelectionPanel;
@@ -76,7 +77,7 @@ public class FavoritesSettingTab implements SettingsTab {
   private JLabel mPluginLabel;
   private JCheckBox mExpertMode, mShowRepetitions, mAutoSelectRemider, mProvideTab, mShowDateSeparators;
   private JRadioButton mScrollTimeNext, mScrollTimeDay;
-  private JRadioButton mFilterStartAll, mFilterStartDefault, mFilterStartCurrent;
+  private JRadioButton mFilterStartAll, mFilterStartDefault, mFilterStartCurrent, mFilterStartLast;
   private JCheckBox mFilterReactOnChange;
 
   private DefaultMarkingPrioritySelectionPanel mMarkingsPanel;
@@ -185,17 +186,19 @@ public class FavoritesSettingTab implements SettingsTab {
     
     int filterStartType = FavoritesPlugin.getInstance().getFilterStartType();
     
-    JPanel filterSettingsPanel = new JPanel(new FormLayout("10dlu,default:grow","default,2dlu,default,1dlu,default,1dlu,default,3dlu,default"));
+    JPanel filterSettingsPanel = new JPanel(new FormLayout("10dlu,default:grow","default,2dlu,default,1dlu,default,1dlu,default,1dlu,default,3dlu,default"));
     
     mFilterStartAll = new JRadioButton(mLocalizer.msg("filterStartAll", "Show all filter"), filterStartType == FilterableProgramListPanel.FILTER_START_ALL_TYPE);
     mFilterStartDefault = new JRadioButton(mLocalizer.msg("filterStartDefault", "Default filter"), filterStartType == FilterableProgramListPanel.FILTER_START_DEFAULT_TYPE);
-    mFilterStartCurrent = new JRadioButton(mLocalizer.msg("filterStartCurrent", "Current filter"), filterStartType == FilterableProgramListPanel.FILTER_START_CURRENT_TYPE);
+    mFilterStartCurrent = new JRadioButton(mLocalizer.msg("filterStartCurrent", "Current TV-Browser filter"), filterStartType == FilterableProgramListPanel.FILTER_START_CURRENT_TYPE);
+    mFilterStartLast = new JRadioButton(mLocalizer.msg("filterStartLast", "Last used filter"), filterStartType == ManageFavoritesPanel.FILTER_START_LAST_TYPE);
     
     ButtonGroup filterStartGroup = new ButtonGroup();
     
     filterStartGroup.add(mFilterStartAll);
     filterStartGroup.add(mFilterStartDefault);
     filterStartGroup.add(mFilterStartCurrent);
+    filterStartGroup.add(mFilterStartLast);
     
     mFilterReactOnChange = new JCheckBox(mLocalizer.msg("filterReactOnChange", "React on changes of selected filter of TV-Browser"), FavoritesPlugin.getInstance().reactOnFilterChange());
     
@@ -205,7 +208,8 @@ public class FavoritesSettingTab implements SettingsTab {
     filterSettingsPanel.add(mFilterStartAll, CC.xy(2, 3));
     filterSettingsPanel.add(mFilterStartDefault, CC.xy(2, 5));
     filterSettingsPanel.add(mFilterStartCurrent, CC.xy(2, 7));
-    filterSettingsPanel.add(mFilterReactOnChange, CC.xyw(1, 9, 2));
+    filterSettingsPanel.add(mFilterStartLast, CC.xy(2, 9));
+    filterSettingsPanel.add(mFilterReactOnChange, CC.xyw(1, 11, 2));
     
     builder.addSeparator(mLocalizer.msg("filter", "Program Filter"), CC.xyw(1,27,4));
     builder.add(filterSettingsPanel, CC.xyw(2,29,3));
@@ -275,8 +279,11 @@ public class FavoritesSettingTab implements SettingsTab {
     else if(mFilterStartDefault.isSelected()) {
       FavoritesPlugin.getInstance().setFilterStartType(FilterableProgramListPanel.FILTER_START_DEFAULT_TYPE);
     }
-    else {
+    else if(mFilterStartCurrent.isSelected()) {
       FavoritesPlugin.getInstance().setFilterStartType(FilterableProgramListPanel.FILTER_START_CURRENT_TYPE);
+    }
+    else if(mFilterStartLast.isSelected()) {
+      FavoritesPlugin.getInstance().setFilterStartType(ManageFavoritesPanel.FILTER_START_LAST_TYPE);
     }
 
     if(mExclusionPanel.wasChanged()) {

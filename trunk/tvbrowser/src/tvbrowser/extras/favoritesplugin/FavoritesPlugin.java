@@ -65,6 +65,7 @@ import tvbrowser.core.TvDataBase;
 import tvbrowser.core.TvDataBaseListener;
 import tvbrowser.core.TvDataUpdateListener;
 import tvbrowser.core.TvDataUpdater;
+import tvbrowser.core.filters.FilterManagerImpl;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.extras.common.ConfigurationHandler;
 import tvbrowser.extras.common.DataDeserializer;
@@ -530,6 +531,10 @@ public class FavoritesPlugin {
     }
 
     try {
+      if(mMangePanel != null) {
+        mSettings.put("lastSelectedProgramFilter", mMangePanel.getSelectedProgramFilterName());
+      }
+      
       mConfigurationHandler.storeSettings(mSettings);
     } catch (IOException e) {
       ErrorHandler.handle(mLocalizer.msg("couldNotStoreFavoritesSettings","Could not store settings for favorites"), e);
@@ -1594,5 +1599,21 @@ public class FavoritesPlugin {
   
   public void setFilterStartType(int type) {
     mSettings.setProperty("filterStartType", String.valueOf(type));
+  }
+  
+  public ProgramFilter getLastSelectedProgramFilter() {
+    ProgramFilter test = FilterManagerImpl.getInstance().getAllFilter();
+    String name = mSettings.getProperty("lastSelectedProgramFilter", test.getName());
+    
+    ProgramFilter[] availableFilter = FilterManagerImpl.getInstance().getAvailableFilters();
+    
+    for(ProgramFilter filter : availableFilter) {
+      if(filter != null && filter.getName().equals(name)) {
+        test = filter;
+        break;
+      }
+    }
+    
+    return test;
   }
 }
