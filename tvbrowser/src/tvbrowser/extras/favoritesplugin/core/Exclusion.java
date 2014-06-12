@@ -415,7 +415,7 @@ public class Exclusion implements Comparable<Exclusion> {
     }
     
     if(mCategory != 0) {
-      if(timeMsg != null && (mTitle != null || mTopic != null || mEpisodeTitle != null || filter != null || mChannel.getChannel() != null)) {
+      if(timeMsg != null || mTitle != null || mTopic != null || mEpisodeTitle != null || filter != null || mChannel.getChannel() != null) {
         textValue.append(" ").append(mLocalizer.msg("exclude.appendCategory","with category '")).append(ProgramInfoHelper.getMessageForBit(mCategory)).append("'");
       }
       else {
