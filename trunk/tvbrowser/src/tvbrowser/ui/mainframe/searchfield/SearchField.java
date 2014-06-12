@@ -459,7 +459,7 @@ public class SearchField extends JPanel {
       mText.addFocusListener(mPersonaFocusListener);
     }
     else {
-      mSearchParent.setBackground(Color.white);
+      mSearchParent.setBackground(UIManager.getColor("TextField.background"));
       mText.removeFocusListener(mPersonaFocusListener);
     }
   }
