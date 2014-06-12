@@ -105,6 +105,7 @@ public class ReminderSettingsTab implements SettingsTab {
   private JCheckBox mShowAlwaysOnTop;
   private JSpinner mAutoCloseReminderTimeSp;
   private JRadioButton mCloseOnEnd, mCloseNever, mCloseOnTime;
+  private JRadioButton mScrollTimeToNext, mScrollTimeOnDay;
 
   private JComboBox mDefaultReminderEntryList;
 
@@ -133,7 +134,7 @@ public class ReminderSettingsTab implements SettingsTab {
         "pref,5dlu,pref,1dlu,pref,1dlu,pref,1dlu,pref,10dlu," +
         "pref,5dlu,pref,10dlu,pref,5dlu,pref,10dlu,pref,5dlu," +
         "pref,10dlu,pref,5dlu,pref,3dlu,pref,3dlu,default,3dlu," +
-        "default,10dlu,default,5dlu,pref");
+        "default,default,10dlu,default,5dlu,pref");
     layout.setColumnGroups(new int[][] {{7,9}});
     PanelBuilder pb = new PanelBuilder(layout, new ScrollableJPanel());
     pb.border(Borders.DIALOG);
@@ -340,10 +341,38 @@ public class ReminderSettingsTab implements SettingsTab {
     pb.add(mShowDateSeparators, CC.xyw(2,29,7));
     pb.add(mProvideTab, CC.xyw(2,31,7));
     
-    //TODO
+    mScrollTimeToNext = new JRadioButton(mLocalizer.msg("timeButtonScrollNext", "Scroll to next occurence of time from shown programs onward"), Boolean.parseBoolean(propDefaults.getValueFromProperties(ReminderPropertyDefaults.SCROLL_TIME_TYPE_NEXT, mSettings)));
+    mScrollTimeOnDay = new JRadioButton(mLocalizer.msg("timeButtonScrollDay", "Scroll to occurence of time on shown day in list"), !mScrollTimeToNext.isSelected());
+    final JLabel scrollTimeLabel = new JLabel(mLocalizer.msg("timeButtonBehaviour", "Time buttons behaviour:"));
+    
+    mScrollTimeToNext.setEnabled(mProvideTab.isSelected());
+    mScrollTimeOnDay.setEnabled(mProvideTab.isSelected());
+    scrollTimeLabel.setEnabled(mProvideTab.isSelected());
+    
+    ButtonGroup time = new ButtonGroup();
+    
+    time.add(mScrollTimeToNext);
+    time.add(mScrollTimeOnDay);
 
-    pb.addSeparator(DefaultMarkingPrioritySelectionPanel.getTitle(), CC.xyw(1,33,10));
-    pb.add(mMarkingsPanel = DefaultMarkingPrioritySelectionPanel.createPanel(ReminderPlugin.getInstance().getMarkPriority(),false,false),CC.xyw(2,35,9));
+    JPanel timeButtonBehaviour = new JPanel(new FormLayout("10dlu,default:grow","5dlu,default,5dlu,default,1dlu,default"));
+
+    timeButtonBehaviour.add(scrollTimeLabel, CC.xy(2, 2));
+    timeButtonBehaviour.add(mScrollTimeToNext, CC.xy(2,4));
+    timeButtonBehaviour.add(mScrollTimeOnDay, CC.xy(2,6));
+    
+    pb.add(timeButtonBehaviour, CC.xyw(2, 32, 7));
+    
+    mProvideTab.addItemListener(new ItemListener() {
+      @Override
+      public void itemStateChanged(ItemEvent e) {
+        scrollTimeLabel.setEnabled(e.getStateChange() == ItemEvent.SELECTED);
+        mScrollTimeToNext.setEnabled(scrollTimeLabel.isEnabled());
+        mScrollTimeOnDay.setEnabled(scrollTimeLabel.isEnabled());
+      }
+    });
+
+    pb.addSeparator(DefaultMarkingPrioritySelectionPanel.getTitle(), CC.xyw(1,34,10));
+    pb.add(mMarkingsPanel = DefaultMarkingPrioritySelectionPanel.createPanel(ReminderPlugin.getInstance().getMarkPriority(),false,false),CC.xyw(2,36,9));
 
     mReminderWindowChB.addItemListener(new ItemListener() {
       public void itemStateChanged(ItemEvent e) {
@@ -528,11 +557,11 @@ public class ReminderSettingsTab implements SettingsTab {
    * Called by the host-application, if the user wants to save the settings.
    */
   public void saveSettings() {
-    mSettings.setProperty("soundfile",mSoundFileChB.getTextField().getText());
+    mSettings.setProperty(ReminderPropertyDefaults.SOUNDFILE_KEY,mSoundFileChB.getTextField().getText());
     mSettings.setProperty("execfile",mExecFileStr);
     mSettings.setProperty("execparam",mExecParamStr);
 
-    mSettings.setProperty("usemsgbox", String.valueOf(mReminderWindowChB
+    mSettings.setProperty(ReminderPropertyDefaults.REMINDER_WINDOW_SHOW, String.valueOf(mReminderWindowChB
         .isSelected()));
     mSettings.setProperty("usesound", String
         .valueOf(mSoundFileChB.isSelected()));
@@ -549,8 +578,10 @@ public class ReminderSettingsTab implements SettingsTab {
     mSettings.setProperty("showRemovedDialog", String.valueOf(mShowRemovedDlg.isSelected()));
 
     mSettings.setProperty("showTimeCounter", String.valueOf(!mCloseNever.isSelected() && mShowTimeCounter.isSelected()));
-    mSettings.setProperty("alwaysOnTop", String.valueOf(mShowAlwaysOnTop.isSelected()));
+    mSettings.setProperty(ReminderPropertyDefaults.REMINDER_WINDOW_ALWAYS_ON_TOP, String.valueOf(mShowAlwaysOnTop.isSelected()));
     mSettings.setProperty("provideTab", String.valueOf(mProvideTab.isSelected()));
+    
+    mSettings.setProperty(ReminderPropertyDefaults.SCROLL_TIME_TYPE_NEXT, String.valueOf(mScrollTimeToNext.isSelected()));
     
     for(int i = 0; i < mReminderWindowPosition.length; i++) {
       if(mReminderWindowPosition[i].isSelected()) {
