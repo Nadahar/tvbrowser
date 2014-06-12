@@ -112,6 +112,8 @@ import util.ui.persona.PersonaListener;
  * @author René Mach
  */
 public class ManageFavoritesPanel extends JPanel implements ListDropAction, TreeSelectionListener, PersonaListener {
+  public static final int FILTER_START_LAST_TYPE = -1;
+  
   private static final int MAX_SHOWN_PROGRAMS = 6000;
   private static final Localizer mLocalizer = ManageFavoritesDialog.mLocalizer;
   private DefaultListModel mFavoritesListModel;
@@ -495,7 +497,13 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction, Tree
     scrollPane.setMinimumSize(new Dimension(200,100));
     mSplitPane.setLeftComponent(scrollPane);
     
-    mProgramListPanel = new FilterableProgramListPanel(FilterableProgramListPanel.TYPE_NAME_AND_PROGRAM_FILTER, new Program[0], true, FavoritesPlugin.getInstance().showDateSeparators(), new ProgramPanelSettings(new PluginPictureSettings(PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE), false, ProgramPanelSettings.X_AXIS),FavoritesPlugin.getInstance().getFilterStartType());
+    if(FavoritesPlugin.getInstance().getFilterStartType() == FILTER_START_LAST_TYPE) {
+      mProgramListPanel = new FilterableProgramListPanel(true, new Program[0], true, FavoritesPlugin.getInstance().showDateSeparators(), new ProgramPanelSettings(new PluginPictureSettings(PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE), false, ProgramPanelSettings.X_AXIS),FavoritesPlugin.getInstance().getLastSelectedProgramFilter());
+    }
+    else {
+      mProgramListPanel = new FilterableProgramListPanel(FilterableProgramListPanel.TYPE_NAME_AND_PROGRAM_FILTER, new Program[0], true, FavoritesPlugin.getInstance().showDateSeparators(), new ProgramPanelSettings(new PluginPictureSettings(PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE), false, ProgramPanelSettings.X_AXIS),FavoritesPlugin.getInstance().getFilterStartType());
+    }
+    
     mProgramListPanel.setBorder(Borders.DLU2);
     
     mProgramList = mProgramListPanel.getProgramList();
@@ -1243,5 +1251,9 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction, Tree
   
   public void selectFilter(ProgramFilter filter) {
     mProgramListPanel.selectFilter(filter);
+  }
+  
+  public String getSelectedProgramFilterName() {
+    return mProgramListPanel.getSelectedProgramFilterName();
   }
 }
