@@ -482,6 +482,13 @@ public class FilterableProgramListPanel extends JPanel implements FilterChangeLi
     }
   }
   
+  /**
+   * @return The filter name of the selected program filter.
+   */
+  public String getSelectedProgramFilterName() {
+    return ((ProgramFilter)mProgramFilterBox.getSelectedItem()).getName();
+  }
+  
   private static final class SimpleTitleFilter implements ProgramFilter {
     private String mTitle;
   
