@@ -196,9 +196,11 @@ public class TvDataUpdater {
       public void updateDayProgram(MutableChannelDayProgram program) {
         mTvDataWasChanged = true;
         doUpdateDayProgram(program);
-        mRecalculatePrograms.add(new ChannelDay(program.getChannel(),program.getDate()));
-        mRecalculatePrograms.add(new ChannelDay(program.getChannel(),program.getDate().addDays(-1)));       
-
+        
+        synchronized (mRecalculatePrograms) {
+          mRecalculatePrograms.add(new ChannelDay(program.getChannel(),program.getDate()));
+          mRecalculatePrograms.add(new ChannelDay(program.getChannel(),program.getDate().addDays(-1)));                 
+        }
       }
 
       public boolean isDayProgramAvailable(Date date, Channel channel) {
@@ -279,17 +281,26 @@ public class TvDataUpdater {
     
     ProgressBarProgressMonitor monitor = new ProgressBarProgressMonitor(progressBar, label);
     monitor.setMessage(mLocalizer.msg("calculateEntries","Calculating new entries in the database"));
-    monitor.setMaximum(mRecalculatePrograms.size());
+    
+    synchronized (mRecalculatePrograms) {
+      monitor.setMaximum(mRecalculatePrograms.size());
+    }
+    
     monitor.setValue(0);
     
     int value = 0;
     
-    for ( Iterator<ChannelDay> i = mRecalculatePrograms.iterator(); i.hasNext(); ) {
-      ChannelDay next = i.next();
-      monitor.setValue(value++);
-      TvDataBase.getInstance().reCalculateTvData(next.getChannel(), next.getDate());
+    synchronized (mRecalculatePrograms) {
+      Iterator<ChannelDay> iterator = mRecalculatePrograms.iterator();
+      
+      while (iterator.hasNext()) {
+        ChannelDay next = iterator.next();
+        monitor.setValue(value++);
+        TvDataBase.getInstance().reCalculateTvData(next.getChannel(), next.getDate());
+      }
+      
+      mRecalculatePrograms.clear();
     }
-    mRecalculatePrograms.clear();
     
     TvDataBase.getInstance().updateTvDataBase();
     
