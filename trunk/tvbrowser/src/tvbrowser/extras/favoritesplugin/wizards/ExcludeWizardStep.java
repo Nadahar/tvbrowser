@@ -457,6 +457,7 @@ public class ExcludeWizardStep extends AbstractWizardStep {
     int timeFrom = -1;
     int timeTo = -1;
     int weekOfDay = Exclusion.DAYLIMIT_DAILY;
+    int category = 0;
 
     if (mTitleCb.isSelected()) {
       title = mTitleTf.getText();
@@ -487,10 +488,14 @@ public class ExcludeWizardStep extends AbstractWizardStep {
       weekOfDay = ((Integer) mDayChooser.getSelectedItem()).intValue();
     }
 
+    if(mCategoryCb.isSelected()) {
+      category = ProgramInfoHelper.getBitForIndex(mCategoryChooser.getSelectedIndex());
+    }
+    
     if (mDoneBtnText.compareTo(mLocalizer.msg("doneButton.toBlacklist","Remove this program now")) == 0) {
       return "blacklist";
     } else {
-      return new Exclusion(title, topic, channel, timeFrom, timeTo, weekOfDay, filterName, episodeTitle, ProgramInfoHelper.getBitForIndex(mCategoryChooser.getSelectedIndex()));
+      return new Exclusion(title, topic, channel, timeFrom, timeTo, weekOfDay, filterName, episodeTitle, category);
     }
 
   }
