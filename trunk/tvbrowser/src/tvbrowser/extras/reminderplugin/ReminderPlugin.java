@@ -182,6 +182,33 @@ public class ReminderPlugin {
       public PluginCenterPanel[] getCenterPanels() {
         return new PluginCenterPanel[] {centerPanel};
       }
+      
+      @Override
+      public void scrolledToDate(Date date) {
+        if(mReminderListPanel != null) {
+          mReminderListPanel.scrollTo(ReminderListPanel.SCROLL_TO_DATE_TYPE, date, -1);
+        }
+      }
+      
+      @Override
+      public void scrolledToNow() {
+        if(mReminderListPanel != null) {
+          mReminderListPanel.scrollTo(ReminderListPanel.SCROLL_TO_NOW_TYPE, null, -1);
+        }
+      }
+      
+      @Override
+      public void scrolledToTime(int time) {
+        if(mReminderListPanel != null) {
+          int type = ReminderListPanel.SCROLL_TO_NEXT_TIME_TYPE;
+          
+          if(!Boolean.parseBoolean(ReminderPropertyDefaults.getPropertyDefaults().getValueFromProperties(ReminderPropertyDefaults.SCROLL_TIME_TYPE_NEXT, mSettings))) {
+            type = ReminderListPanel.SCROLL_TO_TIME_TYPE;
+          }
+          
+          mReminderListPanel.scrollTo(type, null, time);
+        } super.scrolledToTime(time);
+      }
     };
     
     mCenterPanel = UiUtilities.createPersonaBackgroundPanel();

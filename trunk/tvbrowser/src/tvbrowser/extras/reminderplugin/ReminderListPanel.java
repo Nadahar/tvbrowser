@@ -3,7 +3,6 @@ package tvbrowser.extras.reminderplugin;
 import java.awt.Component;
 import java.awt.Font;
 import java.awt.Rectangle;
-import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -50,7 +49,6 @@ import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
 
 import devplugin.Date;
-//import devplugin.Plugin;
 import devplugin.Plugin;
 import devplugin.Program;
 import devplugin.SettingsItem;
@@ -278,18 +276,23 @@ public class ReminderListPanel extends JPanel implements PersonaListener, Progra
     }
     builder.getPanel().setOpaque(false);
     
+    JScrollPane tableScroll = new JScrollPane(mTable);
+    tableScroll.setBorder(BorderFactory.createEmptyBorder());
+    tableScroll.setBackground(UIManager.getColor("TextField.background"));
+    tableScroll.getViewport().setBackground(UIManager.getColor("TextField.background"));
+    
     if(close != null) {
       layout.appendRow(RowSpec.decode("3dlu"));
       layout.appendRow(RowSpec.decode("default"));
 
-      add(new JScrollPane(mTable), cc.xyw(1, 3, 3));
+      add(tableScroll, cc.xyw(1, 3, 3));
       add(builder.getPanel(), cc.xyw(1, 5, 3));
     }
     else {
       layout.appendColumn(ColumnSpec.decode("5dlu"));
       layout.appendColumn(ColumnSpec.decode("default"));
       
-      add(new JScrollPane(mTable), cc.xyw(1, 3, 5));
+      add(tableScroll, cc.xyw(1, 3, 5));
       add(builder.getPanel(), cc.xy(5, 1));
     }
   }
@@ -562,5 +565,133 @@ public class ReminderListPanel extends JPanel implements PersonaListener, Progra
 
     JPopupMenu menu = PluginManagerImpl.getInstance().createPluginContextMenu(p, ReminderPluginProxy.getInstance());
     menu.show(mTable, e.getX() - 15, e.getY() - 15);
+  }
+  
+ /* public void scrollToDate(Date date) {
+    for(int i = 0; i < mTable.getRowCount(); i++) {
+      Program test = (Program)mTable.getValueAt(i, 0);
+      
+      if(test instanceof Program &&  && !test.equals(PluginManagerImpl.getInstance().getExampleProgram())) {
+        int add = 0;
+        
+        if(i > 0 && ((Program)mTable.getValueAt(i-1, 0)).equals(PluginManagerImpl.getInstance().getExampleProgram())) {
+          add = 1;
+        }
+
+        final Rectangle rect = mTable.getCellRect(i-add, 0, true);
+        rect.setSize(rect.width, mTable.getVisibleRect().height);
+        
+        SwingUtilities.invokeLater(new Runnable() {
+          @Override
+          public void run() {
+            mTable.scrollRectToVisible(rect);
+          }
+        });
+        
+        return;
+      }
+    }
+  }
+  
+  public void scrollToNow() {
+    for(int i = 0; i < mTable.getRowCount(); i++) {
+      Program test = (Program)mTable.getValueAt(i, 0);
+      
+      if(test instanceof Program && !test.isExpired() && !test.equals(PluginManagerImpl.getInstance().getExampleProgram())) {
+        int add = 0;
+        
+        if(i > 0 && ((Program)mTable.getValueAt(i-1, 0)).equals(PluginManagerImpl.getInstance().getExampleProgram())) {
+          add = 1;
+        }
+        
+        final Rectangle rect = mTable.getCellRect(i-add, 0, true);
+        rect.setSize(rect.width, mTable.getVisibleRect().height);
+        
+        SwingUtilities.invokeLater(new Runnable() {
+          @Override
+          public void run() {
+            mTable.scrollRectToVisible(rect);
+          }
+        });
+        
+        return;
+      }
+    }
+  }*/
+  
+  public static final int SCROLL_TO_DATE_TYPE = 0;
+  public static final int SCROLL_TO_NOW_TYPE = 1;
+  public static final int SCROLL_TO_NEXT_TIME_TYPE = 2;
+  public static final int SCROLL_TO_TIME_TYPE = 3;
+  
+  public void scrollTo(int type, Date date, int time) {
+    Program example = PluginManagerImpl.getInstance().getExampleProgram();
+    int startRow = 0;
+    int rowTime = -1;
+        
+    if(date == null) {
+      int row = mTable.rowAtPoint(mTable.getVisibleRect().getLocation());
+      
+      if(row < mTable.getRowCount()) {
+        Program test = null;
+        
+        do {
+          test = (Program)mTable.getValueAt(row, 0);
+          
+          row++;
+        }while(test != null && test.equals(example) && row < mTable.getRowCount());
+        
+        if(test != null) {
+          date = test.getDate();
+          
+          if(type == SCROLL_TO_NEXT_TIME_TYPE) {
+            startRow = row-1;
+            rowTime = test.getStartTime();
+          }
+        }
+      }
+    }
+    
+    for(int i = startRow; i < mTable.getRowCount(); i++) {
+      Program test = (Program)mTable.getValueAt(i, 0);
+      
+      if(test instanceof Program && !test.equals(example)) {
+        boolean condition = false;
+        int sub = 0;
+        
+        switch(type) {
+          case SCROLL_TO_DATE_TYPE: condition = date.compareTo(test.getDate()) == 0;break;
+          case SCROLL_TO_NOW_TYPE: condition = !test.isExpired();break;
+          case SCROLL_TO_NEXT_TIME_TYPE: condition = ((test.getDate().compareTo(date) == 0 && test.getStartTime() >= time && rowTime < time) || (test.getDate().compareTo(date) > 0 && test.getStartTime() >= time)) && rowTime != time;break;
+          case SCROLL_TO_TIME_TYPE: {
+            condition = (test.getDate().compareTo(date) == 0 && test.getStartTime() >= time) || test.getDate().compareTo(date) > 0;
+            
+            if(condition && (test.getStartTime() > time || test.getDate().compareTo(date) > 0)) {
+              sub = 1;
+            }
+          }break;
+        }
+        
+        if(condition) {
+          int add = 0;
+          
+          if(i > 0 && ((Program)mTable.getValueAt(i-1, 0)).equals(example)) {
+            add = 1;
+          }
+          
+          final Rectangle rect = mTable.getCellRect(i-add-sub, 0, true);
+          rect.setSize(rect.width, mTable.getVisibleRect().height);
+          
+          SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+              mTable.scrollRectToVisible(rect);
+            }
+          });
+          
+          return;
+        }
+      }
+    }
   }
 }
