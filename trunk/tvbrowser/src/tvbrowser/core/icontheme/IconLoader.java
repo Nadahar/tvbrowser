@@ -28,6 +28,8 @@ package tvbrowser.core.icontheme;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.logging.Logger;
@@ -57,13 +59,11 @@ import devplugin.ThemeIcon;
  * (please remove the [ ])
  */
 public class IconLoader {
-
   /**
    * problems logger
    */
   private static final Logger mLog = java.util.logging.Logger
     .getLogger(IconLoader.class.getName());
-
   /** Singelton */
   private static IconLoader mInstance;
   /** Icon Themes to Load Icons from*/
@@ -74,7 +74,12 @@ public class IconLoader {
   private SoftReferenceCache<ThemeIcon, ImageIcon> mIconCache;
   /** Icon Cache for Plugins */
   private HashMap<Plugin, SoftReferenceCache<ThemeIcon, ImageIcon>> mPluginIconCache;
-
+  
+  /** The icon dir of the current user. */
+  public static final File USER_ICON_DIR = new File(Settings.getUserDirectoryName(), "icons");
+  /** The url of the download specs. */
+  public static final String DOWNLOAD_SPEC_URL = "http://www.tvbrowser.org/downloads/themes/themes.txt";
+  
   /**
    * Private Constructor
    *
@@ -146,9 +151,19 @@ public class IconLoader {
   public IconTheme[] getAvailableThemes() {
     ArrayList<IconTheme> list = new ArrayList<IconTheme>();
 
-    list.addAll(getThemesInDirectory(new File("icons")));
-    list.addAll(getThemesInDirectory(new File(Settings.getUserDirectoryName(), "icons")));
-
+    list.addAll(getThemesInDirectory(USER_ICON_DIR));
+    ArrayList<IconTheme> globalThemes = getThemesInDirectory(new File("icons"));
+    
+    for(IconTheme test : list) {
+      for(int i = globalThemes.size()-1; i >= 0; i--) {
+        if(test.getName().equals(globalThemes.get(i).getName())) {
+          globalThemes.remove(i);
+        }
+      }
+    }
+    
+    list.addAll(globalThemes);
+    
     if (OperatingSystem.isMacOs()) {
       list.addAll(getThemesInDirectory(new File(Settings.getOSLibraryDirectoryName() + "icons")));
     }
@@ -161,7 +176,9 @@ public class IconLoader {
 		}
     for (int i=list.size() - 1; i >= 0; i--) {
     	for (String zipName : zipThemes) {
-	    	if (list.get(i).getName().equalsIgnoreCase(zipName) && !(list.get(i) instanceof ZipIconTheme)) {
+    	  IconTheme test = list.get(i);
+    	  
+	    	if (test.getName().equalsIgnoreCase(zipName) && !(test instanceof ZipIconTheme)) {
 	    		list.remove(i);
 	    		break;
 	    	}

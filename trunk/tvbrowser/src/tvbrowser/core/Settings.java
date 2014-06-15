@@ -548,6 +548,8 @@ public class Settings {
         final File newDir = new File(getUserSettingsDirName());
 
         File oldTvDataDir = null;
+        File oldIconsDir = null;
+        File oldInfoIconsDir = null;
 
         final Properties prop = new Properties();
 
@@ -592,7 +594,16 @@ public class Settings {
 
           }catch(Exception e) {}
         }
-
+        
+        if((TVBrowser.isTransportable())) {
+          if(!(new File(getUserDirectoryName(),"icons").isDirectory()) && new File(oldDir.getParent(),"icons").isDirectory()) {
+            oldIconsDir = new File(oldDir.getParent(),"icons");
+          }
+          if(!(new File(getUserDirectoryName(),"infothemes").isDirectory()) && new File(oldDir.getParent(),"infothemes").isDirectory()) {
+            oldInfoIconsDir = new File(oldDir.getParent(),"infothemes");
+          }
+        }
+        
         if (newDir.mkdirs()) {
           try {
             IOUtilities.copy(oldDir.listFiles(new FilenameFilter() {
@@ -672,6 +683,68 @@ public class Settings {
                   }
                 };
                 copyDataThread.start();
+
+                waiting.setVisible(mShowWaiting);
+              }
+            }
+            
+            /*
+             * Copy old icons directory to new icons directory.
+             */
+            if(oldIconsDir != null && oldIconsDir.isDirectory()) {
+              final File targetDir = new File(getUserDirectoryName(),"icons");
+
+              if(!oldIconsDir.equals(targetDir)) {
+                targetDir.mkdirs();
+
+                final CopyWaitingDlg waiting = new CopyWaitingDlg(new JFrame(), versionTest ? CopyWaitingDlg.APPDATA_MSG : CopyWaitingDlg.IMPORT_MSG);
+
+                mShowWaiting = true;
+
+                final File srcDir = oldIconsDir;
+
+                Thread copyIconsThread = new Thread("Copy icons directory") {
+                  public void run() {
+                    try {
+                      IOUtilities.copy(srcDir.listFiles(), targetDir, true);
+                    }catch(Exception e) {}
+
+                    mShowWaiting = false;
+                    waiting.setVisible(false);
+                  }
+                };
+                copyIconsThread.start();
+
+                waiting.setVisible(mShowWaiting);
+              }
+            }
+            
+            /*
+             * Copy old icons directory to new icons directory.
+             */
+            if(oldInfoIconsDir != null && oldInfoIconsDir.isDirectory()) {
+              final File targetDir = new File(getUserDirectoryName(),"infothemes");
+
+              if(!oldInfoIconsDir.equals(targetDir)) {
+                targetDir.mkdirs();
+
+                final CopyWaitingDlg waiting = new CopyWaitingDlg(new JFrame(), versionTest ? CopyWaitingDlg.APPDATA_MSG : CopyWaitingDlg.IMPORT_MSG);
+
+                mShowWaiting = true;
+
+                final File srcDir = oldInfoIconsDir;
+
+                Thread copyInfoIconsThread = new Thread("Copy info icons directory") {
+                  public void run() {
+                    try {
+                      IOUtilities.copy(srcDir.listFiles(), targetDir, true);
+                    }catch(Exception e) {}
+
+                    mShowWaiting = false;
+                    waiting.setVisible(false);
+                  }
+                };
+                copyInfoIconsThread.start();
 
                 waiting.setVisible(mShowWaiting);
               }
