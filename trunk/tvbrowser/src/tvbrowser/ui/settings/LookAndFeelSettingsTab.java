@@ -31,17 +31,18 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.io.File;
 import java.util.Arrays;
-import javax.swing.DefaultListCellRenderer;
+
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
-import javax.swing.ListCellRenderer;
 import javax.swing.UIManager;
 
 import tvbrowser.core.Settings;
@@ -49,6 +50,9 @@ import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.icontheme.IconTheme;
 import tvbrowser.core.icontheme.InfoIconTheme;
 import tvbrowser.core.icontheme.InfoThemeLoader;
+import tvbrowser.core.icontheme.ThemeDownloadDlg;
+import tvbrowser.core.icontheme.ThemeDownloadItem;
+import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.settings.looksSettings.JGoodiesLNFSettings;
 import tvbrowser.ui.settings.looksSettings.SkinLNFSettings;
 import util.ui.CustomComboBoxRenderer;
@@ -59,8 +63,8 @@ import util.ui.persona.Persona;
 import util.ui.persona.PersonaInfo;
 
 import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.factories.CC;
 import com.jgoodies.forms.factories.DefaultComponentFactory;
-import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
 
@@ -133,18 +137,17 @@ public final class LookAndFeelSettingsTab implements SettingsTab {
 
   public JPanel createSettingsPanel() {
     FormLayout layout = new FormLayout("5dlu, pref, 3dlu, fill:default:grow, 3dlu, pref, 5dlu", "");
-
-    CellConstraints cc = new CellConstraints();
+    
     mSettingsPn = new JPanel(layout);
     mSettingsPn.setBorder(Borders.DIALOG);
 
     layout.appendRow(RowSpec.decode("pref"));
-    mSettingsPn.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("lookAndFeel", "Look and Feel")), cc.xyw(1, 1, 7));
+    mSettingsPn.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("lookAndFeel", "Look and Feel")), CC.xyw(1, 1, 7));
 
     layout.appendRow(RowSpec.decode("5dlu"));
     layout.appendRow(RowSpec.decode("pref"));
 
-    mSettingsPn.add(new JLabel(mLocalizer.msg("channelPosition", "Channel list position") +":"), cc.xy(2, 3));
+    mSettingsPn.add(new JLabel(mLocalizer.msg("channelPosition", "Channel list position") +":"), CC.xy(2, 3));
 
     mPluginViewPosition = new JComboBox(new String[] {Localizer.getLocalization(Localizer.I18N_LEFT),Localizer.getLocalization(Localizer.I18N_RIGHT)});
 
@@ -161,12 +164,12 @@ public final class LookAndFeelSettingsTab implements SettingsTab {
       }
     });
 
-    mSettingsPn.add(mPluginViewPosition, cc.xy(4,3));
+    mSettingsPn.add(mPluginViewPosition, CC.xy(4,3));
 
     layout.appendRow(RowSpec.decode("5dlu"));
     layout.appendRow(RowSpec.decode("pref"));
 
-    mSettingsPn.add(new JLabel(mLocalizer.msg("dateFormat", "Layout of Datelist")+":"), cc.xy(2, 5));
+    mSettingsPn.add(new JLabel(mLocalizer.msg("dateFormat", "Layout of Datelist")+":"), CC.xy(2, 5));
 
     mDateLayout = new JComboBox(new String[] {
             mLocalizer.msg("dateFormat.datelist", "List"),
@@ -182,12 +185,12 @@ public final class LookAndFeelSettingsTab implements SettingsTab {
       }
     });
 
-    mSettingsPn.add(mDateLayout, cc.xy(4,5));
+    mSettingsPn.add(mDateLayout, CC.xy(4,5));
 
     layout.appendRow(RowSpec.decode("5dlu"));
     layout.appendRow(RowSpec.decode("pref"));
 
-    mSettingsPn.add(new JLabel(mLocalizer.msg("theme", "Theme") +":"), cc.xy(2, 7));
+    mSettingsPn.add(new JLabel(mLocalizer.msg("theme", "Theme") +":"), CC.xy(2, 7));
 
     LookAndFeelObj[] lfObjects = getLookAndFeelObjs();
     Arrays.sort(lfObjects);
@@ -206,7 +209,7 @@ public final class LookAndFeelSettingsTab implements SettingsTab {
       }
     });
 
-    mSettingsPn.add(mLfComboBox, cc.xy(4, 7));
+    mSettingsPn.add(mLfComboBox, CC.xy(4, 7));
 
     mConfigBtn = new JButton(mLocalizer.msg("config", "Config"));
     mConfigBtn.addActionListener(new ActionListener() {
@@ -215,12 +218,12 @@ public final class LookAndFeelSettingsTab implements SettingsTab {
       }
     });
 
-    mSettingsPn.add(mConfigBtn, cc.xy(6, 7));
+    mSettingsPn.add(mConfigBtn, CC.xy(6, 7));
     
     layout.appendRow(RowSpec.decode("3dlu"));
     layout.appendRow(RowSpec.decode("pref"));
     
-    mSettingsPn.add(new JLabel(mLocalizer.msg("persona", "Persona") + ":"), cc.xy(2, 9));
+    mSettingsPn.add(new JLabel(mLocalizer.msg("persona", "Persona") + ":"), CC.xy(2, 9));
     
     PersonaInfo[] installedPersonas = Persona.getInstance().getInstalledPersonas();
     
@@ -266,15 +269,15 @@ public final class LookAndFeelSettingsTab implements SettingsTab {
       }
     });
     
-    mSettingsPn.add(mPersonaSelection, cc.xy(4,9));
-    mSettingsPn.add(personaDetails, cc.xy(6,9));
+    mSettingsPn.add(mPersonaSelection, CC.xy(4,9));
+    mSettingsPn.add(personaDetails, CC.xy(6,9));
     
     layout.appendRow(RowSpec.decode("3dlu"));
     layout.appendRow(RowSpec.decode("pref"));
 
-    mSettingsPn.add(new JLabel(mLocalizer.msg("icons", "Icons") + ":"), cc.xy(2, 11));
+    mSettingsPn.add(new JLabel(mLocalizer.msg("icons", "Icons") + ":"), CC.xy(2, 11));
 
-    mIconThemes = new JComboBox(IconLoader.getInstance().getAvailableThemes());
+    mIconThemes = new JComboBox();
     mIconThemes.setRenderer(new CustomComboBoxRenderer(mIconThemes.getRenderer()) {
       @Override
       public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
@@ -286,44 +289,44 @@ public final class LookAndFeelSettingsTab implements SettingsTab {
         return label;
       }
     });
+    
+    fillThemeBox();
 
-    if (Settings.propIcontheme.getString() != null) {
-      IconTheme theme = IconLoader.getInstance().getIconTheme(IconLoader.getInstance().getIconThemeFile(Settings.propIcontheme.getString()));
-      if (theme.loadTheme()) {
-        mIconThemes.setSelectedItem(theme);
-      } else {
-        mIconThemes.setSelectedItem(IconLoader.getInstance().getDefaultTheme());
+    JButton downloadThemes = new JButton(mLocalizer.msg("downloadMore", "Download more"));
+    downloadThemes.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        downloadIcons(ThemeDownloadDlg.THEME_ICON_TYPE);
       }
-    } else {
-      mIconThemes.setSelectedItem(IconLoader.getInstance().getDefaultTheme());
-    }
-
-    mSettingsPn.add(mIconThemes, cc.xy(4, 11));
+    });
+    
+    mSettingsPn.add(mIconThemes, CC.xy(4, 11));
+    mSettingsPn.add(downloadThemes, CC.xy(6, 11));
     
     layout.appendRow(RowSpec.decode("3dlu"));
     layout.appendRow(RowSpec.decode("pref"));
     
-    mSettingsPn.add(new JLabel(mLocalizer.msg("infoIcons", "Program info icons") + ":"), cc.xy(2, 13));
+    mSettingsPn.add(new JLabel(mLocalizer.msg("infoIcons", "Program info icons") + ":"), CC.xy(2, 13));
+        
+    mInfoIconThemes = new JComboBox();
+    fillInfoThemeBox();
     
-    InfoIconTheme[] infoIconThemes = InfoThemeLoader.getInstance().getAvailableInfoIconThemes();
-    String currentInfoIconTheme = Settings.propInfoIconThemeID.getString();
-    
-    mInfoIconThemes = new JComboBox(infoIconThemes);
-    
-    for(int i = 0; i < infoIconThemes.length; i++) {
-      if(infoIconThemes[i].getID().equals(currentInfoIconTheme)) {
-        mInfoIconThemes.setSelectedIndex(i);
-        break;
+    JButton downloadInfoThemes = new JButton(mLocalizer.msg("downloadMore", "Download more"));
+    downloadInfoThemes.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        downloadIcons(ThemeDownloadDlg.INFO_ICON_TYPE);
       }
-    }
+    });
     
-    mSettingsPn.add(mInfoIconThemes, cc.xy(4, 13));
+    mSettingsPn.add(mInfoIconThemes, CC.xy(4, 13));
+    mSettingsPn.add(downloadInfoThemes, CC.xy(6, 13));
     
-    layout.appendRow(RowSpec.decode("3dlu"));
+    /*layout.appendRow(RowSpec.decode("3dlu"));
     layout.appendRow(RowSpec.decode("pref"));
 
     mSettingsPn.add(new LinkButton(mLocalizer.msg("findMoreIcons","You can find more Icons on our Web-Page."),
-        "http://www.tvbrowser.org/iconthemes.php"), cc.xy(4, 15));
+        "http://www.tvbrowser.org/iconthemes.php"), CC.xy(4, 15));*/
     
     layout.appendRow(RowSpec.decode("fill:3dlu:grow"));
     layout.appendRow(RowSpec.decode("pref"));
@@ -332,7 +335,7 @@ public final class LookAndFeelSettingsTab implements SettingsTab {
     mRestartMessage.setForeground(Color.RED);
     mRestartMessage.setVisible(mSomethingChanged);
 
-    mSettingsPn.add(mRestartMessage, cc.xyw(1, 17, 6));
+    mSettingsPn.add(mRestartMessage, CC.xyw(1, 15, 6));
 
     if(!mSomethingChanged) {
       mStartLookAndIndex = mLfComboBox.getSelectedIndex();
@@ -359,6 +362,89 @@ public final class LookAndFeelSettingsTab implements SettingsTab {
     lookChanged();
 
     return mSettingsPn;
+  }
+  
+  private void downloadIcons(int type) {
+    if(JOptionPane.showConfirmDialog(UiUtilities.getLastModalChildOf(MainFrame.getInstance()), mLocalizer.msg("downloadMessage", "To download more icons an Internet connection is needed.\nDo you want to load the list with the available icons now?"), Localizer.getLocalization(Localizer.I18N_INFO), JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+      ThemeDownloadDlg themeDlg = new ThemeDownloadDlg(UiUtilities.getLastModalChildOf(MainFrame.getInstance()),type);
+      themeDlg.setVisible(true);
+      
+      if(themeDlg.downloadSuccess()) {
+        if(type == ThemeDownloadDlg.THEME_ICON_TYPE) {
+          fillThemeBox();
+        }
+        else {
+          ThemeDownloadItem[] successItems = themeDlg.getSuccessItems();
+          
+          for(ThemeDownloadItem success : successItems) {
+            File theme = new File(InfoThemeLoader.USER_ICON_DIR, success.toString());
+            System.out.println(" ttt " + theme.getAbsolutePath() + " " + theme.isFile());
+            InfoThemeLoader.getInstance().addIconTheme(theme);
+          }
+          
+          fillInfoThemeBox();
+        }
+      }
+    }
+  }
+  
+  private void fillInfoThemeBox() {
+    InfoIconTheme[] infoIconThemes = InfoThemeLoader.getInstance().getAvailableInfoIconThemes();
+    String currentInfoIconTheme = Settings.propInfoIconThemeID.getString();
+    String startIconID = null;
+
+    if(mInfoIconThemes.getSelectedIndex() != -1) {
+      startIconID = ((InfoIconTheme)mInfoIconThemes.getItemAt(mStartInfoIconThemeIndex)).getID();
+      currentInfoIconTheme = ((InfoIconTheme)mInfoIconThemes.getSelectedItem()).getID();
+    }
+    
+    mInfoIconThemes.removeAllItems();
+    
+    for(int i = 0; i < infoIconThemes.length; i++) {
+      mInfoIconThemes.addItem(infoIconThemes[i]);
+      
+      if(startIconID != null && startIconID.equals(infoIconThemes[i].getID())) {
+        mStartInfoIconThemeIndex = i;
+      }
+      
+      if(infoIconThemes[i].getID().equals(currentInfoIconTheme)) {
+        mInfoIconThemes.setSelectedIndex(i);
+      }
+    }
+  }
+  
+  private void fillThemeBox() {
+    String startIconName = null;
+    String selectedName = Settings.propIcontheme.getString();
+    
+    if(mIconThemes.getSelectedIndex() != -1) {
+      startIconName = "icons/" + ((IconTheme)mIconThemes.getItemAt(mStartIconIndex)).getBase().getName();
+      selectedName = "icons/" + ((IconTheme)mIconThemes.getSelectedItem()).getBase().getName();
+    }
+    
+    mIconThemes.removeAllItems();
+    
+    IconTheme[] available = IconLoader.getInstance().getAvailableThemes();
+    
+    for(int i = 0; i < available.length; i++) {
+      mIconThemes.addItem(available[i]);
+      
+      if(startIconName != null && ("icons/" + available[i].getBase().getName()).equals(startIconName)) {
+        mStartIconIndex = i;
+      }
+    }
+        
+    if (selectedName != null) {
+      IconTheme theme = IconLoader.getInstance().getIconTheme(IconLoader.getInstance().getIconThemeFile(selectedName));
+      
+      if (theme.loadTheme()) {
+        mIconThemes.setSelectedItem(theme);
+      } else {
+        mIconThemes.setSelectedItem(IconLoader.getInstance().getDefaultTheme());
+      }
+    } else {
+      mIconThemes.setSelectedItem(IconLoader.getInstance().getDefaultTheme());
+    }
   }
 
   private void updateRestartMessage() {
