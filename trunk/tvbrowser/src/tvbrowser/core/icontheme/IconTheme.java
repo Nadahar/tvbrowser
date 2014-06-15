@@ -36,6 +36,8 @@ import java.util.logging.Logger;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
+import com.jgoodies.common.swing.MnemonicUtils;
+
 import util.io.IniFileReader;
 import util.ui.UiUtilities;
 import devplugin.ThemeIcon;
@@ -46,7 +48,7 @@ import devplugin.ThemeIcon;
  * Most of the Code is based on the FreeDesktop Specs
  * http://standards.freedesktop.org/icon-theme-spec/icon-theme-spec-latest.html
  */
-abstract public class IconTheme {
+abstract public class IconTheme implements Comparable<IconTheme> {
   /** Base-Directory of the IconTheme */
   private File mIconBase;
   /** Logger */
@@ -328,5 +330,10 @@ abstract public class IconTheme {
    * @return Image
    */
   protected abstract ImageIcon getImageFromTheme(String image);
+  
+  @Override
+  public int compareTo(IconTheme o) {
+    return getName().compareToIgnoreCase(o.getName());
+  }
   
 }
