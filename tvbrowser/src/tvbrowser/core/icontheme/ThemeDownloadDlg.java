@@ -359,7 +359,7 @@ public class ThemeDownloadDlg extends JDialog implements WindowClosingIf {
         add(mDescription, CC.xy(5, 3));
       }
       
-      mAuthor = UiUtilities.createHtmlHelpTextArea(LOCALIZER.msg("providedBy", "Provided by: {0}", mItem.getAuthor()) + item.getAuthor(), foreground, getBackground());
+      mAuthor = UiUtilities.createHtmlHelpTextArea(LOCALIZER.msg("providedBy", "Provided by: {0}", mItem.getAuthor()), foreground, getBackground());
       mAuthor.setOpaque(false);
       mAuthor.addMouseListener(mouseListener);
       mAuthor.setForeground(foreground);
