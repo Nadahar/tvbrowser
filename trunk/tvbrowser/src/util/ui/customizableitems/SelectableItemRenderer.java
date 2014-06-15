@@ -65,7 +65,7 @@ public class SelectableItemRenderer implements ListCellRenderer {
     
     JPanel p = new JPanel(new BorderLayout(2,0));
     try { p.setBorder(BorderFactory.createEmptyBorder(0,2,0,0));
-    mSelectionWidth = cb.getPreferredSize().width;
+    mSelectionWidth = cb.getPreferredSize().width + 2 + p.getInsets().left;
     
     p.add(cb, BorderLayout.WEST);
     
