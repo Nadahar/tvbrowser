@@ -353,7 +353,7 @@ public class SettingsDialog implements WindowClosingIf {
         SettingsItem.STARTUP);
     root.add(generalSettings);
 
-    SettingNode graphicalSettings = new SettingNode(new LookAndFeelSettingsTab(),
+    SettingNode graphicalSettings = new SettingNode(new LookAndFeelSettingsTab(this),
         SettingsItem.LOOKANDFEEL);
     root.add(graphicalSettings);
 
@@ -492,7 +492,7 @@ public class SettingsDialog implements WindowClosingIf {
     return mDialog;
   }
 
-  private void saveSettings() {
+  void saveSettings() {
     saveSettings((SettingNode) mSelectionTree.getModel().getRoot());
   }
 
