@@ -26,7 +26,6 @@ package tvbrowser.core.icontheme;
 import java.io.File;
 import java.io.FileFilter;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 
 import tvbrowser.core.Settings;
@@ -39,6 +38,11 @@ import tvbrowser.core.Settings;
 public class InfoThemeLoader {
   private static InfoThemeLoader INSTANCE;
   
+  /** The icon dir of the current user. */
+  public static final File USER_ICON_DIR = new File(Settings.getUserDirectoryName(), "infothemes");
+  /** The url of the download specs. */
+  public static final String DOWNLOAD_SPEC_URL = "http://www.tvbrowser.org/downloads/infothemes/infothemes.txt";
+  
   private static final FileFilter THEME_FILE_FILTER = new FileFilter() {
     @Override
     public boolean accept(File pathname) {
@@ -50,11 +54,9 @@ public class InfoThemeLoader {
   
   private InfoThemeLoader() {
     mInfoIconThemeMap = new HashMap<String, InfoIconTheme>();
-    
-    File userThemes = new File(Settings.getUserSettingsDirName(),"infothemes");
-    
-    if(userThemes.isDirectory()) {
-      File[] iconThemes = userThemes.listFiles(THEME_FILE_FILTER);
+        
+    if(USER_ICON_DIR.isDirectory()) {
+      File[] iconThemes = USER_ICON_DIR.listFiles(THEME_FILE_FILTER);
       
       if(iconThemes != null) {
         for(File iconTheme : iconThemes) {
