@@ -387,6 +387,22 @@ public class UiUtilities {
    * @since 2.7.2
    */
   public static JEditorPane createHtmlHelpTextArea(String html, Color background) {
+    return createHtmlHelpTextArea(html, UIManager.getColor("Label.foreground"), background);
+  }
+
+  /**
+   * Creates a Html EditorPane that holds a HTML-Help Text
+   *
+   * Links will be displayed and are clickable
+   *
+   * @param html
+   *          HTML-Text to display
+   * @param foreground The color of the text.
+   * @param background The color for the background.
+   * @return EditorPane that holds a Help Text
+   * @since 3.3.4
+   */
+  public static JEditorPane createHtmlHelpTextArea(String html, Color foreground, Color background) {
     return createHtmlHelpTextArea(html, new HyperlinkListener() {
       private String mTooltip;
 
@@ -410,7 +426,7 @@ public class UiUtilities {
           }
         }
       }
-    },background);
+    },foreground,background);
   }
 
   /**
@@ -427,9 +443,9 @@ public class UiUtilities {
    */
   public static JEditorPane createHtmlHelpTextArea(String html,
       HyperlinkListener listener) {
-    return createHtmlHelpTextArea(html,listener,new JPanel().getBackground());
+    return createHtmlHelpTextArea(html,listener,UIManager.getColor("Panel.background"));
   }
-
+  
   /**
    * Creates a Html EditorPane that holds a HTML-Help Text.
    *
@@ -445,6 +461,25 @@ public class UiUtilities {
    */
   public static JEditorPane createHtmlHelpTextArea(String html,
       HyperlinkListener listener, Color background) {
+    return createHtmlHelpTextArea(html, listener, UIManager.getColor("Label.foreground"), background); 
+  }
+
+  /**
+   * Creates a Html EditorPane that holds a HTML-Help Text.
+   *
+   * Add a Listener if you want to have clickable Links
+   *
+   * @param html
+   *          HTML-Text to display
+   * @param listener
+   *          Link-Listener for this HelpText
+   * @param foreground The color of the text. 
+   * @param background The color for the background.
+   * @return EditorPane that holds a Help Text
+   * @since 3.3.4
+   */
+  public static JEditorPane createHtmlHelpTextArea(String html,
+      HyperlinkListener listener, Color foreground, Color background) {
     // Quick "hack". Remove HTML-Code and replace it with Code that includes the
     // correct Font
     final JEditorPane pane = new JEditorPane("text/html", "");
@@ -458,8 +493,28 @@ public class UiUtilities {
       pane.addHyperlinkListener(listener);
     }
 
-    updateHtmlHelpTextArea(pane, html, background);
+    updateHtmlHelpTextArea(pane, html, foreground, background);
     return pane;
+  }
+  
+  /**
+   * @param helpTextArea The editor pane to update.
+   * @param html The text for the editor pane.
+   * @param foreground The foreground color. 
+   * @param background The background color.
+   * @since 3.3.4
+   */
+  public static void updateHtmlHelpTextArea(final JEditorPane helpTextArea, String html, Color foreground, Color background) {
+    if (html.indexOf("<html>") >= 0) {
+      html = StringUtils.substringBetween(html, "<html>", "</html>");
+    }
+    
+    Font font = UIManager.getFont("Label.font");
+    html = "<html><div style=\"color:" + UiUtilities.getHTMLColorCode(foreground)+";font-family:" + font.getName()
+        + "; font-size:" + font.getSize() +";background-color:rgb(" + background.getRed() + "," + background.getGreen() + "," + background.getBlue() + ");\">" + html + "</div></html>";
+
+    helpTextArea.setFont(font);
+    helpTextArea.setText(html);
   }
 
   /**
@@ -469,20 +524,11 @@ public class UiUtilities {
    * @since 3.0.2
    */
   public static void updateHtmlHelpTextArea(final JEditorPane helpTextArea, String html, Color background) {
-    if (html.indexOf("<html>") >= 0) {
-      html = StringUtils.substringBetween(html, "<html>", "</html>");
-    }
-    JLabel label = new JLabel();
-    Font font = label.getFont();
-    html = "<html><div style=\"color:" + UiUtilities.getHTMLColorCode(label.getForeground())+";font-family:" + font.getName()
-        + "; font-size:" + font.getSize() +";background-color:rgb(" + background.getRed() + "," + background.getGreen() + "," + background.getBlue() + ");\">" + html + "</div></html>";
-
-    helpTextArea.setFont(font);
-    helpTextArea.setText(html);
+    updateHtmlHelpTextArea(helpTextArea, html, UIManager.getColor("Label.foreground"), background);
   }
 
   public static void updateHtmlHelpTextArea(final JEditorPane helpTextArea, String description) {
-    updateHtmlHelpTextArea(helpTextArea, description, new JPanel().getBackground());
+    updateHtmlHelpTextArea(helpTextArea, description, UIManager.getColor("Label.foreground"));
   }
 
 
