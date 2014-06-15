@@ -150,27 +150,32 @@ public class SelectableItemList extends JPanel implements ListSelectionListener{
     
     mList.addMouseListener(new MouseAdapter() {
       public void mousePressed(MouseEvent evt) {
-
         int index = mList.locationToIndex(evt.getPoint());
-           
+        
         if (index != -1) {
-          if (evt.getX() < mItemRenderer.getSelectionWidth() && mIsEnabled) {
-              if(mList.getCellBounds(index,index).contains(evt.getPoint())) {
-                SelectableItem item = (SelectableItem) mListModel.getElementAt(index);
-                if(item.isSelectable()) {
-                  item.setSelected(! item.isSelected());
-                  handleItemSelectionChanged();
-                }
-              }
-            }
+          Rectangle oldCellBounds = mList.getCellBounds(index,index);
+          
           calculateSize();
           addEditor(index);
+          
+          if (evt.getX() <= mItemRenderer.getSelectionWidth() && mIsEnabled) {
+            if(oldCellBounds.contains(evt.getPoint())) {
+              SelectableItem item = (SelectableItem) mListModel.getElementAt(index);
+              if(item.isSelectable()) {
+                item.setSelected(! item.isSelected());
+                handleItemSelectionChanged();
+                mList.repaint();
+              }
+            }
           }
+        }
       }
     });
     mList.addKeyListener(new KeyAdapter(){
       public void keyPressed(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+          addEditor(mList.getSelectedIndex());
+          
           Object[] objs = mList.getSelectedValues();
           for (Object obj : objs) {
             if (obj instanceof SelectableItem) {
@@ -181,7 +186,6 @@ public class SelectableItemList extends JPanel implements ListSelectionListener{
           handleItemSelectionChanged();
           mList.repaint();
         }
-        addEditor(mList.getSelectedIndex());
       }
       
       public void keyReleased(KeyEvent e) {
@@ -221,14 +225,18 @@ public class SelectableItemList extends JPanel implements ListSelectionListener{
   }
   
   private void handleItemSelectionChanged() {
-    JCheckBox cb = ((JCheckBox) mEditorComp.getComponent(0));
-    cb.setSelected(((SelectableItem) mListModel.getElementAt(mEditingIndex)).isSelected());
-    ListSelectionListener[] listeners = mList.getListSelectionListeners();
-    if(listeners != null) {
-      for(ListSelectionListener listener : listeners) {
-        if(mList.getSelectedValue() != null) {
-          int[] indices = mList.getSelectedIndices();
-          listener.valueChanged(new ListSelectionEvent(mList.getSelectedValue(), indices[0], indices[indices.length-1], false));
+    if(mEditorComp != null) {
+      JCheckBox cb = ((JCheckBox) mEditorComp.getComponent(0));
+      cb.setSelected(((SelectableItem) mListModel.getElementAt(mEditingIndex)).isSelected());
+      mEditorComp.repaint();
+      
+      ListSelectionListener[] listeners = mList.getListSelectionListeners();
+      if(listeners != null) {
+        for(ListSelectionListener listener : listeners) {
+          if(mList.getSelectedValue() != null) {
+            int[] indices = mList.getSelectedIndices();
+            listener.valueChanged(new ListSelectionEvent(mList.getSelectedValue(), indices[0], indices[indices.length-1], false));
+          }
         }
       }
     }
