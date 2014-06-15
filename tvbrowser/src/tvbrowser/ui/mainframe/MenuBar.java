@@ -1084,6 +1084,11 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 		  infoBuilder.append("\nJava: ").append(System.getProperty("java.runtime.name")).append(" ").append(System.getProperty("java.version")).append(" ").append(System.getProperty("java.home"));
 		  infoBuilder.append("\nTV-Browser: ").append(TVBrowser.VERSION).append(" ").append(new File("").getAbsolutePath());
 		  infoBuilder.append("\nUser settings: ").append(System.getProperty("user.dir")).append(" ").append(System.getProperty("user.language")).append(" ").append(System.getProperty("user.country")).append(" ").append(System.getProperty("user.timezone"));
+		  infoBuilder.append("\nLookAndFeel: ").append(Settings.propLookAndFeel.getString());
+		  infoBuilder.append("\nPlastic-Theme: ").append(Settings.propJGoodiesTheme.getString());
+		  infoBuilder.append("\nPersona: ").append(Persona.getInstance().getName());
+		  infoBuilder.append("\nIcons: ").append(Settings.propIcontheme.getString());
+		  infoBuilder.append("\nInfo-Icons: ").append(Settings.propInfoIconThemeID.getString());
 		  infoBuilder.append("\n\nInstalled plugins:");
 		  
 		  PluginProxy[] plugins = PluginProxyManager.getInstance().getAllPlugins();
