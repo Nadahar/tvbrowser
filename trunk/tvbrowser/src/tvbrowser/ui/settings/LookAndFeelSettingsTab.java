@@ -45,6 +45,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.UIManager;
 
+import tvbrowser.TVBrowser;
 import tvbrowser.core.Settings;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.icontheme.IconTheme;
@@ -91,6 +92,8 @@ public final class LookAndFeelSettingsTab implements SettingsTab {
   private JComboBox mInfoIconThemes;
 
   private JTextArea mRestartMessage;
+  
+  private JButton mRestartButton;
 
   private int mStartLookAndIndex;
   private int mStartIconIndex;
@@ -135,6 +138,12 @@ public final class LookAndFeelSettingsTab implements SettingsTab {
     return result;
   }
 
+  private SettingsDialog mSettingsDialog;
+  
+  public LookAndFeelSettingsTab(SettingsDialog dialog) {
+    mSettingsDialog = dialog;
+  }
+  
   public JPanel createSettingsPanel() {
     FormLayout layout = new FormLayout("5dlu, pref, 3dlu, fill:default:grow, 3dlu, pref, 5dlu", "");
     
@@ -322,20 +331,29 @@ public final class LookAndFeelSettingsTab implements SettingsTab {
     mSettingsPn.add(mInfoIconThemes, CC.xy(4, 13));
     mSettingsPn.add(downloadInfoThemes, CC.xy(6, 13));
     
-    /*layout.appendRow(RowSpec.decode("3dlu"));
-    layout.appendRow(RowSpec.decode("pref"));
-
-    mSettingsPn.add(new LinkButton(mLocalizer.msg("findMoreIcons","You can find more Icons on our Web-Page."),
-        "http://www.tvbrowser.org/iconthemes.php"), CC.xy(4, 15));*/
-    
     layout.appendRow(RowSpec.decode("fill:3dlu:grow"));
     layout.appendRow(RowSpec.decode("pref"));
 
     mRestartMessage = UiUtilities.createHelpTextArea(mLocalizer.msg("restartNote", "Please Restart"));
     mRestartMessage.setForeground(Color.RED);
     mRestartMessage.setVisible(mSomethingChanged);
-
-    mSettingsPn.add(mRestartMessage, CC.xyw(1, 15, 6));
+    
+    mRestartButton = new JButton(mLocalizer.msg("restart", "Restart now"));
+    mRestartButton.setVisible(mSomethingChanged);
+    mRestartButton.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        mSettingsDialog.saveSettings();
+        TVBrowser.addRestart();
+        MainFrame.getInstance().quit();
+      }
+    });
+    
+    mSettingsPn.add(mRestartMessage, CC.xyw(1, 15, 4));
+    
+    if(TVBrowser.restartEnabled()) {
+      mSettingsPn.add(mRestartButton, CC.xy(6, 15));
+    }
 
     if(!mSomethingChanged) {
       mStartLookAndIndex = mLfComboBox.getSelectedIndex();
@@ -426,6 +444,8 @@ public final class LookAndFeelSettingsTab implements SettingsTab {
     
     IconTheme[] available = IconLoader.getInstance().getAvailableThemes();
     
+    Arrays.sort(available);
+    
     for(int i = 0; i < available.length; i++) {
       mIconThemes.addItem(available[i]);
       
@@ -456,6 +476,7 @@ public final class LookAndFeelSettingsTab implements SettingsTab {
         mSkinLFStartTheme.compareTo(Settings.propSkinLFThemepack.getString()) != 0 ||
         mPluginViewPosition.getSelectedIndex() != mStartPluginViewPositionIndex ||
         mStartInfoIconThemeIndex != mInfoIconThemes.getSelectedIndex());
+    mRestartButton.setVisible(mRestartMessage.isVisible());
   }
 
   void configTheme() {
