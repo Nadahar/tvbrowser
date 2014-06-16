@@ -29,6 +29,7 @@ import java.util.TimeZone;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
+import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import util.ui.Localizer;
 
 import devplugin.Channel;
@@ -43,6 +44,7 @@ public class DummyChannel extends Channel {
   private static final Localizer LOCALIZER = Localizer.getLocalizerFor(DummyChannel.class);
   private static final ImageIcon ICON = new ImageIcon("imgs/unknown_channel.png");
   private static final HashMap<String, DummyGroup> DUMMY_GROUP_MAP = new HashMap<String, DummyChannel.DummyGroup>();
+  private Channel mOriginal;
   
   private static final DummyGroup getDummyGroup(String groupId) {
     DummyGroup dummyGroup = DUMMY_GROUP_MAP.get(groupId);
@@ -57,6 +59,8 @@ public class DummyChannel extends Channel {
   
   public DummyChannel(String dataServiceId, String groupId, String country, String channelId, String channelName) {
     super(dataServiceId, channelName, channelId, TimeZone.getDefault(), country, "\u00A9 " + LOCALIZER.msg("unknown", "Unknown"), LOCALIZER.msg("url", "http://enwiki.tvbrowser.org/index.php/Not_available"), getDummyGroup(groupId), ICON, Channel.CATEGORY_NONE, null, new String[] {country}, null);
+    
+    mOriginal = null;
   }
   
   private static final class DummyGroup implements ChannelGroup {
@@ -92,6 +96,10 @@ public class DummyChannel extends Channel {
    */
   @Override
   public Icon getIcon() {
+    if(mOriginal != null) {
+      return mOriginal.getIcon();
+    }
+    
     return getDefaultIcon();
   }
   
@@ -100,6 +108,10 @@ public class DummyChannel extends Channel {
    */
   @Override
   public String getName() {
+    if(mOriginal != null) {
+      return mOriginal.getName();
+    }
+    
     return super.getName() + " " + LOCALIZER.msg("na","(N/A)");
   }
   
@@ -108,6 +120,23 @@ public class DummyChannel extends Channel {
    */
   @Override
   public String getWebpage() {
+    if(mOriginal != null) {
+      return mOriginal.getWebpage();
+    }
+    
     return getDefaultWebPage();
+  }
+  
+  public void setOriginal(Channel ch) {
+    mOriginal = ch;
+  }
+  
+  @Override
+  public TvDataServiceProxy getDataServiceProxy() {
+    if(mOriginal != null) {
+      return mOriginal.getDataServiceProxy();
+    }
+    
+    return super.getDataServiceProxy();
   }
 }

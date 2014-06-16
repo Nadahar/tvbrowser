@@ -114,7 +114,6 @@ public class ChannelArrayProperty extends Property {
     return mCachedValue;
   }
   
-  
   public void setChannelArray(Channel[] value) {
     if (value == null) {
       throw new IllegalArgumentException("You can't set a null value");
@@ -158,6 +157,10 @@ public class ChannelArrayProperty extends Property {
   
   protected void clearCache() {
     mCachedValue = null;
+  }
+  
+  public void clearCacheExternal() {
+    clearCache();
   }
 
 }
