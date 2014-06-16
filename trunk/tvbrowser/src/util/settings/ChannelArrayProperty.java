@@ -146,7 +146,7 @@ public class ChannelArrayProperty extends Property {
         String dataServiceId = value[i].getDataServiceId();
         buffer.append(dataServiceId).append(':').append(
             value[i].getGroup().getId()).append(':').append(
-            value[i].getBaseCountry()).append(':').append(value[i].getId()).append(":").append(value[i].getName());
+            value[i].getBaseCountry()).append(':').append(value[i].getId()).append(":").append(value[i].getDefaultName());
       }
       
       setProperty(buffer.toString());
