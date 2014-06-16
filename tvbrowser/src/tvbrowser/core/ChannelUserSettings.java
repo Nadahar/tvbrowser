@@ -49,7 +49,7 @@ public class ChannelUserSettings {
   private static HashMap<String, ChannelUserSettings> mChannelUserSettings = new HashMap<String, ChannelUserSettings>();
 
   public static ChannelUserSettings getSettings(Channel ch) {
-    if(ch == null || ch.getDataServiceProxy() == null || ch.getGroup() == null) {
+    if(ch == null || ch.getDataServiceId() == null || ch.getGroup() == null) {
       ChannelUserSettings settings = mChannelUserSettings.get(null);
 
       if (settings == null) {

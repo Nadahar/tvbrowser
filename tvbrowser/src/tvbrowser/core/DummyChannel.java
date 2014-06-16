@@ -26,6 +26,7 @@ package tvbrowser.core;
 import java.util.HashMap;
 import java.util.TimeZone;
 
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
 import util.ui.Localizer;
@@ -55,7 +56,7 @@ public class DummyChannel extends Channel {
   }
   
   public DummyChannel(String dataServiceId, String groupId, String country, String channelId, String channelName) {
-    super(dataServiceId, channelName + " " + LOCALIZER.msg("na","(N/A)"), channelId, TimeZone.getDefault(), country, "\u00A9 " + LOCALIZER.msg("unknown", "Unknown"), LOCALIZER.msg("url", "http://enwiki.tvbrowser.org/index.php/Not_available"), getDummyGroup(groupId), ICON, Channel.CATEGORY_NONE, null, new String[] {country}, null);
+    super(dataServiceId, channelName, channelId, TimeZone.getDefault(), country, "\u00A9 " + LOCALIZER.msg("unknown", "Unknown"), LOCALIZER.msg("url", "http://enwiki.tvbrowser.org/index.php/Not_available"), getDummyGroup(groupId), ICON, Channel.CATEGORY_NONE, null, new String[] {country}, null);
   }
   
   private static final class DummyGroup implements ChannelGroup {
@@ -84,5 +85,29 @@ public class DummyChannel extends Channel {
     public String getProviderName() {
       return LOCALIZER.msg("unknown", "Unknown");
     }
+  }
+  
+  /**
+   * Always return question mark icon.
+   */
+  @Override
+  public Icon getIcon() {
+    return getDefaultIcon();
+  }
+  
+  /**
+   * Return name with (N/A)
+   */
+  @Override
+  public String getName() {
+    return super.getName() + " " + LOCALIZER.msg("na","(N/A)");
+  }
+  
+  /**
+   * Always return default web page.
+   */
+  @Override
+  public String getWebpage() {
+    return getDefaultWebPage();
   }
 }
