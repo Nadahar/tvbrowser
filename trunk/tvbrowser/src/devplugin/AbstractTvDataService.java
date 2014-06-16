@@ -162,7 +162,7 @@ public abstract class AbstractTvDataService {
    * @return The id of this ButtonActionIf.
    */
   final public String getId() {
-    return this.getClass().toString();
+    return this.getClass().getName();
   }
 
   /**

@@ -583,43 +583,45 @@ public class TvDataUpdater {
 
     ArrayList<UpdateJob> jobList = new ArrayList<UpdateJob>();
     for (Channel channel : subscribedChannels) {
-      // Get the UpdateJob for this channel
-      UpdateJob job = null;
-      for (int i = 0; i < jobList.size(); i++) {
-        UpdateJob currJob = jobList.get(i);
-        if (currJob.getDataService().getId().equals(channel.getDataServiceProxy().getId())) {
-          job = currJob;
-          break;
+      if(!(channel instanceof DummyChannel)) {
+        // Get the UpdateJob for this channel
+        UpdateJob job = null;
+        for (int i = 0; i < jobList.size(); i++) {
+          UpdateJob currJob = jobList.get(i);
+          if (currJob.getDataService().getId().equals(channel.getDataServiceId())) {
+            job = currJob;
+            break;
+          }
         }
-      }
-      if (job == null) {
-        // There is no job fo this channel -> create one
-
-          // check, if we can use this dataservice
-          TvDataServiceProxy service = channel.getDataServiceProxy();
-          boolean useService = false;
-          for (TvDataServiceProxy service2 : services) {
-            if (service2.getId().equals(service.getId())) {
-              useService = true;
-              break;
+        if (job == null) {
+          // There is no job fo this channel -> create one
+  
+            // check, if we can use this dataservice
+            TvDataServiceProxy service = channel.getDataServiceProxy();
+            boolean useService = false;
+            for (TvDataServiceProxy service2 : services) {
+              if (service2.getId().equals(service.getId())) {
+                useService = true;
+                break;
+              }
             }
-          }
-          if (!useService) {
-            continue;
-          }
-
-        job = new UpdateJob(channel.getDataServiceProxy());
-        jobList.add(job);
+            if (!useService) {
+              continue;
+            }
+  
+          job = new UpdateJob(channel.getDataServiceProxy());
+          jobList.add(job);
+        }
+  
+        // Add the channel to the UpdateJob
+        job.addChannel(channel);
       }
-
-      // Add the channel to the UpdateJob
-      job.addChannel(channel);
     }
-
+    
     // Convert the list into an array and return it
     UpdateJob[] jobArr = new UpdateJob[jobList.size()];
     jobList.toArray(jobArr);
-    return jobArr;
+    return jobArr;    
   }
 
   // inner class UpdateJob

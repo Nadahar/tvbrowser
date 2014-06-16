@@ -12,6 +12,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
 
 import tvbrowser.core.ChannelList;
+import tvbrowser.core.DummyChannel;
 import tvbrowser.core.Settings;
 import tvbrowser.core.filters.FilterComponent;
 import tvbrowser.core.filters.FilterComponentList;
@@ -93,7 +94,7 @@ public class ChannelContextMenu implements ActionListener {
     mChGoToURL.addActionListener(this);
 
     mMenu.add(mChGoToURL);
-    if (ChannelList.isSubscribedChannel(ch)) {
+    if (ChannelList.isSubscribedChannel(ch) && !(ch instanceof DummyChannel)) {
       mMenu.add(mChConf);
     }
     if (!(mSource instanceof ChannelsSettingsTab)) {

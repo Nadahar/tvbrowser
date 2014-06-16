@@ -27,6 +27,8 @@ package tvbrowser.ui.settings.channel;
 
 import org.apache.commons.lang3.StringUtils;
 
+import tvbrowser.core.DummyChannel;
+
 import devplugin.Channel;
 
 /**
@@ -105,6 +107,10 @@ public class ChannelFilter {
    * @return True if Channel is accepted by this Filter
    */
   public boolean accept(Channel channel) {try {
+    if(channel instanceof DummyChannel) {
+      return true;
+    }
+    
     if (mCountry != null) {
       String[] countries = channel.getAllCountries();
       

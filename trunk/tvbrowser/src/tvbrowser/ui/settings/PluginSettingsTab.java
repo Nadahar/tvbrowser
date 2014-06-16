@@ -61,6 +61,7 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 
 import tvbrowser.core.ChannelList;
+import tvbrowser.core.DummyChannel;
 import tvbrowser.core.PluginAndDataServiceComparator;
 import tvbrowser.core.PluginLoader;
 import tvbrowser.core.Settings;
@@ -510,9 +511,14 @@ public class PluginSettingsTab implements devplugin.SettingsTab, TableModelListe
     // count the removed channels
     int channelCount = 0;
     Channel[] subscribed = ChannelList.getSubscribedChannels();
+    ArrayList<Channel> keepChannels = new ArrayList<Channel>();
+    
     for (Channel element : subscribed) {
-      if (element.getDataServiceProxy().equals(service)) {
+      if (!(element instanceof DummyChannel) && element.getDataServiceProxy().equals(service)) {
         channelCount++;
+      }
+      else {
+        keepChannels.add(element);
       }
     }
     
@@ -526,12 +532,13 @@ public class PluginSettingsTab implements devplugin.SettingsTab, TableModelListe
     if (result == JOptionPane.YES_OPTION) {
       if (PluginLoader.getInstance().deleteDataService(service)) {
         JOptionPane.showMessageDialog(mSettingsDialog.getDialog(), mLocalizer.msg("dataservice.successfully","Deletion was succesfully"));
+        
+        ChannelsSettingsTab.saveChannels(keepChannels.toArray(new Channel[keepChannels.size()]), false);
       } else {
         JOptionPane.showMessageDialog(mSettingsDialog.getDialog(), mLocalizer.msg("failed","Deletion failed"));
       }
         
       populatePluginList();
-//      mSettingsDialog.createPluginTreeItems();
       mTable.setRowSelectionInterval(0, 0);
     }
   }

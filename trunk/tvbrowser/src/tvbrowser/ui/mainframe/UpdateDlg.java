@@ -49,6 +49,7 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
 import tvbrowser.core.ChannelList;
+import tvbrowser.core.DummyChannel;
 import tvbrowser.core.Settings;
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import util.ui.Localizer;
@@ -230,7 +231,7 @@ public class UpdateDlg extends JDialog implements ActionListener, WindowClosingI
     ArrayList<TvDataServiceProxy> services = new ArrayList<TvDataServiceProxy>();
 
     for (Channel channel : ChannelList.getSubscribedChannels()) {
-      if (!services.contains(channel.getDataServiceProxy())) {
+      if (!(channel instanceof DummyChannel) && channel.getDataServiceProxy() != null && !services.contains(channel.getDataServiceProxy())) {
         services.add(channel.getDataServiceProxy());
       }
     }

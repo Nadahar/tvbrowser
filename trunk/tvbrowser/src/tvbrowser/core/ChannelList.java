@@ -182,6 +182,11 @@ public class ChannelList {
    * list of subscribed channels
    */
   private static ArrayList<Channel> mSubscribedChannels = new ArrayList<Channel>();
+  
+  /**
+   * List of dummy channels that were requested but are not available.
+   */
+  private static HashMap<String,DummyChannel> mDummyChannelMap = new HashMap<String, DummyChannel>();
 
   /**
    * map of channel position per subscribed channels, needed for fast channel
@@ -195,7 +200,7 @@ public class ChannelList {
       mChannelWebpagesMap, mChannelDayLightCorrectionMap, mChannelSortNumberMap;
 
   private static Channel mCurrentChangeChannel = null;
-
+  
   /**
    * Load the not subscribed channels after TV-Browser start was finished.
    */
@@ -222,7 +227,15 @@ public class ChannelList {
     for (TvDataServiceProxy proxy : dataServiceArr) {
       addDataServiceChannels(proxy,availableChannels);
     }
-
+    
+    Channel[] channelArr = Settings.propSubscribedChannels.getChannelArray();
+    
+    for(Channel channel : channelArr) {
+      if(channel instanceof DummyChannel) {
+        addChannelToAvailableChannels(channel,availableChannels);
+      }
+    }
+    
     boolean removed = false;
 
     for(int i = mAvailableChannels.size()-1; i >= 0; i--) {
@@ -264,7 +277,7 @@ public class ChannelList {
     if (channelArr.length == 0 && mSubscribedChannels.isEmpty()) {
       channelArr = getDefaultChannels(Settings.propSelectedChannelCountry.getString());
     }
-
+    
     for (Channel channel : channelArr) {
       if (channel != null) {
         subscribeChannel(channel);
@@ -483,29 +496,59 @@ public class ChannelList {
    */
   public static Channel getChannel(String dataServiceId, String groupId,
       String country, String channelId) {
+    return getChannel(dataServiceId,groupId,country,channelId,"Dummy");
+  }
+  
+  /**
+   * Returns a new Channel object with the specified IDs or a dummy channel or null, if the given
+   * IDs contains null values.
+   *
+   * @param dataServiceId
+   *          The id of the data service to get the channel from.
+   * @param groupId
+   *          The id of the channel group.
+   * @param country
+   *          The country of the channel.
+   * @param channelId
+   *          The id of the channel.
+   * @param channelName 
+   *
+   * @return The specified channel or <code>null</code> if the channel wasn't
+   *         found.
+   *
+   * @since 3.3.4
+   */
+  public static Channel getChannel(String dataServiceId, String groupId,
+      String country, String channelId, String channelName) {
     TvDataServiceProxy dataService = null;
+    Channel returnValue = null;
+    
     if (dataServiceId != null) {
       dataService = TvDataServiceProxyManager.getInstance()
           .findDataServiceById(dataServiceId);
-
-      if (dataService == null) {
-        return null;
-      }
     }
 
-    int n = mAvailableChannels.size();
-
-    for(int i = 0; i < n; i++) {
-      Channel channel = mAvailableChannels.get(i);
-
-      if (channel.getId().compareTo(channelId) == 0
-          && ((dataServiceId != null && channel.getDataServiceProxy().getId()
-              .compareTo(dataService.getId()) == 0) || dataServiceId == null)
-          && ((groupId != null && channel.getGroup().getId().compareTo(groupId) == 0) || groupId == null)
-          && ((country != null && channel.getBaseCountry().compareTo(country) == 0) || country == null)) {
-        return channel;
+    if(dataService != null) {
+      int n = mAvailableChannels.size();
+  
+      for(int i = 0; i < n; i++) {
+        Channel channel = mAvailableChannels.get(i);
+  
+        if (channel.getId().compareTo(channelId) == 0
+            && ((dataServiceId != null && channel.getDataServiceId()
+                .compareTo(dataService.getId()) == 0) || dataServiceId == null)
+            && ((groupId != null && channel.getGroup().getId().compareTo(groupId) == 0) || groupId == null)
+            && ((country != null && channel.getBaseCountry().compareTo(country) == 0) || country == null)) {
+          returnValue = channel;
+          break;
+        }
       }
     }
+    
+    if(returnValue == null) {
+      returnValue = getDummyChannel(dataServiceId, groupId, country, channelId, channelName);
+    }
+    
     /*
      * merge-conflict: do we need these lines?
      *  // If we haven't found the channel within the 'available channels', we
@@ -527,6 +570,25 @@ public class ChannelList {
      * return channelArr[j]; } } } } }
      */
 
+    return returnValue;
+  }
+  
+  private static Channel getDummyChannel(String dataServiceId, String groupId,
+      String country, String channelId, String channelName) {
+    if(dataServiceId != null && groupId != null && country != null && channelId != null) {
+      StringBuilder key = new StringBuilder();
+      key.append(dataServiceId).append(";").append(groupId).append(";").append(country).append(";").append(channelId);
+      
+      DummyChannel dummy = mDummyChannelMap.get(key.toString());
+      
+      if(dummy == null) {
+        dummy = new DummyChannel(dataServiceId, groupId, country, channelId, channelName);
+        mDummyChannelMap.put(key.toString(), dummy);
+      }
+      
+      return dummy;
+    }
+    
     return null;
   }
 
@@ -588,6 +650,7 @@ public class ChannelList {
   public static int getNumberOfSubscribedChannels() {
     return mSubscribedChannels.size();
   }
+  
 
   /**
    * Returns all subscribed mAvailableChannels.
@@ -595,11 +658,26 @@ public class ChannelList {
    * @return All subscribed channels in an array.
    */
   public static Channel[] getSubscribedChannels() {
-    Channel[] result = new Channel[mSubscribedChannels.size()];
-    for (int i = 0; i < mSubscribedChannels.size(); i++) {
-      result[i] = mSubscribedChannels.get(i);
+    return getSubscribedChannels(true);
+  }
+
+  /**
+   * Returns all subscribed mAvailableChannels.
+   * @param withDummyChannels Include dummy channels?
+   *
+   * @return The subscribed channels in an array with or without dummy channels.
+   * @since 3.3.4
+   */
+  public static Channel[] getSubscribedChannels(boolean withDummyChannels) {
+    ArrayList<Channel> result = new ArrayList<Channel>();
+    
+    for (Channel channel : mSubscribedChannels) {
+      if(withDummyChannels || !(channel instanceof DummyChannel)) {
+        result.add(channel);
+      }
     }
-    return result;
+    
+    return result.toArray(new Channel[result.size()]);
   }
 
   /**
@@ -794,7 +872,7 @@ public class ChannelList {
           out
               .println(createPropertyForChannel(channel, userChannelName.trim()));
         }
-        subscribedServices.add(channel.getDataServiceProxy().getId());
+        subscribedServices.add(channel.getDataServiceId());
       }
       // remember the currently active services for faster startup
       Settings.propCurrentlyUsedDataServiceIds.setStringArray(subscribedServices.toArray(new String[subscribedServices.size()]));
@@ -859,7 +937,7 @@ public class ChannelList {
   }
 
   private static String createPropertyForChannel(Channel channel, String value) {
-    return new StringBuilder(channel.getDataServiceProxy().getId()).append(":")
+    return new StringBuilder(channel.getDataServiceId()).append(":")
         .append(channel.getGroup().getId()).append(":").append(
             channel.getBaseCountry()).append(":").append(channel.getId()).append(
             "=").append(value).toString();
@@ -867,18 +945,18 @@ public class ChannelList {
 
   private static String getMapValueForChannel(Channel channel,
       HashMap<String, String> map) {
-    String value = map.get(new StringBuilder(channel.getDataServiceProxy()
-        .getId()).append(":").append(channel.getGroup().getId()).append(":")
+    String value = map.get(new StringBuilder(channel.getDataServiceId())
+        .append(":").append(channel.getGroup().getId()).append(":")
         .append(channel.getBaseCountry()).append(":").append(channel.getId())
         .toString());
 
     if (value == null) {
-      value = map.get(new StringBuilder(channel.getDataServiceProxy().getId())
+      value = map.get(new StringBuilder(channel.getDataServiceId())
           .append(":").append(channel.getGroup().getId()).append(":").append(
               channel.getId()).toString());
     }
     if (value == null) {
-      value = map.get(new StringBuilder(channel.getDataServiceProxy().getId())
+      value = map.get(new StringBuilder(channel.getDataServiceId())
           .append(":").append(channel.getId()).toString());
     }
 
