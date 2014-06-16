@@ -157,6 +157,7 @@ import tvbrowser.ui.mainframe.toolbar.ContextMenu;
 import tvbrowser.ui.mainframe.toolbar.DefaultToolBarModel;
 import tvbrowser.ui.mainframe.toolbar.MoreButton;
 import tvbrowser.ui.mainframe.toolbar.ToolBar;
+import tvbrowser.ui.pluginview.PluginTree;
 import tvbrowser.ui.pluginview.PluginView;
 import tvbrowser.ui.pluginview.PluginViewWrapper;
 import tvbrowser.ui.programtable.DefaultProgramTableModel;
@@ -1619,6 +1620,8 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
                 Localizer.getLocalization(Localizer.I18N_INFO), JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
           showSettingsDialog(SettingsItem.MOUSE);
         }
+        
+        PluginTree.getInstance().updateUI();
       }
     });
   }
