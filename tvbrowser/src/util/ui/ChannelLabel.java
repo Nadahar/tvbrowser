@@ -41,7 +41,7 @@ public class ChannelLabel extends JLabel {
 
   /** A Icon-Cache for Performance-Reasons */
   static private SoftReferenceCache<Channel,Icon> ICONCACHE = new SoftReferenceCache<Channel,Icon>();
-  
+    
   /**
    * default channel icon, already prepared for right size
    */
@@ -317,7 +317,7 @@ public class ChannelLabel extends JLabel {
       else {
         Icon resizedIcon =UiUtilities.createChannelIcon(icon);
         
-        if(channel.getJointChannel() == null) {
+        if(channel.getJointChannel() == null && !(channel instanceof DummyChannel)) {
           ICONCACHE.put(channel, resizedIcon);
         }
         

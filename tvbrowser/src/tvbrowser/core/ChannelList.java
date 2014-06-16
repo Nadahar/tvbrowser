@@ -47,6 +47,7 @@ import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
 import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
 import tvbrowser.ui.mainframe.MainFrame;
+import tvbrowser.ui.programtable.DefaultProgramTableModel;
 import util.io.IOUtilities;
 import util.io.stream.ObjectInputStreamProcessor;
 import util.io.stream.ObjectOutputStreamProcessor;
@@ -224,10 +225,22 @@ public class ChannelList {
 
     HashMap<Channel, Channel> availableChannels = new HashMap<Channel, Channel>(mAvailableChannelsMap.size());
 
+    boolean dummyRemoved = false;
+    
     for (TvDataServiceProxy proxy : dataServiceArr) {
-      addDataServiceChannels(proxy,availableChannels);
+      dummyRemoved = addDataServiceChannels(proxy,availableChannels) || dummyRemoved;
     }
     
+    if(dummyRemoved) {
+      Settings.propSubscribedChannels.clearCacheExternal();
+      
+      if(!MainFrame.isStarting()) {
+        DefaultProgramTableModel model = MainFrame.getInstance().getProgramTableModel();
+        model.setChannels(ChannelList.getSubscribedChannels());
+        MainFrame.getInstance().updateChannellist();
+      }
+    }
+        
     Channel[] channelArr = Settings.propSubscribedChannels.getChannelArray();
     
     for(Channel channel : channelArr) {
@@ -299,13 +312,17 @@ public class ChannelList {
     storeChannelTimeLimits();}catch(Throwable t) {t.printStackTrace();}
   }
 
-  private static void addDataServiceChannels(TvDataServiceProxy dataService,
+  private static boolean addDataServiceChannels(TvDataServiceProxy dataService,
       HashMap<Channel, Channel> availableChannels) {
     Channel[] channelArr = dataService.getAvailableChannels();
 
+    boolean dummyRemoved = false;
+    
     for (Channel channel : channelArr) {
-      addChannelToAvailableChannels(channel,availableChannels);
+      dummyRemoved = addChannelToAvailableChannels(channel,availableChannels) || dummyRemoved;
     }
+    
+    return dummyRemoved;
   }
 
   private static void addDataServiceChannelsForTvBrowserStart(
@@ -317,9 +334,31 @@ public class ChannelList {
     }
   }
 
-  private static void addChannelToAvailableChannels(Channel channel, HashMap<Channel, Channel> availableChannels) {
+  private static boolean addChannelToAvailableChannels(Channel channel, HashMap<Channel, Channel> availableChannels) {
     final String channelId = channel.getUniqueId();
     mCurrentChangeChannel = mAvailableChannelsMap.get(channelId);
+    
+    boolean dummyRemoved = false;
+    
+    if((mCurrentChangeChannel instanceof DummyChannel) && !(channel instanceof DummyChannel)) {
+      mAvailableChannels.remove(mCurrentChangeChannel);
+      mAvailableChannelsMap.remove(channelId);
+      int pos = getPos(mCurrentChangeChannel);
+      
+      if(pos >= 0) {
+        mSubscribedChannelPosition.remove(channel.getUniqueId());
+        mSubscribedChannelPosition.put(channel.getUniqueId(), pos);
+        
+        mSubscribedChannels.remove(pos);
+        mSubscribedChannels.add(pos, channel);
+      }
+      
+      mCurrentChangeChannel.setIcon(channel.getDefaultIcon());
+      ((DummyChannel)mCurrentChangeChannel).setOriginal(channel);
+      
+      mCurrentChangeChannel = null;
+      dummyRemoved = true;
+    }
 
     if (mCurrentChangeChannel == null) {
       availableChannels.put(channel, channel);
@@ -356,6 +395,7 @@ public class ChannelList {
     }
 
     mCurrentChangeChannel = null;
+    return dummyRemoved;
   }
 
   private static void loadChannelMaps() {
@@ -544,7 +584,7 @@ public class ChannelList {
         }
       }
     }
-    
+        
     if(returnValue == null) {
       returnValue = getDummyChannel(dataServiceId, groupId, country, channelId, channelName);
     }
