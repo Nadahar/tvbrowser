@@ -2046,6 +2046,9 @@ public class Settings {
   public static final BooleanProperty propVerboseLogging = new BooleanProperty(
       mProp, "verboseLogging", false);
   
+  public static final StringArrayProperty propKnownContextMenuPlugins = new StringArrayProperty(
+      mProp, "knownContextMenuPlugins", new String[0]);
+  
   /**
    * Sets the window position and size for the given window with the values of
    * the given id.
