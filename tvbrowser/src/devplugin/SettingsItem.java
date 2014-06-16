@@ -62,6 +62,8 @@ public class SettingsItem {
   
   public static final String PICTURES = "#pictures";
   public static final String TRAYONTIMEPROGRAMS = "#trayOnTime";
+  
+  public static final String MOUSE = "#mouse";
 
   private SettingsItem () {}
 }
