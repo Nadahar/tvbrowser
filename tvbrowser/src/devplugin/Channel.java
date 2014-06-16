@@ -43,9 +43,8 @@ import javax.swing.ImageIcon;
 
 import tvbrowser.core.ChannelList;
 import tvbrowser.core.ChannelUserSettings;
-import tvbrowser.core.tvdataservice.AbstractTvDataServiceProxy;
-import tvbrowser.core.tvdataservice.DefaultTvDataServiceProxy;
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
+import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
 import util.io.IOUtilities;
 import util.misc.StringPool;
 import util.ui.ImageUtilities;
@@ -83,11 +82,12 @@ public class Channel implements Comparable<Channel> {
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer
       .getLocalizerFor(Channel.class);
 
-  /**
+/*  /**
    * @deprecated
    */
-  @Deprecated
-  private AbstractTvDataService mDataService;
+//  @Deprecated
+//  private AbstractTvDataService mDataService;
+  private String mDataServiceID;
 
   private String mName;
   private String mUnescapedName;
@@ -104,7 +104,7 @@ public class Channel implements Comparable<Channel> {
   /** The Default-Icon */
   private Icon mDefaultIcon;
 
-  private AbstractTvDataServiceProxy mProxy;
+  private TvDataServiceProxy mProxy;
   private String mUniqueId;
 
   private String mSharedChannelId;
@@ -113,6 +113,7 @@ public class Channel implements Comparable<Channel> {
   private Channel mBaseChannel;
   private Icon mJointChannelIcon;
   
+
   /**
    * Creates an instance of this class.
    * <p>
@@ -152,8 +153,86 @@ public class Channel implements Comparable<Channel> {
         + "ISO country code (as used in top level domains, e.g. 'de' or 'us'): "
         + "'" + baseCountry + "'");
     }
-
-    mDataService = dataService;
+    
+    if(dataService != null) {
+      mDataServiceID = dataService.getId();
+    }
+    else {
+      mDataServiceID = null;
+    }
+    
+    mName = name;
+    mId = id;
+    mTimeZone = timeZone;
+    // country, webpage and copyright will often be the same, so filter duplicates
+    mBaseCountry = StringPool.getString(baseCountry);
+    
+    if(allCountries != null) {
+      mAllCountries = new String[allCountries.length];
+      
+      for(int i = 0; i < mAllCountries.length; i++) {
+        mAllCountries[i] = StringPool.getString(allCountries[i]);
+      }
+    }
+    else {
+      mAllCountries = new String[] {mBaseCountry};
+    }
+    
+    if(copyrightNotice != null && copyrightNotice.toLowerCase().startsWith("(c)")) {
+      copyrightNotice = "\u00A9" + copyrightNotice.substring(3);
+    }
+    
+    mCopyrightNotice = StringPool.getString(copyrightNotice);
+    mWebpage = StringPool.getString(webpage);
+    mGroup = group;
+    mDefaultIcon = icon;
+    mCategories = categories;
+    mUnescapedName = unescapedName;
+    mSharedChannelId = sharedChannelId;
+  }
+  
+  /**
+   * Creates an instance of this class.
+   * <p>
+   * @param dataServiceID The ID of the data service of this channel.
+   * @param name The name of this channel.
+   * @param id The id of this channel.
+   * @param timeZone The time zone of this channel.
+   * @param baseCountry The base country of this channel.
+   * @param copyrightNotice The copyright notice for this channel.
+   * @param webpage The webpage of this channel.
+   * @param group The group of this channel.
+   * @param icon The icon for this channel.
+   * @param categories The categories for this channel.
+   * @param unescapedName The unescaped name for this channel.
+   * @param allCountries All supported countries of this channel.
+   *        ATTENTION: Have to contain the base country too.
+   * @param sharedChannelId The id of the shared channel.
+   * @since 3.3.4
+   */
+  public Channel(String dataServiceID, String name, String id,
+    TimeZone timeZone, String baseCountry, String copyrightNotice, String webpage,
+    devplugin.ChannelGroup group, Icon icon, int categories, String unescapedName,
+    String[] allCountries, String sharedChannelId)
+  {
+    if(allCountries != null) {
+      for(String testCountry : allCountries) {
+        if (testCountry.length() != 2) {
+          throw new IllegalArgumentException("all contries must be a two character "
+            + "ISO country code (as used in top level domains, e.g. 'de' or 'us'): "
+            + "'" + testCountry + "'");
+        }        
+      }
+    }
+    
+    if (baseCountry.length() != 2) {
+      throw new IllegalArgumentException("country must be a two character "
+        + "ISO country code (as used in top level domains, e.g. 'de' or 'us'): "
+        + "'" + baseCountry + "'");
+    }
+    
+    mDataServiceID = dataServiceID;
+    
     mName = name;
     mId = id;
     mTimeZone = timeZone;
@@ -335,7 +414,7 @@ public class Channel implements Comparable<Channel> {
   }
 
 
-  /**
+ /* /**
    * Creates an instance of this class.
    * <p>
    * @param dataService The data service of this channel.
@@ -345,12 +424,12 @@ public class Channel implements Comparable<Channel> {
    * @param country The base country of this channel.
    * @deprecated
    */
-  @Deprecated
+/*  @Deprecated
   public Channel(AbstractTvDataService dataService, String name, String id,
      TimeZone timeZone, String country)
    {
       this(dataService,name,id,timeZone,country,"(no copyright notice)",null);
-   }
+   }*/
 
   /**
    * Creates an instance of this class.
@@ -506,7 +585,7 @@ public class Channel implements Comparable<Channel> {
    */
   public void writeToDataFile(RandomAccessFile out) throws IOException {
     out.writeInt(5); // version
-    out.writeUTF(getDataServiceProxy().getId());
+    out.writeUTF(mDataServiceID);
     out.writeUTF(getGroup().getId());
     out.writeUTF(getBaseCountry());
     out.writeUTF(mId);
@@ -519,7 +598,7 @@ public class Channel implements Comparable<Channel> {
    */
   public void writeData(ObjectOutputStream out) throws IOException {
     out.writeInt(5); // version
-    out.writeUTF(getDataServiceProxy().getId());
+    out.writeUTF(mDataServiceID);
     out.writeUTF(getGroup().getId());
     out.writeUTF(getBaseCountry());
     out.writeUTF(mId);
@@ -580,7 +659,7 @@ public class Channel implements Comparable<Channel> {
 
     Channel[] channelArr = Plugin.getPluginManager().getSubscribedChannels();
     for (Channel channel : channelArr) {
-      String chDataServiceId = channel.getDataServiceProxy().getId();
+      String chDataServiceId = channel.getDataServiceId();
       String chGroupId = channel.getGroup().getId();
       String chChannelId = channel.getId();
       String chCountry = channel.getBaseCountry();
@@ -633,16 +712,16 @@ public class Channel implements Comparable<Channel> {
     return mAllCountries;
   }
 
-  /**
+/*  /**
    * Sets the day light saving time correction.
    * <p>
    * @param hours The new day light saving time correction.
    * @deprecated since 3.0
    */
-  @Deprecated
+/*  @Deprecated
   public void setDayLightSavingTimeCorrection(int hours) {
     setTimeZoneCorrectionMinutes(hours * 60);
-  }
+  }*/
 
   /**
    * Corrects the time zone offset of the channel.
@@ -654,16 +733,16 @@ public class Channel implements Comparable<Channel> {
     ChannelUserSettings.getSettings(this).setTimeZoneCorrectionMinutes(minutes);
   }
 
-  /**
+ /* /**
    * Gets the day light saving time correction of this channel.
    * <p>
    * @return The day light saving time correction of this channel.
    * @deprecated since 3.0
    */
-  @Deprecated
+/*  @Deprecated
   public int getDayLightSavingTimeCorrection() {
     return getTimeZoneCorrectionMinutes() / 60;
-  }
+  }*/
 
   /**
    * Gets the time zone offset of this channel.
@@ -681,10 +760,11 @@ public class Channel implements Comparable<Channel> {
    * @return The data service of this channel
    * @deprecated use getDataServiceProxy() instead
    */
-  @Deprecated
+ /* @Deprecated
   public AbstractTvDataService getDataService() {
-    return mDataService;
-  }
+    return TvDataServiceProxyManager.getInstance()
+        .findDataServiceById(mDataServiceID);
+  }*/
 
   /**
    * Gets the data service proxy of this channel
@@ -692,9 +772,9 @@ public class Channel implements Comparable<Channel> {
    * @return The data service proxy of this channel
    */
   public TvDataServiceProxy getDataServiceProxy() {
-    if(mDataService != null) {
+    if(mDataServiceID != null) {
       if (mProxy == null) {
-        mProxy = new DefaultTvDataServiceProxy(mDataService);
+        mProxy = TvDataServiceProxyManager.getInstance().findDataServiceById(mDataServiceID);
       }
       return mProxy;
     } else {
@@ -885,7 +965,7 @@ public class Channel implements Comparable<Channel> {
       Channel cmp = (Channel) obj;
 
       // this is for the example program
-      if((mDataService == null && cmp.getDataServiceProxy() == null) &&
+      if((mDataServiceID == null && cmp.getDataServiceProxy() == null) &&
         (getGroup() == null && cmp.getGroup() == null) &&
         (getId().compareTo(cmp.getId())) == 0) {
         return true;
@@ -906,8 +986,8 @@ public class Channel implements Comparable<Channel> {
           return false;
         }
 
-        String dataServiceId = getDataServiceProxy().getId();
-        String cmpDataServiceId = cmp.getDataServiceProxy().getId();
+        String dataServiceId = mDataServiceID;
+        String cmpDataServiceId = cmp.getDataServiceId();
 
         if(dataServiceId.compareTo(cmpDataServiceId) != 0) {
           return false;
@@ -1043,7 +1123,7 @@ public class Channel implements Comparable<Channel> {
    */
   public String getUniqueId() {
     if (mUniqueId == null) {
-      mUniqueId = new StringBuilder(getDataServiceProxy().getId()).append('_').append(getGroup().getId()).append('_').append(getBaseCountry()).append('_').append(getId()).toString();
+      mUniqueId = new StringBuilder(mDataServiceID).append('_').append(getGroup().getId()).append('_').append(getBaseCountry()).append('_').append(getId()).toString();
     }
     return mUniqueId;
   }
@@ -1088,7 +1168,11 @@ public class Channel implements Comparable<Channel> {
   }
 
   public String getDataServicePackageName() {
-    return getDataServiceProxy().getDataServicePackageName();
+    return mDataServiceID.substring(0, mDataServiceID.indexOf("."));
+  }
+  
+  public String getDataServiceId() {
+    return mDataServiceID;
   }
   
   /**

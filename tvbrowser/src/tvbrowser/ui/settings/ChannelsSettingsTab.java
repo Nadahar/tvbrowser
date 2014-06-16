@@ -70,6 +70,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import tvbrowser.core.ChannelList;
+import tvbrowser.core.DummyChannel;
 import tvbrowser.core.Settings;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.tvdataservice.ChannelGroupManager;
@@ -307,7 +308,7 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
     
     mSubscribedChannels.addListSelectionListener(new ListSelectionListener() {
       public void valueChanged(ListSelectionEvent e) {
-        if (mSubscribedChannels.getSelectedValues().length > 0) {
+        if (mSubscribedChannels.getSelectedValues().length > 0 && !(mSubscribedChannels.getSelectedValue() instanceof DummyChannel)) {
           configureChannels.setEnabled(true);
           setSortNumbers.setEnabled(true);
         } else {
@@ -806,10 +807,12 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
   }
 
   private void saveSettingsInternal(boolean autoUpdate) {
-    Object[] list = ((DefaultListModel) mSubscribedChannels.getModel())
-        .toArray();
-
-    // Convert the list into a Channel[] and fill channels
+    saveChannels(((DefaultListModel) mSubscribedChannels.getModel())
+        .toArray(),autoUpdate);
+  }
+  
+  static void saveChannels(Object[] list, boolean autoUpdate) {
+ // Convert the list into a Channel[] and fill channels
     ArrayList<String> groups = new ArrayList<String>();
 
     Channel[] channelArr = new Channel[list.length];
@@ -818,8 +821,7 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
 
       if (!groups.contains(channelArr[i].getGroup().getId())) {
         groups
-            .add(new StringBuilder(channelArr[i].getDataServiceProxy()
-            .getId())
+            .add(new StringBuilder(channelArr[i].getDataServiceId())
                 .append('.').append(channelArr[i].getGroup().getId())
                 .toString());
       }
@@ -1073,13 +1075,15 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
       Channel previous = null;
       
       for(Object channel : channels) {
-        if(previous != null && (previous.getJointChannel() != null && previous.getJointChannel().equals(channel))) {
-          value--;
+        if(!(channel instanceof DummyChannel)) {
+          if(previous != null && (previous.getJointChannel() != null && previous.getJointChannel().equals(channel))) {
+            value--;
+          }
+          
+          ((Channel)channel).setSortNumber(String.valueOf(value++));
+          
+          previous = (Channel)channel;
         }
-        
-        ((Channel)channel).setSortNumber(String.valueOf(value++));
-        
-        previous = (Channel)channel;
       }
       
       mSubscribedChannels.repaint();
@@ -1094,25 +1098,28 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
   public void configChannels() {
     Object[] o = mSubscribedChannels.getSelectedValues();
 
-    Channel[] channelList = new Channel[o.length];
+    ArrayList<Channel> channelList = new ArrayList<Channel>();
+    
     for (int i = 0; i < o.length; i++) {
-      channelList[i] = (Channel) o[i];
+      if(!(o[i] instanceof DummyChannel)) {
+        channelList.add((Channel) o[i]);
+      }
     }
 
-    if (channelList.length == 1) {
+    if (channelList.size() == 1) {
       ChannelConfigDlg dialog;
 
       Window parent = UiUtilities.getBestDialogParent(mAllChannels);
-      dialog = new ChannelConfigDlg(parent, channelList[0]);
+      dialog = new ChannelConfigDlg(parent, channelList.get(0));
       dialog.centerAndShow();
       ChannelList.checkForJointChannels();
       MainFrame.getInstance().getProgramTableScrollPane()
-          .updateChannelLabelForChannel(channelList[0]);
-    } else if (channelList.length > 1) {
+          .updateChannelLabelForChannel(channelList.get(0));
+    } else if (channelList.size() > 1) {
       MultiChannelConfigDlg dialog;
 
       Window parent = UiUtilities.getBestDialogParent(mAllChannels);
-      dialog = new MultiChannelConfigDlg(parent, channelList);
+      dialog = new MultiChannelConfigDlg(parent, channelList.toArray(new Channel[channelList.size()]));
       
       Settings.layoutWindow("multiChannelConfigDlg", dialog);
       

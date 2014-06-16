@@ -29,6 +29,7 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
+import tvbrowser.core.DummyChannel;
 import tvbrowser.core.Settings;
 import util.misc.SoftReferenceCache;
 import devplugin.Channel;
@@ -235,7 +236,7 @@ public class ChannelLabel extends JLabel {
       if (mShowCountry) {
         text.append(channel.getBaseCountry());
       }
-      if (mShowService) {
+      if (mShowService && !(channel instanceof DummyChannel)) {
         if (mShowCountry) {
           text.append(", ");
         }

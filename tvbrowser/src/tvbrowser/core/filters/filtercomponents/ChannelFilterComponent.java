@@ -122,7 +122,7 @@ public class ChannelFilterComponent extends AbstractFilterComponent {
   public JPanel getSettingsPanel() {
     JPanel content = new JPanel(new FormLayout("50dlu:grow","fill:default:grow"));
 
-    Channel[] channels = tvbrowser.core.ChannelList.getSubscribedChannels();
+    Channel[] channels = tvbrowser.core.ChannelList.getSubscribedChannels(false);
     mList = new OrderChooser(mSelectedChannels, channels);
 
     mList.getUpButton().setVisible(false);

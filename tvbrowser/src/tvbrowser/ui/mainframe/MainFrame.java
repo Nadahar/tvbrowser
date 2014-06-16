@@ -119,6 +119,7 @@ import javax.swing.plaf.basic.BasicTabbedPaneUI;
 import tvbrowser.TVBrowser;
 import tvbrowser.core.ChannelList;
 import tvbrowser.core.DateListener;
+import tvbrowser.core.DummyChannel;
 import tvbrowser.core.Settings;
 import tvbrowser.core.TvDataBase;
 import tvbrowser.core.TvDataUpdater;
@@ -1621,7 +1622,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     Channel[] channels = Settings.propSubscribedChannels.getChannelArray();
 
     for(Channel channel : channels) {
-      if(!checkedServices.contains(channel.getDataServiceProxy())) {
+      if(!(channel instanceof DummyChannel) && channel.getDataServiceProxy() != null && !checkedServices.contains(channel.getDataServiceProxy())) {
         checkedServices.add(channel.getDataServiceProxy());
 
         if(channel.getDataServiceProxy().supportsAutoUpdate()) {

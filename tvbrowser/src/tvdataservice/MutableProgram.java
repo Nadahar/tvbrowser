@@ -205,7 +205,7 @@ public class MutableProgram implements Program {
     }
     
     if  (mChannel.getDataServiceProxy() != null) {
-      String dataServiceId = mChannel.getDataServiceProxy().getId();
+      String dataServiceId = mChannel.getDataServiceId();
       String groupId = mChannel.getGroup().getId();
       String channelId = mChannel.getId();
       String country = mChannel.getBaseCountry();

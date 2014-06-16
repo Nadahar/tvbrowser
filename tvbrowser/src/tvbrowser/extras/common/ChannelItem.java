@@ -52,7 +52,7 @@ public class ChannelItem {
    */
   public ChannelItem(Channel channel) {
     if(channel != null) {
-      mChannelDataServiceId = channel.getDataServiceProxy().getId();
+      mChannelDataServiceId = channel.getDataServiceId();
       mGroupId = channel.getGroup().getId();
       mCertainChannelId = channel.getId();
       mCountry = channel.getBaseCountry();

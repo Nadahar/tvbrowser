@@ -188,6 +188,12 @@ public class PluginManagerImpl implements PluginManager {
   
   @Override
   public Program getProgram(Date date, String progID) {
+  /*  StackTraceElement[] e = Thread.currentThread().getStackTrace();
+    
+    for(StackTraceElement x : e) {
+    System.out.println(x);   
+    }
+    System.out.print("\n\n");*/
     Date cutoff = Date.getCurrentDate().addDays(-TvDataBase.DEFAULT_DATA_LIFESPAN);
     
     ChannelDayProgram dayProg = getDayProgram(date,progID);
@@ -287,7 +293,9 @@ public class PluginManagerImpl implements PluginManager {
    * @param progID The ID of the program.
    * @return The program or <code>null</code> if there is no such program.
    */
-  public Program[] getPrograms(Date date, String progID) {     
+  public Program[] getPrograms(Date date, String progID) {
+    
+    
     ChannelDayProgram dayProg = getDayProgram(date,progID);
     
     if (dayProg != null) {

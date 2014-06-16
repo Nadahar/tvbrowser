@@ -27,6 +27,7 @@
 package tvbrowser.ui.filter.dlgs;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
@@ -48,6 +49,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
+import javax.swing.UIManager;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.AttributeSet;
@@ -157,6 +159,7 @@ public class EditFilterComponentDlg extends JDialog implements ActionListener, D
     
     mTypeDescriptionPanel = new JPanel(new FormLayout("min:grow","fill:default:grow"));
     mTypeDescriptionPanel.add(mFilterComponentDescription, CC.xy(1, 1));
+    mTypeDescriptionPanel.setBackground(Color.red);
     
     mCenterPanel = new JPanel(new BorderLayout());
     JScrollPane scrollPane = new JScrollPane(mCenterPanel);
@@ -299,7 +302,7 @@ public class EditFilterComponentDlg extends JDialog implements ActionListener, D
         FilterComponent fItem = (FilterComponent) item;
         
         if(fItem.getTypeDescription() != null && fItem.getTypeDescription().trim().length() > 0) {
-          UiUtilities.updateHtmlHelpTextArea(mFilterComponentDescription, fItem.getTypeDescription());
+          UiUtilities.updateHtmlHelpTextArea(mFilterComponentDescription, fItem.getTypeDescription(), UIManager.getColor("Label.foreground"), UIManager.getColor("Panel.background"));
           mCenterPanel.add(mTypeDescriptionPanel, BorderLayout.NORTH);
         }
         
