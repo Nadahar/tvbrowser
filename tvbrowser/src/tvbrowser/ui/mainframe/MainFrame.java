@@ -120,6 +120,7 @@ import tvbrowser.TVBrowser;
 import tvbrowser.core.ChannelList;
 import tvbrowser.core.DateListener;
 import tvbrowser.core.DummyChannel;
+import tvbrowser.core.PluginLoader;
 import tvbrowser.core.Settings;
 import tvbrowser.core.TvDataBase;
 import tvbrowser.core.TvDataUpdater;
@@ -1610,6 +1611,13 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
         mMenuBar.updateChannelItems();
         if(Persona.getInstance().getHeaderImage() != null) {
           updatePersona();
+        }
+        
+        if(PluginLoader.getInstance().hasToShowMouseInfo() && 
+            JOptionPane.showConfirmDialog(MainFrame.this, 
+                mLocalizer.msg("askOpenMouseSettings", "Plugins were installed that support mouse actions.\n\nDo you want to open the mouse settings now to configure those actions?"), 
+                Localizer.getLocalization(Localizer.I18N_INFO), JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+          showSettingsDialog(SettingsItem.MOUSE);
         }
       }
     });

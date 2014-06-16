@@ -54,6 +54,7 @@ import tvbrowser.core.plugin.AbstractPluginProxy;
 import tvbrowser.core.plugin.BeanShellPluginProxy;
 import tvbrowser.core.plugin.JavaPluginProxy;
 import tvbrowser.core.plugin.PluginBaseInfo;
+import tvbrowser.core.plugin.PluginManagerImpl;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.core.tvdataservice.DefaultTvDataServiceProxy;
@@ -62,6 +63,7 @@ import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
 import util.io.IOUtilities;
+import devplugin.ActionMenu;
 import devplugin.Plugin;
 import devplugin.PluginInfo;
 import devplugin.Version;
@@ -94,10 +96,13 @@ public class PluginLoader {
   private ArrayList<PluginProxy> loadedProxies;
 
   private ArrayList<String> mNewInstalledPlugins = new ArrayList<String>();
+  
+  private boolean mShowMouseInfo;
 
   private PluginLoader() {
     mSuccessfullyLoadedPluginFiles = new HashSet<String>();
     mDeleteablePlugin = new HashMap<Object, File>();
+    mShowMouseInfo = false;
   }
 
   public static PluginLoader getInstance() {
@@ -217,6 +222,16 @@ public class PluginLoader {
             if (!Settings.propProgramTableIconPlugins.containsItem(((Plugin)plugin).getId())) {
               Settings.propProgramTableIconPlugins.addItem(((Plugin)plugin).getId());
             }
+          }
+          
+          if(!Settings.propKnownContextMenuPlugins.containsItem(((Plugin)plugin).getId())) {
+            ActionMenu test = ((Plugin)plugin).getContextMenuActions(PluginManagerImpl.getInstance().getExampleProgram());
+            
+            if(test != null) {
+              mShowMouseInfo = true;
+            }
+            
+            Settings.propKnownContextMenuPlugins.addItem(((Plugin)plugin).getId());
           }
         }
         if (deleteable) {
@@ -788,6 +803,10 @@ public class PluginLoader {
         mLog.info("Could not load base info for plugin file '" + plugin.getAbsolutePath() + "'. Use default version instead.");
       }
     }
+  }
+  
+  public boolean hasToShowMouseInfo() {
+    return mShowMouseInfo;
   }
 
 }
