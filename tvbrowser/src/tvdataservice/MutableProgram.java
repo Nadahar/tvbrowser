@@ -204,7 +204,7 @@ public class MutableProgram implements Program {
       mNormalizedDate = mNormalizedDate.addDays(-1);
     }
     
-    if  (mChannel.getDataServiceProxy() != null) {
+    if  (mChannel.getDataServiceId() != null) {
       String dataServiceId = mChannel.getDataServiceId();
       String groupId = mChannel.getGroup().getId();
       String channelId = mChannel.getId();
