@@ -945,11 +945,12 @@ public class ChannelList {
 
   private static String getMapValueForChannel(Channel channel,
       HashMap<String, String> map) {
-    String value = map.get(new StringBuilder(channel.getDataServiceId())
-        .append(":").append(channel.getGroup().getId()).append(":")
-        .append(channel.getBaseCountry()).append(":").append(channel.getId())
-        .toString());
-
+    StringBuilder key = new StringBuilder(channel.getDataServiceId())
+    .append(":").append(channel.getGroup().getId()).append(":")
+    .append(channel.getBaseCountry()).append(":").append(channel.getId());
+    
+    String value = map.get(key.toString());
+    
     if (value == null) {
       value = map.get(new StringBuilder(channel.getDataServiceId())
           .append(":").append(channel.getGroup().getId()).append(":").append(
