@@ -330,7 +330,8 @@ public class FavoritesPlugin {
 
   protected void handleTvDataUpdateFinished() {
     mHasToUpdate = true;
-
+    mUpdateInfoThread = null;
+    
     if(mHasRightToUpdate) {
       mUpdateThread = new Thread("Favorites: handle update finished") {
         public void run() {try{
@@ -361,6 +362,7 @@ public class FavoritesPlugin {
 
           if(!infoFavoriteList.isEmpty()) {
             Favorite[] infoFavoriteArr = infoFavoriteList.toArray(new Favorite[infoFavoriteList.size()]);
+            
             if(mUpdateInfoThread == null || !mUpdateInfoThread.isAlive()) {
               mUpdateInfoThread = new UpdateInfoThread();
               mUpdateInfoThread.setPriority(Thread.MIN_PRIORITY);
