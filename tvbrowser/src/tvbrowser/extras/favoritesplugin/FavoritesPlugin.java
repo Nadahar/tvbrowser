@@ -1367,7 +1367,7 @@ public class FavoritesPlugin {
     
     private boolean newFavoritesFound() {
       for(int i = 0; i < mFavorites.length; i++) {
-        if(mFavorites[i] != null) {
+        if(mFavorites[i] != null && mFavorites[i].getNewPrograms().length > 0) {
           return true;
         }
       }
