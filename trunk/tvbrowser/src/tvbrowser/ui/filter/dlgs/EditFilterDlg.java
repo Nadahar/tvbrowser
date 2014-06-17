@@ -118,19 +118,20 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
   
   private DefaultListModel mFilterComponentListModel;
   private DefaultListModel mFilterConstructionListModel;
+  
+  private boolean mFromFilterList;
+  private boolean mOkWasPressed;
 
-  public EditFilterDlg(JDialog parent, FilterList filterList, UserFilter filter) {
-    super(parent,true);
-    init(parent,filterList,filter);
+  public EditFilterDlg(Window parent, FilterList filterList, UserFilter filter, boolean fromFilterList) {
+    super(parent, ModalityType.APPLICATION_MODAL);
+    init(parent,filterList,filter, fromFilterList);
   }
   
-  public EditFilterDlg(JFrame parent, FilterList filterList, UserFilter filter) {
-    super(parent,true);
-    init(parent,filterList,filter);
-  }
-  
-  private void init(Window parent,FilterList filterList, UserFilter filter) {
+  private void init(Window parent,FilterList filterList, UserFilter filter, boolean fromFilterList) {
     UiUtilities.registerForClosing(this);
+    
+    mFromFilterList = fromFilterList;
+    mOkWasPressed = false;
     
     if (filter == null) {
       setTitle(mLocalizer.msg("titleNew", "Create filter"));
@@ -143,8 +144,6 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
     mParent = parent;
     mFilter = filter;
     
-    
-    
     mFilterNameTF = new JTextField(new PlainDocument() {
       public void insertString(int offset, String str, AttributeSet a) throws BadLocationException {
         str = str.replaceAll("[\\p{Punct}&&[^_]]", "_");
@@ -152,6 +151,7 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
       }
     }, "", 30);
     mFilterNameTF.getDocument().addDocumentListener(this);
+    mFilterNameTF.setEditable(fromFilterList);
     
     mFilterRuleTF = new JTextField();
     mFilterRuleTF.getDocument().addDocumentListener(this);
@@ -465,30 +465,48 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
       }
 
     } else if (o == mOkBtn) {
-      String filterName = mFilterNameTF.getText();
-      if (!filterName.equalsIgnoreCase(mFilterName) && mFilterList.containsFilter(filterName)) {
-        JOptionPane
-            .showMessageDialog(this, mLocalizer.msg("alreadyExists", "Filter '{0}' already exists.", filterName));
-      } else {
-        if (mFilter == null) {
-          mFilter = new UserFilter(mFilterNameTF.getText());
+      mOkWasPressed = true;
+      
+      if(mFromFilterList) {
+        String filterName = mFilterNameTF.getText();
+        if (!filterName.equalsIgnoreCase(mFilterName) && mFilterList.containsFilter(filterName)) {
+          JOptionPane
+              .showMessageDialog(this, mLocalizer.msg("alreadyExists", "Filter '{0}' already exists.", filterName));
+          mOkWasPressed = false;
         } else {
-          mFilter.setName(mFilterNameTF.getText());
-        }
-
-        try {
-          mFilter.setRule(mFilterRuleTF.getText());
-          FilterComponentList.getInstance().store();
-          setVisible(false);
-        } catch (ParserException exc) {
-          JOptionPane.showMessageDialog(this, mLocalizer.msg("invalidRule", "Invalid rule: ") + exc.getMessage());
+          if (mFilter == null) {
+            mFilter = new UserFilter(mFilterNameTF.getText());
+          } else {
+            mFilter.setName(mFilterNameTF.getText());
+          }
+  
+          try {
+            mFilter.setRule(mFilterRuleTF.getText());
+            FilterComponentList.getInstance().store();
+            setVisible(false);
+          } catch (ParserException exc) {
+            mOkWasPressed = false;
+            JOptionPane.showMessageDialog(this, mLocalizer.msg("invalidRule", "Invalid rule: ") + exc.getMessage());
+          }
         }
       }
-
+      else {
+        try {
+          mFilter.setRule(mFilterRuleTF.getText());
+          setVisible(false);
+        } catch (ParserException e1) {
+          mOkWasPressed = false;
+          JOptionPane.showMessageDialog(this, mLocalizer.msg("invalidRule", "Invalid rule: ") + e1.getMessage());
+        }
+      }
     } else if (o == mCancelBtn) {
       setVisible(false);
     }
 
+  }
+  
+  public boolean getOkWasPressed() {
+    return mOkWasPressed;
   }
 
   public UserFilter getUserFilter() {

@@ -39,9 +39,10 @@ import java.util.logging.Logger;
 import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 
 import tvbrowser.core.PluginLoader;
+import tvbrowser.core.filters.FilterList;
+import tvbrowser.core.filters.UserFilter;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvdataservice.MutableChannelDayProgram;
 import util.exc.TvBrowserException;
@@ -340,6 +341,12 @@ public class JavaPluginProxy extends AbstractPluginProxy {
    *         <code>null</code> if the plugin does not provide this feature.
    */
   protected ActionMenu doGetContextMenuActions(Program program) {
+    UserFilter filter = FilterList.getInstance().getGenericPluginFilter(this, true);
+    
+    if(filter != null && !filter.accept(program)) {
+      return null;
+    }
+    
     return mPlugin.getContextMenuActions(program);
   }
 
@@ -392,6 +399,12 @@ public class JavaPluginProxy extends AbstractPluginProxy {
    */
   protected Icon[] doGetMarkIcons(Program p) {
     if (mPlugin != null) {
+      UserFilter filter = FilterList.getInstance().getGenericPluginFilter(this, true);
+      
+      if(filter != null && !filter.accept(p)) {
+        return null;
+      }
+      
       return mPlugin.getMarkIcons(p);
     }
     return null;
@@ -581,6 +594,12 @@ public class JavaPluginProxy extends AbstractPluginProxy {
    * @return The mark priority for the given program.
    */
   protected int doGetMarkPriorityForProgram(Program p) {
+    UserFilter filter = FilterList.getInstance().getGenericPluginFilter(this, true);
+    
+    if(filter != null && !filter.accept(p)) {
+      return Program.NO_MARK_PRIORITY;
+    }
+    
     return mPlugin.getMarkPriorityForProgram(p);
   }
 
@@ -641,6 +660,12 @@ public class JavaPluginProxy extends AbstractPluginProxy {
 
   @Override
   protected ImportanceValue doGetImportanceValueForProgram(Program p) {
+    UserFilter filter = FilterList.getInstance().getGenericPluginFilter(this, true);
+    
+    if(filter != null && !filter.accept(p)) {
+      return new ImportanceValue((byte)1,Program.DEFAULT_PROGRAM_IMPORTANCE);
+    }
+    
     return mPlugin.getImportanceValueForProgram(p);
   }
 

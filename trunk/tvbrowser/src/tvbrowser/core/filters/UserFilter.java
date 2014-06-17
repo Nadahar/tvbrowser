@@ -119,12 +119,15 @@ public class UserFilter implements devplugin.ProgramFilter {
 
     createTokenTree();
   }
-
+  
   public void store() {
+    store(tvbrowser.core.filters.FilterList.FILTER_DIRECTORY,mName);
+  }
+
+  public void store(String directoy, String fileName) {
     try {
       mRule = modifyRule(mRule, true);
-      final File file = new File(
-          tvbrowser.core.filters.FilterList.FILTER_DIRECTORY, mName + ".filter");
+      final File file = new File(directoy, fileName + ".filter");
       StreamUtilities.objectOutputStream(file,
           new ObjectOutputStreamProcessor() {
             public void process(ObjectOutputStream out) throws IOException {
