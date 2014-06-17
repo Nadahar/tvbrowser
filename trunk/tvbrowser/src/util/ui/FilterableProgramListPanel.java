@@ -50,7 +50,7 @@ import com.jgoodies.forms.factories.CC;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
 
-import devplugin.FilterChangeListener;
+import devplugin.FilterChangeListenerV2;
 import devplugin.Program;
 import devplugin.ProgramFilter;
 
@@ -60,7 +60,7 @@ import devplugin.ProgramFilter;
  * @author René Mach
  * @since 3.3.4
  */
-public class FilterableProgramListPanel extends JPanel implements FilterChangeListener, PersonaListener {
+public class FilterableProgramListPanel extends JPanel implements FilterChangeListenerV2, PersonaListener {
   /** Program filter combo box starts with Show all filter */
   public static final int FILTER_START_ALL_TYPE = 0;
   /** Program filter combo box starts with default filter */
@@ -302,6 +302,9 @@ public class FilterableProgramListPanel extends JPanel implements FilterChangeLi
       mProgramFilterBox.updateUI();
     }
   }
+  
+  @Override
+  public void filterDefaultChanged(ProgramFilter filter) {}
   
   private void filterPrograms(ProgramFilter filter) {
     filterPrograms(filter,false);

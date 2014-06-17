@@ -36,24 +36,28 @@ import javax.swing.tree.TreePath;
 
 import org.apache.commons.lang3.StringUtils;
 
+import tvbrowser.core.filters.FilterList;
+import tvbrowser.core.filters.FilterManagerImpl;
+import tvbrowser.core.plugin.PluginManagerImpl;
+import util.ui.Localizer;
 import devplugin.FilterChangeListener;
+import devplugin.FilterChangeListenerV2;
 import devplugin.PluginAccess;
 import devplugin.PluginsProgramFilter;
 import devplugin.ProgramFilter;
-
-import tvbrowser.core.plugin.PluginManagerImpl;
-import util.ui.Localizer;
 
 public class FilterTreeModel extends DefaultTreeModel {
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(FilterTreeModel.class);
   private static FilterTreeModel mInstance;
   
   private static ArrayList<FilterChangeListener> CHANGE_LISTENER_LIST;
+  private static ArrayList<FilterChangeListenerV2> CHANGE_LISTENER_LISTV2;
   
   public FilterTreeModel(TreeNode root) {
     super(root,true);
     
     CHANGE_LISTENER_LIST = new ArrayList<FilterChangeListener>(0);
+    CHANGE_LISTENER_LISTV2 = new ArrayList<FilterChangeListenerV2>(0);
   }
 
   public static FilterTreeModel initInstance(ProgramFilter[] filterArr) {
@@ -264,11 +268,25 @@ public class FilterTreeModel extends DefaultTreeModel {
     for(FilterChangeListener listener : CHANGE_LISTENER_LIST) {
       listener.filterAdded(filter);
     }
+    for(FilterChangeListenerV2 listener : CHANGE_LISTENER_LISTV2) {
+      listener.filterAdded(filter);
+    }
+    
+    if(filter.equals(FilterManagerImpl.getInstance().getDefaultFilter())) {
+      fireFilterDefaultChanged(filter);
+    }
   }
 
   void fireFilterRemoved(ProgramFilter filter) {
     for(FilterChangeListener listener : CHANGE_LISTENER_LIST) {
       listener.filterRemoved(filter);
+    }
+    for(FilterChangeListenerV2 listener : CHANGE_LISTENER_LISTV2) {
+      listener.filterRemoved(filter);
+    }
+    
+    if(filter.equals(FilterManagerImpl.getInstance().getDefaultFilter())) {
+      fireFilterDefaultChanged(FilterManagerImpl.getInstance().getAllFilter());
     }
   }
   
@@ -276,13 +294,34 @@ public class FilterTreeModel extends DefaultTreeModel {
     for(FilterChangeListener listener : CHANGE_LISTENER_LIST) {
       listener.filterTouched(filter);
     }
+    for(FilterChangeListenerV2 listener : CHANGE_LISTENER_LISTV2) {
+      listener.filterTouched(filter);
+    }
   }
   
+  void fireFilterDefaultChanged(ProgramFilter filter) {
+    for(FilterChangeListenerV2 listener : CHANGE_LISTENER_LISTV2) {
+      listener.filterDefaultChanged(filter);
+    }
+  }
+  
+  /** @deprecated since 3.3.4 use {@link #registerFilterChangeListener(FilterChangeListenerV2)} instead */
   public void registerFilterChangeListener(FilterChangeListener listener) {
     CHANGE_LISTENER_LIST.add(listener);
   }
   
+  /**
+   * 
+   * @deprecated since 3.3.4 use {@link #unregisterFilterChangeListener(FilterChangeListenerV2)} instead */
   public void unregisterFilterChangeListener(FilterChangeListener listener) {
     CHANGE_LISTENER_LIST.remove(listener);
+  }
+
+  public void registerFilterChangeListener(FilterChangeListenerV2 listener) {
+    CHANGE_LISTENER_LISTV2.add(listener);
+  }
+  
+  public void unregisterFilterChangeListener(FilterChangeListenerV2 listener) {
+    CHANGE_LISTENER_LISTV2.remove(listener);
   }
 }

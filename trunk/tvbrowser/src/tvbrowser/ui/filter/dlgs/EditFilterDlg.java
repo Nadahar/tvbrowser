@@ -37,7 +37,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Vector;
 
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListModel;
@@ -59,7 +58,6 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.table.AbstractTableModel;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.PlainDocument;
@@ -406,8 +404,6 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
             
       FilterComponent rule = dlg.getFilterComponent();
       if (rule != null) {
-        //mComponentTableModel.addElement(rule);
-        
         mFilterComponentListModel.addElement(new FilterItem(rule,0));
         
         tvbrowser.core.filters.FilterComponentList.getInstance().add(rule);
@@ -460,7 +456,6 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
       if (allowRemove) {
         FilterComponentList.getInstance().remove(fc.getName());
         mFilterComponentListModel.removeElementAt(mFilterComponentList.getSelectedIndex());
-        //mComponentTableModel.removeElement(mRuleTableBox.getSelectedRow());
         updateBtns();
       }
 
@@ -527,89 +522,6 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
 
   public void caretUpdate(javax.swing.event.CaretEvent e) {
     mColLb.setText("pos: " + mFilterRuleTF.getCaretPosition());
-  }
-
-  private static class FilterTableModel extends AbstractTableModel {
-
-    private Vector<FilterComponent> dataVector;
-
-    public FilterTableModel() {
-      dataVector = new Vector<FilterComponent>();
-    }
-
-    public int getRowCount() {
-      return dataVector.size();
-    }
-
-    public int getColumnCount() {
-      return 2;
-    }
-
-    public String getColumnName(int columnIndex) {
-      if (columnIndex == 0) {
-        return mLocalizer.msg("filtername", "Filtername");
-      } else if (columnIndex == 1) {
-        return mLocalizer.msg("description", "Description");
-      }
-      return "?";
-    }
-
-    public Class<?> getColumnClass(int columnIndex) {
-      return String.class;
-    }
-
-    public boolean isCellEditable(int rowIndex, int columnIndex) {
-      return false;
-    }
-
-    public Object getValueAt(int rowIndex, int columnIndex) {
-      Object row = dataVector.get(rowIndex);
-      if (row instanceof FilterComponent) {
-        FilterComponent comp = (FilterComponent) row;
-
-        if (columnIndex == 0) {
-          return comp.getName();
-        } else if (columnIndex == 1) {
-          return comp.getDescription();
-        }
-
-      }
-      return "?";
-    }
-
-    public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-
-    }
-
-    public void addElement(FilterComponent fComp) {
-      dataVector.add(fComp);
-      fireTableRowsInserted(getRowCount(), getRowCount());
-    }
-
-    public FilterComponent getElement(int row) {
-      if (row < 0 || row >= getRowCount()) {
-        return null;
-      }
-      return dataVector.get(row);
-    }
-
-    public void removeElement(int row) {
-      if (row < 0 || row >= getRowCount()) {
-        return;
-      }
-      dataVector.remove(row);
-      fireTableRowsDeleted(row, row);
-    }
-
-    public void removeElement(FilterComponent fComp) {
-      if (fComp == null) {
-        return;
-      }
-      if (dataVector.remove(fComp)) {
-        fireTableDataChanged();
-      }
-    }
-
   }
 
   public void close() {
@@ -824,9 +736,6 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
     if(target != null) {
       target.repaint();
     }
-    
-    //target.add(source.getSelectedValue(),row)
-    
   }catch(Throwable t) {t.printStackTrace();}
   }
   
