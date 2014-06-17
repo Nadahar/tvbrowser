@@ -256,6 +256,11 @@ public class TVBrowser {
    * Show only minimized
    */
   private static boolean mMinimized = false;
+  
+  /**
+   * Start TV-Browser in safe mode (no external plugins will be loaded).
+   */
+  private static boolean mSafeMode = false;
 
   /**
    * avoid initializing the look and feel multiple times
@@ -452,18 +457,23 @@ public class TVBrowser {
     /* Initialize the MarkedProgramsMap */
     MarkedProgramsMap.getInstance();
 
-    /*Maybe there are tvdataservices to install (.jar.inst files)*/
-    PluginLoader.getInstance().installPendingPlugins();
-
+    if(!mSafeMode) {
+      /*Maybe there are tvdataservices to install (.jar.inst files)*/
+      PluginLoader.getInstance().installPendingPlugins();
+    }
+    
     PluginProxyManager.getInstance();
-    PluginLoader.getInstance().loadAllPlugins();
+    
+    if(!mSafeMode) {
+      PluginLoader.getInstance().loadAllPlugins();
+    }
 
     mLog.info("Loading TV listings service...");
     splashRef.get().setMessage(mLocalizer.msg("startScreen.dataService", "Loading TV listings service..."));
     
     TvDataServiceProxyManager.getInstance().init();
     
-    if(!Settings.propShowAssistant.getBoolean() && TvDataServiceProxyManager.getInstance().getDataServices().length < 1) {
+    if(!Settings.propShowAssistant.getBoolean() && TvDataServiceProxyManager.getInstance().getDataServices().length < 1 && !mSafeMode) {
       splashRef.get().hideSplash();
       updateLookAndFeel();
       loadDataServicesAtStartup();
@@ -697,7 +707,7 @@ public class TVBrowser {
             }
 
             if(currentVersion != null
-                && currentVersion.compareTo(new Version(3,30,51,false)) < 0) {
+                && currentVersion.compareTo(new Version(3,33,51,false)) < 0) {
               Settings.propSubscribedChannels.setChannelArray(ChannelList.getSubscribedChannels());
             }
             
@@ -848,6 +858,7 @@ public class TVBrowser {
     System.out.println("    -nostartscreen  No start screen during start up");
     System.out.println("    -fullscreen     Start in fullscreen-mode");
     System.out.println("    -ignorejvm      Don't check for Sun Java");
+    System.out.println("    -safemode       Don't load Plugins");
     System.out.println();
   }
 
@@ -862,6 +873,8 @@ public class TVBrowser {
         mShowStartScreen = false;
       } else if (argument.equalsIgnoreCase("-fullscreen") || argument.equalsIgnoreCase("-f")) {
         mFullscreen = true;
+      } else if (argument.equalsIgnoreCase("-safemode") || argument.equalsIgnoreCase("-s")) {
+        mSafeMode = true;
       } else if (argument.startsWith("-D")) {
         if (argument.indexOf("=") >= 2) {
           String key = argument.substring(2, argument.indexOf("="));
@@ -1580,14 +1593,14 @@ public class TVBrowser {
         Settings.propPluginBetaWarning.setBoolean(true);
         PluginLoader.getInstance().installPendingPlugins();
         PluginLoader.getInstance().loadAllPlugins();
-        TvDataServiceProxyManager.getInstance().init();
         
+        TvDataServiceProxyManager.getInstance().init();
         ChannelList.createForTvBrowserStart();
         ChannelList.initSubscribedChannels();
       }
     } catch (IOException e1) {
-    }
   }
+}
 
   private static void updatePluginsOnVersionChange() {
     final boolean oldBetaWarning = Settings.propPluginBetaWarning.getBoolean();
@@ -1619,6 +1632,10 @@ public class TVBrowser {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
+  }
+  
+  public static boolean isSafeMode() {
+    return mSafeMode;
   }
 }
 

@@ -84,19 +84,25 @@ public class PluginAutoUpdater {
    * @throws IOException
    */
   public static SoftwareUpdateItem[] getDataServicesForFirstStartup() throws IOException {
-    String baseUrl = getPluginUpdatesMirror().getUrl();
+    Mirror mirr = getPluginUpdatesMirror();
     
-    try {
-      String name = PLUGIN_UPDATES_FILENAME.substring(0,
-          PLUGIN_UPDATES_FILENAME.indexOf('.'))
-          + "_" + Mirror.MIRROR_LIST_FILE_NAME;
-      IOUtilities.download(new URL(baseUrl + (baseUrl.endsWith("/") ? "" : "/") + name), new File(Settings.getUserSettingsDirName(), name));
-    } catch(Exception ee) {}
+    if(mirr != null) {
+      String baseUrl = mirr.getUrl();
+      
+      try {
+        String name = PLUGIN_UPDATES_FILENAME.substring(0,
+            PLUGIN_UPDATES_FILENAME.indexOf('.'))
+            + "_" + Mirror.MIRROR_LIST_FILE_NAME;
+        IOUtilities.download(new URL(baseUrl + (baseUrl.endsWith("/") ? "" : "/") + name), new File(Settings.getUserSettingsDirName(), name));
+      } catch(Exception ee) {}
+      
+      java.net.URL url = new java.net.URL(baseUrl + "/" + PluginAutoUpdater.PLUGIN_UPDATES_FILENAME);
+      SoftwareUpdater softwareUpdater = new SoftwareUpdater(url,SoftwareUpdater.ONLY_DATA_SERVICE_TYPE,null);
+      
+      return softwareUpdater.getAvailableSoftwareUpdateItems();
+    }
     
-    java.net.URL url = new java.net.URL(baseUrl + "/" + PluginAutoUpdater.PLUGIN_UPDATES_FILENAME);
-    SoftwareUpdater softwareUpdater = new SoftwareUpdater(url,SoftwareUpdater.ONLY_DATA_SERVICE_TYPE,null);
-    
-    return softwareUpdater.getAvailableSoftwareUpdateItems();
+    return new SoftwareUpdateItem[0];
   }
   
   /**

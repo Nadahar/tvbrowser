@@ -40,6 +40,7 @@ import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.JOptionPane;
 
+import tvbrowser.TVBrowser;
 import tvbrowser.core.PluginLoader;
 import tvbrowser.core.filters.FilterList;
 import tvbrowser.core.filters.UserFilter;
@@ -492,7 +493,9 @@ public class JavaPluginProxy extends AbstractPluginProxy {
   }
 
   public void doOnActivation() {
-    plugin().onActivation();
+    if(!TVBrowser.isSafeMode()) {
+      plugin().onActivation();
+    }
   }
 
   private Plugin plugin() {
