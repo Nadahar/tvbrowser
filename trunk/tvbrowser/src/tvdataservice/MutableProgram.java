@@ -42,6 +42,9 @@ import javax.swing.event.EventListenerList;
 import tvbrowser.core.TvDataBase;
 /*import tvbrowser.core.TvDataUpdater;
 import tvbrowser.core.plugin.PluginProxy;*/
+import tvbrowser.core.filters.FilterList;
+import tvbrowser.core.filters.UserFilter;
+import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import util.io.IOUtilities;
 import util.misc.HashCodeUtilities;
@@ -335,8 +338,19 @@ public class MutableProgram implements Program {
    * @param marker The plugin to mark the program for.
    */
   public final synchronized void mark(Marker marker) {
-    MarkedProgramsMap.getInstance().addMarkerForProgram(this, marker);
-    fireStateChanged();
+    PluginProxy proxy = PluginProxyManager.getInstance().getActivatedPluginForId(marker.getId());
+    boolean mark = true;
+    
+    if(proxy != null) {
+      UserFilter filter = FilterList.getInstance().getGenericPluginFilter(proxy, true);
+    
+      mark = (filter == null || filter.accept(this));
+    }
+    
+    if(mark) {
+      MarkedProgramsMap.getInstance().addMarkerForProgram(this, marker);
+      fireStateChanged();
+    }
   }
 
   /**
