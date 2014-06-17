@@ -341,10 +341,12 @@ public class JavaPluginProxy extends AbstractPluginProxy {
    *         <code>null</code> if the plugin does not provide this feature.
    */
   protected ActionMenu doGetContextMenuActions(Program program) {
-    UserFilter filter = FilterList.getInstance().getGenericPluginFilter(this, true);
-    
-    if(filter != null && !filter.accept(program)) {
-      return null;
+    if(program != null && !program.equals(PluginManagerImpl.getInstance().getExampleProgram())) {
+      UserFilter filter = FilterList.getInstance().getGenericPluginFilter(this, true);
+      
+      if(filter != null && !filter.accept(program)) {
+        return null;
+      }
     }
     
     return mPlugin.getContextMenuActions(program);
