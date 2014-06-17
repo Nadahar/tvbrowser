@@ -308,7 +308,7 @@ public class SelectFilterDlg extends JDialog implements ActionListener, WindowCl
   
   void editSelectedFilter(FilterNode node) {
     UserFilter filter = (UserFilter)node.getFilter();
-    new EditFilterDlg(this, FilterList.getInstance(), filter);
+    new EditFilterDlg(this, FilterList.getInstance(), filter, true);
     
     mFilterTree.getModel().fireFilterTouched(filter);
     mFilterTree.updateUI();
@@ -360,7 +360,7 @@ public class SelectFilterDlg extends JDialog implements ActionListener, WindowCl
   }
   
   void createNewFilter(FilterNode parent) {
-    EditFilterDlg dlg = new EditFilterDlg(this, FilterList.getInstance(), null);
+    EditFilterDlg dlg = new EditFilterDlg(this, FilterList.getInstance(), null, true);
     UserFilter filter = dlg.getUserFilter();
     if (filter != null) {
       FilterNode node = new FilterNode(filter);

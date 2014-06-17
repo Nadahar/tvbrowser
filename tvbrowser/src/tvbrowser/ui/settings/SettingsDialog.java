@@ -380,8 +380,8 @@ public class SettingsDialog implements WindowClosingIf {
     generalSettings.add(new SettingNode(new ContextmenuSettingsTab(),
         SettingsItem.CONTEXTMENU));
     generalSettings.add(new SettingNode(new MouseSettingsTab(), SettingsItem.MOUSE));
-    generalSettings.add(new SettingNode(
-        new GlobalPluginProgramFormatingSettings(),
+    generalSettings.add(new SettingNode(new GenericPluginFilterSettingsTab()));
+    generalSettings.add(new SettingNode(new GlobalPluginProgramFormatingSettings(),
         SettingsItem.PLUGINPROGRAMFORMAT));
     generalSettings.add(new SettingNode(new ButtonsSettingsTab(),
         SettingsItem.TIMEBUTTONS));

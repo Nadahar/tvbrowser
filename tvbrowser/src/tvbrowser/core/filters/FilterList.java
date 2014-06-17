@@ -27,7 +27,6 @@
 package tvbrowser.core.filters;
 
 import java.io.BufferedReader;
-
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
@@ -37,7 +36,10 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Properties;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import javax.swing.JMenu;
@@ -45,6 +47,8 @@ import javax.swing.JMenu;
 import org.apache.commons.lang3.StringUtils;
 
 import tvbrowser.core.Settings;
+import tvbrowser.core.plugin.PluginProxy;
+import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.ui.filter.dlgs.FilterNode;
 import tvbrowser.ui.filter.dlgs.FilterTreeModel;
 import tvbrowser.ui.mainframe.searchfield.SearchFilter;
@@ -55,21 +59,31 @@ import devplugin.PluginsProgramFilter;
 import devplugin.ProgramFilter;
 
 public class FilterList {
-  private static FilterList mInstance;
+  private static FilterList INSTANCE;
   private static File mFilterDirectory;
   private File mFilterDat;
+  private static File mGenericFilterDirectory;
+  private File mGenericFilterProp;
+  
   private final static String FILTER_INDEX = "filter.index";
   protected static final String FILTER_DIRECTORY = Settings
       .getUserSettingsDirName()
       + "/filters";
+  protected static final String GENERIC_PLUGIN_FILTER_DIRECTORY = Settings
+      .getUserSettingsDirName()
+      + "/genericfilters";
 
   private FilterTreeModel mFilterTreeModel;
   private final static String FILTER_TREE_DAT = "filters.dat";
-
+  private final static String GENRIC_FILTER_PROP = "genericfilters.prop";
+  
+  private HashMap<String, GenericFilterHolder> mGenericPluginFilterMap;
+  
   private static final Logger mLog
           = Logger.getLogger(FilterList.class.getName());
 
   private FilterList() {
+    mGenericPluginFilterMap = new HashMap<String, GenericFilterHolder>();
     create();
   }
   
@@ -83,137 +97,171 @@ public class FilterList {
     return mFilterDirectory;
   }
 
-  public void create() {
+  private void create() {
     mFilterDirectory = new File(tvbrowser.core.filters.FilterList.FILTER_DIRECTORY);
+    mGenericFilterDirectory = new File(GENERIC_PLUGIN_FILTER_DIRECTORY);
+    
     mFilterDat = new File(mFilterDirectory,FILTER_TREE_DAT);
     if (!mFilterDirectory.exists()) {
       mFilterDirectory.mkdirs();
     }
+    mGenericFilterProp = new File(mGenericFilterDirectory,GENRIC_FILTER_PROP);
+    if (!mGenericFilterDirectory.exists()) {
+      mGenericFilterDirectory.mkdirs();
+    }
+    
     createFilterList();
   }
 
-  public static FilterList getInstance() {
-    if (mInstance == null) {
-      mInstance = new FilterList();
+  public static synchronized FilterList getInstance() {
+    if (INSTANCE == null) {
+      INSTANCE = new FilterList();
     }
-    return mInstance;
+    return INSTANCE;
   }
 
-  private void createFilterList() {try {
-    if(mFilterDat.isFile()) {
+  private void createFilterList() {
+    try {
+      if(mFilterDat.isFile()) {
+        try {
+          ObjectInputStream in = new ObjectInputStream(new FileInputStream(mFilterDat));
+          
+          mFilterTreeModel = FilterTreeModel.initInstance(in);
+          
+          in.close();
+        } catch (Exception e) {
+          e.printStackTrace();
+        }
+      }
+      else {
+        mFilterTreeModel = FilterTreeModel.initInstance(new ProgramFilter[0]);
+      }
+      final HashMap<String, ProgramFilter> filterList = new HashMap<String, ProgramFilter>();
+   
+  
+      /* Read the available filters from the file system and add them to the array */
+      if (mFilterDirectory == null) {
+        throw new NullPointerException("directory is null");
+      }
+  
+      File[] fileList = getFilterFiles(mFilterDirectory);
+  
+      if (fileList != null) {
+        for (File file : fileList) {
+          UserFilter filter = null;
+          try {
+            filter = new UserFilter(file);
+          } catch (ParserException e) {
+            mLog.warning("error parsing filter from file " + file + "; exception: " + e);
+          }
+          if (filter != null) {
+            filterList.put(filter.getName(), filter);
+          }
+        }
+      }
+  
+      /* Sort the list*/
       try {
-        ObjectInputStream in = new ObjectInputStream(new FileInputStream(mFilterDat));
-        
-        mFilterTreeModel = FilterTreeModel.initInstance(in);
-        
-        in.close();
-      } catch (Exception e) {
+        File filterFile = new File(mFilterDirectory, FILTER_INDEX);
+        if (filterFile.canRead()) {
+            StreamUtilities.bufferedReader(filterFile,
+            new BufferedReaderProcessor() {
+              public void process(BufferedReader inxIn) throws IOException {
+                String curFilterName = inxIn.readLine();
+                while (curFilterName != null) {
+                  if (curFilterName.equals("[SEPARATOR]")) {
+                    mFilterTreeModel.addFilter(new SeparatorFilter());
+                  } else {
+                    ProgramFilter filter = filterList.get(curFilterName);
+  
+                    if (filter != null) {
+                      if (!containsFilter(curFilterName)) {
+                        mFilterTreeModel.addFilter(filter);
+                      }
+                      filterList.remove(curFilterName);
+                    }
+                  }
+  
+                  curFilterName = inxIn.readLine();
+                }
+              }
+            });
+        }
+      } catch (FileNotFoundException e) {
+        // ignore
+      } catch (IOException e) {
         e.printStackTrace();
       }
-    }
-    else {
-      mFilterTreeModel = FilterTreeModel.initInstance(new ProgramFilter[0]);
-    }
-    final HashMap<String, ProgramFilter> filterList = new HashMap<String, ProgramFilter>();
- 
-
-    /* Read the available filters from the file system and add them to the array */
-    if (mFilterDirectory == null) {
-      throw new NullPointerException("directory is null");
-    }
-
-    File[] fileList = getFilterFiles();
-
-    if (fileList != null) {
-      for (File file : fileList) {
-        UserFilter filter = null;
+  
+  
+      if (filterList.size() > 0) {
+        for (ProgramFilter programFilter : filterList.values()) {
+          if (!containsFilter(programFilter.getName())) {
+            mFilterTreeModel.addFilter(programFilter);
+          }
+        }
+      }
+      
+      /* Add default filters. The user may not remove them. */
+      ProgramFilter showAll = new ShowAllFilter();
+      if (!containsFilter(showAll.getName())) {
+        mFilterTreeModel.addFilter(showAll);
+      }
+      ProgramFilter pluginFilter = new PluginFilter();
+      if (!containsFilter(pluginFilter.getName())) {
+        mFilterTreeModel.addFilter(pluginFilter);
+      }
+      
+      //add default attributes
+      String attributesDir = mLocalizer.msg("ProgramAttributes", "program attributes");
+      
+      addInfoBitFilter("[SUBTITLE_FILTER]", attributesDir);
+      addInfoBitFilter("[AUDIO_DESCRIPTION_FILTER]", attributesDir);
+      addInfoBitFilter("[ORIGINAL_AUDIO_FILTER]", attributesDir);
+      addInfoBitFilter("[HD_FILTER]", attributesDir);
+      addInfoBitFilter("[NEW_FILTER]", attributesDir);
+      
+      //add default categories
+      String categoriesDir = mLocalizer.msg("ProgramCategories", "program categories");
+      addInfoBitFilter("[MOVIE_FILTER]", categoriesDir);
+      addInfoBitFilter("[SERIES_FILTER]", categoriesDir);
+      addInfoBitFilter("[SHOW_FILTER]", categoriesDir);
+      addInfoBitFilter("[DOCUMENTARY_FILTER]", categoriesDir);
+      addInfoBitFilter("[MAGAZINE_FILTER]", categoriesDir);
+      addInfoBitFilter("[NEWS_FILTER]", categoriesDir);
+      addInfoBitFilter("[SPORTS_FILTER]", categoriesDir);
+      addInfoBitFilter("[ARTS_FILTER]", categoriesDir);
+      addInfoBitFilter("[CHILDRENS_FILTER]", categoriesDir);
+      addInfoBitFilter("[OTHERS_FILTER]", categoriesDir);
+      addInfoBitFilter("[UNCATEGORIZED_FILTER]", categoriesDir);
+      
+      if(mGenericFilterProp.isFile()) {
+        Properties prop = new Properties();
+        
         try {
-          filter = new UserFilter(file);
-        } catch (ParserException e) {
-          mLog.warning("error parsing filter from file " + file + "; exception: " + e);
-        }
-        if (filter != null) {
-          filterList.put(filter.getName(), filter);
-        }
-      }
-    }
-
-    /* Sort the list*/
-    try {
-      File filterFile = new File(mFilterDirectory, FILTER_INDEX);
-      if (filterFile.canRead()) {
-          StreamUtilities.bufferedReader(filterFile,
-          new BufferedReaderProcessor() {
-            public void process(BufferedReader inxIn) throws IOException {
-              String curFilterName = inxIn.readLine();
-              while (curFilterName != null) {
-                if (curFilterName.equals("[SEPARATOR]")) {
-                  mFilterTreeModel.addFilter(new SeparatorFilter());
-                } else {
-                  ProgramFilter filter = filterList.get(curFilterName);
-
-                  if (filter != null) {
-                    if (!containsFilter(curFilterName)) {
-                      mFilterTreeModel.addFilter(filter);
-                    }
-                    filterList.remove(curFilterName);
-                  }
-                }
-
-                curFilterName = inxIn.readLine();
-              }
-            }
-          });
-      }
-    } catch (FileNotFoundException e) {
-      // ignore
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-
-
-    if (filterList.size() > 0) {
-      for (ProgramFilter programFilter : filterList.values()) {
-        if (!containsFilter(programFilter.getName())) {
-          mFilterTreeModel.addFilter(programFilter);
+          FileInputStream in = new FileInputStream(mGenericFilterProp);          
+          prop.load(in);
+          in.close();
+        }catch(IOException e1) {}
+        
+        Enumeration<Object> keys = prop.keys();
+        
+        while(keys.hasMoreElements()) {
+          String key = (String)keys.nextElement();
+          
+          String activatedValue = prop.getProperty(key, null);
+          
+          if(activatedValue != null) {
+            boolean activated = Boolean.parseBoolean(activatedValue);
+            
+            UserFilter filter = new UserFilter(new File(mGenericFilterDirectory,key+".filter"));
+            
+            GenericFilterHolder holder = new GenericFilterHolder(activated, filter);
+            
+            mGenericPluginFilterMap.put(key, holder);
+          }
         }
       }
-    }
-    
-    /* Add default filters. The user may not remove them. */
-    ProgramFilter showAll = new ShowAllFilter();
-    if (!containsFilter(showAll.getName())) {
-      mFilterTreeModel.addFilter(showAll);
-    }
-    ProgramFilter pluginFilter = new PluginFilter();
-    if (!containsFilter(pluginFilter.getName())) {
-      mFilterTreeModel.addFilter(pluginFilter);
-    }
-    
-    //add default attributes
-    String attributesDir = mLocalizer.msg("ProgramAttributes", "program attributes");
-    
-    addInfoBitFilter("[SUBTITLE_FILTER]", attributesDir);
-    addInfoBitFilter("[AUDIO_DESCRIPTION_FILTER]", attributesDir);
-    addInfoBitFilter("[ORIGINAL_AUDIO_FILTER]", attributesDir);
-    addInfoBitFilter("[HD_FILTER]", attributesDir);
-    addInfoBitFilter("[NEW_FILTER]", attributesDir);
-    
-    //add default categories
-    String categoriesDir = mLocalizer.msg("ProgramCategories", "program categories");
-    addInfoBitFilter("[MOVIE_FILTER]", categoriesDir);
-    addInfoBitFilter("[SERIES_FILTER]", categoriesDir);
-    addInfoBitFilter("[SHOW_FILTER]", categoriesDir);
-    addInfoBitFilter("[DOCUMENTARY_FILTER]", categoriesDir);
-    addInfoBitFilter("[MAGAZINE_FILTER]", categoriesDir);
-    addInfoBitFilter("[NEWS_FILTER]", categoriesDir);
-    addInfoBitFilter("[SPORTS_FILTER]", categoriesDir);
-    addInfoBitFilter("[ARTS_FILTER]", categoriesDir);
-    addInfoBitFilter("[CHILDRENS_FILTER]", categoriesDir);
-    addInfoBitFilter("[OTHERS_FILTER]", categoriesDir);
-    addInfoBitFilter("[UNCATEGORIZED_FILTER]", categoriesDir);
-
-    
     }catch(Throwable t) {t.printStackTrace();}
     
     mFilterTreeModel.addPluginsProgramFilters();
@@ -232,8 +280,8 @@ public class FilterList {
     }
   }
 
-  private File[] getFilterFiles() {
-    return mFilterDirectory.listFiles(new FileFilter() {
+  private File[] getFilterFiles(File directory) {
+    return directory.listFiles(new FileFilter() {
       public boolean accept(File f) {
         return f.getAbsolutePath().endsWith(".filter");
       }
@@ -302,10 +350,91 @@ public class FilterList {
 
     store();
   }
+  
+  public void updateGenericPluginFilterActivated(PluginProxy plugin, boolean activated) {
+    GenericFilterHolder holder = mGenericPluginFilterMap.get(plugin.getId());
+    
+    if(holder != null) {
+      holder.setActivated(activated);
+    }
+  }
+  
+  public void updateGenericPluginFilter(PluginProxy plugin, UserFilter filter, boolean activated) {
+    if(filter != null) {
+      GenericFilterHolder holder = mGenericPluginFilterMap.get(plugin.getId());
+      
+      if(holder == null) {
+        holder = new GenericFilterHolder();
+        mGenericPluginFilterMap.put(plugin.getId(), holder);
+      }
+      
+      holder.setActivated(activated);
+      holder.setFilter(filter);
+    }
+    else {
+      mGenericPluginFilterMap.remove(plugin.getId());
+    }
+    
+    storeGenericFilters();
+  }
+  
+  public UserFilter getGenericPluginFilter(PluginProxy plugin, boolean onlyActivated) {
+    GenericFilterHolder holder = mGenericPluginFilterMap.get(plugin.getId());
+    
+    if(holder != null && (!onlyActivated || holder.isActivated())) {
+      return holder.getFilter();
+    }
+    
+    return null;
+  }
 
   public void remove(ProgramFilter filter) {
     mFilterTreeModel.deleteFilter(filter);
     store();
+  }
+  
+  private void storeGenericFilters() {
+    Set<String> keys = mGenericPluginFilterMap.keySet();
+    
+    Properties prop = new Properties();
+    
+    for(String key : keys) {
+      GenericFilterHolder holder = mGenericPluginFilterMap.get(key);
+      
+      prop.setProperty(key, String.valueOf(holder.isActivated()));
+      
+      holder.getFilter().store(GENERIC_PLUGIN_FILTER_DIRECTORY, key);
+    }
+    
+    FileOutputStream out;
+    try {
+      out = new FileOutputStream(mGenericFilterProp);
+      prop.store(out, "Generic plugin filters");
+      out.close();
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+  }
+  
+  public PluginProxy[] getActivatedGenericPluginFilterProxies() {
+    ArrayList<PluginProxy> proxyList = new ArrayList<PluginProxy>();
+    
+    Set<String> keys = mGenericPluginFilterMap.keySet();
+    
+    for(String key : keys) {
+      GenericFilterHolder holder = mGenericPluginFilterMap.get(key);
+      
+      if(holder.isActivated()) {
+        PluginProxy proxy = PluginProxyManager.getInstance().getActivatedPluginForId(key);
+        
+        if(proxy != null) {
+          proxyList.add(proxy);
+        }
+      }
+    }
+    
+    return proxyList.toArray(new PluginProxy[proxyList.size()]);
   }
 
   public void store() {
@@ -325,7 +454,7 @@ public class FilterList {
     }
     
     /* delete all filters*/
-    File[] fileList = getFilterFiles();
+    File[] fileList = getFilterFiles(mFilterDirectory);
     if (fileList != null) {
       for (File file : fileList) {
         file.delete();
@@ -337,6 +466,8 @@ public class FilterList {
         ((UserFilter) filter).store();
       }
     }
+    
+    storeGenericFilters();
   }
 
   /**
@@ -420,5 +551,36 @@ public class FilterList {
   
   public FilterTreeModel getFilterTreeModel() {
     return mFilterTreeModel;
+  }
+  
+  private static final class GenericFilterHolder {
+    private UserFilter mGenericFilter;
+    private boolean mIsActivated;
+    
+    public GenericFilterHolder() {
+      mGenericFilter = null;
+      mIsActivated = false;
+    }
+    
+    public GenericFilterHolder(boolean activated, UserFilter filter) {
+      mIsActivated = activated;
+      mGenericFilter = filter;
+    }
+    
+    public boolean isActivated() {
+      return mIsActivated;
+    }
+    
+    public void setActivated(boolean activated) {
+      mIsActivated = activated;
+    }
+    
+    public UserFilter getFilter() {
+      return mGenericFilter;
+    }
+    
+    public void setFilter(UserFilter filter) {
+      mGenericFilter = filter;
+    }
   }
 }
