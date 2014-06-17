@@ -193,6 +193,7 @@ import com.jgoodies.forms.layout.Sizes;
 import devplugin.Channel;
 import devplugin.ChannelDayProgram;
 import devplugin.Date;
+import devplugin.FilterChangeListenerV2;
 import devplugin.Plugin;
 import devplugin.PluginCenterPanel;
 import devplugin.PluginCenterPanelWrapper;
@@ -207,7 +208,8 @@ import devplugin.Version;
  *
  * @author Martin Oberhauser
  */
-public class MainFrame extends JFrame implements DateListener,DropTargetListener,PersonaListener,PluginStateListener {
+public class MainFrame extends JFrame implements DateListener,DropTargetListener,PersonaListener,
+                                                     PluginStateListener,FilterChangeListenerV2 {
 
   private static final Logger mLog = java.util.logging.Logger
       .getLogger(tvbrowser.TVBrowser.class.getName());
@@ -631,6 +633,8 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     this.setDropTarget(target);
     
     updateCenterPanels();
+    
+    FilterManagerImpl.getInstance().registerFilterChangeListener(this);
   }
 
   /**
@@ -3493,5 +3497,38 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
         mCenterTabPane.setSelectedIndex(index);
       }      
     }
+  }
+
+  @Override
+  public void filterAdded(ProgramFilter filter) {}
+
+  @Override
+  public void filterRemoved(ProgramFilter filter) {
+    ProgramFilter current = getProgramFilter();
+    
+    if(current != null && filter != null && current.equals(filter)) {
+      ProgramFilter defaultFilter = FilterManagerImpl.getInstance().getDefaultFilter();
+      
+      if(filter.equals(defaultFilter)) {
+        defaultFilter = FilterManagerImpl.getInstance().getAllFilter();
+      }
+      
+      setProgramFilter(defaultFilter);
+    }
+  }
+
+  @Override
+  public void filterTouched(ProgramFilter filter) {
+    ProgramFilter current = getProgramFilter();
+    
+    if(current != null && filter != null && current.equals(filter)) {
+      setProgramFilter(filter);
+    }
+  }
+
+  @Override
+  public void filterDefaultChanged(ProgramFilter filter) {
+    updateFilterPanel();
+    mToolBarModel.setFilterButtonSelected(!getProgramFilter().equals(filter));
   }
 }

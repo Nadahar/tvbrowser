@@ -27,6 +27,7 @@ import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.ui.filter.dlgs.EditFilterComponentDlg;
 import tvbrowser.ui.mainframe.MainFrame;
 import devplugin.FilterChangeListener;
+import devplugin.FilterChangeListenerV2;
 import devplugin.FilterManager;
 import devplugin.PluginsProgramFilter;
 import devplugin.ProgramFilter;
@@ -191,6 +192,16 @@ public class FilterManagerImpl implements FilterManager {
 
   @Override
   public void unregisterFilterChangeListener(FilterChangeListener listener) {
+    FilterList.getInstance().getFilterTreeModel().unregisterFilterChangeListener(listener);
+  }
+
+  @Override
+  public void registerFilterChangeListener(FilterChangeListenerV2 listener) {
+    FilterList.getInstance().getFilterTreeModel().registerFilterChangeListener(listener);
+  }
+
+  @Override
+  public void unregisterFilterChangeListener(FilterChangeListenerV2 listener) {
     FilterList.getInstance().getFilterTreeModel().unregisterFilterChangeListener(listener);
   }
 }

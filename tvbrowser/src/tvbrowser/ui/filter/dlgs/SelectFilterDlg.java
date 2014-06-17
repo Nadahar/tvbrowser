@@ -27,24 +27,18 @@
 package tvbrowser.ui.filter.dlgs;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.Dialog;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
-import javax.swing.DefaultListCellRenderer;
-
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JLabel;
 import javax.swing.JList;
-
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -53,7 +47,6 @@ import javax.swing.tree.TreePath;
 
 import tvbrowser.core.Settings;
 import tvbrowser.core.filters.FilterList;
-import tvbrowser.core.filters.FilterManagerImpl;
 import tvbrowser.core.filters.InfoBitFilter;
 import tvbrowser.core.filters.PluginFilter;
 import tvbrowser.core.filters.SeparatorFilter;
@@ -82,17 +75,15 @@ public class SelectFilterDlg extends JDialog implements ActionListener, WindowCl
 
   private static SelectFilterDlg mInstance;
 
-  private JButton mHelpBtn, mNewFolder, mEditBtn, mRemoveBtn, mNewBtn, mCancelBtn, mOkBtn, mUpBtn, mDownBtn, mSeperator, mDefaultFilterBtn;
+  private JButton mHelpBtn, mNewFolder, mEditBtn, mRemoveBtn, mNewBtn, mOkBtn, mUpBtn, mDownBtn, mSeperator, mDefaultFilterBtn;
 
 
   private FilterList mFilterList;
-
-  private String mDefaultFilterId;
   private FilterTree mFilterTree;
   
   public static SelectFilterDlg create(Window parent) {
     if(mInstance == null) {
-      new SelectFilterDlg(MainFrame.getInstance());
+      new SelectFilterDlg(UiUtilities.getLastModalChildOf(MainFrame.getInstance()));
     }
     
     return mInstance;
@@ -104,7 +95,6 @@ public class SelectFilterDlg extends JDialog implements ActionListener, WindowCl
   
   private SelectFilterDlg(Window parent) {
     super(parent, mLocalizer.msg("title", "Edit Filters"),Dialog.ModalityType.APPLICATION_MODAL);
-    //super(parent, mLocalizer.msg("title", "Edit Filters"), true);
     mInstance = this;
     
     FormLayout layout = new FormLayout("default,default:grow,default","default,4dlu,fill:default:grow,5dlu,default");
@@ -115,9 +105,6 @@ public class SelectFilterDlg extends JDialog implements ActionListener, WindowCl
     UiUtilities.registerForClosing(this);
 
     mFilterList = FilterList.getInstance();
-    ProgramFilter defaultFilter = FilterManagerImpl.getInstance().getDefaultFilter();
-    mDefaultFilterId = defaultFilter.getClass().getName() + "###" + defaultFilter.getName();
-    
     mFilterTree = new FilterTree();
     
     mNewBtn = UiUtilities.createToolBarButton(FilterTree.mLocalizer.msg("newFilter", "New Filter"),TVBrowserIcons.newIcon(TVBrowserIcons.SIZE_LARGE));
@@ -279,31 +266,13 @@ public class SelectFilterDlg extends JDialog implements ActionListener, WindowCl
 
   public void close() {
     mFilterList.store();
-    FilterManagerImpl.getInstance().setCurrentFilter(FilterManagerImpl.getInstance().getCurrentFilter());
+    //FilterManagerImpl.getInstance().setCurrentFilter(FilterManagerImpl.getInstance().getCurrentFilter());
     setVisible(false);
     mInstance = null;
   }
 
   public void drop(JList source, JList target, int rows, boolean move) {
     UiUtilities.moveSelectedItems(target,rows,true);
-  }
-
-  private class FilterListCellRenderer extends DefaultListCellRenderer {
-    public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-      JLabel tc = (JLabel)super.getListCellRendererComponent(list,value,index,isSelected,cellHasFocus);
-
-      if(value instanceof ProgramFilter) {
-        String id = value.getClass().getName();
-        String name = ((ProgramFilter)value).getName();
-
-        if((mDefaultFilterId.equals(id + "###" + name)) ||
-            (mDefaultFilterId.length() < 1 && value instanceof ShowAllFilter)) {
-          tc.setFont(tc.getFont().deriveFont(Font.BOLD));
-        }
-      }
-
-      return tc;
-    }
   }
   
   void editSelectedFilter(FilterNode node) {
@@ -326,15 +295,6 @@ public class SelectFilterDlg extends JDialog implements ActionListener, WindowCl
         mFilterTree.getModel().reload(parent);
       }
       else if((node.containsFilter() || node.containsSeparator()) && node.isDeletingAllowed()) {
-        String id = node.getFilter().getClass().getName();
-        String name = node.getFilter().getName();
-        
-        if((Settings.propDefaultFilter.getString().equals(id + "###" + name)) ||
-            (Settings.propDefaultFilter.getString().trim().length() < 1 && node.getFilter() instanceof ShowAllFilter)) {
-          Settings.propDefaultFilter.resetToDefault();
-          MainFrame.getInstance().setProgramFilter(FilterManagerImpl.getInstance().getAllFilter());
-        }
-        
         ProgramFilter[] filters = node.getAllFilters();
         
         mFilterTree.getModel().removeNodeFromParent(node);
@@ -421,5 +381,6 @@ public class SelectFilterDlg extends JDialog implements ActionListener, WindowCl
     String defaultFilterId = node.getFilter().getClass().getName() + "###" + node.getFilter().getName();
     Settings.propDefaultFilter.setString(defaultFilterId);
     mFilterTree.updateUI();
+    mFilterTree.getModel().fireFilterDefaultChanged(node.getFilter());
   }
 }

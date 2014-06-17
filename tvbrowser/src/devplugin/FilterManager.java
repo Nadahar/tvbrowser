@@ -106,14 +106,33 @@ public interface FilterManager {
    * <p>
    * @param listener The listener to register.
    * @since 3.3.3
+   * @deprecated since 3.3.4 use {@link #registerFilterChangeListener(FilterChangeListenerV2)} instead.
    */
   public void registerFilterChangeListener(FilterChangeListener listener);
+  
+  /**
+   * Registers the given FilterChangeListener.
+   * <p>
+   * @param listener The listener to register.
+   * @since 3.3.4
+   */
+  public void registerFilterChangeListener(FilterChangeListenerV2 listener);
   
   /**
    * Unregisters the given FilterChangeListener.
    * <p>
    * @param listener The listener to remove.
    * @since 3.3.3
+   * @deprecated since 3.3.4 use {@link #unregisterFilterChangeListener(FilterChangeListenerV2)} instead.
    */
   public void unregisterFilterChangeListener(FilterChangeListener listener);
+  
+  /**
+   * Unregisters the given FilterChangeListener.
+   * <p>
+   * @param listener The listener to remove.
+   * @since 3.3.4
+   */
+  public void unregisterFilterChangeListener(FilterChangeListenerV2 listener);
+
 }

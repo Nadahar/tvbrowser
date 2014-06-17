@@ -27,10 +27,9 @@ package devplugin;
  * A listener for changes of filters.
  * <p>
  * @author René Mach
- * @since 3.3.3
- * @deprecated since 3.3.4 use {@link FilterChangeListenerV2} instead.
+ * @since 3.3.4
  */
-public interface FilterChangeListener {
+public interface FilterChangeListenerV2 {
   /**
    * Called when a filter is added.
    * <p>
@@ -51,4 +50,13 @@ public interface FilterChangeListener {
    * @param filter The filter that was touched.
    */
   public void filterTouched(ProgramFilter filter);
+  
+  /**
+   * Called when the default filter was changed.
+   * <p>
+   * @param filter The new default filter, or the
+   * all filter if no default filter exists.
+   */
+  public void filterDefaultChanged(ProgramFilter filter);
 }
+
