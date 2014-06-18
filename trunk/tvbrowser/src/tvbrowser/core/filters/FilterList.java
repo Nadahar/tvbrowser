@@ -168,9 +168,13 @@ public class FilterList {
             new BufferedReaderProcessor() {
               public void process(BufferedReader inxIn) throws IOException {
                 String curFilterName = inxIn.readLine();
+                String lastFilterName = null;
+                
                 while (curFilterName != null) {
-                  if (curFilterName.equals("[SEPARATOR]")) {
-                    mFilterTreeModel.addFilter(new SeparatorFilter());
+                  if (curFilterName.equals(SeparatorFilter.KEY)) {
+                    if(lastFilterName == null || !lastFilterName.equals(SeparatorFilter.KEY)) {
+                      mFilterTreeModel.addFilter(new SeparatorFilter());
+                    }
                   } else {
                     ProgramFilter filter = filterList.get(curFilterName);
   
@@ -181,7 +185,8 @@ public class FilterList {
                       filterList.remove(curFilterName);
                     }
                   }
-  
+                  
+                  lastFilterName = curFilterName;
                   curFilterName = inxIn.readLine();
                 }
               }

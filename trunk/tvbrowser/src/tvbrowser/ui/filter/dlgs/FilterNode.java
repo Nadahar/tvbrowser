@@ -93,11 +93,15 @@ public class FilterNode extends DefaultMutableTreeNode {
       setUserObject(in.readUTF());
       
       mWasExpanded = in.readBoolean();
+      
+      boolean lastWasSeparator = false;
+      
       for(int i = 0; i < n; i++) {
         FilterNode node = new FilterNode(in, version);
         
-        if(node.getUserObject() != null) {
+        if(node.getUserObject() != null && (!lastWasSeparator || !(node.getUserObject() instanceof SeparatorFilter))) {
           add(node);
+          lastWasSeparator = node.getUserObject() instanceof SeparatorFilter;
         }
       }
     }
@@ -112,11 +116,8 @@ public class FilterNode extends DefaultMutableTreeNode {
       else if(name.equals(PluginFilter.KEY)) {
         userObject = new PluginFilter();
       }
-      else if(name.equals("[SUBTITLE_FILTER]")) {
-         userObject = new InfoBitFilter("[SUBTITLE_FILTER]");
-      }
-      else if(name.equals("[AUDIO_DESCRIPTION_FILTER]")) {
-        userObject = new InfoBitFilter("[AUDIO_DESCRIPTION_FILTER]");
+      else if(name.equals(InfoBitFilter.SUBTITLE_FILTER_KEY) || name.equals(InfoBitFilter.AUDIO_DESCRIPTION_FILTER_KEY)) {
+         userObject = new InfoBitFilter(name);
       }
       else if(name.equals(SeparatorFilter.KEY)) {
         userObject = new SeparatorFilter();
