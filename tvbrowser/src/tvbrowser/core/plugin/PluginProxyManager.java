@@ -570,7 +570,6 @@ public class PluginProxyManager {
     synchronized (mPluginList) {
       for (PluginListItem item : mPluginList) {
         String pluginId = item.getPlugin().getId();
-
         // Check whether this plugin is deactivated
         boolean activated = true;
         if (deactivatedPluginIdArr != null) {

@@ -33,6 +33,7 @@ import javax.swing.Icon;
 import javax.swing.JFrame;
 import javax.swing.UIManager;
 
+import tvbrowser.ui.mainframe.MainFrame;
 import util.ui.UIThreadRunner;
 
 
@@ -108,14 +109,15 @@ public class ErrorHandler {
   public static void handle(final String msg, final Throwable throwable) {
     mLog.log(Level.SEVERE, msg, throwable);
     try {
-      UIThreadRunner.invokeAndWait(new Runnable() {
-
-        @Override
-        public void run() {
-          ErrorWindow errorWindow = new ErrorWindow(mParent, msg, throwable);
-          errorWindow.centerAndShow();
-        }
-      });
+      if(!MainFrame.isStarting()) {
+        UIThreadRunner.invokeAndWait(new Runnable() {
+          @Override
+          public void run() {
+            ErrorWindow errorWindow = new ErrorWindow(mParent, msg, throwable);
+            errorWindow.centerAndShow();
+          }
+        });
+      }
     } catch (InterruptedException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();

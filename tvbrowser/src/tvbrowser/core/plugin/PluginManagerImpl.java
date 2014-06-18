@@ -316,9 +316,13 @@ public class PluginManagerImpl implements PluginManager {
   
   /** {@inheritDoc} */
   public Program getProgram(String uniqueID) {
-    Object[] values = getDateAndProgIDforUniqueID(uniqueID);
+    if(uniqueID != null && uniqueID.trim().length() > 0) {
+      Object[] values = getDateAndProgIDforUniqueID(uniqueID);
+      
+      return getProgram((Date)values[0], (String)values[1]);
+    }
     
-    return getProgram((Date)values[0], (String)values[1]);
+    return null;
   }
 
   private Object[] getDateAndProgIDforUniqueID(String uniqueID) {

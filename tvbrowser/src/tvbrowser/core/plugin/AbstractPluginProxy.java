@@ -131,11 +131,11 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
   final void loadSettings(File userDirectory) throws TvBrowserException {
     try {
       doLoadSettings(userDirectory);
-    } catch (RuntimeException exc) {
+    } catch (Throwable t) {
       throw new TvBrowserException(AbstractPluginProxy.class,
 
           "error.loading.runtimeException", "The plugin {0} caused an error when loading the plugin settings.", getInfo()
-          .getName(), exc);
+          .getName(), t);
     }
   }
 
