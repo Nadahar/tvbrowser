@@ -32,6 +32,22 @@ import devplugin.ProgramFilter;
  * This Filter filters for infobits, depending on the given key name
  */
 public class InfoBitFilter implements ProgramFilter {
+  public static final String SUBTITLE_FILTER_KEY = "[SUBTITLE_FILTER]";
+  public static final String AUDIO_DESCRIPTION_FILTER_KEY = "[AUDIO_DESCRIPTION_FILTER]";
+  public static final String HD_FILTER_KEY = "[HD_FILTER]";
+  public static final String NEW_FILTER_KEY = "[NEW_FILTER]";
+  public static final String ORIGINAL_AUDIO_FILTER_KEY = "[ORIGINAL_AUDIO_FILTER]";
+  public static final String ARTS_FILTER_KEY = "[ARTS_FILTER]";
+  public static final String CHILDRENS_FILTER_KEY = "[CHILDRENS_FILTER]";
+  public static final String DOCUMENTARY_FILTER_KEY = "[DOCUMENTARY_FILTER]";
+  public static final String MAGAZINE_FILTER_KEY = "[MAGAZINE_FILTER]";
+  public static final String MOVIE_FILTER_KEY = "[MOVIE_FILTER]";
+  public static final String NEWS_FILTER_KEY = "[NEWS_FILTER]";
+  public static final String OTHERS_FILTER_KEY = "[OTHERS_FILTER]";
+  public static final String SERIES_FILTER_KEY = "[SERIES_FILTER]";
+  public static final String SHOW_FILTER_KEY = "[SHOW_FILTER]";
+  public static final String SPORTS_FILTER_KEY = "[SPORTS_FILTER]";
+  public static final String UNCATEGORIZED_FILTER_KEY = "[UNCATEGORIZED_FILTER]";
   
   private int[] mInfoBits;
   private String mName;
@@ -42,71 +58,70 @@ public class InfoBitFilter implements ProgramFilter {
     
     util.ui.Localizer catLocalizer = util.ui.Localizer.getLocalizerFor(devplugin.ProgramInfoHelper.class);
     
-    if (name.equals("[SUBTITLE_FILTER]")) {
+    if (name.equals(SUBTITLE_FILTER_KEY)) {
       mName = "Subtitled";
       mKey = name;
       mInfoBits = new int[] {
           Program.INFO_SUBTITLE_FOR_AURALLY_HANDICAPPED, Program.INFO_ORIGINAL_WITH_SUBTITLE, Program.INFO_SIGN_LANGUAGE};
-    } else if (name.equals("[AUDIO_DESCRIPTION_FILTER]")) {
+    } else if (name.equals(AUDIO_DESCRIPTION_FILTER_KEY)) {
       mName = "Audiodescription";
       mKey = name;
       mInfoBits = new int[] {
           Program.INFO_AUDIO_DESCRIPTION};
-    } else if (name.equals("[HD_FILTER]")) {
+    } else if (name.equals(HD_FILTER_KEY)) {
       mName = "HD";
       mKey = name;
       mInfoBits = new int[] { Program.INFO_VISION_HD };
-    } else if (name.equals("[NEW_FILTER]")) {
+    } else if (name.equals(NEW_FILTER_KEY)) {
       mName = "New";
       mKey = name;
       mInfoBits = new int[] { Program.INFO_NEW };
-    } else if (name.equals("[ORIGINAL_AUDIO_FILTER]")) {
+    } else if (name.equals(ORIGINAL_AUDIO_FILTER_KEY)) {
       mName = "OriginalAudio";
       mKey = name;
       mInfoBits = new int[] { Program.INFO_ORIGINAL_WITH_SUBTITLE, Program.INFO_AUDIO_TWO_CHANNEL_TONE };
     }
-    
-    else if (name.equals("[ARTS_FILTER]")) {
+    else if (name.equals(ARTS_FILTER_KEY)) {
       mLocalized = catLocalizer.msg("categorie_arts", "Theater/Concert");
       mKey = name;
       mInfoBits = new int[] {Program.INFO_CATEGORIE_ARTS};
-    } else if (name.equals("[CHILDRENS_FILTER]")) {
+    } else if (name.equals(CHILDRENS_FILTER_KEY)) {
       mLocalized = catLocalizer.msg("categorie_childrens", "Children's Programming");
       mKey = name;
       mInfoBits = new int[] {Program.INFO_CATEGORIE_CHILDRENS};
-    } else if (name.equals("[DOCUMENTARY_FILTER]")) {
+    } else if (name.equals(DOCUMENTARY_FILTER_KEY)) {
       mLocalized = catLocalizer.msg("categorie_documentary", "Documentary/Reportage");
       mKey = name;
       mInfoBits = new int[] {Program.INFO_CATEGORIE_DOCUMENTARY};
-    } else if (name.equals("[MAGAZINE_FILTER]")) {
+    } else if (name.equals(MAGAZINE_FILTER_KEY)) {
       mLocalized = catLocalizer.msg("categorie_magazine_infotainment", "Magazine/Infotainment");
       mKey = name;
       mInfoBits = new int[] {Program.INFO_CATEGORIE_MAGAZINE_INFOTAINMENT};
-    } else if (name.equals("[MOVIE_FILTER]")) {
+    } else if (name.equals(MOVIE_FILTER_KEY)) {
       mLocalized = catLocalizer.msg("categorie_movie", "Movie");
       mKey = name;
       mInfoBits = new int[] {Program.INFO_CATEGORIE_MOVIE};
-    } else if (name.equals("[NEWS_FILTER]")) {
+    } else if (name.equals(NEWS_FILTER_KEY)) {
       mLocalized = catLocalizer.msg("categorie_news", "News");
       mKey = name;
       mInfoBits = new int[] {Program.INFO_CATEGORIE_NEWS};
-    } else if (name.equals("[OTHERS_FILTER]")) {
+    } else if (name.equals(OTHERS_FILTER_KEY)) {
       mLocalized = catLocalizer.msg("categorie_others", "Other Program");
       mKey = name;
       mInfoBits = new int[] {Program.INFO_CATEGORIE_OTHERS};
-    } else if (name.equals("[SERIES_FILTER]")) {
+    } else if (name.equals(SERIES_FILTER_KEY)) {
       mLocalized = catLocalizer.msg("categorie_series", "Series");
       mKey = name;
       mInfoBits = new int[] {Program.INFO_CATEGORIE_SERIES};
-    } else if (name.equals("[SHOW_FILTER]")) {
+    } else if (name.equals(SHOW_FILTER_KEY)) {
       mLocalized = catLocalizer.msg("categorie_show", "Show/Entertainment");
       mKey = name;
       mInfoBits = new int[] {Program.INFO_CATEGORIE_SHOW};
-    } else if (name.equals("[SPORTS_FILTER]")) {
+    } else if (name.equals(SPORTS_FILTER_KEY)) {
       mLocalized = catLocalizer.msg("categorie_sports", "Sports");
       mKey = name;
       mInfoBits = new int[] {Program.INFO_CATEGORIE_SPORTS};
-    } else if (name.equals("[UNCATEGORIZED_FILTER]")) {
+    } else if (name.equals(UNCATEGORIZED_FILTER_KEY)) {
       mName = "Uncategorized";
       mKey = name;
       mInfoBits = new int[] {
