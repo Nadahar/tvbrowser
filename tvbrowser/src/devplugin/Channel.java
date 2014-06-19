@@ -81,12 +81,7 @@ public class Channel implements Comparable<Channel> {
   private static HashMap<Integer, String> categoryName;
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer
       .getLocalizerFor(Channel.class);
-
-/*  /**
-   * @deprecated
-   */
-//  @Deprecated
-//  private AbstractTvDataService mDataService;
+  
   private String mDataServiceID;
 
   private String mName;
@@ -113,7 +108,16 @@ public class Channel implements Comparable<Channel> {
   private Channel mBaseChannel;
   private Icon mJointChannelIcon;
   
-
+  private boolean mAccessControl;
+  
+  private static final String getDataServiceIDFromDataService(AbstractTvDataService dataService) {
+    if(dataService != null) {
+      return dataService.getId();
+    }
+    
+    return null;
+  }
+  
   /**
    * Creates an instance of this class.
    * <p>
@@ -136,59 +140,37 @@ public class Channel implements Comparable<Channel> {
   public Channel(AbstractTvDataService dataService, String name, String id,
     TimeZone timeZone, String baseCountry, String copyrightNotice, String webpage,
     devplugin.ChannelGroup group, Icon icon, int categories, String unescapedName,
-    String[] allCountries, String sharedChannelId)
+    String[] allCountries, String sharedChannelId) {
+    this(dataService, name, id, timeZone, baseCountry, copyrightNotice, webpage, group, icon, categories, unescapedName, allCountries, sharedChannelId, false);
+  }
+  
+  /**
+   * Creates an instance of this class.
+   * <p>
+   * @param dataService The data service of this channel.
+   * @param name The name of this channel.
+   * @param id The id of this channel.
+   * @param timeZone The time zone of this channel.
+   * @param baseCountry The base country of this channel.
+   * @param copyrightNotice The copyright notice for this channel.
+   * @param webpage The webpage of this channel.
+   * @param group The group of this channel.
+   * @param icon The icon for this channel.
+   * @param categories The categories for this channel.
+   * @param unescapedName The unescaped name for this channel.
+   * @param allCountries All supported countries of this channel.
+   *        ATTENTION: Have to contain the base country too.
+   * @param sharedChannelId The id of the shared channel.
+   * @param accessControl If access of certain plugins to this
+   *                      channel should be prevented by TV-Browser.
+   * @since 3.3.4
+   */
+  public Channel(AbstractTvDataService dataService, String name, String id,
+    TimeZone timeZone, String baseCountry, String copyrightNotice, String webpage,
+    devplugin.ChannelGroup group, Icon icon, int categories, String unescapedName,
+    String[] allCountries, String sharedChannelId, boolean accessControl)
   {
-    if(allCountries != null) {
-      for(String testCountry : allCountries) {
-        if (testCountry.length() != 2) {
-          throw new IllegalArgumentException("all contries must be a two character "
-            + "ISO country code (as used in top level domains, e.g. 'de' or 'us'): "
-            + "'" + testCountry + "'");
-        }        
-      }
-    }
-    
-    if (baseCountry.length() != 2) {
-      throw new IllegalArgumentException("country must be a two character "
-        + "ISO country code (as used in top level domains, e.g. 'de' or 'us'): "
-        + "'" + baseCountry + "'");
-    }
-    
-    if(dataService != null) {
-      mDataServiceID = dataService.getId();
-    }
-    else {
-      mDataServiceID = null;
-    }
-    
-    mName = name;
-    mId = id;
-    mTimeZone = timeZone;
-    // country, webpage and copyright will often be the same, so filter duplicates
-    mBaseCountry = StringPool.getString(baseCountry);
-    
-    if(allCountries != null) {
-      mAllCountries = new String[allCountries.length];
-      
-      for(int i = 0; i < mAllCountries.length; i++) {
-        mAllCountries[i] = StringPool.getString(allCountries[i]);
-      }
-    }
-    else {
-      mAllCountries = new String[] {mBaseCountry};
-    }
-    
-    if(copyrightNotice != null && copyrightNotice.toLowerCase().startsWith("(c)")) {
-      copyrightNotice = "\u00A9" + copyrightNotice.substring(3);
-    }
-    
-    mCopyrightNotice = StringPool.getString(copyrightNotice);
-    mWebpage = StringPool.getString(webpage);
-    mGroup = group;
-    mDefaultIcon = icon;
-    mCategories = categories;
-    mUnescapedName = unescapedName;
-    mSharedChannelId = sharedChannelId;
+    this(getDataServiceIDFromDataService(dataService), name, id, timeZone, baseCountry, copyrightNotice, webpage, group, icon, categories, unescapedName, allCountries, sharedChannelId, accessControl);
   }
   
   /**
@@ -208,12 +190,14 @@ public class Channel implements Comparable<Channel> {
    * @param allCountries All supported countries of this channel.
    *        ATTENTION: Have to contain the base country too.
    * @param sharedChannelId The id of the shared channel.
+   * @param accessControl If access of certain plugins to this
+   *                      channel should be prevented by TV-Browser.
    * @since 3.3.4
    */
   public Channel(String dataServiceID, String name, String id,
     TimeZone timeZone, String baseCountry, String copyrightNotice, String webpage,
     devplugin.ChannelGroup group, Icon icon, int categories, String unescapedName,
-    String[] allCountries, String sharedChannelId)
+    String[] allCountries, String sharedChannelId, boolean accessControl)
   {
     if(allCountries != null) {
       for(String testCountry : allCountries) {
@@ -261,6 +245,7 @@ public class Channel implements Comparable<Channel> {
     mCategories = categories;
     mUnescapedName = unescapedName;
     mSharedChannelId = sharedChannelId;
+    mAccessControl = false;
   }
   
   /**
@@ -412,25 +397,7 @@ public class Channel implements Comparable<Channel> {
   {
     this(dataService, name, name, timeZone, country, copyrightNotice, null);
   }
-
-
- /* /**
-   * Creates an instance of this class.
-   * <p>
-   * @param dataService The data service of this channel.
-   * @param name The name of this channel.
-   * @param id The id of this channel.
-   * @param timeZone The time zone of this channel.
-   * @param country The base country of this channel.
-   * @deprecated
-   */
-/*  @Deprecated
-  public Channel(AbstractTvDataService dataService, String name, String id,
-     TimeZone timeZone, String country)
-   {
-      this(dataService,name,id,timeZone,country,"(no copyright notice)",null);
-   }*/
-
+  
   /**
    * Creates an instance of this class.
    * <p>
@@ -711,18 +678,7 @@ public class Channel implements Comparable<Channel> {
   public String[] getAllCountries() {
     return mAllCountries;
   }
-
-/*  /**
-   * Sets the day light saving time correction.
-   * <p>
-   * @param hours The new day light saving time correction.
-   * @deprecated since 3.0
-   */
-/*  @Deprecated
-  public void setDayLightSavingTimeCorrection(int hours) {
-    setTimeZoneCorrectionMinutes(hours * 60);
-  }*/
-
+  
   /**
    * Corrects the time zone offset of the channel.
    * <p>
@@ -732,18 +688,7 @@ public class Channel implements Comparable<Channel> {
   public void setTimeZoneCorrectionMinutes(int minutes) {
     ChannelUserSettings.getSettings(this).setTimeZoneCorrectionMinutes(minutes);
   }
-
- /* /**
-   * Gets the day light saving time correction of this channel.
-   * <p>
-   * @return The day light saving time correction of this channel.
-   * @deprecated since 3.0
-   */
-/*  @Deprecated
-  public int getDayLightSavingTimeCorrection() {
-    return getTimeZoneCorrectionMinutes() / 60;
-  }*/
-
+  
   /**
    * Gets the time zone offset of this channel.
    * <p>
@@ -753,18 +698,6 @@ public class Channel implements Comparable<Channel> {
   public int getTimeZoneCorrectionMinutes() {
     return ChannelUserSettings.getSettings(this).getTimeZoneCorrectionMinutes();
   }
-
-  /**
-   * Gets the data service of this channel
-   *
-   * @return The data service of this channel
-   * @deprecated use getDataServiceProxy() instead
-   */
- /* @Deprecated
-  public AbstractTvDataService getDataService() {
-    return TvDataServiceProxyManager.getInstance()
-        .findDataServiceById(mDataServiceID);
-  }*/
 
   /**
    * Gets the data service proxy of this channel
@@ -1328,5 +1261,13 @@ public class Channel implements Comparable<Channel> {
    */
   public void setSortNumber(String number) {
     ChannelUserSettings.getSettings(this).setSortNumber(number);
+  }
+  
+  /**
+   * @return If channel is access controled.
+   * @since 3.3.4
+   */
+  public boolean isAccessControl() {
+    return mAccessControl;
   }
 }

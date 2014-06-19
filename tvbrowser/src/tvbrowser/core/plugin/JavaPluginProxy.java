@@ -33,6 +33,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.Properties;
 import java.util.logging.Logger;
 
@@ -42,6 +43,7 @@ import javax.swing.JOptionPane;
 
 import tvbrowser.TVBrowser;
 import tvbrowser.core.PluginLoader;
+import tvbrowser.core.Settings;
 import tvbrowser.core.filters.FilterList;
 import tvbrowser.core.filters.UserFilter;
 import tvbrowser.ui.mainframe.MainFrame;
@@ -345,7 +347,7 @@ public class JavaPluginProxy extends AbstractPluginProxy {
     if(program != null && !program.equals(PluginManagerImpl.getInstance().getExampleProgram())) {
       UserFilter filter = FilterList.getInstance().getGenericPluginFilter(this, true);
       
-      if(filter != null && !filter.accept(program)) {
+      if(accessControl(program.getChannel()) || (filter != null && !filter.accept(program))) {
         return null;
       }
     }
@@ -362,7 +364,11 @@ public class JavaPluginProxy extends AbstractPluginProxy {
    *         <code>null</code> if the plugin does not provide this feature.
    */
   protected ActionMenu doGetContextMenuActions(final Channel channel) {
-    return mPlugin.getContextMenuActions(channel);
+    if(!accessControl(channel)) {
+      return mPlugin.getContextMenuActions(channel);
+    }
+    
+    return null;
   }
 
   /**
@@ -401,15 +407,14 @@ public class JavaPluginProxy extends AbstractPluginProxy {
    * @return the icons to use for marking programs in the program table.
    */
   protected Icon[] doGetMarkIcons(Program p) {
-    if (mPlugin != null) {
+    if (mPlugin != null && p != null) {
       UserFilter filter = FilterList.getInstance().getGenericPluginFilter(this, true);
       
-      if(filter != null && !filter.accept(p)) {
-        return null;
+      if(!(accessControl(p.getChannel()) || (filter != null && !filter.accept(p)))) {
+        return mPlugin.getMarkIcons(p);
       }
-      
-      return mPlugin.getMarkIcons(p);
     }
+    
     return null;
   }
 
@@ -442,7 +447,11 @@ public class JavaPluginProxy extends AbstractPluginProxy {
    * @see #getProgramTableIconText()
    */
   protected Icon[] doGetProgramTableIcons(Program program) {
-    return mPlugin.getProgramTableIcons(program);
+    if(program != null && !accessControl(program.getChannel())) {
+      return mPlugin.getProgramTableIcons(program);
+    }
+    
+    return null;
   }
 
 
@@ -469,7 +478,9 @@ public class JavaPluginProxy extends AbstractPluginProxy {
    * @see #handleTvDataUpdateFinished()
    */
   protected void doHandleTvDataAdded(ChannelDayProgram newProg) {
-    mPlugin.handleTvDataAdded(newProg);
+    if(newProg != null && !accessControl(newProg.getChannel())) {
+      mPlugin.handleTvDataAdded(newProg);
+    }
   }
 
 
@@ -482,7 +493,9 @@ public class JavaPluginProxy extends AbstractPluginProxy {
    * @see #handleTvDataUpdateFinished()
    */
   protected void doHandleTvDataDeleted(ChannelDayProgram oldProg) {
-    mPlugin.handleTvDataDeleted(oldProg);
+    if(oldProg != null && !accessControl(oldProg.getChannel())) {
+      mPlugin.handleTvDataDeleted(oldProg);
+    }
   }
 
   /**
@@ -538,6 +551,18 @@ public class JavaPluginProxy extends AbstractPluginProxy {
    * @since 2.5
    */
   protected boolean doReceivePrograms(Program[] programArr, ProgramReceiveTarget receiveTarget) {
+    if(programArr != null && accessControl()) {
+      ArrayList<Program> accessPrograms = new ArrayList<Program>();
+      
+      for(Program p : programArr) {
+        if(!p.getChannel().isAccessControl()) {
+          accessPrograms.add(p);
+        }
+      }
+      
+      programArr = accessPrograms.toArray(new Program[accessPrograms.size()]);
+    }
+    
     boolean value = mPlugin.receivePrograms(programArr, receiveTarget);
 
     if(!value) {
@@ -601,7 +626,7 @@ public class JavaPluginProxy extends AbstractPluginProxy {
   protected int doGetMarkPriorityForProgram(Program p) {
     UserFilter filter = FilterList.getInstance().getGenericPluginFilter(this, true);
     
-    if(filter != null && !filter.accept(p)) {
+    if(p != null && (accessControl(p.getChannel()) || (filter != null && !filter.accept(p)))) {
       return Program.NO_MARK_PRIORITY;
     }
     
@@ -647,7 +672,9 @@ public class JavaPluginProxy extends AbstractPluginProxy {
 
   @Override
   protected void doHandleTvDataAdded(MutableChannelDayProgram newProg) {
-    mPlugin.handleTvDataAdded(newProg);
+    if(newProg != null && !accessControl(newProg.getChannel())) {
+      mPlugin.handleTvDataAdded(newProg);
+    }
   }
 
   @Override
@@ -660,14 +687,18 @@ public class JavaPluginProxy extends AbstractPluginProxy {
   @Override
   protected void doHandleTvDataTouched(ChannelDayProgram removedDayProgram,
       ChannelDayProgram addedDayProgram) {
-    mPlugin.handleTvDataTouched(removedDayProgram,addedDayProgram);
+    if((removedDayProgram != null && !accessControl(removedDayProgram.getChannel())) || 
+        (addedDayProgram != null && !accessControl(addedDayProgram.getChannel())) ||
+        (removedDayProgram == null && addedDayProgram == null)) {
+      mPlugin.handleTvDataTouched(removedDayProgram,addedDayProgram);
+    }
   }
 
   @Override
   protected ImportanceValue doGetImportanceValueForProgram(Program p) {
     UserFilter filter = FilterList.getInstance().getGenericPluginFilter(this, true);
     
-    if(filter != null && !filter.accept(p)) {
+    if(p != null && (accessControl(p.getChannel()) || (filter != null && !filter.accept(p)))) {
       return new ImportanceValue((byte)1,Program.DEFAULT_PROGRAM_IMPORTANCE);
     }
     
@@ -718,5 +749,21 @@ public class JavaPluginProxy extends AbstractPluginProxy {
     }
     
     return null;
+  }
+  
+  private boolean accessControl(Channel ch) {
+    return (ch != null && ch.isAccessControl() && accessControl());
+  }
+  
+  private boolean accessControl() {
+    if(Settings.propAccessControl.getStringArray().length > 0) {
+      int startIndex = mPlugin.getId().indexOf(".")+1;
+      
+      if(Settings.propAccessControl.containsItem(mPlugin.getId().substring(startIndex, mPlugin.getId().indexOf(".", startIndex)))) {
+        return true;
+      }
+    }
+    
+    return false;
   }
 }

@@ -56,7 +56,8 @@ public abstract class SoftwareUpdateItem {
   private static final String DOWNLOAD_TYPE_KEY = "downloadtype";
   private static final String DOWNLOAD_KEY = "download";
   private static final String FILE_NAME_KEY = "filename";
-  private static final String KATEGORY_KEY = "category"; 
+  private static final String KATEGORY_KEY = "category";
+  private static final String ACCESS_KEY = "access"; 
     
   private static final String DOWNLOAD_TYPE_MIRROR_VALUE = "mirrors";
   private static final String KATEGORY_UNKNOWN_VALUE = "unknown";
@@ -368,6 +369,15 @@ public abstract class SoftwareUpdateItem {
 	  }
 	  else {
 	    return KATEGORY_UNKNOWN_VALUE;
+	  }
+	}
+	
+	public boolean isAccessControl() {
+	  if(mPropertyMap.containsKey(ACCESS_KEY)) {
+	    return mPropertyMap.get(ACCESS_KEY).toLowerCase().equals("true");
+	  }
+	  else {
+	    return false;
 	  }
 	}
 }
