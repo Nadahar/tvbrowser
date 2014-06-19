@@ -39,6 +39,7 @@ import org.apache.commons.lang3.StringUtils;
 import tvbrowser.core.filters.FilterList;
 import tvbrowser.core.filters.FilterManagerImpl;
 import tvbrowser.core.plugin.PluginManagerImpl;
+import tvbrowser.ui.mainframe.MainFrame;
 import util.ui.Localizer;
 import devplugin.FilterChangeListener;
 import devplugin.FilterChangeListenerV2;
@@ -272,7 +273,7 @@ public class FilterTreeModel extends DefaultTreeModel {
       listener.filterAdded(filter);
     }
     
-    if(filter.equals(FilterManagerImpl.getInstance().getDefaultFilter())) {
+    if(!MainFrame.isStarting() && filter.equals(FilterManagerImpl.getInstance().getDefaultFilter())) {
       fireFilterDefaultChanged(filter);
     }
   }
@@ -285,7 +286,7 @@ public class FilterTreeModel extends DefaultTreeModel {
       listener.filterRemoved(filter);
     }
     
-    if(filter.equals(FilterManagerImpl.getInstance().getDefaultFilter())) {
+    if(!MainFrame.isStarting() && filter.equals(FilterManagerImpl.getInstance().getDefaultFilter())) {
       fireFilterDefaultChanged(FilterManagerImpl.getInstance().getAllFilter());
     }
   }
