@@ -36,10 +36,10 @@ import javax.swing.tree.TreePath;
 
 import org.apache.commons.lang3.StringUtils;
 
-import tvbrowser.core.filters.FilterList;
+import tvbrowser.core.Settings;
 import tvbrowser.core.filters.FilterManagerImpl;
+import tvbrowser.core.filters.ShowAllFilter;
 import tvbrowser.core.plugin.PluginManagerImpl;
-import tvbrowser.ui.mainframe.MainFrame;
 import util.ui.Localizer;
 import devplugin.FilterChangeListener;
 import devplugin.FilterChangeListenerV2;
@@ -273,7 +273,7 @@ public class FilterTreeModel extends DefaultTreeModel {
       listener.filterAdded(filter);
     }
     
-    if(!MainFrame.isStarting() && filter.equals(FilterManagerImpl.getInstance().getDefaultFilter())) {
+    if(isDefaultFilter(filter)) {
       fireFilterDefaultChanged(filter);
     }
   }
@@ -286,7 +286,7 @@ public class FilterTreeModel extends DefaultTreeModel {
       listener.filterRemoved(filter);
     }
     
-    if(!MainFrame.isStarting() && filter.equals(FilterManagerImpl.getInstance().getDefaultFilter())) {
+    if(isDefaultFilter(filter)) {
       fireFilterDefaultChanged(FilterManagerImpl.getInstance().getAllFilter());
     }
   }
@@ -324,5 +324,28 @@ public class FilterTreeModel extends DefaultTreeModel {
   
   public void unregisterFilterChangeListener(FilterChangeListenerV2 listener) {
     CHANGE_LISTENER_LISTV2.remove(listener);
+  }
+  
+  private boolean isDefaultFilter(ProgramFilter filter) {
+    String filterId = Settings.propDefaultFilter.getString();
+    String filterName = null;
+  
+    if (StringUtils.isNotEmpty(filterId) && filter != null) {
+      String[] filterValues = filterId.split("###");
+      filterId = shortFilterClassName(filterValues[0]);
+      filterName = filterValues[1];
+      
+      return shortFilterClassName(filter.getClass().getName()).equals(filterId) && filter.getName().equals(filterName);
+    }
+    
+    return filter instanceof ShowAllFilter;
+  }
+  
+  private String shortFilterClassName(final String className) {
+    int index = className.lastIndexOf('$');
+    if (index > 0) {
+      return className.substring(0, index);
+    }
+    return className;
   }
 }
