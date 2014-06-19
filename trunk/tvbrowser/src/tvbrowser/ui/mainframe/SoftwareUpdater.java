@@ -201,6 +201,13 @@ public final class SoftwareUpdater {
             continue;
           }
         }
+        
+        if(item.isAccessControl() && !Settings.propAccessControl.containsItem(className.toLowerCase())) {
+          Settings.propAccessControl.addItem(className.toLowerCase());
+        }
+        else if(!item.isAccessControl() && Settings.propAccessControl.containsItem(className.toLowerCase())) {
+          Settings.propAccessControl.removeItem(className.toLowerCase());
+        }
 
         // remove already installed plugins
         String pluginId = "java." + className.toLowerCase() + "." + className;

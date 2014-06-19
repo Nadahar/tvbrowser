@@ -58,7 +58,7 @@ public class DummyChannel extends Channel {
   }
   
   public DummyChannel(String dataServiceId, String groupId, String country, String channelId, String channelName) {
-    super(dataServiceId, channelName, channelId, TimeZone.getDefault(), country, "\u00A9 " + LOCALIZER.msg("unknown", "Unknown"), LOCALIZER.msg("url", "http://enwiki.tvbrowser.org/index.php/Not_available"), getDummyGroup(groupId), ICON, Channel.CATEGORY_NONE, null, new String[] {country}, null);
+    super(dataServiceId, channelName, channelId, TimeZone.getDefault(), country, "\u00A9 " + LOCALIZER.msg("unknown", "Unknown"), LOCALIZER.msg("url", "http://enwiki.tvbrowser.org/index.php/Not_available"), getDummyGroup(groupId), ICON, Channel.CATEGORY_NONE, null, new String[] {country}, null, true);
     
     mOriginal = null;
   }

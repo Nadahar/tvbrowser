@@ -186,38 +186,56 @@ public class PluginManagerImpl implements PluginManager {
     return mInstance;
   }
   
+  private boolean checkChannelAccess(Channel ch) {
+    if(ch != null) {
+      if(ch.isAccessControl() && Settings.propAccessControl.getStringArray().length > 0) {
+        StackTraceElement[] stackTace = Thread.currentThread().getStackTrace();
+        String[] values = Settings.propAccessControl.getStringArray();
+        
+        for(int i = 0; i < Math.min(5, stackTace.length); i++) {
+          for(String testValue : values) {
+            String className = stackTace[i].getClassName();
+            
+            if(className.substring(0, className.indexOf(".")).equals(testValue)) {
+              return false;
+            }
+          }
+        }
+      }
+    }
+    
+    return true;
+  }
+  
   @Override
   public Program getProgram(Date date, String progID) {
-  /*  StackTraceElement[] e = Thread.currentThread().getStackTrace();
+    Channel ch = getChannelFromProgId(progID);
     
-    for(StackTraceElement x : e) {
-    System.out.println(x);   
-    }
-    System.out.print("\n\n");*/
-    Date cutoff = Date.getCurrentDate().addDays(-TvDataBase.DEFAULT_DATA_LIFESPAN);
-    
-    ChannelDayProgram dayProg = getDayProgram(date,progID);
-    
-    if (dayProg != null) {
-      Program prog = dayProg.getProgram(progID);
-      if (prog != null) {
-        return prog;
+    if(checkChannelAccess(ch)) {
+      Date cutoff = Date.getCurrentDate().addDays(-TvDataBase.DEFAULT_DATA_LIFESPAN);
+      
+      ChannelDayProgram dayProg = getDayProgram(date,progID,ch);
+      
+      if (dayProg != null) {
+        Program prog = dayProg.getProgram(progID);
+        if (prog != null) {
+          return prog;
+        }
+        else if(date.compareTo(cutoff) >= 0) {
+          mLog.warning("could not find program with id '"+progID+"' (date: "+date+")");
+        }
       }
       else if(date.compareTo(cutoff) >= 0) {
-        mLog.warning("could not find program with id '"+progID+"' (date: "+date+")");
+        mLog.warning("day program not found: "+progID+"; "+date);
       }
-    }
-    else if(date.compareTo(cutoff) >= 0) {
-      mLog.warning("day program not found: "+progID+"; "+date);
     }
 
     return null;
   }
   
-  private ChannelDayProgram getDayProgram(Date date, String progID) {
+  private ChannelDayProgram getDayProgram(Date date, String progID, Channel ch) {
     TvDataBase db = TvDataBase.getInstance();
     
-    Channel ch = getChannelFromProgId(progID);
     if (ch != null && ChannelList.isSubscribedChannel(ch)) {
       int index = progID.lastIndexOf('_');
       String timeString = progID.substring(index + 1);
@@ -294,21 +312,23 @@ public class PluginManagerImpl implements PluginManager {
    * @return The program or <code>null</code> if there is no such program.
    */
   public Program[] getPrograms(Date date, String progID) {
+    Channel ch = getChannelFromProgId(progID);
     
-    
-    ChannelDayProgram dayProg = getDayProgram(date,progID);
-    
-    if (dayProg != null) {
-      Program[] progs = dayProg.getPrograms(progID);
-      if (progs != null) {
-        return progs;
+    if(checkChannelAccess(ch)) {
+      ChannelDayProgram dayProg = getDayProgram(date,progID,ch);
+      
+      if (dayProg != null) {
+        Program[] progs = dayProg.getPrograms(progID);
+        if (progs != null) {
+          return progs;
+        }
+        else {
+          mLog.warning("could not find program with id '"+progID+"' (date: "+date+")");
+        }
       }
       else {
-        mLog.warning("could not find program with id '"+progID+"' (date: "+date+")");
+        mLog.warning("day program not found: "+progID+"; "+date);
       }
-    }
-    else {
-      mLog.warning("day program not found: "+progID+"; "+date);
     }
 
     return null;
@@ -383,6 +403,41 @@ public class PluginManagerImpl implements PluginManager {
    * @return all channels the user has subscribed.
    */
   public Channel[] getSubscribedChannels() {
+    if(Settings.propAccessControl.getStringArray().length > 0) {
+      StackTraceElement[] stackTace = Thread.currentThread().getStackTrace();
+      String[] values = Settings.propAccessControl.getStringArray();
+      
+      boolean isAccessControl = false;
+      
+      for(int i = 0; i < Math.min(5, stackTace.length); i++) {
+        for(String testValue : values) {
+          String className = stackTace[i].getClassName();
+          
+          if(className.substring(0, className.indexOf(".")).equals(testValue)) {
+            isAccessControl = true;
+            break;
+          }
+        }
+      }
+      
+      Channel[] channels = ChannelList.getSubscribedChannels();
+      
+      if(isAccessControl) {
+        ArrayList<Channel> accessChannels = new ArrayList<Channel>();
+        
+        for(Channel ch : channels) {
+          if(!ch.isAccessControl()) {
+            accessChannels.add(ch);
+          }
+        }
+        
+        return accessChannels.toArray(new Channel[accessChannels.size()]);
+      }
+      else {
+        return channels;
+      }
+    }
+    
     return ChannelList.getSubscribedChannels();
   }
 
@@ -397,52 +452,56 @@ public class PluginManagerImpl implements PluginManager {
    * If the requested data is not available, the iterator is empty, but not <code>null</code>.
    */
   public Iterator<Program> getChannelDayProgram(Date date, Channel channel) {
-    ChannelDayProgram channelDayProgram = TvDataBase.getInstance()
-        .getDayProgram(date, channel);
-    if (channelDayProgram == null) {
-      return EMPTY_ITERATOR;
+    if(checkChannelAccess(channel)) {
+      ChannelDayProgram channelDayProgram = TvDataBase.getInstance()
+          .getDayProgram(date, channel);
+      if (channelDayProgram == null) {
+        return EMPTY_ITERATOR;
+      }
+      
+      if(!channel.getTimeZone().equals(TimeZone.getDefault())) {
+        ArrayList<Program> newList = new ArrayList<Program>();
+        
+        ChannelDayProgram yesterday = TvDataBase.getInstance().getDayProgram(date.addDays(-1), channel);
+        
+        if(yesterday != null) {
+          for(int i = yesterday.getProgramCount()-1; i >= 0; i--) {
+            if(yesterday.getProgramAt(i).getDate().equals(date)) {
+              newList.add(yesterday.getProgramAt(i));
+            }
+            else {
+              break;
+            }
+          }
+        }
+        
+        for(int i = 0; i < channelDayProgram.getProgramCount(); i++) {
+          if(channelDayProgram.getProgramAt(i).getDate().equals(date)) {
+            newList.add(channelDayProgram.getProgramAt(i));
+            
+          }
+        }
+        
+        ChannelDayProgram tomorrow = TvDataBase.getInstance().getDayProgram(date.addDays(1), channel);
+        
+        if(tomorrow != null) {
+          for(int i = 0; i < tomorrow.getProgramCount(); i++) {
+            if(tomorrow.getProgramAt(i).getDate().equals(date)) {
+              newList.add(tomorrow.getProgramAt(i));
+            }
+            else {
+              break;
+            }
+          }
+        }
+        
+        return newList.iterator();
+      }
+      
+      return channelDayProgram.getPrograms();
     }
     
-    if(!channel.getTimeZone().equals(TimeZone.getDefault())) {
-      ArrayList<Program> newList = new ArrayList<Program>();
-      
-      ChannelDayProgram yesterday = TvDataBase.getInstance().getDayProgram(date.addDays(-1), channel);
-      
-      if(yesterday != null) {
-        for(int i = yesterday.getProgramCount()-1; i >= 0; i--) {
-          if(yesterday.getProgramAt(i).getDate().equals(date)) {
-            newList.add(yesterday.getProgramAt(i));
-          }
-          else {
-            break;
-          }
-        }
-      }
-      
-      for(int i = 0; i < channelDayProgram.getProgramCount(); i++) {
-        if(channelDayProgram.getProgramAt(i).getDate().equals(date)) {
-          newList.add(channelDayProgram.getProgramAt(i));
-          
-        }
-      }
-      
-      ChannelDayProgram tomorrow = TvDataBase.getInstance().getDayProgram(date.addDays(1), channel);
-      
-      if(tomorrow != null) {
-        for(int i = 0; i < tomorrow.getProgramCount(); i++) {
-          if(tomorrow.getProgramAt(i).getDate().equals(date)) {
-            newList.add(tomorrow.getProgramAt(i));
-          }
-          else {
-            break;
-          }
-        }
-      }
-      
-      return newList.iterator();
-    }
-    
-    return channelDayProgram.getPrograms();
+    return EMPTY_ITERATOR;
   }
 
   /**
