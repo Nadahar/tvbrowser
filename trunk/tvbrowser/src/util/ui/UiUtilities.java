@@ -528,7 +528,7 @@ public class UiUtilities {
   }
 
   public static void updateHtmlHelpTextArea(final JEditorPane helpTextArea, String description) {
-    updateHtmlHelpTextArea(helpTextArea, description, UIManager.getColor("Label.foreground"));
+    updateHtmlHelpTextArea(helpTextArea, description, UIManager.getColor("Panel.background"));
   }
 
 
