@@ -593,7 +593,7 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
     }
   }
 
-  protected abstract void doOnActivation();
+  protected abstract void doOnActivation() throws Throwable;
 
   public void onDeactivation() {
     try {
@@ -603,7 +603,7 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
     }
   }
 
-  protected abstract void doOnDeactivation();
+  protected abstract void doOnDeactivation() throws Throwable;
 
   public boolean canUseProgramTree() {
     try {
