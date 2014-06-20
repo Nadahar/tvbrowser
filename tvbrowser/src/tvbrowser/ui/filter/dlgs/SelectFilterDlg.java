@@ -298,22 +298,20 @@ public class SelectFilterDlg extends JDialog implements ActionListener, WindowCl
         ProgramFilter[] filters = node.getAllFilters();
         
         mFilterTree.getModel().removeNodeFromParent(node);
-        mFilterTree.updateUI();
         
         for(ProgramFilter filter : filters) {
           mFilterTree.getModel().fireFilterRemoved(filter);
         }
-        //TODO
       }
       else if(node.getUserObject() instanceof String) {
         mFilterTree.getModel().removeNodeFromParent(node);
-        mFilterTree.updateUI();
       }
       
       if(rows[0] > mFilterTree.getRowCount() - 1) {
         rows[0] = mFilterTree.getRowCount() -1;
       }
       
+      mFilterTree.updateUI();
       mFilterTree.setSelectionRows(rows);
       updateBtns();
     }
