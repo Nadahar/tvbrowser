@@ -287,6 +287,7 @@ public class FilterTreeModel extends DefaultTreeModel {
     }
     
     if(isDefaultFilter(filter)) {
+      Settings.propDefaultFilter.resetToDefault();
       fireFilterDefaultChanged(FilterManagerImpl.getInstance().getAllFilter());
     }
   }
