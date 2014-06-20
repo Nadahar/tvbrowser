@@ -505,7 +505,7 @@ public class JavaPluginProxy extends AbstractPluginProxy {
     mPlugin.handleTvBrowserStartFinished();
   }
 
-  public void doOnActivation() {
+  public void doOnActivation() throws Throwable {
     if(!TVBrowser.isSafeMode()) {
       plugin().onActivation();
     }
@@ -518,8 +518,10 @@ public class JavaPluginProxy extends AbstractPluginProxy {
     return mPlugin;
   }
 
-  public void doOnDeactivation() {
-    mPlugin.onDeactivation();
+  public void doOnDeactivation() throws Throwable {
+    if(mPlugin != null) {
+      mPlugin.onDeactivation();
+    }
   }
 
   public boolean doCanUseProgramTree() {
