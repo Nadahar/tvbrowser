@@ -48,6 +48,7 @@ import tvbrowser.core.filters.UserFilter;
 import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
 import tvbrowser.extras.favoritesplugin.core.FavoriteFilter;
 import tvbrowser.ui.mainframe.MainFrame;
+import util.ui.ScrollableMenu;
 
 import devplugin.PluginsProgramFilter;
 import devplugin.ProgramFilter;
@@ -381,7 +382,7 @@ public class FilterNode extends DefaultMutableTreeNode {
         final FilterNode test = (FilterNode)getChildAt(i);
         
         if(test.isDirectoryNode() && !test.isLeaf()) {
-          JMenu dir = new JMenu(test.getUserObject().toString());
+          JMenu dir = new ScrollableMenu(test.getUserObject().toString());
           parent.add(dir);
           test.createMenuInternal(test,dir,group,curFilter);
         }
