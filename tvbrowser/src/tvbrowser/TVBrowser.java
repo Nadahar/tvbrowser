@@ -81,6 +81,7 @@ import tvbrowser.core.Settings;
 import tvbrowser.core.TvDataBase;
 import tvbrowser.core.TvDataUpdater;
 import tvbrowser.core.filters.FilterComponentList;
+import tvbrowser.core.filters.FilterList;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.core.plugin.programformating.GlobalPluginProgramFormatingManager;
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
@@ -381,6 +382,9 @@ public class TVBrowser {
     if (!isJavaImplementationSupported()) {
       mainLogger.warning(SUN_JAVA_WARNING);
     }
+    
+    // Initialize filter list
+    FilterList.getInstance();
     
     /* Set the proxy settings
      * 
