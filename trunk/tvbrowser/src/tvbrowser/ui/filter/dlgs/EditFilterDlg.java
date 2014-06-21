@@ -488,6 +488,7 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
       else {
         try {
           mFilter.setRule(mFilterRuleTF.getText());
+          FilterComponentList.getInstance().store();
           setVisible(false);
         } catch (ParserException e1) {
           mOkWasPressed = false;

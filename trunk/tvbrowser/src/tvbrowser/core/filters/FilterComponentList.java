@@ -96,7 +96,9 @@ public class FilterComponentList {
                     e.printStackTrace();
                   }
                   if (comp != null) {
-                    mComponentList.add(comp);
+                    synchronized (mComponentList) {
+                      mComponentList.add(comp);
+                    }
                   }
                 }
                 else if(version == 2) {
@@ -121,7 +123,9 @@ public class FilterComponentList {
                             e.printStackTrace();
                           }
                           if (comp != null) {
-                            mComponentList.add(comp);
+                            synchronized (mComponentList) {
+                              mComponentList.add(comp);
+                            }
                           }
                         }
                       }
@@ -293,30 +297,35 @@ public class FilterComponentList {
 
 
   public FilterComponent[] getAvailableFilterComponents() {
-    return mComponentList.toArray(new FilterComponent[mComponentList.size()]);
+    synchronized (mComponentList) {
+      return mComponentList.toArray(new FilterComponent[mComponentList.size()]);
+    }
   }
-
-
   public FilterComponent getFilterComponentByName(String name) {
-    for(FilterComponent c : mComponentList) {
-      if(c.getName().compareTo(name) == 0) {
-        return c;
+    synchronized (mComponentList) {
+      for(FilterComponent c : mComponentList) {
+        if(c.getName().compareTo(name) == 0) {
+          return c;
+        }
       }
     }
-
+    
     return null;
   }
 
 
-  public static FilterComponentList getInstance() {
+  public static synchronized FilterComponentList getInstance() {
     if (mInstance == null) {
       mInstance = new FilterComponentList();
     }
+    
     return mInstance;
   }
 
   public void add(FilterComponent comp) {
-    mComponentList.add(comp);
+    synchronized (mComponentList) {
+      mComponentList.add(comp);
+    }
     
     store();
     //mComponentMap.put(comp.getName().toUpperCase(), comp);
@@ -329,14 +338,16 @@ public class FilterComponentList {
   public void remove(String filterCompName) {
     FilterComponent filterComp = getFilterComponentByName(filterCompName);
     
-    if(mComponentList.remove(filterComp)) {
-      String key = filterComp.getClass().getCanonicalName();
-      
-      File componentFile = new File(tvbrowser.core.filters.FilterList.FILTER_DIRECTORY,"java."+key+".dat");
-      
-      if(componentFile.isFile()) {
-        if(!componentFile.delete()) {
-          componentFile.deleteOnExit();
+    synchronized (mComponentList) {
+      if(mComponentList.remove(filterComp)) {
+        String key = filterComp.getClass().getCanonicalName();
+        
+        File componentFile = new File(tvbrowser.core.filters.FilterList.FILTER_DIRECTORY,"java."+key+".dat");
+        
+        if(componentFile.isFile()) {
+          if(!componentFile.delete()) {
+            componentFile.deleteOnExit();
+          }
         }
       }
     }

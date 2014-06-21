@@ -29,7 +29,6 @@ package tvdataservice;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-//import java.util.Comparator;
 import java.util.Iterator;
 import java.util.TimeZone;
 import java.util.Vector;
@@ -40,9 +39,7 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.EventListenerList;
 
 import tvbrowser.core.TvDataBase;
-/*import tvbrowser.core.TvDataUpdater;
-import tvbrowser.core.plugin.PluginProxy;*/
-import tvbrowser.core.filters.FilterList;
+import tvbrowser.core.filters.GenericFilterMap;
 import tvbrowser.core.filters.UserFilter;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
@@ -338,11 +335,12 @@ public class MutableProgram implements Program {
    * @param marker The plugin to mark the program for.
    */
   public final synchronized void mark(Marker marker) {
-    PluginProxy proxy = PluginProxyManager.getInstance().getActivatedPluginForId(marker.getId());
     boolean mark = true;
     
+    PluginProxy proxy = PluginProxyManager.getInstance().getActivatedPluginForId(marker.getId());
+    
     if(proxy != null) {
-      UserFilter filter = FilterList.getInstance().getGenericPluginFilter(proxy, true);
+      UserFilter filter = GenericFilterMap.getInstance().getGenericPluginFilter(proxy, true);
     
       mark = (filter == null || filter.accept(this));
     }
