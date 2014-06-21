@@ -141,9 +141,15 @@ public class ErrorHandler {
   public static int handle(String msg, Throwable thr, int messageType) {
     mLog.log(Level.SEVERE, msg, thr);
 
-    ErrorWindow errwin = new ErrorWindow(mParent, msg, thr, messageType);
-    errwin.centerAndShow();
-    return errwin.getReturnValue();
+    if(!MainFrame.isStarting()) {
+      ErrorWindow errwin = new ErrorWindow(mParent, msg, thr, messageType);
+      errwin.centerAndShow();
+      
+      return errwin.getReturnValue();
+    }
+    else {
+      return ErrorHandler.NO_PRESSED;
+    }
   }
 
 }
