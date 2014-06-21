@@ -82,6 +82,7 @@ import tvbrowser.core.TvDataBase;
 import tvbrowser.core.TvDataUpdater;
 import tvbrowser.core.filters.FilterComponentList;
 import tvbrowser.core.filters.FilterList;
+import tvbrowser.core.filters.GenericFilterMap;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.core.plugin.programformating.GlobalPluginProgramFormatingManager;
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
@@ -382,10 +383,7 @@ public class TVBrowser {
     if (!isJavaImplementationSupported()) {
       mainLogger.warning(SUN_JAVA_WARNING);
     }
-    
-    // Initialize filter list
-    FilterList.getInstance();
-    
+        
     /* Set the proxy settings
      * 
      * ATTENTION: This has to be done before all Internet connections
@@ -495,7 +493,7 @@ public class TVBrowser {
       splashRef.get().setMessage(mLocalizer.msg("startScreen.laf", "Loading look and feel..."));
       updateLookAndFeel();
     }
-
+    
     mLog.info("Loading plugins...");
     splashRef.get().setMessage(mLocalizer.msg("startScreen.plugins", "Loading plugins..."));
     
@@ -504,6 +502,8 @@ public class TVBrowser {
     } catch(TvBrowserException exc) {
       ErrorHandler.handle(exc);
     }
+    
+    GenericFilterMap.getInstance().loadFilters();
     
     splashRef.get().setMessage(mLocalizer.msg("startScreen.tvData", "Checking TV database..."));
 

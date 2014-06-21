@@ -44,7 +44,7 @@ import javax.swing.JOptionPane;
 import tvbrowser.TVBrowser;
 import tvbrowser.core.PluginLoader;
 import tvbrowser.core.Settings;
-import tvbrowser.core.filters.FilterList;
+import tvbrowser.core.filters.GenericFilterMap;
 import tvbrowser.core.filters.UserFilter;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvdataservice.MutableChannelDayProgram;
@@ -345,7 +345,7 @@ public class JavaPluginProxy extends AbstractPluginProxy {
    */
   protected ActionMenu doGetContextMenuActions(Program program) {
     if(program != null && !program.equals(PluginManagerImpl.getInstance().getExampleProgram())) {
-      UserFilter filter = FilterList.getInstance().getGenericPluginFilter(this, true);
+      UserFilter filter = GenericFilterMap.getInstance().getGenericPluginFilter(this, true);
       
       if(accessControl(program.getChannel()) || (filter != null && !filter.accept(program))) {
         return null;
@@ -408,7 +408,7 @@ public class JavaPluginProxy extends AbstractPluginProxy {
    */
   protected Icon[] doGetMarkIcons(Program p) {
     if (mPlugin != null && p != null) {
-      UserFilter filter = FilterList.getInstance().getGenericPluginFilter(this, true);
+      UserFilter filter = GenericFilterMap.getInstance().getGenericPluginFilter(this, true);
       
       if(!(accessControl(p.getChannel()) || (filter != null && !filter.accept(p)))) {
         return mPlugin.getMarkIcons(p);
@@ -626,7 +626,7 @@ public class JavaPluginProxy extends AbstractPluginProxy {
    * @return The mark priority for the given program.
    */
   protected int doGetMarkPriorityForProgram(Program p) {
-    UserFilter filter = FilterList.getInstance().getGenericPluginFilter(this, true);
+    UserFilter filter = GenericFilterMap.getInstance().getGenericPluginFilter(this, true);
     
     if(p != null && (accessControl(p.getChannel()) || (filter != null && !filter.accept(p)))) {
       return Program.NO_MARK_PRIORITY;
@@ -698,7 +698,7 @@ public class JavaPluginProxy extends AbstractPluginProxy {
 
   @Override
   protected ImportanceValue doGetImportanceValueForProgram(Program p) {
-    UserFilter filter = FilterList.getInstance().getGenericPluginFilter(this, true);
+    UserFilter filter = GenericFilterMap.getInstance().getGenericPluginFilter(this, true);
     
     if(p != null && (accessControl(p.getChannel()) || (filter != null && !filter.accept(p)))) {
       return new ImportanceValue((byte)1,Program.DEFAULT_PROGRAM_IMPORTANCE);

@@ -25,6 +25,9 @@ package tvbrowser.ui.settings;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
@@ -36,6 +39,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import tvbrowser.core.filters.FilterList;
+import tvbrowser.core.filters.GenericFilterMap;
 import tvbrowser.core.filters.UserFilter;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
@@ -58,10 +62,16 @@ public class GenericPluginFilterSettingsTab implements SettingsTab {
   private static final Localizer LOCALIZER = Localizer.getLocalizerFor(GenericPluginFilterSettingsTab.class); 
 
   private SelectableItemList mGenericPluginFilterList;
+  private ArrayList<PluginProxy> mCurrentlySelecteedList; 
   
   @Override
   public JPanel createSettingsPanel() {
-    mGenericPluginFilterList = new SelectableItemList(FilterList.getInstance().getActivatedGenericPluginFilterProxies(), PluginProxyManager.getInstance().getActivatedPlugins());
+    PluginProxy[] currentlySelected = GenericFilterMap.getInstance().getActivatedGenericPluginFilterProxies();
+    
+    mCurrentlySelecteedList = new ArrayList<PluginProxy>();
+    mCurrentlySelecteedList.addAll(Arrays.asList(currentlySelected));
+    
+    mGenericPluginFilterList = new SelectableItemList(currentlySelected, PluginProxyManager.getInstance().getActivatedPlugins());
     mGenericPluginFilterList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     
     JScrollPane scrollPane = new JScrollPane(mGenericPluginFilterList);
@@ -74,7 +84,7 @@ public class GenericPluginFilterSettingsTab implements SettingsTab {
         SelectableItem item = (SelectableItem)mGenericPluginFilterList.getSelectedValue();
         PluginProxy proxy = (PluginProxy)item.getItem();
         
-        UserFilter filter = FilterList.getInstance().getGenericPluginFilter(proxy, false);
+        UserFilter filter = GenericFilterMap.getInstance().getGenericPluginFilter(proxy, false);
         
         if(filter == null) {
           filter = new UserFilter(proxy.getInfo().getName());
@@ -83,7 +93,7 @@ public class GenericPluginFilterSettingsTab implements SettingsTab {
         EditFilterDlg editFilter = new EditFilterDlg(UiUtilities.getLastModalChildOf(MainFrame.getInstance()), FilterList.getInstance(), filter, false);
         
         if(editFilter.getOkWasPressed()) {
-          FilterList.getInstance().updateGenericPluginFilter(proxy, filter, item.isSelected());
+          GenericFilterMap.getInstance().updateGenericPluginFilter(proxy, filter, item.isSelected());
         }
       }
     });
@@ -94,6 +104,15 @@ public class GenericPluginFilterSettingsTab implements SettingsTab {
       public void valueChanged(ListSelectionEvent e) {
         if(!e.getValueIsAdjusting()) {
           edit.setEnabled(e.getFirstIndex() >= 0);
+          
+          if(edit.isEnabled()) {
+            SelectableItem item = (SelectableItem)mGenericPluginFilterList.getSelectedValue();
+            PluginProxy proxy = (PluginProxy)item.getItem();
+            
+            if(!mCurrentlySelecteedList.contains(proxy)) {
+              mCurrentlySelecteedList.add(proxy);
+            }
+          }
         }
       }
     });
@@ -115,10 +134,23 @@ public class GenericPluginFilterSettingsTab implements SettingsTab {
   @Override
   public void saveSettings() {
     Object[] selectedPlugins = mGenericPluginFilterList.getSelection();
+    ArrayList<PluginProxy> newSelection = new ArrayList<PluginProxy>();
     
     for(Object o : selectedPlugins) {
-      FilterList.getInstance().updateGenericPluginFilterActivated((PluginProxy)o, true);
+      GenericFilterMap.getInstance().updateGenericPluginFilterActivated((PluginProxy)o, true);
+      mCurrentlySelecteedList.remove(o);
+      newSelection.add((PluginProxy)o);
     }
+    
+    for(PluginProxy unselected : mCurrentlySelecteedList) {
+      GenericFilterMap.getInstance().updateGenericPluginFilterActivated((PluginProxy)unselected, false);
+    }
+    
+    mCurrentlySelecteedList.clear();
+    mCurrentlySelecteedList = null;
+    mCurrentlySelecteedList = newSelection;
+    
+    GenericFilterMap.getInstance().storeGenericFilters();
   }
 
   @Override
