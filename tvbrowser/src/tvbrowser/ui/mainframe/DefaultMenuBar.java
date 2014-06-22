@@ -46,7 +46,11 @@ public class DefaultMenuBar extends MenuBar {
 
     JMenu fileMenu = createMenu("menu.main", "&File", true);
     add(fileMenu);
-    if (TVBrowser.restartEnabled()) fileMenu.add(mRestartMI);
+    
+    if (TVBrowser.restartEnabled()) {
+      fileMenu.add(mRestartMI);
+    }
+    
     fileMenu.addSeparator();
     fileMenu.add(mQuitMI);
 
