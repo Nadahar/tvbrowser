@@ -58,8 +58,6 @@ import javax.swing.KeyStroke;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
 
-import com.l2fprod.common.demo.Main;
-
 import tvbrowser.TVBrowser;
 import tvbrowser.core.ChannelList;
 import tvbrowser.core.Settings;
