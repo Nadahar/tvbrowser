@@ -38,6 +38,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.EventListenerList;
 
+import tvbrowser.core.PendingMarkings;
 import tvbrowser.core.TvDataBase;
 import tvbrowser.core.filters.GenericFilterMap;
 import tvbrowser.core.filters.UserFilter;
@@ -337,12 +338,19 @@ public class MutableProgram implements Program {
   public final synchronized void mark(Marker marker) {
     boolean mark = true;
     
-    PluginProxy proxy = PluginProxyManager.getInstance().getActivatedPluginForId(marker.getId());
+    if(PendingMarkings.usePending() && GenericFilterMap.getInstance().containsKey(marker.getId())) {
+      PendingMarkings.addMarker(this, marker);
+      mark = false;
+    }
     
-    if(proxy != null) {
-      UserFilter filter = GenericFilterMap.getInstance().getGenericPluginFilter(proxy, true);
-    
-      mark = (filter == null || filter.accept(this));
+    if(mark) {
+      PluginProxy proxy = PluginProxyManager.getInstance().getActivatedPluginForId(marker.getId());
+      
+      if(proxy != null) {
+        UserFilter filter = GenericFilterMap.getInstance().getGenericPluginFilter(proxy, true);
+      
+        mark = (filter == null || filter.accept(this));
+      }
     }
     
     if(mark) {
