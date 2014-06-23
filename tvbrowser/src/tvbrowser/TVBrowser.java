@@ -76,6 +76,7 @@ import org.pushingpixels.substance.api.SubstanceLookAndFeel;
 import org.pushingpixels.substance.api.skin.SkinInfo;
 
 import tvbrowser.core.ChannelList;
+import tvbrowser.core.PendingMarkings;
 import tvbrowser.core.PluginLoader;
 import tvbrowser.core.Settings;
 import tvbrowser.core.TvDataBase;
@@ -488,6 +489,9 @@ public class TVBrowser {
     
     ChannelList.checkForJointChannels();
     
+    //Preload generic filters 
+    GenericFilterMap.getInstance();
+    
     if (!lookAndFeelInitialized) {
       mLog.info("Loading Look&Feel...");
       splashRef.get().setMessage(mLocalizer.msg("startScreen.laf", "Loading look and feel..."));
@@ -503,7 +507,10 @@ public class TVBrowser {
       ErrorHandler.handle(exc);
     }
     
-    GenericFilterMap.getInstance().loadFilters();
+    // Initialize filters of generic filter map
+    GenericFilterMap.getInstance().initializeFilters();
+    // Mark pending markings
+    PendingMarkings.markMapEntries();
     
     splashRef.get().setMessage(mLocalizer.msg("startScreen.tvData", "Checking TV database..."));
 

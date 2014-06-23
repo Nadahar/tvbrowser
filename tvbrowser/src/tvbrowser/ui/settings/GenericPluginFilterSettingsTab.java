@@ -28,6 +28,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
@@ -45,6 +46,7 @@ import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.ui.filter.dlgs.EditFilterDlg;
 import tvbrowser.ui.mainframe.MainFrame;
+import tvdataservice.MarkedProgramsMap;
 import util.ui.Localizer;
 import util.ui.TVBrowserIcons;
 import util.ui.UiUtilities;
@@ -67,11 +69,19 @@ public class GenericPluginFilterSettingsTab implements SettingsTab {
   @Override
   public JPanel createSettingsPanel() {
     PluginProxy[] currentlySelected = GenericFilterMap.getInstance().getActivatedGenericPluginFilterProxies();
+    PluginProxy[] allPlugins = PluginProxyManager.getInstance().getActivatedPlugins();
+    
+    Arrays.sort(allPlugins, new Comparator<PluginProxy>() {
+      @Override
+      public int compare(PluginProxy o1, PluginProxy o2) {
+        return o1.getInfo().getName().compareTo(o2.getInfo().getName());
+      }
+    });
     
     mCurrentlySelecteedList = new ArrayList<PluginProxy>();
     mCurrentlySelecteedList.addAll(Arrays.asList(currentlySelected));
     
-    mGenericPluginFilterList = new SelectableItemList(currentlySelected, PluginProxyManager.getInstance().getActivatedPlugins());
+    mGenericPluginFilterList = new SelectableItemList(currentlySelected, allPlugins);
     mGenericPluginFilterList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     
     JScrollPane scrollPane = new JScrollPane(mGenericPluginFilterList);
@@ -151,6 +161,7 @@ public class GenericPluginFilterSettingsTab implements SettingsTab {
     mCurrentlySelecteedList = newSelection;
     
     GenericFilterMap.getInstance().storeGenericFilters();
+    MarkedProgramsMap.getInstance().validateMarkings();
   }
 
   @Override

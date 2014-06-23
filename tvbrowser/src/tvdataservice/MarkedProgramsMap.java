@@ -191,6 +191,22 @@ public class MarkedProgramsMap {
     }
   }
   
+  public void validateMarkings() {
+    synchronized (mMarkedMap) {
+      for(String key : mMarkedMap.keySet()) {
+        MarkedHolder marked = mMarkedMap.get(key);
+        
+        if(marked != null) {
+          marked.validateMarking();
+          
+          if(marked.getCurrentProgramInstance() != null) {
+            ((MutableProgram)marked.getCurrentProgramInstance()).fireStateChanged();
+          }
+        }
+      }
+    }
+  }
+  
   private void handleFilterMarking(Program p) {
     if(!MainFrame.isStarting() && !MainFrame.isShuttingDown() && PluginManagerImpl.getInstance().getFilterManager() != null && !PluginManagerImpl.getInstance().getFilterManager().getCurrentFilter().equals(PluginManagerImpl.getInstance().getFilterManager().getDefaultFilter())) {
       try {

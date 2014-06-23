@@ -62,6 +62,8 @@ public class GenericFilterMap {
     if (!mGenericFilterDirectory.exists()) {
       mGenericFilterDirectory.mkdirs();
     }
+    
+    loadFilters();
   }
   
   public static final synchronized GenericFilterMap getInstance() {
@@ -72,7 +74,7 @@ public class GenericFilterMap {
     return INSTANCE;
   }
   
-  public void loadFilters() {
+  private void loadFilters() {
     try {
       if(mGenericFilterProp.isFile()) {
         Properties prop = new Properties();
@@ -92,10 +94,8 @@ public class GenericFilterMap {
           
           if(activatedValue != null) {
             boolean activated = Boolean.parseBoolean(activatedValue);
-            
-            UserFilter filter = new UserFilter(new File(mGenericFilterDirectory,key+".filter"));
-            
-            GenericFilterHolder holder = new GenericFilterHolder(activated, filter);
+                        
+            GenericFilterHolder holder = new GenericFilterHolder(activated, new File(mGenericFilterDirectory,key+".filter"));
             
             mGenericPluginFilterMap.put(key, holder);
           }
@@ -185,18 +185,40 @@ public class GenericFilterMap {
     return proxyList.toArray(new PluginProxy[proxyList.size()]);
   }
   
+  public void initializeFilters() {
+    for(String key : mGenericPluginFilterMap.keySet()) {
+      GenericFilterHolder holder = mGenericPluginFilterMap.get(key);
+      
+      if(holder != null) {
+        try {
+          holder.initialize();
+        } catch (ParserException e) {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        }
+      }
+    }
+  }
+  
+  public boolean containsKey(String key) {
+    return mGenericPluginFilterMap.containsKey(key);
+  }
+  
   private static final class GenericFilterHolder {
     private UserFilter mGenericFilter;
     private boolean mIsActivated;
+    private File mFilterFile;
     
     public GenericFilterHolder() {
       mGenericFilter = null;
+      mFilterFile = null;
       mIsActivated = false;
     }
     
-    public GenericFilterHolder(boolean activated, UserFilter filter) {
+    public GenericFilterHolder(boolean activated, File filterFile) {
       mIsActivated = activated;
-      mGenericFilter = filter;
+      mFilterFile = filterFile;
+      mGenericFilter = null;
     }
     
     public boolean isActivated() {
@@ -213,6 +235,12 @@ public class GenericFilterMap {
     
     public void setFilter(UserFilter filter) {
       mGenericFilter = filter;
+    }
+    
+    public void initialize() throws ParserException {
+      if(mFilterFile != null && mFilterFile.isFile()) {
+        mGenericFilter = new UserFilter(mFilterFile);
+      }
     }
   }
 }
