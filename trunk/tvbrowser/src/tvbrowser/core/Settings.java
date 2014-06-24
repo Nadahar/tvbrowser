@@ -1556,8 +1556,8 @@ public class Settings {
   /** Contains the separators for the selected program info filed of a program panel */
   public static final StringArrayProperty propProgramInfoFieldsSeparators = new StringArrayProperty(
       mProp, "programpanel.infoFieldsSeparators", new String[] {
-         " "," ",
-         " "," "
+         " - "," - ",
+         " - "," - "
       });
 
   public static final StringArrayProperty propProgramTableIconPlugins = new StringArrayProperty(
