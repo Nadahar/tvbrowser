@@ -143,14 +143,15 @@ public class TVBrowser {
 
   private static final boolean mIsStable = false;
   private static final int mMajorVersion = 3;
-  private static final int mMinorVersion = 396;
-  private static final int mSubMinorVersion = 0;
+  private static final int mMinorVersion = 39;
+  private static final int mSubMinorVersion = 7;
 
   /* If you want to change the version string, add it to the beginning of this array.
      We need the old version strings to import the settings.
   */
   /** The string array with the names of the earlier versions. */
   private static final String[] ALL_VERSIONS = new String[] {
+          "3.3.97 RC",
           "3.3.96 Beta",
           "3.3.95 Beta",
           "3.3.3.51 SVN",
@@ -415,7 +416,7 @@ public class TVBrowser {
     System.setProperty("http.agent", MAINWINDOW_TITLE);
 
     Version tmpVer = Settings.propTVBrowserVersion.getVersion();
-    final Version currentVersion = tmpVer != null ? new Version(tmpVer.getMajor(),tmpVer.getMinor(),Settings.propTVBrowserVersionIsStable.getBoolean()) : tmpVer;
+    final Version currentVersion = tmpVer != null ? new Version(tmpVer.getMajor(),tmpVer.getMinor(),tmpVer.getSubMinor(),Settings.propTVBrowserVersionIsStable.getBoolean()) : tmpVer;
 
     /*TODO Create an update service for installed TV data services that doesn't
      *     work with TV-Browser 3.0 and updates for them are known.
@@ -721,6 +722,25 @@ public class TVBrowser {
             if(currentVersion != null
                 && currentVersion.compareTo(new Version(3,33,51,false)) < 0) {
               Settings.propSubscribedChannels.setChannelArray(ChannelList.getSubscribedChannels());
+            }
+            
+            if(currentVersion != null
+                && currentVersion.compareTo(new Version(3,39,7,false)) < 0) {
+              ProgramFieldType[] typeArr = Settings.propProgramInfoFields.getProgramFieldTypeArray();
+              String[] separators = Settings.propProgramInfoFieldsSeparators.getStringArray();
+              
+              ArrayList<String> separatorList = new ArrayList<String>();
+              
+              for(int i = 0; i < typeArr.length - 1; i++) {
+                if(i < separators.length - 1 && separators[i].equals("\n")) {
+                  separatorList.add(separators[i]);
+                }
+                else {
+                  separatorList.add(" - ");
+                }
+              }
+              
+              Settings.propProgramInfoFieldsSeparators.setStringArray(separatorList.toArray(new String[separatorList.size()]));
             }
             
             MainFrame.getInstance().getProgramTableScrollPane()

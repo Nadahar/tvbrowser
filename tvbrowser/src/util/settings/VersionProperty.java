@@ -59,22 +59,34 @@ public class VersionProperty extends Property {
       String asString = getProperty();
   
       if (asString != null) {
-        try {
-          int asInt = Integer.parseInt(asString);
-          int major = asInt / 10000;
-          int minor = asInt % 10000 / 100;
-          int subMinor = asInt % 100;
+        if(asString.contains(";")) {
+          String[] parts = asString.split(";");
           
-          if(asString.length() == 3) {
-            major = asInt / 100;
-            minor = asInt % 100;            
-            subMinor = 0;
-          }
-     
-          mCachedValue = new devplugin.Version(major,minor,subMinor);
+          mCachedValue = new devplugin.Version(Integer.parseInt(parts[0]),Integer.parseInt(parts[1]),Integer.parseInt(parts[2]));
         }
-        catch(NumberFormatException exc) {
-          // We use the default value
+        else {
+          try {
+            int asInt = Integer.parseInt(asString);
+            int major = asInt / 10000;
+            int minor = asInt % 10000 / 100;
+            int subMinor = asInt % 100;
+            
+            if(asString.length() == 3) {
+              major = asInt / 100;
+              minor = asInt % 100;            
+              subMinor = 0;
+            }
+       
+            mCachedValue = new devplugin.Version(major,minor,subMinor);
+            
+            if(mCachedValue.getMajor() > 3 || (mCachedValue.getMajor() == 3 && mCachedValue.getMinor() > 33) ||
+                (mCachedValue.getMajor() == 3 && mCachedValue.getMinor() == 33 && mCachedValue.getSubMinor() >= 51)) {
+              mCachedValue = new devplugin.Version(3,33,50);
+            }
+          }
+          catch(NumberFormatException exc) {
+            // We use the default value
+          }
         }
       }
   
@@ -95,8 +107,7 @@ public class VersionProperty extends Property {
     if (value.equals(mDefaultValue)) {
       setProperty(null);
     } else {
-      int asInt = value.getMajor() * 10000 + value.getMinor() * 100 + value.getSubMinor();
-      setProperty(Integer.toString(asInt));
+      setProperty(value.getMajor() + ";" + value.getMinor() + ";" + value.getSubMinor());
     }
     
     mCachedValue = value;

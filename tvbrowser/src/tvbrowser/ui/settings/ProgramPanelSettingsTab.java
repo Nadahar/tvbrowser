@@ -169,7 +169,9 @@ public class ProgramPanelSettingsTab implements SettingsTab {
         String[] splitSeparators = separators[i].split(";#;");
         
         for(String sep : splitSeparators) {
-          mInfoTextOCh.addElement(sep, i+1, true);
+          if(!sep.equals(" - ")) {
+            mInfoTextOCh.addElement(sep, i+1, true);
+          }
         }
       }
     }
@@ -333,24 +335,26 @@ public class ProgramPanelSettingsTab implements SettingsTab {
       if(infoFieldArr[i] instanceof ProgramFieldType) {
         fieldTypeList.add((ProgramFieldType)infoFieldArr[i]);
         
-        if(i < infoFieldArr.length-1 && infoFieldArr[i+1] instanceof String) {
-          i++;
-          
-          StringBuilder separator = new StringBuilder();
-          separator.append(infoFieldArr[i]);
-          
-          int j = i+1;
-          
-          while(j < infoFieldArr.length && infoFieldArr[j] instanceof String) {
-            separator.append(";#;").append(infoFieldArr[j]);
-            j++;
+        if(i < infoFieldArr.length-1) {
+          if(infoFieldArr[i+1] instanceof String) {
             i++;
+            
+            StringBuilder separator = new StringBuilder();
+            separator.append(infoFieldArr[i]);
+            
+            int j = i+1;
+            
+            while(j < infoFieldArr.length && infoFieldArr[j] instanceof String) {
+              separator.append(";#;").append(infoFieldArr[j]);
+              j++;
+              i++;
+            }
+            
+            separatorList.add(separator.toString());
           }
-          
-          separatorList.add(separator.toString());
-        }
-        else {
-          separatorList.add(" ");
+          else {
+            separatorList.add(" - ");
+          }
         }
       }
     }
