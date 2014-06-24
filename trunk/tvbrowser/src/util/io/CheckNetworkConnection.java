@@ -35,7 +35,9 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
 
+import javax.net.ssl.HttpsURLConnection;
 import javax.swing.BorderFactory;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -105,9 +107,22 @@ class CheckNetworkConnection {
         mCheckRunning = true;
         mResult = false;
         try {
-          HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-          mResult = (connection.getResponseCode() == HttpURLConnection.HTTP_OK)
-              || (connection.getResponseCode() == HttpURLConnection.HTTP_SEE_OTHER);
+          URLConnection test = url.openConnection();
+          
+          if(test instanceof HttpsURLConnection) {
+            HttpsURLConnection connection = (HttpsURLConnection)test;
+            mResult = (connection.getResponseCode() == HttpsURLConnection.HTTP_OK)
+                || (connection.getResponseCode() == HttpsURLConnection.HTTP_SEE_OTHER)
+                || (connection.getResponseCode() == HttpsURLConnection.HTTP_ACCEPTED)
+                || (connection.getResponseCode() == HttpsURLConnection.HTTP_CREATED);
+          }
+          else {
+            HttpURLConnection connection = (HttpURLConnection) test;
+            mResult = (connection.getResponseCode() == HttpURLConnection.HTTP_OK)
+                || (connection.getResponseCode() == HttpURLConnection.HTTP_SEE_OTHER)
+                || (connection.getResponseCode() == HttpURLConnection.HTTP_ACCEPTED)
+                || (connection.getResponseCode() == HttpURLConnection.HTTP_CREATED);  
+          }
         } catch (IOException e) {
         }
 
