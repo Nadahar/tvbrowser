@@ -126,7 +126,7 @@ public class ThemeDownloadItem implements Comparable<ThemeDownloadItem> {
       String url = mProperties.getProperty(DOWNLOAD_URL,null);
       
       if(url != null) {
-        File targetFile = new File(iconDir,url.substring(url.lastIndexOf("/")));
+        File targetFile = new File(iconDir,url.substring(url.lastIndexOf("=")+1)+".zip");
         
         try {
           IOUtilities.download(new URL(url), targetFile);
