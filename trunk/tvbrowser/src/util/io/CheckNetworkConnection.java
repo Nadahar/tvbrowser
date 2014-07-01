@@ -84,7 +84,15 @@ class CheckNetworkConnection {
     
     mResult = false;
     
-    return checkConnectionInternal(getCheckUrls());      
+    for(String url : CHECK_URLS) {
+      try {
+        if(checkConnectionInternal(new URL(url))) {
+          return true;
+        }
+      } catch (MalformedURLException e) {}
+    }
+    
+    return mResult;
   }
 
   /**
@@ -96,7 +104,7 @@ class CheckNetworkConnection {
   public boolean checkConnection(final URL url) {
     mResult = false;
     
-    return checkConnectionInternal(new URL[] {url});
+    return checkConnectionInternal(url);
   }
     
 
@@ -106,33 +114,32 @@ class CheckNetworkConnection {
    * @param url check this Server
    * @return true, if a connection can be established
    */
-  private boolean checkConnectionInternal(final URL[] urls) {
+  private boolean checkConnectionInternal(final URL url) {
     // Start Check in second Thread
     new Thread(new Runnable() {
       public void run() {
         mCheckRunning = true;
         
-        for(URL url : urls) {
-          if(!mResult && url != null) {
-            try {
-              URLConnection test = url.openConnection();
+        if(!mResult && url != null) {
+          try {
+            URLConnection test = url.openConnection();
+            
+            if(test instanceof HttpsURLConnection) {
+              HttpsURLConnection connection = (HttpsURLConnection)test;
               
-              if(test instanceof HttpsURLConnection) {
-                HttpsURLConnection connection = (HttpsURLConnection)test;
-                mResult = mResult || (connection.getResponseCode() == HttpsURLConnection.HTTP_OK)
-                    || (connection.getResponseCode() == HttpsURLConnection.HTTP_SEE_OTHER)
-                    || (connection.getResponseCode() == HttpsURLConnection.HTTP_ACCEPTED)
-                    || (connection.getResponseCode() == HttpsURLConnection.HTTP_CREATED);
-              }
-              else {
-                HttpURLConnection connection = (HttpURLConnection) test;
-                mResult = mResult || (connection.getResponseCode() == HttpURLConnection.HTTP_OK)
-                    || (connection.getResponseCode() == HttpURLConnection.HTTP_SEE_OTHER)
-                    || (connection.getResponseCode() == HttpURLConnection.HTTP_ACCEPTED)
-                    || (connection.getResponseCode() == HttpURLConnection.HTTP_CREATED);  
-              }
-            } catch (IOException e) {}
-          }
+              mResult = (connection.getResponseCode() == HttpsURLConnection.HTTP_OK)
+                  || (connection.getResponseCode() == HttpsURLConnection.HTTP_SEE_OTHER)
+                  || (connection.getResponseCode() == HttpsURLConnection.HTTP_ACCEPTED)
+                  || (connection.getResponseCode() == HttpsURLConnection.HTTP_CREATED) || mResult;
+            }
+            else {
+              HttpURLConnection connection = (HttpURLConnection) test;
+              mResult = (connection.getResponseCode() == HttpURLConnection.HTTP_OK)
+                  || (connection.getResponseCode() == HttpURLConnection.HTTP_SEE_OTHER)
+                  || (connection.getResponseCode() == HttpURLConnection.HTTP_ACCEPTED)
+                  || (connection.getResponseCode() == HttpURLConnection.HTTP_CREATED) || mResult;  
+            }
+          } catch (IOException e) {}
         }
         
         mCheckRunning = false;
@@ -235,17 +242,5 @@ class CheckNetworkConnection {
 
   public static String[] getUrls() {
     return CHECK_URLS;
-  }
-  
-  private static URL[] getCheckUrls() {
-    URL[] check = new URL[CHECK_URLS.length];
-    
-    for(int i = 0; i < CHECK_URLS.length; i++) {
-      try {
-        check[i] = new URL(CHECK_URLS[i]);
-      } catch (MalformedURLException e) {}
-    }
-    
-    return check;
   }
 }
