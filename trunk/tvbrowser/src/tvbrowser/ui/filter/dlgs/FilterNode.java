@@ -352,7 +352,11 @@ public class FilterNode extends DefaultMutableTreeNode {
   public boolean isDeletingAllowed() {
     return !(userObject instanceof ShowAllFilter || userObject instanceof PluginFilter ||
         userObject instanceof PluginsProgramFilter || userObject instanceof InfoBitFilter || 
-        userObject instanceof FavoriteFilter || getChildCount() > 0);
+        getChildCount() > 0);
+  }
+  
+  public boolean isUserDeletingAllowed() {
+    return isDeletingAllowed() && !(userObject instanceof FavoriteFilter);
   }
   
   public boolean testAndSetToPluginsProgramFilter(PluginsProgramFilter filter) {
