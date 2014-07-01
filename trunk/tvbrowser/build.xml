@@ -618,6 +618,7 @@
   	    	<include name="imgs/**"/>
   	    	<include name="plugins/**"/>
   	    	<include name="themepacks/**"/>
+  	    	<include name="infothemes/**"/>
   	    	<exclude name="tvbrowser.sh"/>
   	    	<exclude name="tvbrowser.desktop"/>
   	    	<include name="*"/>
