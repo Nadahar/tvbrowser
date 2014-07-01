@@ -565,7 +565,7 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
     });
 
     panel.add(mReminderAfterDownloadCb = new JCheckBox(mLocalizer.msg("autoAlert", "Alert me, whenever a matching program is discovered")), cc.xyw(1, 1, 2));
-    panel.add(mProvideFilter = new JCheckBox(mLocalizer.msg("provideFilter", "Create filter for this Favorite program")), cc.xyw(1, 3, 2));
+    panel.add(mProvideFilter = new JCheckBox(mLocalizer.msg("provideFilter", "Provide filter for this Favorite program")), cc.xyw(1, 3, 2));
     panel.add(mPassProgramsCheckBox = new JCheckBox(mLocalizer.msg("passProgramsTo", "Pass programs to") +" "), cc.xy(1, 5));
     panel.add(mPassProgramsLb, cc.xy(2, 5));
     panel.add(mChangePassProgramsBtn, cc.xy(3, 5));
