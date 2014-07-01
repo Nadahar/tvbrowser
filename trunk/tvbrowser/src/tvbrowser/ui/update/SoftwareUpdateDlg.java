@@ -290,7 +290,7 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
         selectedDataServices.add("TvBrowserDataService");
         selectedDataServices.add("SweDBTvDataService");
       }
-      else if(country.equals("SE") || country.equals("AU")) {
+      else if(country.equals("SE") || country.equals("AU") || country.equals("HR")) {
         selectedDataServices.add("SweDBTvDataService");
       }
       else {
