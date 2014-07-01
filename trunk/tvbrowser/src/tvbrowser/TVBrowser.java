@@ -1555,6 +1555,9 @@ public class TVBrowser {
     System.setProperty("http.proxyUser",     httpUser);
     System.setProperty("http.proxyPassword", httpPassword);
     System.setProperty("https.proxyHost",     httpHost);
+    System.setProperty("https.proxyPort",     httpPort);
+    System.setProperty("https.proxyUser",     httpUser);
+    System.setProperty("https.proxyPassword", httpPassword);
   }
 
   /**
