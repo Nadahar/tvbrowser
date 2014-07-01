@@ -36,6 +36,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.swing.BorderFactory;
@@ -57,12 +58,12 @@ import com.jgoodies.forms.layout.FormLayout;
  */
 class CheckNetworkConnection {
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(CheckNetworkConnection.class);
-
-  private boolean mCheckRunning = true;
-
+  
   private boolean mResult = false;
 
   private JDialog mWaitingDialog;
+  
+  private AtomicInteger mRunningCount = new AtomicInteger();
 
   private final static String[] CHECK_URLS = { 
     "https://duckduckgo.com/",
@@ -83,15 +84,18 @@ class CheckNetworkConnection {
     }
     
     mResult = false;
+    mRunningCount.set(0);
     
     for(String url : CHECK_URLS) {
       try {
         if(checkConnectionInternal(new URL(url))) {
+          hideDialog();
           return true;
         }
       } catch (MalformedURLException e) {}
     }
     
+    hideDialog();
     return mResult;
   }
 
@@ -103,8 +107,12 @@ class CheckNetworkConnection {
    */
   public boolean checkConnection(final URL url) {
     mResult = false;
+    mRunningCount.set(0);
     
-    return checkConnectionInternal(url);
+    boolean check = checkConnectionInternal(url);
+    
+    hideDialog();
+    return check;
   }
     
 
@@ -118,9 +126,9 @@ class CheckNetworkConnection {
     // Start Check in second Thread
     new Thread(new Runnable() {
       public void run() {
-        mCheckRunning = true;
-        
         if(!mResult && url != null) {
+          mRunningCount.incrementAndGet();
+          
           try {
             URLConnection test = url.openConnection();
             
@@ -142,20 +150,22 @@ class CheckNetworkConnection {
           } catch (IOException e) {}
         }
         
-        mCheckRunning = false;
+        mRunningCount.decrementAndGet();
       };
     }, "Check network connection").start();
     
     int num = 0;
     // Wait till second Thread is finished or Settings.propNetworkCheckTimeout is reached
     int timeout = Settings.propNetworkCheckTimeout.getInt()/100;
-    while ((mCheckRunning) && (num < timeout)) {
+    while (mRunningCount.get() > 0 && (num < timeout)) {
       num++;
       if (num == 7) {
         // Show the Dialog after 700 MS
         SwingUtilities.invokeLater(new Runnable() {
           public void run() {
-            showDialog();
+            if(!mResult) {
+              showDialog();
+            }
           };
         });
       }
@@ -165,13 +175,11 @@ class CheckNetworkConnection {
       }
     }
     
-    hideDialog();
     return mResult;
   }
   
   
   private void hideDialog() {
-    mCheckRunning = false;
     if (mWaitingDialog != null) {
       if(MainFrame.getInstance().isVisible() && UiUtilities.getLastModalChildOf(MainFrame.getInstance()).equals(mWaitingDialog)) {
         mWaitingDialog.dispose();
@@ -203,7 +211,7 @@ class CheckNetworkConnection {
       }
     }catch(Exception e) {}
     
-    if ((mCheckRunning) && (mWaitingDialog == null)) {
+    if ((mRunningCount.get() > 0) && (mWaitingDialog == null) && !mResult) {
       Window comp = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
       if (comp instanceof Dialog) {
         mWaitingDialog = new JDialog((Dialog) comp, false);
@@ -233,10 +241,10 @@ class CheckNetworkConnection {
 //      panel.add(bar, cc.xy(2, 6));
 
       mWaitingDialog.pack();
-      if(mCheckRunning) {
+      if(mRunningCount.get() > 0 && !mResult) {
         UiUtilities.centerAndShow(mWaitingDialog);
       }
-      mWaitingDialog.setVisible(mCheckRunning && MainFrame.getInstance().isVisible() && MainFrame.getInstance().getExtendedState() != Frame.ICONIFIED);
+      mWaitingDialog.setVisible(!mResult && mRunningCount.get() > 0 && MainFrame.getInstance().isVisible() && MainFrame.getInstance().getExtendedState() != Frame.ICONIFIED);
     }
   }
 
