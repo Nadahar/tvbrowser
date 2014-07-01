@@ -580,7 +580,7 @@ public class FilterTree extends JTree implements DragGestureListener, DropTarget
     
     menu.add(item);
     
-    if(last.isDeletingAllowed()) {
+    if(last.isUserDeletingAllowed()) {
       item = new JMenuItem(Localizer.getLocalization(Localizer.I18N_DELETE),
           TVBrowserIcons.delete(TVBrowserIcons.SIZE_SMALL));
   

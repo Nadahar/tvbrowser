@@ -205,7 +205,7 @@ public class SelectFilterDlg extends JDialog implements ActionListener, WindowCl
         mDefaultFilterBtn.setEnabled(false);
       }
       
-      mRemoveBtn.setEnabled(row > 0 && node.isDeletingAllowed());
+      mRemoveBtn.setEnabled(row > 0 && node.isUserDeletingAllowed());
       
     }
     else {
@@ -294,7 +294,7 @@ public class SelectFilterDlg extends JDialog implements ActionListener, WindowCl
         parent.remove(node);
         mFilterTree.getModel().reload(parent);
       }
-      else if((node.containsFilter() || node.containsSeparator()) && node.isDeletingAllowed()) {
+      else if((node.containsFilter() || node.containsSeparator()) && node.isUserDeletingAllowed()) {
         ProgramFilter[] filters = node.getAllFilters();
         
         mFilterTree.getModel().removeNodeFromParent(node);
