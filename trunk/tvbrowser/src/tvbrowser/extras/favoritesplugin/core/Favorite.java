@@ -1097,7 +1097,7 @@ public abstract class Favorite {
   }
   
   public boolean hasFilterForKey(long key) {
-    return mFilterKey == key;
+    return isProvidingFilter() && mFilterKey == key;
   }
   
   public long getFilterKey() {
