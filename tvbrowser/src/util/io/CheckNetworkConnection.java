@@ -64,7 +64,7 @@ class CheckNetworkConnection {
 
   private JDialog mWaitingDialog;
 
-  private final static String[] CHECK_URLS = {
+  private final static String[] CHECK_URLS = { 
     "https://duckduckgo.com/",
     "http://www.google.com/",
     "http://www.yahoo.com/",
@@ -77,21 +77,14 @@ class CheckNetworkConnection {
    * @return true, if the connection is working
    */
   public boolean checkConnection() {
-    try {
-      // if checking is disabled, always assume existing connection
-      if (!Settings.propInternetConnectionCheck.getBoolean()) {
-        return true;
-      }
-      for (String url : CHECK_URLS) {
-        if (checkConnection(new URL(url))) {
-          return true;
-        }
-      }
-      
-    } catch (MalformedURLException e) {
-      e.printStackTrace();
+    // if checking is disabled, always assume existing connection
+    if (!Settings.propInternetConnectionCheck.getBoolean()) {
+      return true;
     }
-    return false;
+    
+    mResult = false;
+    
+    return checkConnectionInternal(getCheckUrls());      
   }
 
   /**
@@ -101,35 +94,51 @@ class CheckNetworkConnection {
    * @return true, if a connection can be established
    */
   public boolean checkConnection(final URL url) {
+    mResult = false;
+    
+    return checkConnectionInternal(new URL[] {url});
+  }
+    
+
+  /**
+   * Checks if a internet connection to a specific Server can be established
+   * 
+   * @param url check this Server
+   * @return true, if a connection can be established
+   */
+  private boolean checkConnectionInternal(final URL[] urls) {
     // Start Check in second Thread
     new Thread(new Runnable() {
       public void run() {
         mCheckRunning = true;
-        mResult = false;
-        try {
-          URLConnection test = url.openConnection();
-          
-          if(test instanceof HttpsURLConnection) {
-            HttpsURLConnection connection = (HttpsURLConnection)test;
-            mResult = (connection.getResponseCode() == HttpsURLConnection.HTTP_OK)
-                || (connection.getResponseCode() == HttpsURLConnection.HTTP_SEE_OTHER)
-                || (connection.getResponseCode() == HttpsURLConnection.HTTP_ACCEPTED)
-                || (connection.getResponseCode() == HttpsURLConnection.HTTP_CREATED);
+        
+        for(URL url : urls) {
+          if(!mResult && url != null) {
+            try {
+              URLConnection test = url.openConnection();
+              
+              if(test instanceof HttpsURLConnection) {
+                HttpsURLConnection connection = (HttpsURLConnection)test;
+                mResult = mResult || (connection.getResponseCode() == HttpsURLConnection.HTTP_OK)
+                    || (connection.getResponseCode() == HttpsURLConnection.HTTP_SEE_OTHER)
+                    || (connection.getResponseCode() == HttpsURLConnection.HTTP_ACCEPTED)
+                    || (connection.getResponseCode() == HttpsURLConnection.HTTP_CREATED);
+              }
+              else {
+                HttpURLConnection connection = (HttpURLConnection) test;
+                mResult = mResult || (connection.getResponseCode() == HttpURLConnection.HTTP_OK)
+                    || (connection.getResponseCode() == HttpURLConnection.HTTP_SEE_OTHER)
+                    || (connection.getResponseCode() == HttpURLConnection.HTTP_ACCEPTED)
+                    || (connection.getResponseCode() == HttpURLConnection.HTTP_CREATED);  
+              }
+            } catch (IOException e) {}
           }
-          else {
-            HttpURLConnection connection = (HttpURLConnection) test;
-            mResult = (connection.getResponseCode() == HttpURLConnection.HTTP_OK)
-                || (connection.getResponseCode() == HttpURLConnection.HTTP_SEE_OTHER)
-                || (connection.getResponseCode() == HttpURLConnection.HTTP_ACCEPTED)
-                || (connection.getResponseCode() == HttpURLConnection.HTTP_CREATED);  
-          }
-        } catch (IOException e) {
         }
-
+        
         mCheckRunning = false;
       };
     }, "Check network connection").start();
-
+    
     int num = 0;
     // Wait till second Thread is finished or Settings.propNetworkCheckTimeout is reached
     int timeout = Settings.propNetworkCheckTimeout.getInt()/100;
@@ -148,7 +157,7 @@ class CheckNetworkConnection {
       } catch (InterruptedException e) {
       }
     }
-
+    
     hideDialog();
     return mResult;
   }
@@ -227,5 +236,16 @@ class CheckNetworkConnection {
   public static String[] getUrls() {
     return CHECK_URLS;
   }
-
+  
+  private static URL[] getCheckUrls() {
+    URL[] check = new URL[CHECK_URLS.length];
+    
+    for(int i = 0; i < CHECK_URLS.length; i++) {
+      try {
+        check[i] = new URL(CHECK_URLS[i]);
+      } catch (MalformedURLException e) {}
+    }
+    
+    return check;
+  }
 }
