@@ -17,9 +17,9 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  * CVS information:
- *     $Date: 2010-08-16 08:23:45 +0200 (Mo, 16. Aug 2010) $
- *   $Author: bananeweizen $
- * $Revision: 6704 $
+ *     $Date$
+ *   $Author$
+ * $Revision$
  */
 package devplugin;
 
@@ -31,7 +31,7 @@ import java.util.ArrayList;
  * methods, that are at best self describing in name to use them with
  * reflection from other Plugins.
  * <p>
- * You are free to provide any access to your Plugin (not for DataSevices).
+ * You are free to provide any access to your Plugin (not for DataServices).
  * Provide it in that way that any Plugin using this class to connect to your
  * Plugin can be sure not to run in any unexpected situation.
  * <p>
@@ -39,7 +39,7 @@ import java.util.ArrayList;
  * for granted, every new Plugin version of the Plugin you want to connect to
  * can make changes to the class or even remove support for it (you can take that
  * personally because it's really bad style to just remove functions without prior
- * warning)
+ * warning).
  * 
  * @author René Mach
  * @since 3.3.4
