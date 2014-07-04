@@ -21,7 +21,7 @@ import util.ui.UiUtilities;
 
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.factories.Borders;
-import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.factories.CC;
 import com.jgoodies.forms.layout.FormLayout;
 
 import devplugin.SettingsItem;
@@ -44,6 +44,8 @@ public class TrayOnTimeSettingsTab implements SettingsTab {
   private JEditorPane mHelpLabel, mInfo, mTimeHelp;
   private JRadioButton mShowIconAndName, mShowName, mShowIcon;
   
+  private JCheckBox mShowSortNumber;
+  
   private ColorLabel mLightColorLb,mDarkColorLb;
   private ColorButton mLight, mDark;
   
@@ -52,9 +54,8 @@ public class TrayOnTimeSettingsTab implements SettingsTab {
   public JPanel createSettingsPanel() {
     mInstance = this;
     
-    CellConstraints cc = new CellConstraints();
     PanelBuilder builder = new PanelBuilder(new FormLayout("5dlu,12dlu,pref:grow,5dlu",
-        "pref,5dlu,pref,pref,pref,5dlu,pref,10dlu,pref,5dlu,pref,pref,pref," +
+        "pref,5dlu,pref,pref,pref,5dlu,pref,10dlu,pref,5dlu,pref,pref,pref,5dlu,pref," +
         "10dlu,pref,5dlu,pref,pref,pref,3dlu,pref,5dlu,pref,fill:pref:grow,pref"));
     builder.border(Borders.DIALOG);
     
@@ -76,6 +77,8 @@ public class TrayOnTimeSettingsTab implements SettingsTab {
     bg1.add(mShowIconAndName);
     bg1.add(mShowIcon);
     bg1.add(mShowName);
+    
+    mShowSortNumber = new JCheckBox(mLocalizer.msg("showChannelNumber", "Show sort number"),Settings.propTrayOnTimeProgramsShowingSortNumber.getBoolean());
     
     mShowTime = new JCheckBox(mLocalizer.msg("showTime","Show start time"),Settings.propTrayOnTimeProgramsContainsTime.getBoolean());
     mShowToolTip = new JCheckBox(mLocalizer.msg("showToolTip","Show additional information of the program in a tool tip"),Settings.propTrayOnTimeProgramsContainsToolTip.getBoolean());
@@ -113,34 +116,36 @@ public class TrayOnTimeSettingsTab implements SettingsTab {
     
     mDarkLabel = colors.addLabel(
         mLocalizer.msg("progressLight",
-            "Background color of the programs at..."), cc.xy(1, 1));
-    colors.add(mLightColorLb, cc.xy(3, 1));
-    colors.add(mLight,cc.xy(5, 1));
+            "Background color of the programs at..."), CC.xy(1, 1));
+    colors.add(mLightColorLb, CC.xy(3, 1));
+    colors.add(mLight,CC.xy(5, 1));
 
     mLightLabel = colors.addLabel(
         mLocalizer.msg("progressDark",
-            "Progress color of the programs at..."), cc.xy(1, 3));
-    colors.add(mDarkColorLb, cc.xy(3, 3));
-    colors.add(mDark,cc.xy(5, 3));
+            "Progress color of the programs at..."), CC.xy(1, 3));
+    colors.add(mDarkColorLb, CC.xy(3, 3));
+    colors.add(mDark,CC.xy(5, 3));
         
-    JPanel c = (JPanel) builder.addSeparator(mLocalizer.msg("onTime","Programs at..."), cc.xyw(1,1,4));
-    builder.add(mIsEnabled, cc.xyw(2,3,2));
-    builder.add(mShowInTray, cc.xy(3,4));
-    builder.add(mShowInSubMenu, cc.xy(3,5));
-    builder.add(mTimeHelp, cc.xyw(2,7,2));
+    JPanel c = (JPanel) builder.addSeparator(mLocalizer.msg("onTime","Programs at..."), CC.xyw(1,1,4));
+    builder.add(mIsEnabled, CC.xyw(2,3,2));
+    builder.add(mShowInTray, CC.xy(3,4));
+    builder.add(mShowInSubMenu, CC.xy(3,5));
+    builder.add(mTimeHelp, CC.xyw(2,7,2));
 
-    JPanel c1 = (JPanel) builder.addSeparator(mLocalizer.msg("iconNameSeparator","Channel icons/channel name"), cc.xyw(1,9,4));
-    builder.add(mShowIconAndName, cc.xyw(2,11,2));
-    builder.add(mShowIcon, cc.xyw(2,12,2));
-    builder.add(mShowName, cc.xyw(2,13,2));
+    JPanel c1 = (JPanel) builder.addSeparator(mLocalizer.msg("iconNameSeparator","Channel icons/channel name"), CC.xyw(1,9,4));
+    builder.add(mShowIconAndName, CC.xyw(2,11,2));
+    builder.add(mShowIcon, CC.xyw(2,12,2));
+    builder.add(mShowName, CC.xyw(2,13,2));
     
-    JPanel c2 = (JPanel) builder.addSeparator(mLocalizer.msg("settings","Settings"), cc.xyw(1,15,4));
-    builder.add(mShowTime, cc.xyw(2,17,2));
-    builder.add(mShowToolTip, cc.xyw(2,18,2));
-    builder.add(mShowProgress, cc.xyw(2,19,2));
-    builder.add(colors.getPanel(), cc.xy(3,21));
-    builder.add(mInfo, cc.xyw(2,23,2));
-    builder.add(mHelpLabel, cc.xyw(1,25,4));
+    builder.add(mShowSortNumber, CC.xyw(2,15,2));
+    
+    JPanel c2 = (JPanel) builder.addSeparator(mLocalizer.msg("settings","Settings"), CC.xyw(1,17,4));
+    builder.add(mShowTime, CC.xyw(2,19,2));
+    builder.add(mShowToolTip, CC.xyw(2,20,2));
+    builder.add(mShowProgress, CC.xyw(2,21,2));
+    builder.add(colors.getPanel(), CC.xy(3,23));
+    builder.add(mInfo, CC.xyw(2,25,2));
+    builder.add(mHelpLabel, CC.xyw(1,27,4));
     
     mSeparator1 = (JLabel)c.getComponent(0);
     mIconSeparator = (JLabel)c1.getComponent(0);
@@ -196,6 +201,7 @@ public class TrayOnTimeSettingsTab implements SettingsTab {
     mDarkLabel.setEnabled(mIsEnabled.isSelected() && mShowProgress.isSelected() && mTrayIsEnabled);
     mLightLabel.setEnabled(mIsEnabled.isSelected() && mShowProgress.isSelected() && mTrayIsEnabled);
     mInfo.setEnabled(mIsEnabled.isSelected() && mShowProgress.isSelected() && mTrayIsEnabled);
+    mShowSortNumber.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled);
   }
 
   public void saveSettings() {
@@ -223,6 +229,9 @@ public class TrayOnTimeSettingsTab implements SettingsTab {
     }
     if(mDarkColorLb != null) {
       Settings.propTrayOnTimeProgramsDarkBackground.setColor(mDarkColorLb.getColor());
+    }
+    if(mShowSortNumber != null) {
+      Settings.propTrayOnTimeProgramsShowingSortNumber.setBoolean(mShowSortNumber.isSelected());
     }
   }
 

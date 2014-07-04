@@ -80,7 +80,7 @@ public class ProgramMenuItem extends JMenuItem {
   private static Font mPlainFont = (new JMenuItem()).getFont();
   private static Font mBoldFont = mPlainFont.deriveFont(Font.BOLD);
   private int mIconHeight = 0;
-  private boolean mShowStartTime, mShowDate, mShowName;
+  private boolean mShowStartTime, mShowDate, mShowName, mShowSortNumber;
   private Icon mIcon = null;
   private TextAreaIcon mChannelName;
     
@@ -117,6 +117,7 @@ public class ProgramMenuItem extends JMenuItem {
       mShowName = Settings.propTrayNowProgramsContainsName.getBoolean();
       showIcon = Settings.propTrayNowProgramsContainsIcon.getBoolean();
       mShowToolTip = Settings.propTrayNowProgramsContainsToolTip.getBoolean();
+      mShowSortNumber = Settings.propTrayNowProgramsShowingSortNumber.getBoolean();
     }
     else if(type == SOON_TYPE) {
       mShowStartTime = Settings.propTraySoonProgramsContainsTime.getBoolean();
@@ -124,6 +125,7 @@ public class ProgramMenuItem extends JMenuItem {
       mShowName = Settings.propTraySoonProgramsContainsName.getBoolean();
       showIcon = Settings.propTraySoonProgramsContainsIcon.getBoolean();
       mShowToolTip = Settings.propTraySoonProgramsContainsToolTip.getBoolean();
+      mShowSortNumber = Settings.propTraySoonProgramsShowingSortNumber.getBoolean();
     }
     else if(type == ON_TIME_TYPE) {
       mShowStartTime = Settings.propTrayOnTimeProgramsContainsTime.getBoolean();
@@ -131,6 +133,7 @@ public class ProgramMenuItem extends JMenuItem {
       mShowName = Settings.propTrayOnTimeProgramsContainsName.getBoolean();
       showIcon = Settings.propTrayOnTimeProgramsContainsIcon.getBoolean();
       mShowToolTip = Settings.propTrayOnTimeProgramsContainsToolTip.getBoolean();
+      mShowSortNumber = Settings.propTrayOnTimeProgramsShowingSortNumber.getBoolean();
       
       if(!Settings.propTrayOnTimeProgramsShowProgress.getBoolean()) {
         time = -1;
@@ -142,6 +145,7 @@ public class ProgramMenuItem extends JMenuItem {
       mShowName = Settings.propTrayImportantProgramsContainsName.getBoolean();
       showIcon = Settings.propTrayImportantProgramsContainsIcon.getBoolean();
       mShowToolTip = Settings.propTrayImportantProgramsContainsToolTip.getBoolean();
+      mShowSortNumber = Settings.propTrayImportantProgramsShowingSortNumber.getBoolean();
     }
     else if(type == SOON_TYPE) {
       mShowStartTime = true;
@@ -149,6 +153,7 @@ public class ProgramMenuItem extends JMenuItem {
       mShowName = Settings.propTraySoonProgramsContainsName.getBoolean();
       showIcon = Settings.propTraySoonProgramsContainsIcon.getBoolean();
       mShowToolTip = Settings.propTraySoonProgramsContainsToolTip.getBoolean();
+      mShowSortNumber = Settings.propTraySoonProgramsShowingSortNumber.getBoolean();
     }
     else if (type == AFTER_TYPE) {
       mShowStartTime = true;
@@ -157,14 +162,22 @@ public class ProgramMenuItem extends JMenuItem {
       showIcon = Settings.propTrayImportantProgramsContainsIcon.getBoolean();
       mShowToolTip = Settings.propTrayImportantProgramsContainsToolTip.getBoolean();
       time = -1;
+      mShowSortNumber = Settings.propTrayImportantProgramsShowingSortNumber.getBoolean();
     }
     else {
       mShowStartTime = true;
       mShowDate = false;
       mShowName = true;
+      mShowSortNumber = true;
     }
-        
-    mChannelName = new TextAreaIcon(p.getChannel().getName(), mBoldFont, Settings.propTrayChannelWidth.getInt());
+    
+    String sortNumber = "";
+    
+    if(mShowSortNumber && p.getChannel().getSortNumber().trim().length() > 0) {
+      sortNumber = p.getChannel().getSortNumber() + ". ";
+    }
+    
+    mChannelName = new TextAreaIcon(sortNumber + (mShowName ? p.getChannel().getName() : ""), mBoldFont, Settings.propTrayChannelWidth.getInt());
     mChannelName.setMaximumLineCount(2);
 
     if(mShowToolTip) {
@@ -209,7 +222,7 @@ public class ProgramMenuItem extends JMenuItem {
     });
       
     mInsets = getMargin();
-    setUI(new ProgramMenuItemUI(p, mChannelName,mIcon,mShowStartTime,mShowDate,showIcon,mShowName,time));
+    setUI(new ProgramMenuItemUI(p, mChannelName,mIcon,mShowStartTime,mShowDate,showIcon,mShowName || sortNumber.trim().length() > 0,time));
     
     mTimer = new Timer(10000, new ActionListener() {
 
@@ -244,7 +257,7 @@ public class ProgramMenuItem extends JMenuItem {
       width += 30;
     }
     
-    if(mShowName) {
+    if(mShowName || mShowSortNumber) {
       width += Settings.propTrayChannelWidth.getInt() + getIconTextGap();
     }
     if(mShowStartTime) {
@@ -266,7 +279,7 @@ public class ProgramMenuItem extends JMenuItem {
       height += 2;
     }
 
-    if(mChannelName.getIconHeight() > height && mShowName) {
+    if(mChannelName.getIconHeight() > height && (mShowName || mShowSortNumber)) {
       height = mChannelName.getIconHeight() + mInsets.top + mInsets.bottom + 2;
     }
 
