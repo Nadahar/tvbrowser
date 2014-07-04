@@ -1256,7 +1256,7 @@ public class Settings {
       mProp, "traySpecialChannels", new devplugin.Channel[] {});
 
   public static final IntProperty propTrayChannelWidth = new IntProperty(
-      mProp, "trayChannelWidth", 72);
+      mProp, "trayChannelWidth", 78);
 
   /*
    * Settings for the ON_TIME_TYPE of the ProgramMenuItem.
@@ -1276,6 +1276,9 @@ public class Settings {
 
   public static final BooleanProperty propTrayOnTimeProgramsContainsName = new BooleanProperty(
       mProp, "trayOnTimeProgramsContainsName", true);
+  
+  public static final BooleanProperty propTrayOnTimeProgramsShowingSortNumber = new BooleanProperty(
+      mProp, "trayOnTimeProgramsShowingSortNumber", true);
 
   public static final BooleanProperty propTrayOnTimeProgramsContainsToolTip = new BooleanProperty(
       mProp, "trayOnTimeProgramsContainsToolTip", true);
@@ -1319,6 +1322,9 @@ public class Settings {
 
   public static final BooleanProperty propTrayNowProgramsContainsToolTip = new BooleanProperty(
       mProp, "trayNowProgramsContainsToolTip", true);
+  
+  public static final BooleanProperty propTrayNowProgramsShowingSortNumber = new BooleanProperty(
+      mProp, "trayNowProgramsShowingSortNumber", true);
 
   /*
    * Settings for the SOON_TYPE of the ProgramMenuItem.
@@ -1338,7 +1344,9 @@ public class Settings {
 
   public static final BooleanProperty propTraySoonProgramsContainsToolTip = new BooleanProperty(
       mProp, "traySoonProgramsContainsToolTip", true);
-
+  
+  public static final BooleanProperty propTraySoonProgramsShowingSortNumber = new BooleanProperty(
+      mProp, "traySoonProgramsShowingSortNumber", true);
   /*
    * Settings for the IMPORTANT_TYPE of the ProgramMenuItem.
    */
@@ -1370,6 +1378,9 @@ public class Settings {
 
   public static final BooleanProperty propTrayImportantProgramsContainsToolTip = new BooleanProperty(
       mProp, "trayImportantProgramsContainsToolTip", true);
+  
+  public static final BooleanProperty propTrayImportantProgramsShowingSortNumber = new BooleanProperty(
+      mProp, "trayImportantProgramsShowingSortNumber", true);
 
   /*
    * Toolbar settings

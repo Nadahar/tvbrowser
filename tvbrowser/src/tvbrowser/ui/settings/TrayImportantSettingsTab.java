@@ -23,7 +23,7 @@ import util.ui.UiUtilities;
 
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.factories.Borders;
-import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.factories.CC;
 import com.jgoodies.forms.layout.FormLayout;
 
 import devplugin.SettingsItem;
@@ -49,6 +49,8 @@ public class TrayImportantSettingsTab implements SettingsTab {
   private JEditorPane mHelpLabel;
   private JRadioButton mShowIconAndName, mShowName, mShowIcon;
   
+  private JCheckBox mShowSortNumber;
+  
   private JComboBox mPriority;
   private JLabel mPriorityText;
   
@@ -57,10 +59,10 @@ public class TrayImportantSettingsTab implements SettingsTab {
   
   public JPanel createSettingsPanel() {
     mInstance = this;
-    CellConstraints cc = new CellConstraints();
+    
     PanelBuilder builder = new PanelBuilder(new FormLayout("5dlu,12dlu,pref,5dlu,pref,5dlu,pref:grow,5dlu",
         "pref,5dlu,pref,pref,pref,pref,pref,10dlu,pref,5dlu,pref," +
-        "pref,pref,10dlu,pref,5dlu,pref,pref,pref,fill:pref:grow,pref"));
+        "pref,pref,5dlu,pref,10dlu,pref,5dlu,pref,pref,pref,fill:pref:grow,pref"));
     builder.border(Borders.DIALOG);
     
     mIsEnabled = new JCheckBox(mLocalizer.msg("importantEnabled","Show important programs"),Settings.propTrayImportantProgramsEnabled.getBoolean());
@@ -87,6 +89,8 @@ public class TrayImportantSettingsTab implements SettingsTab {
     bg1.add(mShowIcon);
     bg1.add(mShowName);
     
+    mShowSortNumber = new JCheckBox(mLocalizer.msg("showChannelNumber", "Show sort number"),Settings.propTrayImportantProgramsShowingSortNumber.getBoolean());
+    
     mShowDate = new JCheckBox(mLocalizer.msg("showDate","Show date"),Settings.propTrayImportantProgramsContainsDate.getBoolean());
     mShowTime = new JCheckBox(mLocalizer.msg("showTime","Show start time"),Settings.propTrayImportantProgramsContainsTime.getBoolean());
     mShowToolTip = new JCheckBox(mLocalizer.msg("showToolTip","Show additional information of the program in a tool tip"),Settings.propTrayImportantProgramsContainsToolTip.getBoolean());
@@ -112,28 +116,30 @@ public class TrayImportantSettingsTab implements SettingsTab {
     mPriority.setSelectedIndex(Settings.propTrayImportantProgramsPriority.getInt());
     mPriority.setRenderer(new MarkPriorityComboBoxRenderer(mPriority.getRenderer()));
 
-    priority.add(mPriorityText, cc.xy(1,2));
-    priority.add(mPriority, cc.xy(3,2));
+    priority.add(mPriorityText, CC.xy(1,2));
+    priority.add(mPriority, CC.xy(3,2));
     
-    JPanel c = (JPanel) builder.addSeparator(mLocalizer.msg("important","Important programs"), cc.xyw(1,1,8));
-    builder.add(mIsEnabled, cc.xyw(2,3,6));
-    builder.add(mShowInTray, cc.xyw(3,4,5));
-    builder.add(mShowInSubMenu, cc.xyw(3,5,5));
-    mSizeLabel = builder.addLabel(mLocalizer.msg("importantSize","Number of shown programs:"), cc.xy(3,6));
-    builder.add(mSize, cc.xy(5,6));
-    mSizeInfo = builder.addLabel(mLocalizer.msg("sizeInfo","(maximum: {0})",maxSizeValue), cc.xy(7,6));
-    builder.add(priority, cc.xyw(3,7,5));
+    JPanel c = (JPanel) builder.addSeparator(mLocalizer.msg("important","Important programs"), CC.xyw(1,1,8));
+    builder.add(mIsEnabled, CC.xyw(2,3,6));
+    builder.add(mShowInTray, CC.xyw(3,4,5));
+    builder.add(mShowInSubMenu, CC.xyw(3,5,5));
+    mSizeLabel = builder.addLabel(mLocalizer.msg("importantSize","Number of shown programs:"), CC.xy(3,6));
+    builder.add(mSize, CC.xy(5,6));
+    mSizeInfo = builder.addLabel(mLocalizer.msg("sizeInfo","(maximum: {0})",maxSizeValue), CC.xy(7,6));
+    builder.add(priority, CC.xyw(3,7,5));
     
-    JPanel c1 = (JPanel) builder.addSeparator(mLocalizer.msg("iconNameSeparator","Channel icons/channel name"), cc.xyw(1,9,8));
-    builder.add(mShowIconAndName, cc.xyw(2,11,6));
-    builder.add(mShowIcon, cc.xyw(2,12,6));
-    builder.add(mShowName, cc.xyw(2,13,6));
+    JPanel c1 = (JPanel) builder.addSeparator(mLocalizer.msg("iconNameSeparator","Channel icons/channel name"), CC.xyw(1,9,8));
+    builder.add(mShowIconAndName, CC.xyw(2,11,6));
+    builder.add(mShowIcon, CC.xyw(2,12,6));
+    builder.add(mShowName, CC.xyw(2,13,6));
     
-    JPanel c2 = (JPanel) builder.addSeparator(mLocalizer.msg("settings","Settings"), cc.xyw(1,15,8));
-    builder.add(mShowDate, cc.xyw(2,17,6));
-    builder.add(mShowTime, cc.xyw(2,18,6));
-    builder.add(mShowToolTip, cc.xyw(2,19,6));
-    builder.add(mHelpLabel, cc.xyw(1,21,8));
+    builder.add(mShowSortNumber, CC.xyw(2,15,6));
+    
+    JPanel c2 = (JPanel) builder.addSeparator(mLocalizer.msg("settings","Settings"), CC.xyw(1,17,8));
+    builder.add(mShowDate, CC.xyw(2,19,6));
+    builder.add(mShowTime, CC.xyw(2,20,6));
+    builder.add(mShowToolTip, CC.xyw(2,21,6));
+    builder.add(mHelpLabel, CC.xyw(1,23,8));
     
     mSeparator1 = (JLabel)c.getComponent(0);
     mIconSeparator = (JLabel)c1.getComponent(0);
@@ -215,6 +221,9 @@ public class TrayImportantSettingsTab implements SettingsTab {
     }
     if(mPriority != null) {
       Settings.propTrayImportantProgramsPriority.setInt(mPriority.getSelectedIndex());
+    }
+    if(mShowSortNumber != null) {
+      Settings.propTrayImportantProgramsShowingSortNumber.setBoolean(mShowSortNumber.isSelected());
     }
   }
 

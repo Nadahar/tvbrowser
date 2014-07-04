@@ -56,6 +56,7 @@ import javax.swing.WindowConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import tvbrowser.core.Settings;
 import tvbrowser.extras.favoritesplugin.core.Favorite;
 import tvbrowser.extras.favoritesplugin.dlgs.FavoriteTreeModel;
 import tvbrowser.ui.mainframe.MainFrame;
@@ -279,7 +280,14 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
             "until {0}", program.getEndTimeString()));
         channelPanel.add(endTime, BorderLayout.PAGE_START);
       }
-      String channelName = program.getChannel().getName();
+      
+      String sortNumber = "";
+      
+      if(Settings.propShowSortNumberInProgramLists.getBoolean() && program.getChannel().getSortNumber().trim().length() > 0) {
+        sortNumber = program.getChannel().getSortNumber() + ". ";
+      }
+      
+      String channelName = sortNumber + program.getChannel().getName();
       JLabel channelLabel = new JLabel();
       channelLabel.setToolTipText(channelName);
       channelLabel.setIcon(UiUtilities.createChannelIcon(program.getChannel()

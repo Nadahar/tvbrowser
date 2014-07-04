@@ -19,7 +19,7 @@ import util.ui.UiUtilities;
 
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.factories.Borders;
-import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.factories.CC;
 import com.jgoodies.forms.layout.FormLayout;
 
 import devplugin.SettingsItem;
@@ -41,16 +41,17 @@ public class TrayNowSettingsTab implements SettingsTab {
   private JEditorPane mHelpLabel;
   private JRadioButton mShowIconAndName, mShowName, mShowIcon;
   
+  private JCheckBox mShowSortNumber;
+  
   private static boolean mTrayIsEnabled = Settings.propTrayIsEnabled.getBoolean();
   private static TrayNowSettingsTab mInstance = null;
   
   public JPanel createSettingsPanel() {
     mInstance = this;
     
-    CellConstraints cc = new CellConstraints();
     PanelBuilder builder = new PanelBuilder(new FormLayout("5dlu,12dlu,pref:grow,5dlu",
         "pref,5dlu,pref,pref,pref,10dlu,pref,5dlu,pref,pref," +
-        "pref,10dlu,pref,5dlu,pref,pref,fill:pref:grow,pref"));
+        "pref,5dlu,pref,10dlu,pref,5dlu,pref,pref,fill:pref:grow,pref"));
     builder.border(Borders.DIALOG);
     
     mIsEnabled = new JCheckBox(mLocalizer.msg("nowEnabled","Show Now running programs"),Settings.propTrayNowProgramsEnabled.getBoolean());
@@ -72,6 +73,8 @@ public class TrayNowSettingsTab implements SettingsTab {
     bg1.add(mShowIcon);
     bg1.add(mShowName);
     
+    mShowSortNumber = new JCheckBox(mLocalizer.msg("showChannelNumber", "Show sort number"),Settings.propTrayNowProgramsShowingSortNumber.getBoolean());
+    
     mShowTime = new JCheckBox(mLocalizer.msg("showTime","Show start time"),Settings.propTrayNowProgramsContainsTime.getBoolean());
     mShowToolTip = new JCheckBox(mLocalizer.msg("showToolTip","Show additional information of the program in a tool tip"),Settings.propTrayNowProgramsContainsToolTip.getBoolean());
     mShowToolTip.setToolTipText(mLocalizer.msg("toolTipTip","Tool tips are small helper to something, like this one."));
@@ -84,20 +87,22 @@ public class TrayNowSettingsTab implements SettingsTab {
       }
     });
     
-    JPanel c = (JPanel) builder.addSeparator(mLocalizer.msg("now","Now running programs"), cc.xyw(1,1,4));
-    builder.add(mIsEnabled, cc.xyw(2,3,2));
-    builder.add(mShowInTray, cc.xy(3,4));
-    builder.add(mShowInSubMenu, cc.xy(3,5));
+    JPanel c = (JPanel) builder.addSeparator(mLocalizer.msg("now","Now running programs"), CC.xyw(1,1,4));
+    builder.add(mIsEnabled, CC.xyw(2,3,2));
+    builder.add(mShowInTray, CC.xy(3,4));
+    builder.add(mShowInSubMenu, CC.xy(3,5));
     
-    JPanel c1 = (JPanel) builder.addSeparator(mLocalizer.msg("iconNameSeparator","Channel icons/channel name"), cc.xyw(1,7,4));
-    builder.add(mShowIconAndName, cc.xyw(2,9,2));
-    builder.add(mShowIcon, cc.xyw(2,10,2));
-    builder.add(mShowName, cc.xyw(2,11,2));
+    JPanel c1 = (JPanel) builder.addSeparator(mLocalizer.msg("iconNameSeparator","Channel icons/channel name"), CC.xyw(1,7,4));
+    builder.add(mShowIconAndName, CC.xyw(2,9,2));
+    builder.add(mShowIcon, CC.xyw(2,10,2));
+    builder.add(mShowName, CC.xyw(2,11,2));
     
-    JPanel c2 = (JPanel) builder.addSeparator(mLocalizer.msg("settings","Settings"), cc.xyw(1,13,4));
-    builder.add(mShowTime, cc.xyw(2,15,2));
-    builder.add(mShowToolTip, cc.xyw(2,16,2));
-    builder.add(mHelpLabel, cc.xyw(1,18,4));
+    builder.add(mShowSortNumber, CC.xyw(2,13,2));
+    
+    JPanel c2 = (JPanel) builder.addSeparator(mLocalizer.msg("settings","Settings"), CC.xyw(1,15,4));
+    builder.add(mShowTime, CC.xyw(2,17,2));
+    builder.add(mShowToolTip, CC.xyw(2,18,2));
+    builder.add(mHelpLabel, CC.xyw(1,20,4));
     
     mSeparator1 = (JLabel)c.getComponent(0);
     mIconSeparator = (JLabel)c1.getComponent(0);
@@ -132,6 +137,7 @@ public class TrayNowSettingsTab implements SettingsTab {
     mShowIcon.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled);
     mShowTime.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled);
     mShowToolTip.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled);
+    mShowSortNumber.setEnabled(mIsEnabled.isSelected() && mTrayIsEnabled);
   }
   
   public void saveSettings() {
@@ -150,6 +156,9 @@ public class TrayNowSettingsTab implements SettingsTab {
     }
     if(mShowToolTip != null) {
       Settings.propTrayNowProgramsContainsToolTip.setBoolean(mShowToolTip.isSelected());
+    }
+    if(mShowSortNumber != null) {
+      Settings.propTrayNowProgramsShowingSortNumber.setBoolean(mShowSortNumber.isSelected());
     }
   }
 
