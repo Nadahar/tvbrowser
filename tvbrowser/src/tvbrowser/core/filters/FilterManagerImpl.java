@@ -26,6 +26,8 @@ import tvbrowser.core.filters.filtercomponents.ChannelFilterComponent;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.ui.filter.dlgs.EditFilterComponentDlg;
 import tvbrowser.ui.mainframe.MainFrame;
+import devplugin.ChannelFilter;
+import devplugin.ChannelFilterChangeListener;
 import devplugin.FilterChangeListener;
 import devplugin.FilterChangeListenerV2;
 import devplugin.FilterManager;
@@ -203,5 +205,32 @@ public class FilterManagerImpl implements FilterManager {
   @Override
   public void unregisterFilterChangeListener(FilterChangeListenerV2 listener) {
     FilterList.getInstance().getFilterTreeModel().unregisterFilterChangeListener(listener);
+  }
+
+  @Override
+  public ChannelFilter getCurrentChannelFilter() {
+    return MainFrame.getInstance().getChannelFilter();
+  }
+
+  @Override
+  public void setChannelFilter(ChannelFilter filter) {
+    MainFrame.getInstance().setChannelFilter(filter);
+  }
+
+  @Override
+  public ChannelFilter[] getAvailableChannelFilters() {
+    return ChannelFilterList.getInstance().getAvailableChannelFilter();
+  }
+
+  @Override
+  public void registerChannelFilterChangeListener(
+      ChannelFilterChangeListener listener) {
+    ChannelFilterList.getInstance().registerChannelFilterChangeListener(listener);
+  }
+
+  @Override
+  public void unregisterChannelFilterChangeListener(
+      ChannelFilterChangeListener listener) {
+    ChannelFilterList.getInstance().unregisterChannelFilterChangeListener(listener);
   }
 }

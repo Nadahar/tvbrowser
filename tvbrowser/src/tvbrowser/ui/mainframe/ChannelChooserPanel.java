@@ -46,7 +46,6 @@ import javax.swing.event.ListSelectionListener;
 
 import tvbrowser.core.ChannelList;
 import tvbrowser.core.Settings;
-import tvbrowser.core.filters.filtercomponents.ChannelFilterComponent;
 import tvbrowser.ui.programtable.DefaultProgramTableModel;
 import util.ui.ChannelContextMenu;
 import util.ui.ChannelListCellRenderer;
@@ -55,6 +54,7 @@ import util.ui.ListDragAndDropHandler;
 import util.ui.ListDropAction;
 import util.ui.UiUtilities;
 import devplugin.Channel;
+import devplugin.ChannelFilter;
 
 /**
  * @author bodum
@@ -65,7 +65,7 @@ public class ChannelChooserPanel extends JPanel implements ListDropAction {
   private JList mList;
   private MainFrame mParent;
   private boolean disableSync = false;
-  private ChannelFilterComponent mChannelFilter;
+  private ChannelFilter mChannelFilter;
   
   /**
    * @param frame
@@ -219,7 +219,7 @@ public class ChannelChooserPanel extends JPanel implements ListDropAction {
     DefaultProgramTableModel model = MainFrame.getInstance().getProgramTableModel();
     model.setChannels(ChannelList.getSubscribedChannels());
     MainFrame.getInstance().updateChannellist();
-    setChannelGroup(mChannelFilter);
+    setChannelFilter(mChannelFilter);
   }
 
   public void selectChannel(Channel channel) {
@@ -228,7 +228,7 @@ public class ChannelChooserPanel extends JPanel implements ListDropAction {
     mList.ensureIndexIsVisible(mList.getSelectedIndex());
   }
 
-  public void setChannelGroup(ChannelFilterComponent channelFilter) {
+  public void setChannelFilter(ChannelFilter channelFilter) {
     mChannelFilter = channelFilter;
     Channel[] channels = null;
     if (channelFilter != null) {

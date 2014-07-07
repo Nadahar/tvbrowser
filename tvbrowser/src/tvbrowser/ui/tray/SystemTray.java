@@ -54,7 +54,6 @@ import javax.swing.event.PopupMenuListener;
 import tvbrowser.TVBrowser;
 import tvbrowser.core.Settings;
 import tvbrowser.core.TvDataBase;
-import tvbrowser.core.filters.filtercomponents.ChannelFilterComponent;
 import tvbrowser.core.plugin.ButtonActionIf;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
@@ -72,6 +71,7 @@ import util.ui.UiUtilities;
 import util.ui.menu.MenuUtil;
 import devplugin.ActionMenu;
 import devplugin.Channel;
+import devplugin.ChannelFilter;
 import devplugin.Date;
 import devplugin.Program;
 import devplugin.SettingsItem;
@@ -827,11 +827,11 @@ public class SystemTray {
   }
 
   private boolean acceptedChannel(final ProgramMenuItem item) {
-    ChannelFilterComponent channelGroup = MainFrame.getInstance().getChannelGroup();
-    if (channelGroup == null) {
+    ChannelFilter channelFilter = MainFrame.getInstance().getChannelFilter();
+    if (channelFilter == null) {
       return true;
     }
-    return channelGroup.accept(item.getProgram());
+    return channelFilter.accept(item.getProgram());
   }
 
   private int getMaxItemCount() {

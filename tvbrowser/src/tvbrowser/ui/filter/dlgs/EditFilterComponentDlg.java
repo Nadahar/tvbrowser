@@ -49,6 +49,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
+import javax.swing.JWindow;
 import javax.swing.UIManager;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -109,6 +110,11 @@ public class EditFilterComponentDlg extends JDialog implements ActionListener, D
   private JEditorPane mFilterComponentDescription;
   private JPanel mTypeDescriptionPanel;
 
+  public EditFilterComponentDlg(Window parent, FilterComponent comp) {
+    super(parent, ModalityType.APPLICATION_MODAL);
+    init(parent,comp,null);
+  }
+  
   public EditFilterComponentDlg(JDialog parent) {
     this(parent, null);
   }

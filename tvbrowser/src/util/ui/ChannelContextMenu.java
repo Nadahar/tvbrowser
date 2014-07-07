@@ -14,9 +14,7 @@ import javax.swing.JRadioButtonMenuItem;
 import tvbrowser.core.ChannelList;
 import tvbrowser.core.DummyChannel;
 import tvbrowser.core.Settings;
-import tvbrowser.core.filters.FilterComponent;
-import tvbrowser.core.filters.FilterComponentList;
-import tvbrowser.core.filters.filtercomponents.ChannelFilterComponent;
+import tvbrowser.core.filters.ChannelFilterList;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
@@ -29,6 +27,7 @@ import util.browserlauncher.Launch;
 import util.ui.menu.MenuUtil;
 import devplugin.ActionMenu;
 import devplugin.Channel;
+import devplugin.ChannelFilter;
 
 /**
  * A class that builds a PopupMenu for a Channel.
@@ -206,20 +205,13 @@ public class ChannelContextMenu implements ActionListener {
         } else {
           JRadioButtonMenuItem filterItem = (JRadioButtonMenuItem) e
               .getSource();
-          String filterName = filterItem.getText();
-          final FilterComponent component = FilterComponentList.getInstance()
-              .getFilterComponentByName(filterName);
-          if (component != null && component instanceof ChannelFilterComponent) {
-            setChannelGroup((ChannelFilterComponent) component);
-          } else {
-            setChannelGroup(null);
-          }
+          setChanneFilter(ChannelFilterList.getInstance().getChannelFilterForName(filterItem.getText()));
         }
       }
     }
   }
 
-  private void setChannelGroup(final ChannelFilterComponent channelGroup) {
-    MainFrame.getInstance().setChannelGroup(channelGroup);
+  private void setChanneFilter(final ChannelFilter channelFilter) {
+    MainFrame.getInstance().setChannelFilter(channelFilter);
   }
 }
