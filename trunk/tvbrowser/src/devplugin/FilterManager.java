@@ -134,5 +134,44 @@ public interface FilterManager {
    * @since 3.3.4
    */
   public void unregisterFilterChangeListener(FilterChangeListenerV2 listener);
-
+  
+  /**
+   * Gets the current channel filter.
+   * <p>
+   * @return The current channel filter or <code>null</code> if no channel filter is active.
+   * @since 3.4.1
+   */
+  public ChannelFilter getCurrentChannelFilter();
+  
+  /**
+   * Sets the current channel filter.
+   * <p>
+   * @param filter The channel filter to set or <code>null</code> to disable current channel filter.
+   * @since 3.4.1
+   */
+  public void setChannelFilter(ChannelFilter filter);
+  
+  /**
+   * Gets the available channel filters.
+   * <p>
+   * @return The available channel filters.
+   * @since 3.4.1
+   */
+  public ChannelFilter[] getAvailableChannelFilters();
+  
+  /**
+   * Registers the given ChannelFilterChangeListener.
+   * <p>
+   * @param listener The listener to register
+   * @since 3.4.1
+   */
+  public void registerChannelFilterChangeListener(ChannelFilterChangeListener listener);
+  
+  /**
+   * Unregisters the given ChannelFilterChangeListener.
+   * <p>
+   * @param listener The listener to unregister.
+   * @since 3.4.1
+   */
+  public void unregisterChannelFilterChangeListener(ChannelFilterChangeListener listener);
 }

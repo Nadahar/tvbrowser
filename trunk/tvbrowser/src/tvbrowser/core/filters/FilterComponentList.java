@@ -27,7 +27,6 @@
 package tvbrowser.core.filters;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -328,6 +327,10 @@ public class FilterComponentList {
     }
     
     store();
+    
+    if(comp instanceof ChannelFilterComponent) {
+      ChannelFilterList.getInstance().fireChannelFilterAdded((ChannelFilterComponent)comp);
+    }
     //mComponentMap.put(comp.getName().toUpperCase(), comp);
   }
 
@@ -340,6 +343,10 @@ public class FilterComponentList {
     
     synchronized (mComponentList) {
       if(mComponentList.remove(filterComp)) {
+        if(filterComp instanceof ChannelFilterComponent) {
+          ChannelFilterList.getInstance().fireChannelFilterRemoved((ChannelFilterComponent)filterComp);
+        }
+        
         String key = filterComp.getClass().getCanonicalName();
         
         File componentFile = new File(tvbrowser.core.filters.FilterList.FILTER_DIRECTORY,"java."+key+".dat");

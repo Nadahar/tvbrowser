@@ -134,7 +134,7 @@ public class ProgramTableScrollPaneWrapper extends PluginCenterPanel {
           switch(type) {
             case INFO_EMPTY_FILTER_RESULT: MainFrame.getInstance().setProgramFilter(FilterManagerImpl.getInstance().getAllFilter());break;
             case INFO_NO_CHANNELS_SUBSCRIBED: PluginManagerImpl.getInstance().showSettings(SettingsItem.CHANNELS);break;
-            case INFO_EMPTY_CHANNEL_GROUP: MainFrame.getInstance().setChannelGroup(null);break;
+            case INFO_EMPTY_CHANNEL_GROUP: MainFrame.getInstance().setChannelFilter(null);break;
             case INFO_NO_DATA: MainFrame.getInstance().updateTvData();break;
           }
         }

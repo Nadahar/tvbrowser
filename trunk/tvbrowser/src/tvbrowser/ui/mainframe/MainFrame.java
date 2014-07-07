@@ -173,6 +173,7 @@ import tvbrowser.ui.update.SoftwareUpdateDlg;
 import tvbrowser.ui.update.SoftwareUpdateItem;
 import util.browserlauncher.Launch;
 import util.exc.ErrorHandler;
+import util.exc.TvBrowserException;
 import util.io.IOUtilities;
 import util.misc.OperatingSystem;
 import util.programkeyevent.ProgramKeyEventHandler;
@@ -192,6 +193,7 @@ import com.jgoodies.forms.layout.Sizes;
 
 import devplugin.Channel;
 import devplugin.ChannelDayProgram;
+import devplugin.ChannelFilter;
 import devplugin.Date;
 import devplugin.FilterChangeListenerV2;
 import devplugin.Plugin;
@@ -603,12 +605,15 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     setProgramFilter(filter);
     
     // set channel group filter
-    String channelGroupName = Settings.propLastUsedChannelGroup.getString();
-    if (channelGroupName != null) {
-      FilterComponent component = FilterComponentList.getInstance().getFilterComponentByName(channelGroupName);
-      if (component != null && component instanceof ChannelFilterComponent) {
-        setChannelGroup((ChannelFilterComponent) component);
-      }
+    String channelFilterName = Settings.propLastUsedChannelGroup.getString();
+    if (channelFilterName != null) {
+      ChannelFilter channelFilter;
+      try {
+        channelFilter = ChannelFilter.createChannelFilterForName(channelFilterName);
+        
+        setChannelFilter(channelFilter);
+      } catch (ClassCastException e1) {
+      } catch (TvBrowserException e1) {}
     }
 
     addKeyboardAction();
@@ -1405,7 +1410,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
       mScrollPaneWrapper.showInfoPanel(ProgramTableScrollPaneWrapper.INFO_EMPTY_FILTER_RESULT, filter.getName());
     }
     else {
-      setChannelGroup(mProgramTableModel.getChannelGroup());
+      setChannelFilter(mProgramTableModel.getChannelFilter());
     }
 
     updateFilterPanel();
@@ -1455,17 +1460,17 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
   /**
    * Set the active channel group
    * @param channelFilter
-   * @since 2.6
+   * @since 3.4.1
    */
-  public void setChannelGroup(ChannelFilterComponent channelFilter) {
-    mProgramTableModel.setChannelGroup(channelFilter);
+  public void setChannelFilter(ChannelFilter channelFilter) {
+    mProgramTableModel.setChannelFilter(channelFilter);
     if (channelFilter != null) {
       Settings.propLastUsedChannelGroup.setString(channelFilter.getName());
     }
     else {
       Settings.propLastUsedChannelGroup.setString(null);
     }
-    mChannelChooser.setChannelGroup(channelFilter);
+    mChannelChooser.setChannelFilter(channelFilter);
     mChannelChooser.repaint();
     mMenuBar.updateChannelGroupMenu();
     
@@ -1494,11 +1499,11 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     return mProgramTableModel.getProgramFilter();
   }
 
-  public ChannelFilterComponent getChannelGroup() {
+  public ChannelFilter getChannelFilter() {
     if (mProgramTableModel == null) {
       return null;
     }
-    return mProgramTableModel.getChannelGroup();
+    return mProgramTableModel.getChannelFilter();
   }
 
   public void quit() {
@@ -2080,10 +2085,10 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     } else {
       Settings.propLastUsedFilter.setString(FilterManagerImpl.getInstance().getDefaultFilter().getName());
     }
-
-    ChannelFilterComponent channelGroup = getChannelGroup();
-    if (channelGroup != null) {
-      Settings.propLastUsedChannelGroup.setString(channelGroup.getName());
+    
+    ChannelFilter channelFilter = getChannelFilter();
+    if (channelFilter != null) {
+      Settings.propLastUsedChannelGroup.setString(channelFilter.getName());
     }
     else {
       Settings.propLastUsedChannelGroup.setString(null);
@@ -2199,7 +2204,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     else {
       mScrollPaneWrapper.removeInfoPanel(ProgramTableScrollPaneWrapper.INFO_NO_DATA);
       mScrollPaneWrapper.removeInfoPanel(ProgramTableScrollPaneWrapper.INFO_EMPTY_FILTER_RESULT);
-      setChannelGroup(mProgramTableModel.getChannelGroup());
+      setChannelFilter(mProgramTableModel.getChannelFilter());
     }
   }
   

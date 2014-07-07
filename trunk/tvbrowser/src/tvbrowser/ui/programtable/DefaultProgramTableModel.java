@@ -40,12 +40,12 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import tvbrowser.core.TvDataBase;
-import tvbrowser.core.filters.filtercomponents.ChannelFilterComponent;
 import util.io.IOUtilities;
 import util.program.ProgramUtilities;
 import util.ui.ProgramPanel;
 import devplugin.Channel;
 import devplugin.ChannelDayProgram;
+import devplugin.ChannelFilter;
 import devplugin.Date;
 import devplugin.Program;
 import devplugin.ProgramFilter;
@@ -77,9 +77,9 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
   private int[] mOnAirRows;
   
   /**
-   * the currently active channel group
+   * the currently active channel filter
    */
-  private ChannelFilterComponent mChannelGroupFilter = null;
+  private ChannelFilter mChannelFilter = null;
 
   /**
    * Creates a new instance of DefaultProgramTableModel.
@@ -202,8 +202,8 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
     fireTableDataChanged(null);
   }
   
-  public void setChannelGroup(ChannelFilterComponent channelFilter) {
-    mChannelGroupFilter = channelFilter;
+  public void setChannelFilter(ChannelFilter channelFilter) {
+    mChannelFilter = channelFilter;
     updateTableContent();
     fireTableDataChanged(null);
   }
@@ -213,8 +213,8 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
     return mProgramFilter;
   }
   
-  public ChannelFilterComponent getChannelGroup() {
-    return mChannelGroupFilter;
+  public ChannelFilter getChannelFilter() {
+    return mChannelFilter;
   }
 
 
@@ -323,7 +323,7 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
 
 
   private boolean filterAccepts(Program program) {
-    return (mChannelGroupFilter == null || mChannelGroupFilter.accept(program)) && (mProgramFilter==null || mProgramFilter.accept(program));
+    return (mChannelFilter == null || mChannelFilter.accept(program)) && (mProgramFilter==null || mProgramFilter.accept(program));
   }
 
   public void setDate(Date date, ProgressMonitor monitor, Runnable callback)
@@ -398,7 +398,7 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
       }
     }
 
-    boolean showEmptyColumns = (mProgramFilter instanceof tvbrowser.core.filters.ShowAllFilter) && (mChannelGroupFilter == null);
+    boolean showEmptyColumns = (mProgramFilter instanceof tvbrowser.core.filters.ShowAllFilter) && (mChannelFilter == null);
 
     ArrayList<ArrayList<ProgramPanel>> newShownColumns = new ArrayList<ArrayList<ProgramPanel>>();
     ArrayList<Channel> newShownChannels = new ArrayList<Channel>();

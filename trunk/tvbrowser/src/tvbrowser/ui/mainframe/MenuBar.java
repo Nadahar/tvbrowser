@@ -62,6 +62,7 @@ import tvbrowser.TVBrowser;
 import tvbrowser.core.ChannelList;
 import tvbrowser.core.Settings;
 import tvbrowser.core.TvDataBase;
+import tvbrowser.core.filters.ChannelFilterList;
 import tvbrowser.core.filters.FilterComponent;
 import tvbrowser.core.filters.FilterComponentList;
 import tvbrowser.core.filters.FilterList;
@@ -92,6 +93,7 @@ import util.ui.UiUtilities;
 import util.ui.persona.Persona;
 import devplugin.ActionMenu;
 import devplugin.Channel;
+import devplugin.ChannelFilter;
 import devplugin.ContextMenuSeparatorAction;
 import devplugin.Date;
 import devplugin.PluginInfo;
@@ -559,7 +561,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 		menuItem.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
-				MainFrame.getInstance().setChannelGroup(null);
+				MainFrame.getInstance().setChannelFilter(null);
 			}
 		});
 		// selective groups
@@ -571,9 +573,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 			menuItem.addActionListener(new ActionListener() {
 
 				public void actionPerformed(ActionEvent e) {
-					MainFrame.getInstance().setChannelGroup(
-							(ChannelFilterComponent) FilterComponentList.getInstance()
-									.getFilterComponentByName(filterName));
+					MainFrame.getInstance().setChannelFilter(ChannelFilterList.getInstance().getChannelFilterForName(filterName));
 				}
 			});
 			menu.add(menuItem);
@@ -604,7 +604,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 					FilterComponentList.getInstance().add(rule);
 					FilterComponentList.getInstance().store();
 					MainFrame.getInstance()
-							.setChannelGroup((ChannelFilterComponent) rule);
+							.setChannelFilter(ChannelFilterList.getInstance().getChannelFilterForName(rule.getName()));
 				}
 			}
 		});
@@ -615,23 +615,27 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
     menuItemEdit.addActionListener(new ActionListener() {
 
       public void actionPerformed(ActionEvent e) {
-        FilterComponent rule = MainFrame.getInstance().getChannelGroup();
+        ChannelFilter rule = MainFrame.getInstance().getChannelFilter();
         if (rule != null) {
-          // rule must be removed before editing it, otherwise the dialog doesn't save it
-          FilterComponentList.getInstance().remove(rule.getName());
-          EditFilterComponentDlg dlg = new EditFilterComponentDlg((JFrame)null, rule);
-          FilterComponent newRule = dlg.getFilterComponent();
-          if (newRule == null) { // restore original rule
-            newRule = rule;
+          FilterComponent test = FilterComponentList.getInstance().getFilterComponentByName(rule.getName());
+          
+          if(test instanceof ChannelFilterComponent) {
+            // rule must be removed before editing it, otherwise the dialog doesn't save it
+            FilterComponentList.getInstance().remove(test.getName());
+            EditFilterComponentDlg dlg = new EditFilterComponentDlg(UiUtilities.getLastModalChildOf(MainFrame.getInstance()), test);
+            FilterComponent newRule = dlg.getFilterComponent();
+            if (newRule == null) { // restore original rule
+              newRule = test;
+            }
+            FilterComponentList.getInstance().add(newRule);
+            FilterComponentList.getInstance().store();
+            MainFrame.getInstance().setChannelFilter(ChannelFilterList.getInstance().getChannelFilterForName(newRule.getName()));
           }
-          FilterComponentList.getInstance().add(newRule);
-          FilterComponentList.getInstance().store();
-          MainFrame.getInstance().setChannelGroup((ChannelFilterComponent) newRule);
         }
       }
     });
     menu.add(menuItemEdit);
-    menuItemEdit.setEnabled(!MainFrame.isStarting() && MainFrame.getInstance().getChannelGroup() != null);
+    menuItemEdit.setEnabled(!MainFrame.isStarting() && MainFrame.getInstance().getChannelFilter() != null);
 	}
 
 	private JMenuItem createDateMenuItem(final Date date) {

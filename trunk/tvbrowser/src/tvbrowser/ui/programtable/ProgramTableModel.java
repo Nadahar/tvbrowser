@@ -26,9 +26,9 @@
 
 package tvbrowser.ui.programtable;
 
-import tvbrowser.core.filters.filtercomponents.ChannelFilterComponent;
 import util.ui.ProgramPanel;
 import devplugin.Channel;
+import devplugin.ChannelFilter;
 import devplugin.Date;
 import devplugin.ProgramFilter;
 
@@ -51,29 +51,11 @@ public interface ProgramTableModel {
   public void setProgramFilter(ProgramFilter filter);
   
   /**
-   * set the active channel group
+   * set the active channel filter
    * @param channelFilter
-   * @since 2.6
+   * @since 3.4.1
    */
-  public void setChannelGroup(ChannelFilterComponent channelFilter);
+  public void setChannelFilter(ChannelFilter channelFilter);
 
   public ProgramPanel getProgramPanel(int col, int row);
-  
-  /**
-   * Gets joint channel for the given channel.
-   * <p>
-   * @param ch The channel to get the joint channel for.
-   * @return The joint channel or <code>null</code> if there is not joined channel.
-   */
-//  public Channel getJointChannelFor(Channel ch);
-  
-  /**
-   * Gets the base channel for the given channel if joined or returns the channel.
-   * <p>
-   * @since 3.2.1
-   * @param ch The channel to check.
-   * @return The given channel if not joined or the base channel if joined.
-   */
-//  public Channel getChannelForChannel(Channel ch);
-
 }
