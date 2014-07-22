@@ -23,6 +23,7 @@
 package emailplugin;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -44,6 +45,7 @@ import util.ui.UiUtilities;
 
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.Sizes;
 
 import devplugin.SettingsTab;
 
@@ -97,7 +99,7 @@ public final class EMailSettingsTab implements SettingsTab {
     final JPanel configPanel = new JPanel();
 
     FormLayout layout = new FormLayout("5dlu, pref, 3dlu, pref:grow, fill:75dlu, 3dlu, pref, 5dlu",
-        "5dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 10dlu, fill:default:grow, 3dlu");
+        "5dlu, pref, 3dlu, pref, 3dlu, 15dlu, 25dlu, 3dlu, pref, 10dlu, fill:default:grow, 3dlu");
     configPanel.setLayout(layout);
 
     CellConstraints cc = new CellConstraints();
@@ -139,11 +141,12 @@ public final class EMailSettingsTab implements SettingsTab {
     configPanel.add(mParameterLabel, cc.xy(2, 6));
 
     mParameter = new ParamInputField(new EMailParamLibrary("mailto:?body="), mSettings.getParameter(), true);
+ //   mParameter.setPreferredSize(new Dimension(mParameter.getPreferredSize().width,Sizes.dialogUnitXAsPixel(60, mParameter)));
 
-    configPanel.add(mParameter, cc.xyw(4, 6, 4));
+    configPanel.add(mParameter, cc.xywh(4, 6, 4, 2));
 
     mHelpText = UiUtilities.createHtmlHelpTextArea(mLocalizer.msg("Desc","Desc", "{" + EMailParamLibrary.KEY_MAIL_TEXT + "}"));
-    configPanel.add(mHelpText, cc.xyw(2,8,6));
+    configPanel.add(mHelpText, cc.xyw(2,9,6));
 
     mDefaultApplication.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -155,7 +158,7 @@ public final class EMailSettingsTab implements SettingsTab {
 
     mConfigPanel = new PluginProgramConfigurationPanel(mPlugin.getSelectedPluginProgramFormattings(), mPlugin.getAvailableLocalPluginProgramFormattings(), EMailPlugin.getDefaultFormatting(), true ,true);
 
-    configPanel.add(mConfigPanel, cc.xyw(1, 10, 7));
+    configPanel.add(mConfigPanel, cc.xyw(1, 11, 7));
     
     JPanel panel = new JPanel(new BorderLayout());
     
