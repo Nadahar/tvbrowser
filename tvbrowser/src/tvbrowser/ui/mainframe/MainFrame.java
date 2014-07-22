@@ -125,12 +125,9 @@ import tvbrowser.core.Settings;
 import tvbrowser.core.TvDataBase;
 import tvbrowser.core.TvDataUpdater;
 import tvbrowser.core.contextmenu.ContextMenuManager;
-import tvbrowser.core.filters.FilterComponent;
-import tvbrowser.core.filters.FilterComponentList;
 import tvbrowser.core.filters.FilterList;
 import tvbrowser.core.filters.FilterManagerImpl;
 import tvbrowser.core.filters.ShowAllFilter;
-import tvbrowser.core.filters.filtercomponents.ChannelFilterComponent;
 import tvbrowser.core.plugin.PluginManagerImpl;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
@@ -1631,6 +1628,10 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
         }
         
         PluginTree.getInstance().updateUI();
+        
+        if(!Settings.propIsUsingFullscreen.getBoolean()) {
+          mRootNode.update();
+        }
       }
     });
   }
