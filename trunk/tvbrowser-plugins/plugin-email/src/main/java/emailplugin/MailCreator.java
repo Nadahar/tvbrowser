@@ -121,7 +121,7 @@ public class MailCreator {
     if (Desktop.isDesktopSupported()) {
       Desktop desktop = Desktop.getDesktop();
       try {
-        URI uriMailTo = new URI("mailto", "?body=" + content + "&subject=" + title, null);
+        URI uriMailTo = new URI("mailto", mSettings.getReceiver() + "?body=" + content + "&subject=" + title, null);
         desktop.mail(uriMailTo);
         sent = true;
       } catch (Exception e) {

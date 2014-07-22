@@ -82,6 +82,9 @@ public final class EMailSettingsTab implements SettingsTab {
   /** Application-Label */
   private JLabel mAppLabel;
   
+  private JLabel mReceiverLabel;
+  private JTextField mReceiver;
+  
   private PluginProgramConfigurationPanel mConfigPanel;
   
   /**
@@ -99,11 +102,18 @@ public final class EMailSettingsTab implements SettingsTab {
     final JPanel configPanel = new JPanel();
 
     FormLayout layout = new FormLayout("5dlu, pref, 3dlu, pref:grow, fill:75dlu, 3dlu, pref, 5dlu",
-        "5dlu, pref, 3dlu, pref, 3dlu, 15dlu, 25dlu, 3dlu, pref, 10dlu, fill:default:grow, 3dlu");
+        "5dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, 15dlu, 25dlu, 3dlu, pref, 10dlu, fill:default:grow, 3dlu");
     configPanel.setLayout(layout);
 
     CellConstraints cc = new CellConstraints();
 
+    mReceiver = new JTextField(mSettings.getReceiver());
+    
+    mReceiverLabel = new JLabel(mLocalizer.msg("receiver", "Default receiver"));
+    
+    configPanel.add(mReceiverLabel, cc.xy(2, 2));
+    configPanel.add(mReceiver, cc.xyw(4, 2, 4));
+    
     boolean osOk = OperatingSystem.isMacOs() || OperatingSystem.isWindows();
 
     mDefaultApplication = new JCheckBox();
@@ -117,14 +127,14 @@ public final class EMailSettingsTab implements SettingsTab {
       mDefaultApplication.setSelected(mSettings.getUseDefaultApplication());
     }
     
-    configPanel.add(mDefaultApplication, cc.xyw(2,2, 6));
+    configPanel.add(mDefaultApplication, cc.xyw(2,4, 6));
     
     mAppLabel = new JLabel(mLocalizer.msg("Application", "Application") + ":");
-    configPanel.add(mAppLabel, cc.xy(2, 4));
+    configPanel.add(mAppLabel, cc.xy(2, 6));
 
     mApplication = new JTextField(mSettings.getApplication());
 
-    configPanel.add(mApplication, cc.xyw(4, 4, 2));
+    configPanel.add(mApplication, cc.xyw(4, 6, 2));
 
     mAppFinder = new JButton("...");
     mAppFinder.addActionListener(new ActionListener() {
@@ -135,18 +145,17 @@ public final class EMailSettingsTab implements SettingsTab {
 
     });
 
-    configPanel.add(mAppFinder, cc.xy(7, 4));
+    configPanel.add(mAppFinder, cc.xy(7, 6));
 
     mParameterLabel = new JLabel(mLocalizer.msg("Parameter", "Parameter") + ":");
-    configPanel.add(mParameterLabel, cc.xy(2, 6));
+    configPanel.add(mParameterLabel, cc.xy(2, 8));
 
     mParameter = new ParamInputField(new EMailParamLibrary("mailto:?body="), mSettings.getParameter(), true);
- //   mParameter.setPreferredSize(new Dimension(mParameter.getPreferredSize().width,Sizes.dialogUnitXAsPixel(60, mParameter)));
-
-    configPanel.add(mParameter, cc.xywh(4, 6, 4, 2));
+    
+    configPanel.add(mParameter, cc.xywh(4, 8, 4, 2));
 
     mHelpText = UiUtilities.createHtmlHelpTextArea(mLocalizer.msg("Desc","Desc", "{" + EMailParamLibrary.KEY_MAIL_TEXT + "}"));
-    configPanel.add(mHelpText, cc.xyw(2,9,6));
+    configPanel.add(mHelpText, cc.xyw(2,11,6));
 
     mDefaultApplication.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -158,7 +167,7 @@ public final class EMailSettingsTab implements SettingsTab {
 
     mConfigPanel = new PluginProgramConfigurationPanel(mPlugin.getSelectedPluginProgramFormattings(), mPlugin.getAvailableLocalPluginProgramFormattings(), EMailPlugin.getDefaultFormatting(), true ,true);
 
-    configPanel.add(mConfigPanel, cc.xyw(1, 11, 7));
+    configPanel.add(mConfigPanel, cc.xyw(1, 13, 7));
     
     JPanel panel = new JPanel(new BorderLayout());
     
@@ -177,6 +186,8 @@ public final class EMailSettingsTab implements SettingsTab {
     mHelpText.setEnabled(!mDefaultApplication.isSelected());
     mParameterLabel.setEnabled(!mDefaultApplication.isSelected());
     mAppLabel.setEnabled(!mDefaultApplication.isSelected());
+    mReceiverLabel.setEnabled(!mDefaultApplication.isSelected());
+    mReceiver.setEnabled(!mDefaultApplication.isSelected());
   }
   
   /**
@@ -194,6 +205,7 @@ public final class EMailSettingsTab implements SettingsTab {
     mSettings.setApplication(mApplication.getText());
     mSettings.setParameter(mParameter.getText());
     mSettings.setDefaultApplication(mDefaultApplication.isSelected());
+    mSettings.setReceiver(mReceiver.getText().trim());
    
     mPlugin.setAvailableLocalPluginProgramFormattings(mConfigPanel.getAvailableLocalPluginProgramFormatings());
     mPlugin.setSelectedPluginProgramFormattings(mConfigPanel.getSelectedPluginProgramFormatings());

@@ -32,6 +32,7 @@ public final class EMailSettings extends PropertyBasedSettings {
   private static final String KEY_PARAMETER = "parameter";
   private static final String KEY_APPLICATION = "application";
   private static final String KEY_USE_DEFAULTAPP = "defaultapp";
+  private static final String KEY_RECEIVER = "receiver";
 
   public EMailSettings(final Properties properties) {
     super(properties);
@@ -70,4 +71,11 @@ public final class EMailSettings extends PropertyBasedSettings {
     set(KEY_SHOW_EMAIL_OPENED, show);
   }
 
+  public void setReceiver(String value) {
+    set(KEY_RECEIVER, value);
+  }
+  
+  public String getReceiver() {
+    return get(KEY_RECEIVER, "");
+  }
 }
