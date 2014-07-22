@@ -115,7 +115,7 @@ public class ParamInputField extends JPanel {
    */
   private void createGui(String text, boolean singleLine) {
     FormLayout layout = new FormLayout("fill:min:grow, 3dlu, default, 3dlu, default, 3dlu, default",
-                 "fill:min:grow, 3dlu, default");
+                 "fill:20dlu:grow, 3dlu, default");
     setLayout(layout);
     
     CellConstraints cc = new CellConstraints();
