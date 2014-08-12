@@ -82,6 +82,7 @@ import tvbrowser.ui.mainframe.actions.TVBrowserAction;
 import tvbrowser.ui.mainframe.actions.TVBrowserActions;
 import tvbrowser.ui.mainframe.toolbar.ContextMenu;
 import tvbrowser.ui.settings.ToolBarDragAndDropSettings;
+import tvdataservice.MarkedProgramsMap;
 import util.browserlauncher.Launch;
 import util.misc.OperatingSystem;
 import util.ui.FixedSizeIcon;
@@ -1091,6 +1092,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 		  infoBuilder.append("\nPersona: ").append(Persona.getInstance().getName());
 		  infoBuilder.append("\nIcons: ").append(Settings.propIcontheme.getString());
 		  infoBuilder.append("\nInfo-Icons: ").append(Settings.propInfoIconThemeID.getString());
+		  infoBuilder.append("\nNumber of markings: ").append(MarkedProgramsMap.getInstance().getMarkedPrograms().length);
 		  infoBuilder.append("\n\nInstalled plugins:");
 		  
 		  PluginProxy[] plugins = PluginProxyManager.getInstance().getAllPlugins();
@@ -1173,7 +1175,11 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
     mHelpMenu.add(mForumMI);
     mHelpMenu.add(mDownloadMI);
     mHelpMenu.add(mDonorMI);
-
+    mHelpMenu.addSeparator();
+    mHelpMenu.add(mDonateMI);
+    mHelpMenu.add(mDebugMI);
+    mHelpMenu.add(mAboutMI);
+    
     // the split panes reserve F6 and F8, so our accelerator keys don't work on split panes
     // therefore remove those bindings
     InputMap map = (InputMap) UIManager.get("SplitPane.ancestorInputMap");
