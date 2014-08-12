@@ -28,6 +28,8 @@
 package tvbrowser.ui.mainframe;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
@@ -64,6 +66,8 @@ public final class SoftwareUpdater {
 	private SoftwareUpdateItem[] mSoftwareUpdateItems;
 	private String mBlockRequestingPluginId;
 	private boolean mIsRequestingBlockArrayClear;
+	
+	private static final String FALLBACK_PLUGINS_GZ_URL = "http://www.tvbrowser.org/scripts/plugins.gz";
 
 	 /**
    * Creates an instance of this class.
@@ -90,12 +94,24 @@ public final class SoftwareUpdater {
    * @throws IOException
    */
   public SoftwareUpdater(URL url, int dialogType, PluginBaseInfo[] baseInfos) throws IOException {
+    File pluginsGZ = new File(Settings.getUserSettingsDirName(),"plugins.gz");
+    
+    IOUtilities.download(url, pluginsGZ);
+    
+    if(!pluginsGZ.isFile() || pluginsGZ.length() < 100) {
+      IOUtilities.download(new URL(FALLBACK_PLUGINS_GZ_URL), pluginsGZ);
+    }
+    
     BufferedReader reader = new BufferedReader(new InputStreamReader(
-    	IOUtilities.openSaveGZipInputStream(IOUtilities.getStream(url, 300000)),"ISO-8859-1"));
+    	IOUtilities.openSaveGZipInputStream(new FileInputStream(pluginsGZ)),"UTF-8"));
 
     mSoftwareUpdateItems=readSoftwareUpdateItems(reader,dialogType,false,baseInfos);
     
     reader.close();
+    
+    if(!pluginsGZ.delete()) {
+      pluginsGZ.deleteOnExit();
+    }
   }
 	
 	/**
