@@ -29,12 +29,13 @@ import java.io.ObjectOutputStream;
 /**
  * A class that contrains a list with Urls
  * 
- * @author Ren� Mach
+ * @author René Mach
  */
 public class UrlListEntry {
   private String mTitle;
   private boolean mIsShortLink;
   private String[] mUrlList;
+  private boolean mIsUsingRegualarExpression;
   
   /**
    * Creates an instance of this class for the first entry of a program title.
@@ -42,11 +43,13 @@ public class UrlListEntry {
    * @param title The title of the program.
    * @param entries The url list entries.
    * @param isShortLink If the short link should be shown.
+   * @param isUsingRegularExpression If the title is a regular expression.
    */
-  public UrlListEntry(String title, String[] entries,boolean isShortLink) {
+  public UrlListEntry(String title, String[] entries,boolean isShortLink, boolean isUsingRegularExpression) {
     mTitle = title;
     mUrlList = entries;
     mIsShortLink = isShortLink;
+    mIsUsingRegualarExpression = isUsingRegularExpression;
   }
   
   /**
@@ -113,6 +116,8 @@ public class UrlListEntry {
     for(String url : mUrlList) {
       out.writeUTF(url);
     }
+    
+    out.writeBoolean(mIsUsingRegualarExpression);
   }
   
   /**
@@ -130,5 +135,18 @@ public class UrlListEntry {
     for(int i = 0; i < mUrlList.length; i++) {
       mUrlList[i] = in.readUTF();
     }
+    
+    if(version >= 4) {
+      mIsUsingRegualarExpression = in.readBoolean();
+    }
+  }
+  
+  /**
+   * If the title match is using a regular expression.
+   * <p>
+   * @return <code>true</code> if the title match is using a regular expression, <code>false</code> if not.
+   */
+  public boolean isUsingRegularExpression() {
+    return mIsUsingRegualarExpression;
   }
 }

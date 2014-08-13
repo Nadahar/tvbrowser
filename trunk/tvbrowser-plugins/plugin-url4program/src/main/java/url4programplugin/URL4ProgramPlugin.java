@@ -24,6 +24,7 @@ package url4programplugin;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -83,6 +84,7 @@ import devplugin.Version;
 public class URL4ProgramPlugin extends Plugin {
 
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(URL4ProgramPlugin.class);
+  private static final Version VERSION = new Version(0, 11, 0, true);
 
   private Hashtable<String,UrlListEntry> mProgram2Url = new Hashtable<String,UrlListEntry>();
   private JDialog mDialog;
@@ -90,7 +92,7 @@ public class URL4ProgramPlugin extends Plugin {
   private JTable mUrlProgramTable;
 
   public static Version getVersion() {
-    return new Version(0, 10, 1, true);
+    return VERSION;
   }
 
   /** @return The Plugin Info. */
@@ -117,8 +119,22 @@ public class URL4ProgramPlugin extends Plugin {
     ContextMenuAction menu = null;
 
     if(!mProgram2Url.isEmpty()) {
-      UrlListEntry entry = mProgram2Url.get(p.getTitle());
-
+      String title = p.getTitle();
+      UrlListEntry entry = mProgram2Url.get(title);
+      
+      if(entry == null) {
+         Enumeration<UrlListEntry> elements = mProgram2Url.elements();
+         
+         while(elements.hasMoreElements()) {
+           UrlListEntry test = elements.nextElement();
+           
+           if(test.isUsingRegularExpression() && title.matches(test.getProgramTitle())) {
+             entry = test;
+             break;
+           }
+         }
+      }
+      
       if(entry != null) {
         String[] url = entry.getUrls();
 
@@ -156,18 +172,22 @@ public class URL4ProgramPlugin extends Plugin {
 
     menu.setActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
+        String titleHelp = mLocalizer.msg("column1", "Program title")+":";
+        JTextField title = new JTextField(p.getTitle());
+        JCheckBox useRegularExpression = new JCheckBox(mLocalizer.msg("titleRegular", "Title is regular expression"));
+        String websiteHelp = mLocalizer.msg("column2", "Internet page(s)")+":";
         JTextField input = new JTextField();
         JCheckBox shortLink = new JCheckBox(mLocalizer.msg("fullLink","Show full link in context menu"),(entry == null ? true : !entry.isShortLinkEntry()));
         shortLink.setToolTipText(mLocalizer.msg("fullLinkTooltip","<html>If this is <b>not</b> selected only 'Open website' is shown in context menu.</html>"));
 
-        Object[] message = {mLocalizer.msg("addText","Adding of the internet page for the program:\n") + p.getTitle(), input, shortLink};
+        Object[] message = {mLocalizer.msg("addText","Adding of the internet page for the program:\n") + p.getTitle(), titleHelp, title, useRegularExpression, websiteHelp, input, shortLink};
 
         int i = JOptionPane.showConfirmDialog(UiUtilities.getLastModalChildOf(getParentFrame()),
             message,mLocalizer.msg("addTitle","Add internet page for program"),JOptionPane.OK_CANCEL_OPTION,JOptionPane.QUESTION_MESSAGE);
 
         if(i == JOptionPane.OK_OPTION && input.getText().length() > 0) {
           if(entry == null) {
-            mProgram2Url.put(p.getTitle(), new UrlListEntry(p.getTitle(),new String[] {input.getText()},!shortLink.isSelected()));
+            mProgram2Url.put(p.getTitle(), new UrlListEntry(p.getTitle(),new String[] {input.getText()},!shortLink.isSelected(),useRegularExpression.isSelected()));
           }
           else {
             entry.addUrl(input.getText(),!shortLink.isSelected());
@@ -285,8 +305,9 @@ public class URL4ProgramPlugin extends Plugin {
       }
     });
 
-    Object[][] tableEntries = new Object[keys.length][3];
+    Object[][] tableEntries = new Object[keys.length][4];
     String[] head = {mLocalizer.msg("column1","Program title"),
+                     mLocalizer.msg("column1a","RegEx"),
                      mLocalizer.msg("column2","Internet page"),
                      mLocalizer.msg("column3","Complete link")};
 
@@ -302,14 +323,17 @@ public class URL4ProgramPlugin extends Plugin {
         value.append(";").append(urls[j]);
       }
 
-      tableEntries[i][1] = value.toString();
-      tableEntries[i][2] = !entry.isShortLinkEntry();
+      tableEntries[i][1] = entry.isUsingRegularExpression();
+      tableEntries[i][2] = value.toString();
+      tableEntries[i][3] = !entry.isShortLinkEntry();
     }
 
     mUrlProgramTable = new JTable(new ProgramUrlTableModel(tableEntries, head));
-    mUrlProgramTable.getColumnModel().getColumn(2).setCellRenderer(new UrlTableRenderer());
-    mUrlProgramTable.getColumnModel().getColumn(2).setPreferredWidth(UiUtilities.getStringWidth(mUrlProgramTable.getFont(), mLocalizer.msg("full","Show complete link")) + 30);
-    mUrlProgramTable.getColumnModel().getColumn(2).setMaxWidth(mUrlProgramTable.getColumnModel().getColumn(2).getPreferredWidth());
+    mUrlProgramTable.getColumnModel().getColumn(1).setCellRenderer(new UrlTableRenderer());
+    mUrlProgramTable.getColumnModel().getColumn(1).setMaxWidth(mUrlProgramTable.getColumnModel().getColumn(1).getPreferredWidth());    
+    mUrlProgramTable.getColumnModel().getColumn(3).setCellRenderer(new UrlTableRenderer());
+    mUrlProgramTable.getColumnModel().getColumn(3).setPreferredWidth(UiUtilities.getStringWidth(mUrlProgramTable.getFont(), mLocalizer.msg("full","Show complete link")) + 30);
+    mUrlProgramTable.getColumnModel().getColumn(3).setMaxWidth(mUrlProgramTable.getColumnModel().getColumn(3).getPreferredWidth());
 
     mUrlProgramTable.addKeyListener(new KeyAdapter() {
       public void keyPressed(KeyEvent e) {
@@ -328,7 +352,7 @@ public class URL4ProgramPlugin extends Plugin {
 
             int column = mUrlProgramTable.columnAtPoint(e.getPoint());
 
-            if(column == 2) {
+            if(column == 1 || column == 3) {
               Boolean oldValue = (Boolean)mUrlProgramTable.getValueAt(i, column);
 
               mUrlProgramTable.setValueAt(!oldValue.booleanValue(),i,column);
@@ -362,21 +386,9 @@ public class URL4ProgramPlugin extends Plugin {
 
     p.add(buttonPanel, BorderLayout.SOUTH);
     p.add(pane, BorderLayout.CENTER);
-
-    if(mProperties.containsKey("width") && mProperties.containsKey("height")) {
-      mDialog.setSize(Integer.parseInt(mProperties.getProperty("width")),
-          Integer.parseInt(mProperties.getProperty("height")));
-    } else {
-      mDialog.setSize(500,300);
-    }
-
-    if(mProperties.containsKey("x") && mProperties.containsKey("y")) {
-      mDialog.setLocation(Integer.parseInt(mProperties.getProperty("x")),
-          Integer.parseInt(mProperties.getProperty("y")));
-    } else {
-      mDialog.setLocationRelativeTo(w);
-    }
-
+    
+    layoutWindow("programURLTableDialog", mDialog, new Dimension(600,300));
+    
     mDialog.setVisible(true);
 
     if (mUrlProgramTable.isEditing()) {
@@ -392,11 +404,12 @@ public class URL4ProgramPlugin extends Plugin {
 
     for(int i = 0; i < mUrlProgramTable.getRowCount(); i++) {
       String key = (String)mUrlProgramTable.getValueAt(i, 0);
-      String value = (String)mUrlProgramTable.getValueAt(i, 1);
-      Boolean b = !(Boolean)mUrlProgramTable.getValueAt(i, 2);
+      Boolean regEx = (Boolean)mUrlProgramTable.getValueAt(i, 1);
+      String value = (String)mUrlProgramTable.getValueAt(i, 2);
+      Boolean b = !(Boolean)mUrlProgramTable.getValueAt(i, 3);
 
       if(value != null && value.length() > 0) {
-        mProgram2Url.put(key,new UrlListEntry(key,value.split(";"),b));
+        mProgram2Url.put(key,new UrlListEntry(key,value.split(";"),b,regEx));
       }
     }
   }
@@ -418,7 +431,7 @@ public class URL4ProgramPlugin extends Plugin {
     }
 
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-      if (columnIndex == 1) {
+      if (columnIndex == 0 || columnIndex == 2) {
         return true;
       }
 
@@ -449,7 +462,7 @@ public class URL4ProgramPlugin extends Plugin {
            shortLink = !(Boolean)o[1];
         }
 
-        mProgram2Url.put((String)key, new UrlListEntry((String)key, new String[] {value}, shortLink));
+        mProgram2Url.put((String)key, new UrlListEntry((String)key, new String[] {value}, shortLink, false));
       }
     }
     else {
@@ -463,7 +476,7 @@ public class URL4ProgramPlugin extends Plugin {
   }
 
   public void writeData(ObjectOutputStream out) throws IOException {
-    out.writeInt(3); // version
+    out.writeInt(4); // version
 
     out.writeInt(mProgram2Url.size());
 
@@ -476,8 +489,16 @@ public class URL4ProgramPlugin extends Plugin {
 
   private static class UrlTableRenderer extends DefaultTableCellRenderer {
     public Component getTableCellRendererComponent(JTable table, Object value,boolean isSelected, boolean hasFocus, int row, int column)  {
-
-      JCheckBox box = new JCheckBox(mLocalizer.msg("full","Show complete link"),((Boolean)value).booleanValue());
+      
+      JCheckBox box = null;
+      
+      if(column == 1) {
+        box = new JCheckBox("",((Boolean)value).booleanValue());
+      }
+      else {
+        box = new JCheckBox(mLocalizer.msg("full","Show complete link"),((Boolean)value).booleanValue());
+      }
+      
       box.setBorder(BorderFactory.createEmptyBorder(1,3,1,3));
 
       box.setOpaque(isSelected);
