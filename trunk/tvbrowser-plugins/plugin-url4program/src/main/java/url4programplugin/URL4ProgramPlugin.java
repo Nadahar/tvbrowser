@@ -47,6 +47,8 @@ import java.util.Properties;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
@@ -65,6 +67,7 @@ import javax.swing.table.DefaultTableModel;
 
 import util.browserlauncher.Launch;
 import util.ui.Localizer;
+import util.ui.TVBrowserIcons;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 import devplugin.ActionMenu;
@@ -84,7 +87,7 @@ import devplugin.Version;
 public class URL4ProgramPlugin extends Plugin {
 
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(URL4ProgramPlugin.class);
-  private static final Version VERSION = new Version(0, 11, 0, true);
+  private static final Version VERSION = new Version(0, 11, 1, true);
 
   private Hashtable<String,UrlListEntry> mProgram2Url = new Hashtable<String,UrlListEntry>();
   private JDialog mDialog;
@@ -187,7 +190,7 @@ public class URL4ProgramPlugin extends Plugin {
 
         if(i == JOptionPane.OK_OPTION && input.getText().length() > 0) {
           if(entry == null) {
-            mProgram2Url.put(p.getTitle(), new UrlListEntry(p.getTitle(),new String[] {input.getText()},!shortLink.isSelected(),useRegularExpression.isSelected()));
+            mProgram2Url.put(title.getText(), new UrlListEntry(p.getTitle(),new String[] {input.getText()},!shortLink.isSelected(),useRegularExpression.isSelected()));
           }
           else {
             entry.addUrl(input.getText(),!shortLink.isSelected());
@@ -377,12 +380,24 @@ public class URL4ProgramPlugin extends Plugin {
         }
       }
     });
+    
+    JButton add = new JButton(TVBrowserIcons.newIcon(TVBrowserIcons.SIZE_SMALL));
+    add.setToolTipText(mLocalizer.msg("tooltipAdd", "Add new entry"));
+    add.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        ((ProgramUrlTableModel)mUrlProgramTable.getModel()).addRow(new Object[] {"DUMMY",false,"",true});
+      }
+    });
 
     JScrollPane pane = new JScrollPane(mUrlProgramTable);
 
-    JPanel buttonPanel = new JPanel(new BorderLayout());
-    buttonPanel.add(ok, BorderLayout.EAST);
-    buttonPanel.add(delete, BorderLayout.WEST);
+    JPanel buttonPanel = new JPanel();
+    buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
+    buttonPanel.add(delete);
+    buttonPanel.add(Box.createRigidArea(new Dimension(5,0)));
+    buttonPanel.add(add);
+    buttonPanel.add(Box.createHorizontalGlue());
+    buttonPanel.add(ok);
 
     p.add(buttonPanel, BorderLayout.SOUTH);
     p.add(pane, BorderLayout.CENTER);
