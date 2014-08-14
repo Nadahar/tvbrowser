@@ -59,6 +59,7 @@ import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.codec.digest.Md5Crypt;
 
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.factories.Borders;
@@ -116,7 +117,7 @@ public class AndroidSync extends Plugin {
   private static final String PLUGIN_TYPE = "PLUGIN_TYPE";
   private static final String FILTER_TYPE = "FILTER_TYPE";
   
-  private static final Version mVersion = new Version(0, 15, 2, false);
+  private static final Version mVersion = new Version(0, 16, 0, false);
   private final String CrLf = "\r\n";
   private Properties mProperties;
   
@@ -131,6 +132,9 @@ public class AndroidSync extends Plugin {
   private PluginsProgramFilter[] mFilter;
   
   private int mMarkPriority;
+  
+  private Channel[] mUsedChannelArr;
+  private boolean mShowChannelInfo;
   
   public AndroidSync() {
     mProperties = new Properties();
@@ -154,6 +158,9 @@ public class AndroidSync extends Plugin {
     };
     
     mFilter = new PluginsProgramFilter[] { filter };
+    
+    mUsedChannelArr = new Channel[0];
+    mShowChannelInfo = false;
   }
   
   public static Version getVersion() {
@@ -191,6 +198,42 @@ public class AndroidSync extends Plugin {
           getPluginManager().showSettings(this);
         }
       }
+    }
+    else {
+      updateChannels();
+    }
+  }
+  
+  private void updateChannels() {
+    if(!mShowChannelInfo) {
+      Channel[] channels = getPluginManager().getSubscribedChannels();
+      
+      mShowChannelInfo = channels.length != mUsedChannelArr.length;
+      
+      if(!mShowChannelInfo) {
+        for(int i = 0; i < mUsedChannelArr.length; i++) {
+          if(!channels[i].equals(mUsedChannelArr[i])) {
+            mShowChannelInfo = true;
+            break;
+          }
+        }
+      }
+    }
+    
+    if(mShowChannelInfo) {
+      Window w = UiUtilities.getLastModalChildOf(getParentFrame());
+      
+      int selected = JOptionPane.showConfirmDialog(w, mLocalizer.msg("channelChangeMessage", "The subscribed channel list was changed.\n\nDo you want to upload the new channel list to the TV-Browser server?"), getInfo().getName() + ": " + mLocalizer.msg("channelChangeTitle", "Channels changed"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+      
+      if(selected == JOptionPane.YES_OPTION) {
+        upload(CHANNEL_SYNC_ADDRESS, true);
+      }
+      else {
+        mUsedChannelArr = getPluginManager().getSubscribedChannels();
+        saveMe();
+      }
+      
+      mShowChannelInfo = false;
     }
   }
   
@@ -292,7 +335,10 @@ public class AndroidSync extends Plugin {
     
     download(REMINDER_BACK_SYNC_ADDRESS, false);
     upload(REMINDER_UP_SYNC_ADDRESS, false);
+    
+    updateChannels();
   }
+  
   @Override
   public int getMarkPriorityForProgram(Program p) {
     return mMarkPriority;
@@ -557,12 +603,34 @@ public class AndroidSync extends Plugin {
       }
       
       updateTree();
+      
+      if(version >= 3) {
+        int n = in.readInt();
+        
+        ArrayList<Channel> usedChannel = new ArrayList<Channel>();
+        
+        for(int i = 0; i < n; i++) {
+          Channel ch = Channel.readData(in, true);
+          
+          if(ch != null) {
+            usedChannel.add(ch);
+          }
+          else {
+            mShowChannelInfo = true;
+          }
+        }
+        
+        mUsedChannelArr = usedChannel.toArray(new Channel[usedChannel.size()]);
+      }
+      else {
+        mUsedChannelArr = getPluginManager().getSubscribedChannels();
+      }
     }catch(IOException e) {}
   }
   
   @Override
   public void writeData(ObjectOutputStream out) throws IOException {
-    out.writeInt(2); // version
+    out.writeInt(3); // version
     
     out.writeInt(mBackSyncedPrograms.size());
     
@@ -580,6 +648,12 @@ public class AndroidSync extends Plugin {
     
     for(Program prog : mRemovedReminders) {
       out.writeUTF(prog.getUniqueID());
+    }
+    
+    out.writeInt(mUsedChannelArr.length);
+    
+    for(Channel channel : mUsedChannelArr) {
+      channel.writeData(out);
     }
   }
   
@@ -1000,6 +1074,11 @@ public class AndroidSync extends Plugin {
           } while (len > 0);
 
           System.out.println("DONE");
+          
+          if(address != null && address.equals(CHANNEL_SYNC_ADDRESS)) {
+            mUsedChannelArr = getPluginManager().getSubscribedChannels();
+            saveMe();
+          }
           
           if(info) {
             JOptionPane.showMessageDialog(getParentFrame(), mLocalizer.msg("success", "The data were send successfully."), mLocalizer.msg("successTitle", "Success"), JOptionPane.INFORMATION_MESSAGE);
