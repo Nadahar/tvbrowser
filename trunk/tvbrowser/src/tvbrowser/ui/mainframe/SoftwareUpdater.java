@@ -67,7 +67,7 @@ public final class SoftwareUpdater {
 	private String mBlockRequestingPluginId;
 	private boolean mIsRequestingBlockArrayClear;
 	
-	private static final String FALLBACK_PLUGINS_GZ_URL = "http://www.tvbrowser.org/scripts/plugins.gz";
+	public static final String FALLBACK_PLUGINS_GZ_URL = "http://www.tvbrowser.org/scripts/plugins.gz";
 
 	 /**
    * Creates an instance of this class.
@@ -78,7 +78,7 @@ public final class SoftwareUpdater {
    */
   public SoftwareUpdater(URL url, PluginBaseInfo[] baseInfos) throws IOException {
     BufferedReader reader = new BufferedReader(new InputStreamReader(
-    	IOUtilities.openSaveGZipInputStream(IOUtilities.getStream(url, 300000)),"ISO-8859-1"));
+    	IOUtilities.openSaveGZipInputStream(IOUtilities.getStream(url, 300000)),"ISO-8859-15"));
 
     mSoftwareUpdateItems=readSoftwareUpdateItems(reader,ONLY_UPDATE_TYPE,false,baseInfos);
 
@@ -103,7 +103,7 @@ public final class SoftwareUpdater {
     }
     
     BufferedReader reader = new BufferedReader(new InputStreamReader(
-    	IOUtilities.openSaveGZipInputStream(new FileInputStream(pluginsGZ)),"UTF-8"));
+    	IOUtilities.openSaveGZipInputStream(new FileInputStream(pluginsGZ)),"ISO-8859-15"));
 
     mSoftwareUpdateItems=readSoftwareUpdateItems(reader,dialogType,false,baseInfos);
     
@@ -124,7 +124,7 @@ public final class SoftwareUpdater {
 	 */
 	SoftwareUpdater(URL url, int dialogType, boolean dragNdrop) throws IOException {
 		BufferedReader reader = new BufferedReader(new InputStreamReader(
-			IOUtilities.openSaveGZipInputStream(IOUtilities.getStream(url, 300000)),"ISO-8859-1"));
+			IOUtilities.openSaveGZipInputStream(IOUtilities.getStream(url, 300000)),"ISO-8859-15"));
 
 		mSoftwareUpdateItems=readSoftwareUpdateItems(reader,dialogType,dragNdrop,null);
 
