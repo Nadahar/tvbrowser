@@ -87,7 +87,7 @@ import devplugin.Version;
 public class URL4ProgramPlugin extends Plugin {
 
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(URL4ProgramPlugin.class);
-  private static final Version VERSION = new Version(0, 11, 1, true);
+  private static final Version VERSION = new Version(0, 11, 2, true);
 
   private Hashtable<String,UrlListEntry> mProgram2Url = new Hashtable<String,UrlListEntry>();
   private JDialog mDialog;
@@ -183,6 +183,13 @@ public class URL4ProgramPlugin extends Plugin {
         JCheckBox shortLink = new JCheckBox(mLocalizer.msg("fullLink","Show full link in context menu"),(entry == null ? true : !entry.isShortLinkEntry()));
         shortLink.setToolTipText(mLocalizer.msg("fullLinkTooltip","<html>If this is <b>not</b> selected only 'Open website' is shown in context menu.</html>"));
 
+        if(entry != null) {
+          title.setText(entry.getProgramTitle());
+          title.setEnabled(false);
+          useRegularExpression.setSelected(entry.isUsingRegularExpression());
+          useRegularExpression.setEnabled(false);
+        }
+        
         Object[] message = {mLocalizer.msg("addText","Adding of the internet page for the program:\n") + p.getTitle(), titleHelp, title, useRegularExpression, websiteHelp, input, shortLink};
 
         int i = JOptionPane.showConfirmDialog(UiUtilities.getLastModalChildOf(getParentFrame()),
