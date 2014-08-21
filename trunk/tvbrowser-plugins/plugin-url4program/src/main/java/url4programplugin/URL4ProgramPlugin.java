@@ -177,11 +177,7 @@ public class URL4ProgramPlugin extends Plugin {
       if(!entryList.isEmpty()) {
         menu = new ContextMenuAction("URL4ProgramPlugin",createImageIcon("apps","internet-web-browser",16));
 
-        Action[] urlActions = createOpenActionMenu(entryList);
-
-        Action[] allActions = new Action[urlActions.length + 2];
-
-        System.arraycopy(urlActions,0,allActions,0,urlActions.length);
+        Action[] allActions = createOpenActionMenu(entryList);
 
         allActions[allActions.length-2] = ContextMenuSeparatorAction.getInstance();
         allActions[allActions.length-1] = createAddMenu(p,entry);
@@ -242,7 +238,7 @@ public class URL4ProgramPlugin extends Plugin {
   private Action[] createOpenActionMenu(ArrayList<ContextEntry> entryList) {
     Collections.sort(entryList);
     
-    ContextMenuAction[] actions = new ContextMenuAction[entryList.size()];
+    Action[] actions = new Action[entryList.size()+2];
     
     for(int i = 0; i < entryList.size(); i++) {
       ContextEntry entry = entryList.get(i);
@@ -257,13 +253,15 @@ public class URL4ProgramPlugin extends Plugin {
         }
       }
 
-      actions[i] = new ContextMenuAction(mLocalizer.msg("open", "Open {0}", "'" + text + "'"),createImageIcon("apps","internet-web-browser",16));
-      actions[i].putValue(Action.ACTION_COMMAND_KEY, entry.mUrl);
-      actions[i].setActionListener(new ActionListener() {
+      ContextMenuAction action = new ContextMenuAction(mLocalizer.msg("open", "Open {0}", "'" + text + "'"),createImageIcon("apps","internet-web-browser",16));
+      action.putValue(Action.ACTION_COMMAND_KEY, entry.mUrl);
+      action.setActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           Launch.openURL(e.getActionCommand());
         }
       });
+      
+      actions[i] = action;
     }
 
     /*ContextMenuAction menu = new ContextMenuAction();
