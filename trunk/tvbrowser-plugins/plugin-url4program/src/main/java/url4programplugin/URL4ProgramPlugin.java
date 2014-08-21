@@ -37,8 +37,10 @@ import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -87,7 +89,7 @@ import devplugin.Version;
 public class URL4ProgramPlugin extends Plugin {
 
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(URL4ProgramPlugin.class);
-  private static final Version VERSION = new Version(0, 11, 2, true);
+  private static final Version VERSION = new Version(0, 12, 0, true);
 
   private Hashtable<String,UrlListEntry> mProgram2Url = new Hashtable<String,UrlListEntry>();
   private JDialog mDialog;
@@ -114,6 +116,20 @@ public class URL4ProgramPlugin extends Plugin {
   public Properties storeSettings() {
     return mProperties;
   }
+  
+  private static class ContextEntry implements Comparable<ContextEntry> {
+    String mUrl;
+    boolean mShortLink;
+    
+    public ContextEntry(String url, boolean shortLink) {
+      mUrl = url;
+      mShortLink = shortLink;
+    }
+
+    public int compareTo(ContextEntry o) {
+      return mUrl.compareToIgnoreCase(o.mUrl);
+    }
+  }
 
   /**
    * @return The ActionMenu for this Plugin.
@@ -123,40 +139,54 @@ public class URL4ProgramPlugin extends Plugin {
 
     if(!mProgram2Url.isEmpty()) {
       String title = p.getTitle();
+      ArrayList<String> urlList = new ArrayList<String>();
+      ArrayList<ContextEntry> entryList = new ArrayList<ContextEntry>();
       UrlListEntry entry = mProgram2Url.get(title);
       
-      if(entry == null) {
-         Enumeration<UrlListEntry> elements = mProgram2Url.elements();
-         
-         while(elements.hasMoreElements()) {
-           UrlListEntry test = elements.nextElement();
-           
-           if(test.isUsingRegularExpression() && title.matches(test.getProgramTitle())) {
-             entry = test;
-             break;
-           }
-         }
-      }
+      int entryMatchLength = 0;
       
       if(entry != null) {
-        String[] url = entry.getUrls();
-
-        if(url.length > 0) {
-          menu = new ContextMenuAction("URL4ProgramPlugin",createImageIcon("apps","internet-web-browser",16));
-
-          Action[] urlActions = createOpenActionMenu(entry.getUrls(),entry.isShortLinkEntry());
-
-          Action[] allActions = new Action[urlActions.length + 2];
-
-          System.arraycopy(urlActions,0,allActions,0,urlActions.length);
-
-          allActions[allActions.length-2] = ContextMenuSeparatorAction.getInstance();
-          allActions[allActions.length-1] = createAddMenu(p,entry);
-
-          return new ActionMenu(menu,allActions);
-        } else {
-          menu = createAddMenu(p,entry);
+        for(String url : entry.getUrls()) {
+          urlList.add(url);
+          entryList.add(new ContextEntry(url, entry.isShortLinkEntry()));
         }
+        
+        entryMatchLength = Integer.MAX_VALUE;
+      }
+      
+      Enumeration<UrlListEntry> elements = mProgram2Url.elements();
+      
+      while(elements.hasMoreElements()) {
+        UrlListEntry test = elements.nextElement();
+        
+        if(test.isUsingRegularExpression() && title.matches(test.getProgramTitle())) {
+          if(test.getProgramTitle().trim().length() > entryMatchLength) {
+            entry = test;
+            entryMatchLength = test.getProgramTitle().trim().length();
+          }
+          
+          for(String urlTest : test.getUrls()) {
+            if(!urlList.contains(urlTest)) {
+              urlList.add(urlTest);
+              entryList.add(new ContextEntry(urlTest, test.isShortLinkEntry()));
+            }
+          }
+        }
+      }
+      
+      if(!entryList.isEmpty()) {
+        menu = new ContextMenuAction("URL4ProgramPlugin",createImageIcon("apps","internet-web-browser",16));
+
+        Action[] urlActions = createOpenActionMenu(entryList);
+
+        Action[] allActions = new Action[urlActions.length + 2];
+
+        System.arraycopy(urlActions,0,allActions,0,urlActions.length);
+
+        allActions[allActions.length-2] = ContextMenuSeparatorAction.getInstance();
+        allActions[allActions.length-1] = createAddMenu(p,entry);
+
+        return new ActionMenu(menu,allActions);
       } else {
         menu = createAddMenu(p,entry);
       }
@@ -209,13 +239,16 @@ public class URL4ProgramPlugin extends Plugin {
     return menu;
   }
 
-  private Action[] createOpenActionMenu(String[] urls, boolean shortLink) {
-    ContextMenuAction[] actions = new ContextMenuAction[urls.length];
+  private Action[] createOpenActionMenu(ArrayList<ContextEntry> entryList) {
+    Collections.sort(entryList);
+    
+    ContextMenuAction[] actions = new ContextMenuAction[entryList.size()];
+    
+    for(int i = 0; i < entryList.size(); i++) {
+      ContextEntry entry = entryList.get(i);
+      String text = entry.mUrl;
 
-    for(int i = 0; i < urls.length; i++) {
-      String text = urls[i];
-
-      if(shortLink) {
+      if(entry.mShortLink) {
         text = text.substring(text.indexOf(".")+1);
         int index = text.indexOf("/");
 
@@ -225,7 +258,7 @@ public class URL4ProgramPlugin extends Plugin {
       }
 
       actions[i] = new ContextMenuAction(mLocalizer.msg("open", "Open {0}", "'" + text + "'"),createImageIcon("apps","internet-web-browser",16));
-      actions[i].putValue(Action.ACTION_COMMAND_KEY, urls[i]);
+      actions[i].putValue(Action.ACTION_COMMAND_KEY, entry.mUrl);
       actions[i].setActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           Launch.openURL(e.getActionCommand());
