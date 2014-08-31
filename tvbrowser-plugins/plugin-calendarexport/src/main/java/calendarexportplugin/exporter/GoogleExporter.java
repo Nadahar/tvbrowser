@@ -37,6 +37,7 @@ import util.exc.ErrorHandler;
 import util.io.IOUtilities;
 import util.paramhandler.ParamParser;
 import util.program.AbstractPluginProgramFormating;
+import util.ui.DontShowAgainMessageBox;
 import util.ui.Localizer;
 import util.ui.login.LoginDialog;
 import calendarexportplugin.CalendarExportPlugin;
@@ -191,7 +192,7 @@ public class GoogleExporter extends AbstractExporter {
       }
 
       if (uploadedItems) {
-        JOptionPane.showMessageDialog(CalendarExportPlugin.getInstance().getBestParentFrame(), mLocalizer.msg("exportDone", "Google Export done."), mLocalizer.msg("export", "Export"), JOptionPane.INFORMATION_MESSAGE);
+        DontShowAgainMessageBox.dontShowAgainMessageBox(CalendarExportPlugin.getInstance(), "googleExportDone", CalendarExportPlugin.getInstance().getBestParentFrame(), mLocalizer.msg("exportDone", "Google Export done."), mLocalizer.msg("export", "Export"), JOptionPane.INFORMATION_MESSAGE);
       }
 
       return true;
