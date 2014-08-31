@@ -98,7 +98,7 @@ import devplugin.Version;
 public class URL4ProgramPlugin extends Plugin {
 
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(URL4ProgramPlugin.class);
-  private static final Version VERSION = new Version(0, 13, 1, true);
+  private static final Version VERSION = new Version(0, 13, 2, true);
 
   private Hashtable<String,UrlListEntry> mProgram2Url = new Hashtable<String,UrlListEntry>();
   private JDialog mDialog;
@@ -540,7 +540,7 @@ public class URL4ProgramPlugin extends Plugin {
           case 0: return entry.getProgramTitle();
           case 1: return entry.isRegExType();
           case 2: return getStringForArray(entry.getUrls());
-          case 3: return entry.isShortLinkEntry();
+          case 3: return !entry.isShortLinkEntry();
         }      
       }
       
@@ -556,7 +556,7 @@ public class URL4ProgramPlugin extends Plugin {
           case 0: entry.setTitle((String)aValue);break;
           case 1: entry.setType(((Boolean)aValue) ? UrlListEntry.REGEX_TYPE : UrlListEntry.TITLE_TYPE);break;
           case 2: entry.setUrlList(((String)aValue).split(";"));break;
-          case 3: entry.setShortLink((Boolean)aValue);break;
+          case 3: entry.setShortLink(!(Boolean)aValue);break;
         }
         
         fireTableDataChanged();
