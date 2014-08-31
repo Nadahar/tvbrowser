@@ -51,8 +51,10 @@ import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.DefaultCellEditor;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -66,18 +68,24 @@ import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellEditor;
 
 import util.browserlauncher.Launch;
 import util.ui.Localizer;
 import util.ui.TVBrowserIcons;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
+
+import com.jgoodies.forms.factories.CC;
+import com.jgoodies.forms.layout.FormLayout;
+
 import devplugin.ActionMenu;
 import devplugin.ContextMenuAction;
 import devplugin.ContextMenuSeparatorAction;
 import devplugin.Plugin;
 import devplugin.PluginInfo;
 import devplugin.Program;
+import devplugin.ProgramFilter;
 import devplugin.Version;
 
 /**
@@ -89,7 +97,7 @@ import devplugin.Version;
 public class URL4ProgramPlugin extends Plugin {
 
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(URL4ProgramPlugin.class);
-  private static final Version VERSION = new Version(0, 12, 0, true);
+  private static final Version VERSION = new Version(0, 13, 0, true);
 
   private Hashtable<String,UrlListEntry> mProgram2Url = new Hashtable<String,UrlListEntry>();
   private JDialog mDialog;
@@ -159,7 +167,7 @@ public class URL4ProgramPlugin extends Plugin {
       while(elements.hasMoreElements()) {
         UrlListEntry test = elements.nextElement();
         
-        if(test.isUsingRegularExpression() && title.matches(test.getProgramTitle())) {
+        if(test.matches(p)) {
           if(test.getProgramTitle().trim().length() > entryMatchLength) {
             entry = test;
             entryMatchLength = test.getProgramTitle().trim().length();
@@ -201,7 +209,11 @@ public class URL4ProgramPlugin extends Plugin {
 
     menu.setActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
+        
+        try {
+        
         String titleHelp = mLocalizer.msg("column1", "Program title")+":";
+        
         JTextField title = new JTextField(p.getTitle());
         JCheckBox useRegularExpression = new JCheckBox(mLocalizer.msg("titleRegular", "Title is regular expression"));
         String websiteHelp = mLocalizer.msg("column2", "Internet page(s)")+":";
@@ -210,9 +222,14 @@ public class URL4ProgramPlugin extends Plugin {
         shortLink.setToolTipText(mLocalizer.msg("fullLinkTooltip","<html>If this is <b>not</b> selected only 'Open website' is shown in context menu.</html>"));
 
         if(entry != null) {
+          if(entry.isFilterType()) {
+            titleHelp = mLocalizer.msg("filter", "Program filter") + ":";
+            useRegularExpression.setVisible(false);
+          }
+          
           title.setText(entry.getProgramTitle());
           title.setEnabled(false);
-          useRegularExpression.setSelected(entry.isUsingRegularExpression());
+          useRegularExpression.setSelected(entry.isRegExType());
           useRegularExpression.setEnabled(false);
         }
         
@@ -223,12 +240,14 @@ public class URL4ProgramPlugin extends Plugin {
 
         if(i == JOptionPane.OK_OPTION && input.getText().length() > 0) {
           if(entry == null) {
-            mProgram2Url.put(title.getText(), new UrlListEntry(p.getTitle(),new String[] {input.getText()},!shortLink.isSelected(),useRegularExpression.isSelected()));
+            mProgram2Url.put(title.getText(), new UrlListEntry((useRegularExpression.isSelected() ? UrlListEntry.REGEX_TYPE : UrlListEntry.TITLE_TYPE),p.getTitle(),new String[] {input.getText()},!shortLink.isSelected()));
           }
           else {
             entry.addUrl(input.getText(),!shortLink.isSelected());
           }
         }
+        
+      }catch(Throwable t) {t.printStackTrace();}
       }
     });
 
@@ -345,37 +364,47 @@ public class URL4ProgramPlugin extends Plugin {
         return o1.compareToIgnoreCase(o2);
       }
     });
-
-    Object[][] tableEntries = new Object[keys.length][4];
+    
     String[] head = {mLocalizer.msg("column1","Program title"),
                      mLocalizer.msg("column1a","RegEx"),
                      mLocalizer.msg("column2","Internet page"),
                      mLocalizer.msg("column3","Complete link")};
 
-    for(int i = 0; i < keys.length; i++) {
-      tableEntries[i][0] = keys[i];
-
-      UrlListEntry entry = mProgram2Url.get(keys[i]);
-
-      String[] urls = entry.getUrls();
-      StringBuilder value = new StringBuilder(urls[0]);
-
-      for(int j = 1; j < urls.length; j++) {
-        value.append(";").append(urls[j]);
-      }
-
-      tableEntries[i][1] = entry.isUsingRegularExpression();
-      tableEntries[i][2] = value.toString();
-      tableEntries[i][3] = !entry.isShortLinkEntry();
+    ArrayList<UrlListEntry> entryList = new ArrayList<UrlListEntry>();
+    
+    for(UrlListEntry entry : mProgram2Url.values()) {
+      entryList.add(entry);
     }
-
-    mUrlProgramTable = new JTable(new ProgramUrlTableModel(tableEntries, head));
+    
+    Collections.sort(entryList);
+    
+    mUrlProgramTable = new JTable(new ProgramUrlTableModel(entryList, head)) {
+      @Override
+      public TableCellEditor getCellEditor(int row, int column) {
+        UrlListEntry entry = ((ProgramUrlTableModel)getModel()).getEntryAtRow(row);
+        
+        if(column == 0 && entry.isFilterType()) {
+          ProgramFilter[] filters = getPluginManager().getFilterManager().getAvailableFilters();
+          
+          JComboBox comboBox = new JComboBox();
+          
+          for(ProgramFilter filter : filters) {
+            comboBox.addItem(filter.getName());
+          }
+          
+          return new DefaultCellEditor(comboBox);
+        }
+        else {
+          return super.getCellEditor(row, column);
+        }
+      }
+    };
     mUrlProgramTable.getColumnModel().getColumn(1).setCellRenderer(new UrlTableRenderer());
     mUrlProgramTable.getColumnModel().getColumn(1).setMaxWidth(mUrlProgramTable.getColumnModel().getColumn(1).getPreferredWidth());    
     mUrlProgramTable.getColumnModel().getColumn(3).setCellRenderer(new UrlTableRenderer());
     mUrlProgramTable.getColumnModel().getColumn(3).setPreferredWidth(UiUtilities.getStringWidth(mUrlProgramTable.getFont(), mLocalizer.msg("full","Show complete link")) + 30);
     mUrlProgramTable.getColumnModel().getColumn(3).setMaxWidth(mUrlProgramTable.getColumnModel().getColumn(3).getPreferredWidth());
-
+    
     mUrlProgramTable.addKeyListener(new KeyAdapter() {
       public void keyPressed(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
@@ -389,11 +418,13 @@ public class URL4ProgramPlugin extends Plugin {
         if (SwingUtilities.isLeftMouseButton(e)) {
           int i = mUrlProgramTable.getSelectedRow();
           if (i != -1) {
+            UrlListEntry entry = ((ProgramUrlTableModel)mUrlProgramTable.getModel()).getEntryAtRow(i);
+            
             delete.setEnabled(true);
 
             int column = mUrlProgramTable.columnAtPoint(e.getPoint());
 
-            if(column == 1 || column == 3) {
+            if((column == 1 && !entry.isFilterType()) || column == 3) {
               Boolean oldValue = (Boolean)mUrlProgramTable.getValueAt(i, column);
 
               mUrlProgramTable.setValueAt(!oldValue.booleanValue(),i,column);
@@ -423,7 +454,12 @@ public class URL4ProgramPlugin extends Plugin {
     add.setToolTipText(mLocalizer.msg("tooltipAdd", "Add new entry"));
     add.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        ((ProgramUrlTableModel)mUrlProgramTable.getModel()).addRow(new Object[] {"DUMMY",false,"",true});
+        if(JOptionPane.showConfirmDialog(UiUtilities.getLastModalChildOf(getParentFrame()), mLocalizer.msg("addProgramFilter","Add entry with program filter?"), mLocalizer.msg("addProgramFilterTitle","Type selection"), JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+          ((ProgramUrlTableModel)mUrlProgramTable.getModel()).addEntry(new UrlListEntry(UrlListEntry.FILTER_TYPE, getPluginManager().getFilterManager().getAllFilter().getName(), new String[] {"www.tvbrowser.org"}, false));
+        }
+        else {
+          ((ProgramUrlTableModel)mUrlProgramTable.getModel()).addEntry(new UrlListEntry(UrlListEntry.TITLE_TYPE, "DUMMY", new String[] {"www.tvbrowser.org"}, false));
+        }
       }
     });
 
@@ -454,16 +490,15 @@ public class URL4ProgramPlugin extends Plugin {
     mProperties.setProperty("height", String.valueOf(mDialog.getHeight()));
 
     mProgram2Url.clear();
-
-    for(int i = 0; i < mUrlProgramTable.getRowCount(); i++) {
-      String key = (String)mUrlProgramTable.getValueAt(i, 0);
-      Boolean regEx = (Boolean)mUrlProgramTable.getValueAt(i, 1);
-      String value = (String)mUrlProgramTable.getValueAt(i, 2);
-      Boolean b = !(Boolean)mUrlProgramTable.getValueAt(i, 3);
-
-      if(value != null && value.length() > 0) {
-        mProgram2Url.put(key,new UrlListEntry(key,value.split(";"),b,regEx));
+    
+    for(UrlListEntry entry : entryList) {
+      String key = entry.getProgramTitle();
+      
+      if(entry.isFilterType()) {
+        key = "FILTER###" + key;
       }
+      
+      mProgram2Url.put(key,entry);
     }
   }
 
@@ -472,15 +507,16 @@ public class URL4ProgramPlugin extends Plugin {
   }
 
   private static class ProgramUrlTableModel extends DefaultTableModel {
-
     private static final long serialVersionUID = 1L;
+    private ArrayList<UrlListEntry> mEntryList;
 
     /**
      * @param entries The entries of the table.
      * @param header The title of the columns.
      */
-    ProgramUrlTableModel(Object[][] entries, Object[] header) {
-      super(entries,header);
+    ProgramUrlTableModel(ArrayList<UrlListEntry> entries, Object[] header) {
+      super(header,entries.size());
+      mEntryList = entries;
     }
 
     public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -490,8 +526,79 @@ public class URL4ProgramPlugin extends Plugin {
 
       return false;
     }
+    
+    @Override
+    public Object getValueAt(int row, int column) {
+      if(row < mEntryList.size()) {
+        UrlListEntry entry = mEntryList.get(row);
+        
+        switch (column) {
+          case 0: return entry.getProgramTitle();
+          case 1: return entry.isRegExType();
+          case 2: return getStringForArray(entry.getUrls());
+          case 3: return entry.isShortLinkEntry();
+        }      
+      }
+      
+      return null;
+    }
+    
+    @Override
+    public void setValueAt(Object aValue, int row, int column) {
+      if(row < mEntryList.size()) {
+        UrlListEntry entry = mEntryList.get(row);
+        
+        switch (column) {
+          case 0: entry.setTitle((String)aValue);break;
+          case 1: entry.setType(((Boolean)aValue) ? UrlListEntry.REGEX_TYPE : UrlListEntry.TITLE_TYPE);break;
+          case 2: entry.setUrlList(((String)aValue).split(";"));break;
+          case 3: entry.setShortLink((Boolean)aValue);break;
+        }
+        
+        fireTableDataChanged();
+      }
+    }
+    
+    public void addEntry(UrlListEntry entry) {
+      mEntryList.add(entry);
+      super.addRow(new Object[]{entry.getProgramTitle(),entry.isRegExType(),getStringForArray(entry.getUrls()),entry.isShortLinkEntry()});
+    }
+    
+    public UrlListEntry getEntryAtRow(int row) {
+      if(row < mEntryList.size()) {
+        return mEntryList.get(row);
+      }
+      
+      return null;
+    }
+    
+    @Override
+    public void removeRow(int row) {
+      if(row < mEntryList.size()) {
+        mEntryList.remove(row);
+        super.removeRow(row);
+      }
+    }
+    
+/*    public ArrayList<UrlListEntry> getEntryList() {
+      return mEntryList;
+    }*/
+    
+    private String getStringForArray(String[] values) {
+      StringBuilder builder = new StringBuilder();
+      
+      if(values.length > 0) {
+        builder.append(values[0]);
+      }
+      
+      for(int i = 1; i < values.length; i++) {
+        builder.append(";").append(values[i]);
+      }
+      
+      return builder.toString();
+    }
   }
-
+  
   public void readData(ObjectInputStream in) throws IOException,
   ClassNotFoundException {
     int version = in.readInt();
@@ -515,7 +622,7 @@ public class URL4ProgramPlugin extends Plugin {
            shortLink = !(Boolean)o[1];
         }
 
-        mProgram2Url.put((String)key, new UrlListEntry((String)key, new String[] {value}, shortLink, false));
+        mProgram2Url.put((String)key, new UrlListEntry(UrlListEntry.TITLE_TYPE,(String)key, new String[] {value}, shortLink));
       }
     }
     else {
@@ -529,7 +636,7 @@ public class URL4ProgramPlugin extends Plugin {
   }
 
   public void writeData(ObjectOutputStream out) throws IOException {
-    out.writeInt(4); // version
+    out.writeInt(5); // version
 
     out.writeInt(mProgram2Url.size());
 
@@ -542,11 +649,14 @@ public class URL4ProgramPlugin extends Plugin {
 
   private static class UrlTableRenderer extends DefaultTableCellRenderer {
     public Component getTableCellRendererComponent(JTable table, Object value,boolean isSelected, boolean hasFocus, int row, int column)  {
+      UrlListEntry entry = ((ProgramUrlTableModel)table.getModel()).getEntryAtRow(row);
       
       JCheckBox box = null;
       
       if(column == 1) {
         box = new JCheckBox("",((Boolean)value).booleanValue());
+        box.setEnabled(!entry.isFilterType());
+        box.setVisible(!entry.isFilterType());
       }
       else {
         box = new JCheckBox(mLocalizer.msg("full","Show complete link"),((Boolean)value).booleanValue());
@@ -560,8 +670,12 @@ public class URL4ProgramPlugin extends Plugin {
         box.setBackground(table.getSelectionBackground());
         box.setForeground(table.getSelectionForeground());
       }
-
-      return box;
+      
+      JPanel center = new JPanel(new FormLayout("default:grow,default,default:grow","default"));
+      center.add(box, CC.xy(2,1));
+      center.setOpaque(false);
+      
+      return center;
     }
   }
 }
