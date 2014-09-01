@@ -151,6 +151,9 @@ public class FavoritesPlugin {
 
   private boolean mHasToUpdate = false;
 
+  private static final String EXPERT_MODE_KEY = "expertMode";
+  private static final String TYPE_SELECTION_KEY = "showTypeSelection";
+  
   /**
    * do not save the favorite tree during TV data updates because it might not be consistent
    */
@@ -959,13 +962,21 @@ public class FavoritesPlugin {
   }
 
   public boolean isUsingExpertMode() {
-    return mSettings.getProperty("expertMode","false").compareTo("true") == 0;
+    return mSettings.getProperty(EXPERT_MODE_KEY,"false").compareTo("true") == 0;
   }
-
+  
   public void setIsUsingExpertMode(boolean value) {
-    mSettings.setProperty("expertMode",String.valueOf(value));
+    mSettings.setProperty(EXPERT_MODE_KEY,String.valueOf(value));
   }
-
+  
+  public boolean showTypeSelection() {
+    return mSettings.getProperty(TYPE_SELECTION_KEY,"true").compareTo("true") == 0;
+  }
+  
+  public void setShowTypeSelection(boolean value) {
+    mSettings.setProperty(TYPE_SELECTION_KEY,String.valueOf(value));
+  }
+  
   public boolean isShowingPictures() {
     return mSettings.getProperty("showPictures","false").compareTo("true") == 0;
   }
@@ -995,8 +1006,7 @@ public class FavoritesPlugin {
     Window parent = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
     Favorite favorite;
     if (isUsingExpertMode()) {
-      
-      if(JOptionPane.showConfirmDialog(UiUtilities.getLastModalChildOf(MainFrame.getInstance()), mLocalizer.msg("askType.message", "Create a filter favorite?"), mLocalizer.msg("askType.title", "Type selection"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
+      if(showTypeSelection() && JOptionPane.showConfirmDialog(UiUtilities.getLastModalChildOf(MainFrame.getInstance()), mLocalizer.msg("askType.message", "Create a filter favorite?"), mLocalizer.msg("askType.title", "Type selection"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
         favorite = new FilterFavorite();
       }
       else {

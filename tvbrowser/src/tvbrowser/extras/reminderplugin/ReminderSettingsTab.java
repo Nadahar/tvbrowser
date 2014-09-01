@@ -129,6 +129,7 @@ public class ReminderSettingsTab implements SettingsTab {
    */
   public JPanel createSettingsPanel() {
     PropertyDefaults propDefaults = ReminderPropertyDefaults.getPropertyDefaults();
+    propDefaults.setProperties(mSettings);
     
     FormLayout layout = new FormLayout("5dlu,pref,5dlu,pref,pref:grow,3dlu,pref,3dlu,pref,5dlu",
         "pref,5dlu,pref,1dlu,pref,1dlu,pref,1dlu,pref,10dlu," +
@@ -140,14 +141,14 @@ public class ReminderSettingsTab implements SettingsTab {
     pb.border(Borders.DIALOG);
 
     final String[] extArr = { ".wav", ".aif", ".rmf", ".au", ".mid" };
-    String soundFName = propDefaults.getValueFromProperties(ReminderPropertyDefaults.SOUNDFILE_KEY, mSettings);
+    String soundFName = propDefaults.getValueFromProperties(ReminderPropertyDefaults.SOUNDFILE_KEY);
     String msg = mLocalizer.msg("soundFileFilter", "Sound file ({0})",
         "*" + StringUtils.join(extArr, ", *"));
 
 
-    mReminderWindowChB = new JCheckBox(mLocalizer.msg("reminderWindow", "Reminder window"), propDefaults.getValueFromProperties(ReminderPropertyDefaults.REMINDER_WINDOW_SHOW, mSettings).equalsIgnoreCase("true"));
+    mReminderWindowChB = new JCheckBox(mLocalizer.msg("reminderWindow", "Reminder window"), propDefaults.getValueFromProperties(ReminderPropertyDefaults.REMINDER_WINDOW_SHOW).equalsIgnoreCase("true"));
 
-    mShowAlwaysOnTop = new JCheckBox(mLocalizer.msg("alwaysOnTop","Show always on top"), propDefaults.getValueFromProperties(ReminderPropertyDefaults.REMINDER_WINDOW_ALWAYS_ON_TOP, mSettings).equalsIgnoreCase("true"));
+    mShowAlwaysOnTop = new JCheckBox(mLocalizer.msg("alwaysOnTop","Show always on top"), propDefaults.getValueFromProperties(ReminderPropertyDefaults.REMINDER_WINDOW_ALWAYS_ON_TOP).equalsIgnoreCase("true"));
     mShowAlwaysOnTop.setEnabled(mReminderWindowChB.isSelected());
 
     JPanel reminderWindowCfg = new JPanel(new FormLayout("12dlu,default:grow","default,1dlu,default,1dlu,default,1dlu,default"));
@@ -159,7 +160,7 @@ public class ReminderSettingsTab implements SettingsTab {
     int xPos = 1;
     int yPos = 1;
     
-    int selected = Integer.parseInt(propDefaults.getValueFromProperties(ReminderPropertyDefaults.REMINDER_WINDOW_POSITION, mSettings));
+    int selected = Integer.parseInt(propDefaults.getValueFromProperties(ReminderPropertyDefaults.REMINDER_WINDOW_POSITION));
     
     mReminderWindowPosition = new JRadioButton[13];
     
@@ -341,7 +342,7 @@ public class ReminderSettingsTab implements SettingsTab {
     pb.add(mShowDateSeparators, CC.xyw(2,29,7));
     pb.add(mProvideTab, CC.xyw(2,31,7));
     
-    mScrollTimeToNext = new JRadioButton(mLocalizer.msg("timeButtonScrollNext", "Scroll to next occurence of time from shown programs onward"), Boolean.parseBoolean(propDefaults.getValueFromProperties(ReminderPropertyDefaults.SCROLL_TIME_TYPE_NEXT, mSettings)));
+    mScrollTimeToNext = new JRadioButton(mLocalizer.msg("timeButtonScrollNext", "Scroll to next occurence of time from shown programs onward"), Boolean.parseBoolean(propDefaults.getValueFromProperties(ReminderPropertyDefaults.SCROLL_TIME_TYPE_NEXT)));
     mScrollTimeOnDay = new JRadioButton(mLocalizer.msg("timeButtonScrollDay", "Scroll to occurence of time on shown day in list"), !mScrollTimeToNext.isSelected());
     final JLabel scrollTimeLabel = new JLabel(mLocalizer.msg("timeButtonBehaviour", "Time buttons behaviour:"));
     

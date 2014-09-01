@@ -879,7 +879,7 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction, Tree
   public void newFavorite(FavoriteNode parent) {
     Favorite favorite;
     if (FavoritesPlugin.getInstance().isUsingExpertMode()) {
-      if(JOptionPane.showConfirmDialog(UiUtilities.getLastModalChildOf(MainFrame.getInstance()), FavoritesPlugin.mLocalizer.msg("askType.message", "Create a filter favorite?"), FavoritesPlugin.mLocalizer.msg("askType.title", "Type selection"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
+      if(FavoritesPlugin.getInstance().showTypeSelection() && JOptionPane.showConfirmDialog(UiUtilities.getLastModalChildOf(MainFrame.getInstance()), FavoritesPlugin.mLocalizer.msg("askType.message", "Create a filter favorite?"), FavoritesPlugin.mLocalizer.msg("askType.title", "Type selection"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
         favorite = new FilterFavorite();
       }
       else {
