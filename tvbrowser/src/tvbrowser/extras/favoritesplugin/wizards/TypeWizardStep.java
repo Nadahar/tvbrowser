@@ -44,16 +44,15 @@ import javax.swing.JTextField;
 
 import org.apache.commons.lang3.StringUtils;
 
-import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
 import tvbrowser.extras.favoritesplugin.core.ActorsFavorite;
 import tvbrowser.extras.favoritesplugin.core.AdvancedFavorite;
 import tvbrowser.extras.favoritesplugin.core.Favorite;
+import tvbrowser.extras.favoritesplugin.core.FilterFavorite;
 import tvbrowser.extras.favoritesplugin.core.TitleFavorite;
 import tvbrowser.extras.favoritesplugin.core.TopicFavorite;
 import tvbrowser.extras.favoritesplugin.dlgs.EditFavoriteDialog;
 import tvbrowser.extras.favoritesplugin.dlgs.FavoriteNode;
 import tvbrowser.extras.favoritesplugin.dlgs.FavoriteTreeModel;
-import tvbrowser.extras.favoritesplugin.dlgs.ManageFavoritesDialog;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.program.ProgramUtilities;
 import util.ui.LinkButton;
@@ -103,7 +102,7 @@ public class TypeWizardStep extends AbstractWizardStep {
    */
   private String mTopic;
   
-  private AdvancedFavorite mFavorite;
+  private Favorite mFavorite;
 
   public TypeWizardStep() {
     this(null);
@@ -134,10 +133,11 @@ public class TypeWizardStep extends AbstractWizardStep {
   public JPanel createContent(final WizardHandler handler) {
 
     LinkButton expertBtn = new LinkButton(mLocalizer.msg("advancedView", "Switch to expert view"), null);
+    LinkButton filterBtn = new LinkButton(mLocalizer.msg("filterFavorite", "Create filter favorite"), null);
 
     CellConstraints cc = new CellConstraints();
     PanelBuilder panelBuilder = new PanelBuilder(new FormLayout("5dlu, pref, default:grow",
-        "pref, 5dlu, pref, 5dlu, pref, 5dlu, pref, 5dlu, pref"));
+        "pref, 5dlu, pref, 5dlu, pref, 5dlu, pref, 5dlu, pref, 5dlu, default"));
 
     panelBuilder.add(new JLabel(mMainQuestion), cc.xyw(1, 1, 3));
     panelBuilder
@@ -152,6 +152,8 @@ public class TypeWizardStep extends AbstractWizardStep {
     panelBuilder.add(mActorsCb, cc.xy(3,7));
     panelBuilder.border(Borders.DLU4);
     panelBuilder.add(expertBtn, cc.xyw(1, 9, 3));
+    panelBuilder.add(filterBtn, cc.xyw(1, 11, 3));
+    
     ButtonGroup group = new ButtonGroup();
     group.add(mTitleRb);
     group.add(mTopicRb);
@@ -200,6 +202,24 @@ public class TypeWizardStep extends AbstractWizardStep {
         }
         
         handler.finishWithCurrentStep();
+      }
+    });
+    
+    filterBtn.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {try {
+        mAdvancedSelected = true;
+        
+        mFavorite = new FilterFavorite();
+        Window parent = UiUtilities
+            .getLastModalChildOf(MainFrame.getInstance());
+        EditFavoriteDialog dlg = new EditFavoriteDialog(parent, mFavorite);
+        UiUtilities.centerAndShow(dlg);
+        
+        if (!dlg.getOkWasPressed()) {
+          mFavorite = null;
+        }
+        
+        handler.finishWithCurrentStep();}catch(Throwable t) {t.printStackTrace();}
       }
     });
 

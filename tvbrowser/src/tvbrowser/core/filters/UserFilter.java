@@ -35,6 +35,9 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.regex.Pattern;
 
+import tvbrowser.core.filters.filtercomponents.BeanShellFilterComponent;
+import tvbrowser.core.filters.filtercomponents.FavoritesFilterComponent;
+import tvbrowser.core.filters.filtercomponents.ProgramMarkingPriorityFilterComponent;
 import util.exc.ErrorHandler;
 import util.io.stream.ObjectInputStreamProcessor;
 import util.io.stream.ObjectOutputStreamProcessor;
@@ -441,6 +444,31 @@ public class UserFilter implements devplugin.ProgramFilter {
 
     return false;
   }
+  
+  public boolean acceptableForFilterFavorite() {
+    boolean acceptable = false;
+    Token[] tokens = createTokenList(mRule);
+    
+    if(tokens != null) {
+      acceptable = true;
+      
+      for(Token token : tokens) {
+        if(token.type == Token.ITEM) {
+          FilterComponent component = FilterComponentList.getInstance().getFilterComponentByName(token.value);
+          
+          if(component != null &&
+              (component instanceof BeanShellFilterComponent ||
+                  component instanceof FavoritesFilterComponent ||
+                  component instanceof ProgramMarkingPriorityFilterComponent)) {
+            acceptable = false;
+            break;
+          }
+        }
+      }
+    }
+    
+    return acceptable;
+  }
 }
 
 abstract class Node {
@@ -551,6 +579,5 @@ class ItemNode extends Node {
 
   public boolean containsRuleComponent(String compName) {
     return (mRule.getName().equalsIgnoreCase(compName));
-  }
-
+  }  
 }

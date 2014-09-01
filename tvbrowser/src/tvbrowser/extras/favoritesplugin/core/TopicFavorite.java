@@ -114,5 +114,9 @@ public class TopicFavorite extends Favorite {
       return true;
     }
   }
-
+  
+  @Override
+  public boolean isValidSearch() {
+    return true;
+  }
 }

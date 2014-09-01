@@ -793,9 +793,19 @@ public class FavoriteTree extends JTree implements DragGestureListener, DropTarg
           label.setOpaque(!sel && !cellHasFocus);
         }
       }
-
-      if(leaf && value instanceof FavoriteNode && ((FavoriteNode)value).isDirectoryNode()) {
-        label.setIcon(getClosedIcon());
+      
+      if(value instanceof FavoriteNode) {
+        FavoriteNode node = ((FavoriteNode)value);
+        if(leaf && node.isDirectoryNode()) {
+          label.setIcon(getClosedIcon());
+        }
+        
+        Favorite fav = node.getFavorite();
+        
+        if(fav != null && !fav.isValidSearch()) {
+          label.setForeground(Color.orange);
+          label.setText("<html><strike>"+label.getText()+"</strike></html>");
+        }
       }
 
       if(UiUtilities.isNimbusLookAndFeel()) {

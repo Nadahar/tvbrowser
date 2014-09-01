@@ -1103,4 +1103,6 @@ public abstract class Favorite {
   public long getFilterKey() {
     return mFilterKey;
   }
+  
+  public abstract boolean isValidSearch(); 
 }

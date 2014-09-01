@@ -76,6 +76,8 @@ import tvbrowser.extras.favoritesplugin.core.AdvancedFavorite;
 import tvbrowser.extras.favoritesplugin.core.Exclusion;
 import tvbrowser.extras.favoritesplugin.core.Favorite;
 import tvbrowser.extras.favoritesplugin.core.FavoriteFilter;
+import tvbrowser.extras.favoritesplugin.core.FilterFavorite;
+import tvbrowser.extras.favoritesplugin.core.PendingFilterLoader;
 import tvbrowser.extras.favoritesplugin.core.TitleFavorite;
 import tvbrowser.extras.favoritesplugin.core.TopicFavorite;
 import tvbrowser.extras.favoritesplugin.dlgs.EditFavoriteDialog;
@@ -102,6 +104,7 @@ import devplugin.AfterDataUpdateInfoPanel;
 import devplugin.ButtonAction;
 import devplugin.ChannelDayProgram;
 import devplugin.Date;
+import devplugin.FilterChangeListenerV2;
 import devplugin.PluginCenterPanel;
 import devplugin.PluginCenterPanelWrapper;
 import devplugin.PluginTreeNode;
@@ -156,7 +159,7 @@ public class FavoritesPlugin {
   private Hashtable<String,ReceiveTargetItem> mSendPluginsTable = new Hashtable<String,ReceiveTargetItem>();
   private ProgramReceiveTarget[] mClientPluginTargets;
 
-  private ArrayList<AdvancedFavorite> mPendingFavorites;
+  private ArrayList<PendingFilterLoader> mPendingFavorites;
   private int mMarkPriority = -2;
 
   private Exclusion[] mExclusions;
@@ -222,7 +225,7 @@ public class FavoritesPlugin {
     
     mCenterPanel = UiUtilities.createPersonaBackgroundPanel();
     mExclusions = new Exclusion[0];
-    mPendingFavorites = new ArrayList<AdvancedFavorite>(0);
+    mPendingFavorites = new ArrayList<PendingFilterLoader>(0);
     mClientPluginTargets = new ProgramReceiveTarget[0];
     mConfigurationHandler = new ConfigurationHandler(DATAFILE_PREFIX);
     load();
@@ -404,7 +407,7 @@ public class FavoritesPlugin {
   public void handleTvBrowserStartFinished() {
     updateRootNode(false);
     if(!mPendingFavorites.isEmpty()) {
-      for(AdvancedFavorite fav : mPendingFavorites) {
+      for(PendingFilterLoader fav : mPendingFavorites) {
         fav.loadPendingFilter();
       }
 
@@ -417,6 +420,50 @@ public class FavoritesPlugin {
     if(mHasToUpdate) {
       handleTvDataUpdateFinished();
     }
+    
+    FilterManagerImpl.getInstance().registerFilterChangeListener(new FilterChangeListenerV2() {
+      @Override
+      public void filterTouched(ProgramFilter filter) {
+        Favorite[] favorites = FavoriteTreeModel.getInstance().getFavoriteArr();
+        
+        for(Favorite fav : favorites) {
+          if(fav instanceof FilterFavorite) {
+            ((FilterFavorite)fav).updateFilter(filter);
+          }
+        }
+        
+        if(mMangePanel != null) {
+          mMangePanel.repaint();
+        }
+        if(ManageFavoritesDialog.getInstance() != null) {
+          ManageFavoritesDialog.getInstance().repaint();
+        }
+      }
+      
+      @Override
+      public void filterRemoved(ProgramFilter filter) {
+        Favorite[] favorites = FavoriteTreeModel.getInstance().getFavoriteArr();
+        
+        for(Favorite fav : favorites) {
+          if(fav instanceof FilterFavorite) {
+            ((FilterFavorite)fav).deleteFilter(filter);
+          }
+        }
+        
+        if(mMangePanel != null) {
+          mMangePanel.repaint();
+        }
+        if(ManageFavoritesDialog.getInstance() != null) {
+          ManageFavoritesDialog.getInstance().repaint();
+        }
+      }
+      
+      @Override
+      public void filterDefaultChanged(ProgramFilter filter) {}
+      
+      @Override
+      public void filterAdded(ProgramFilter filter) {}
+    });
     
     addPanel();
   }
@@ -948,7 +995,14 @@ public class FavoritesPlugin {
     Window parent = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
     Favorite favorite;
     if (isUsingExpertMode()) {
-      favorite = new AdvancedFavorite(program != null ? program.getTitle() : "");
+      
+      if(JOptionPane.showConfirmDialog(UiUtilities.getLastModalChildOf(MainFrame.getInstance()), mLocalizer.msg("askType.message", "Create a filter favorite?"), mLocalizer.msg("askType.title", "Type selection"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
+        favorite = new FilterFavorite();
+      }
+      else {
+        favorite = new AdvancedFavorite(program != null ? program.getTitle() : "");
+      }
+      
       EditFavoriteDialog dlg = new EditFavoriteDialog(parent, favorite);
       UiUtilities.centerAndShow(dlg);
       if (!dlg.getOkWasPressed()) {
@@ -1178,7 +1232,7 @@ public class FavoritesPlugin {
    * @param fav The AdvancedFavorite to add.
    * @since 2.5.1
    */
-  public void addPendingFavorite(AdvancedFavorite fav) {
+  public void addPendingFavorite(PendingFilterLoader fav) {
     mPendingFavorites.add(fav);
   }
 

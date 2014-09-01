@@ -144,4 +144,8 @@ public class ActorsFavorite extends Favorite {
     }
   }
 
+  @Override
+  public boolean isValidSearch() {
+    return true;
+  }
 }
