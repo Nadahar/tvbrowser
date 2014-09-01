@@ -34,26 +34,56 @@ import java.util.Properties;
  */
 public class PropertyDefaults {
   private HashMap<String, String> mDefaultValueMap;
+  private Properties mProperties;
   
   public PropertyDefaults(HashMap<String, String> defaultValueMap) {
     mDefaultValueMap = defaultValueMap;
   }
   
   /**
-   * Gets the value for the given key from the given properties
+   * Sets the properties to use for this property defaults.
+   * <p>
+   * @param properties The properties to use.
+   * @since 3.4.1
+   */
+  public void setProperties(Properties properties) {
+    mProperties = properties;
+  }
+  
+  /**
+   * Gets the value for the given key from the previously set properties
+   * or the default value for the key of this property defaults.
+   * 
+   * @param key The key of the property value to get. 
+   * @return A value or <code>null</code> if no value exists for the given key.
+   * @since 3.4.1
+   */
+  public String getValueFromProperties(String key) {
+    return getValueFromProperties(key, null);
+  }
+  
+  /**
+   * Gets the value for the given key from the given properties,
+   * the properties previously set if given properties is <code>null</code>
    * or the default value for the key of this property defaults.
    * 
    * @param key The key of the property value to get.
-   * @param properties The properties to get the value from
+   * @param properties The properties to get the value from or <code>null</code>
+   * to use previously set properties or to get default value if no property is set.
    * 
    * @return A value or <code>null</code> if no value exists for the given key.
    */
   public String getValueFromProperties(String key, Properties properties) {
-    if(key != null && properties != null) {
-      return properties.getProperty(key, mDefaultValueMap.get(key));
-    }
-    else if(key != null) {
-      return mDefaultValueMap.get(key);
+    if(key != null) {
+      if(properties != null) {
+        return properties.getProperty(key, mDefaultValueMap.get(key));
+      }
+      else if(mProperties != null) {
+        return mProperties.getProperty(key, mDefaultValueMap.get(key));
+      }
+      else {
+        return mDefaultValueMap.get(key);
+      }
     }
     
     return null;
@@ -72,5 +102,15 @@ public class PropertyDefaults {
     }
     
     return null;
+  }
+  
+  /**
+   * Gets the properties to use for this property defaults.
+   * <p>
+   * @return The previously set properties or <code>null</code> if no properties were set.
+   * @since 3.4.1
+   */
+  public Properties getProperties() {
+    return mProperties;
   }
 }
