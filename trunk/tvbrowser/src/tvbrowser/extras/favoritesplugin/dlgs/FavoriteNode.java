@@ -32,6 +32,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import tvbrowser.extras.favoritesplugin.core.ActorsFavorite;
 import tvbrowser.extras.favoritesplugin.core.AdvancedFavorite;
 import tvbrowser.extras.favoritesplugin.core.Favorite;
+import tvbrowser.extras.favoritesplugin.core.FilterFavorite;
 import tvbrowser.extras.favoritesplugin.core.TitleFavorite;
 import tvbrowser.extras.favoritesplugin.core.TopicFavorite;
 import devplugin.Program;
@@ -96,6 +97,9 @@ public class FavoriteNode extends DefaultMutableTreeNode implements Comparable<F
         }
         else if (AdvancedFavorite.TYPE_ID.equals(typeID)) {
           userObject = new AdvancedFavorite(in);
+        }
+        else if(FilterFavorite.TYPE_ID.equals(typeID)) {
+          userObject = new FilterFavorite(in);
         }
       }
     }

@@ -120,5 +120,8 @@ public class TitleFavorite extends Favorite {
     }
   }
 
-
+  @Override
+  public boolean isValidSearch() {
+    return true;
+  }
 }

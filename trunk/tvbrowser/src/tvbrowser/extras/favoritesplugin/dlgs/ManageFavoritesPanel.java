@@ -1149,12 +1149,16 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction, Tree
     {
       Component c = super.getListCellRendererComponent(list, value, index, isSelected,
           cellHasFocus);
-
+      
       if (value instanceof Favorite && c instanceof JLabel) {
         Favorite fav = (Favorite)value;
         ((JLabel)c).setText(fav.getName() + " (" + (mShowNew ? fav.getNewPrograms().length : fav.getWhiteListPrograms().length) + ")");
-
-        if(mShowNew && fav.getNewPrograms().length > 0 && !isSelected) {
+        
+        if(!fav.isValidSearch()) {
+          c.setForeground(Color.orange);
+          ((JLabel)c).setText("<html><strike>"+((JLabel)c).getText()+"</strike></html>");
+        }
+        else if(mShowNew && fav.getNewPrograms().length > 0 && !isSelected) {
           c.setForeground(Color.red);
         }
       }

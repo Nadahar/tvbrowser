@@ -62,7 +62,7 @@ import devplugin.PluginManager;
 import devplugin.Program;
 import devplugin.ProgramFilter;
 
-public class AdvancedFavorite extends Favorite {
+public class AdvancedFavorite extends Favorite implements PendingFilterLoader {
 
   private static final util.ui.Localizer mLocalizer
         = util.ui.Localizer.getLocalizerFor(AdvancedFavorite.class);
@@ -447,5 +447,10 @@ public class AdvancedFavorite extends Favorite {
         ErrorHandler.handle("Error on loading pending filter '" + mPendingFilterName + "' for Favorite: '" + getName() + "'",e);
       }
     }
+  }
+
+  @Override
+  public boolean isValidSearch() {
+    return true;
   }
 }
