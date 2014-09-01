@@ -37,7 +37,9 @@ import java.util.regex.Pattern;
 
 import tvbrowser.core.filters.filtercomponents.BeanShellFilterComponent;
 import tvbrowser.core.filters.filtercomponents.FavoritesFilterComponent;
+import tvbrowser.core.filters.filtercomponents.PluginFilterComponent;
 import tvbrowser.core.filters.filtercomponents.ProgramMarkingPriorityFilterComponent;
+import tvbrowser.core.filters.filtercomponents.ReminderFilterComponent;
 import util.exc.ErrorHandler;
 import util.io.stream.ObjectInputStreamProcessor;
 import util.io.stream.ObjectOutputStreamProcessor;
@@ -459,7 +461,9 @@ public class UserFilter implements devplugin.ProgramFilter {
           if(component != null &&
               (component instanceof BeanShellFilterComponent ||
                   component instanceof FavoritesFilterComponent ||
-                  component instanceof ProgramMarkingPriorityFilterComponent)) {
+                  component instanceof ProgramMarkingPriorityFilterComponent ||
+                  component instanceof ReminderFilterComponent ||
+                  component instanceof PluginFilterComponent)) {
             acceptable = false;
             break;
           }
