@@ -206,7 +206,7 @@ public class TypeWizardStep extends AbstractWizardStep {
     });
     
     filterBtn.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {try {
+      public void actionPerformed(ActionEvent e) {
         mAdvancedSelected = true;
         
         mFavorite = new FilterFavorite();
@@ -219,7 +219,7 @@ public class TypeWizardStep extends AbstractWizardStep {
           mFavorite = null;
         }
         
-        handler.finishWithCurrentStep();}catch(Throwable t) {t.printStackTrace();}
+        handler.finishWithCurrentStep();
       }
     });
 
