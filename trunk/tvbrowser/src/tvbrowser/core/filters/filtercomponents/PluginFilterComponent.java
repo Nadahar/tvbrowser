@@ -33,7 +33,6 @@ import java.util.Arrays;
 
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
-import javax.swing.JTextArea;
 
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
