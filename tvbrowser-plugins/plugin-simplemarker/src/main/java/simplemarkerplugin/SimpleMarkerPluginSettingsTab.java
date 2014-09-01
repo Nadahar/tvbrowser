@@ -21,6 +21,7 @@
  */
 package simplemarkerplugin;
 
+import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
@@ -48,6 +49,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import javax.swing.event.ListSelectionEvent;
@@ -168,7 +170,9 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
     mListTable.getColumnModel().getColumn(4).setCellEditor(new MarkListSendToPluginCellEditor());
 
     JScrollPane pane = new JScrollPane(mListTable);
-
+    pane.setPreferredSize(new Dimension(200,150));
+    pane.getViewport().setBackground(UIManager.getColor("List.background"));
+    
     y += 2;
     
     panel.add(pane, cc.xy(2, y));
