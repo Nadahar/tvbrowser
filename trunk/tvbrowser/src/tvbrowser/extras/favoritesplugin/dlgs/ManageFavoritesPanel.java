@@ -85,6 +85,7 @@ import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
 import tvbrowser.extras.favoritesplugin.core.AdvancedFavorite;
 import tvbrowser.extras.favoritesplugin.core.Favorite;
+import tvbrowser.extras.favoritesplugin.core.FilterFavorite;
 import tvbrowser.extras.favoritesplugin.wizards.TypeWizardStep;
 import tvbrowser.extras.favoritesplugin.wizards.WizardHandler;
 import tvbrowser.ui.mainframe.MainFrame;
@@ -878,7 +879,13 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction, Tree
   public void newFavorite(FavoriteNode parent) {
     Favorite favorite;
     if (FavoritesPlugin.getInstance().isUsingExpertMode()) {
-      favorite = new AdvancedFavorite("");
+      if(JOptionPane.showConfirmDialog(UiUtilities.getLastModalChildOf(MainFrame.getInstance()), FavoritesPlugin.mLocalizer.msg("askType.message", "Create a filter favorite?"), FavoritesPlugin.mLocalizer.msg("askType.title", "Type selection"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
+        favorite = new FilterFavorite();
+      }
+      else {
+        favorite = new AdvancedFavorite("");
+      }
+      
       EditFavoriteDialog dlg = new EditFavoriteDialog((ManageFavoritesDialog.getInstance() != null && ManageFavoritesDialog.getInstance().isVisible()) ? (Window)ManageFavoritesDialog.getInstance() : MainFrame.getInstance(), favorite);
       UiUtilities.centerAndShow(dlg);
       
