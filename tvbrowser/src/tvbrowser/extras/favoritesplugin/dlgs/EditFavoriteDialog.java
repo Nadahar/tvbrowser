@@ -604,7 +604,7 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
     return mOkWasPressed;
   }
 
-  private void saveAndClose() {try {
+  private void saveAndClose() {
     if (!mFavoriteConfigurator.check()) {
       return;
     }
@@ -687,7 +687,6 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
     
     FilterList.getInstance().store();
     MainFrame.getInstance().updateFilterMenu();
-  }catch(Throwable t) {t.printStackTrace();}
   }
 
   public void close() {

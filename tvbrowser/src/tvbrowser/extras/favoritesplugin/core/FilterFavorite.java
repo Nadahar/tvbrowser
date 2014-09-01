@@ -188,7 +188,6 @@ public class FilterFavorite extends Favorite implements PendingFilterLoader {
     // write version
     out.writeInt(1);
     out.writeUTF(mFilterName);
-    System.out.println("hier " + mFilterName);
   }
   
   class Configurator implements FavoriteConfigurator {
@@ -199,7 +198,6 @@ public class FilterFavorite extends Favorite implements PendingFilterLoader {
       PanelBuilder pb = new PanelBuilder(new FormLayout("default:grow,3dlu,default","default,3dlu,default"));
       pb.border(Borders.createEmptyBorder("2dlu,0dlu,2dlu,0dlu"));
       
-      try{
       ArrayList<ProgramFilter> selectableFilter = new ArrayList<ProgramFilter>();
       
       ProgramFilter[] availableFilters = Plugin.getPluginManager().getFilterManager().getAvailableFilters();
@@ -242,9 +240,8 @@ public class FilterFavorite extends Favorite implements PendingFilterLoader {
       pb.addLabel(LOCALIZER.msg("message", "Programs that are accepted by this filter will be marked as Favorite:"), CC.xyw(1, 1, 3));
       pb.add(mFilterSelection, CC.xy(1,3));
       pb.add(editFilter, CC.xy(3, 3));
-      }catch(Throwable t) {t.printStackTrace();}
+      
       return pb.getPanel();
-    
     }
 
     @Override
