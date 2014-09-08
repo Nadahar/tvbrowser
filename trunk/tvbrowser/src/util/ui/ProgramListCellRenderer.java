@@ -176,7 +176,7 @@ public class ProgramListCellRenderer extends DefaultListCellRenderer {
       boolean cellHasFocus) {
     JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 
-    if (value instanceof Program) {
+    if (value != null && value instanceof Program) {
 
       Program program = (Program) value;
       Insets borderInsets = label.getBorder().getBorderInsets(label);
