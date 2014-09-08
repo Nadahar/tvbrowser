@@ -66,19 +66,23 @@
     <module>plugin-clipboard</module>
     <module>plugin-countrycode</module>
     <module>plugin-clock</module>
+    <module>plugin-colorme</module>
     <module>plugin-dataviewer</module>
     <module>plugin-dreamboxdataservice</module>
     <module>plugin-dvb</module>
     <module>plugin-dvbviewerdataservice</module>
     <module>plugin-email</module>
     <module>plugin-feeds</module>
+    <module>plugin-filterinfoicons</module>
     <module>plugin-filterview</module>
+    <module>plugin-fixprogramdudation</module>
     <module>plugin-freetuxtv</module>
     <module>plugin-genre</module>
     <module>plugin-golem</module>
     <module>plugin-growl</module>
     <module>plugin-i18n</module>
     <module>plugin-idontwant2see</module>
+    <module>plugin-infoserver</module>
     <module>plugin-imdb</module>
     <module>plugin-jumptoprogram</module>
     <module>plugin-knotify</module>
@@ -89,6 +93,7 @@
     <module>plugin-mixeddataservice</module>
     <module>plugin-mixedupdatelock</module>
     <module>plugin-movieaward</module>
+    <module>plugin-netcontrol</module>
     <module>plugin-news</module>
     <module>plugin-notifyosd</module>
     <module>plugin-nextviewdataservice</module>
@@ -106,6 +111,7 @@
     <module>plugin-snarl</module>
     <module>plugin-soundreminder</module>
     <module>plugin-speech</module>
+	<module>plugin-switch</module>
     <module>plugin-swedbdataservice</module>
     <module>plugin-tagging</module>
     <module>plugin-teletext</module>
@@ -125,9 +131,6 @@
     <module>plugin-zattoo</module>
     <module>plugin-web</module>
     <module>plugin-unityglobalmenusupport</module>
-    <module>plugin-switch</module>
-    <module>plugin-netcontrol</module>
-    <module>plugin-infoserver</module>
     <module>plugin-schedulesdirectdataservice</module>
   </modules>
   <dependencyManagement>
