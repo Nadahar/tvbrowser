@@ -768,4 +768,9 @@ public class JavaPluginProxy extends AbstractPluginProxy {
     
     return false;
   }
+
+  @Override
+  protected boolean doGetAllowsArtificialPluginTree() {
+    return mPlugin.isAllowingArtificialPluginTree();
+  }
 }

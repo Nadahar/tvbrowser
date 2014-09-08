@@ -609,7 +609,7 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
     try {
       boolean canUse = doCanUseProgramTree();
       // deactivate artificial plugin tree for plugins providing their own implementation
-      if (canUse && mArtificialRootNode != null) {
+      if ((canUse || !doGetAllowsArtificialPluginTree()) && mArtificialRootNode != null) {
         mArtificialRootNode = null;
       }
       return canUse || (mArtificialRootNode != null && mArtificialRootNode.size() < 100);
@@ -954,8 +954,20 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
   }
 
   final public boolean hasArtificialPluginTree() {
-    return mArtificialRootNode != null;
+    return getAllowsArtificialPluginTree() && mArtificialRootNode != null;
   }
+  
+  private final boolean getAllowsArtificialPluginTree() {
+    try {
+      return doGetAllowsArtificialPluginTree();
+    } catch (Throwable exc) {
+      handlePluginException(exc);
+    }
+
+    return true;
+  }
+  
+  protected abstract boolean doGetAllowsArtificialPluginTree();
 
   final public void addToArtificialPluginTree(MutableProgram program) {
     if (mArtificialRootNode != null) {
@@ -964,7 +976,7 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
   }
 
   final public PluginTreeNode getArtificialRootNode() {
-    return mArtificialRootNode;
+    return getAllowsArtificialPluginTree() ? mArtificialRootNode : null;
   }
 
   final public void removeArtificialPluginTree() {

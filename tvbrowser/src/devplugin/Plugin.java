@@ -1052,4 +1052,14 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
   public PluginCommunication getCommunicationClass() {
     return null;
   }
+  
+  /**
+   * Gets if an artificial plugin tree is allowed for this Plugin.
+   * <p>
+   * @return <code>true</code> if an artificial plugin tree is allowed for this Plugin.
+   * @since 3.4.1
+   */
+  public boolean isAllowingArtificialPluginTree() {
+    return !canUseProgramTree();
+  }
 }
