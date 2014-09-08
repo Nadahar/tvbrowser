@@ -327,4 +327,9 @@ public class BeanShellPluginProxy extends AbstractPluginProxy {
       // TODO Auto-generated method stub
       return null;
     }
+
+    @Override
+    protected boolean doGetAllowsArtificialPluginTree() {
+      return true;
+    }
  }

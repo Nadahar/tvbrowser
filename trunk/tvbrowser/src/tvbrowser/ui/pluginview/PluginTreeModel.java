@@ -105,14 +105,18 @@ public class PluginTreeModel extends DefaultTreeModel {
 
 
   public void addPluginTree(PluginProxy plugin) {
-    PluginTreeNode pluginRoot;
-    if (plugin.hasArtificialPluginTree()) {
-      pluginRoot = plugin.getArtificialRootNode();
-    }
-    else {
+    PluginTreeNode pluginRoot = null;
+    
+    if(plugin.canUseProgramTree()) {
       pluginRoot = plugin.getRootNode();
     }
-    addCustomNode(pluginRoot);
+    else if (plugin.hasArtificialPluginTree()) {
+      pluginRoot = plugin.getArtificialRootNode();
+    }
+    
+    if(pluginRoot != null) {
+      addCustomNode(pluginRoot);
+    }
   }
 
   private void insertSorted(PluginTreeNode pluginRoot) {
