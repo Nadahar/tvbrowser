@@ -354,6 +354,7 @@ public class MutableProgram implements Program {
     }
     
     if(mark) {
+      //System.out.println("MARK " + this);
       MarkedProgramsMap.getInstance().addMarkerForProgram(this, marker);
       fireStateChanged();
     }
@@ -1063,9 +1064,8 @@ public class MutableProgram implements Program {
    * @since 2.2.2
    */
   public final void validateMarking() {
-    if(MarkedProgramsMap.getInstance().validateMarkingForProgram(this)) {
-      fireStateChanged();
-    }
+    MarkedProgramsMap.getInstance().validateMarkingForProgram(this);
+    fireStateChanged();
   }
 
   /**
