@@ -972,7 +972,7 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction, Tree
           if(mFavoritesList != null) {
             mFavoritesList.repaint();
           }
-          favoriteSelectionChanged();
+          //favoriteSelectionChanged();
           FavoritesPlugin.getInstance().updateRootNode(true);
         }
 
@@ -983,10 +983,7 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction, Tree
         
         scrollInProgramListToIndex(index);
     }
-
   }
-
-
 
   public void deleteSelectedFavorite() {
     int selection = -1;
