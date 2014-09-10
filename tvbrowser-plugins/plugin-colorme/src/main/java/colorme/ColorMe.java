@@ -42,7 +42,7 @@ import devplugin.Version;
  * @author René Mach
  */
 public class ColorMe extends Plugin {
-  private static final Version VERSION = new Version(0,11,1,false);
+  private static final Version VERSION = new Version(0,11,2,false);
   private static final Localizer LOCALIZER = Localizer.getLocalizerFor(ColorMe.class);
   
   private HashSet<Program> mLowestPrograms;
@@ -213,6 +213,8 @@ public class ColorMe extends Plugin {
       getParentFrame().setCursor(old);
       
       returnValue = true;
+      
+      saveMe();
     }
     
     return returnValue;
