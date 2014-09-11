@@ -476,7 +476,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
         }
       }
     };
-
+    
     KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_UP, InputEvent.CTRL_MASK);
     
     // Remove ctrl-up from normal focus traversal
@@ -520,7 +520,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
         popup.show(e.getComponent(), e.getPoint().x, e.getPoint().y);
       }
     });
-        
+    
     mProgramTableScrollPane.setOpaque(false);
 
     createDateSelector();
@@ -559,7 +559,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     mMainframeNode.setProperty(Settings.propViewMainframe);
     mNavigationNode.setProperty(Settings.propViewNavigation);
     mDateChannelNode.setProperty(Settings.propViewDateChannel);
-
+    
     /* create views */
     programtableNode.setLeaf(skinPanel);
     this.setShowPluginOverview(Settings.propShowPluginView.getBoolean());
@@ -621,7 +621,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
       }
     });
     mTimer.start();
-
+    
     setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 
     //create the drop target for installation of Plugins with Drag'N'Drop on MainFrame
@@ -1381,7 +1381,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     return (Settings.propDefaultFilter.getString().equals(filter.getClass().getName() + "###" + filter.getName()));
   }
   
-  public synchronized void setProgramFilter(ProgramFilter filter) {    
+  public synchronized void setProgramFilter(ProgramFilter filter) {
     boolean isDefaultFilter = filter.equals(FilterManagerImpl.getInstance().getDefaultFilter());
     
     mScrollPaneWrapper.removeInfoPanel(ProgramTableScrollPaneWrapper.INFO_EMPTY_FILTER_RESULT);
@@ -1389,14 +1389,14 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     if (!isDefaultFilter) { // Store Position
       mStoredViewPosition = mProgramTableScrollPane.getViewport().getViewPosition();
     }
-
+    
     if (mProgramTableModel.getProgramFilter() instanceof SearchFilter && !(filter instanceof SearchFilter)) {
       mSearchField.deactivateSearch();
     }
     else if(mProgramTableModel.getProgramFilter() instanceof FaytFilter && !(filter instanceof FaytFilter)) {
       mFindAsYouType.closeFayt();
     }
-
+    
     mProgramTableScrollPane.deSelectItem(false);
     mProgramTableModel.setProgramFilter(filter);
     mMenuBar.updateFiltersMenu();
@@ -1409,12 +1409,12 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     else {
       setChannelFilter(mProgramTableModel.getChannelFilter());
     }
-
+    
     updateFilterPanel();
-
+    
     mToolBar.update();
     addKeyboardAction();
-
+    
     if(mPluginView != null) {
       mPluginView.repaint();
     }
