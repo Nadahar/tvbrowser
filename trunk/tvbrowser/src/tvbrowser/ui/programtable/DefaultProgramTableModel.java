@@ -181,8 +181,13 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
     HashSet<Channel> jointChannels = new HashSet<Channel>();
     
     for(Channel ch :mChannelArr) {
-      if(ch.getJointChannel() != null && !jointChannels.contains(ch)) {
-        jointChannels.add(ch.getJointChannel());
+      if(ch.getJointChannel() != null) {
+        if(!jointChannels.contains(ch)) {
+          jointChannels.add(ch.getJointChannel());
+        }
+        else {
+          ch.setJointChannel(null);
+        }
       }
     }
     
