@@ -61,6 +61,7 @@ import javax.swing.JTextArea;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import tvbrowser.TVBrowser;
 import tvbrowser.core.PluginLoader;
 import tvbrowser.core.Settings;
 import tvbrowser.core.icontheme.IconLoader;
@@ -109,11 +110,15 @@ public class LocaleSettingsTab implements devplugin.SettingsTab {
   private static int mStartLanguageIndex;
   private static int mStartTimeZoneIndex;
   private static boolean mTwelveHourFormatIsSelected;
-
+  
+  private SettingsDialog mSettingsDialog;
+  private JButton mRestartButton;
+  
   /**
    * Creates a new instance of ProxySettingsTab.
    */
-  public LocaleSettingsTab() {
+  public LocaleSettingsTab(SettingsDialog settingsDialog) {
+    mSettingsDialog = settingsDialog;
   }
 
   /**
@@ -123,15 +128,12 @@ public class LocaleSettingsTab implements devplugin.SettingsTab {
     mSettingsPn = new JPanel(new FormLayout("5dlu, pref, 3dlu, default, 5dlu, default, fill:3dlu:grow, 3dlu",
         "pref, 5dlu, pref, 10dlu, pref, 5dlu, pref, 10dlu, pref, 5dlu, pref, 2dlu, pref, fill:3dlu:grow, pref"));
     mSettingsPn.setBorder(Borders.DIALOG);
+    mSettingsPn.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("titleLanguage", "Locale")), CC.xyw(1,1,7));
 
-    CellConstraints cc = new CellConstraints();
-
-    mSettingsPn.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("titleLanguage", "Locale")), cc.xyw(1,1,7));
-
-    mSettingsPn.add(new JLabel(mLocalizer.msg("language", "Language:")), cc.xy(2,3));
+    mSettingsPn.add(new JLabel(mLocalizer.msg("language", "Language:")), CC.xy(2,3));
     Locale[] allLocales = mLocalizer.getAllAvailableLocales();
     ArrayList<Locale> localesList = new ArrayList<Locale>(Arrays.asList(allLocales));
-    mSettingsPn.add(mLanguageCB = new JComboBox(allLocales), cc.xy(4,3));
+    mSettingsPn.add(mLanguageCB = new JComboBox(allLocales), CC.xy(4,3));
 
     mLanguageCB.setRenderer(new CustomComboBoxRenderer(mLanguageCB.getRenderer()) {
       @Override
@@ -151,7 +153,7 @@ public class LocaleSettingsTab implements devplugin.SettingsTab {
       }
     });
     
-    mSettingsPn.add(downloadLanguages, cc.xy(6,3));
+    mSettingsPn.add(downloadLanguages, CC.xy(6,3));
 
     String language = Settings.propLanguage.getString();
     String country = Settings.propCountry.getString();
@@ -212,14 +214,14 @@ public class LocaleSettingsTab implements devplugin.SettingsTab {
 
     mTimezoneLB = new JLabel(mLocalizer.msg("timezone", "Timezone:"));
 
-    mSettingsPn.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("titleTimezone", "Locale")), cc.xyw(1,5,7));
+    mSettingsPn.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("titleTimezone", "Locale")), CC.xyw(1,5,7));
 
-    mSettingsPn.add(mTimezoneLB, cc.xy(2,7));
-    mSettingsPn.add(mTimezoneCB, cc.xyw(4,7,3));
+    mSettingsPn.add(mTimezoneLB, CC.xy(2,7));
+    mSettingsPn.add(mTimezoneCB, CC.xyw(4,7,3));
 
-    mSettingsPn.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("titleTimeFormat", "Time format")), cc.xyw(1,9,7));
+    mSettingsPn.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("titleTimeFormat", "Time format")), CC.xyw(1,9,7));
 
-    mSettingsPn.add(new JLabel(mLocalizer.msg("timeFormat", "Time format:")), cc.xy(2,11));
+    mSettingsPn.add(new JLabel(mLocalizer.msg("timeFormat", "Time format:")), CC.xy(2,11));
 
     mTwentyfourHourFormat = new JRadioButton(mLocalizer.msg("twentyFour", "24 hour format"));
     mTwelveHourFormat = new JRadioButton(mLocalizer.msg("twelve", "12 hour format"));
@@ -227,8 +229,8 @@ public class LocaleSettingsTab implements devplugin.SettingsTab {
     group.add(mTwentyfourHourFormat);
     group.add(mTwelveHourFormat);
 
-    mSettingsPn.add(mTwentyfourHourFormat, cc.xy(4, 11));
-    mSettingsPn.add(mTwelveHourFormat, cc.xy(4, 13));
+    mSettingsPn.add(mTwentyfourHourFormat, CC.xy(4, 11));
+    mSettingsPn.add(mTwelveHourFormat, CC.xy(4, 13));
 
     if (Settings.propTwelveHourFormat.getBoolean()) {
       mTwelveHourFormat.setSelected(true);
@@ -240,6 +242,17 @@ public class LocaleSettingsTab implements devplugin.SettingsTab {
     mInfoArea.setForeground(Color.RED);
     mInfoArea.setVisible(mSomethingChanged);
 
+    mRestartButton = new JButton(LookAndFeelSettingsTab.mLocalizer.msg("restart", "Restart now"));
+    mRestartButton.setVisible(mSomethingChanged);
+    mRestartButton.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        mSettingsDialog.saveSettings();
+        TVBrowser.addRestart();
+        MainFrame.getInstance().quit();
+      }
+    });
+    
     if(!mSomethingChanged) {
       mStartLanguageIndex = mLanguageCB.getSelectedIndex();
       mStartTimeZoneIndex = mTimezoneCB.getSelectedIndex();
@@ -252,6 +265,7 @@ public class LocaleSettingsTab implements devplugin.SettingsTab {
             mTimezoneCB.getSelectedIndex() != mStartTimeZoneIndex ||
             (mTwelveHourFormatIsSelected && !mTwelveHourFormat.isSelected() ||
                 !mTwelveHourFormatIsSelected && !mTwentyfourHourFormat.isSelected()));
+        mRestartButton.setVisible(mInfoArea.isVisible());
       }
     };
 
@@ -260,7 +274,12 @@ public class LocaleSettingsTab implements devplugin.SettingsTab {
     mTwelveHourFormat.addItemListener(itemListener);
     mTwentyfourHourFormat.addItemListener(itemListener);
 
-    mSettingsPn.add(mInfoArea, cc.xyw(1, 15, 7));
+    JPanel restart = new JPanel(new FormLayout("default:grow,5dlu,default","default"));
+    
+    restart.add(mInfoArea, CC.xy(1, 1));
+    restart.add(mRestartButton, CC.xy(3, 1));
+    
+    mSettingsPn.add(restart, CC.xyw(1, 15, 7));
 
     return mSettingsPn;
   }

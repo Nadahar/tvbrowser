@@ -96,7 +96,7 @@ public class SystemTray {
 
   private Java6Tray mSystemTray;
 
-  private JMenuItem mOpenCloseMenuItem, mQuitMenuItem, mConfigure;
+  private JMenuItem mOpenCloseMenuItem, mRestartMenuItem, mQuitMenuItem, mConfigure;
 
   private JPopupMenu mTrayMenu;
   private Thread mClickTimer;
@@ -158,6 +158,7 @@ public class SystemTray {
       Font f = mOpenCloseMenuItem.getFont();
 
       mOpenCloseMenuItem.setFont(f.deriveFont(Font.BOLD));
+      mRestartMenuItem = new JMenuItem(mLocalizer.msg("menu.restart", "Restart"), TVBrowserIcons.restart(TVBrowserIcons.SIZE_SMALL));
       mQuitMenuItem = new JMenuItem(mLocalizer.msg("menu.quit", "Quit"), TVBrowserIcons.quit(TVBrowserIcons.SIZE_SMALL));
       mConfigure = new JMenuItem(mLocalizer.msg("menu.configure", "Configure"), TVBrowserIcons
           .preferences(TVBrowserIcons.SIZE_SMALL));
@@ -173,9 +174,16 @@ public class SystemTray {
           toggleShowHide();
         }
       });
+      
+      mRestartMenuItem.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+          TVBrowser.addRestart();
+          MainFrame.getInstance().quit();
+        }
+      });
 
       mQuitMenuItem.addActionListener(new java.awt.event.ActionListener() {
-
         public void actionPerformed(java.awt.event.ActionEvent e) {
           MainFrame.getInstance().quit();
         }
@@ -342,6 +350,8 @@ public class SystemTray {
       mTrayMenu.addSeparator();
     }
     mTrayMenu.add(mConfigure);
+    mTrayMenu.addSeparator();
+    mTrayMenu.add(mRestartMenuItem);
     mTrayMenu.addSeparator();
     mTrayMenu.add(mQuitMenuItem);
   }

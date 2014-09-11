@@ -73,7 +73,7 @@ import devplugin.SettingsTab;
 
 public final class LookAndFeelSettingsTab implements SettingsTab {
 
-  private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(LookAndFeelSettingsTab.class);
+  static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(LookAndFeelSettingsTab.class);
 
   private JComboBox mLfComboBox;
 
