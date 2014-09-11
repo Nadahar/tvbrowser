@@ -31,7 +31,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.TimeZone;
 
@@ -178,26 +177,18 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
 
     mChannelArr = channelArr;
     
-    HashSet<Channel> jointChannels = new HashSet<Channel>();
+    int joinedChannelCount = 0;
     
     for(Channel ch :mChannelArr) {
       if(ch.getJointChannel() != null) {
-        if(!jointChannels.contains(ch)) {
-          jointChannels.add(ch.getJointChannel());
-        }
-        else {
-          ch.setJointChannel(null);
-        }
+        joinedChannelCount++;
       }
     }
     
-    mProgramColumn=new ArrayList[mChannelArr.length-jointChannels.size()];
+    mProgramColumn=new ArrayList[mChannelArr.length-joinedChannelCount];
     for (int i=0;i<mProgramColumn.length;i++) {
       mProgramColumn[i]=new ArrayList<ProgramPanel>();
     }
-    
-    jointChannels.clear();
-    jointChannels = null;
     
     updateDateRange();
     
@@ -366,7 +357,7 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
     deregisterFromPrograms(mProgramColumn);
     
     TvDataBase db = TvDataBase.getInstance();
-    
+
     if (monitor != null) {
       monitor.setMaximum(mProgramColumn.length - 1);
       monitor.setValue(0);
@@ -401,12 +392,12 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
       }
       
       addChannelDayProgram(i-jointChannelCount, cdp, jointChannelDayProgram, mMainDay, mTodayEarliestTime, nextDay, mTomorrowLatestTime);
-      
+
       if (monitor != null) {
         monitor.setValue(i);
       }
     }
-    
+
     boolean showEmptyColumns = (mProgramFilter instanceof tvbrowser.core.filters.ShowAllFilter) && (mChannelFilter == null);
 
     ArrayList<ArrayList<ProgramPanel>> newShownColumns = new ArrayList<ArrayList<ProgramPanel>>();
@@ -426,10 +417,10 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
     }
     mShownProgramColumn = new ArrayList[newShownColumns.size()];
     mShownChannelArr = new Channel[newShownChannels.size()];
-    
+
     newShownColumns.toArray(mShownProgramColumn);
     newShownChannels.toArray(mShownChannelArr);
-    
+
     SwingUtilities.invokeLater(new Runnable() {
 
       public void run() {
@@ -439,10 +430,14 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
       }
     });
   }
+
+  
   
   public void addProgramTableModelListener(ProgramTableModelListener listener) {
     mListenerList.add(listener);
   }
+
+  
   
   public Channel[] getShownChannels() {
     checkThread();
