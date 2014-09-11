@@ -1216,6 +1216,8 @@ public class ChannelList {
   public static void checkForJointChannels() {
     Channel previousChannel = null;
     
+    HashSet<Channel> jointChannels = new HashSet<Channel>();
+    
     for(Channel ch :getSubscribedChannels()) {
       if(previousChannel != null && ((previousChannel.isTimeLimited() && ch.isTimeLimited() 
           && (previousChannel.getStartTimeLimit() == ch.getEndTimeLimit())
@@ -1225,7 +1227,8 @@ public class ChannelList {
           previousChannel.getSharedChannelId().equals(ch.getId()) &&
           previousChannel.getDataServicePackageName().equals(ch.getDataServicePackageName())
           && previousChannel.getGroup().equals(ch.getGroup()))
-          )) {
+          ) && !jointChannels.contains(previousChannel)) {
+        jointChannels.add(ch);
         previousChannel.setJointChannel(ch);
       }
       else if(previousChannel != null) {
@@ -1234,5 +1237,8 @@ public class ChannelList {
       
       previousChannel = ch;
     }
+    
+    jointChannels.clear();
+    jointChannels = null;
   }
 }
