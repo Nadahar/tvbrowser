@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashSet;
 import java.util.Iterator;
 
@@ -61,15 +62,18 @@ import devplugin.Version;
  */
 public class FilterInfoIcon extends Plugin implements FilterChangeListenerV2 {
   static final Localizer LOCALIZER = Localizer.getLocalizerFor(FilterInfoIcon.class);
-  private static final Version VERSION = new Version(0,10,5,false);
+  private static final Version VERSION = new Version(0,11,0,false);
   private static Icon DEFAULT_ICON;
   private HashSet<FilterEntry> mFilterSet;
   private static String LAST_USED_ICON_PATH;
+  
+  private long mLastUpdate;
   
   public FilterInfoIcon() {
     DEFAULT_ICON = UiUtilities.scaleIcon(createImageIcon("status", "view-filter-set", TVBrowserIcons.SIZE_SMALL), 13);
     mFilterSet = new HashSet<FilterEntry>();
     LAST_USED_ICON_PATH = null;
+    mLastUpdate = 0;
   }
     
   public static Version getVersion() {
@@ -132,22 +136,39 @@ public class FilterInfoIcon extends Plugin implements FilterChangeListenerV2 {
   @Override
   public void handleTvDataUpdateStarted(Date until) {
     for(Iterator<FilterEntry> it = mFilterSet.iterator(); it.hasNext();) {
-      it.next().handleTvDataUpdateStarted();
+      FilterEntry entry = it.next();
+      
+      if(!entry.getUpdateDaily()) {
+        entry.handleTvDataUpdateStarted();
+      }
     }
   }
   
   @Override
   public void handleTvDataAdded(MutableChannelDayProgram newProg) {
     for(Iterator<FilterEntry> it = mFilterSet.iterator(); it.hasNext();) {
-      it.next().handleTvDataAdded(newProg);
+      FilterEntry entry = it.next();
+      
+      if(!entry.getUpdateDaily()) {
+        entry.handleTvDataAdded(newProg);
+      }
     }
   }
   
   @Override
   public void handleTvDataUpdateFinished() {
     for(Iterator<FilterEntry> it = mFilterSet.iterator(); it.hasNext();) {
-      it.next().handleTvDataUpdateFinished();
+      FilterEntry entry = it.next();
+      
+      if(!entry.getUpdateDaily()) {
+        entry.handleTvDataUpdateFinished();
+      }
+      else {
+        entry.findForReceiveTargets();
+      }
     }
+    
+    mLastUpdate = System.currentTimeMillis();
   }
   
   
@@ -197,7 +218,7 @@ public class FilterInfoIcon extends Plugin implements FilterChangeListenerV2 {
   
   @Override
   public void writeData(ObjectOutputStream out) throws IOException {
-    out.writeInt(1); // write version
+    out.writeInt(2); // write version
     
     out.writeInt(mFilterSet.size());
     
@@ -210,11 +231,28 @@ public class FilterInfoIcon extends Plugin implements FilterChangeListenerV2 {
     if(LAST_USED_ICON_PATH != null) {
       out.writeUTF(IOUtilities.checkForRelativePath(LAST_USED_ICON_PATH));
     }
+    
+    out.writeLong(mLastUpdate);
   }
   
   @Override
   public void handleTvBrowserStartFinished() {
     getPluginManager().getFilterManager().registerFilterChangeListener(this);
+    
+    Calendar test = Calendar.getInstance();
+    test.setTimeInMillis(mLastUpdate);
+    
+    if(test.get(Calendar.DAY_OF_YEAR) < Calendar.getInstance().get(Calendar.DAY_OF_YEAR)) {
+      for(Iterator<FilterEntry> it = mFilterSet.iterator(); it.hasNext();) {
+        FilterEntry entry = it.next();
+        
+        if(entry.getUpdateDaily()) {
+          entry.findForReceiveTargets();
+        }
+      }
+    }
+    
+    mLastUpdate = System.currentTimeMillis();
   }
   
   @Override
@@ -224,7 +262,7 @@ public class FilterInfoIcon extends Plugin implements FilterChangeListenerV2 {
   
   @Override
   public void readData(ObjectInputStream in) throws IOException, ClassNotFoundException {
-    in.readInt(); // read version
+    int version = in.readInt(); // read version
     
     int n = in.readInt();
     
@@ -234,6 +272,10 @@ public class FilterInfoIcon extends Plugin implements FilterChangeListenerV2 {
     
     if(in.readBoolean()) {
       LAST_USED_ICON_PATH = IOUtilities.translateRelativePath(in.readUTF());
+    }
+    
+    if(version >= 2) {
+      mLastUpdate = in.readLong();
     }
   }
 

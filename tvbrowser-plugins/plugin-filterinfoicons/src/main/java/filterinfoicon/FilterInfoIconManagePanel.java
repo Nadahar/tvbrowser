@@ -33,6 +33,7 @@ import java.util.Iterator;
 
 import javax.swing.DefaultCellEditor;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
@@ -41,6 +42,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileFilter;
@@ -74,19 +76,19 @@ public class FilterInfoIconManagePanel extends JPanel {
     String[] header = new String[] {
         FilterInfoIcon.LOCALIZER.msg("table.filter", "Program filter"),
         FilterInfoIcon.LOCALIZER.msg("table.icon", "Icon"),
-        FilterInfoIcon.LOCALIZER.msg("table.send", "Send to other plugins")
+        FilterInfoIcon.LOCALIZER.msg("table.send", "Send to other plugins"),
+        FilterInfoIcon.LOCALIZER.msg("table.updateDaily", "Update daily")
     };
     
     mTableModel = new FilterInfoIconTableModel(header,entries);
     mParentDialog = parent;
     
     mTable = new JTable(mTableModel) {
+      private JCheckBox mDailyBox = new JCheckBox();
+      
       @Override
       public TableCellEditor getCellEditor(int row, int column) {
-        if(column != 0) {
-          return super.getCellEditor(row, column);
-        }
-        else {
+        if(column == 0) {
           JComboBox comboBox = new JComboBox();
           
           String filterName = (String)getValueAt(row, column);
@@ -105,6 +107,14 @@ public class FilterInfoIconManagePanel extends JPanel {
           edit.setClickCountToStart(2);
           
           return edit;
+        }
+        else if(column == 3) {
+          mDailyBox.setHorizontalAlignment(JCheckBox.CENTER);
+          mDailyBox.setSelected((Boolean)getValueAt(row, column));
+          return new DefaultCellEditor(mDailyBox);
+        }
+        else {
+          return super.getCellEditor(row, column);
         }
       }
     };
@@ -136,6 +146,7 @@ public class FilterInfoIconManagePanel extends JPanel {
     mTable.getColumnModel().getColumn(1).setCellRenderer(cellRenderer);
     mTable.getColumnModel().getColumn(1).setMaxWidth(mTable.getColumnModel().getColumn(1).getPreferredWidth());
     mTable.getColumnModel().getColumn(2).setCellRenderer(cellRenderer);
+    mTable.getColumnModel().getColumn(3).setCellRenderer(cellRenderer);
     
     final JButton delete = new JButton(TVBrowserIcons.delete(TVBrowserIcons.SIZE_SMALL));
     delete.setToolTipText(Localizer.getLocalization(Localizer.I18N_DELETE));
@@ -245,6 +256,12 @@ public class FilterInfoIconManagePanel extends JPanel {
         mTableModel.fireTableCellUpdated(row, column);
       }
     }
+    /*else if(column == 3) {
+      final FilterEntry entry = mTableModel.getEntry(row);
+      
+      entry.setUpdateDaily(!entry.getUpdateDaily());
+      mTableModel.fireTableCellUpdated(row, column);
+    }*/
   }
   
   private class FilterInfoIconTableModel extends DefaultTableModel {
@@ -266,7 +283,7 @@ public class FilterInfoIconManagePanel extends JPanel {
     
     @Override
     public boolean isCellEditable(int row, int column) {
-      return column == 0;
+      return column == 0 || column == 3;
     }
     
     @Override
@@ -282,6 +299,7 @@ public class FilterInfoIconManagePanel extends JPanel {
         case 0: return entry.toString();
         case 1: return entry.getIconFilePath();
         case 2: return entry.getReceiveTargets();
+        case 3: return entry.getUpdateDaily();
       }
       
       return null;
@@ -295,6 +313,7 @@ public class FilterInfoIconManagePanel extends JPanel {
         case 0: entry.updateFilter((ProgramFilter)aValue);break;
         case 1: entry.setIconFilePath(((File)aValue).getAbsolutePath());break;
         case 2: entry.setProgramReceiveTargets((ProgramReceiveTarget[])aValue);break;
+        case 3: entry.setUpdateDaily((Boolean)aValue);break;
       }
       
       fireTableCellUpdated(row, column);
@@ -378,6 +397,22 @@ public class FilterInfoIconManagePanel extends JPanel {
         }
         else {
           ((JLabel)c).setText(FilterInfoIcon.LOCALIZER.msg("noTarget", "Don't send"));
+        }
+      }
+      else if(column == 3) {
+        JCheckBox box = new JCheckBox();
+        box.setSelected((Boolean)value);
+        box.setHorizontalAlignment(JCheckBox.CENTER);
+        
+        c = box;
+        
+        if(isSelected) {
+          c.setForeground(UIManager.getColor("Table.selectionForeground"));
+          c.setBackground(UIManager.getColor("Table.selectionBackground"));
+        }
+        else {
+          c.setForeground(UIManager.getColor("Table.foreground"));
+          c.setBackground(UIManager.getColor("Table.background"));
         }
       }
       
