@@ -57,6 +57,7 @@ public class FilterEntry implements Comparable<FilterEntry> {
   
   private boolean mIsValid;
   private boolean mFilterLoad = false;
+  private boolean mUpdateDaily;
   
   private HashSet<Program> mUpdateSet;
   
@@ -64,16 +65,11 @@ public class FilterEntry implements Comparable<FilterEntry> {
     mFilterName = "";
     mIsValid = false;
     mFilterLoad = true;
-  }
-  
-  public FilterEntry(ProgramFilter filter, ProgramReceiveTarget[] receiveTargets, String iconFileName) {
-    updateFilter(filter);
-    setIconFilePath(iconFileName);
-    setProgramReceiveTargets(receiveTargets);
+    mUpdateDaily = false;
   }
   
   public FilterEntry(ObjectInputStream in) throws IOException, ClassNotFoundException {
-    in.readInt(); // read version
+    int version = in.readInt(); // read version
     
     mFilterName = in.readUTF();
     
@@ -91,11 +87,26 @@ public class FilterEntry implements Comparable<FilterEntry> {
     
     mIsValid = true;
     mFilterLoad = false;
+    
+    if(version >= 2) {
+      mUpdateDaily = in.readBoolean();
+    }
+    else {
+      mUpdateDaily = false;
+    }
   }
   
   public void setProgramReceiveTargets(ProgramReceiveTarget[] receiveTargets) {
     mReceiveTargets = receiveTargets;
     findForReceiveTargets();
+  }
+  
+  public boolean getUpdateDaily() {
+    return mUpdateDaily;
+  }
+  
+  public void setUpdateDaily(boolean value) {
+    mUpdateDaily = value;
   }
   
   public void handleTvDataUpdateStarted() {
@@ -256,7 +267,7 @@ public class FilterEntry implements Comparable<FilterEntry> {
   }
   
   public void writeData(ObjectOutputStream out) throws IOException {
-    out.writeInt(1); // version
+    out.writeInt(2); // version
     
     if(mFilterName == null) {
       mFilterName = "";
@@ -279,6 +290,8 @@ public class FilterEntry implements Comparable<FilterEntry> {
         target.writeData(out);
       }
     }
+    
+    out.writeBoolean(mUpdateDaily);
   }
   
   public void checkFilter(ProgramFilter filter) {
