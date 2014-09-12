@@ -919,9 +919,9 @@ public class UiUtilities {
    */
   public static ImageIcon createChannelIcon(Icon ic) {
     BufferedImage img = new BufferedImage(getChannelIconWidth(), getChannelIconHeight(), BufferedImage.TYPE_INT_RGB);
-
+    
     if (ic == null) {
-      ic = new ImageIcon("./imgs/tvbrowser16.png");
+      ic = TVBrowserIcons.defaultChannelLogo();
     }
 
     int height = 20;

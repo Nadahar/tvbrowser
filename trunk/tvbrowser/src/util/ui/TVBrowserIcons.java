@@ -19,7 +19,17 @@ public class TVBrowserIcons {
    * size of small icons
    */
   public static final int SIZE_SMALL = 16;
+  
+  private static final ImageIcon DEFAULT_CHANNEL_LOGO = new ImageIcon("./imgs/tvbrowser16.png"); 
 
+  /**
+   * icon for channels without logo
+   * @return default channel logo
+   */
+  public static final ImageIcon defaultChannelLogo() {
+    return DEFAULT_CHANNEL_LOGO;
+  }
+  
   /**
    * icon for plugins
    * @param size
