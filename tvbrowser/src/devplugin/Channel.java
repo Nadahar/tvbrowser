@@ -49,7 +49,6 @@ import util.io.IOUtilities;
 import util.misc.StringPool;
 import util.ui.ImageUtilities;
 import util.ui.TVBrowserIcons;
-import util.ui.UiUtilities;
 
 /**
  * A class that defines a TV-Browser channel
@@ -771,11 +770,8 @@ public class Channel implements Comparable<Channel> {
       }
     }
 
-    if (mIcon == null && mDefaultIcon != null) {
+    if (mIcon == null) {
       return mDefaultIcon;
-    }
-    else if(mIcon == null) {
-      return UiUtilities.createChannelIcon(null);
     }
 
     return mIcon;
@@ -1148,6 +1144,26 @@ public class Channel implements Comparable<Channel> {
     if(mJointChannel != null) {
       mJointChannel.mBaseChannel = this;
       mJointChannelIcon = new Icon() {
+        private Icon getIcon() {
+          Icon icon = Channel.this.getIcon();
+          
+          if(icon == null) {
+            icon = TVBrowserIcons.defaultChannelLogo();
+          }
+          
+          return icon;
+        }
+        
+        private Icon getJointChannelIcon() {
+          Icon icon = mJointChannel.getIcon();
+          
+          if(icon == null) {
+            icon = TVBrowserIcons.defaultChannelLogo();
+          }
+          
+          return icon;
+        }
+        
         @Override
         public void paintIcon(Component c, Graphics g, int x, int y) {
           int y1 = y + getIconHeight()/2 - getIcon().getIconHeight()/2;
@@ -1156,19 +1172,19 @@ public class Channel implements Comparable<Channel> {
           g.drawLine(x+getIcon().getIconWidth()+3, y, x+getIcon().getIconWidth()+3, getIconHeight());
           g.drawLine(x+getIcon().getIconWidth()+4, y, x+getIcon().getIconWidth()+4, getIconHeight());
           
-          y1 = y + getIconHeight()/2 - mJointChannel.getIcon().getIconHeight()/2;
+          y1 = y + getIconHeight()/2 - getJointChannelIcon().getIconHeight()/2;
           
-          mJointChannel.getIcon().paintIcon(c, g, x+7+getIcon().getIconWidth(), y1);
+          getJointChannelIcon().paintIcon(c, g, x+7+getIcon().getIconWidth(), y1);
         }
   
         @Override
         public int getIconWidth() {
-          return getIcon().getIconWidth() + mJointChannel.getIcon().getIconWidth() + 7;
+          return getIcon().getIconWidth() + getJointChannelIcon().getIconWidth() + 7;
         }
   
         @Override
         public int getIconHeight() {
-          return Math.max(getIcon().getIconHeight(), mJointChannel.getIcon().getIconHeight());
+          return Math.max(getIcon().getIconHeight(), getJointChannelIcon().getIconHeight());
         }
         
       };

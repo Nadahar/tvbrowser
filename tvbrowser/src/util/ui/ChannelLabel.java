@@ -45,7 +45,7 @@ public class ChannelLabel extends JLabel {
   /**
    * default channel icon, already prepared for right size
    */
-  static Icon DEFAULT_ICON =  UiUtilities.createChannelIcon(new ImageIcon("./imgs/tvbrowser16.png"));
+  static Icon DEFAULT_ICON =  UiUtilities.createChannelIcon(TVBrowserIcons.defaultChannelLogo());
   
   private boolean mChannelIconsVisible;
   private boolean mTextIsVisible;
