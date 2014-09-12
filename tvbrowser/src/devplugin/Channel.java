@@ -48,6 +48,8 @@ import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
 import util.io.IOUtilities;
 import util.misc.StringPool;
 import util.ui.ImageUtilities;
+import util.ui.TVBrowserIcons;
+import util.ui.UiUtilities;
 
 /**
  * A class that defines a TV-Browser channel
@@ -769,8 +771,11 @@ public class Channel implements Comparable<Channel> {
       }
     }
 
-    if (mIcon == null) {
+    if (mIcon == null && mDefaultIcon != null) {
       return mDefaultIcon;
+    }
+    else if(mIcon == null) {
+      return UiUtilities.createChannelIcon(null);
     }
 
     return mIcon;
