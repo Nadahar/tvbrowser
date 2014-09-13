@@ -177,72 +177,77 @@ public class ProgramListCellRenderer extends DefaultListCellRenderer {
     JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 
     if (value != null && value instanceof Program) {
-
       Program program = (Program) value;
-      Insets borderInsets = label.getBorder().getBorderInsets(label);
-      mProgramPanel.setWidth(list.getWidth() - borderInsets.left - borderInsets.right);
-      mProgramPanel.setProgram(program);
-      mProgramPanel.setPaintExpiredProgramsPale(!isSelected);
-      mProgramPanel.setTextColor(label.getForeground());
-      mProgramPanel.setBackground(label.getBackground());
-
-      if (!mProgramSet.contains(program)) {
-        mProgramSet.add(program);
-        program.addChangeListener(new ProgramListChangeListener(list));
+      
+      if(program.getProgramState() == Program.IS_VALID_STATE) {
+	      Insets borderInsets = label.getBorder().getBorderInsets(label);
+	      mProgramPanel.setWidth(list.getWidth() - borderInsets.left - borderInsets.right);
+	      mProgramPanel.setProgram(program);
+	      mProgramPanel.setPaintExpiredProgramsPale(!isSelected);
+	      mProgramPanel.setTextColor(label.getForeground());
+	      mProgramPanel.setBackground(label.getBackground());
+	
+	      if (!mProgramSet.contains(program)) {
+	        mProgramSet.add(program);
+	        program.addChangeListener(new ProgramListChangeListener(list));
+	      }
+	
+	      StringBuilder labelString = new StringBuilder();
+	      int days = program.getDate().getNumberOfDaysSince(Date.getCurrentDate());
+	
+	      switch (days) {
+	      case -1: {
+	        labelString.append(Localizer.getLocalization(Localizer.I18N_YESTERDAY));
+	        labelString.append(", ").append(program.getDateString());
+	        break;
+	      }
+	      case 0: {
+	        labelString.append(Localizer.getLocalization(Localizer.I18N_TODAY));
+	        labelString.append(", ").append(program.getDateString());
+	        break;
+	      }
+	      case 1: {
+	        labelString.append(Localizer.getLocalization(Localizer.I18N_TOMORROW));
+	        labelString.append(", ").append(program.getDateString());
+	        break;
+	      }
+	      default: {
+	        labelString.append(program.getDate().toString());
+	      }
+	      }
+	
+	      labelString.append(" - ").append(program.getChannel().getName());
+	      mHeaderLb.setText(labelString.toString());
+	
+	      if (program.isExpired() && !isSelected) {
+	        mHeaderLb.setForeground(Color.gray);
+	      } else {
+	        mHeaderLb.setForeground(label.getForeground());
+	      }
+	
+	      mMainPanel.setBackground(label.getBackground());
+	
+	      if (isSelected) {
+	        mMainPanel.setForeground(label.getForeground());
+	      }
+	
+	      mMainPanel.setEnabled(label.isEnabled());
+	      mMainPanel.setBorder(label.getBorder());
+	
+	      if ((!isSelected) && program.getMarkPriority() < Program.MIN_MARK_PRIORITY) {
+	        if(((index & 1) == 1)) {
+	          mMainPanel.setBackground(program.isExpired() ? SECOND_ROW_COLOR_EXPIRED : SECOND_ROW_COLOR);
+	        }
+	        else {
+	          mMainPanel.setBackground(program.isExpired() ? FIRST_ROW_COLOR_EXPIRED : FIRST_ROW_COLOR);
+	        }
+	      }
+	
+	      return mMainPanel;
       }
-
-      StringBuilder labelString = new StringBuilder();
-      int days = program.getDate().getNumberOfDaysSince(Date.getCurrentDate());
-
-      switch (days) {
-      case -1: {
-        labelString.append(Localizer.getLocalization(Localizer.I18N_YESTERDAY));
-        labelString.append(", ").append(program.getDateString());
-        break;
+      else {
+    	  label.setText(program.getChannel() + " " + program.getDateString() + " " + program.getStartTime() + " " + program.getTitle());
       }
-      case 0: {
-        labelString.append(Localizer.getLocalization(Localizer.I18N_TODAY));
-        labelString.append(", ").append(program.getDateString());
-        break;
-      }
-      case 1: {
-        labelString.append(Localizer.getLocalization(Localizer.I18N_TOMORROW));
-        labelString.append(", ").append(program.getDateString());
-        break;
-      }
-      default: {
-        labelString.append(program.getDate().toString());
-      }
-      }
-
-      labelString.append(" - ").append(program.getChannel().getName());
-      mHeaderLb.setText(labelString.toString());
-
-      if (program.isExpired() && !isSelected) {
-        mHeaderLb.setForeground(Color.gray);
-      } else {
-        mHeaderLb.setForeground(label.getForeground());
-      }
-
-      mMainPanel.setBackground(label.getBackground());
-
-      if (isSelected) {
-        mMainPanel.setForeground(label.getForeground());
-      }
-
-      mMainPanel.setEnabled(label.isEnabled());
-      mMainPanel.setBorder(label.getBorder());
-
-      if ((!isSelected) && program.getMarkPriority() < Program.MIN_MARK_PRIORITY) {
-        if(((index & 1) == 1)) {
-          mMainPanel.setBackground(program.isExpired() ? SECOND_ROW_COLOR_EXPIRED : SECOND_ROW_COLOR);
-        }
-        else {
-          mMainPanel.setBackground(program.isExpired() ? FIRST_ROW_COLOR_EXPIRED : FIRST_ROW_COLOR);
-        }
-      }
-
-      return mMainPanel;
     }
     else if(value instanceof String && list.getModel().getSize() > index +1) {
       Object nextValue = list.getModel().getElementAt(index + 1);
