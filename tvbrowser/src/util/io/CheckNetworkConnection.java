@@ -123,12 +123,13 @@ class CheckNetworkConnection {
    * @return true, if a connection can be established
    */
   private boolean checkConnectionInternal(final URL url) {
+	mRunningCount.incrementAndGet();
+	
     // Start Check in second Thread
     new Thread(new Runnable() {
       public void run() {
-        if(!mResult && url != null) {
-          mRunningCount.incrementAndGet();
-          
+        if(!mResult && url != null) {          
+          System.out.println("URL " + url);
           try {
             URLConnection test = url.openConnection();
             
@@ -157,6 +158,7 @@ class CheckNetworkConnection {
     int num = 0;
     // Wait till second Thread is finished or Settings.propNetworkCheckTimeout is reached
     int timeout = Settings.propNetworkCheckTimeout.getInt()/100;
+    System.out.println(mRunningCount.get() + " " + num + " " + timeout);
     while (mRunningCount.get() > 0 && (num < timeout)) {
       num++;
       if (num == 7) {
@@ -172,9 +174,10 @@ class CheckNetworkConnection {
       try {
         Thread.sleep(100);
       } catch (InterruptedException e) {
+    	  e.printStackTrace();
       }
     }
-    
+    System.out.println("hier");
     return mResult;
   }
   
