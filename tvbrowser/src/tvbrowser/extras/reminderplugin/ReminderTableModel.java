@@ -144,11 +144,13 @@ public class ReminderTableModel extends AbstractTableModel {
   }
 
   public Object getValueAt(int rowIndex, int columnIndex) {
-    if (columnIndex == 0) {
-      return mProgramItems[rowIndex].getProgram();
-    } else if (columnIndex == 1) {
-      return mProgramItems[rowIndex];
-    }
+	if(rowIndex >= 0 && rowIndex < getRowCount()) {
+	    if (columnIndex == 0) {
+	      return mProgramItems[rowIndex].getProgram();
+	    } else if (columnIndex == 1) {
+	      return mProgramItems[rowIndex];
+	    }
+	}
     
     return "";
   }

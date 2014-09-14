@@ -636,7 +636,11 @@ public class ReminderListPanel extends JPanel implements PersonaListener, Progra
         Program test = null;
         
         do {
-          test = (Program)mTable.getValueAt(row, 0);
+          Object o = mTable.getValueAt(row, 0);
+          
+          if(o instanceof Program) {
+        	  test = (Program)mTable.getValueAt(row, 0);
+          }
           
           row++;
         }while(test != null && test.equals(example) && row < mTable.getRowCount());
