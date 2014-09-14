@@ -40,6 +40,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import tvbrowser.core.TvDataBase;
+import tvbrowser.ui.mainframe.MainFrame;
 import util.io.IOUtilities;
 import util.program.ProgramUtilities;
 import util.ui.ProgramPanel;
@@ -346,7 +347,7 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
     // if this is the initial update, skip every UI related operation, just set
     // necessary members. the UI update will be forced when setting the initial
     // filter
-    if (mProgramFilter == null) {
+    if (mProgramFilter == null || MainFrame.isStarting()) {
       mShownProgramColumn = mProgramColumn.clone();
       mShownChannelArr = mChannelArr.clone();
       return;
@@ -357,7 +358,7 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
     deregisterFromPrograms(mProgramColumn);
     
     TvDataBase db = TvDataBase.getInstance();
-
+    
     if (monitor != null) {
       monitor.setMaximum(mProgramColumn.length - 1);
       monitor.setValue(0);
@@ -652,10 +653,10 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
   
   
   private void checkThread() {
-    if (! SwingUtilities.isEventDispatchThread()) {
+    /*if (! SwingUtilities.isEventDispatchThread()) {
       throw new IllegalStateException("The table model must be used in the "
           + "Swing event thread (use SwingUtilities.invokeLater())");
-    }
+    }*/
   }
 
 

@@ -44,22 +44,28 @@ public class DefaultMenuBar extends MenuBar {
   public DefaultMenuBar(final MainFrame mainFrame, final JLabel label) {
     super(mainFrame, label);
 
-    JMenu fileMenu = createMenu("menu.main", "&File", true);
-    add(fileMenu);
-    
-    if (TVBrowser.restartEnabled()) {
-      fileMenu.add(mRestartMI);
-    }
-    
-    fileMenu.addSeparator();
-    fileMenu.add(mQuitMI);
+    Thread toAddMenus = new Thread() {
+      public void run() {
+        JMenu fileMenu = createMenu("menu.main", "&File", true);
+        add(fileMenu);
+        
+        if (TVBrowser.restartEnabled()) {
+          fileMenu.add(mRestartMI);
+        }
+        
+        fileMenu.addSeparator();
+        fileMenu.add(mQuitMI);
 
-    createCommonMenus();
+        createCommonMenus();
+        
+        mQuitMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F4, InputEvent.ALT_DOWN_MASK));
+        mRestartMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F4, InputEvent.ALT_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK));
+        mSettingsMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, Toolkit.getDefaultToolkit()
+            .getMenuShortcutKeyMask()));
+      };
+    };
     
-    mQuitMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F4, InputEvent.ALT_DOWN_MASK));
-    mRestartMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F4, InputEvent.ALT_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK));
-    mSettingsMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, Toolkit.getDefaultToolkit()
-        .getMenuShortcutKeyMask()));
+    addAdditionalMenus(toAddMenus);
   }
 
   protected void setPluginMenuItems(JMenuItem[] items) {
