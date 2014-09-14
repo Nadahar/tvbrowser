@@ -42,21 +42,27 @@ public class MacOSXMenuBar extends MenuBar {
   public MacOSXMenuBar(MainFrame mainFrame, JLabel label) {
     super(mainFrame, label);
 
-    createTVBrowserMenuItem();
-
-    createCommonMenus();
-
-    int commandModifier = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
-
-    // shortcuts as defined in the Apple guidelines
-    // command Q
-    mQuitMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, commandModifier));
-
-    // command ,
-    mSettingsMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_COMMA, commandModifier));
-
-    // alt command T
-    mToolbarMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T, commandModifier | KeyEvent.ALT_DOWN_MASK));
+    Thread toAddMenus = new Thread() {
+      public void run() {
+        createTVBrowserMenuItem();
+    
+        createCommonMenus();
+    
+        int commandModifier = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
+    
+        // shortcuts as defined in the Apple guidelines
+        // command Q
+        mQuitMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, commandModifier));
+    
+        // command ,
+        mSettingsMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_COMMA, commandModifier));
+    
+        // alt command T
+        mToolbarMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T, commandModifier | KeyEvent.ALT_DOWN_MASK));
+      }
+    };
+    
+    addAdditionalMenus(toAddMenus);
   }
 
 

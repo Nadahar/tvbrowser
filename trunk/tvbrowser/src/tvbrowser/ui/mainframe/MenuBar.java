@@ -133,13 +133,47 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 	 */
 	private JLabel mLabel;
 	private Border mDefaultBorder;
+	private Thread mInitializeThread;
 	
 	protected MenuBar(MainFrame mainFrame, JLabel label) {
 	  mDefaultBorder = getBorder();
 		mMainFrame = mainFrame;
 		mLabel = label;
-		createMenuItems();
-		updatePersona();
+		createNeededMenuItems();
+		
+		mInitializeThread = new Thread("MENU BAR INITIALIZE THREAD") {
+		  public void run() {
+		    createMenuItems();
+		    updatePersona();
+		  };
+		};
+		mInitializeThread.start();
+	}
+	
+	private void createNeededMenuItems() {
+	  mSettingsMI = createMenuItem(TVBrowserActions.settings);
+	  
+	  mQuitMI = createMenuItem("menuitem.exit", "Exit", TVBrowserIcons
+        .quit(TVBrowserIcons.SIZE_SMALL));
+    mQuitMI.addActionListener(this);
+    
+    mRestartMI = createMenuItem("menuitem.restart", "Restart", TVBrowserIcons
+        .restart(TVBrowserIcons.SIZE_SMALL));
+    mRestartMI.addActionListener(this);
+    
+    mGoMenu = createMenu("menu.go", "Go", true);
+    mViewMenu = createMenu("menu.view", "View", true);
+    
+    mToolbarMenu = createMenu("menuitem.viewToolbar", "Toolbar");
+    mChannelGroupMenu = createMenu("menuitem.channelgroup", "Channel group");
+    mGotoDateMenu = createMenu("menuitem.date", "date");
+    mGotoTimeMenu = createMenu("menuitem.time", "time");
+    mPluginHelpMenu = createMenu("menuitem.pluginHelp", "Plugin help");
+    mFontSizeMenu = createMenu("menuitem.fontSize", "Font size");
+    mColumnWidthMenu = createMenu("menuitem.columnWidth", "ColumnWidth");
+    mFiltersMenu = createScrollableMenu("menuitem.filters", "Filter");
+    
+    mLicenseMenu = createLicenseMenuItems();
 	}
 
 	protected MainFrame getMainFrame() {
@@ -167,19 +201,10 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 	}
 
 	private void createMenuItems() {
-	  mSettingsMI = createMenuItem(TVBrowserActions.settings);
-		mQuitMI = createMenuItem("menuitem.exit", "Exit", TVBrowserIcons
-				.quit(TVBrowserIcons.SIZE_SMALL));
-		mQuitMI.addActionListener(this);
 		new MenuHelpTextAdapter(mQuitMI, mLocalizer.msg("menuinfo.quit", ""),
 				mLabel);
-		mRestartMI = createMenuItem("menuitem.restart", "Restart", TVBrowserIcons
-				.restart(TVBrowserIcons.SIZE_SMALL));
-		mRestartMI.addActionListener(this);
 		new MenuHelpTextAdapter(mRestartMI, mLocalizer.msg("menuinfo.restart", ""),
 				mLabel);
-
-		mToolbarMenu = createMenu("menuitem.viewToolbar", "Toolbar");
 
 		mToolbarMI = new JCheckBoxMenuItem(ToolBarDragAndDropSettings.mLocalizer
 				.msg("showToolbar", "Show toolbar"));
@@ -248,17 +273,12 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 		mViewFilterBarMI.addActionListener(this);
 		new MenuHelpTextAdapter(mViewFilterBarMI, mLocalizer.msg(
 				"menuinfo.filterbar", ""), mLabel);
-
-		mFiltersMenu = createScrollableMenu("menuitem.filters", "Filter");
+		
 		mFiltersMenu.setIcon(TVBrowserIcons.filter(TVBrowserIcons.SIZE_SMALL));
 		updateFiltersMenu();
-
-		mChannelGroupMenu = createMenu("menuitem.channelgroup", "Channel group");
-		updateChannelGroupMenu(mChannelGroupMenu);
-
-		mGoMenu = createMenu("menu.go", "Go", true);
 		
-		mGotoDateMenu = createMenu("menuitem.date", "date");
+		updateChannelGroupMenu(mChannelGroupMenu);
+		
 		mGotoDateMenu.setIcon(IconLoader.getInstance().getIconFromTheme("apps",
 				"office-calendar", 16));
 
@@ -266,7 +286,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 				.getLocalization(Localizer.I18N_CHANNEL));
 		mGotoChannelMenu.setIcon(IconLoader.getInstance().getIconFromTheme(
 				"actions", "scroll-to-channel", 16));
-		mGotoTimeMenu = createMenu("menuitem.time", "time");
+		
 		mGotoTimeMenu.setIcon(IconLoader.getInstance().getIconFromTheme("actions",
 				"scroll-to-time", 16));
 		mGoMenu.add(createMenuItem(TVBrowserActions.goToPreviousDay));
@@ -280,9 +300,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 		mGoMenu.add(mGotoTimeMenu);
 		mGoMenu.addSeparator();
     mGoMenu.add(createMenuItem(TVBrowserActions.scrollToNow));
-
-		mViewMenu = createMenu("menu.view", "View", true);
-		
+    
 		mFullscreenMI = createCheckBoxItem("menuitem.fullscreen", "Fullscreen");
 		mFullscreenMI.setIcon(TVBrowserIcons.fullScreen(TVBrowserIcons.SIZE_SMALL));
 		mFullscreenMI.addActionListener(this);
@@ -292,9 +310,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 		updateDateItems();
 		updateChannelItems();
 		updateTimeItems();
-
-		mLicenseMenu = createLicenseMenuItems();
-
+		
 		Icon urlHelpImg = IconLoader.getInstance().getIconFromTheme("apps",
 				"help-browser", 16);
 		Icon urlBrowserImg = IconLoader.getInstance().getIconFromTheme("apps",
@@ -396,19 +412,16 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 		mAboutMI.addActionListener(this);
 		new MenuHelpTextAdapter(mAboutMI, mLocalizer.msg("menuinfo.about", ""),
 				mLabel);
-
-		mPluginHelpMenu = createMenu("menuitem.pluginHelp", "Plugin help");
+		
 		mPluginHelpMenu.setIcon(urlHelpImg);
 		updatePluginHelpMenuItems();
-
-		mFontSizeMenu = createMenu("menuitem.fontSize", "Font size");
+		
 		mFontSizeMenu.add(createMenuItem(TVBrowserActions.fontSizeLarger));
 		mFontSizeMenu.add(createMenuItem(TVBrowserActions.fontSizeSmaller));
 		mFontSizeMenu.addSeparator();
 		mFontSizeMenu.add(createMenuItem(TVBrowserActions.fontSizeDefault));
 		mFontSizeMenu.setIcon(TVBrowserIcons.zoomIn(TVBrowserIcons.SIZE_SMALL));
-
-		mColumnWidthMenu = createMenu("menuitem.columnWidth", "ColumnWidth");
+		
 		mColumnWidthMenu.add(createMenuItem(TVBrowserActions.columnWidthLarger));
 		mColumnWidthMenu.add(createMenuItem(TVBrowserActions.columnWidthSmaller));
 		mColumnWidthMenu.addSeparator();
@@ -837,6 +850,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
     }
 
     mPluginsMenu.addSeparator();
+    
     mPluginsMenu.add(mInstallPluginsMI);
     mPluginsMenu.add(mPluginManagerMI);
   }
@@ -1134,6 +1148,22 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 	}
 
 	protected void createHelpMenuItems(boolean showAbout) {
+	}
+	
+	protected final void addAdditionalMenus(final Runnable callback) {
+	  if(mInitializeThread != null && mInitializeThread.isAlive()) {
+	    new Thread("ADD ADITONAL MENUS WAITING THREAD") {
+	      public void run() {
+	        while(mInitializeThread.isAlive()) {
+	          try {
+              sleep(100);
+            } catch (InterruptedException e) {}
+	        }
+	        
+	        callback.run();
+	      };
+	    }.start();
+	  }
 	}
 
   protected void createCommonMenus() {

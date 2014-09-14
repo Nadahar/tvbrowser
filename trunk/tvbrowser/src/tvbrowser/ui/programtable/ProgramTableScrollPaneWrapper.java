@@ -97,6 +97,10 @@ public class ProgramTableScrollPaneWrapper extends PluginCenterPanel {
     }
   }
   
+  public boolean hasInfoPanel(int type) {
+    return (mInfoPanel != null && mInfoPanel.isType(type));
+  }
+  
   private static final class InfoPanel extends JPanel {
     private int mType;
     

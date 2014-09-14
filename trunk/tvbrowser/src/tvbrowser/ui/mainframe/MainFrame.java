@@ -588,9 +588,9 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     
     setJMenuBar(mMenuBar);
     addContextMenuMouseListener(mMenuBar);
-
+    
     // set program filter
-    FilterList filterList = FilterList.getInstance();
+    final FilterList filterList = FilterList.getInstance();
     
     ProgramFilter filter = filterList
         .getFilterByName(Settings.propLastUsedFilter.getString());
@@ -612,9 +612,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
       } catch (ClassCastException e1) {
       } catch (TvBrowserException e1) {}
     }
-
-    addKeyboardAction();
-
+    
     mTimer = new Timer(10000, new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
         handleTimerEvent();
@@ -1378,10 +1376,11 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
       return true;
     }
     ProgramFilter filter = mProgramTableModel.getProgramFilter();
-    return (Settings.propDefaultFilter.getString().equals(filter.getClass().getName() + "###" + filter.getName()));
+    
+    return filter == null || (Settings.propDefaultFilter.getString().equals(filter.getClass().getName() + "###" + filter.getName()));
   }
   
-  public synchronized void setProgramFilter(ProgramFilter filter) {
+  public synchronized void setProgramFilter(final ProgramFilter filter) {
     boolean isDefaultFilter = filter.equals(FilterManagerImpl.getInstance().getDefaultFilter());
     
     mScrollPaneWrapper.removeInfoPanel(ProgramTableScrollPaneWrapper.INFO_EMPTY_FILTER_RESULT);
@@ -1449,9 +1448,14 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     
     mProgramTableScrollPane.requestFocusInWindow();
     
-    for(PluginCenterPanelWrapper wrapper : mCenterPanelWrapperList) {
-      wrapper.filterSelected(filter);
-    }
+    new Thread("SEND FILTER TO CENTER PANELS") {
+      @Override
+      public void run() {
+        for(PluginCenterPanelWrapper wrapper : mCenterPanelWrapperList) {
+          wrapper.filterSelected(filter);
+        }
+      }
+    }.start();
   }
 
   /**
@@ -1955,9 +1959,13 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     mProgramTableScrollPane.requestFocusInWindow();
     mProgramTableScrollPane.getProgramTable().clearTimeMarkings();
     
-    for(PluginCenterPanelWrapper wrapper : mCenterPanelWrapperList) {
-      wrapper.scrolledToNow();
-    }
+    new Thread("SEND SCROLL TO NOW TO CENTER PANELS") {
+      public void run() {
+        for(PluginCenterPanelWrapper wrapper : mCenterPanelWrapperList) {
+          wrapper.scrolledToNow();
+        }        
+      };
+    }.start();
   }
   
   /** Very first scrollToNow should only be called from TVBrowser.java */
@@ -2203,9 +2211,20 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
       mScrollPaneWrapper.showInfoPanel(ProgramTableScrollPaneWrapper.INFO_EMPTY_FILTER_RESULT, filter.getName());
     }
     else {
-      mScrollPaneWrapper.removeInfoPanel(ProgramTableScrollPaneWrapper.INFO_NO_DATA);
-      mScrollPaneWrapper.removeInfoPanel(ProgramTableScrollPaneWrapper.INFO_EMPTY_FILTER_RESULT);
-      setChannelFilter(mProgramTableModel.getChannelFilter());
+      boolean hadInfoPanel = false;
+      
+      if(mScrollPaneWrapper.hasInfoPanel(ProgramTableScrollPaneWrapper.INFO_NO_DATA)) {
+        hadInfoPanel = true;
+        mScrollPaneWrapper.removeInfoPanel(ProgramTableScrollPaneWrapper.INFO_NO_DATA);
+      }
+      if(mScrollPaneWrapper.hasInfoPanel(ProgramTableScrollPaneWrapper.INFO_EMPTY_FILTER_RESULT)) {
+        hadInfoPanel = true;
+        mScrollPaneWrapper.removeInfoPanel(ProgramTableScrollPaneWrapper.INFO_EMPTY_FILTER_RESULT);
+      }
+      
+      if(hadInfoPanel) {
+        setChannelFilter(mProgramTableModel.getChannelFilter());
+      }
     }
   }
   
