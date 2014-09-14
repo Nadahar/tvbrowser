@@ -144,7 +144,6 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 		mInitializeThread = new Thread("MENU BAR INITIALIZE THREAD") {
 		  public void run() {
 		    createMenuItems();
-		    updatePersona();
 		  };
 		};
 		mInitializeThread.start();
@@ -1161,6 +1160,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 	        }
 	        
 	        callback.run();
+	        updatePersona();
 	      };
 	    }.start();
 	  }
