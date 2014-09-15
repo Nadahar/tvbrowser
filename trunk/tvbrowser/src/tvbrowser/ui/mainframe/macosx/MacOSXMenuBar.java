@@ -38,6 +38,7 @@ import javax.swing.*;
 import com.apple.eawt.*;
 
 public class MacOSXMenuBar extends MenuBar {
+  private boolean mMenusAdded = false;
 
   public MacOSXMenuBar(MainFrame mainFrame, JLabel label) {
     super(mainFrame, label);
@@ -65,6 +66,24 @@ public class MacOSXMenuBar extends MenuBar {
     addAdditionalMenus(toAddMenus);
   }
 
+  protected void setPluginMenuItems(final JMenuItem[] items) {
+    new Thread("SET PLUGIN MENU ITEMS THREAD") {
+      @Override
+      public void run() {
+        while(!mMenusAdded) {
+          try {
+            sleep(100);
+          } catch (InterruptedException e) {}
+        }
+        
+        setPluginMenuItemsInternal(items);
+      }
+    }.start();
+  }
+  
+  private void setPluginMenuItemsInternal(JMenuItem[] items) {
+    super.setPluginMenuItems(items);
+  }
 
   private void createTVBrowserMenuItem() {
     Application app = Application.getApplication();
