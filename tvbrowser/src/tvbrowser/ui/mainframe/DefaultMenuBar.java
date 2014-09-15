@@ -40,6 +40,7 @@ import tvbrowser.TVBrowser;
  *
  */
 public class DefaultMenuBar extends MenuBar {
+  private boolean mMenusAdded = false;
 
   public DefaultMenuBar(final MainFrame mainFrame, final JLabel label) {
     super(mainFrame, label);
@@ -62,17 +63,33 @@ public class DefaultMenuBar extends MenuBar {
         mRestartMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F4, InputEvent.ALT_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK));
         mSettingsMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, Toolkit.getDefaultToolkit()
             .getMenuShortcutKeyMask()));
+        
+        mMenusAdded = true;
       };
     };
     
     addAdditionalMenus(toAddMenus);
   }
 
-  protected void setPluginMenuItems(JMenuItem[] items) {
+  protected void setPluginMenuItems(final JMenuItem[] items) {
+    new Thread("SET PLUGIN MENU ITEMS THREAD") {
+      @Override
+      public void run() {
+        while(!mMenusAdded) {
+          try {
+            sleep(100);
+          } catch (InterruptedException e) {}
+        }
+        
+        setPluginMenuItemsInternal(items);
+      }
+    }.start();
+  }
+  
+  private void setPluginMenuItemsInternal(JMenuItem[] items) {
     super.setPluginMenuItems(items);
     // on non Mac systems, the settings are in the tools menu
     mPluginsMenu.addSeparator();
     mPluginsMenu.add(mSettingsMI);
   }
-
 }
