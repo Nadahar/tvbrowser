@@ -67,7 +67,7 @@ public class MacOSXMenuBar extends MenuBar {
   }
 
   protected void setPluginMenuItems(final JMenuItem[] items) {
-    new Thread("SET PLUGIN MENU ITEMS THREAD") {
+    SwingUtilities.invokeLater(new Thread("SET PLUGIN MENU ITEMS THREAD") {
       @Override
       public void run() {
         while(!mMenusAdded) {
@@ -78,7 +78,7 @@ public class MacOSXMenuBar extends MenuBar {
         
         setPluginMenuItemsInternal(items);
       }
-    }.start();
+    });
   }
   
   private void setPluginMenuItemsInternal(JMenuItem[] items) {
