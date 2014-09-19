@@ -32,6 +32,7 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
 
 import tvbrowser.TVBrowser;
 
@@ -72,7 +73,7 @@ public class DefaultMenuBar extends MenuBar {
   }
 
   protected void setPluginMenuItems(final JMenuItem[] items) {
-    new Thread("SET PLUGIN MENU ITEMS THREAD") {
+    SwingUtilities.invokeLater(new Thread("SET PLUGIN MENU ITEMS THREAD") {
       @Override
       public void run() {
         while(!mMenusAdded) {
@@ -83,7 +84,7 @@ public class DefaultMenuBar extends MenuBar {
         
         setPluginMenuItemsInternal(items);
       }
-    }.start();
+    });
   }
   
   private void setPluginMenuItemsInternal(JMenuItem[] items) {
