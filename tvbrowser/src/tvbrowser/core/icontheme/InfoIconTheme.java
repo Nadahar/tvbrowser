@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Locale;
@@ -41,6 +42,8 @@ import java.util.zip.ZipFile;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+
+import tvbrowser.core.Settings;
 
 /**
  * A class that stores the info icons for the program panels.
@@ -191,7 +194,7 @@ public class InfoIconTheme implements Comparable<InfoIconTheme> {
         
         if(iconEntry.getName().startsWith("Info_")) {
           try {
-            URL url = new URL("jar:" + zipURL + "!/" + iconEntry.getName());
+            URL url = new URL("jar:" + zipURL + "!/" + URLEncoder.encode(iconEntry.getName(), "UTF-8"));
             mapIcon(new ImageIcon(url), iconEntry.getName());
           } catch (IOException e) {
             e.printStackTrace();
@@ -312,7 +315,13 @@ public class InfoIconTheme implements Comparable<InfoIconTheme> {
   public ImageIcon getInfoIcon(byte type) {
     loadIcons();
     
-    return mIconMap.get(Byte.valueOf(type));
+    ImageIcon icon = mIconMap.get(Byte.valueOf(type));
+    
+    if(icon == null && !mID.equals(Settings.propInfoIconThemeID.getDefault())) {
+      icon = InfoThemeLoader.getInstance().getDefaultTheme().getInfoIcon(type);
+    }
+    
+    return icon;
   }
   
   /**
@@ -335,40 +344,41 @@ public class InfoIconTheme implements Comparable<InfoIconTheme> {
     if(mInfoIconArr == null) {
       mInfoIconArr = new Icon[25];
       
-      mInfoIconArr[0] = mIconMap.get(Byte.valueOf(INFO_BLACK_AND_WHITE));
-      mInfoIconArr[1] = mIconMap.get(Byte.valueOf(INFO_4_3));
-      mInfoIconArr[2] = mIconMap.get(Byte.valueOf(INFO_16_9));
-      mInfoIconArr[3] = mIconMap.get(Byte.valueOf(INFO_MONO));
-      mInfoIconArr[4] = mIconMap.get(Byte.valueOf(INFO_STEREO));
-      mInfoIconArr[5] = mIconMap.get(Byte.valueOf(INFO_DOLBY_SOURROUND));
-      mInfoIconArr[6] = mIconMap.get(Byte.valueOf(INFO_DOLBY_DIGITAL_5_1));
-      mInfoIconArr[7] = mIconMap.get(Byte.valueOf(INFO_TWO_CHANNEL_TONE));
-      mInfoIconArr[8] = mIconMap.get(Byte.valueOf(INFO_SUBTITLE_FOR_AURALLY_HANDICAPPED));
-      mInfoIconArr[9] = mIconMap.get(Byte.valueOf(INFO_LIVE));
-      mInfoIconArr[10] = mIconMap.get(Byte.valueOf(INFO_ORIGINAL_WITH_SUBTITLE));
-      mInfoIconArr[11] = mIconMap.get(Byte.valueOf(INFO_NEW));
-      mInfoIconArr[12] = mIconMap.get(Byte.valueOf(INFO_AUDIO_DESCRIPTION));
-      mInfoIconArr[13] = mIconMap.get(Byte.valueOf(INFO_HD));
-      mInfoIconArr[14] = mIconMap.get(Byte.valueOf(INFO_MOVIE));
-      mInfoIconArr[15] = mIconMap.get(Byte.valueOf(INFO_SERIES));
-      mInfoIconArr[16] = mIconMap.get(Byte.valueOf(INFO_NEWS));
-      mInfoIconArr[17] = mIconMap.get(Byte.valueOf(INFO_SHOW));
-      mInfoIconArr[18] = mIconMap.get(Byte.valueOf(INFO_INFOTAINMENT));
-      mInfoIconArr[19] = mIconMap.get(Byte.valueOf(INFO_DOCU));
-      mInfoIconArr[20] = mIconMap.get(Byte.valueOf(INFO_ARTS));
-      mInfoIconArr[21] = mIconMap.get(Byte.valueOf(INFO_SPORTS));
-      mInfoIconArr[22] = mIconMap.get(Byte.valueOf(INFO_CHILDREN));
-      mInfoIconArr[23] = mIconMap.get(Byte.valueOf(INFO_OTHERS));
-      mInfoIconArr[24] = mIconMap.get(Byte.valueOf(INFO_SIGN_LANGUGAGE));
+      mInfoIconArr[0] = getInfoIcon(INFO_BLACK_AND_WHITE);
+      mInfoIconArr[1] = getInfoIcon(INFO_4_3);
+      mInfoIconArr[2] = getInfoIcon(INFO_16_9);
+      mInfoIconArr[3] = getInfoIcon(INFO_MONO);
+      mInfoIconArr[4] = getInfoIcon(INFO_STEREO);
+      mInfoIconArr[5] = getInfoIcon(INFO_DOLBY_SOURROUND);
+      mInfoIconArr[6] = getInfoIcon(INFO_DOLBY_DIGITAL_5_1);
+      mInfoIconArr[7] = getInfoIcon(INFO_TWO_CHANNEL_TONE);
+      mInfoIconArr[8] = getInfoIcon(INFO_SUBTITLE_FOR_AURALLY_HANDICAPPED);
+      mInfoIconArr[9] = getInfoIcon(INFO_LIVE);
+      mInfoIconArr[10] = getInfoIcon(INFO_ORIGINAL_WITH_SUBTITLE);
+      mInfoIconArr[11] = getInfoIcon(INFO_NEW);
+      mInfoIconArr[12] = getInfoIcon(INFO_AUDIO_DESCRIPTION);
+      mInfoIconArr[13] = getInfoIcon(INFO_HD);
+      mInfoIconArr[14] = getInfoIcon(INFO_MOVIE);
+      mInfoIconArr[15] = getInfoIcon(INFO_SERIES);
+      mInfoIconArr[16] = getInfoIcon(INFO_NEWS);
+      mInfoIconArr[17] = getInfoIcon(INFO_SHOW);
+      mInfoIconArr[18] = getInfoIcon(INFO_INFOTAINMENT);
+      mInfoIconArr[19] = getInfoIcon(INFO_DOCU);
+      mInfoIconArr[20] = getInfoIcon(INFO_ARTS);
+      mInfoIconArr[21] = getInfoIcon(INFO_SPORTS);
+      mInfoIconArr[22] = getInfoIcon(INFO_CHILDREN);
+      mInfoIconArr[23] = getInfoIcon(INFO_OTHERS);
+      mInfoIconArr[24] = getInfoIcon(INFO_SIGN_LANGUGAGE);
     }
     
     return mInfoIconArr;
   }
   
   private String getDescriptionForIconType(byte type) {
-    ImageIcon icon = mIconMap.get(Byte.valueOf(type));
+    ImageIcon icon = getInfoIcon(type);
     
     if(icon != null) {
+     // System.out.println(icon.getDescription());
       return icon.getDescription();
     }
     
