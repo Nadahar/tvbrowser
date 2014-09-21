@@ -103,7 +103,7 @@ public class ScrollableMenu extends JMenu {
   private void setMaxItemToDisplay() {
     // set max items count visible on screen
     Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-    maxItemsToDisplay = (dim.height / maxHeight) - 3;
+    maxItemsToDisplay = Math.max((dim.height / maxHeight) - 3,3);
   }
 
   private static class SelectNextItemAction extends AbstractAction {
@@ -495,6 +495,7 @@ public class ScrollableMenu extends JMenu {
     }
 
     while(super.getMenuComponentCount() > maxItemsToDisplay + 4) {
+      System.out.println(super.getMenuComponentCount() + " " + maxItemsToDisplay);
       super.remove(super.getMenuComponentCount() - 3);
     }
 

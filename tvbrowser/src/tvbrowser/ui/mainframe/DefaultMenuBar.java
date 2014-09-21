@@ -71,23 +71,8 @@ public class DefaultMenuBar extends MenuBar {
     
     addAdditionalMenus(toAddMenus);
   }
-
-  protected void setPluginMenuItems(final JMenuItem[] items) {
-    SwingUtilities.invokeLater(new Thread("SET PLUGIN MENU ITEMS THREAD") {
-      @Override
-      public void run() {
-        while(!mMenusAdded) {
-          try {
-            sleep(100);
-          } catch (InterruptedException e) {}
-        }
-        
-        setPluginMenuItemsInternal(items);
-      }
-    });
-  }
   
-  private void setPluginMenuItemsInternal(JMenuItem[] items) {
+  protected void setPluginMenuItems(JMenuItem[] items) {
     super.setPluginMenuItems(items);
     // on non Mac systems, the settings are in the tools menu
     mPluginsMenu.addSeparator();

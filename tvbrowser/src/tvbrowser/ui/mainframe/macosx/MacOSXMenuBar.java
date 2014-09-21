@@ -66,25 +66,6 @@ public class MacOSXMenuBar extends MenuBar {
     addAdditionalMenus(toAddMenus);
   }
 
-  protected void setPluginMenuItems(final JMenuItem[] items) {
-    SwingUtilities.invokeLater(new Thread("SET PLUGIN MENU ITEMS THREAD") {
-      @Override
-      public void run() {
-        while(!mMenusAdded) {
-          try {
-            sleep(100);
-          } catch (InterruptedException e) {}
-        }
-        
-        setPluginMenuItemsInternal(items);
-      }
-    });
-  }
-  
-  private void setPluginMenuItemsInternal(JMenuItem[] items) {
-    super.setPluginMenuItems(items);
-  }
-
   private void createTVBrowserMenuItem() {
     Application app = Application.getApplication();
     app.addAboutMenuItem();
