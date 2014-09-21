@@ -33,10 +33,11 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
 import tvbrowser.core.Settings;
+import util.settings.ProgramPanelSettings;
 
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.factories.Borders;
-import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.factories.CC;
 import com.jgoodies.forms.layout.FormLayout;
 
 import devplugin.SettingsTab;
@@ -54,6 +55,9 @@ public class ChannelIconAndNameSettingsTab implements SettingsTab {
   private JRadioButton mShowOnlyIconInProgramTable;
   private JRadioButton mShowOnlyNameInProgramTable;
 
+  private JRadioButton mShowIconInProgramPanelPlugins;
+  private JRadioButton mShowIconInProgramPanelNever;
+  
   private JRadioButton mShowIconAndNameInChannelLists;
   private JRadioButton mShowOnlyIconInChannelLists;
   private JRadioButton mShowOnlyNameInChannelLists;
@@ -67,22 +71,22 @@ public class ChannelIconAndNameSettingsTab implements SettingsTab {
    * Creates the settings panel for this tab.
    */
   public JPanel createSettingsPanel() {
-    CellConstraints cc = new CellConstraints();
     PanelBuilder pb = new PanelBuilder(new FormLayout("5dlu, default:grow, 5dlu",
-    "default,5dlu,default,default,default,5dlu,default,default,10dlu,default,5dlu,default,default,default,5dlu,default"));
+    "default,5dlu,default,default,default,5dlu,default,default,10dlu,default," +
+    "5dlu,default,default,10dlu,default,5dlu,default,default,default,5dlu,default"));
     pb.border(Borders.DIALOG);
 
     int y = 1;
     
-    pb.addSeparator(mLocalizer.msg("programTable","Program table"), cc.xyw(1,y++,3));
-    pb.add(mShowIconAndNameInProgramTable = new JRadioButton(mLocalizer.msg("showIconAndName","Show channel icon and channel name"), Settings.propShowChannelIconsInProgramTable.getBoolean() && Settings.propShowChannelNamesInProgramTable.getBoolean()), cc.xy(2,++y));
-    pb.add(mShowOnlyIconInProgramTable = new JRadioButton(mLocalizer.msg("showOnlyIcon","Show channel icon"), Settings.propShowChannelIconsInProgramTable.getBoolean() && !Settings.propShowChannelNamesInProgramTable.getBoolean()), cc.xy(2,++y));
-    pb.add(mShowOnlyNameInProgramTable = new JRadioButton(mLocalizer.msg("showOnlyName","Show channel name"), Settings.propShowChannelNamesInProgramTable.getBoolean() && !Settings.propShowChannelIconsInProgramTable.getBoolean()), cc.xy(2,++y));
+    pb.addSeparator(mLocalizer.msg("programTable","Program table"), CC.xyw(1,y++,3));
+    pb.add(mShowIconAndNameInProgramTable = new JRadioButton(mLocalizer.msg("showIconAndName","Show channel icon and channel name"), Settings.propShowChannelIconsInProgramTable.getBoolean() && Settings.propShowChannelNamesInProgramTable.getBoolean()), CC.xy(2,++y));
+    pb.add(mShowOnlyIconInProgramTable = new JRadioButton(mLocalizer.msg("showOnlyIcon","Show channel icon"), Settings.propShowChannelIconsInProgramTable.getBoolean() && !Settings.propShowChannelNamesInProgramTable.getBoolean()), CC.xy(2,++y));
+    pb.add(mShowOnlyNameInProgramTable = new JRadioButton(mLocalizer.msg("showOnlyName","Show channel name"), Settings.propShowChannelNamesInProgramTable.getBoolean() && !Settings.propShowChannelIconsInProgramTable.getBoolean()), CC.xy(2,++y));
     
     y += 2;
     
-    pb.add(mShowSortNumberInProgramTable = new JCheckBox(mLocalizer.msg("showChannelNumber", "Show sort number"), Settings.propShowSortNumberInProgramTable.getBoolean()), cc.xy(2, y++));
-    pb.add(mShowTooltipInProgramTable = new JCheckBox(mLocalizer.msg("showToolTip","Show large channel icons in tooltip"), Settings.propShowChannelTooltipInProgramTable.getBoolean()), cc.xy(2,y));
+    pb.add(mShowSortNumberInProgramTable = new JCheckBox(mLocalizer.msg("showChannelNumber", "Show sort number"), Settings.propShowSortNumberInProgramTable.getBoolean()), CC.xy(2, y++));
+    pb.add(mShowTooltipInProgramTable = new JCheckBox(mLocalizer.msg("showToolTip","Show large channel icons in tooltip"), Settings.propShowChannelTooltipInProgramTable.getBoolean()), CC.xy(2,y));
     
     mShowTooltipInProgramTable.setEnabled(!mShowOnlyNameInProgramTable.isSelected());
     
@@ -99,14 +103,24 @@ public class ChannelIconAndNameSettingsTab implements SettingsTab {
     
     y += 2;
     
-    pb.addSeparator(mLocalizer.msg("channelLists","Channel lists"), cc.xyw(1,y++,3));
-    pb.add(mShowIconAndNameInChannelLists = new JRadioButton(mLocalizer.msg("showIconAndName","Show channel icon and channel name"), Settings.propShowChannelIconsInChannellist.getBoolean() && Settings.propShowChannelNamesInChannellist.getBoolean()), cc.xy(2,++y));
-    pb.add(mShowOnlyIconInChannelLists = new JRadioButton(mLocalizer.msg("showOnlyIcon","Show channel icon"), Settings.propShowChannelIconsInChannellist.getBoolean() && !Settings.propShowChannelNamesInChannellist.getBoolean()), cc.xy(2,++y));
-    pb.add(mShowOnlyNameInChannelLists = new JRadioButton(mLocalizer.msg("showOnlyName","Show channel name"), Settings.propShowChannelNamesInChannellist.getBoolean() && !Settings.propShowChannelIconsInChannellist.getBoolean()), cc.xy(2,++y));
+    pb.addSeparator(mLocalizer.msg("programPanels", "Program panels"),CC.xyw(1,y++,3));
+    pb.add(mShowIconInProgramPanelPlugins = new JRadioButton(mLocalizer.msg("showLogoPlugins", "Plugins decide showing of channel logos"), Settings.propShowChannelLogoForProgramPanel.getInt() == ProgramPanelSettings.SHOW_CHANNEL_LOGO_PLUGINS_CONTROL), CC.xy(2,++y));
+    pb.add(mShowIconInProgramPanelNever = new JRadioButton(mLocalizer.msg("showLogoNever", "Channel logos are never shown"), Settings.propShowChannelLogoForProgramPanel.getInt() == ProgramPanelSettings.SHOW_CHANNEL_LOGO_NEVER), CC.xy(2,++y));
+    
+    ButtonGroup programPanels = new ButtonGroup();
+    programPanels.add(mShowIconInProgramPanelPlugins);
+    programPanels.add(mShowIconInProgramPanelNever);
     
     y += 2;
     
-    pb.add(mShowSortNumberInChannelLists = new JCheckBox(mLocalizer.msg("showChannelNumber", "Show sort number"), Settings.propShowSortNumberInProgramLists.getBoolean()), cc.xy(2, y++));
+    pb.addSeparator(mLocalizer.msg("channelLists","Channel lists"), CC.xyw(1,y++,3));
+    pb.add(mShowIconAndNameInChannelLists = new JRadioButton(mLocalizer.msg("showIconAndName","Show channel icon and channel name"), Settings.propShowChannelIconsInChannellist.getBoolean() && Settings.propShowChannelNamesInChannellist.getBoolean()), CC.xy(2,++y));
+    pb.add(mShowOnlyIconInChannelLists = new JRadioButton(mLocalizer.msg("showOnlyIcon","Show channel icon"), Settings.propShowChannelIconsInChannellist.getBoolean() && !Settings.propShowChannelNamesInChannellist.getBoolean()), CC.xy(2,++y));
+    pb.add(mShowOnlyNameInChannelLists = new JRadioButton(mLocalizer.msg("showOnlyName","Show channel name"), Settings.propShowChannelNamesInChannellist.getBoolean() && !Settings.propShowChannelIconsInChannellist.getBoolean()), CC.xy(2,++y));
+    
+    y += 2;
+    
+    pb.add(mShowSortNumberInChannelLists = new JCheckBox(mLocalizer.msg("showChannelNumber", "Show sort number"), Settings.propShowSortNumberInProgramLists.getBoolean()), CC.xy(2, y++));
     
     ButtonGroup channelLists = new ButtonGroup();
     channelLists.add(mShowIconAndNameInChannelLists);
@@ -122,6 +136,13 @@ public class ChannelIconAndNameSettingsTab implements SettingsTab {
   public void saveSettings() {
     Settings.propShowChannelIconsInProgramTable.setBoolean(mShowIconAndNameInProgramTable.isSelected() || mShowOnlyIconInProgramTable.isSelected());
     Settings.propShowChannelNamesInProgramTable.setBoolean(mShowIconAndNameInProgramTable.isSelected() || mShowOnlyNameInProgramTable.isSelected());
+    
+    if(mShowIconInProgramPanelPlugins.isSelected()) {
+      Settings.propShowChannelLogoForProgramPanel.setInt(ProgramPanelSettings.SHOW_CHANNEL_LOGO_PLUGINS_CONTROL);
+    }
+    else {
+      Settings.propShowChannelLogoForProgramPanel.setInt(ProgramPanelSettings.SHOW_CHANNEL_LOGO_NEVER);
+    }
     
     Settings.propShowChannelIconsInChannellist.setBoolean(mShowIconAndNameInChannelLists.isSelected() || mShowOnlyIconInChannelLists.isSelected());
     Settings.propShowChannelNamesInChannellist.setBoolean(mShowIconAndNameInChannelLists.isSelected() || mShowOnlyNameInChannelLists.isSelected());

@@ -18,6 +18,8 @@
  */
 package util.settings;
 
+import tvbrowser.core.Settings;
+
 /**
  * A class that contains setting values for the program panel.
  *
@@ -35,6 +37,11 @@ public class ProgramPanelSettings {
   public static final int SHOW_PICTURES_FOR_PLUGINS = 3;
   /** Show the pictures for programs with selected duration */
   public static final int SHOW_PICTURES_FOR_DURATION = 4;
+  
+  /** Channel logo is shown for program panels a plugin has set */
+  public static final int SHOW_CHANNEL_LOGO_PLUGINS_CONTROL = 0;
+  /** Channel logo is never shown for any program panels */
+  public static final int SHOW_CHANNEL_LOGO_NEVER = 1;
 
   /** Orientation Progressbar in X_AXIS */
   public static final int X_AXIS = 0;
@@ -50,6 +57,7 @@ public class ProgramPanelSettings {
   private boolean mShowDescription;
   private boolean mIgnoreProgramImportance;
   private boolean mShowPictureBorder;
+  private boolean mShowChannelLogo;
   private String[] mPluginIds;
 
   /**
@@ -61,14 +69,9 @@ public class ProgramPanelSettings {
    * @since 2.7
    */
   public ProgramPanelSettings(PluginPictureSettings settings, boolean showOnlyDateAndTitle, int axis) {
-    mType = settings.isShowingPictures() ? SHOW_PICTURES_EVER : SHOW_PICTURES_NEVER;
-    mShowDescription = settings.isShowingDescription();
-    mShowPictureBorder = true;
-    mShowOnlyDateAndTitle = showOnlyDateAndTitle;
-    mAxis = axis;
+    this(settings, showOnlyDateAndTitle, axis, false, true);
   }
   
-
   /**
    * Creates an instance of this class with the given values.
    *
@@ -80,13 +83,7 @@ public class ProgramPanelSettings {
    * @since 3.1
    */
   public ProgramPanelSettings(PluginPictureSettings settings, boolean showOnlyDateAndTitle, int axis, boolean ignoreProgramImportance,boolean showPictureBorder) {
-    mType = settings.isShowingPictures() ? SHOW_PICTURES_EVER : SHOW_PICTURES_NEVER;
-    mShowDescription = settings.isShowingDescription();
-    mShowPictureBorder = true;
-    mShowOnlyDateAndTitle = showOnlyDateAndTitle;
-    mAxis = axis;
-    mIgnoreProgramImportance = ignoreProgramImportance;
-    mShowPictureBorder = showPictureBorder;
+    this(settings.isShowingPictures() ? SHOW_PICTURES_EVER : SHOW_PICTURES_NEVER, 0, 0, showOnlyDateAndTitle, settings.isShowingDescription(), 0, null, axis, ignoreProgramImportance, showPictureBorder);
   }
 
   /**
@@ -287,7 +284,26 @@ public class ProgramPanelSettings {
    * @param showPictureBorder If the border around the pictures should be painted.
    * @since 3.1
    */
-  public ProgramPanelSettings(int type, int timeRangeStart, int timeRangeEnd, boolean showOnlyDateAndTitle, boolean showDescription, int duration, String[] pluginIds, int axis, boolean ignoreProgramImportance, boolean showPictureBorder) {  
+  public ProgramPanelSettings(int type, int timeRangeStart, int timeRangeEnd, boolean showOnlyDateAndTitle, boolean showDescription, int duration, String[] pluginIds, int axis, boolean ignoreProgramImportance, boolean showPictureBorder) {
+    this(type, timeRangeStart, timeRangeEnd, showOnlyDateAndTitle, showDescription, duration, pluginIds, axis, ignoreProgramImportance, showPictureBorder, true);
+  }
+  
+  /**
+   * Creates an instance of this class.
+   *
+   * @param type The picture showing type.
+   * @param timeRangeStart The time range start time.
+   * @param timeRangeEnd The time range end time.
+   * @param showOnlyDateAndTitle If the program panel should only contain date and title.
+   * @param showDescription If the picture description should be shown.
+   * @param pluginIds The ids of the plugins to show the pictures for.
+   * @param duration The minimum duration of the programs the pictures should be shown for.
+   * @param axis The axis for the progress bar of the program panel.
+   * @param ignoreProgramImportance If the program importance should be ignored.
+   * @param showPictureBorder If the border around the pictures should be painted.
+   * @since 3.4.1
+   */
+  public ProgramPanelSettings(int type, int timeRangeStart, int timeRangeEnd, boolean showOnlyDateAndTitle, boolean showDescription, int duration, String[] pluginIds, int axis, boolean ignoreProgramImportance, boolean showPictureBorder, boolean showChannelLogo) {
     mType = type;
     mTimeRangeStart = timeRangeStart;
     mTimeRangeEnd = timeRangeEnd;
@@ -298,6 +314,7 @@ public class ProgramPanelSettings {
     mAxis = axis;
     mIgnoreProgramImportance = ignoreProgramImportance;
     mShowPictureBorder = showPictureBorder;
+    mShowChannelLogo = showChannelLogo;
   }
 
   /**
@@ -458,5 +475,15 @@ public class ProgramPanelSettings {
    */
   public boolean isShowingPictureBorder() {
     return mShowPictureBorder;
+  }
+  
+  /**
+   * Gets if the channel logog should be shown in front of the time.
+   * <p>
+   * @return If the channel logo should be shown in front of the time.
+   * @since 3.4.1
+   */
+  public boolean isShowingChannelLogo() {
+    return mShowChannelLogo && Settings.propShowChannelLogoForProgramPanel.getInt() == 0;
   }
 }
