@@ -2063,6 +2063,9 @@ public class Settings {
   public static final StringArrayProperty propAccessControl = new StringArrayProperty(
       mProp, "accessControl", new String[0]);
   
+  public static final IntProperty propShowChannelLogoForProgramPanel = new IntProperty(
+      mProp, "showChannelLogoForProgramPanel", ProgramPanelSettings.SHOW_CHANNEL_LOGO_PLUGINS_CONTROL);
+  
   /**
    * Sets the window position and size for the given window with the values of
    * the given id.

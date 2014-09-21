@@ -45,7 +45,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
@@ -113,13 +112,15 @@ public class ProgramPanel extends JComponent implements ChangeListener, PluginSt
 
   private static int columnWidthOffset = 0;
 
+  /** The width of the channel logo */
+  private static int WIDTH_LOGO = 46;
   /** The width of the left part (the time). */
   public static int WIDTH_LEFT = -1;
   /** The width of the right part (the title and short info). */
   private static int WIDTH_RIGHT = Settings.propColumnWidth.getInt() - WIDTH_LEFT;
   /** The total width. */
-  private static int WIDTH_TOTAL = WIDTH_LEFT + WIDTH_RIGHT;
-
+  private static int WIDTH_TOTAL = WIDTH_LOGO + WIDTH_LEFT + WIDTH_RIGHT;
+  
   /** Formatter for the Time-String */
   private static final TimeFormatter TIME_FORMATTER = new TimeFormatter();
 
@@ -141,6 +142,8 @@ public class ProgramPanel extends JComponent implements ChangeListener, PluginSt
    * It's the height the panel has with a maximum of 3 information rows.
    */
   private int mPreferredHeight = 0;
+  
+  private ChannelLabel mChannelLabel;
   /** The start time as String. */
   private String mProgramTimeAsString;
   /** The icon used to render the title. */
@@ -191,7 +194,7 @@ public class ProgramPanel extends JComponent implements ChangeListener, PluginSt
    * Creates a new instance of ProgramPanel.
    */
   public ProgramPanel() {
-    this(new ProgramPanelSettings(Settings.propPictureType.getInt(), Settings.propPictureStartTime.getInt(), Settings.propPictureEndTime.getInt(), false, Settings.propIsPictureShowingDescription.getBoolean(), Settings.propPictureDuration.getInt(), Settings.propPicturePluginIds.getStringArray(), false, Settings.propShowProgramTablePictureBorder.getBoolean()));
+    this(new ProgramPanelSettings(Settings.propPictureType.getInt(), Settings.propPictureStartTime.getInt(), Settings.propPictureEndTime.getInt(), false, Settings.propIsPictureShowingDescription.getBoolean(), Settings.propPictureDuration.getInt(), Settings.propPicturePluginIds.getStringArray(), ProgramPanelSettings.Y_AXIS, false, Settings.propShowProgramTablePictureBorder.getBoolean(), false));
   }
 
   /**
@@ -212,8 +215,8 @@ public class ProgramPanel extends JComponent implements ChangeListener, PluginSt
 
     calculateWidth();
 
-    mTitleIcon = new TextAreaIcon(null, mTitleFont, WIDTH_RIGHT - 5);
-    mDescriptionIcon = new TextAreaIcon(null, mNormalFont, WIDTH_RIGHT - 5);
+    mTitleIcon = new TextAreaIcon(null, mTitleFont, WIDTH_RIGHT - 5 - (mSettings.isShowingChannelLogo() ? WIDTH_LOGO : 0));
+    mDescriptionIcon = new TextAreaIcon(null, mNormalFont, WIDTH_RIGHT - 5 - (mSettings.isShowingChannelLogo() ? WIDTH_LOGO : 0));
     mDescriptionIcon.setMaximumLineCount(3);
 
     setBackground(UIManager.getColor("programPanel.background"));
@@ -274,7 +277,7 @@ public class ProgramPanel extends JComponent implements ChangeListener, PluginSt
           + distance;
       WIDTH_RIGHT = Settings.propColumnWidth.getInt() + columnWidthOffset
           - WIDTH_LEFT;
-      WIDTH_TOTAL = WIDTH_LEFT + WIDTH_RIGHT;
+      WIDTH_TOTAL = (mSettings.isShowingChannelLogo() ? WIDTH_LOGO : 0)  + WIDTH_LEFT + WIDTH_RIGHT;
     }
   }
 
@@ -347,8 +350,8 @@ private static Font getDynamicFontSize(Font font, int offset) {
    */
   public void forceRepaint() {
     calculateWidth();
-    mTitleIcon = new TextAreaIcon(null, mTitleFont, WIDTH_RIGHT - 5);
-    mDescriptionIcon = new TextAreaIcon(null, mNormalFont, WIDTH_RIGHT - 5);
+    mTitleIcon = new TextAreaIcon(null, mTitleFont, WIDTH_RIGHT - 5 - (mSettings.isShowingChannelLogo() ? WIDTH_LOGO : 0));
+    mDescriptionIcon = new TextAreaIcon(null, mNormalFont, WIDTH_RIGHT - 5 - (mSettings.isShowingChannelLogo() ? WIDTH_LOGO : 0));
     mDescriptionIcon.setMaximumLineCount(Settings.propProgramPanelMaxLines
         .getInt());
     mProgram.validateMarking();
@@ -380,7 +383,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
     }
     columnWidth = Settings.propColumnWidth.getInt() + columnWidthOffset;
     WIDTH_RIGHT = columnWidth - WIDTH_LEFT;
-    WIDTH_TOTAL = WIDTH_LEFT + WIDTH_RIGHT;
+    WIDTH_TOTAL = WIDTH_LOGO + WIDTH_LEFT + WIDTH_RIGHT;
     return columnWidth;
   }
 
@@ -483,6 +486,8 @@ private static Font getDynamicFontSize(Font font, int offset) {
       mTitleIcon.setMaximumLineCount(-1);
     }
     mDescriptionIcon.setMaximumLineCount(-1);
+    
+    mChannelLabel = new ChannelLabel(mProgram.getChannel(),true,false);
 
     boolean programChanged = (oldProgram != program);
     if (programChanged) {
@@ -544,8 +549,10 @@ private static Font getDynamicFontSize(Font font, int offset) {
         descHeight = 0;
       }
 
+      int height = titleHeight + descHeight + mPictureAreaIcon.getIconHeight() + additionalHeight + V_GAP;
+      
       // Calculate the height
-      mHeight = titleHeight + descHeight + mPictureAreaIcon.getIconHeight() + additionalHeight + V_GAP;
+      mHeight = (mSettings.isShowingChannelLogo() ? Math.max(height, mChannelLabel.getPreferredSize().height) : height);
       setPreferredSize(new Dimension(WIDTH_TOTAL, mHeight));
 
       // Calculate the preferred height
@@ -860,6 +867,16 @@ private static Font getDynamicFontSize(Font font, int offset) {
       grp.setStroke(str);
       grp.setColor(col);
     }
+    
+    if(mSettings.isShowingChannelLogo()) {
+      int yTranslation = getHeight()/2-mChannelLabel.getHeight()/2;
+          
+      grp.translate(1, yTranslation);
+      
+      mChannelLabel.paint(grp);
+      
+      grp.translate(WIDTH_LOGO, -yTranslation);
+    }
 
     // Draw all the text
     if (mPaintExpiredProgramsPale && mProgram.isExpired()) {
@@ -873,9 +890,10 @@ private static Font getDynamicFontSize(Font font, int offset) {
       setForeground(c);
       grp.setColor(c);
     }
+        
     grp.setFont(ProgramPanel.mTimeFont);
     grp.drawString(mProgramTimeAsString, 1, mTimeFont.getSize());
-
+    
     mTitleIcon.paintIcon(this, grp, WIDTH_LEFT, 0);
 
     if (!mSettings.isShowingOnlyDateAndTitle()) {
@@ -898,7 +916,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
 
 
     // paint the icons of the plugins that have marked the program (lower right corner)
-    int x = width - 1;
+    int x = width - 1 - (mSettings.isShowingChannelLogo() ? WIDTH_LOGO : 0);
     int y = mTitleIcon.getIconHeight() + mDescriptionIcon.getIconHeight()
         + mPictureAreaIcon.getIconHeight() + 18;
     y = Math.min(y, height - 1);
@@ -1320,7 +1338,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
   }
 
   private int getTextIconWidth(final int fullWidth) {
-    return fullWidth - WIDTH_LEFT - 5;
+    return fullWidth - WIDTH_LEFT - 5 - (mSettings.isShowingChannelLogo() ? WIDTH_LOGO : 0);
   }
 
   /**
