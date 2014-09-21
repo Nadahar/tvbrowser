@@ -83,7 +83,22 @@ public class ProgramPanelSettings {
    * @since 3.1
    */
   public ProgramPanelSettings(PluginPictureSettings settings, boolean showOnlyDateAndTitle, int axis, boolean ignoreProgramImportance,boolean showPictureBorder) {
-    this(settings.isShowingPictures() ? SHOW_PICTURES_EVER : SHOW_PICTURES_NEVER, 0, 0, showOnlyDateAndTitle, settings.isShowingDescription(), 0, null, axis, ignoreProgramImportance, showPictureBorder);
+    this(settings, showOnlyDateAndTitle, axis, ignoreProgramImportance, showPictureBorder, true);
+  }
+  
+  /**
+   * Creates an instance of this class with the given values.
+   *
+   * @param settings The PluginPictureSettings to be used.
+   * @param showOnlyDateAndTitle If the program panel should only contain date and title.
+   * @param axis The axis for the ProgramPanel.
+   * @param ignoreProgramImportance If the program importance should be ignored.
+   * @param showPictureBorder If the picture border should be shown.
+   * @param showChannelLogo If the channel logo should be shown.
+   * @since 3.4.1
+   */
+  public ProgramPanelSettings(PluginPictureSettings settings, boolean showOnlyDateAndTitle, int axis, boolean ignoreProgramImportance,boolean showPictureBorder, boolean showChannelLogo) {
+    this(settings.isShowingPictures() ? SHOW_PICTURES_EVER : SHOW_PICTURES_NEVER, 0, 0, showOnlyDateAndTitle, settings.isShowingDescription(), 0, null, axis, ignoreProgramImportance, showPictureBorder, showChannelLogo);
   }
 
   /**
@@ -301,6 +316,7 @@ public class ProgramPanelSettings {
    * @param axis The axis for the progress bar of the program panel.
    * @param ignoreProgramImportance If the program importance should be ignored.
    * @param showPictureBorder If the border around the pictures should be painted.
+   * @param showChannelLogo If the channel logo should be shown.
    * @since 3.4.1
    */
   public ProgramPanelSettings(int type, int timeRangeStart, int timeRangeEnd, boolean showOnlyDateAndTitle, boolean showDescription, int duration, String[] pluginIds, int axis, boolean ignoreProgramImportance, boolean showPictureBorder, boolean showChannelLogo) {
