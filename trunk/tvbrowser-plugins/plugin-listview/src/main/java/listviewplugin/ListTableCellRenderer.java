@@ -29,12 +29,15 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Rectangle;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 
+import util.settings.PluginPictureSettings;
 import util.settings.ProgramPanelSettings;
 import util.ui.ChannelLabel;
 import util.ui.ProgramPanel;
@@ -158,7 +161,16 @@ public class ListTableCellRenderer extends DefaultTableCellRenderer {
 
       Program program = (Program) value;
 
-      mProgramPanel[row][index] = new ProgramPanel(program, new ProgramPanelSettings(ListViewPlugin.getInstance().getPictureSettings(),false, ProgramPanelSettings.X_AXIS));
+      ProgramPanelSettings settings = new ProgramPanelSettings(ListViewPlugin.getInstance().getPictureSettings(),false, ProgramPanelSettings.X_AXIS);
+      
+      try {
+        Constructor<? extends ProgramPanelSettings> constructor = settings.getClass().getConstructor(new Class<?>[] {PluginPictureSettings.class, boolean.class, int.class, boolean.class, boolean.class, boolean.class});
+        settings = (ProgramPanelSettings)constructor.newInstance(new Object[] {ListViewPlugin.getInstance().getPictureSettings(), false, ProgramPanelSettings.X_AXIS, false, true, false});
+      } catch (Exception e) {
+        // ignore, just use old instance of ProgramPanelSettings, the used TV-Browser version is not able to show channel logos in program panels.
+      }
+      
+      mProgramPanel[row][index] = new ProgramPanel(program, settings);
 
       JPanel rpanel = new JPanel(new BorderLayout());
       rpanel.add(mProgramPanel[row][index], BorderLayout.CENTER);
