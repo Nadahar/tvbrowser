@@ -50,6 +50,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.Enumeration;
 
 import javax.swing.Icon;
@@ -486,7 +487,6 @@ public class FilterTree extends JTree implements DragGestureListener, DropTarget
     if(last.isDirectoryNode() && last.getChildCount() > 0) {
       item = new JMenuItem(isExpanded(path) ? mLocalizer.msg("collapse", "Collapse") : mLocalizer.msg("expand", "Expand"));
       item.setFont(item.getFont().deriveFont(Font.BOLD));
-
       item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           if(isExpanded(path)) {
@@ -502,7 +502,6 @@ public class FilterTree extends JTree implements DragGestureListener, DropTarget
       }
 
       item = new JMenuItem(mLocalizer.msg("expandAll", "Expand all"));
-
       item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           expandAll(last);
@@ -512,14 +511,23 @@ public class FilterTree extends JTree implements DragGestureListener, DropTarget
       menu.add(item);
 
       item = new JMenuItem(mLocalizer.msg("collapseAll", "Collapse all"));
-
       item.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
           collapseAll(last);
         }
       });
+      
       menu.add(item);
-
+      
+      item = new JMenuItem(SelectFilterDlg.mLocalizer.msg("sortAlphabetically", "Sort filters alphabetically"), IconLoader.getInstance().getIconFromTheme("actions", "sort-list", TVBrowserIcons.SIZE_SMALL));
+      item.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+          sortAlphabetically(last);
+        }
+      });
+      
+      menu.add(item);
       menu.addSeparator();
     }
 
@@ -623,7 +631,16 @@ public class FilterTree extends JTree implements DragGestureListener, DropTarget
     mExpandListenerIsEnabled = true;
   }
   
-
+  void sortAlphabetically(FilterNode node) {
+    FilterList.getInstance().getFilterTreeModel().sort(node, new Comparator<FilterNode>() {
+      @Override
+      public int compare(FilterNode node1, FilterNode node2) {
+        return node1.toString().compareToIgnoreCase(node2.toString());
+      }
+    }, SelectFilterDlg.mLocalizer.msg("sortAlphabetically", "Sort filters alphabetically"));
+    
+    reload(node);
+  }
   
   private class FilterTreeUI extends javax.swing.plaf.basic.BasicTreeUI implements MouseListener {
     private static final int CLICK_WAIT_TIME = 150;
