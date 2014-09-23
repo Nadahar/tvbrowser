@@ -34,6 +34,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.Comparator;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -53,7 +54,10 @@ import tvbrowser.core.filters.SeparatorFilter;
 import tvbrowser.core.filters.ShowAllFilter;
 import tvbrowser.core.filters.UserFilter;
 import tvbrowser.core.icontheme.IconLoader;
+import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
 import tvbrowser.extras.favoritesplugin.core.FavoriteFilter;
+import tvbrowser.extras.favoritesplugin.dlgs.FavoriteNodeComparator;
+import tvbrowser.extras.favoritesplugin.dlgs.FavoriteTree;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.ui.ListDropAction;
 import util.ui.Localizer;
@@ -75,8 +79,7 @@ public class SelectFilterDlg extends JDialog implements ActionListener, WindowCl
 
   private static SelectFilterDlg mInstance;
 
-  private JButton mHelpBtn, mNewFolder, mEditBtn, mRemoveBtn, mNewBtn, mOkBtn, mUpBtn, mDownBtn, mSeperator, mDefaultFilterBtn;
-
+  private JButton mHelpBtn, mNewFolder, mEditBtn, mRemoveBtn, mNewBtn, mOkBtn, mUpBtn, mDownBtn, mSeperator, mDefaultFilterBtn, mSortAlphabetically;
 
   private FilterList mFilterList;
   private FilterTree mFilterTree;
@@ -114,7 +117,8 @@ public class SelectFilterDlg extends JDialog implements ActionListener, WindowCl
     mSeperator = UiUtilities.createToolBarButton(FilterTree.mLocalizer.msg("newSeparator", "Add separator"),IconLoader.getInstance().getIconFromTheme("emblems", "separator", 22));
     mDefaultFilterBtn = UiUtilities.createToolBarButton(Localizer.getLocalization(Localizer.I18N_STANDARD),IconLoader.getInstance().getIconFromTheme("actions", "view-filter", 22));
     mUpBtn = UiUtilities.createToolBarButton(mLocalizer.msg("up","Move selected value up"),TVBrowserIcons.up(TVBrowserIcons.SIZE_LARGE));
-    mDownBtn = UiUtilities.createToolBarButton(mLocalizer.msg("down","Move selected value down"),TVBrowserIcons.down(TVBrowserIcons.SIZE_LARGE));
+    mDownBtn = UiUtilities.createToolBarButton(mLocalizer.msg("down","Move selected value down"),TVBrowserIcons.down(TVBrowserIcons.SIZE_LARGE));    
+    mSortAlphabetically = UiUtilities.createToolBarButton(mLocalizer.msg("sortAlphabetically", "Sort filters alphabetically"), IconLoader.getInstance().getIconFromTheme("actions", "sort-list", TVBrowserIcons.SIZE_LARGE));
     
     JToolBar toolbarPn = new JToolBar();
     toolbarPn.setBorder(BorderFactory.createEmptyBorder());
@@ -131,6 +135,7 @@ public class SelectFilterDlg extends JDialog implements ActionListener, WindowCl
     addToolbarSeperator(toolbarPn);
     toolbarPn.add(mUpBtn);
     toolbarPn.add(mDownBtn);
+    toolbarPn.add(mSortAlphabetically);
 
     mNewBtn.addActionListener(this);
     mEditBtn.addActionListener(this);
@@ -140,6 +145,7 @@ public class SelectFilterDlg extends JDialog implements ActionListener, WindowCl
     mUpBtn.addActionListener(this);
     mDownBtn.addActionListener(this);
     mNewFolder.addActionListener(this);
+    mSortAlphabetically.addActionListener(this);
     
     mHelpBtn = Utilities.createHelpButton();
     mOkBtn = new JButton(Localizer.getLocalization(Localizer.I18N_CLOSE));
@@ -258,6 +264,9 @@ public class SelectFilterDlg extends JDialog implements ActionListener, WindowCl
         setDefaultFilter(last);
       } else if (e.getSource() == mNewFolder) {
         createNewFolder(last);
+      }
+      else if(e.getSource() == mSortAlphabetically) {
+        mFilterTree.sortAlphabetically(last);
       }
     }
     }catch(Throwable t) {t.printStackTrace();}

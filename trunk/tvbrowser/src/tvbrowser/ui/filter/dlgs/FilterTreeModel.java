@@ -27,9 +27,12 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Enumeration;
 
 import javax.swing.JMenu;
+import javax.swing.JOptionPane;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
@@ -40,7 +43,11 @@ import tvbrowser.core.Settings;
 import tvbrowser.core.filters.FilterManagerImpl;
 import tvbrowser.core.filters.ShowAllFilter;
 import tvbrowser.core.plugin.PluginManagerImpl;
+import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
+import tvbrowser.extras.favoritesplugin.dlgs.FavoriteNode;
+import tvbrowser.ui.mainframe.MainFrame;
 import util.ui.Localizer;
+import util.ui.UiUtilities;
 import devplugin.FilterChangeListener;
 import devplugin.FilterChangeListenerV2;
 import devplugin.PluginAccess;
@@ -348,5 +355,42 @@ public class FilterTreeModel extends DefaultTreeModel {
       return className.substring(0, index);
     }
     return className;
+  }
+  
+  /**
+   * Sorts the path from the given node to all leafs alphabetically.
+   *
+   * @param node The node to sort from.
+   * @param comp Comparator for sorting
+   * @param title Title of confirmation message dialog
+   */
+  public void sort(FilterNode node, Comparator<FilterNode> comp, String title) {
+    String msg = mLocalizer.msg("reallySort",
+        "Do you really want to sort '{0}'?\n\nThe current order will get lost.", node.toString());
+    int result = JOptionPane.showConfirmDialog(UiUtilities
+        .getLastModalChildOf(MainFrame.getInstance()), msg, title,
+        JOptionPane.YES_NO_OPTION);
+    if (result == JOptionPane.YES_OPTION) {
+      sortNodeInternal(node, comp);
+    }
+  }
+  
+  /**
+   * sort filter nodes (dialog handling must be done by caller)
+   * @param node
+   * @param comp
+   */
+  private void sortNodeInternal(FilterNode node, Comparator<FilterNode> comp) {
+    ArrayList<FilterNode> childNodes = Collections.list(node.children());
+    Collections.sort(childNodes, comp);
+
+    node.removeAllChildren();
+
+    for(FilterNode child : childNodes) {
+      node.add(child);
+      if(child.isDirectoryNode()) {
+        sortNodeInternal(child, comp);
+      }
+    }
   }
 }
