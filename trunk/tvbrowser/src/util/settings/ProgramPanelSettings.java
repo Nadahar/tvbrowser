@@ -59,6 +59,18 @@ public class ProgramPanelSettings {
   private boolean mShowPictureBorder;
   private boolean mShowChannelLogo;
   private String[] mPluginIds;
+  
+  private static final ProgramPanelSettings SHOW_ONLY_DATE_AND_TITLE_SETTINGS = new ProgramPanelSettings(ProgramPanelSettings.SHOW_PICTURES_NEVER, -1, -1, true, true, 10, true);
+  
+  /**
+   * Get ProgramPanelSettings that will only allow showing of date and title.
+   * <p>
+   * @return ProgramPanelSettings that will only allow showing of date and title.
+   * @since 3.4.1
+   */
+  public static ProgramPanelSettings getShowOnlyDateAndTitleSettings() {
+    return SHOW_ONLY_DATE_AND_TITLE_SETTINGS;
+  }
 
   /**
    * Creates an instance of this class with the given values.
@@ -98,7 +110,7 @@ public class ProgramPanelSettings {
    * @since 3.4.1
    */
   public ProgramPanelSettings(PluginPictureSettings settings, boolean showOnlyDateAndTitle, int axis, boolean ignoreProgramImportance,boolean showPictureBorder, boolean showChannelLogo) {
-    this(settings.isShowingPictures() ? SHOW_PICTURES_EVER : SHOW_PICTURES_NEVER, 0, 0, showOnlyDateAndTitle, settings.isShowingDescription(), 0, null, axis, ignoreProgramImportance, showPictureBorder, showChannelLogo);
+    this(settings.isShowingPictures() ? SHOW_PICTURES_EVER : SHOW_PICTURES_NEVER, -1, -1, showOnlyDateAndTitle, settings.isShowingDescription(), 10, null, axis, ignoreProgramImportance, showPictureBorder, showChannelLogo);
   }
 
   /**

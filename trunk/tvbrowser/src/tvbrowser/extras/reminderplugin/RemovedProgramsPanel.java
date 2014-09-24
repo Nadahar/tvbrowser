@@ -70,7 +70,7 @@ public class RemovedProgramsPanel extends AfterDataUpdateInfoPanel {
     
     add(lb, BorderLayout.NORTH);
     
-    mProgramList = new ProgramList(programs, new ProgramPanelSettings(ProgramPanelSettings.SHOW_PICTURES_NEVER, -1, -1, true, true, 10, true));
+    mProgramList = new ProgramList(programs, ProgramPanelSettings.getShowOnlyDateAndTitleSettings());
     mProgramList.addMouseListener(new MouseAdapter() {
       @Override
       public void mouseReleased(MouseEvent e) {
