@@ -64,12 +64,14 @@ import javax.swing.text.PlainDocument;
 
 import org.apache.commons.lang3.StringUtils;
 
+import tvbrowser.core.ChannelList;
 import tvbrowser.core.Settings;
 import tvbrowser.core.filters.FilterComponent;
 import tvbrowser.core.filters.FilterComponentList;
 import tvbrowser.core.filters.FilterList;
 import tvbrowser.core.filters.ParserException;
 import tvbrowser.core.filters.UserFilter;
+import tvbrowser.core.filters.filtercomponents.SingleChannelFilterComponent;
 import util.ui.DragAndDropMouseListener;
 import util.ui.ListDragAndDropHandler;
 import util.ui.ListDropAction;
@@ -84,6 +86,8 @@ import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.factories.CC;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
+
+import devplugin.Channel;
 
 public class EditFilterDlg extends JDialog implements ActionListener, DocumentListener, CaretListener, WindowClosingIf, ListDropAction {
 
@@ -331,7 +335,7 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
     for (FilterComponent element : fc) {
       mFilterComponentListModel.addElement(new FilterItem(element,0));
     }
-    
+        
     filterComponents.add(mNewBtn, CC.xy(3,1));
     filterComponents.add(mEditBtn, CC.xy(3,3));
     filterComponents.add(mRemoveBtn, CC.xy(3,5));
@@ -368,7 +372,7 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
     if(mFilterComponentList.getSelectedIndex() > 0) {
       FilterItem item = (FilterItem)mFilterComponentList.getSelectedValue();
       
-      mEditBtn.setEnabled(!item.isAndItem() && !item.isOrItem() && !item.isNotItem() && !item.isOpenBracketItem() && !item.isCloseBracketItem());
+      mEditBtn.setEnabled(!item.isAndItem() && !item.isOrItem() && !item.isNotItem() && !item.isOpenBracketItem() && !item.isCloseBracketItem() && !(item.getComponent() instanceof SingleChannelFilterComponent));
       mRemoveBtn.setEnabled(mEditBtn.isEnabled());
     }
     else {

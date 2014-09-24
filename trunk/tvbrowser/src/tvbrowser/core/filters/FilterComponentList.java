@@ -37,6 +37,7 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.logging.Logger;
 
+import tvbrowser.core.ChannelList;
 import tvbrowser.core.filters.filtercomponents.AgeLimitFilterComponent;
 import tvbrowser.core.filters.filtercomponents.BeanShellFilterComponent;
 import tvbrowser.core.filters.filtercomponents.ChannelFilterComponent;
@@ -53,12 +54,14 @@ import tvbrowser.core.filters.filtercomponents.ProgramMarkingPriorityFilterCompo
 import tvbrowser.core.filters.filtercomponents.ProgramRunningFilterComponent;
 import tvbrowser.core.filters.filtercomponents.ProgramTypeFilterComponent;
 import tvbrowser.core.filters.filtercomponents.ReminderFilterComponent;
+import tvbrowser.core.filters.filtercomponents.SingleChannelFilterComponent;
 import tvbrowser.core.filters.filtercomponents.SingleTitleFilterComponent;
 import tvbrowser.core.filters.filtercomponents.TimeFilterComponent;
 import tvbrowser.core.plugin.PluginManagerImpl;
 import util.io.stream.ObjectInputStreamProcessor;
 import util.io.stream.ObjectOutputStreamProcessor;
 import util.io.stream.StreamUtilities;
+import devplugin.Channel;
 import devplugin.PluginAccess;
 import devplugin.PluginsFilterComponent;
 
@@ -137,6 +140,42 @@ public class FilterComponentList {
             }
           });
       }
+      
+      updateChannels(ChannelList.getSubscribedChannels());
+  }
+  
+  public void updateChannels(Channel[] channels) {
+    ArrayList<SingleChannelFilterComponent> toRemove = new ArrayList<SingleChannelFilterComponent>();
+    ArrayList<Channel> toAdd = new ArrayList<Channel>();
+    toAdd.addAll(Arrays.asList(channels));
+    
+    for(Iterator<FilterComponent> it = mComponentList.iterator(); it.hasNext(); ) {
+      FilterComponent test = it.next();
+      
+      if(test instanceof SingleChannelFilterComponent) {
+        boolean found = false;
+        
+        for(Channel ch : channels) {
+          if(((SingleChannelFilterComponent)test).containsChannel(ch)) {
+            toAdd.remove(ch);
+            found = true;
+            break;
+          }
+        }
+        
+        if(!found) {
+          toRemove.add((SingleChannelFilterComponent)test);
+        }
+      }
+    }
+    
+    for(SingleChannelFilterComponent remove : toRemove) {
+      mComponentList.remove(remove);
+    }
+    
+    for(Channel ch : toAdd) {
+      mComponentList.add(new SingleChannelFilterComponent(ch));
+    }
   }
   
   public void store() {
@@ -246,6 +285,8 @@ public class FilterComponentList {
       filterComponent = new SingleTitleFilterComponent(name, description);
     } else if (className.endsWith(".TimeFilterComponent")) {
       filterComponent = new TimeFilterComponent(name, description);
+    } else if (className.endsWith(".SingleChannelFilterComponent")) {
+      filterComponent = new SingleChannelFilterComponent(null);
     }
     else {
       try {

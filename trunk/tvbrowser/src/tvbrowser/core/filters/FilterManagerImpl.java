@@ -26,6 +26,7 @@ import tvbrowser.core.filters.filtercomponents.ChannelFilterComponent;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.ui.filter.dlgs.EditFilterComponentDlg;
 import tvbrowser.ui.mainframe.MainFrame;
+import devplugin.Channel;
 import devplugin.ChannelFilter;
 import devplugin.ChannelFilterChangeListener;
 import devplugin.FilterChangeListener;

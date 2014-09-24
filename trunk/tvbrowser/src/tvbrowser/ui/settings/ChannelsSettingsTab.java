@@ -72,6 +72,8 @@ import javax.swing.event.ListSelectionListener;
 import tvbrowser.core.ChannelList;
 import tvbrowser.core.DummyChannel;
 import tvbrowser.core.Settings;
+import tvbrowser.core.filters.FilterComponentList;
+import tvbrowser.core.filters.FilterList;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.tvdataservice.ChannelGroupManager;
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
@@ -834,6 +836,14 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
         .toArray(new String[groups.size()]));
 
     Settings.propChannelsWereConfigured.setBoolean(ChannelList.getNumberOfSubscribedChannels() > 0);
+    
+    FilterComponentList.getInstance().updateChannels(channelArr);
+    FilterComponentList.getInstance().store();
+    
+    FilterList.getInstance().updateAvailableChannels(channelArr);
+    FilterList.getInstance().store();
+    
+    
 
     if (!Settings.propTrayUseSpecialChannels.getBoolean()) {
       Channel[] tempArr = new Channel[channelArr.length > 10 ? 10
