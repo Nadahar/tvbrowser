@@ -43,12 +43,15 @@ import javax.swing.JMenu;
 
 import org.apache.commons.lang3.StringUtils;
 
+import tvbrowser.core.ChannelList;
 import tvbrowser.core.Settings;
 import tvbrowser.ui.filter.dlgs.FilterNode;
 import tvbrowser.ui.filter.dlgs.FilterTreeModel;
+import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.mainframe.searchfield.SearchFilter;
 import util.io.stream.BufferedReaderProcessor;
 import util.io.stream.StreamUtilities;
+import devplugin.Channel;
 import devplugin.PluginAccess;
 import devplugin.PluginsProgramFilter;
 import devplugin.ProgramFilter;
@@ -220,6 +223,8 @@ public class FilterList {
       addInfoBitFilter("[CHILDRENS_FILTER]", categoriesDir);
       addInfoBitFilter("[OTHERS_FILTER]", categoriesDir);
       addInfoBitFilter("[UNCATEGORIZED_FILTER]", categoriesDir);
+      
+      updateAvailableChannels(ChannelList.getSubscribedChannels());
     }catch(Throwable t) {t.printStackTrace();}
     
     mFilterTreeModel.addPluginsProgramFilters();
@@ -307,6 +312,14 @@ public class FilterList {
     mFilterTreeModel.addFilter(filter);
 
     store();
+  }
+  
+  public void updateAvailableChannels(Channel[] channels) {
+    mFilterTreeModel.updateAvailableChannels(channels, mLocalizer.msg("channelDirectory", "Channel filters"),mLocalizer.msg("ProgramCategories", "program categories"));
+    
+    if(!MainFrame.isStarting()) {
+      MainFrame.getInstance().updateFilterMenu();
+    }
   }
 
   public void remove(ProgramFilter filter) {

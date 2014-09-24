@@ -44,12 +44,14 @@ import tvbrowser.core.filters.ParserException;
 import tvbrowser.core.filters.PluginFilter;
 import tvbrowser.core.filters.SeparatorFilter;
 import tvbrowser.core.filters.ShowAllFilter;
+import tvbrowser.core.filters.SingleChannelFilter;
 import tvbrowser.core.filters.UserFilter;
 import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
 import tvbrowser.extras.favoritesplugin.core.FavoriteFilter;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.ui.ScrollableMenu;
 
+import devplugin.Channel;
 import devplugin.PluginsProgramFilter;
 import devplugin.ProgramFilter;
 
@@ -63,6 +65,7 @@ public class FilterNode extends DefaultMutableTreeNode {
   private static final String FAVORITE_FILTER_KEY = "FAVORITE_FILTER###";
   private static final String PLUGIN_FILTER_KEY = "PLUGIN_FILTER###";
   private static final String INFOBIT_FILTER_KEY = "INFOBIT_FILTER###";
+  private static final String SINGLE_CHANNEL_FILTER_KEY = "SINGLE_CHANNEL_FILTER###";
   private boolean mWasExpanded;
   
   /**
@@ -137,6 +140,13 @@ public class FilterNode extends DefaultMutableTreeNode {
         
         userObject = FavoritesPlugin.getInstance().getFilterForKeyValue(filterKey);
       }
+      else if(name.startsWith(SINGLE_CHANNEL_FILTER_KEY)) {
+        SingleChannelFilter filter = new SingleChannelFilter(Channel.readData(in, true));
+        
+        if(filter.isValidChannel()) {
+          userObject = filter;
+        }
+      }
       else {
         File userFilterFile = new File(FilterList.getFilterDirectory(),name + ".filter");
         
@@ -206,6 +216,9 @@ public class FilterNode extends DefaultMutableTreeNode {
       }
       else if(userObject instanceof FavoriteFilter) {
         out.writeUTF(FAVORITE_FILTER_KEY + ((FavoriteFilter)userObject).getKeyValue());
+      }
+      else if(userObject instanceof SingleChannelFilter) {
+        ((SingleChannelFilter)userObject).store(SINGLE_CHANNEL_FILTER_KEY, out);
       }
     }
   }
@@ -352,6 +365,7 @@ public class FilterNode extends DefaultMutableTreeNode {
   public boolean isDeletingAllowed() {
     return !(userObject instanceof ShowAllFilter || userObject instanceof PluginFilter ||
         userObject instanceof PluginsProgramFilter || userObject instanceof InfoBitFilter || 
+        userObject instanceof SingleChannelFilter ||
         getChildCount() > 0);
   }
   

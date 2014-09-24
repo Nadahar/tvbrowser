@@ -27,9 +27,11 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Enumeration;
+import java.util.LinkedList;
 
 import javax.swing.JMenu;
 import javax.swing.JOptionPane;
@@ -42,12 +44,12 @@ import org.apache.commons.lang3.StringUtils;
 import tvbrowser.core.Settings;
 import tvbrowser.core.filters.FilterManagerImpl;
 import tvbrowser.core.filters.ShowAllFilter;
+import tvbrowser.core.filters.SingleChannelFilter;
 import tvbrowser.core.plugin.PluginManagerImpl;
-import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
-import tvbrowser.extras.favoritesplugin.dlgs.FavoriteNode;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
+import devplugin.Channel;
 import devplugin.FilterChangeListener;
 import devplugin.FilterChangeListenerV2;
 import devplugin.PluginAccess;
@@ -216,6 +218,61 @@ public class FilterTreeModel extends DefaultTreeModel {
     return ((FilterNode)getRoot()).getAllFilters();
   }
   
+  public void updateAvailableChannels(Channel[] channels, String directoryName, String aboveDirectory) {
+    ArrayList<Channel> channelsToAddList = new ArrayList<Channel>();
+    channelsToAddList.addAll(Arrays.asList(channels));
+    
+    FilterNode root = ((FilterNode)getRoot());
+    
+    LinkedList<FilterNode> list = new LinkedList<FilterNode>();
+    list.push(root);
+    
+    do {
+      FilterNode node = list.pop();
+      
+      if(node.isDirectoryNode()) {
+        for(int i = 0; i < node.getChildCount(); i++) {
+          list.push((FilterNode)node.getChildAt(i));
+        }
+      }
+      else {
+        if(node.getUserObject() instanceof SingleChannelFilter) {
+          SingleChannelFilter filter = (SingleChannelFilter)node.getUserObject();
+          boolean channelFound = false;
+          
+          for(Channel ch : channels) {
+            if(filter.containsChannel(ch)) {
+              channelFound = true;
+              channelsToAddList.remove(ch);
+              break;
+            }
+          }
+          
+          if(!channelFound) {
+            ((FilterNode)node.getParent()).remove(node);
+            fireFilterRemoved(filter);
+          }
+        }
+      }
+    }while(!list.isEmpty());
+        
+    FilterNode channelDirectory = getDirectoryNode(directoryName, (FilterNode)getRoot());
+    
+    if(channelDirectory == null) {
+      FilterNode aboveNode = getDirectoryNode(aboveDirectory, (FilterNode)getRoot());
+      
+      int index = aboveNode == null ? 0 : aboveNode.getParent().getIndex(aboveNode);
+      
+      channelDirectory = new FilterNode(directoryName);
+      
+      ((FilterNode)getRoot()).insert(channelDirectory, index+1);
+    }
+    
+    for(Channel ch : channelsToAddList) {
+      channelDirectory.addFilter(new SingleChannelFilter(ch));
+    }
+  }
+  
   public void addPluginsProgramFilters() {
     PluginAccess[] plugins = PluginManagerImpl.getInstance().getActivatedPlugins();
 
@@ -233,17 +290,33 @@ public class FilterTreeModel extends DefaultTreeModel {
   }
   
   public FilterNode getDirectoryNode(String name, FilterNode parent) {
-	FilterNode child;
     if (parent == null) {
-      parent = (FilterNode) getRoot();
+      parent = (FilterNode)getRoot();
     }
-	for (int i=0;i<root.getChildCount();i++) {	      
-	  child = (FilterNode)root.getChildAt(i);
-	  if (child.isDirectoryNode() && child.toString().equals(name)) {
-		return child;
-	  }
-	}
-	return null;
+    
+    LinkedList<FilterNode> toSearch = new LinkedList<FilterNode>();
+    toSearch.push(parent);
+    
+    do {
+      FilterNode node = toSearch.pop();
+      
+      if(node.isDirectoryNode()) {
+        if(node.toString().equals(name)) {
+          return node;
+        }
+        else {
+          for(int i = 0; i < node.getChildCount(); i++) {
+            FilterNode child = (FilterNode)node.getChildAt(i);
+            
+            if(child.isDirectoryNode()) {
+              toSearch.push(child);
+            }
+          }
+        }
+      }
+    }while(!toSearch.isEmpty());
+      	
+  	return null;
   }
   
   public void createMenu(JMenu menu, ProgramFilter curFilter) {
