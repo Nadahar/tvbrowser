@@ -532,7 +532,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
         || (maxDescLines != mDescriptionIcon.getMaximumLineCount())) {
       int descHeight = 0;
       // (Re)set the description text
-      if (!mSettings.isShowingOnlyDateAndTitle() && maxDescLines > 0) {
+      if (!mSettings.isShowingOnlyDateAndTitle() && program.getProgramState() == Program.IS_VALID_STATE && maxDescLines > 0) {
         mDescriptionIcon.setMaximumLineCount(maxDescLines);
         ProgramFieldType[] infoFieldArr = Settings.propProgramInfoFields
             .getProgramFieldTypeArray();
@@ -574,7 +574,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
   }
   
   private boolean showPicture(Program program, boolean dontShow) {
-    if (!mSettings.isShowingOnlyDateAndTitle()
+    if (!mSettings.isShowingOnlyDateAndTitle() && program.getProgramState() == Program.IS_VALID_STATE
         && mProgram.hasFieldValue(ProgramFieldType.PICTURE_TYPE)
         && (
         mSettings.isShowingPictureEver() || !dontShow ||
@@ -896,7 +896,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
     
     mTitleIcon.paintIcon(this, grp, WIDTH_LEFT, 0);
 
-    if (!mSettings.isShowingOnlyDateAndTitle()) {
+    if (!mSettings.isShowingOnlyDateAndTitle() && mProgram.getProgramState() == Program.IS_VALID_STATE) {
       mPictureAreaIcon.paintIcon(this,grp, WIDTH_LEFT, mTitleIcon.getIconHeight());
 
       if (mHeight >= mPreferredHeight) {
