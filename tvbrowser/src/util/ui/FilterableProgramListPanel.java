@@ -25,6 +25,8 @@ package util.ui;
 
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.ArrayList;
@@ -33,6 +35,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 
 import javax.swing.DefaultListModel;
+import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -178,7 +181,7 @@ public class FilterableProgramListPanel extends JPanel implements FilterChangeLi
   }
   
   private void createGUI(int type, boolean showNumberOfPrograms, int startType, ProgramFilter startFilter) {
-    FormLayout layout = new FormLayout("default,3dlu,100dlu:grow","default,3dlu,fill:default:grow");
+    FormLayout layout = new FormLayout("default,3dlu,100dlu:grow,3dlu,default","default,3dlu,fill:default:grow");
     
     setLayout(layout);
     
@@ -206,10 +209,21 @@ public class FilterableProgramListPanel extends JPanel implements FilterChangeLi
       
       fillProgramFilterBox(startType, startFilter);
       
+      JButton refresh = new JButton(TVBrowserIcons.refresh(TVBrowserIcons.SIZE_SMALL));
+      refresh.setToolTipText(LOCALIZER.msg("refresh", "Refresh list with current filter"));
+      refresh.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+          filterPrograms((ProgramFilter)mProgramFilterBox.getSelectedItem());
+        }
+      });
+      
       mProgramFilterLabel = new JLabel(LOCALIZER.msg("filterPrograms", "Program filter:"));
       
       add(mProgramFilterLabel, CC.xy(1, y));
-      add(mProgramFilterBox, CC.xy(3, y++));
+      add(mProgramFilterBox, CC.xy(3, y));
+      
+      add(refresh, CC.xy(5, y++));
       
       y++;
     }
@@ -232,7 +246,7 @@ public class FilterableProgramListPanel extends JPanel implements FilterChangeLi
       mTitleFilterLabel = new JLabel(LOCALIZER.msg("filterTitles","Title filter:"));
       
       add(mTitleFilterLabel, CC.xy(1, y));
-      add(mTitleFilterBox, CC.xy(3, y++));
+      add(mTitleFilterBox, CC.xyw(3, y++, 3));
       
       y++;
     }
@@ -243,7 +257,7 @@ public class FilterableProgramListPanel extends JPanel implements FilterChangeLi
       
       mNumberLabel = new JLabel(LOCALIZER.msg("numberOfPrograms", "Number of shown programs: {0}", 0));
       
-      add(mNumberLabel, CC.xyw(1, y++, 3));
+      add(mNumberLabel, CC.xyw(1, y++, 5));
       
       y++;
     }
@@ -251,7 +265,7 @@ public class FilterableProgramListPanel extends JPanel implements FilterChangeLi
     mProgramListScrollPane = new JScrollPane(mProgramList);
     mProgramListScrollPane.setBorder(null);
     
-    add(mProgramListScrollPane, CC.xyw(1, y, 3));
+    add(mProgramListScrollPane, CC.xyw(1, y, 5));
   }
   
   private void fillProgramFilterBox(int startType, ProgramFilter startFilter) {
