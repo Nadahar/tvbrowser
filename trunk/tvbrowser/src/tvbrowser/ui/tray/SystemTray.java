@@ -392,11 +392,61 @@ public class SystemTray {
        */
       Date currentDate = Date.getCurrentDate();
       for (Channel channel : channels) {
-        Iterator<Program> today = ProgramUtilities.getJointProgramIteratorFor(currentDate, channel);
+        ArrayList<Program> prog = ProgramUtilities.getJointProgramListForYesterdayTodayTomorrow(currentDate, channel, true);
+        
+        boolean nextAdded = false;
+        boolean nowAdded = false;
+        
+        for(int i = 0; i < prog.size(); i++) {
+          Program test = prog.get(i);
+          
+          if(!nowAdded && test.isOnAir()) {
+            Program now = test;
+            
+            int start = test.getStartTime();
+            int end = test.getStartTime() + test.getLength();
+            
+            int j = i+1;
+            
+            while(j < prog.size() && prog.get(j).isOnAir()) {
+              Program nowTest = prog.get(j++);
+              
+              if(nowTest.getStartTime() >= start && (nowTest.getStartTime() + nowTest.getLength()) < end) {
+                now = nowTest;
+                start = now.getStartTime();
+                end = now.getStartTime() + now.getLength();
+              }
+            }
+            
+            addToNowRunning(now, programs, additional);
+            
+            nowAdded = true;
+          }
+          
+          if(!nextAdded && test.getStartTime() > IOUtilities.getMinutesAfterMidnight()) {
+            int j = i+1;
+            Program next = test;
+            
+            while(!addToNext(next, nextPrograms, nextAdditionalPrograms) && j < prog.size()) {
+              next = prog.get(j++);
+            }
+            
+            nextAdded = true;
+          }
+          
+          if((nowAdded || test.getStartTime() > IOUtilities.getMinutesAfterMidnight()) && nextAdded) {
+            break;
+          }
+        }
+        
+       /* Iterator<Program> today = ProgramUtilities.getJointProgramIteratorFor(currentDate, channel);
 
         if (today != null) {
+          
           //final int programCount = today.getProgramCount();
-         int j=0;
+          int j=0;
+          boolean added = false;
+         
           while (today.hasNext()) {
             Program prog = today.next();
             if (j == 0 && prog.getStartTime() > IOUtilities.getMinutesAfterMidnight()) {
@@ -411,8 +461,20 @@ public class SystemTray {
 
                 if (p.isOnAir()) {
                   addToNowRunning(p, programs, additional);
-                  Program p1 = prog;
-                  addToNext(p1, nextPrograms, nextAdditionalPrograms);
+                  
+                  while(!addToNext(prog, nextPrograms, nextAdditionalPrograms) && today.hasNext()) {
+                    prog = today.next();
+                  }
+                  
+                  added = true;
+                  break;
+                }
+                else if(p.getStartTime() > IOUtilities.getMinutesAfterMidnight()) {
+                  while(!addToNext(prog, nextPrograms, nextAdditionalPrograms) && today.hasNext()) {
+                    prog = today.next();
+                  }
+                  
+                  added = true;
                   break;
                 }
               }
@@ -421,26 +483,67 @@ public class SystemTray {
         //    Program p = today.getProgramAt(j);
 
             if (prog.isOnAir()) {
+              added = true;
               addToNowRunning(prog, programs, additional);
-              Program nextProgram = null;
-              if (today.hasNext()) {
-                nextProgram = today.next();
-              } else {
+              
+              boolean nextAdded = false;
+              
+              if(today.hasNext()) {
+                do {
+                  nextAdded = addToNext(today.next(), nextPrograms, nextAdditionalPrograms);
+                }while(!nextAdded && today.hasNext());
+              }
+              
+              if(!nextAdded) {
                 Iterator<Program> tomorrow = ProgramUtilities.getJointProgramIteratorFor(currentDate.addDays(1), channel);
                 if (tomorrow != null && tomorrow.hasNext()) {
-                  nextProgram = tomorrow.next();
+                  do {
+                    nextAdded = addToNext(tomorrow.next(), nextPrograms, nextAdditionalPrograms);
+                  }while(!nextAdded && tomorrow.hasNext());
                 }
               }
-              if (nextProgram != null) {
-                addToNext(nextProgram, nextPrograms, nextAdditionalPrograms);
-              }
 
+              break;
+            }
+            else if(prog.getStartTime() > IOUtilities.getMinutesAfterMidnight()) {
+              added = true;
+              boolean nextAdded = false;
+              
+              if(today.hasNext()) {
+                do {
+                  nextAdded = addToNext(today.next(), nextPrograms, nextAdditionalPrograms);
+                }while(!nextAdded && today.hasNext());
+              }
+              
+              if(!nextAdded) {
+                Iterator<Program> tomorrow = ProgramUtilities.getJointProgramIteratorFor(currentDate.addDays(1), channel);
+                if (tomorrow != null && tomorrow.hasNext()) {
+                  do {
+                    nextAdded = addToNext(tomorrow.next(), nextPrograms, nextAdditionalPrograms);
+                  }while(!nextAdded && tomorrow.hasNext());
+                }
+              }
+              
               break;
             }
             
             j++;
           }
-        }
+          
+          if(!added) {
+            Iterator<Program> tomorrow = ProgramUtilities.getJointProgramIteratorFor(currentDate.addDays(1), channel);
+            
+            while (tomorrow != null && tomorrow.hasNext()) {
+              Program test = tomorrow.next();
+              
+              if(test.getStartTime() > IOUtilities.getMinutesAfterMidnight()) {
+                if(addToNext(test, nextPrograms, nextAdditionalPrograms)) {
+                  break;
+                }
+              }
+            }
+          }
+        }*/
       }
 
       // Show important programs?
@@ -865,13 +968,16 @@ public class SystemTray {
    * @param program
    *          The program to check and add.
    */
-  private void addToNext(Program program, ArrayList<ProgramMenuItem> nextPrograms,
+  private boolean addToNext(Program program, ArrayList<ProgramMenuItem> nextPrograms,
       ArrayList<ProgramMenuItem> nextAdditionalPrograms) {
     if (!program.isExpired() && !program.isOnAir() && (Settings.propTrayFilterNot.getBoolean() ||
         (Settings.propTrayFilterNotMarked.getBoolean() && program.getMarkerArr().length > 0) ||
         MainFrame.getInstance().getProgramFilter().accept(program))) {
       addToListInternal(program, nextPrograms, nextAdditionalPrograms, ProgramMenuItem.SOON_TYPE);
+      return true;
     }
+    
+    return false;
   }
 
   private void addToListInternal(Program program, ArrayList<ProgramMenuItem> listStandard,

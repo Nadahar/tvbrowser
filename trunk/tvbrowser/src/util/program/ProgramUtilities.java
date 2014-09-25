@@ -768,4 +768,39 @@ public class ProgramUtilities {
     
     return it;
   }
+  
+  /**
+   * Gets combined day program for yesterday, today and tomorrow.
+   * <p>
+   * @param today The date of today.
+   * @param channel The channel to get the programs for
+   * @param excludeExpired If expired programs should be excluded
+   * @return An ArrayList with the found programs.
+   * @since 3.4.1
+   */
+  public static ArrayList<Program> getJointProgramListForYesterdayTodayTomorrow(Date today, Channel channel, boolean excludeExpired) {
+    ArrayList<Program> progList = new ArrayList<Program>();
+    
+    Iterator<Program> yesterday = getJointProgramIteratorFor(today.addDays(-1),channel);
+    Iterator<Program> todayIterator = getJointProgramIteratorFor(today,channel);
+    Iterator<Program> tomorrow = getJointProgramIteratorFor(today.addDays(1),channel);
+    
+    addProgramsFromIteratorToList(yesterday,progList,excludeExpired);
+    addProgramsFromIteratorToList(todayIterator,progList,excludeExpired);
+    addProgramsFromIteratorToList(tomorrow,progList,excludeExpired);
+    
+    return progList;
+  }
+  
+  private static void addProgramsFromIteratorToList(Iterator<Program> iterator, ArrayList<Program> toAdd, boolean excludeExpired) {
+    if(iterator != null) {
+      while(iterator.hasNext()) {
+        Program test = iterator.next();
+        
+        if(!excludeExpired || !test.isExpired()) {
+          toAdd.add(test);
+        }
+      }
+    }
+  }
 }
