@@ -423,7 +423,7 @@ public class SystemTray {
             nowAdded = true;
           }
           
-          if(!nextAdded && test.getStartTime() > IOUtilities.getMinutesAfterMidnight()) {
+          if(!nextAdded && (test.getStartTime() > IOUtilities.getMinutesAfterMidnight() || test.getDate().compareTo(currentDate) >= 0)) {
             int j = i+1;
             Program next = test;
             
