@@ -68,4 +68,9 @@ public class SingleChannelFilter implements ProgramFilter {
   public boolean containsChannel(Channel ch) {
     return mChannel != null && mChannel.equals(ch);
   }
+  
+  @Override
+  public String toString() {
+    return getName();
+  }
 }
