@@ -17,6 +17,7 @@
 package filterviewplugin;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -36,6 +37,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
+import javax.swing.UIManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -95,15 +97,12 @@ class FilterViewSettingsTab implements SettingsTab {
       mIcons.put(filterName, mSettings.getFilterIconName(mSettings.getFilter(filterName)));
     }
     mFilterList.addCenterRendererComponent(String.class, new SelectableItemRendererCenterComponentIf() {
-      private DefaultListCellRenderer mRenderer = new DefaultListCellRenderer();
-
       public void calculateSize(JList list, int index, JPanel contentPane) {
       }
 
       public JPanel createCenterPanel(JList list, Object value, int index, boolean isSelected, boolean isEnabled,
           JScrollPane parentScrollPane, int leftColumnWidth) {
-        DefaultListCellRenderer label = (DefaultListCellRenderer) mRenderer.getListCellRendererComponent(list, value,
-            index, isSelected, false);
+        JLabel label = new JLabel();
         String filterName = value.toString();
         String iconFileName = mIcons.get(filterName);
         Icon icon = null;
@@ -124,15 +123,15 @@ class FilterViewSettingsTab implements SettingsTab {
         label.setHorizontalAlignment(SwingConstants.LEADING);
         label.setVerticalAlignment(SwingConstants.CENTER);
         label.setOpaque(false);
-
+        
         JPanel panel = new JPanel(new BorderLayout());
         if (isSelected && isEnabled) {
           panel.setOpaque(true);
-          panel.setForeground(list.getSelectionForeground());
+          label.setForeground(list.getSelectionForeground());
           panel.setBackground(list.getSelectionBackground());
         } else {
           panel.setOpaque(false);
-          panel.setForeground(list.getForeground());
+          label.setForeground(list.getForeground());
           panel.setBackground(list.getBackground());
         }
         panel.add(label, BorderLayout.WEST);
