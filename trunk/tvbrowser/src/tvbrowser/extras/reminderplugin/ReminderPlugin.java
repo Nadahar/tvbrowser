@@ -859,14 +859,7 @@ public class ReminderPlugin {
   }
 
   private void saveReminders() {
-    Thread thread = new Thread("Save reminders") {
-      @Override
-      public void run() {
-        store();
-      }
-    };
-    thread.setPriority(Thread.MIN_PRIORITY);
-    thread.start();
+    store();
   }
 
   protected ActionMenu getButtonAction() {try {

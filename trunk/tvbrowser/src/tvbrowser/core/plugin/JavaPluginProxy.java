@@ -190,9 +190,24 @@ public class JavaPluginProxy extends AbstractPluginProxy {
         mPlugin.readData(in);
       }
       catch (Throwable thr) {
-        throw new TvBrowserException(getClass(), "error.3",
-            "Loading data for plugin {0} failed.\n({1})",
-            getInfo().getName(), datFile.getAbsolutePath(), thr);
+        File datFileBackup = new File(userDirectory, getId() + ".dat_old");
+        
+        if(datFileBackup.isFile()) {
+          try {
+            in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(datFileBackup), 0x4000));
+            mPlugin.readData(in);
+            mLog.severe("Date file '" + datFile.getAbsolutePath() + "' could not be read. Read old file instead: '" + datFileBackup.getAbsolutePath() + "'.");
+          }catch(Throwable thr1) {
+            throw new TvBrowserException(getClass(), "error.3",
+                "Loading data for plugin {0} failed.\n({1})",
+                getInfo().getName(), datFileBackup.getAbsolutePath(), thr);            
+          }
+        }
+        else {        
+          throw new TvBrowserException(getClass(), "error.3",
+              "Loading data for plugin {0} failed.\n({1})",
+              getInfo().getName(), datFile.getAbsolutePath(), thr);
+        }
       }
       finally {
         if (in != null) {
@@ -244,6 +259,8 @@ public class JavaPluginProxy extends AbstractPluginProxy {
 
     // save the plugin data in a temp file
     File tmpDatFile = new File(userDirectory, getId() + ".dat.temp");
+    File oldDatFile = new File(userDirectory, getId() + ".dat_old");
+    
     try {
       StreamUtilities.objectOutputStream(tmpDatFile,
           new ObjectOutputStreamProcessor() {
@@ -255,7 +272,12 @@ public class JavaPluginProxy extends AbstractPluginProxy {
 
       // Saving succeeded -> Delete the old file and rename the temp file
       File datFile = new File(userDirectory, getId() + ".dat");
-      datFile.delete();
+      
+      if(oldDatFile.isFile()) {
+        oldDatFile.delete();
+      }
+      
+      datFile.renameTo(oldDatFile);
       tmpDatFile.renameTo(datFile);
     }
     catch(Throwable thr) {
