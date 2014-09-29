@@ -1564,9 +1564,6 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
       return;
     }
     mShuttingDown = true;
-    
-    FavoritesPlugin.getInstance().store();
-    ReminderPlugin.getInstance().store();
 
     PluginProxyManager.getInstance().shutdownAllPlugins(log);
 

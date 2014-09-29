@@ -1085,13 +1085,16 @@ public class FavoritesPlugin {
   }
 
   protected synchronized void saveFavorites() {
+    store();
+    
     Thread thread = new Thread("Save favorites") {
       public void run() {
-        store();
         SwingUtilities.invokeLater(new Runnable() {
           @Override
           public void run() {
-            mMangePanel.handleFavoriteEvent();
+            if(mMangePanel != null) {
+              mMangePanel.handleFavoriteEvent();
+            }
           }
         });
       }
@@ -1482,7 +1485,10 @@ public class FavoritesPlugin {
   public void editSelectedFavorite() {
     if(ManageFavoritesDialog.getInstance() != null && ManageFavoritesDialog.getInstance().isVisible()) {
       ManageFavoritesDialog.getInstance().editSelectedFavorite();
-      mMangePanel.handleFavoriteEvent();
+      
+      if(mMangePanel != null) {
+        mMangePanel.handleFavoriteEvent();
+      }
     }
     else if(mMangePanel != null) {
       mMangePanel.editSelectedFavorite();
@@ -1492,7 +1498,10 @@ public class FavoritesPlugin {
   public void newFavorite(FavoriteNode parent) {
     if(ManageFavoritesDialog.getInstance() != null && ManageFavoritesDialog.getInstance().isVisible()) {
       ManageFavoritesDialog.getInstance().newFavorite(parent);
-      mMangePanel.handleFavoriteEvent();
+      
+      if(mMangePanel != null) {
+        mMangePanel.handleFavoriteEvent();
+      }
     }
     else if(mMangePanel != null) {
       mMangePanel.newFavorite(parent);
@@ -1512,7 +1521,10 @@ public class FavoritesPlugin {
   public void deleteSelectedFavorite() {
     if(ManageFavoritesDialog.getInstance() != null && ManageFavoritesDialog.getInstance().isVisible()) {
       ManageFavoritesDialog.getInstance().deleteSelectedFavorite();
-      mMangePanel.handleFavoriteEvent();
+      
+      if(mMangePanel != null) {
+        mMangePanel.handleFavoriteEvent();
+      }
     }
     else if(mMangePanel != null) {
       mMangePanel.deleteSelectedFavorite();

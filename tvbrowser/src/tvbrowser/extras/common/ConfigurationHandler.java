@@ -34,6 +34,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Properties;
+import java.util.logging.Logger;
 
 import tvbrowser.core.Settings;
 import util.io.stream.ObjectOutputStreamProcessor;
@@ -44,6 +45,7 @@ import util.io.stream.StreamUtilities;
  * ConfigurationHandler is used to load and store configurations.
  */
 public class ConfigurationHandler {
+  private static final Logger LOGGER = Logger.getLogger(ConfigurationHandler.class.getName());
 
   private String mFilePrefix;
 
@@ -62,6 +64,23 @@ public class ConfigurationHandler {
        try {
          in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(datFile), 0x4000));
          deserializer.read(in);
+       }
+       catch (IOException e) {
+         File oldFile = new File(userDirectory, "java."+mFilePrefix + ".dat_old");
+         
+         if(oldFile.isFile()) {
+           try {
+             in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(oldFile), 0x4000));
+             deserializer.read(in);
+             LOGGER.severe("Data file '" + datFile.getAbsolutePath() + "' could not be read. Read old version instead '" +oldFile.getAbsolutePath() + "'");
+           }
+           catch(ClassNotFoundException e1) {
+             throw new IOException("Could not read file "+datFile.getAbsolutePath());
+           }
+         }
+         else {
+           throw e;
+         }
        }
        catch (ClassNotFoundException e) {
          throw new IOException("Could not read file "+datFile.getAbsolutePath());
@@ -83,6 +102,7 @@ public class ConfigurationHandler {
 
     File tmpDatFile = new File(userDirectory, mFilePrefix + ".dat.temp");
     File datFile = new File(userDirectory, "java." + mFilePrefix + ".dat");
+    File oldVersion = new File(userDirectory, "java." + mFilePrefix + ".dat_old");
 
     StreamUtilities.objectOutputStream(tmpDatFile,
         new ObjectOutputStreamProcessor() {
@@ -93,7 +113,11 @@ public class ConfigurationHandler {
         });
 
     // Saving succeeded -> Delete the old file and rename the temp file
-    datFile.delete();
+    if(oldVersion.isFile()) {
+      oldVersion.delete();
+    }
+    
+    datFile.renameTo(oldVersion);
     tmpDatFile.renameTo(datFile);
   }
 
