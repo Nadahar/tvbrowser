@@ -92,7 +92,7 @@ public class TrayProgramsChannelsSettingsTab implements SettingsTab {
     builder.border(Borders.DIALOG);
     CellConstraints cc = new CellConstraints();
     try {
-   mChannelWidth = new JSlider(SwingConstants.HORIZONTAL, 50, 150, Settings.propTrayChannelWidth.getInt());
+   mChannelWidth = new JSlider(SwingConstants.HORIZONTAL, 40, 150, Settings.propTrayChannelWidth.getInt());
     }catch(Exception e){e.printStackTrace();}
     
     mUseUserChannels = new JCheckBox(mLocalizer.msg("userChannels","Use user defined channels"),Settings.propTrayUseSpecialChannels.getBoolean());
