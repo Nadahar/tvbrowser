@@ -79,7 +79,7 @@ import devplugin.Version;
  *         adopted by fishhead
  */
 public class CapturePlugin extends devplugin.Plugin {
-  private static final Version mVersion = new Version(3,14,6,false);
+  private static final Version mVersion = new Version(3,14,9,false);
 
     /**
      * Translator

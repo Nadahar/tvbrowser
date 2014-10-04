@@ -469,7 +469,7 @@ public class DreamboxConnector {
     // delete REC
     Map<String, String> recTimer = timerHelper.createRecTimer(dreamboxChannel,
         prgTime, 0/* afterevent */, 0/* repeated */, timezone,
-        ""/* location */, ""/* tags */, useHdService);
+        ""/* location */, ""/* tags */, useHdService, false);
     boolean state = timerHelper.timerDelete(recTimer);
 
     // delete ZAP before
