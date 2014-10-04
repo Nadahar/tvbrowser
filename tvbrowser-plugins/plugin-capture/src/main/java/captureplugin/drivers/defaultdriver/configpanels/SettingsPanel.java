@@ -31,6 +31,7 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.ArrayList;
 import java.util.TimeZone;
 
 import javax.swing.JCheckBox;
@@ -54,6 +55,8 @@ import captureplugin.drivers.defaultdriver.DeviceConfig;
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
+
+import devplugin.ProgramReceiveTarget;
 
 
 /**
@@ -184,8 +187,18 @@ public class SettingsPanel extends ScrollableJPanel implements ActionListener, C
       
       pb.add(timeZonePanel, cc.xyw(3,26,3));
       
+      ProgramReceiveTarget[] targets = mData.getProgramReceiveTargets();
+      
+      ArrayList<ProgramReceiveTarget> existing = new ArrayList<ProgramReceiveTarget>();
+      
+      for(ProgramReceiveTarget target : targets) {
+        if(target.getReceifeIfForIdOfTarget() != null) {
+          existing.add(target);
+        }
+      }
+        
       mProgramReceiveTargetSelection = new ProgramReceiveTargetSelectionPanel(UiUtilities.getLastModalChildOf(CapturePlugin.getInstance().getSuperFrame()),
-          mData.getProgramReceiveTargets(),null,CapturePlugin.getInstance(),true,mLocalizer.msg("sendToTitle","Send scheduled programs to:"));
+          existing.toArray(new ProgramReceiveTarget[existing.size()]),null,CapturePlugin.getInstance(),true,mLocalizer.msg("sendToTitle","Send scheduled programs to:"));
       mProgramReceiveTargetSelection.addChangeListener(this);
       pb.add(mProgramReceiveTargetSelection, cc.xyw(1,28,5));
       

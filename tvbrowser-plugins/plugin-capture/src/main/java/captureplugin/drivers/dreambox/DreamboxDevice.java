@@ -227,6 +227,7 @@ public final class DreamboxDevice implements DeviceIf {
             int info = time.getProgram().getInfo();
             boolean useHdService = (info & Program.INFO_VISION_HD) == Program.INFO_VISION_HD;
             pgmOptPanel.setUseHdService(useHdService);
+            pgmOptPanel.setUseDescription(true);
             pgmOptPanel.setZapBeforeEvent(Boolean.getBoolean("captureplugin.ProgramOptionPanel.beforeEvent"));
             if (!E2ServiceHelper.hasHdService(channel.getReference())) {
                 pgmOptPanel.hideUseHdService();
@@ -246,7 +247,8 @@ public final class DreamboxDevice implements DeviceIf {
                 // REC
                 Map<String, String> timerRec = timerHelper.createRecTimer(channel, prgTime, pgmOptPanel
                         .getSelectedAfterEvent(), pgmOptPanel.getRepeated(), mConfig.getTimeZone(), pgmOptPanel
-                        .getSelectedLocation(), pgmOptPanel.getSelectedTag(), pgmOptPanel.isUseHdService());
+                        .getSelectedLocation(), pgmOptPanel.getSelectedTag(), pgmOptPanel.isUseHdService(), pgmOptPanel
+                        .isUsingDescription());
 
                 if (!pgmOptPanel.isOnlyCreateZapTimer()) {
                     // Timer programmieren

@@ -443,7 +443,7 @@ public class E2TimerHelper {
    * @return timer
    */
   public Map<String, String> createRecTimer(DreamboxChannel dreamboxChannel, ProgramTime prgTime, int afterEvent,
-      int repeated, TimeZone timezone, String location, String tags, boolean useHdService) {
+      int repeated, TimeZone timezone, String location, String tags, boolean useHdService, boolean useDescription) {
 
     Map<String, String> timer = new DefaultValueReturnMap<String, String>("");
 
@@ -460,13 +460,13 @@ public class E2TimerHelper {
 
     // Kurzbeschreibung
     String shortInfo = prgTime.getProgram().getShortInfo();
-    if ((shortInfo == null) || (shortInfo.startsWith(keineBeschreibung))) {
+    if (!useDescription || (shortInfo == null) || (shortInfo.startsWith(keineBeschreibung))) {
       shortInfo = "";
     }
 
     // Beschreibung
     String description = prgTime.getProgram().getDescription();
-    if ((description == null) || (description.startsWith(keineBeschreibung))) {
+    if (!useDescription || (description == null) || (description.startsWith(keineBeschreibung))) {
       description = "";
     }
 
@@ -497,7 +497,7 @@ public class E2TimerHelper {
     }
 
     // Titel
-    String title = prgTime.getProgram().getTitle();
+    String title = prgTime.getTitle();
 
     // Sender Reference und Name
     String sRef = E2ServiceHelper.getServiceRef(dreamboxChannel.getReference(), useHdService);

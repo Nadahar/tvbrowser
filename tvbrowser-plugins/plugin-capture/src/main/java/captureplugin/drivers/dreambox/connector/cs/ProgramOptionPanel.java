@@ -45,6 +45,7 @@ public class ProgramOptionPanel extends JPanel implements ActionListener {
   private final JComboBox cmbLocation;
   private final JLabel lbTag;
   private final JComboBox cmbTag;
+  private final JCheckBox cbUseDescription;
   private final JCheckBox cbUseHdService;
   private final JCheckBox cbOnlyCreateZapTimer;
 
@@ -64,6 +65,17 @@ public class ProgramOptionPanel extends JPanel implements ActionListener {
     c.gridheight = 1;
     c.fill = GridBagConstraints.HORIZONTAL;
 
+    //use description
+    cbUseDescription = new JCheckBox(mLocalizer.msg("useDescription", "Send description (if available)"));
+    
+    c.insets = new Insets(2, 6, 4, 2);
+    c.gridx = 0;
+    c.gridy = 0;
+    c.gridwidth = 6;
+    panelGB.add(cbUseDescription, c);
+    
+    c.gridwidth = 1;
+    
     // AfterEvent
     cmbAfterEvent = new JComboBox(new String[] {
         mLocalizer.msg("afterEventNothing", "Nothing"),
@@ -74,7 +86,7 @@ public class ProgramOptionPanel extends JPanel implements ActionListener {
 
     c.insets = new Insets(4, 6, 0, 10);
     c.gridx = 0;
-    c.gridy = 0;
+    c.gridy++;
     panelGB.add(cmbAfterEvent, c);
 
     // Repeated
@@ -320,7 +332,25 @@ public class ProgramOptionPanel extends JPanel implements ActionListener {
   public void setUseHdService(boolean useHdService) {
     cbUseHdService.setSelected(useHdService);
   }
+  
+  /**
+   * If the description should be send to Dreambox
+   * 
+   * @return <code>true</code> if to send description, <code>false</code> if not.
+   */
+  public boolean isUsingDescription() {
+    return cbUseDescription.isSelected();
+  }
 
+  /**
+   * Set the use description state
+   * 
+   * @param useDescription <code>true</code> to enable description, <code>false</code> for not.
+   */
+  public void setUseDescription(boolean useDescription) {
+    cbUseDescription.setSelected(useDescription);
+  }
+  
   /**
    * Enable/Disable components
    */
