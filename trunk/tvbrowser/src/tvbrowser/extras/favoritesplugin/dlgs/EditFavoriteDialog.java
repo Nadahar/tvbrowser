@@ -401,108 +401,7 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
 
     return panel;
   }
-
- /* private JPanel createExclusionPanel() {
-
-    JPanel content = new JPanel(new FormLayout("5dlu, fill:pref:grow, 3dlu, pref",
-        "pref, 3dlu, pref, 3dlu, pref, 3dlu, fill:pref:grow"));
-
-    CellConstraints cc = new CellConstraints();
-
-    Exclusion[] exclusions = mFavorite.getExclusions();
-
-    DefaultListModel listModel = new DefaultListModel();
-    mExclusionsList = new JList(listModel);
-    for (int i = 0; i < exclusions.length; i++) {
-      listModel.addElement(exclusions[i]);
-    }
-    mExclusionsList.setCellRenderer(new ExclusionListCellRenderer());
-
-    mExclusionsList.addListSelectionListener(new ListSelectionListener() {
-      public void valueChanged(ListSelectionEvent e) {
-        if (!e.getValueIsAdjusting()) {
-          updateExclusionListButtons();
-        }
-      }
-    });
-
-    mExclusionsList.addMouseListener(new MouseAdapter() {
-      public void mouseClicked(MouseEvent e) {
-        if(SwingUtilities.isLeftMouseButton(e) && e.getClickCount() >= 2
-            && mEditExclusionBtn.isEnabled()) {
-          mEditExclusionBtn.getActionListeners()[0].actionPerformed(null);
-        }
-      }
-    });
-
-    content.add(new JScrollPane(mExclusionsList), cc.xywh(2, 1, 1, 5));
-
-    Icon newIcon = TVBrowserIcons.newIcon(TVBrowserIcons.SIZE_SMALL);
-    Icon editIcon = TVBrowserIcons.edit(TVBrowserIcons.SIZE_SMALL);
-    Icon deleteIcon = TVBrowserIcons.delete(TVBrowserIcons.SIZE_SMALL);
-
-    mNewExclusionBtn = new JButton(newIcon);
-    mEditExclusionBtn = new JButton(editIcon);
-    mDeleteExclusionBtn = new JButton(deleteIcon);
-
-    mNewExclusionBtn.setMargin(UiUtilities.ZERO_INSETS);
-    mEditExclusionBtn.setMargin(UiUtilities.ZERO_INSETS);
-    mDeleteExclusionBtn.setMargin(UiUtilities.ZERO_INSETS);
-
-    mNewExclusionBtn.setToolTipText(mLocalizer.msg("tooltip.newExclusion", "New exclusion criteria"));
-    mEditExclusionBtn.setToolTipText(mLocalizer.msg("toolip.editExclusion", "Edit exclusion criteria"));
-    mDeleteExclusionBtn.setToolTipText(mLocalizer.msg("tooltip.deleteExclusion", "Delete exclusion criteria"));
-
-    content.add(mNewExclusionBtn, cc.xy(4, 1));
-    content.add(mEditExclusionBtn, cc.xy(4, 3));
-    content.add(mDeleteExclusionBtn, cc.xy(4, 5));
-
-    final EditFavoriteDialog parent = this;
-
-    mNewExclusionBtn.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent event) {
-
-        WizardHandler handler = new WizardHandler(parent, new ExcludeWizardStep(mFavorite));
-        Exclusion exclusion = (Exclusion) handler.show();
-        if (exclusion != null) {
-          ((DefaultListModel) mExclusionsList.getModel()).addElement(exclusion);
-        }
-
-      }
-    });
-
-    mEditExclusionBtn.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        Exclusion oldExclusion = (Exclusion) mExclusionsList.getSelectedValue();
-        WizardHandler handler = new WizardHandler(parent, new ExcludeWizardStep(mFavorite, oldExclusion));
-        Exclusion newExclusion = (Exclusion) handler.show();
-        if (newExclusion != null) {
-          int inx = mExclusionsList.getSelectedIndex();
-          ((DefaultListModel) mExclusionsList.getModel()).setElementAt(newExclusion, inx);
-        }
-      }
-    });
-
-    mDeleteExclusionBtn.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        Exclusion exclusion = (Exclusion) mExclusionsList.getSelectedValue();
-        if (exclusion != null) {
-          ((DefaultListModel) mExclusionsList.getModel()).removeElement(exclusion);
-        }
-      }
-    });
-
-    updateExclusionListButtons();
-
-    return content;
-  }
-
-  private void updateExclusionListButtons() {
-    Object selectedItem = mExclusionsList.getSelectedValue();
-    mEditExclusionBtn.setEnabled(selectedItem != null);
-    mDeleteExclusionBtn.setEnabled(selectedItem != null);
-  }*/
-
+  
   private static String getForwardPluginsLabelString(ProgramReceiveTarget[] receiveTargetArr) {
     ArrayList<ProgramReceiveIf> plugins = new ArrayList<ProgramReceiveIf>();
 
@@ -572,9 +471,21 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
     
     mReminderAfterDownloadCb.setSelected(mFavorite.isRemindAfterDownload());
     mProvideFilter.setSelected(mFavorite.isProvidingFilter());
-
+    
+    ArrayList<ProgramReceiveTarget> targets = new ArrayList<ProgramReceiveTarget>();
+    
+    if(mPassProgramPlugins != null || mPassProgramPlugins.length > 0) {
+      for(ProgramReceiveTarget target : mPassProgramPlugins) {
+        if(target.getReceifeIfForIdOfTarget() != null) {
+          targets.add(target);
+        }
+      }
+    }
+    
+    mPassProgramPlugins = targets.toArray(new ProgramReceiveTarget[targets.size()]);
+    
     mPassProgramsCheckBox.setSelected(mPassProgramPlugins != null && mPassProgramPlugins.length > 0 && !mPassProgramsLb.getText().equals(mLocalizer.msg("dontpass", "don't pass programs")));
-    mPassProgramsCheckBox.setEnabled(FavoritesPlugin.getInstance().getClientPluginTargetIds().length == 0);
+    mPassProgramsCheckBox.setEnabled(targets.isEmpty());
     mPassProgramsCheckBox.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         updatePassProgramsPanel();
