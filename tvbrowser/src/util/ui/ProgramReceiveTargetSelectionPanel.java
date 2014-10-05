@@ -118,7 +118,7 @@ public class ProgramReceiveTargetSelectionPanel extends JPanel {
 
     if (mReceiveTargets != null) {
       for (ProgramReceiveTarget target : mReceiveTargets) {
-        if (!plugins.contains(target.getReceifeIfForIdOfTarget())) {
+        if (!plugins.contains(target.getReceifeIfForIdOfTarget()) && target.getReceifeIfForIdOfTarget() != null) {
           plugins.add(target.getReceifeIfForIdOfTarget());
         }
       }

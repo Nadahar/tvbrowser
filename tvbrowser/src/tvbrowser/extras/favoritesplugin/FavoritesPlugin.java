@@ -1208,15 +1208,7 @@ public class FavoritesPlugin {
     return getIconFromTheme(ICON_CATEGORY, ICON_NAME, size);
   }
 
-	public ProgramReceiveTarget[] getClientPluginTargetIds() {
-    return mClientPluginTargets;
-  }
-
-  public void setClientPluginTargets(ProgramReceiveTarget[] clientPluginTargetArr) {
-    mClientPluginTargets = clientPluginTargetArr;
-  }
-
-  public ProgramReceiveTarget[] getDefaultClientPluginsTargets() {
+  public ProgramReceiveTarget[] getClientPluginTargetIds() {
     ArrayList<ProgramReceiveTarget> list = new ArrayList<ProgramReceiveTarget>(0);
     for (ProgramReceiveTarget target : mClientPluginTargets) {
       ProgramReceiveIf plugin = target.getReceifeIfForIdOfTarget();
@@ -1224,7 +1216,23 @@ public class FavoritesPlugin {
         list.add(target);
       }
     }
-    return list.toArray(new ProgramReceiveTarget[list.size()]);
+    
+    ProgramReceiveTarget[] targets = list.toArray(new ProgramReceiveTarget[list.size()]);
+    
+    if(!MainFrame.isStarting()) {
+      mClientPluginTargets = targets;
+    }
+    
+    return targets;
+  }
+
+  public void setClientPluginTargets(ProgramReceiveTarget[] clientPluginTargetArr) {
+    mClientPluginTargets = clientPluginTargetArr;
+    getClientPluginTargetIds();
+  }
+
+  public ProgramReceiveTarget[] getDefaultClientPluginsTargets() {
+    return getClientPluginTargetIds();
   }
 
   public static String getFavoritesPluginId() {
