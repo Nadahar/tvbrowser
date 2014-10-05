@@ -102,6 +102,7 @@
     <module>plugin-personatimeswitcher</module>
     <module>plugin-print</module>
     <module>plugin-programlist</module>
+    <module>plugin-relativetimefiltercomponent</module>
     <module>plugin-radiotimesdataservice</module>
     <module>plugin-recommendation</module>
     <module>plugin-rememberme</module>
