@@ -117,6 +117,8 @@ public class PictureAreaIcon implements Icon {
       } else {
         mScaledIcon = imic;
       }
+      
+      mIconHeight = mScaledIcon.getIconHeight();
     }
 
     String copyright = p.getTextField(ProgramFieldType.PICTURE_COPYRIGHT_TYPE);
@@ -135,13 +137,18 @@ public class PictureAreaIcon implements Icon {
       // reset show description as the string is empty
       mDescriptionLines = 0;
     }
+    
+    mIconHeight = mIconHeight + mCopyrightText.getIconHeight() + (mDescriptionLines > 0 ? mDescriptionText.getIconHeight() : 0) + 10;
   }
+  
+  
+  private int mIconHeight = 0;
 
   public int getIconHeight() {
     if(mScaledIcon == null) {
       return 0;
     } else {
-      return mScaledIcon.getIconHeight() + mCopyrightText.getIconHeight() + (mDescriptionLines > 0 ? mDescriptionText.getIconHeight() : 0) + 10;
+      return mIconHeight;// + mCopyrightText.getIconHeight() + (mDescriptionLines > 0 ? mDescriptionText.getIconHeight() : 0) + 10;
     }
   }
 

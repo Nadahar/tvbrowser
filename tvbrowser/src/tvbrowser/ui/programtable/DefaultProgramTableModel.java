@@ -33,6 +33,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.TimeZone;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
@@ -57,6 +60,7 @@ import devplugin.ProgressMonitor;
  * @author  Til
  */
 public class DefaultProgramTableModel implements ProgramTableModel, ChangeListener {
+  private static final int MAXIMUM_WAIT_TIME_FOR_THREAD_POOL_IN_SECONDS = 30;
   
   private int mTomorrowLatestTime;
   private int mTodayEarliestTime;
@@ -246,7 +250,6 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
     if (cdpArr == null) {
       return;
     }
-    checkThread();
     
     ArrayList<Iterator<Program>> programIteratorArray = new ArrayList<Iterator<Program>>();
     
@@ -342,7 +345,7 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
     updateTableContent(null, null);
   }
 
-  private synchronized void updateTableContent(ProgressMonitor monitor, final Runnable callback)
+  private synchronized void updateTableContent(final ProgressMonitor monitor, final Runnable callback)
   {
     // if this is the initial update, skip every UI related operation, just set
     // necessary members. the UI update will be forced when setting the initial
@@ -364,13 +367,15 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
       monitor.setValue(0);
     }
 
-    Date nextDay = mMainDay.addDays(1);
+    final Date nextDay = mMainDay.addDays(1);
     int jointChannelCount = 0;
+    
+    ExecutorService threadPool = Executors.newFixedThreadPool(Math.max(Runtime.getRuntime().availableProcessors(),3));
     
     for (int i = 0; i < mChannelArr.length; i++) {
       mProgramColumn[i-jointChannelCount].clear();
       DateRange dateRange = mDateRangeForChannel.get(mChannelArr[i]);
-      ChannelDayProgram[] cdp = new ChannelDayProgram[dateRange.getCount()];
+      final ChannelDayProgram[] cdp = new ChannelDayProgram[dateRange.getCount()];
 
       for (int d = 0; d<cdp.length; d++) {
         cdp[d] = db.getDayProgram(mMainDay.addDays(dateRange.getBegin() + d), mChannelArr[i]);
@@ -392,13 +397,29 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
         }
       }
       
-      addChannelDayProgram(i-jointChannelCount, cdp, jointChannelDayProgram, mMainDay, mTodayEarliestTime, nextDay, mTomorrowLatestTime);
+      final int finalI = i;
+      final int index = i-jointChannelCount;
+      final ChannelDayProgram[] use = jointChannelDayProgram;
+      
+      threadPool.execute(new Thread("ADD CHANNEL DAY PROGRAM TO PROGRAM TABLE MODEL THREAD") {
+        @Override
+        public void run() {
+          addChannelDayProgram(index, cdp, use, mMainDay, mTodayEarliestTime, nextDay, mTomorrowLatestTime);
+          
+          if (monitor != null) {
+            monitor.setValue(finalI);
+          }
+        }
+      });
 
-      if (monitor != null) {
-        monitor.setValue(i);
-      }
     }
 
+    threadPool.shutdown();
+    
+    try {
+      threadPool.awaitTermination(MAXIMUM_WAIT_TIME_FOR_THREAD_POOL_IN_SECONDS, TimeUnit.SECONDS);
+    } catch (InterruptedException e) {}
+    
     boolean showEmptyColumns = (mProgramFilter instanceof tvbrowser.core.filters.ShowAllFilter) && (mChannelFilter == null);
 
     ArrayList<ArrayList<ProgramPanel>> newShownColumns = new ArrayList<ArrayList<ProgramPanel>>();
@@ -422,23 +443,14 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
     newShownColumns.toArray(mShownProgramColumn);
     newShownChannels.toArray(mShownChannelArr);
 
-    SwingUtilities.invokeLater(new Runnable() {
-
-      public void run() {
-        handleTimerEvent();
-        registerAtPrograms(mProgramColumn);
-        fireTableDataChanged(callback);
-      }
-    });
+    handleTimerEvent();
+    registerAtPrograms(mProgramColumn);
+    fireTableDataChanged(callback);
   }
 
-  
-  
   public void addProgramTableModelListener(ProgramTableModelListener listener) {
     mListenerList.add(listener);
   }
-
-  
   
   public Channel[] getShownChannels() {
     checkThread();
@@ -454,18 +466,14 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
   }
 
   public int getColumnCount() {
-    checkThread();
     return Math.min(mShownChannelArr.length, mProgramColumn.length);
   }
 
   public int getRowCount(int col) {
-    checkThread();
     return mShownProgramColumn[col].size();
   }
 
   public ProgramPanel getProgramPanel(int col, int row) {
-    checkThread();
-
     ArrayList<ProgramPanel> list=mShownProgramColumn[col];
     if (list.size()<=row) {
       return null;
@@ -484,15 +492,20 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
     }
   }
 
-  private void registerAtPrograms(ArrayList<ProgramPanel>[] columns) {
-    for (ArrayList<ProgramPanel> list : columns) {
-      Iterator<ProgramPanel> it=list.iterator();
-      while (it.hasNext()) {
-        ProgramPanel panel = it.next();
-        Program prog = panel.getProgram();
-        prog.addChangeListener(this);
-      }
-    }
+  private void registerAtPrograms(final ArrayList<ProgramPanel>[] columns) {
+    new Thread("REGISTER CHANGE LISTENER THREAD IN DEFAULT PROGRAM TABLE MODEL") {
+      public void run() {
+        for (ArrayList<ProgramPanel> list : columns) {
+          Iterator<ProgramPanel> it=list.iterator();
+          while (it.hasNext()) {
+            ProgramPanel panel = it.next();
+            Program prog = panel.getProgram();
+            prog.addChangeListener(DefaultProgramTableModel.this);
+          }
+        }
+        
+      };
+    }.start();
   }
 
   protected void fireTableDataChanged(Runnable callback) {
@@ -504,11 +517,15 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
 
   
   
-  protected void fireTableCellUpdated(int col, int row) {
-    for (int i = 0; i < mListenerList.size(); i++) {
-      ProgramTableModelListener lst = mListenerList.get(i);
-      lst.tableCellUpdated(col, row);
-    }
+  protected void fireTableCellUpdated(final int col, final int row) {
+    new Thread("FIRE TABLE CELL UPDATED THREAD IN DEFAULT PROGRAM TABLE MODEL") {
+      public void run() {
+        for (int i = 0; i < mListenerList.size(); i++) {
+          ProgramTableModelListener lst = mListenerList.get(i);
+          lst.tableCellUpdated(col, row);
+        }
+      };
+    }.start();
   }
   
   
@@ -563,46 +580,68 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
 
     mLastTimerMinutesAfterMidnight = minutesAfterMidnight;
 
+    ExecutorService threadPool = Executors.newFixedThreadPool(Math.max(Runtime.getRuntime().availableProcessors(),3));
+    
     // Force a repaint of all programs on air
     // (so the progress background will be updated)
     if(mOnAirRows == null) {
       int columnCount = getColumnCount();
 	  mOnAirRows = new int[columnCount];
       Arrays.fill(mOnAirRows, -1);
-      for (int col = 0; col < columnCount; col++) {
-        int rowCount = getRowCount(col);
-		for (int row = 0; row < rowCount; row++) {
-          ProgramPanel panel = getProgramPanel(col, row);
-          if (panel.getProgram().isOnAir()) {
-            mOnAirRows[col] = row;
-            fireTableCellUpdated(col, row);
-          }
+      for (int col1 = 0; col1 < columnCount; col1++) {
+        final int col = col1;
+        final int rowCount = getRowCount(col);
+		for (int row1 = 0; row1 < rowCount; row1++) {
+		  final int row = row1;
+		  
+		  threadPool.execute(new Thread("FORCE REPAINT ON AIR PROGRAMS THREAD NEW") {
+		    @Override
+		    public void run() {
+		      ProgramPanel panel = getProgramPanel(col, row);
+	          if (panel.getProgram().isOnAir()) {
+	            mOnAirRows[col] = row;
+	            fireTableCellUpdated(col, row);
+	          }
+		    }
+		  });
         }
       }
     }
     else {
-      for (int col = 0; col < mOnAirRows.length; col++) {
-        if(mOnAirRows[col] != -1) {
-          ProgramPanel panel = getProgramPanel(col, mOnAirRows[col]);
-          
-          if(panel.getProgram().isOnAir()) {
-            fireTableCellUpdated(col, mOnAirRows[col]);
-          }
-          else if(panel.getProgram().isExpired()){
-            fireTableCellUpdated(col, mOnAirRows[col]);
-            
-            panel = getProgramPanel(col, mOnAirRows[col]+1);
-            
-            if(panel == null) {
-              mOnAirRows[col] = -1;
-            } else {
-              mOnAirRows[col] = mOnAirRows[col]+1;
-              fireTableCellUpdated(col, mOnAirRows[col]);
+      for (int col1 = 0; col1 < mOnAirRows.length; col1++) {
+        final int col = col1;
+        
+        threadPool.execute(new Thread("FORCE REPAINT ON AIR PROGRAMS THREAD CURRENT") {
+          public void run() {
+            if(mOnAirRows[col] != -1) {
+              ProgramPanel panel = getProgramPanel(col, mOnAirRows[col]);
+              
+              if(panel.getProgram().isOnAir()) {
+                fireTableCellUpdated(col, mOnAirRows[col]);
+              }
+              else if(panel.getProgram().isExpired()){
+                fireTableCellUpdated(col, mOnAirRows[col]);
+                
+                panel = getProgramPanel(col, mOnAirRows[col]+1);
+                
+                if(panel == null) {
+                  mOnAirRows[col] = -1;
+                } else {
+                  mOnAirRows[col] = mOnAirRows[col]+1;
+                  fireTableCellUpdated(col, mOnAirRows[col]);
+                }
+              }
             }
-          }
-        }
+          };
+        });
       }
     }
+    
+    threadPool.shutdown();
+    
+    try {
+      threadPool.awaitTermination(MAXIMUM_WAIT_TIME_FOR_THREAD_POOL_IN_SECONDS, TimeUnit.SECONDS);
+    } catch (InterruptedException e) {}
   }
 
 
@@ -651,18 +690,14 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
     }
   }
   
-  
   private void checkThread() {
-    /*if (! SwingUtilities.isEventDispatchThread()) {
+    if (! SwingUtilities.isEventDispatchThread()) {
       throw new IllegalStateException("The table model must be used in the "
           + "Swing event thread (use SwingUtilities.invokeLater())");
-    }*/
+    }
   }
-
-
-
+  
   private static class DateRange {
-
     private int mCnt;
     private int mBegin;
 
@@ -678,6 +713,5 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
     public int getCount() {
       return mCnt;
     }
-
   }
 }

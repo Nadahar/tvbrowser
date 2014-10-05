@@ -45,6 +45,10 @@ public class CalendarTablePanel extends AbstractCalendarPanel implements ListSel
   private int mLastRow = -1;
 
   private boolean mAllowEvents = true;
+  
+  private static final long LAST_MARK_TIMEOUT = 200;
+  
+  private long mLastMarkTime;
 
   public CalendarTablePanel(KeyListener keyListener) {
     setLayout(new BorderLayout());
@@ -94,12 +98,21 @@ public class CalendarTablePanel extends AbstractCalendarPanel implements ListSel
   protected void rebuildControls() {
   }
 
+  
+  @Override
+  public void markDate(Date date, boolean informPluginPanels) {
+    if(System.currentTimeMillis() - mLastMarkTime > LAST_MARK_TIMEOUT) {
+      super.markDate(date, informPluginPanels);
+    }
+  }
 
   public void markDate(final Date date, final Runnable callback, final boolean informPluginPanels) {
     if (!isValidDate(date)) {
       askForDataUpdate(date);
       return;
     }
+    
+    mLastMarkTime = System.currentTimeMillis();
     
     Thread thread = new Thread("Finder") {
       public void run() {
@@ -114,7 +127,11 @@ public class CalendarTablePanel extends AbstractCalendarPanel implements ListSel
     }
 
     setCurrentDate(date);
+    mTable.getColumnModel().getSelectionModel().removeListSelectionListener(this);
+    mTable.getSelectionModel().removeListSelectionListener(this);
     mTableModel.setCurrentDate(date);
+    mTable.getColumnModel().getSelectionModel().addListSelectionListener(this);
+    mTable.getSelectionModel().addListSelectionListener(this);
 
     Point position = mTableModel.getPositionOfDate(date);
     if (position != null) {
@@ -153,8 +170,8 @@ public class CalendarTablePanel extends AbstractCalendarPanel implements ListSel
     if (!mAllowEvents) {
       return;
     }
-    int column = mTable.getSelectedColumn();
-    int row = mTable.getSelectedRow();
+    final int column = mTable.getSelectedColumn();
+    final int row= mTable.getSelectedRow();
     if (column >= 0 && row >= 0) {
       Date date = (Date) mTable.getValueAt(row, column);
       CalendarTableModel model = (CalendarTableModel)mTable.getModel();
@@ -162,6 +179,7 @@ public class CalendarTablePanel extends AbstractCalendarPanel implements ListSel
         // filter out the duplicate events caused by listening to row and column selection changes
         if (column != mLastColumn || row != mLastRow) {
           markDate(date,true);
+
           mLastColumn = column;
           mLastRow = row;
         }
