@@ -1946,13 +1946,35 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
       wrapper.scrolledToTime(time);
     }
   }
-
+  
   public void scrollToNow() {
+    scrollToNow(false);
+  }
+
+  private void scrollToNow(boolean selectDay) {
+    int dayStart = Settings.propProgramTableStartOfDay.getInt();
+    int dayEnd = Settings.propProgramTableEndOfDay.getInt();
+    
     mProgramTableScrollPane.resetScrolledTime();
     Calendar cal = Calendar.getInstance();
-    int hour = cal.get(Calendar.HOUR_OF_DAY);
+    int minutes = cal.get(Calendar.HOUR_OF_DAY) * 60 + cal.get(Calendar.MINUTE);
     devplugin.Date day = Date.getCurrentDate();
-    scrollTo(day, hour * 60 + cal.get(Calendar.MINUTE));
+    
+    if(((dayStart >= dayEnd && minutes < dayEnd) // no overlapping -> stay on last day until day end
+        || (dayStart < dayEnd && minutes <= (dayEnd + dayStart) /2))) {
+      if(!selectDay) {
+        day = day.addDays(-1);
+        minutes += 1440;
+      }
+    }
+    
+    if(selectDay || mProgramTableModel.getDate().compareTo(day) != 0) {
+      scrollTo(day, minutes);
+    }
+    else {
+      scrollToTime(minutes, false);
+    }
+    
     mProgramTableScrollPane.requestFocusInWindow();
     mProgramTableScrollPane.getProgramTable().clearTimeMarkings();
     
@@ -1971,7 +1993,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     SwingUtilities.invokeLater(new Runnable() {
       @Override
       public void run() {
-        scrollToNow();    
+        scrollToNow(true);    
       }
     });
     

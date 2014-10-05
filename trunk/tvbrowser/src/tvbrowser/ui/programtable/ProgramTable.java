@@ -545,7 +545,7 @@ public class ProgramTable extends JPanel
           panel.setTextColor(UIManager.getColor("List.foreground"));
         }
         
-        panel.setProgramPanelSettings(new ProgramPanelSettings(Settings.propPictureType.getInt(), Settings.propPictureStartTime.getInt(), Settings.propPictureEndTime.getInt(), false, Settings.propIsPictureShowingDescription.getBoolean(), Settings.propPictureDuration.getInt(), Settings.propPicturePluginIds.getStringArray(), false, Settings.propShowProgramTablePictureBorder.getBoolean()));
+        panel.setProgramPanelSettings(new ProgramPanelSettings(Settings.propPictureType.getInt(), Settings.propPictureStartTime.getInt(), Settings.propPictureEndTime.getInt(), false, Settings.propIsPictureShowingDescription.getBoolean(), Settings.propPictureDuration.getInt(), Settings.propPicturePluginIds.getStringArray(), ProgramPanelSettings.Y_AXIS, false, Settings.propShowProgramTablePictureBorder.getBoolean(), false));
         panel.forceRepaint();
       }
     }
@@ -578,7 +578,8 @@ public class ProgramTable extends JPanel
       mBackgroundPainter.layoutChanged(mLayout, mModel);
     }
 
-    updateUI();
+   // repaint();
+    //updateUI();
   }
 
 
