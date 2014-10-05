@@ -100,6 +100,7 @@ public class BeanShellFilterComponent extends AbstractFilterComponent {
   public void saveSettings() {
     mScriptSource = mScriptEditor.getText();
     try {
+      mScript = null;
       compileSource();
     } catch (Exception e) {
       e.printStackTrace();
