@@ -568,7 +568,9 @@ public class SystemTray {
       boolean now = false;
 
       // filter duplicates from additional programs
-      for (ProgramMenuItem addItem : additional) {
+      for (int i = additional.size()-1; i >= 0; i--) {
+        ProgramMenuItem addItem = additional.get(i);
+        
         boolean equal = false;
         for (ProgramMenuItem item : programs) {
           if (item != null && item.getProgram().equals(addItem.getProgram())) {
@@ -576,8 +578,8 @@ public class SystemTray {
             break;
           }
         }
-        if (!equal) {
-          programs.add(addItem);
+        if (equal) {
+          additional.remove(addItem);
         }
       }
 
