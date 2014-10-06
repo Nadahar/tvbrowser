@@ -30,7 +30,7 @@ import devplugin.Version;
  */
 public class RelativeTimeFilterComponent extends Plugin {
   static final Localizer LOCALIZER = Localizer.getLocalizerFor(RelativeTimeFilterComponent.class);
-  private static final Version VERSION = new Version(1,0);
+  private static final Version VERSION = new Version(1,1);
   
   public static Version getVersion() {
     return VERSION;
