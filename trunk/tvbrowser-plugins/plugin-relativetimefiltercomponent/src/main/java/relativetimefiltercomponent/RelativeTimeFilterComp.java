@@ -22,15 +22,18 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Calendar;
 
+import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 
+import util.io.IOUtilities;
 import util.ui.EnhancedPanelBuilder;
 
 import com.jgoodies.forms.factories.CC;
 
 import devplugin.Date;
+import devplugin.Plugin;
 import devplugin.PluginsFilterComponent;
 import devplugin.Program;
 
@@ -45,10 +48,13 @@ public class RelativeTimeFilterComp extends PluginsFilterComponent {
   
   private JSpinner mPreTimeSetup;
   private JSpinner mPostTimeSetup;
+  private JCheckBox mDayRelativeSelection;
+  
+  private boolean mDayRelative = false; 
   
   @Override
   public int getVersion() {
-    return 1;
+    return 2;
   }
 
   @Override
@@ -59,7 +65,16 @@ public class RelativeTimeFilterComp extends PluginsFilterComponent {
    
     long startMinute = start.getTimeInMillis() / 60000;
     long endMinute = startMinute + program.getLength();
+    
     long nowMinute = System.currentTimeMillis() / 60000;
+    
+    if(mDayRelative) {
+      Calendar test = Calendar.getInstance();
+      Date current = Plugin.getPluginManager().getCurrentDate();
+      test.set(current.getYear(), current.getMonth()-1, current.getDayOfMonth(), IOUtilities.getMinutesAfterMidnight() / 60, IOUtilities.getMinutesAfterMidnight() % 60);
+      
+      nowMinute = test.getTimeInMillis() / 60000;
+    }
    
     return ((nowMinute - mAcceptablePreTime <= startMinute) && (nowMinute + mAcceptablePostTime >= endMinute));
   }
@@ -69,17 +84,22 @@ public class RelativeTimeFilterComp extends PluginsFilterComponent {
       ClassNotFoundException {
     mAcceptablePreTime = in.readInt();
     mAcceptablePostTime = in.readInt();
+    
+    if(version >= 2) {
+      mDayRelative = in.readBoolean();
+    }
   }
 
   @Override
   public void write(ObjectOutputStream out) throws IOException {
     out.writeInt(mAcceptablePreTime);
     out.writeInt(mAcceptablePostTime);
+    out.writeBoolean(mDayRelative);
   }
 
   @Override
   public String getUserPresentableClassName() {
-    return RelativeTimeFilterComponent.LOCALIZER.msg("name", "Provides a filter component that accepts programs around the current time.");
+    return RelativeTimeFilterComponent.LOCALIZER.msg("compName", "Time relative");
   }
 
   @Override
@@ -88,6 +108,7 @@ public class RelativeTimeFilterComp extends PluginsFilterComponent {
     
     mPreTimeSetup = new JSpinner(new SpinnerNumberModel(mAcceptablePreTime, 5, 720, 5));
     mPostTimeSetup = new JSpinner(new SpinnerNumberModel(mAcceptablePostTime, 5, 720, 5));
+    mDayRelativeSelection = new JCheckBox(RelativeTimeFilterComponent.LOCALIZER.msg("settings.dayRelative","Use selected day instead of current time for calculation"), mDayRelative);
     
     pb.addRow();
     pb.addLabel(RelativeTimeFilterComponent.LOCALIZER.msg("settings.firstLabel","Accepts programs that start at least"), CC.xyw(2, pb.getRow(), 3));
@@ -100,6 +121,9 @@ public class RelativeTimeFilterComp extends PluginsFilterComponent {
     pb.add(mPostTimeSetup, CC.xy(2, pb.getRow()));
     pb.addLabel(RelativeTimeFilterComponent.LOCALIZER.msg("settings.thirdLabel","minutes after the current time."), CC.xy(4, pb.getRow()));
     
+    pb.addRow();
+    pb.add(mDayRelativeSelection, CC.xyw(2, pb.getRow(), 3));
+    
     return pb.getPanel();
   }
   
@@ -108,9 +132,11 @@ public class RelativeTimeFilterComp extends PluginsFilterComponent {
     if(mPreTimeSetup != null && mPostTimeSetup != null) {
       mAcceptablePreTime = (Integer)mPreTimeSetup.getValue();
       mAcceptablePostTime = (Integer)mPostTimeSetup.getValue();
+      mDayRelative = mDayRelativeSelection.isSelected();
       
       mPreTimeSetup = null;
       mPostTimeSetup = null;
+      mDayRelativeSelection = null;
     }
   }
 }
