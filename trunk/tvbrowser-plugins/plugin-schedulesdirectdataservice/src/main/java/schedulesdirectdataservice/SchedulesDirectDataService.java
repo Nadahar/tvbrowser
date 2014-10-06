@@ -85,7 +85,7 @@ public class SchedulesDirectDataService extends AbstractTvDataService {
   private static final Logger mLog
     = Logger.getLogger(SchedulesDirectDataService.class.getName());
 
-  private static final Version VERSION = new Version(3,12,1);
+  private static final Version VERSION = new Version(3,12,2);
 
   private ChannelGroup mChannelGroup = new ChannelGroupImpl("SchedulesDirect", "SchedulesDirect", "SchedulesDirect", "SchedulesDirect");
 
@@ -94,7 +94,7 @@ public class SchedulesDirectDataService extends AbstractTvDataService {
    * List of Channels
    */
   private ArrayList<Channel> mChannels = new ArrayList<Channel>();
-  private static final String SCHEDULESDIRECT_SERVICE = "http://webservices.schedulesdirect.tmsdatadirect.com/schedulesdirect/tvlistings/xtvdService";
+  private static final String SCHEDULESDIRECT_SERVICE = "http://dd.schedulesdirect.org/schedulesdirect/tvlistings/xtvdService";
   private HashMap<Channel, Map<Date, MutableChannelDayProgram>> mChannelMap;
 
 
