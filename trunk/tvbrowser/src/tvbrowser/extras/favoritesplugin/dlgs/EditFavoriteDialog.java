@@ -485,7 +485,7 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
     mPassProgramPlugins = targets.toArray(new ProgramReceiveTarget[targets.size()]);
     
     mPassProgramsCheckBox.setSelected(mPassProgramPlugins != null && mPassProgramPlugins.length > 0 && !mPassProgramsLb.getText().equals(mLocalizer.msg("dontpass", "don't pass programs")));
-    mPassProgramsCheckBox.setEnabled(targets.isEmpty());
+    mPassProgramsCheckBox.setEnabled(FavoritesPlugin.getInstance().getClientPluginTargetIds().length == 0);
     mPassProgramsCheckBox.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         updatePassProgramsPanel();
