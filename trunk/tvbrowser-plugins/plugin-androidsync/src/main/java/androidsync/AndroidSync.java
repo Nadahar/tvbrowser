@@ -36,6 +36,8 @@ import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
@@ -59,12 +61,6 @@ import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.codec.digest.Md5Crypt;
-
-import com.jgoodies.forms.builder.PanelBuilder;
-import com.jgoodies.forms.factories.Borders;
-import com.jgoodies.forms.factories.CC;
-import com.jgoodies.forms.layout.FormLayout;
 
 import tvbrowser.extras.reminderplugin.ReminderPlugin;
 import tvdataservice.MarkedProgramsList;
@@ -75,6 +71,10 @@ import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.ui.customizableitems.SelectableItemList;
 
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.factories.CC;
+import com.jgoodies.forms.layout.FormLayout;
 
 import devplugin.ActionMenu;
 import devplugin.Channel;
@@ -117,7 +117,7 @@ public class AndroidSync extends Plugin {
   private static final String PLUGIN_TYPE = "PLUGIN_TYPE";
   private static final String FILTER_TYPE = "FILTER_TYPE";
   
-  private static final Version mVersion = new Version(0, 16, 0, false);
+  private static final Version mVersion = new Version(0, 17, 0, false);
   private final String CrLf = "\r\n";
   private Properties mProperties;
   
@@ -221,9 +221,9 @@ public class AndroidSync extends Plugin {
     }
     
     if(mShowChannelInfo) {
-      Window w = UiUtilities.getLastModalChildOf(getParentFrame());
+      //Window w = UiUtilities.getLastModalChildOf(getParentFrame());
       
-      int selected = JOptionPane.showConfirmDialog(w, mLocalizer.msg("channelChangeMessage", "The subscribed channel list was changed.\n\nDo you want to upload the new channel list to the TV-Browser server?"), getInfo().getName() + ": " + mLocalizer.msg("channelChangeTitle", "Channels changed"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+      int selected = JOptionPane.showConfirmDialog(null, mLocalizer.msg("channelChangeMessage", "The subscribed channel list was changed.\n\nDo you want to upload the new channel list to the TV-Browser server?"), getInfo().getName() + ": " + mLocalizer.msg("channelChangeTitle", "Channels changed"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
       
       if(selected == JOptionPane.YES_OPTION) {
         upload(CHANNEL_SYNC_ADDRESS, true);
@@ -744,6 +744,32 @@ public class AndroidSync extends Plugin {
           channels.append(ch.getGroup().getId());
           channels.append(":");
           channels.append(ch.getId());
+          
+          try {
+            Method getSortNumber = ch.getClass().getMethod("getSortNumber", new Class<?>[0]);
+            Object value = getSortNumber.invoke(ch, new Object[0]);
+            
+            if(value != null && value instanceof String && value.toString().trim().length() > 0) {
+              channels.append(":");
+              channels.append(value);
+            }
+          } catch (SecurityException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+          } catch (NoSuchMethodException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+          } catch (IllegalArgumentException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+          } catch (IllegalAccessException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+          } catch (InvocationTargetException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+          }
+          
           channels.append("\n");
         }
       }
