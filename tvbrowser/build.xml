@@ -412,12 +412,12 @@
 
 
   <!-- Creates the default runtime folder (platform independent) -->
-  <target name="runtime-default" depends="clean-default, make-default, runtime, test">
+  <target name="runtime-default" depends="clean-default, make-default, runtime">
   </target>
 
 
   <!-- Creates the runtime folder for the transportable version -->
-  <target name="runtime-transportable" depends="clean-transportable, make-transportable, runtime, test">
+  <target name="runtime-transportable" depends="clean-transportable, make-transportable, runtime">
 	<echo message="deployment dir is ${deployment.dir}, win is ${win.dir}" />
 	<mkdir dir="${tvbrowser-transportable.runtime.dir}"/>
   	<mkdir dir="${tvbrowser-transportable.runtime.dir}/settings"/>
@@ -445,7 +445,7 @@
 
 
   <!-- Creates the runtime folder for the Mac platform -->
-  <target name="runtime-mac" depends="clean-mac, make-mac, runtime, test">
+  <target name="runtime-mac" depends="clean-mac, make-mac, runtime">
 
     <delete dir="${tvbrowser-mac.runtime.dir}"/>
     <mkdir dir="${tvbrowser-mac.runtime.dir}"/>
@@ -776,7 +776,7 @@
     </target>
 
   <!--
-    | Does the JUnit tests.
+    | Does the JUnit s.
     |
     | If this target does not work, copy the file "junit.jar" from the directory "lib"
     | in your ANT_HOME/lib directory. (ANT_HOME/lib is on my machine "/usr/share/ant/lib")
