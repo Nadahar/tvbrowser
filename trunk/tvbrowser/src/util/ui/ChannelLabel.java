@@ -262,7 +262,7 @@ public class ChannelLabel extends JLabel {
 
       setText(text.toString());
     }
-    else if(mShowSortNumber&& channel.getSortNumber().trim().length() > 0) {
+    else if(mShowSortNumber && channel.getSortNumber().trim().length() > 0) {
       setText(channel.getSortNumber().trim() + ". ");
     }
     
