@@ -487,7 +487,11 @@ private static Font getDynamicFontSize(Font font, int offset) {
     }
     mDescriptionIcon.setMaximumLineCount(-1);
     
-    mChannelLabel = new ChannelLabel(mProgram.getChannel(),true,false);
+    try {
+      mChannelLabel = new ChannelLabel(mProgram.getChannel(),true,false);
+    }catch(Exception e) {
+      mLog.log(Level.SEVERE, "Could not load channelLabel for program '" + program + "'", e);
+    }
 
     boolean programChanged = (oldProgram != program);
     if (programChanged) {
@@ -878,7 +882,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
         
         grp.translate(WIDTH_LOGO, -yTranslation);
       }catch(Exception e) {
-        mLog.log(Level.SEVERE, "Error in drawing channel logo", e);
+        mLog.log(Level.SEVERE, "Error in drawing channel logo for program '" + mProgram + "'", e);
       }
     }
 
@@ -920,7 +924,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
 
 
     // paint the icons of the plugins that have marked the program (lower right corner)
-    int x = width - 1 - (mSettings.isShowingChannelLogo() ? WIDTH_LOGO : 0);
+    int x = width - 1 - (mSettings.isShowingChannelLogo() && mChannelLabel != null ? WIDTH_LOGO : 0);
     int y = mTitleIcon.getIconHeight() + mDescriptionIcon.getIconHeight()
         + mPictureAreaIcon.getIconHeight() + 18;
     y = Math.min(y, height - 1);
