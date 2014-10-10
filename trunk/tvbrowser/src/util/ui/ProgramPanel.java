@@ -489,7 +489,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
     
     try {
       mChannelLabel = new ChannelLabel(true,false,false,false,false,false,false);
-      mChannelLabel.setChannel(mProgram.getChannel());
+      mChannelLabel.setChannel(program.getChannel());
     }catch(Exception e) {
       mLog.log(Level.SEVERE, "Could not load channelLabel for program '" + program + "'", e);
     }
