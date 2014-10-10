@@ -263,7 +263,7 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
       final ProgramPanel panel = new ProgramPanel(program,
           new ProgramPanelSettings(new PluginPictureSettings(
               PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE), false,
-              ProgramPanelSettings.X_AXIS));
+              ProgramPanelSettings.X_AXIS, false, true, false));
       componentList.add(panel);
       panels.add(panel);
       panel.setMinimumSize(new Dimension(300,50));

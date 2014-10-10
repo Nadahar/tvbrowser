@@ -26,7 +26,6 @@ package util.ui;
 import java.awt.Dimension;
 
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
 import tvbrowser.core.DummyChannel;
@@ -53,7 +52,7 @@ public class ChannelLabel extends JLabel {
   private boolean mShowCountry;
 
   private boolean mShowService;
-  private boolean mShowJointChanelInfo;
+  private boolean mShowJointChannelInfo;
   private boolean mShowTimeLimitation;
   
   private boolean mShowSortNumber;
@@ -178,7 +177,7 @@ public class ChannelLabel extends JLabel {
     mTextIsVisible = textIsVisible;
     mShowDefaultValues = showDefaultValues;
     mShowCountry = showCountry;
-    mShowJointChanelInfo = showJoinedChannelInfo;
+    mShowJointChannelInfo = showJoinedChannelInfo;
     mShowTimeLimitation = showTimeLimitation;
     mShowSortNumber = showSortNumber;
   }
@@ -225,10 +224,10 @@ public class ChannelLabel extends JLabel {
   public void setChannel(Channel channel) {
     mChannel = channel;
     if (mChannelIconsVisible) {
-      setChannelIcon(channel, (mShowJointChanelInfo && channel.getJointChannel() != null) ? channel.getJointChannelIcon() : (mShowDefaultValues ? channel.getDefaultIcon() : channel.getIcon()));
+      setChannelIcon(channel, (mShowJointChannelInfo && channel.getJointChannel() != null) ? channel.getJointChannelIcon() : (mShowDefaultValues ? channel.getDefaultIcon() : channel.getIcon()));
     }
     if (mTextIsVisible) {
-      StringBuilder text = new StringBuilder((mShowJointChanelInfo && channel.getJointChannel() != null) ? channel.getJointChannelName() : (mShowDefaultValues ? channel.getDefaultName() : channel.getName()));
+      StringBuilder text = new StringBuilder((mShowJointChannelInfo && channel.getJointChannel() != null) ? channel.getJointChannelName() : (mShowDefaultValues ? channel.getDefaultName() : channel.getName()));
 
       if (mShowCountry || mShowService || mShowTimeLimitation) {
         text.append(" (");
@@ -302,7 +301,7 @@ public class ChannelLabel extends JLabel {
   
   private void setChannelIcon(Channel channel, Icon icon) {
     Icon cached = null;
-    if (icon != null && !mShowJointChanelInfo) { // no hash lookup, if no icon to set
+    if (icon != null && !mShowJointChannelInfo) { // no hash lookup, if no icon to set
       cached = ICONCACHE.get(channel);
     }
     if (cached != null) {
@@ -315,7 +314,7 @@ public class ChannelLabel extends JLabel {
         super.setIcon(getDefaultIcon());
       }
       else {
-        Icon resizedIcon =UiUtilities.createChannelIcon(icon);
+        Icon resizedIcon = UiUtilities.createChannelIcon(icon);
         
         if(channel.getJointChannel() == null && !(channel instanceof DummyChannel)) {
           ICONCACHE.put(channel, resizedIcon);
