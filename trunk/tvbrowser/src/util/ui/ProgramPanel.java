@@ -552,7 +552,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
       int height = titleHeight + descHeight + mPictureAreaIcon.getIconHeight() + additionalHeight + V_GAP;
       
       // Calculate the height
-      mHeight = (mSettings.isShowingChannelLogo() ? Math.max(height, mChannelLabel.getPreferredSize().height) : height);
+      mHeight = ((mSettings.isShowingChannelLogo() && mChannelLabel != null) ? Math.max(height, mChannelLabel.getPreferredSize().height) : height);
       setPreferredSize(new Dimension(WIDTH_TOTAL, mHeight));
 
       // Calculate the preferred height
@@ -868,14 +868,18 @@ private static Font getDynamicFontSize(Font font, int offset) {
       grp.setColor(col);
     }
     
-    if(mSettings.isShowingChannelLogo()) {
-      int yTranslation = getHeight()/2-mChannelLabel.getHeight()/2;
-          
-      grp.translate(1, yTranslation);
-      
-      mChannelLabel.paint(grp);
-      
-      grp.translate(WIDTH_LOGO, -yTranslation);
+    if(mSettings.isShowingChannelLogo() && mChannelLabel != null) {
+      try {
+        int yTranslation = getHeight()/2-mChannelLabel.getHeight()/2;
+            
+        grp.translate(1, yTranslation);
+        
+        mChannelLabel.paint(grp);
+        
+        grp.translate(WIDTH_LOGO, -yTranslation);
+      }catch(Exception e) {
+        mLog.log(Level.SEVERE, "Error in drawing channel logo", e);
+      }
     }
 
     // Draw all the text
