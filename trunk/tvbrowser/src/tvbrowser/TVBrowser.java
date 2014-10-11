@@ -320,11 +320,18 @@ public class TVBrowser {
     // setup logging
 
     // Get the default Logger
-    Logger mainLogger = Logger.getLogger("");
+    final Logger mainLogger = Logger.getLogger("");
 
     // Use a even simpler Formatter for console logging
     mainLogger.getHandlers()[0].setFormatter(createFormatter());
-
+    
+    Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+      @Override
+      public void uncaughtException(Thread thread, Throwable t) {
+        mainLogger.log(Level.SEVERE, "UNCAUGHT EXCEPTION IN THREAD '" + thread.getName() + "'", t);
+      }
+    });
+    
     if(mIsTransportable) {
       File settingsDir = new File("settings");
       try {

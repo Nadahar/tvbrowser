@@ -577,9 +577,8 @@ public class ProgramTable extends JPanel
     if (mBackgroundPainter != null) {
       mBackgroundPainter.layoutChanged(mLayout, mModel);
     }
-
-    repaint();
-    //updateUI();
+    
+    updateUI();
   }
 
 
@@ -638,7 +637,7 @@ public class ProgramTable extends JPanel
     requestFocus();
 
     if(mClickThread == null || !mClickThread.isAlive()) {
-      mClickThread = new Thread("Single click") {
+      mClickThread = new Thread("ProgramTable Single click") {
         public void run() {
           try {
             Thread.sleep(Plugin.SINGLE_CLICK_WAITING_TIME + 50);

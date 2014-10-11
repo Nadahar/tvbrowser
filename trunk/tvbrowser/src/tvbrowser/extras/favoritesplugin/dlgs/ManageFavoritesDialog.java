@@ -30,6 +30,7 @@ import java.awt.BorderLayout;
 import java.awt.Window;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.logging.Level;
 
 import javax.swing.JDialog;
 import javax.swing.JPanel;
@@ -37,6 +38,7 @@ import javax.swing.WindowConstants;
 
 import com.jgoodies.forms.factories.Borders;
 
+import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
 import tvbrowser.extras.favoritesplugin.core.Favorite;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
@@ -65,35 +67,37 @@ public class ManageFavoritesDialog extends JDialog implements WindowClosingIf{
   }
 
   private void init(Favorite[] favoriteArr, int splitPanePosition, boolean showNew, Favorite initialSelection) {
-    mInstance = this;
-    
-    mManagePanel = new ManageFavoritesPanel(favoriteArr, splitPanePosition, showNew, initialSelection,false);
-    
-    ((JPanel)getContentPane()).setBorder(Borders.DIALOG);
-    ((JPanel)getContentPane()).setLayout(new BorderLayout());
-    ((JPanel)getContentPane()).add(mManagePanel,BorderLayout.CENTER);
-    
-    addWindowListener(new WindowAdapter() {
-      @Override
-      public void windowClosing(WindowEvent e) {
-        mInstance = null;
+    try {
+      mInstance = this;
+      
+      mManagePanel = new ManageFavoritesPanel(favoriteArr, splitPanePosition, showNew, initialSelection,false);
+      
+      ((JPanel)getContentPane()).setBorder(Borders.DIALOG);
+      ((JPanel)getContentPane()).setLayout(new BorderLayout());
+      ((JPanel)getContentPane()).add(mManagePanel,BorderLayout.CENTER);
+      
+      addWindowListener(new WindowAdapter() {
+        @Override
+        public void windowClosing(WindowEvent e) {
+          mInstance = null;
+        }
+      });
+  
+      UiUtilities.registerForClosing(this);
+  
+      if(showNew) {
+        setTitle(mLocalizer.msg("newTitle", "New programs found"));
+      } else {
+        setTitle(mLocalizer.msg("title", "Manage favorite programs"));
       }
-    });
-
-    UiUtilities.registerForClosing(this);
-
-    if(showNew) {
-      setTitle(mLocalizer.msg("newTitle", "New programs found"));
-    } else {
-      setTitle(mLocalizer.msg("title", "Manage favorite programs"));
-    }
-    
-    setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-    addWindowListener(new WindowAdapter() {
-      public void windowClosing(WindowEvent e) {
-        close();
-      }
-    });
+      
+      setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+      addWindowListener(new WindowAdapter() {
+        public void windowClosing(WindowEvent e) {
+          close();
+        }
+      });
+    }catch(Throwable t) {FavoritesPlugin.mLog.log(Level.SEVERE, "ERROR OPENING MANAGE DIALOG", t);}
   }
 
   public static ManageFavoritesDialog getInstance() {
