@@ -214,7 +214,7 @@ public class ProgramPanel extends JComponent implements ChangeListener, PluginSt
     }
 
     calculateWidth();
-
+    
     mTitleIcon = new TextAreaIcon(null, mTitleFont, WIDTH_RIGHT - 5 - (mSettings.isShowingChannelLogo() ? WIDTH_LOGO : 0));
     mDescriptionIcon = new TextAreaIcon(null, mNormalFont, WIDTH_RIGHT - 5 - (mSettings.isShowingChannelLogo() ? WIDTH_LOGO : 0));
     mDescriptionIcon.setMaximumLineCount(3);
@@ -276,8 +276,8 @@ public class ProgramPanel extends JComponent implements ChangeListener, PluginSt
           TIME_FORMATTER.formatTime(23, 59))
           + distance;
       WIDTH_RIGHT = Settings.propColumnWidth.getInt() + columnWidthOffset
-          - WIDTH_LEFT;
-      WIDTH_TOTAL = (mSettings.isShowingChannelLogo() ? WIDTH_LOGO : 0)  + WIDTH_LEFT + WIDTH_RIGHT;
+          - WIDTH_LEFT + (mSettings.isShowingChannelLogo() ? WIDTH_LOGO : 0);
+      WIDTH_TOTAL = WIDTH_LEFT + WIDTH_RIGHT;
     }
   }
 
