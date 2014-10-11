@@ -493,19 +493,14 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
   }
 
   private void registerAtPrograms(final ArrayList<ProgramPanel>[] columns) {
-    new Thread("REGISTER CHANGE LISTENER THREAD IN DEFAULT PROGRAM TABLE MODEL") {
-      public void run() {
-        for (ArrayList<ProgramPanel> list : columns) {
-          Iterator<ProgramPanel> it=list.iterator();
-          while (it.hasNext()) {
-            ProgramPanel panel = it.next();
-            Program prog = panel.getProgram();
-            prog.addChangeListener(DefaultProgramTableModel.this);
-          }
-        }
-        
-      };
-    }.start();
+    for (ArrayList<ProgramPanel> list : columns) {
+      Iterator<ProgramPanel> it=list.iterator();
+      while (it.hasNext()) {
+        ProgramPanel panel = it.next();
+        Program prog = panel.getProgram();
+        prog.addChangeListener(DefaultProgramTableModel.this);
+      }
+    }
   }
 
   protected void fireTableDataChanged(Runnable callback) {
@@ -518,14 +513,10 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
   
   
   protected void fireTableCellUpdated(final int col, final int row) {
-    new Thread("FIRE TABLE CELL UPDATED THREAD IN DEFAULT PROGRAM TABLE MODEL") {
-      public void run() {
-        for (int i = 0; i < mListenerList.size(); i++) {
-          ProgramTableModelListener lst = mListenerList.get(i);
-          lst.tableCellUpdated(col, row);
-        }
-      };
-    }.start();
+    for (int i = 0; i < mListenerList.size(); i++) {
+      ProgramTableModelListener lst = mListenerList.get(i);
+      lst.tableCellUpdated(col, row);
+    }
   }
   
   
