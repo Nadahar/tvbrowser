@@ -76,7 +76,7 @@ public class SharedChannelAutoUpdatePlugin extends devplugin.Plugin {
               daysList.remove(i);
             }
           } else {
-        	daysList.remove(i);
+            daysList.remove(i);
           }
         }
         if (daysList.size() == 0) {
@@ -116,14 +116,13 @@ public class SharedChannelAutoUpdatePlugin extends devplugin.Plugin {
   }
 
   private void storeNewSettings (Properties updateList){
-	try {
-		FileOutputStream propfile = new FileOutputStream(mpropFile);
+  	try {
+  		FileOutputStream propfile = new FileOutputStream(mpropFile);
 	    updateList.store(propfile, "Changed DayPrograms to be checked for Update");
     	propfile.close();	    
-	} catch (IOException e) {
-		e.printStackTrace();
-    }
-
+  	} catch (IOException e) {
+  		e.printStackTrace();
+    }  
   }
 
   public Properties storeSettings() {
