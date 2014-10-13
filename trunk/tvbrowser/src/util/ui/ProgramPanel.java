@@ -513,10 +513,10 @@ private static Font getDynamicFontSize(Font font, int offset) {
 
     boolean programChanged = oldProgram == null || !oldProgram.equals(program);
     
+    // Get the start time, filter duplicate strings
+    mProgramTimeAsString = StringPool.getString(program.getTimeString());
+    
     if (programChanged) {
-      // Get the start time, filter duplicate strings
-      mProgramTimeAsString = /*StringPool.getString(*/program.getTimeString()/*)*/;
-
       // Set the new title
       mTitleIcon.setText(program.getTitle());
 
