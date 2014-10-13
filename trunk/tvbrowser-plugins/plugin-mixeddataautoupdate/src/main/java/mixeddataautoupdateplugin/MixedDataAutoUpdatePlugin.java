@@ -72,13 +72,13 @@ public class MixedDataAutoUpdatePlugin extends devplugin.Plugin {
           daysString = daysString + ";" + newDate;
         }
         ArrayList<String> daysList = new ArrayList<String>(Arrays.asList(daysString.split(";")));
-        Date[] days = new Date[daysList.size()];
-        for (int i = 0; i < days.length; i++) {
-          days[i] = Date.createYYYYMMDD(daysList.get(i).substring(0, 4) + "-" + daysList.get(i).substring(4, 6) + "-" + daysList.get(i).substring(6, 8), "-");
-        }
         Date yesterDay = Date.getCurrentDate().addDays(-1);
-        for (int i = daysList.size() - 1; i >= 0; i--) {
-          if (yesterDay.compareTo(days[i]) > 0) {
+        for (int i = 0; i < daysList.size(); i++) {
+          if (daysList.get(i).length()==8) {
+            if (yesterDay.compareTo(Date.createYYYYMMDD(daysList.get(i).substring(0, 4) + "-" + daysList.get(i).substring(4, 6) + "-" + daysList.get(i).substring(6, 8), "-")) > 0) {
+              daysList.remove(i);
+            }
+          } else {
             daysList.remove(i);
           }
         }
@@ -119,11 +119,13 @@ public class MixedDataAutoUpdatePlugin extends devplugin.Plugin {
   }
 
   private void storeNewSettings (Properties updateList){
-    try{
-      updateList.store(new FileOutputStream(mpropFile), "Changed DayPrograms to be checked for Update");
+    try {
+      FileOutputStream propfile = new FileOutputStream(mpropFile);
+      updateList.store(propfile, "Changed DayPrograms to be checked for Update");
+      propfile.close();     
     } catch (IOException e) {
+      e.printStackTrace();
     }
-
   }
 
   public Properties storeSettings() {
