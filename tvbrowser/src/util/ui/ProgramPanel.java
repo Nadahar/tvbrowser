@@ -191,6 +191,8 @@ public class ProgramPanel extends JComponent implements ChangeListener, PluginSt
   private byte mProgramImportance;
   
   private int mLogoWidth = 0;
+  
+  private short mStartTime = 0;
 
   /**
    * Creates a new instance of ProgramPanel.
@@ -514,6 +516,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
     if (programChanged) {
       // Get the start time, filter duplicate strings
       mProgramTimeAsString = StringPool.getString(program.getTimeString());
+      mStartTime = (short)program.getStartTime();
       
       // Set the new title
       mTitleIcon.setText(program.getTitle());
@@ -702,6 +705,11 @@ private static Font getDynamicFontSize(Font font, int offset) {
   public void paintComponent(Graphics g) {
     // lazy update of plugin icons and layout
     if (mHasChanged) {
+      if(mProgram.getStartTime() != mStartTime) {
+        mStartTime = (short)mProgram.getStartTime();
+        mProgramTimeAsString = StringPool.getString(mProgram.getTimeString());
+      }
+      
       mIconArr = getPluginIcons(mProgram);
       mProgramImportance = !mSettings.isIgnoringProgramImportance() ? ProgramUtilities.getProgramImportance(mProgram) : Program.MAX_PROGRAM_IMPORTANCE;
       mHasChanged = false;
