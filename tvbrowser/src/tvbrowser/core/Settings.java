@@ -802,6 +802,10 @@ public class Settings {
     ((DeferredFontProperty)propProgramInfoFont).resetDefault();
     ((DeferredFontProperty)propChannelNameFont).resetDefault();
     ((DeferredFontProperty)propProgramTimeFont).resetDefault();
+    
+    if(propColumnWidth.getInt() < MIN_COLUMN_WIDTH) {
+      propColumnWidth.setInt(MIN_COLUMN_WIDTH);
+    }
   }
   
   public static void updateContextMenuSettings() {
@@ -1839,7 +1843,7 @@ public class Settings {
   /**
    * minimum width of the program table columns
    */
-  public static final int MIN_COLUMN_WIDTH = 60;
+  public static final int MIN_COLUMN_WIDTH = 90;
 
   /** The setting that contains the global picture settings value */
   public static final IntProperty propPluginsPictureSetting = new IntProperty(

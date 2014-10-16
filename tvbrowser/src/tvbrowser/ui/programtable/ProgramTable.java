@@ -522,7 +522,9 @@ public class ProgramTable extends JPanel
     for (int row = 0; row < rowCount; row++) {
       ProgramPanel panel = mModel.getProgramPanel(col, row);
       currY += panel.getHeight();
+      
       if (y < currY) {
+        panel.logTimeString();
         return panel.getProgram();
       }
     }
@@ -1499,7 +1501,9 @@ public class ProgramTable extends JPanel
     stopAutoScroll();
     mMouse = e.getPoint();
     repaint();
-
+    
+    //mModel.getProgramPanel(mCurrentCol, mCurrentRow)
+    
     Program program = getProgramAt(e.getX(), e.getY());
     if (program != null) {
       deSelectItem();
