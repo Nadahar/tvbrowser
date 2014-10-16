@@ -234,7 +234,6 @@ public class ProgramPanel extends JComponent implements ChangeListener, PluginSt
    */
   public ProgramPanel(Program prog) {
     this();
-   // System.out.println(mSettings.isShowingChannelLogo() + " " + prog + " " + WIDTH_LOGO);
     setProgram(prog);
   }
 
@@ -492,7 +491,6 @@ private static Font getDynamicFontSize(Font font, int offset) {
   public void setProgram(Program program, int maxHeight) {
     Program oldProgram = mProgram;
     mProgram = program;
-   // mMarkTime = -1;
 
     if (Settings.propProgramTableCutTitle.getBoolean()) {
       mTitleIcon.setMaximumLineCount(Settings.propProgramTableCutTitleLines
@@ -513,10 +511,10 @@ private static Font getDynamicFontSize(Font font, int offset) {
 
     boolean programChanged = oldProgram == null || !oldProgram.equals(program);
     
-    // Get the start time, filter duplicate strings
-    mProgramTimeAsString = StringPool.getString(program.getTimeString());
-    
     if (programChanged) {
+      // Get the start time, filter duplicate strings
+      mProgramTimeAsString = StringPool.getString(program.getTimeString());
+      
       // Set the new title
       mTitleIcon.setText(program.getTitle());
 
@@ -1098,6 +1096,10 @@ private static Font getDynamicFontSize(Font font, int offset) {
           caller);
       menu.show(evt.getComponent(), evt.getX() - 15, evt.getY() - 15);
     }
+  }
+  
+  public void logTimeString() {
+    mLog.info("PROGRAM PANEL START TIME STRING: '" + mProgramTimeAsString + "' FOR: " + mProgram);
   }
 
   /**
