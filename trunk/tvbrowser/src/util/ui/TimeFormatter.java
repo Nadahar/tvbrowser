@@ -65,7 +65,7 @@ public class TimeFormatter {
    * @param minutes Minutes
    * @return String representation
    */
-  public String formatTime(int hours, int minutes) {
+  public synchronized String formatTime(int hours, int minutes) {
     mCal.set(Calendar.HOUR_OF_DAY, hours);
     mCal.set(Calendar.MINUTE, minutes);
     return mFormat.format(mCal.getTime());
