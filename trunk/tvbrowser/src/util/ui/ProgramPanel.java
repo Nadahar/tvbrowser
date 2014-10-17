@@ -515,8 +515,10 @@ private static Font getDynamicFontSize(Font font, int offset) {
     
     if (programChanged) {
       // Get the start time, filter duplicate strings
-      mProgramTimeAsString = StringPool.getString(program.getTimeString());
       mStartTime = (short)program.getStartTime();
+      mProgramTimeAsString = StringPool.getString(program.getTimeString());
+      
+      mLog.info("PROGRAM PANEL VALUES startTimeMinutes: " + mStartTime + " timeString: " + mProgramTimeAsString + " FOR PROGRAM: " + program);
       
       // Set the new title
       mTitleIcon.setText(program.getTitle());
