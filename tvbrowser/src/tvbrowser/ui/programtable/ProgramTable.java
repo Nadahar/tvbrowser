@@ -524,7 +524,6 @@ public class ProgramTable extends JPanel
       currY += panel.getHeight();
       
       if (y < currY) {
-        panel.logTimeString();
         return panel.getProgram();
       }
     }

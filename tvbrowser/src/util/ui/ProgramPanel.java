@@ -191,8 +191,6 @@ public class ProgramPanel extends JComponent implements ChangeListener, PluginSt
   private byte mProgramImportance;
   
   private int mLogoWidth = 0;
-  
-  private short mStartTime = 0;
 
   /**
    * Creates a new instance of ProgramPanel.
@@ -515,10 +513,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
     
     if (programChanged) {
       // Get the start time, filter duplicate strings
-      mStartTime = (short)program.getStartTime();
       mProgramTimeAsString = StringPool.getString(program.getTimeString());
-      
-      mLog.info("PROGRAM PANEL VALUES startTimeMinutes: " + mStartTime + " timeString: " + mProgramTimeAsString + " FOR PROGRAM: " + program);
       
       // Set the new title
       mTitleIcon.setText(program.getTitle());
@@ -707,11 +702,6 @@ private static Font getDynamicFontSize(Font font, int offset) {
   public void paintComponent(Graphics g) {
     // lazy update of plugin icons and layout
     if (mHasChanged) {
-      if(mProgram.getStartTime() != mStartTime) {
-        mStartTime = (short)mProgram.getStartTime();
-        mProgramTimeAsString = StringPool.getString(mProgram.getTimeString());
-      }
-      
       mIconArr = getPluginIcons(mProgram);
       mProgramImportance = !mSettings.isIgnoringProgramImportance() ? ProgramUtilities.getProgramImportance(mProgram) : Program.MAX_PROGRAM_IMPORTANCE;
       mHasChanged = false;
@@ -1106,10 +1096,6 @@ private static Font getDynamicFontSize(Font font, int offset) {
           caller);
       menu.show(evt.getComponent(), evt.getX() - 15, evt.getY() - 15);
     }
-  }
-  
-  public void logTimeString() {
-    mLog.info("PROGRAM PANEL START TIME STRING: '" + mProgramTimeAsString + "' FOR: " + mProgram);
   }
 
   /**
