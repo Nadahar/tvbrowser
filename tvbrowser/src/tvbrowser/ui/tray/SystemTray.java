@@ -411,7 +411,13 @@ public class SystemTray {
             while(j < prog.size() && prog.get(j).isOnAir()) {
               Program nowTest = prog.get(j++);
               
-              if(nowTest.getStartTime() >= start && (nowTest.getStartTime() + nowTest.getLength()) < end) {
+              int testStart = nowTest.getStartTime();
+              
+              if(now.getDate().addDays(1).compareTo(nowTest.getDate()) == 0) {
+                testStart += 24 * 60;
+              }
+              
+              if(testStart >= start && (testStart + nowTest.getLength()) < end) {
                 now = nowTest;
                 start = now.getStartTime();
                 end = now.getStartTime() + now.getLength();
@@ -438,112 +444,6 @@ public class SystemTray {
             break;
           }
         }
-        
-       /* Iterator<Program> today = ProgramUtilities.getJointProgramIteratorFor(currentDate, channel);
-
-        if (today != null) {
-          
-          //final int programCount = today.getProgramCount();
-          int j=0;
-          boolean added = false;
-         
-          while (today.hasNext()) {
-            Program prog = today.next();
-            if (j == 0 && prog.getStartTime() > IOUtilities.getMinutesAfterMidnight()) {
-              Iterator<Program> yesterday = ProgramUtilities.getJointProgramIteratorFor(currentDate.addDays(-1), channel);
-
-              if (yesterday != null && yesterday.hasNext()) {
-                Program p = null;
-                
-                while(yesterday.hasNext()) {
-                  p = yesterday.next();
-                }
-
-                if (p.isOnAir()) {
-                  addToNowRunning(p, programs, additional);
-                  
-                  while(!addToNext(prog, nextPrograms, nextAdditionalPrograms) && today.hasNext()) {
-                    prog = today.next();
-                  }
-                  
-                  added = true;
-                  break;
-                }
-                else if(p.getStartTime() > IOUtilities.getMinutesAfterMidnight()) {
-                  while(!addToNext(prog, nextPrograms, nextAdditionalPrograms) && today.hasNext()) {
-                    prog = today.next();
-                  }
-                  
-                  added = true;
-                  break;
-                }
-              }
-            }
-
-        //    Program p = today.getProgramAt(j);
-
-            if (prog.isOnAir()) {
-              added = true;
-              addToNowRunning(prog, programs, additional);
-              
-              boolean nextAdded = false;
-              
-              if(today.hasNext()) {
-                do {
-                  nextAdded = addToNext(today.next(), nextPrograms, nextAdditionalPrograms);
-                }while(!nextAdded && today.hasNext());
-              }
-              
-              if(!nextAdded) {
-                Iterator<Program> tomorrow = ProgramUtilities.getJointProgramIteratorFor(currentDate.addDays(1), channel);
-                if (tomorrow != null && tomorrow.hasNext()) {
-                  do {
-                    nextAdded = addToNext(tomorrow.next(), nextPrograms, nextAdditionalPrograms);
-                  }while(!nextAdded && tomorrow.hasNext());
-                }
-              }
-
-              break;
-            }
-            else if(prog.getStartTime() > IOUtilities.getMinutesAfterMidnight()) {
-              added = true;
-              boolean nextAdded = false;
-              
-              if(today.hasNext()) {
-                do {
-                  nextAdded = addToNext(today.next(), nextPrograms, nextAdditionalPrograms);
-                }while(!nextAdded && today.hasNext());
-              }
-              
-              if(!nextAdded) {
-                Iterator<Program> tomorrow = ProgramUtilities.getJointProgramIteratorFor(currentDate.addDays(1), channel);
-                if (tomorrow != null && tomorrow.hasNext()) {
-                  do {
-                    nextAdded = addToNext(tomorrow.next(), nextPrograms, nextAdditionalPrograms);
-                  }while(!nextAdded && tomorrow.hasNext());
-                }
-              }
-              
-              break;
-            }
-            
-            j++;
-          }
-          
-          if(!added) {
-            Iterator<Program> tomorrow = ProgramUtilities.getJointProgramIteratorFor(currentDate.addDays(1), channel);
-            
-            while (tomorrow != null && tomorrow.hasNext()) {
-              Program test = tomorrow.next();
-              
-              if(test.getStartTime() > IOUtilities.getMinutesAfterMidnight()) {
-                if(addToNext(test, nextPrograms, nextAdditionalPrograms)) {
-                  break;
-                }
-              }
-            }
-          }
-        }*/
       }
 
       // Show important programs?
