@@ -117,7 +117,7 @@ public class AndroidSync extends Plugin {
   private static final String PLUGIN_TYPE = "PLUGIN_TYPE";
   private static final String FILTER_TYPE = "FILTER_TYPE";
   
-  private static final Version mVersion = new Version(0, 17, 0, false);
+  private static final Version mVersion = new Version(0, 19, 0, false);
   private final String CrLf = "\r\n";
   private Properties mProperties;
   
@@ -329,12 +329,12 @@ public class AndroidSync extends Plugin {
       mProperties.setProperty(LAST_UPLOAD, today.getYear() + "-" + today.getMonth() + "-" + today.getDayOfMonth());
       
       download(BACK_SYNC_ADDRESS,false);
-      //ReminderPlugin.getInstance().addPrograms(programArr)
-      //ReminderPlugin.getInstance().get
     }
     
-    download(REMINDER_BACK_SYNC_ADDRESS, false);
-    upload(REMINDER_UP_SYNC_ADDRESS, false);
+    if(mProperties.getProperty(SYNCHRONIZE_REMINDER, "true").trim().equals("true")) {
+      download(REMINDER_BACK_SYNC_ADDRESS, false);
+      upload(REMINDER_UP_SYNC_ADDRESS, false);
+    }
     
     updateChannels();
   }
@@ -485,7 +485,7 @@ public class AndroidSync extends Plugin {
           }
         }
         
-        mSynchroReminders = new JCheckBox(mLocalizer.msg("synchronizeReminder", "Synchronize Reminder"), mProperties.getProperty(SYNCHRONIZE_REMINDER,"true").equals("true"));
+        mSynchroReminders = new JCheckBox(mLocalizer.msg("synchronizeReminder", "Synchronize Reminder automatically"), mProperties.getProperty(SYNCHRONIZE_REMINDER,"true").equals("true"));
         mPluginType = new JRadioButton(mLocalizer.msg("pluginType","Hightlighted programs of Plugins"));
         mFilterType = new JRadioButton(mLocalizer.msg("filterType","Accepted programs of Filter"));
         
@@ -706,7 +706,6 @@ public class AndroidSync extends Plugin {
       
       for(Program prog : toExport) {
         Calendar cal = prog.getDate().getCalendar();
-        cal.setTimeZone(prog.getChannel().getTimeZone());
         
         cal.set(Calendar.HOUR_OF_DAY, prog.getStartTime() / 60);
         cal.set(Calendar.MINUTE, prog.getStartTime() % 60);
@@ -807,7 +806,6 @@ public class AndroidSync extends Plugin {
       
       for(Program prog : toExport) {
         Calendar cal = prog.getDate().getCalendar();
-        cal.setTimeZone(prog.getChannel().getTimeZone());
         
         cal.set(Calendar.HOUR_OF_DAY, prog.getStartTime() / 60);
         cal.set(Calendar.MINUTE, prog.getStartTime() % 60);
@@ -944,8 +942,17 @@ public class AndroidSync extends Plugin {
                 if(timeZone == null) {
                   for(Channel ch : subscribedChannels) {
                     if(ch.getUniqueId().equals(id)) {
-                      timeZoneMap.put(id, ch.getTimeZone());
                       timeZone = ch.getTimeZone();
+                      
+                      if(timeZone.getID().equals("GMT")) {
+                        timeZone = TimeZone.getTimeZone("WET");
+                      }
+                      else if(timeZone.getID().equals("GMT+01:00")) {
+                        timeZone = TimeZone.getTimeZone("CET");
+                      }
+                      
+                      timeZoneMap.put(id, timeZone);
+                      
                       break;
                     }
                   }
