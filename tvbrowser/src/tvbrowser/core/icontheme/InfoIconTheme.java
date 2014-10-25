@@ -43,8 +43,6 @@ import java.util.zip.ZipFile;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
-import tvbrowser.core.Settings;
-
 /**
  * A class that stores the info icons for the program panels.
  * <p>
@@ -317,8 +315,12 @@ public class InfoIconTheme implements Comparable<InfoIconTheme> {
     
     ImageIcon icon = mIconMap.get(Byte.valueOf(type));
     
-    if(icon == null && !mID.equals(Settings.propInfoIconThemeID.getDefault())) {
-      icon = InfoThemeLoader.getInstance().getDefaultTheme().getInfoIcon(type);
+    if(icon == null) {
+      InfoIconTheme test = InfoThemeLoader.getInstance().getDefaultTheme();
+      
+      if(test != null && !mID.equals(test.getID())) {
+        icon = test.getInfoIcon(type);
+      }
     }
     
     return icon;
