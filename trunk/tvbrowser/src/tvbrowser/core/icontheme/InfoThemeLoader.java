@@ -65,7 +65,8 @@ public class InfoThemeLoader {
       }
     }
     
-    File globalThemes = new File("infothemes");
+    File globalThemes = new File(Settings.getDefaultSettings().getProperty(
+        "infothemedirectory", "infothemes"));
     
     if(globalThemes.isDirectory()) {
       File[] iconThemes = globalThemes.listFiles(THEME_FILE_FILTER);
@@ -137,7 +138,13 @@ public class InfoThemeLoader {
    * @return The default info icon theme.
    */
   public InfoIconTheme getDefaultTheme() {
-    return mInfoIconThemeMap.get(Settings.propInfoIconThemeID.getDefault());
+    InfoIconTheme test = mInfoIconThemeMap.get(Settings.propInfoIconThemeID.getDefault());
+    
+    if(test == null && !mInfoIconThemeMap.isEmpty()) {
+      test = getAvailableInfoIconThemes()[0];
+    }
+    
+    return test;
   }
   
   public InfoIconTheme[] getAvailableInfoIconThemes() {
