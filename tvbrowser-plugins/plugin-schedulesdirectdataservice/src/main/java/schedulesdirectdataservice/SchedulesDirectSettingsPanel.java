@@ -19,9 +19,9 @@
  * CVS information:
  *  $RCSfile$
  *   $Source$
- *     $Date: 2007-09-20 23:45:38 +0200 (Do, 20 Sep 2007) $
- *   $Author: bananeweizen $
- * $Revision: 3894 $
+ *     $Date$
+ *   $Author$
+ * $Revision$
  */
 package schedulesdirectdataservice;
 
