@@ -25,11 +25,13 @@
  */
 package tvbrowser.ui.settings.channel;
 
+import java.awt.Color;
 import java.awt.Component;
 
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.UIManager;
 
 import tvbrowser.core.ChannelList;
 import tvbrowser.core.DuplicateChannelNameCounter;
@@ -73,8 +75,24 @@ public class FilteredChannelListCellRenderer extends DefaultListCellRenderer {
       mChannel.setOpaque(isSelected);
       mChannel.setBackground(label.getBackground());
       mChannel.setForeground(label.getForeground());
-      mChannel.setEnabled(mFilter.accept((Channel)value));
-      
+      mChannel.setEnabled(mFilter.accept((Channel)value),isSelected);
+      /*
+      if() {
+        Color disabledColor = UIManager.getColor("Label.disabledForeground");
+        
+        mChannel.setEnabled(true);
+        
+        if(isSelected) {
+          UIManager.put("Label.disabledForeground", list.getSelectionForeground());
+        }
+        
+        mChannel.setEnabled(false);
+        UIManager.put("Label.disabledForeground", disabledColor);
+      }
+      else {
+        mChannel.setEnabled(true);
+      }
+      */
       return mChannel;
     }
 
