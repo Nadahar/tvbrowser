@@ -378,4 +378,13 @@ public class ChannelLabel extends JLabel {
   public Channel getChannel() {
     return mChannel;
   }
+  
+  public void setEnabled(boolean enabled, boolean selected) {
+    if(!selected) {
+      setEnabled(enabled);
+    }
+    else {
+      setEnabled(true);
+    }
+  }
 }
