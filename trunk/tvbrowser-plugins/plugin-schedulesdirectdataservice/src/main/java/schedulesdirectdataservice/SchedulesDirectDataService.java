@@ -16,12 +16,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
- * CVS information:
- *  $RCSfile$
- *   $Source$
- *     $Date: 2007-09-20 23:45:38 +0200 (Do, 20 Sep 2007) $
- *   $Author: bananeweizen $
- * $Revision: 3894 $
+ * SVN information:
+ *     $Date$
+ *   $Author$
+ * $Revision$
  */
 package schedulesdirectdataservice;
 
@@ -85,7 +83,7 @@ public class SchedulesDirectDataService extends AbstractTvDataService {
   private static final Logger mLog
     = Logger.getLogger(SchedulesDirectDataService.class.getName());
 
-  private static final Version VERSION = new Version(3,12,2);
+  private static final Version VERSION = new Version(3,13,2);
 
   private ChannelGroup mChannelGroup = new ChannelGroupImpl("SchedulesDirect", "SchedulesDirect", "SchedulesDirect", "SchedulesDirect");
 
@@ -142,15 +140,16 @@ public class SchedulesDirectDataService extends AbstractTvDataService {
         mChannelMap = new HashMap<Channel, Map<devplugin.Date, MutableChannelDayProgram>>();
         for (Schedule schedule : schedules) {
           Channel ch = channelMap.get(Integer.toString(schedule.getStation()));
-          if (ch != null) {
+          net.sf.xtvdclient.xtvd.datatypes.Program xtvdProgram = xtvd.getPrograms().get(schedule.getProgram());
+          
+          if (ch != null && xtvdProgram != null) {
             Calendar cal = Calendar.getInstance();
             cal.setTime(schedule.getTime().getLocalDate());
             devplugin.Date programDate = new Date(cal);
             MutableChannelDayProgram chDayProgram = getMutableDayProgram(ch, programDate);
 
             MutableProgram prog = new MutableProgram(ch, programDate, cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE), true);
-            net.sf.xtvdclient.xtvd.datatypes.Program xtvdProgram = xtvd.getPrograms().get(schedule.getProgram());
-
+            
             int info = 0;
             if (schedule.getCloseCaptioned()) {
               info |= Program.INFO_SUBTITLE_FOR_AURALLY_HANDICAPPED;
