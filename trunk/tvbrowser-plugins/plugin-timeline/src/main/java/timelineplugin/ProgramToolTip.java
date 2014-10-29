@@ -19,6 +19,7 @@ package timelineplugin;
 
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.lang.reflect.Constructor;
 
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
@@ -29,6 +30,7 @@ import javax.swing.plaf.ComponentUI;
 import util.settings.PluginPictureSettings;
 import util.settings.ProgramPanelSettings;
 import util.ui.ProgramPanel;
+import devplugin.Plugin;
 import devplugin.Program;
 
 public class ProgramToolTip extends JToolTip {
@@ -42,11 +44,19 @@ public class ProgramToolTip extends JToolTip {
 		private ProgramPanel mProgramPanel;
 
 		ProgramToolTipUI(final Program p) {
-			ProgramPanelSettings settings = new ProgramPanelSettings(
-					new PluginPictureSettings(
-							PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE), false);
+		  PluginPictureSettings pictureSettings = new PluginPictureSettings(PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE);
+		  
+			ProgramPanelSettings settings = new ProgramPanelSettings(pictureSettings, false);
+			
+      try {
+        Constructor<? extends ProgramPanelSettings> constructor = settings.getClass().getConstructor(new Class<?>[] {PluginPictureSettings.class, boolean.class, int.class, boolean.class, boolean.class, boolean.class});
+        settings = (ProgramPanelSettings)constructor.newInstance(new Object[] {pictureSettings, false, ProgramPanelSettings.X_AXIS, false, true, false});
+      } catch (Exception e) {
+        // ignore, just use old instance of ProgramPanelSettings, the used TV-Browser version is not able to show channel logos in program panels.
+      }
+			
 			mProgramPanel = new ProgramPanel(p, settings);
-			mProgramPanel.setSize(new Dimension(200, 300));
+			mProgramPanel.setSize(new Dimension(220, 300));
 			mProgramPanel.setHeight(300);
 			mProgramPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 		}
@@ -59,7 +69,7 @@ public class ProgramToolTip extends JToolTip {
 		}
 
 		public Dimension getPreferredSize(final JComponent c) {
-			return new Dimension(200, mProgramPanel.getPreferredHeight());
+			return new Dimension(mProgramPanel.getWidth(), mProgramPanel.getPreferredHeight());
 		}
 	}
 }
