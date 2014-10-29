@@ -28,8 +28,6 @@ package tvbrowser.core.icontheme;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.logging.Logger;
@@ -89,6 +87,8 @@ public class IconLoader {
     mDefaultIconDir = new File(Settings.getDefaultSettings().getProperty(
         "icontheme", "icons/tango.zip"));
 
+    mLog.info("Try to load default icon theme from: " + mDefaultIconDir.getAbsolutePath());
+    
     if (!mDefaultIconDir.exists()) {
       // If the default directory does not exist, try to find another icon theme in the icontheme directory
       File iconDir = new File("icons");
