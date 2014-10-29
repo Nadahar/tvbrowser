@@ -66,6 +66,8 @@ public final class TimelinePlugin extends devplugin.Plugin {
 	static final util.ui.Localizer mLocalizer = util.ui.Localizer
 			.getLocalizerFor(TimelinePlugin.class);
 
+	private static final Version VERSION = new Version(1, 13, 2, false);
+	
 	private static TimelinePlugin mInstance;
 
 	private static final Font DEFAULT_FONT = new Font("Dialog", Font.PLAIN, 12);
@@ -117,7 +119,7 @@ public final class TimelinePlugin extends devplugin.Plugin {
 	}
 
 	public static Version getVersion() {
-		return new Version(1, 13, 1, false);
+		return VERSION;
 	}
 
 	public SettingsTab getSettingsTab() {
