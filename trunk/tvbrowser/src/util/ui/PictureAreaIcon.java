@@ -79,7 +79,7 @@ public class PictureAreaIcon implements Icon {
   public PictureAreaIcon(Program p, Font f, int width, boolean showDescription, boolean grayFilter, boolean zoom) {
     this(p,f,width,showDescription,grayFilter,zoom,true);
   }
-  
+  int mWidth = -1;
   /**
    * Constructor for programs with picture.
    *
@@ -121,17 +121,20 @@ public class PictureAreaIcon implements Icon {
       mIconHeight = mScaledIcon.getIconHeight();
     }
 
+    mWidth = width;
+    
     String copyright = p.getTextField(ProgramFieldType.PICTURE_COPYRIGHT_TYPE);
     
     if(copyright != null && copyright.toLowerCase().startsWith("(c)")) {
       copyright = "\u00A9" + copyright.substring(3);
     }
     
-    mCopyrightText = new TextAreaIcon(copyright,f.deriveFont((float)(f.getSize() * 0.9)),width-6);
+    mCopyrightText = new TextAreaIcon(copyright,f.deriveFont((float)(f.getSize() * 0.9)),width-9);
     String pictureText = showDescription ? p.getTextField(ProgramFieldType.PICTURE_DESCRIPTION_TYPE) : "";
     if (StringUtils.isNotEmpty(pictureText)) {
-      mDescriptionText = new TextAreaIcon(pictureText,f,width-6);
+      mDescriptionText = new TextAreaIcon(pictureText,f,width-9);
       mDescriptionText.setMaximumLineCount(mDescriptionLines);
+      
     }
     else {
       // reset show description as the string is empty
@@ -153,7 +156,7 @@ public class PictureAreaIcon implements Icon {
   }
 
   public int getIconWidth() {
-    return mCopyrightText.getIconWidth() + 6;
+    return mWidth;
   }
 
   public void paintIcon(final Component c, Graphics g, int x, int y) {

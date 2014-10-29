@@ -526,7 +526,13 @@ private static Font getDynamicFontSize(Font font, int offset) {
     int length = program.getLength();
     // Create the picture area icon
     if(showPicture(program,dontShowPictureAreaIcon(true))) {
-      mPictureAreaIcon = new PictureAreaIcon(program,mNormalFont, Math.max(WIDTH_RIGHT - 4 - mLogoWidth, 56-WIDTH_LEFT), mSettings.isShowingPictureDescription(), true, false, mSettings.isShowingPictureBorder());
+      int pictureWidth = Math.max(WIDTH_RIGHT - 4 - mLogoWidth, 56-WIDTH_LEFT);
+      
+      if(textIconWidth - 156 > 0) {
+        pictureWidth = Math.min(156, textIconWidth);
+      }
+      
+      mPictureAreaIcon = new PictureAreaIcon(program,mNormalFont, pictureWidth, mSettings.isShowingPictureDescription(), true, false, mSettings.isShowingPictureBorder());
     } else {
       mPictureAreaIcon = new PictureAreaIcon();
     }
@@ -1356,6 +1362,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
 
   public void setWidth(int newWidth) {
     int oldWidth = getWidth();
+    
     int textIconWidth = getTextIconWidth(newWidth);
     if (oldWidth != newWidth && newWidth > 0 || (textIconWidth != mDescriptionIcon.getIconWidth() && textIconWidth > 0)) {
       recreateTextIcons(newWidth);
@@ -1366,15 +1373,18 @@ private static Font getDynamicFontSize(Font font, int offset) {
     return fullWidth - WIDTH_LEFT - 5 - mLogoWidth;
   }
 
+  int textIconWidth = -1;
+  
   /**
    * recreate the textual icons if the width of the program panel has changed
    * @param newWidth
    */
   private void recreateTextIcons(int newWidth) {
-    int textIconWidth = getTextIconWidth(newWidth);
+    textIconWidth = getTextIconWidth(newWidth);
     mTitleIcon = new TextAreaIcon(null, mTitleFont, textIconWidth);
     mDescriptionIcon = new TextAreaIcon(null, mNormalFont, textIconWidth);
     mDescriptionIcon.setMaximumLineCount(3);
+    
     if (mProgram != null) {
       mProgram.validateMarking();
       Program p = mProgram;
