@@ -208,7 +208,12 @@ public class TextLineBreakerStringWidth {
         && (line.length() != 0))
       {
         // Add three dots if we stop because of the maxLines rule
-        line += ELLIPSIS;
+        if(getStringWidth(line + ELLIPSIS) > width) {
+          line = line.substring(0,line.length()-2) + ELLIPSIS;
+        }
+        else {
+          line += ELLIPSIS;
+        }
       }
 
       lineList.add(line);
