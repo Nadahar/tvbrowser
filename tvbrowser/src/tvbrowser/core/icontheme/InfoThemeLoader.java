@@ -27,6 +27,7 @@ import java.io.File;
 import java.io.FileFilter;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.logging.Logger;
 
 import tvbrowser.core.Settings;
 
@@ -36,6 +37,7 @@ import tvbrowser.core.Settings;
  * @author René Mach
  */
 public class InfoThemeLoader {
+  private static final Logger LOGGER = Logger.getLogger(InfoThemeLoader.class.getName()); 
   private static InfoThemeLoader INSTANCE;
   
   /** The icon dir of the current user. */
@@ -54,7 +56,9 @@ public class InfoThemeLoader {
   
   private InfoThemeLoader() {
     mInfoIconThemeMap = new HashMap<String, InfoIconTheme>();
-        
+     
+    LOGGER.info("Try to load user info icon themes from: " + USER_ICON_DIR.getAbsolutePath());
+    
     if(USER_ICON_DIR.isDirectory()) {
       File[] iconThemes = USER_ICON_DIR.listFiles(THEME_FILE_FILTER);
       
@@ -67,6 +71,8 @@ public class InfoThemeLoader {
     
     File globalThemes = new File(Settings.getDefaultSettings().getProperty(
         "infothemedirectory", "infothemes"));
+    
+    LOGGER.info("Try to load global info icon themes from: " + globalThemes.getAbsolutePath());
     
     if(globalThemes.isDirectory()) {
       File[] iconThemes = globalThemes.listFiles(THEME_FILE_FILTER);
