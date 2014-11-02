@@ -110,6 +110,8 @@ public class MacOSXMenuBar extends MenuBar {
       Object applicationListener = Proxy.newProxyInstance(app.getClass().getClassLoader(), new Class<?>[] {applicationListenerClass}, new ApplicationListenerHandler(this));
       
       addApplicationListener.invoke(app, new Object[] {applicationListener});
+      
+      menusCreated = true;
     } catch (Exception e) {
       LOGGER.log(Level.INFO, "OS X specific classes not found.", e);
     }
