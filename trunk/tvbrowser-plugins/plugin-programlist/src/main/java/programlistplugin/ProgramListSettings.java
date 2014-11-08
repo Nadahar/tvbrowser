@@ -30,6 +30,7 @@ public class ProgramListSettings extends PropertyBasedSettings {
   private static final String KEY_SHOW_DESCRIPTION = "showDescription";
   private static final String KEY_PROVIDE_TAB = "provideTab";
   private static final String KEY_SHOW_DATE_SEPARATOR = "showDateSeparator";
+  private static final String KEY_REACT_ON_FILTER_CHANGE = "reactOnFilterChange";
 
   public ProgramListSettings(final Properties properties) {
     super(properties);
@@ -73,5 +74,13 @@ public class ProgramListSettings extends PropertyBasedSettings {
   
   public void setShowDateSeparator(final boolean show) {
     set(KEY_SHOW_DATE_SEPARATOR, show);
+  }
+  
+  public boolean reactOnFilterChange() {
+    return get(KEY_REACT_ON_FILTER_CHANGE, true);
+  }
+  
+  public void setReactOnFilterChange(final boolean react) {
+    set(KEY_REACT_ON_FILTER_CHANGE, react);
   }
 }
