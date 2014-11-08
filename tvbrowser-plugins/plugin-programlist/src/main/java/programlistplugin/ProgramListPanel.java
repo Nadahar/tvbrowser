@@ -615,7 +615,7 @@ public class ProgramListPanel extends JPanel implements PersonaListener, FilterC
   
   synchronized void updateFilter(ProgramFilter filter) {
     if(mListThread == null || !mListThread.isAlive()) {
-      if(mFilterBox.getSelectedItem() != null && mFilterBox.getSelectedItem().equals(filter)) {
+      if(mFilterBox.getSelectedItem() != null && mFilterBox.getSelectedItem().toString().equals(filter.getName())) {
         mCurrentVisible = mList.getVisibleRect();
       }
       
@@ -657,7 +657,7 @@ public class ProgramListPanel extends JPanel implements PersonaListener, FilterC
 
   @Override
   public void filterAdded(ProgramFilter filter) {
-    mFilterBox.addItem(filter);
+    mFilterBox.addItem(filter.getName());
   }
 
   @Override
@@ -667,7 +667,7 @@ public class ProgramListPanel extends JPanel implements PersonaListener, FilterC
   public void filterRemoved(ProgramFilter filter) {
     ProgramFilter selected = (ProgramFilter)mFilterBox.getSelectedItem();
     
-    mFilterBox.removeItem(filter);
+    mFilterBox.removeItem(filter.getName());
     
     if(selected != null && selected.equals(filter)) {
       fillProgramList();
@@ -676,7 +676,7 @@ public class ProgramListPanel extends JPanel implements PersonaListener, FilterC
 
   @Override
   public void filterTouched(ProgramFilter filter) {
-    if(mFilterBox.getSelectedItem() != null && mFilterBox.getSelectedItem().equals(filter)) {
+    if(mFilterBox.getSelectedItem() != null && mFilterBox.getSelectedItem().toString().equals(filter.getName())) {
       mCurrentSelection = mList.getSelectedValue();
       mCurrentVisible = mList.getVisibleRect();
       
