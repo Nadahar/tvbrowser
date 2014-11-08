@@ -29,6 +29,7 @@ import java.util.Vector;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
@@ -76,6 +77,8 @@ public class VirtualDataServiceSettingsPanel extends SettingsPanel implements Ac
 	private JButton mProgramDel;
 	private JButton mProgramEdit;
 
+	private JCheckBox mAllowCopyForPrograms;
+	
 	public VirtualDataServiceSettingsPanel(final String workingDirectory)
 	{
 		mChannelManager = new VirtualChannelManager(workingDirectory);
@@ -84,14 +87,16 @@ public class VirtualDataServiceSettingsPanel extends SettingsPanel implements Ac
 		setBorder(Borders.createEmptyBorder(Sizes.DLUY5, Sizes.DLUX5, Sizes.DLUY5, Sizes.DLUX5));
 
 		final FormLayout layout = new FormLayout(
-        "5dlu, default, 3dlu, pref, 5dlu",
-        "5dlu, pref, 2dlu, pref, 2dlu, pref, 2dlu, pref, pref:grow, 10dlu, pref, 2dlu, pref, 2dlu, pref, 2dlu, pref, pref:grow");
+        "5dlu, default:grow, 3dlu, pref, 5dlu",
+        "5dlu, pref, 5dlu, pref, 2dlu, pref, 2dlu, pref, 2dlu, pref, pref:grow, 10dlu, pref, 2dlu, pref, 2dlu, pref, 2dlu, pref, pref:grow");
 
 		final PanelBuilder builder = new PanelBuilder(layout);
 		builder.setBorder(null);
 
 		final CellConstraints cc = new CellConstraints();
 
+		mAllowCopyForPrograms = new JCheckBox(mLocalizer.msg("allowCopyForPrograms","Provide copy context menu entry for all programs"), VirtualDataService.getInstance().allowCopyForPrograms());
+		
 		mChannels = new DefaultListModel();
 		mChannelList = new JList(mChannels);
 		mChannelList.addListSelectionListener(new ListSelectionListener()
@@ -154,6 +159,9 @@ public class VirtualDataServiceSettingsPanel extends SettingsPanel implements Ac
 		mProgramEdit.addActionListener(this);
 
 		int row = 2;
+		
+		builder.add(mAllowCopyForPrograms, cc.xyw(2,row,3));
+		row += 2;
 		builder.addLabel(Localizer.getLocalization(Localizer.I18N_CHANNEL), cc.xyw(2, row, 3));
 		row += 2;
 		builder.add(scrollChannel, cc.xywh(2, row, 1, 6));
@@ -240,6 +248,7 @@ public class VirtualDataServiceSettingsPanel extends SettingsPanel implements Ac
 	{
 		mChannelManager.save();
 		VirtualDataService.getInstance().clearChannelList();
+		VirtualDataService.getInstance().setAllowCopyPrograms(mAllowCopyForPrograms.isSelected());
 		setChannelButtons(false);
 	}
 

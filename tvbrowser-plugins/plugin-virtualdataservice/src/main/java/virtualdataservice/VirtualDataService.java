@@ -64,6 +64,8 @@ public class VirtualDataService extends AbstractTvDataService
   private static VirtualDataService mInstance = null;
 
   private static Properties mProperties;
+  
+  private static final String KEY_ALLOW_COPY_FOR_PROGRAMS = "KEY_ALLOW_COPY_FOR_PROGRAMS";
 
   private ChannelGroup mVirtualChannelGroup = new ChannelGroupImpl("Virtual", "virtual", mLocalizer.msg("desc", "Virtual"), "Virtual");
   private ArrayList<Channel> mChannels = null;
@@ -76,7 +78,7 @@ public class VirtualDataService extends AbstractTvDataService
   final private ImageIcon editIcon = DummyPlugin.getInstance().createImageIcon("actions", "document-edit", 16);
   final private ImageIcon newIcon = DummyPlugin.getInstance().createImageIcon("actions", "document-new", 16);
 //modified by jb //
-
+  
   public VirtualDataService()
   {
     mInstance = this;
@@ -126,7 +128,7 @@ public class VirtualDataService extends AbstractTvDataService
 
   public static Version getVersion()
   {
-    return new Version(0, 3, 0, false);
+    return new Version(0, 4, 0, false);
   }
 
   public PluginInfo getInfo()
@@ -343,13 +345,13 @@ public class VirtualDataService extends AbstractTvDataService
         addAction.putValue(Action.NAME, mLocalizer.msg("new", "Add Program"));
         addAction.putValue(Action.SMALL_ICON, newIcon);
         actionList.add(addAction);
-
-       if (isValidVcProgram) {
+    }
+    
+    if (allowCopyForPrograms() && (isValidVcProgram || channel == null)) {
+      if (isValidVcProgram) {
         actionList.add(ContextMenuSeparatorAction.getInstance());
       }
-      }
-
-    if (isValidVcProgram || channel == null) {
+      
       for (final VirtualChannel vcn : channels) {
         final AbstractAction copyAction = new AbstractAction() {
           private static final long serialVersionUID = 1L;
@@ -501,7 +503,7 @@ public class VirtualDataService extends AbstractTvDataService
   private Calendar getCalendar(final Program program, final int hours,
       final int minutes) {
    return getCalendar(program, hours, minutes, 0);
- }
+  }
 
   private Calendar getCalendar(final Program program, final int hours,
       final int minutes, final int dayDiff) {
@@ -514,9 +516,17 @@ public class VirtualDataService extends AbstractTvDataService
     cal.set(Calendar.SECOND, 0);
     cal.set(Calendar.MILLISECOND, 0);
     return cal;
- }
+  }
 
-
+  
+  public void setAllowCopyPrograms(boolean value) {
+    mProperties.setProperty(KEY_ALLOW_COPY_FOR_PROGRAMS, String.valueOf(value));
+  }
+  
+  public boolean allowCopyForPrograms() {
+    return mProperties.getProperty(KEY_ALLOW_COPY_FOR_PROGRAMS, "true").equals("true");
+  }
+  
   }
 
 class DummyPlugin extends Plugin {
