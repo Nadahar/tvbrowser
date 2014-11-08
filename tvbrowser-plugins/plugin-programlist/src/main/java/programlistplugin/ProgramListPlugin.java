@@ -27,6 +27,8 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
@@ -69,7 +71,7 @@ import devplugin.Version;
 public class ProgramListPlugin extends Plugin {
   static final Localizer mLocalizer = Localizer.getLocalizerFor(ProgramListPlugin.class);
 
-  private static Version mVersion = new Version(3, 23, 4, true);
+  private static Version mVersion = new Version(3, 24, 0, true);
   
   private static final int MAX_DIALOG_LIST_SIZE = 5000;
   static final int MAX_PANEL_LIST_SIZE = 2500;
@@ -102,49 +104,47 @@ public class ProgramListPlugin extends Plugin {
       
       @Override
       public void run() {
-        // TODO Auto-generated method stub
+        mCenterPanelWrapper = UiUtilities.createPersonaBackgroundPanel();
+        mCenterPanel = new ProgramListCenterPanel();
         
-    mCenterPanelWrapper = UiUtilities.createPersonaBackgroundPanel();
-    mCenterPanel = new ProgramListCenterPanel();
-    
-    mWrapper = new PluginCenterPanelWrapper() {
-      @Override
-      public PluginCenterPanel[] getCenterPanels() {
-        return new PluginCenterPanel[] {mCenterPanel};
-      }
-      
-      public void filterSelected(ProgramFilter filter) {
-        if(mCenterPanelEntry != null) {
-          mCenterPanelEntry.updateFilter(filter);
-        }
-      }
-      
-      public void timeEvent() {
-        if(mCenterPanelEntry != null) {
-          mCenterPanelEntry.timeEvent();
-        }
-      }
-    };
-    
-    new Thread("wait for TV-Browser start finished") {
-      public void run() {
-        while(!mTvBrowserWasStarted) {
-          try {
-            sleep(100);
-          } catch (InterruptedException e) {
-            // ignore
+        mWrapper = new PluginCenterPanelWrapper() {
+          @Override
+          public PluginCenterPanel[] getCenterPanels() {
+            return new PluginCenterPanel[] {mCenterPanel};
           }
-        }
+          
+          public void filterSelected(ProgramFilter filter) {
+            if(mCenterPanelEntry != null && getSettings().reactOnFilterChange()) {
+              mCenterPanelEntry.updateFilter(filter);
+            }
+          }
+          
+          public void timeEvent() {
+            if(mCenterPanelEntry != null) {
+              mCenterPanelEntry.timeEvent();
+            }
+          }
+        };
         
-        try {
-          sleep(1000);
-        } catch (InterruptedException e) {
-          // ignore
-        }
-        
-        addPanel();
-      }
-    }.start();
+        new Thread("wait for TV-Browser start finished") {
+          public void run() {
+            while(!mTvBrowserWasStarted) {
+              try {
+                sleep(100);
+              } catch (InterruptedException e) {
+                // ignore
+              }
+            }
+            
+            try {
+              sleep(1000);
+            } catch (InterruptedException e) {
+              // ignore
+            }
+            
+            addPanel();
+          }
+        }.start();
       }
     });
 
@@ -158,6 +158,7 @@ public class ProgramListPlugin extends Plugin {
         if(getSettings().provideTab()) {
           mCenterPanelEntry = new ProgramListPanel(null, false, MAX_PANEL_LIST_SIZE);
           Persona.getInstance().registerPersonaListener(mCenterPanelEntry);
+          getPluginManager().getFilterManager().registerFilterChangeListener(mCenterPanelEntry);
           
           SwingUtilities.invokeLater(new Runnable() {
             @Override
@@ -171,7 +172,8 @@ public class ProgramListPlugin extends Plugin {
           });
         } else {
           if(mCenterPanelEntry != null) {
-            Persona.getInstance().removePersonaListerner(mCenterPanelEntry);
+            Persona.getInstance().removePersonaListener(mCenterPanelEntry);
+            getPluginManager().getFilterManager().unregisterFilterChangeListener(mCenterPanelEntry);
           }
           
           mCenterPanelEntry = null;
@@ -370,15 +372,28 @@ public class ProgramListPlugin extends Plugin {
     return new SettingsTab() {
       private JCheckBox mProvideTab;
       private JCheckBox mShowDateSeparator;
+      private JCheckBox mReactOnFilterChange;
+      
       @Override
       public JPanel createSettingsPanel() {
-        JPanel panel = new JPanel(new FormLayout("5dlu,min:grow","5dlu,default,default"));
+        JPanel panel = new JPanel(new FormLayout("5dlu,min:grow","5dlu,default,default,default"));
         
         mShowDateSeparator = new JCheckBox(mLocalizer.msg("showDateSeparator", "Show date separator in list"), getSettings().showDateSeparator());
         mProvideTab = new JCheckBox(mLocalizer.msg("provideTab", "Provide tab in TV-Browser main window"), getSettings().provideTab());
+        mReactOnFilterChange = new JCheckBox(mLocalizer.msg("reactOnFilterChange", "React on filter changes and updates of program table"), getSettings().reactOnFilterChange());
         
         panel.add(mShowDateSeparator, new CellConstraints().xy(2, 2));
         panel.add(mProvideTab, new CellConstraints().xy(2, 3));
+        panel.add(mReactOnFilterChange, new CellConstraints().xy(2, 4));
+        
+        mReactOnFilterChange.setEnabled(mProvideTab.isSelected());
+        
+        mProvideTab.addItemListener(new ItemListener() {
+          @Override
+          public void itemStateChanged(ItemEvent e) {
+            mReactOnFilterChange.setEnabled(e.getStateChange() == ItemEvent.SELECTED);
+          }
+        });
         
         return panel;
       }
@@ -387,6 +402,8 @@ public class ProgramListPlugin extends Plugin {
       public void saveSettings() {
         getSettings().setProvideTab(mProvideTab.isSelected());
         getSettings().setShowDateSeparator(mShowDateSeparator.isSelected());
+        getSettings().setReactOnFilterChange(mReactOnFilterChange.isSelected());
+        
         addPanel();
       }
       

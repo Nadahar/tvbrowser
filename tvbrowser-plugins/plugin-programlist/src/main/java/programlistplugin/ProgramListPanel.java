@@ -70,6 +70,7 @@ import util.ui.persona.Persona;
 import util.ui.persona.PersonaListener;
 import devplugin.Channel;
 import devplugin.Date;
+import devplugin.FilterChangeListenerV2;
 import devplugin.Plugin;
 import devplugin.Program;
 import devplugin.ProgramFilter;
@@ -79,7 +80,7 @@ import devplugin.ProgramFilter;
  * 
  * @author René Mach
  */
-public class ProgramListPanel extends JPanel implements PersonaListener {
+public class ProgramListPanel extends JPanel implements PersonaListener, FilterChangeListenerV2 {
   private static final Localizer mLocalizer = ProgramListPlugin.mLocalizer;
   private static final String DATE_SEPARATOR = "DATE_SEPRATOR";
   
@@ -384,6 +385,8 @@ public class ProgramListPanel extends JPanel implements PersonaListener {
   }
   
   void fillFilterBox() {
+    mCurrentSelection = mList.getSelectedValue();
+    
     // initialize filter as allFilter because we may no longer find the filter
     // with the stored name
     ProgramFilter receiveFilter = ProgramListPlugin.getInstance().getReceiveFilter();
@@ -505,6 +508,8 @@ public class ProgramListPanel extends JPanel implements PersonaListener {
                 
                 Program lastProgram = null;
                 
+                int currentSelectionNewIndex = -1;
+                
                 for (Program program : mPrograms) {
                   if (model.size() < mMaxListSize) {
                     if(ProgramListPlugin.getInstance().getSettings().showDateSeparator() && 
@@ -513,6 +518,10 @@ public class ProgramListPanel extends JPanel implements PersonaListener {
                     }
                     
                     model.addElement(program);
+                    
+                    if(mCurrentSelection != null && mCurrentSelection.equals(program)) {
+                      currentSelectionNewIndex = model.getSize()-1;
+                    }
                     
                     if (!program.isExpired() && index == -1) {
                       index = model.getSize() - (ProgramListPlugin.getInstance().getSettings().showDateSeparator() ? 2 : 1);
@@ -526,7 +535,13 @@ public class ProgramListPanel extends JPanel implements PersonaListener {
                   forceScrollingIndex = 1000;
                 }
                 
-                updateList(model, forceScrollingIndex, index);
+                mCurrentSelection = null;
+                
+                if(currentSelectionNewIndex != -1) {
+                  index = currentSelectionNewIndex;
+                }
+                
+                updateList(model, forceScrollingIndex, index, currentSelectionNewIndex != -1);
                 //mList.updateUI();
               } catch (Exception e) {
                 e.printStackTrace();
@@ -546,7 +561,7 @@ public class ProgramListPanel extends JPanel implements PersonaListener {
   }
   
   
-  private void updateList(final DefaultListModel model, final int forceScrollingIndex, final int index) {
+  private void updateList(final DefaultListModel model, final int forceScrollingIndex, final int index, final boolean select) {
     SwingUtilities.invokeLater(new Runnable() {
       @Override
       public void run() {
@@ -554,6 +569,16 @@ public class ProgramListPanel extends JPanel implements PersonaListener {
         mList.setModel(model);
         mList.ensureIndexIsVisible(forceScrollingIndex);
         mList.ensureIndexIsVisible(index);
+        
+        if(select) {
+          mList.setSelectedIndex(index);
+        }
+        else if(mCurrentVisible != null && mList.contains(mCurrentVisible.getLocation())) {
+          mList.scrollRectToVisible(mCurrentVisible);
+        }
+        
+        mCurrentVisible = null;
+        
         setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));                
       }
     });
@@ -585,8 +610,15 @@ public class ProgramListPanel extends JPanel implements PersonaListener {
     mFilterLabel.setForeground(mShowDescription.getForeground());
   }
   
+  private Object mCurrentSelection = null;
+  private Rectangle mCurrentVisible = null;
+  
   synchronized void updateFilter(ProgramFilter filter) {
     if(mListThread == null || !mListThread.isAlive()) {
+      if(mFilterBox.getSelectedItem() != null && mFilterBox.getSelectedItem().equals(filter)) {
+        mCurrentVisible = mList.getVisibleRect();
+      }
+      
       fillFilterBox();
       mFilterBox.setSelectedItem(filter.getName());
     }
@@ -603,14 +635,16 @@ public class ProgramListPanel extends JPanel implements PersonaListener {
         if(mUpdateCounter < 0) {
           mUpdateCounter = 5;
           
-          if(mListThread == null || !mListThread.isAlive()) {
+          if((mListThread == null || !mListThread.isAlive()) && (mUpdateThread == null || !mUpdateThread.isAlive())) {
             mUpdateThread = new Thread() {
               public void run() {
-                for(int i = mModel.getSize() - 1; i >= 0; i--) {
-                  Object value = mModel.get(i);
-                  if(value instanceof Program && ((Program)value).isExpired()) {
-                    mModel.remove(i);
-                  }
+                synchronized (mModel) {
+                  for(int i = mModel.getSize() - 1; i >= 0; i--) {
+                    Object value = mModel.get(i);
+                    if(value instanceof Program && ((Program)value).isExpired()) {
+                      mModel.remove(i);
+                    }
+                  }                  
                 }
               }
             };
@@ -619,5 +653,34 @@ public class ProgramListPanel extends JPanel implements PersonaListener {
         }        
       }
     });
+  }
+
+  @Override
+  public void filterAdded(ProgramFilter filter) {
+    mFilterBox.addItem(filter);
+  }
+
+  @Override
+  public void filterDefaultChanged(ProgramFilter filter) {}
+
+  @Override
+  public void filterRemoved(ProgramFilter filter) {
+    ProgramFilter selected = (ProgramFilter)mFilterBox.getSelectedItem();
+    
+    mFilterBox.removeItem(filter);
+    
+    if(selected != null && selected.equals(filter)) {
+      fillProgramList();
+    }
+  }
+
+  @Override
+  public void filterTouched(ProgramFilter filter) {
+    if(mFilterBox.getSelectedItem() != null && mFilterBox.getSelectedItem().equals(filter)) {
+      mCurrentSelection = mList.getSelectedValue();
+      mCurrentVisible = mList.getVisibleRect();
+      
+      fillProgramList();
+    }
   }
 }
