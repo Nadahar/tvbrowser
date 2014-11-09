@@ -83,6 +83,7 @@ import devplugin.ProgramFilter;
 public class ProgramListPanel extends JPanel implements PersonaListener, FilterChangeListenerV2 {
   private static final Localizer mLocalizer = ProgramListPlugin.mLocalizer;
   private static final String DATE_SEPARATOR = "DATE_SEPRATOR";
+  private static final int ANCHESTOR_UPDATE_TIMEOUT = 250;
   
   /**
    * maximum number of programs to be shown in the list. If the filter has more results, only the first results are shown.
@@ -109,6 +110,8 @@ public class ProgramListPanel extends JPanel implements PersonaListener, FilterC
   private JButton mPreviousDay;
   
   private boolean mUpdateList;
+  
+  private long mLastAncestorRemoved;
   
   public ProgramListPanel(final Channel selectedChannel, boolean showClose, int maxListSize) {
     mMaxListSize = maxListSize;
@@ -366,10 +369,12 @@ public class ProgramListPanel extends JPanel implements PersonaListener, FilterC
     add(southPanel, BorderLayout.SOUTH);
     
     mUpdateList = false;
+    mLastAncestorRemoved = 0;
     
     addAncestorListener(new AncestorListener() {
       @Override
       public void ancestorRemoved(AncestorEvent event) {
+        mLastAncestorRemoved = System.currentTimeMillis();
         mUpdateList = false;
       }
       
@@ -379,7 +384,14 @@ public class ProgramListPanel extends JPanel implements PersonaListener, FilterC
       @Override
       public void ancestorAdded(AncestorEvent event) {
         mUpdateList = true;
-        mChannelBox.getItemListeners()[0].itemStateChanged(null);
+        
+        if(System.currentTimeMillis() - mLastAncestorRemoved > ANCHESTOR_UPDATE_TIMEOUT) {
+          mCurrentSelection = mList.getSelectedValue();
+          mCurrentVisible = mList.getVisibleRect();
+          mCurrentCount = mModel.getSize();
+          
+          mChannelBox.getItemListeners()[0].itemStateChanged(null);
+        }
       }
     });
   }
@@ -573,11 +585,12 @@ public class ProgramListPanel extends JPanel implements PersonaListener, FilterC
         if(select) {
           mList.setSelectedIndex(index);
         }
-        else if(mCurrentVisible != null && mList.contains(mCurrentVisible.getLocation())) {
+        else if(mCurrentVisible != null && mList.contains(mCurrentVisible.getLocation()) && mModel.getSize() == mCurrentCount) {
           mList.scrollRectToVisible(mCurrentVisible);
         }
         
         mCurrentVisible = null;
+        mCurrentCount = 0;
         
         setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));                
       }
@@ -612,11 +625,13 @@ public class ProgramListPanel extends JPanel implements PersonaListener, FilterC
   
   private Object mCurrentSelection = null;
   private Rectangle mCurrentVisible = null;
+  private int mCurrentCount = 0;
   
   synchronized void updateFilter(ProgramFilter filter) {
     if(mListThread == null || !mListThread.isAlive()) {
       if(mFilterBox.getSelectedItem() != null && mFilterBox.getSelectedItem().toString().equals(filter.getName())) {
         mCurrentVisible = mList.getVisibleRect();
+        mCurrentCount = mModel.getSize();
       }
       
       fillFilterBox();
@@ -679,6 +694,7 @@ public class ProgramListPanel extends JPanel implements PersonaListener, FilterC
     if(mFilterBox.getSelectedItem() != null && mFilterBox.getSelectedItem().toString().equals(filter.getName())) {
       mCurrentSelection = mList.getSelectedValue();
       mCurrentVisible = mList.getVisibleRect();
+      mCurrentCount = mModel.getSize();
       
       fillProgramList();
     }
