@@ -69,6 +69,7 @@
   <property name="deployment.dir" value="deployment" />
   <property name="win.dir" value="${deployment.dir}/win"/>
   <property name="linux.dir" value="${deployment.dir}/linux"/>
+  <property name="osx.dir" value="${deployment.dir}/macosx"/>
   <property name="x11.dir" value="${deployment.dir}/x11"/>
   <property name="installer.dir" value="${win.dir}/installer"/>
   <property name="package-lists.dir" value="${txt.dir}/package-lists"/>
@@ -716,15 +717,21 @@
    	<copy todir="${tvbrowser-transportable.runtime.dir}">
    	  <fileset dir="${linux.dir}" includes="tvbrowser.sh"/>
    	</copy>
+   	<copy todir="${tvbrowser-transportable.runtime.dir}">
+   	  <fileset dir="${osx.dir}" includes="tvbrowser-transportable-mac.sh"/>
+   	</copy>
    	<move file="${tvbrowser-transportable.runtime.dir}/tvbrowser.sh" tofile="${tvbrowser-transportable.runtime.dir}/tvbrowser-transportable.sh"/>
 
 	  <zip destfile="${public.dir}/tvbrowser_${tvbrowser.version}_bin_transportable.zip">
       <zipfileset prefix="tvbrowser-transportable"
                   dir="${tvbrowser-transportable.runtime.dir}"
-				excludes="**/tvbrowser-transportable.sh"/>
+				excludes="**/tvbrowser-transportable.sh, **/tvbrowser-transportable-mac.sh"/>
       <zipfileset prefix="tvbrowser-transportable"
 	                  dir="${tvbrowser-transportable.runtime.dir}"
       	filemode="755" includes="**/tvbrowser-transportable.sh"/>
+      <zipfileset prefix="tvbrowser-transportable"
+	                  dir="${tvbrowser-transportable.runtime.dir}"
+      	filemode="755" includes="**/tvbrowser-transportable-mac.sh"/>
     </zip>
   </target>
 
