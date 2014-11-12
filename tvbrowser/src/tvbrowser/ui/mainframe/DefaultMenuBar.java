@@ -35,6 +35,7 @@ import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 
 import tvbrowser.TVBrowser;
+import util.misc.OperatingSystem;
 
 /**
  * menu bar for non Mac systems
@@ -58,7 +59,11 @@ public class DefaultMenuBar extends MenuBar {
         fileMenu.addSeparator();
         fileMenu.add(mQuitMI);
 
-        createCommonMenus();
+        createCommonMenus(true);
+        
+        if(mEditMenu != null) {
+          mEditMenu.add(mSettingsMI);
+        }
         
         mQuitMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F4, InputEvent.ALT_DOWN_MASK));
         mRestartMI.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F4, InputEvent.ALT_DOWN_MASK | InputEvent.SHIFT_DOWN_MASK));
@@ -74,8 +79,10 @@ public class DefaultMenuBar extends MenuBar {
   
   protected void setPluginMenuItems(JMenuItem[] items) {
     super.setPluginMenuItems(items);
-    // on non Mac systems, the settings are in the tools menu
-    mPluginsMenu.addSeparator();
-    mPluginsMenu.add(mSettingsMI);
+    // on Windows systems, the settings are in the tools menu
+    if(mEditMenu == null) {
+      mPluginsMenu.addSeparator();
+      mPluginsMenu.add(mSettingsMI);
+    }
   }
 }

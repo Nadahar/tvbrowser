@@ -52,7 +52,9 @@ public class MacOSXMenuBar extends MenuBar {
 
     Thread toAddMenus = new Thread() {
       public void run() {
-        if(!createTVBrowserMenuItem()) {
+        boolean osxMenuCreated = createTVBrowserMenuItem();
+        
+        if(!osxMenuCreated) {
           JMenu fileMenu = createMenu("menu.main", "&File", true);
           add(fileMenu);
           
@@ -64,7 +66,7 @@ public class MacOSXMenuBar extends MenuBar {
           fileMenu.add(mQuitMI);
         }
     
-        createCommonMenus();
+        createCommonMenus(!osxMenuCreated);
     
         int commandModifier = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
     

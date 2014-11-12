@@ -110,7 +110,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 	private MainFrame mMainFrame;
 
   protected JMenuItem mQuitMI, mRestartMI, mToolbarMI, mSettingsMI, mAboutMI, mDebugMI, mDonateMI; // these are accessed in MacOS menu sub class
-  protected JMenu mPluginsMenu, mHelpMenu; // these are accessed in common menu sub class
+  protected JMenu mPluginsMenu, mHelpMenu, mEditMenu; // these are accessed in common menu sub class
 
 	private JMenuItem mStatusbarMI,
 			mTimeBtnsMI, mDatelistMI, mChannellistMI, mPluginOverviewMI,
@@ -1166,11 +1166,17 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 	  }
 	}
 
-  protected void createCommonMenus() {
+  protected void createCommonMenus(boolean aboutMenu) {
+    if(!OperatingSystem.isWindows() && !OperatingSystem.isMacOs()) {
+      mEditMenu = createMenu("menu.edit", "&Edit", true);
+      
+      add(mEditMenu);
+    }
+    
     add(mViewMenu);
 
     add(mGoMenu);
-
+    
     JMenu tvListingsMenu = createMenu("menu.tvData", "TV &data", true);
     
     add(tvListingsMenu);
@@ -1208,7 +1214,10 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
     mHelpMenu.addSeparator();
     mHelpMenu.add(mDonateMI);
     mHelpMenu.add(mDebugMI);
-    mHelpMenu.add(mAboutMI);
+    
+    if(aboutMenu) {
+      mHelpMenu.add(mAboutMI);
+    }
     
     // the split panes reserve F6 and F8, so our accelerator keys don't work on split panes
     // therefore remove those bindings

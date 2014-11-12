@@ -136,8 +136,6 @@ import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
 import tvbrowser.extras.common.InternalPluginProxyIf;
 import tvbrowser.extras.common.InternalPluginProxyList;
-import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
-import tvbrowser.extras.reminderplugin.ReminderPlugin;
 import tvbrowser.ui.DontShowAgainOptionBox;
 import tvbrowser.ui.aboutbox.AboutBox;
 import tvbrowser.ui.filter.dlgs.SelectFilterDlg;
