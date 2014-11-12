@@ -37,11 +37,21 @@ import java.util.Locale;
  * @author Til Schneider, www.murfman.de
  */
 public class News implements Comparable<News> {
+  public static final String TYPE_NONE = "None";
+  public static final String TYPE_ALL = "All";
+  public static final String TYPE_TV_BROWSER = "TV-Browser";
+  public static final String TYPE_TV_ANDROID = "Android";
+  public static final String TYPE_TV_DESKTOP = "Desktop";
+  public static final String TYPE_TV_WEBSITE = "Website";
+  
   private static final String LANGUAGE_SEPARATOR = "###de###_###en###";
   
   /** The timestamp of the news */
   private Date mTime;
 
+  /** The news type */
+  private String mType;
+  
   /** The author */
   private String mAuthor;
 
@@ -63,14 +73,16 @@ public class News implements Comparable<News> {
    * 
    * @param time The timestamp of the news
    * @param author The author
+   * @param type The news type
    * @param title The title
    * @param text The text
    * @param engTitle The English title
    * @param engText The English text
    */
-  public News(Date time, String author, String title, String text, String engTitle, String engText) {
+  public News(Date time, String author, String type, String title, String text, String engTitle, String engText) {
     mTime = time;
     mAuthor = author;
+    mType = type;
     mTitle = title;
     mText = text;
     mEngTitle = engTitle != null ? engTitle : "";
@@ -134,7 +146,7 @@ public class News implements Comparable<News> {
    */
   public void writeData(ObjectOutputStream out) throws IOException {
     out.writeObject(mTime);
-    out.writeObject(mAuthor);
+    out.writeObject(mAuthor+";;"+mType);
     
     if(mEngTitle.trim().length() > 0) {
       out.writeObject(mTitle + LANGUAGE_SEPARATOR + mEngTitle);
@@ -170,6 +182,14 @@ public class News implements Comparable<News> {
     String text = (String) in.readObject();
     String engTitle = null;
     String engText = null;
+    String type = TYPE_NONE;
+    
+    if(author.contains(";;")) {
+      String[] parts = author.split(";;");
+      
+      author = parts[0].trim();
+      type = parts[1].trim();
+    }
     
     int n = title.indexOf(LANGUAGE_SEPARATOR);
     
@@ -185,11 +205,26 @@ public class News implements Comparable<News> {
       text = text.substring(0,n);
     }
     
-    return new News(time, author, title, text, engTitle, engText);
+    return new News(time, author, type, title, text, engTitle, engText);
   }
 
   
   public int compareTo(News other) {
     return mTime.compareTo(other.mTime);
+  }
+  
+  public boolean isAcceptableType(String type) {
+    boolean accept = mType.equals(TYPE_NONE) || type.equals(TYPE_ALL);
+    
+    if(!accept) {
+      if(type.equals(TYPE_TV_BROWSER)) {
+        accept = mType.equals(TYPE_TV_BROWSER) || mType.equals(TYPE_TV_ANDROID) || mType.equals(TYPE_TV_DESKTOP);
+      }
+      else {
+        accept = mType.equals(type);
+      }
+    }
+    
+    return accept;
   }
 }
