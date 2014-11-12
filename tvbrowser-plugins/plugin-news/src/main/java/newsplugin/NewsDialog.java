@@ -105,6 +105,10 @@ public class NewsDialog implements WindowClosingIf {
 
   private boolean mShowOnlyNew;
   
+  private boolean mHasNews;
+  
+  private JCheckBox mSafeSettings;
+  
   /**
    * Creates a new instance of NewsDialog.
    *
@@ -113,6 +117,7 @@ public class NewsDialog implements WindowClosingIf {
    * @param newNewsCount The number of news that should be marked as new.
    */
   public NewsDialog(Window parent, ArrayList<News> newsList, int newNewsCount, boolean showOnlyNew, int newsTypeIndex) {
+    mHasNews = false;
     mShowOnlyNew = showOnlyNew;
     mDialog = UiUtilities.createDialog(parent, false);
     mDialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
@@ -148,10 +153,13 @@ public class NewsDialog implements WindowClosingIf {
       }
     });
     
-    JPanel settings = new JPanel(new FormLayout("default,3dlu,default:grow","default,3dlu,default,2dlu"));
+    mSafeSettings = new JCheckBox(mLocalizer.msg("safeSettings", "Save selection"), false);
+    
+    JPanel settings = new JPanel(new FormLayout("default,3dlu,default:grow,default","default,3dlu,default,3dlu,default,2dlu"));
     
     settings.add(new JLabel(mLocalizer.msg("type", "News type:")), CC.xy(1, 1));
-    settings.add(mNewsTypeSelection, CC.xy(3, 1));
+    settings.add(mNewsTypeSelection, CC.xyw(3, 1, 2));
+    settings.add(mSafeSettings, CC.xy(4, 5));
 
     if (mNewNewsCount > 0) {
       String msg = mLocalizer.msg("onlyNew", "Show only new news");
@@ -256,11 +264,11 @@ public class NewsDialog implements WindowClosingIf {
         mNewIcon = TVBrowserIcons.newIcon(TVBrowserIcons.SIZE_LARGE);
       }
 
+      StringBuilder newsText = new StringBuilder();
+      
       // Show the news - backwards (newest first)
       int newsCount = mNewsList.size();
       for (int i = 0; i < newsCount; i++) {
-
-
         if ((mOnlyNewChB != null) && mOnlyNewChB.isSelected()
           && (i >= mNewNewsCount))
         {
@@ -281,41 +289,49 @@ public class NewsDialog implements WindowClosingIf {
         
         if(news.isAcceptableType(acceptedNewsType)) {
           if (i != 0) {
-            buf.append("<hr>");
+            newsText.append("<hr>");
           }
   
-          buf.append("<table width=\"100%\">");
-          buf.append("<tr>");
+          newsText.append("<table width=\"100%\">");
+          newsText.append("<tr>");
           if (i < mNewNewsCount) {
-            buf.append("<td rowspan=\"4\" width=\"30\" valign=\"top\">");
+            newsText.append("<td rowspan=\"4\" width=\"30\" valign=\"top\">");
             JLabel iconLabel = new JLabel(mNewIcon);
             iconLabel.setToolTipText(mLocalizer.msg("newNews", "This news is new"));
-            buf.append(doc.createCompTag(iconLabel));
-            buf.append("</td>");
+            newsText.append(doc.createCompTag(iconLabel));
+            newsText.append("</td>");
           }
-          buf.append("<td class=\"time\">" + dateFormat.format(news.getTime()) + ":</td></tr>");
+          newsText.append("<td class=\"time\">" + dateFormat.format(news.getTime()) + ":</td></tr>");
   
-          buf.append("<tr><td class=\"title\">" + news.getTitle() + "</td></tr>");
+          newsText.append("<tr><td class=\"title\">" + news.getTitle() + "</td></tr>");
   
           String text = news.getText();
           text = IOUtilities.replace(text, "&lt;", "<");
           text = IOUtilities.replace(text, "&gt;", ">");
           text = IOUtilities.replace(text, "/>", ">"); // JEditorPane knows no XHTML
-          buf.append("<tr><td class=\"text\">" + text + "</td></tr>");
+          newsText.append("<tr><td class=\"text\">" + text + "</td></tr>");
   
-          buf.append("<tr><td class=\"author\">" + news.getAuthor() + "</td></tr>");
-          buf.append("</table>");
+          newsText.append("<tr><td class=\"author\">" + news.getAuthor() + "</td></tr>");
+          newsText.append("</table>");
         }
       }
+      
+      buf.append(newsText);
+      
+      mHasNews = newsText.toString().trim().length() > 0;
     }
+    
     buf.append("</body></html>");
     
     return buf.toString();
   }
 
+  public boolean hasNews() {
+    return mHasNews;
+  }
 
   public void close() {
-    NewsPlugin.getInstance().saveMeInternal(mShowOnlyNew, mNewsTypeSelection.getSelectedIndex());
+    NewsPlugin.getInstance().saveMeInternal(mSafeSettings.isSelected(), mShowOnlyNew, mNewsTypeSelection.getSelectedIndex());
     mDialog.dispose();
   }
 
