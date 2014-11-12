@@ -1173,6 +1173,7 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction, Tree
   @Override
   public void drop(JList source, JList target, int rows, boolean move) {
     UiUtilities.moveSelectedItems(target,rows,true);
+    FavoritesPlugin.getInstance().updateRootNode(true);
   }
   
   @Override

@@ -683,6 +683,8 @@ public class FavoriteTree extends JTree implements DragGestureListener, DropTarg
     }
 
     e.dropComplete(true);
+    
+    FavoritesPlugin.getInstance().updateRootNode(true);
   }
 
   public void dropActionChanged(DropTargetDragEvent e) {}

@@ -67,6 +67,10 @@ public class MacOSXMenuBar extends MenuBar {
         }
     
         createCommonMenus(!osxMenuCreated);
+        
+        if(mEditMenu != null) {
+          mEditMenu.add(mSettingsMI);
+        }
     
         int commandModifier = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
     
