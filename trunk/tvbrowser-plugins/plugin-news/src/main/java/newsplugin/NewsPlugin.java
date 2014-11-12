@@ -31,7 +31,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -57,7 +56,7 @@ import devplugin.Version;
  * @author Til Schneider, www.murfman.de
  */
 public class NewsPlugin extends Plugin {
-  private static final Version mVersion = new Version(3,11);
+  private static final Version mVersion = new Version(3,12);
 
   /** The localizer used by this class. */
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer
@@ -83,11 +82,16 @@ public class NewsPlugin extends Plugin {
 
   private PluginInfo mPluginInfo;
   
+  private boolean mShowOnlyNew;
+  private int mSelectedNewsTypeIndex;
+  
   /**
    * Creates a new instance of NewsPlugin.
    */
   public NewsPlugin() {
     mNewsList = new NewsList();
+    mShowOnlyNew = true;
+    mSelectedNewsTypeIndex = 0;
     mInstance = this;
   }
 
@@ -108,7 +112,7 @@ public class NewsPlugin extends Plugin {
     AbstractAction action = new AbstractAction() {
       public void actionPerformed(ActionEvent evt) {
         if(mNewsDialog == null || !mNewsDialog.isVisible()) {
-          mNewsDialog = new NewsDialog(getParentFrame(), mNewsList.getList(), -1);
+          mNewsDialog = new NewsDialog(getParentFrame(), mNewsList.getList(), -1, mShowOnlyNew, mSelectedNewsTypeIndex);
           mNewsDialog.show();
         }
       }
@@ -187,7 +191,7 @@ public class NewsPlugin extends Plugin {
               SwingUtilities.invokeLater(new Runnable() {
                 public void run() {
                   NewsDialog dlg = new NewsDialog(getParentFrame(), mNewsList.getList(),
-                      newNewsCount);
+                      newNewsCount, mShowOnlyNew, mSelectedNewsTypeIndex);
                   dlg.show();
                 }
               });
@@ -255,7 +259,7 @@ public class NewsPlugin extends Plugin {
   private News[] parseNews(String news) {
     // Create a regex that extracts news
     String regex =
-            "<news date=\"([^\"]*)\" author=\"([^\"]*)\">"
+            "<news date=\"([^\"]*)\" author=\"([^\"]*)\" type=\"([^\"]*)\">"
             + "\\s*<title>([^<]*)</title>" + "\\s*<text>([^<]*)</text>";
 
     if(news.indexOf("<title-en>") != -1) {
@@ -270,14 +274,15 @@ public class NewsPlugin extends Plugin {
     while (matcher.find(lastPos)) {
       String dateAsString = matcher.group(1);
       String author = matcher.group(2);
-      String title = matcher.group(3);
-      String text = matcher.group(4);
+      String type = matcher.group(3);
+      String title = matcher.group(4);
+      String text = matcher.group(5);
       String engTitle = null;
       String engText = null;
       
-      if(matcher.groupCount() > 4) {
-        engTitle = matcher.group(5);
-        engText = matcher.group(6);
+      if(matcher.groupCount() > 5) {
+        engTitle = matcher.group(6);
+        engText = matcher.group(7);
       }
       
       // Convert the date to a real date. E.g.: "2004-09-17 15:38:31"
@@ -297,7 +302,7 @@ public class NewsPlugin extends Plugin {
               .parseInt(dateAsString.substring(17, 19)));
       Date date = cal.getTime();
       
-      list.add(new News(date, author, title, text, engTitle, engText));
+      list.add(new News(date, author, type, title, text, engTitle, engText));
 
       lastPos = matcher.end();
     }
@@ -318,7 +323,7 @@ public class NewsPlugin extends Plugin {
    *           When saving failed.
    */
   public void writeData(ObjectOutputStream out) throws IOException {
-    out.writeInt(3); // version
+    out.writeInt(4); // version
     
     out.writeInt(mNewsList.getList().size());
     for (int i = 0; i < mNewsList.getList().size(); i++) {
@@ -328,6 +333,8 @@ public class NewsPlugin extends Plugin {
     
     out.writeLong(mNoConnectionTime);
     out.writeLong(mLastNewsFileModified);
+    out.writeBoolean(mShowOnlyNew);
+    out.writeInt(mSelectedNewsTypeIndex);
   }
 
   /**
@@ -364,6 +371,10 @@ public class NewsPlugin extends Plugin {
     if(version >= 3) {
       mLastNewsFileModified = in.readLong();
     }
+    if(version >= 4) {
+      mShowOnlyNew = in.readBoolean();
+      mSelectedNewsTypeIndex = in.readInt();
+    }
   }
   
   /**
@@ -371,7 +382,10 @@ public class NewsPlugin extends Plugin {
    * <p>
    * @return If the settings could be saved.
    */
-  public boolean saveMeInternal() {
+  public boolean saveMeInternal(boolean showOnlyNew, int newsTypeIndex) {
+    mShowOnlyNew = showOnlyNew;
+    mSelectedNewsTypeIndex = newsTypeIndex;
+    
     return super.saveMe();
   }
 }

@@ -40,6 +40,7 @@ import java.util.ArrayList;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JEditorPane;
 import javax.swing.JLabel;
@@ -50,6 +51,9 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
+
+import com.jgoodies.forms.factories.CC;
+import com.jgoodies.forms.layout.FormLayout;
 
 import util.browserlauncher.Launch;
 import util.io.IOUtilities;
@@ -80,6 +84,9 @@ public class NewsDialog implements WindowClosingIf {
 
   /** Show only the new news? */
   private JCheckBox mOnlyNewChB;
+  
+  /** Show only news of the given type */
+  private JComboBox<String> mNewsTypeSelection;
 
   /** The scroll pane. */
   private JScrollPane mScrollPane;
@@ -96,7 +103,8 @@ public class NewsDialog implements WindowClosingIf {
   /** The number of news that should be marked as new */
   private int mNewNewsCount;
 
-
+  private boolean mShowOnlyNew;
+  
   /**
    * Creates a new instance of NewsDialog.
    *
@@ -104,7 +112,8 @@ public class NewsDialog implements WindowClosingIf {
    * @param newsList The news to show.
    * @param newNewsCount The number of news that should be marked as new.
    */
-  public NewsDialog(Window parent, ArrayList<News> newsList, int newNewsCount) {
+  public NewsDialog(Window parent, ArrayList<News> newsList, int newNewsCount, boolean showOnlyNew, int newsTypeIndex) {
+    mShowOnlyNew = showOnlyNew;
     mDialog = UiUtilities.createDialog(parent, false);
     mDialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
     mDialog.addWindowListener(new WindowAdapter() {
@@ -122,17 +131,42 @@ public class NewsDialog implements WindowClosingIf {
     main.setBorder(UiUtilities.DIALOG_BORDER);
     main.setPreferredSize(new Dimension(500, 350));
     mDialog.setContentPane(main);
+    
+    mNewsTypeSelection = new JComboBox<String>();
+    
+    mNewsTypeSelection.addItem(mLocalizer.msg("type.all", "All"));
+    mNewsTypeSelection.addItem(mLocalizer.msg("type.tvbrowser", "TV-Browser"));
+    mNewsTypeSelection.addItem(mLocalizer.msg("type.desktop", "Only for TV-Browser for desktop"));
+    mNewsTypeSelection.addItem(mLocalizer.msg("type.android", "Only for TV-Browser for Android"));
+    mNewsTypeSelection.addItem(mLocalizer.msg("type.website", "Website"));
+    
+    mNewsTypeSelection.setSelectedIndex(newsTypeIndex);
+    
+    mNewsTypeSelection.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        updateNewsPane();
+      }
+    });
+    
+    JPanel settings = new JPanel(new FormLayout("default,3dlu,default:grow","default,3dlu,default,2dlu"));
+    
+    settings.add(new JLabel(mLocalizer.msg("type", "News type:")), CC.xy(1, 1));
+    settings.add(mNewsTypeSelection, CC.xy(3, 1));
 
     if (mNewNewsCount > 0) {
       String msg = mLocalizer.msg("onlyNew", "Show only new news");
-      mOnlyNewChB = new JCheckBox(msg, true);
+      mOnlyNewChB = new JCheckBox(msg, showOnlyNew);
       mOnlyNewChB.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent evt) {
+          mShowOnlyNew = mOnlyNewChB.isSelected();
           updateNewsPane();
         }
       });
-      main.add(mOnlyNewChB, BorderLayout.NORTH);
+      
+      settings.add(mOnlyNewChB, CC.xyw(1, 3, 3));
     }
+    
+    main.add(settings, BorderLayout.NORTH);
 
     mNewsPane = new JEditorPane();
     mNewsPane.setEditorKit(new ExtendedHTMLEditorKit());
@@ -234,33 +268,44 @@ public class NewsDialog implements WindowClosingIf {
           break;
         }
 
-        if (i != 0) {
-          buf.append("<hr>");
-        }
-
         News news = mNewsList.get(i);
-
-        buf.append("<table width=\"100%\">");
-        buf.append("<tr>");
-        if (i < mNewNewsCount) {
-          buf.append("<td rowspan=\"4\" width=\"30\" valign=\"top\">");
-          JLabel iconLabel = new JLabel(mNewIcon);
-          iconLabel.setToolTipText(mLocalizer.msg("newNews", "This news is new"));
-          buf.append(doc.createCompTag(iconLabel));
-          buf.append("</td>");
+        
+        String acceptedNewsType = News.TYPE_ALL;
+        
+        switch(mNewsTypeSelection.getSelectedIndex()) {
+          case 1: acceptedNewsType = News.TYPE_TV_BROWSER;break;
+          case 2: acceptedNewsType = News.TYPE_TV_DESKTOP;break;
+          case 3: acceptedNewsType = News.TYPE_TV_ANDROID;break;
+          case 4: acceptedNewsType = News.TYPE_TV_WEBSITE;break;
         }
-        buf.append("<td class=\"time\">" + dateFormat.format(news.getTime()) + ":</td></tr>");
-
-        buf.append("<tr><td class=\"title\">" + news.getTitle() + "</td></tr>");
-
-        String text = news.getText();
-        text = IOUtilities.replace(text, "&lt;", "<");
-        text = IOUtilities.replace(text, "&gt;", ">");
-        text = IOUtilities.replace(text, "/>", ">"); // JEditorPane knows no XHTML
-        buf.append("<tr><td class=\"text\">" + text + "</td></tr>");
-
-        buf.append("<tr><td class=\"author\">" + news.getAuthor() + "</td></tr>");
-        buf.append("</table>");
+        
+        if(news.isAcceptableType(acceptedNewsType)) {
+          if (i != 0) {
+            buf.append("<hr>");
+          }
+  
+          buf.append("<table width=\"100%\">");
+          buf.append("<tr>");
+          if (i < mNewNewsCount) {
+            buf.append("<td rowspan=\"4\" width=\"30\" valign=\"top\">");
+            JLabel iconLabel = new JLabel(mNewIcon);
+            iconLabel.setToolTipText(mLocalizer.msg("newNews", "This news is new"));
+            buf.append(doc.createCompTag(iconLabel));
+            buf.append("</td>");
+          }
+          buf.append("<td class=\"time\">" + dateFormat.format(news.getTime()) + ":</td></tr>");
+  
+          buf.append("<tr><td class=\"title\">" + news.getTitle() + "</td></tr>");
+  
+          String text = news.getText();
+          text = IOUtilities.replace(text, "&lt;", "<");
+          text = IOUtilities.replace(text, "&gt;", ">");
+          text = IOUtilities.replace(text, "/>", ">"); // JEditorPane knows no XHTML
+          buf.append("<tr><td class=\"text\">" + text + "</td></tr>");
+  
+          buf.append("<tr><td class=\"author\">" + news.getAuthor() + "</td></tr>");
+          buf.append("</table>");
+        }
       }
     }
     buf.append("</body></html>");
@@ -270,7 +315,7 @@ public class NewsDialog implements WindowClosingIf {
 
 
   public void close() {
-    NewsPlugin.getInstance().saveMeInternal();
+    NewsPlugin.getInstance().saveMeInternal(mShowOnlyNew, mNewsTypeSelection.getSelectedIndex());
     mDialog.dispose();
   }
 
