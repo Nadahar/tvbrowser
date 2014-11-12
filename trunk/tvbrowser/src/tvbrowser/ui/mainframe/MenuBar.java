@@ -1167,7 +1167,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 	}
 
   protected void createCommonMenus(boolean aboutMenu) {
-    if(!OperatingSystem.isWindows() && !OperatingSystem.isMacOs()) {
+    if(!OperatingSystem.isWindows() && (!OperatingSystem.isMacOs() || aboutMenu)) {
       mEditMenu = createMenu("menu.edit", "&Edit", true);
       
       add(mEditMenu);
