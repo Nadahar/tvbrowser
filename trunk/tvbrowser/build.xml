@@ -62,6 +62,7 @@
   <property name="tvbrowser-transportable.runtime.dir" value="${runtime.dir}/tvbrowser_transportable"/>
   <property name="tvbrowser-nightly.runtime.dir" value="${runtime.dir}/tvbrowser_nightly"/>
   <property name="tvbrowser-mac.runtime.dir" value="${runtime.dir}/tvbrowser_mac"/>
+	  <property name="tvbrowser-macjava.runtime.dir" value="${runtime.dir}/tvbrowser_macjava"/>
   <property name="themepacks.dir" value="themepacks"/>
   <property name="personas.dir" value="personas"/>
 
@@ -146,6 +147,7 @@
     <echo message="  public-default        Creates platform-independent binaries"/>
     <echo message="  public-win            Creates binaries for the Microsoft Windows Platforms (requires Windows)"/>
     <echo message="  public-mac            Creates binaries for the Mac OS X (requires Mac OS X)"/>
+  	<echo message="  public-macjava        Creates binaries for the Mac OS X with Java from Oracle (requires Mac OS X)"/>
   	<echo message="  public-linux          Creates binaries for Linux platforms"/>
   	<echo message="  public-ubuntu         Creates binaries for Ubuntu platforms"/>
   	<echo message="  public-fedora         Creates binaries for Fedora platforms"/>
@@ -164,10 +166,12 @@
     <echo message="  make-linux            Compiles the source code for linux platforms."/>
     <echo message="  make-win              Compiles the source code for windows platforms."/>
     <echo message="  make-mac              Compiles the source code for Mac OS X."/>
+  	<echo message="  make-macjava          Compiles the source code for Mac OS X with Java from Oracle."/>
     <echo message="  runtime-default       Creates the platform independent runtime directory" />
   	<echo message="  runtime-transportable Creates the platform independent runtime directory for transportable version" />
     <echo message="  runtime-linux         Creates a runtime directory for linux platforms" />
     <echo message="  runtime-mac           Creates a runtime directory for Mac OS X" />
+  	<echo message="  runtime-macjava       Creates a runtime directory for Mac OS X with Java from Oracle" />
     <echo message="  runtime-win           Creates a runtime directory for MS Windows" />
     <echo message="  test                  Runs the JUnit tests."/>
   </target>
@@ -213,9 +217,14 @@
     <delete dir="${tvbrowser-mac.runtime.dir}"/>
   </target>
 
-  <target name="clean-all" depends="clean-mac, clean-linux, clean-win, clean-default">
-    <delete dir="${public.dir}"/>
-  </target>
+	  <!-- Deletes the classes and the runtime directory. -->
+	  <target name="clean-macjava" depends="clean">
+	    <delete dir="${tvbrowser-macjava.runtime.dir}"/>
+	  </target>
+
+	  <target name="clean-all" depends="clean-mac, clean-macjava, clean-linux, clean-win, clean-default">
+	    <delete dir="${public.dir}"/>
+	  </target>
 
 
 
@@ -284,6 +293,22 @@
     </javac>
 
   </target>
+	
+	  <!-- Compiles the source code for mac platforms with Java from Oracle -->
+	  <target name="make-macjava" depends="copy-resources">
+	    <echo message="Compiling the source code ..."/>
+	    <mkdir dir="${classes.dir}"/>
+	    <javac destdir="${classes.dir}" debug="${debug}" deprecation="true" encoding="UTF-8" target="1.6" source="1.6">
+	      <src>
+	        <path refid="sourcepath"/>
+	      </src>
+	      <classpath>
+	        <path refid="classpath"/>
+	        <path location="/Library/Java/JavaVirtualMachines"/>
+	      </classpath>
+	    </javac>
+
+	  </target>
 	
   <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
    |
@@ -479,6 +504,53 @@
 
   </target>
 
+	<!-- Creates the runtime folder for the Mac platform with Java from Oracle->
+	  <target name="runtime-macjava" depends="clean-macjava, make-macjava, runtime, test"-->
+	  <target name="runtime-macjava" depends="clean-macjava, make-macjava, runtime">
+
+	  <!-- Creates an .app file for Mac OS X with appbundler for Java SE 7+ from infinitekind -->
+		<taskdef name="appbundler"
+		    classpath="deployment/macosx7/appbundler-1.0ea.jar"
+		    classname="com.oracle.appbundler.AppBundlerTask" />
+
+	    <!--runtime dir="${env.JAVA_HOME}"/-->
+
+		<delete dir="${tvbrowser-macjava.runtime.dir}"/>
+		<mkdir dir="${tvbrowser-macjava.runtime.dir}"/>
+
+		<appbundler 
+		    outputdirectory="${tvbrowser-macjava.runtime.dir}" 
+		    name="TV-Browser" 
+		    icon="images/additional/tvbrowser.icns"
+		    displayname="TV-Browser" 
+		    identifier="tvbrowser.TVBrowser" 
+		    shortversion="${tvbrowser.version}"
+		    applicationCategory="public.app-category.entertainment"
+		    workingDirectory="$APP_ROOT/Contents/Resources"
+		    mainclassname="tvbrowser.TVBrowser">
+		<classpath dir="${tvbrowser-default.runtime.dir}">
+		    <include name="*.jar"/>
+		</classpath>
+		<!-- OSX specific options, optional -->
+		<option value="-Dpropertiesfile=osx.properties"/>
+		<option value="-Dapple.laf.useScreenMenuBar=true"/>
+		<option value="-Dcom.apple.macos.use-file-dialog-packages=true"/>
+		<!--option value="-Dcom.apple.macos.useScreenMenuBar=true"/-->
+		<option value="-Dcom.apple.mrj.application.apple.menu.about.name=${bundle.name}"/>
+		<option value="-Dcom.apple.smallTabs=true"/>
+		<option value="-Xmx1024M"/>
+		</appbundler>
+
+	    <copy todir="${tvbrowser-macjava.runtime.dir}/TV-Browser.app/Contents/Resources">
+	        <fileset dir="${tvbrowser-default.runtime.dir}" excludes="tvbrowser.jar"/>
+	    </copy>
+	    <copy todir="${tvbrowser-macjava.runtime.dir}/TV-Browser.app/Contents/Resources">
+	      <fileset dir="${deployment.dir}" includes="osx.properties"/>
+	    </copy>
+
+	  </target>
+	
+	
   <!-- Creates the desktop entry file for Linux platforms -->
   <target name="tvbrowser-desktop-entry">
   	<desktopEntry
@@ -774,6 +846,64 @@
       <delete file="tvbrowser.sparseimage" />
     </target>
 
+	 <!-- Creates the release binaries (.dmg) for mac os x with java from oracle -->
+	    <target name="public-macjava" depends="runtime-macjava" description="Creates binaries for the Mac OS X with Java from Oracle  (requires Mac OS X)">
+	      <mkdir dir="${public.dir}"/>
+
+	      <echo message="creating disk image..."/>
+
+	      <!-- Create .sparseimage-File -->
+	      <exec executable="hdiutil" os="Mac OS X">
+	          <arg value="convert"/>
+	          <arg value="deployment/macosx/tvbrowser.dmg"/>
+	          <arg value="-format"/>
+	          <arg value="UDSP"/>
+	          <arg value="-o"/>
+	          <arg value="tvbrowser"/>
+	      </exec>
+
+	      <!-- Mount .sparseimage -->
+	      <exec executable="hdiutil" os="Mac OS X">
+	          <arg value="mount"/>
+	          <arg value="tvbrowser.sparseimage"/>
+	      </exec>
+
+	      <!-- Copy Contents of .app-File with command line tool. Only this way the +x is copied-->
+	      <exec executable="cp" os="Mac OS X">
+	          <arg value="-r"/>
+	          <arg value="${tvbrowser-macjava.runtime.dir}/TV-Browser.app/Contents"/>
+	          <arg value="/Volumes/TV-Browser/TV-Browser.app"/>
+	      </exec>
+
+	      <!-- Copy additional files into .spareseimage -->
+	      <copy todir="/Volumes/TV-Browser/">
+	        <fileset file="${tvbrowser-macjava.runtime.dir}/LICENSE.txt"/>
+	        <fileset file="${tvbrowser-macjava.runtime.dir}/readme.rtf"/>
+	      </copy>
+
+	      <!-- Eject .sparseimage -->
+	      <exec executable="hdiutil" os="Mac OS X">
+	           <arg value="eject"/>
+	           <arg value="/Volumes/TV-Browser/"/>
+	      </exec>
+
+	      <!-- Delete existing Files -->
+	      <delete file="${public.dir}/tvbrowser_${tvbrowser.version}_macjava.dmg" />
+
+	      <!-- Convert .sparseimage to dmg -->
+	      <exec executable="hdiutil" os="Mac OS X">
+	        <arg value="convert"/>
+	        <arg value="tvbrowser.sparseimage"/>
+	        <arg value="-format"/>
+	        <arg value="UDBZ"/>
+	        <arg value="-o" />
+	        <arg value="${public.dir}/tvbrowser_${tvbrowser.version}_macjava.dmg"/>
+	      </exec>
+
+	      <!-- Delete Files -->
+	      <delete file="tvbrowser.sparseimage" />
+	    </target>
+	
   <!--
     | Does the JUnit s.
     |
