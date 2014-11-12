@@ -488,6 +488,8 @@ public class Settings {
         }
       }
 
+      File pluginsDir = null;
+      
       if(TVBrowser.isTransportable()) {
         mLog.info("TV-Browser ist transportable version, show import dialog: '" 
            + (oldDir != null && oldDir.isDirectory() && oldDir.exists() && !oldDir.getAbsolutePath().startsWith(new File("settings").getAbsolutePath()))
@@ -514,6 +516,9 @@ public class Settings {
             if(oldDir != null) {
               oldDir = findNewestOldVersionDir(oldDir.getAbsolutePath(), oldDirectoryName, true);
             }
+          }
+          else if(OperatingSystem.isMacOs()) {
+            pluginsDir = new File(System.getProperty("user.home"),"Library/Application Support/TV-Browser/plugins");
           }
         }
         else if(oldDir == null || !oldDir.isDirectory() || !oldDir.exists()) {
@@ -590,6 +595,12 @@ public class Settings {
               oldTvDataDir = new File(oldDir, "tvdata");
             } else if(new File(oldDir.getParent(), "tvdata").isDirectory()) {
               oldTvDataDir = new File(oldDir.getParent(), "tvdata");
+            } else if(OperatingSystem.isMacOs()) {
+              File test = new File(System.getProperty("user.home"),"Library/Application Support/TV-Browser/tvdata");
+              
+              if(test.isDirectory()) {
+                oldTvDataDir = test;
+              }
             }
 
           }catch(Exception e) {}
@@ -615,8 +626,23 @@ public class Settings {
               }
             }), newDir);
 
+            if(pluginsDir != null && pluginsDir.isDirectory()) {
+              File target = new File(newDir,"plugins");
+              
+              if(!target.isDirectory()) {
+                target.mkdirs();
+              }
+              
+              IOUtilities.copy(pluginsDir.listFiles(new FileFilter() {
+                @Override
+                public boolean accept(File f) {
+                  return f.isFile() && f.getName().toLowerCase().endsWith(".jar");
+                }
+              }), target);
+            }
+            
             mShowSettingsCopyWaiting = false;
-
+            
             mLog.info("settings from previous version copied successfully");
             File newSettingsFile = new File(newDir, SETTINGS_FILE);
             mProp.readFromFile(newSettingsFile);

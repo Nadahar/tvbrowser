@@ -22,15 +22,22 @@ MSG11="Java exec found in PATH. Verifying..."
 
 look_for_java()
 {
-  JAVADIR="/Library/Internet Plug-Ins/JavaAppletPlugin.plugin/Contents/Home/bin/"
-  JAVA_PROGRAM_DIR="$JAVADIR"
+  JAVADIR="/Library/Java/JavaVirtualMachines/Contents/Home/bin/"
   
-  echo $MSG2 $JAVA_PROGRAM_DIR
-  if check_version ; then
-    return 0
-  else
-    return 1
-  fi
+  IFS=$'\n'
+  potential_java_dirs=(`ls -1 "$JAVADIR" | sort`)
+  IFS=
+  for D in "${potential_java_dirs[@]}"; do
+    if [[ -d "$JAVADIR/$D" && -x "$JAVADIR/$D/Contents/Home/bin/java" ]]; then
+      JAVA_PROGRAM_DIR="$JAVADIR/$D/Contents/Home/bin/"
+      echo $MSG2 $JAVA_PROGRAM_DIR
+      if check_version ; then
+        return 0
+      else
+        return 1
+      fi
+    fi
+  done
 
   echo $MSG8 "${JAVADIR}/" $MSG9 ; echo $MSG4
   return 1
@@ -109,11 +116,10 @@ echo $MSG0
 
 cd ${PROGRAM_DIR}
 
-$cmdLine = "${JAVA_PROGRAM_DIR}java -Xms16m -Xmx512m -Dapple.laf.useScreenMenuBar=true -Dcom.apple.macos.use-file-dialog-packages=true -Dcom.apple.mrj.application.apple.menu.about.name=\"TV-Browser\" -Dcom.apple.smallTabs=true -Djava.library.path=\"${PROGRAM_DIR}\" -jar tvbrowser.jar \"$@\""
+echo "${JAVA_PROGRAM_DIR}java -Xms16m -Xmx512m -Dapple.laf.useScreenMenuBar=true -Dcom.apple.macos.use-file-dialog-packages=true -Dcom.apple.mrj.application.apple.menu.about.name=TV-Browser -Dcom.apple.smallTabs=true -Djava.library.path=\"${PROGRAM_DIR}\" -jar tvbrowser.jar \"$@\""
 
-echo $cmdLine
 $cmdLine
-#${JAVA_PROGRAM_DIR}java -Xms16m -Xmx512m -Djava.library.path="${PROGRAM_DIR}" -jar tvbrowser.jar "$@"
+${JAVA_PROGRAM_DIR}java -Xms16m -Xmx512m -Dapple.laf.useScreenMenuBar=true -Dcom.apple.macos.use-file-dialog-packages=true -Dcom.apple.mrj.application.apple.menu.about.name=TV-Browser -Dcom.apple.smallTabs=true -Djava.library.path="${PROGRAM_DIR}" -jar tvbrowser.jar "$@"
 # ensure disk cache is written to drive
 sync
 echo "TV-Browser TERMINATED."
