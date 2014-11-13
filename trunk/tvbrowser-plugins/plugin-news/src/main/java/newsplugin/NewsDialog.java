@@ -86,7 +86,7 @@ public class NewsDialog implements WindowClosingIf {
   private JCheckBox mOnlyNewChB;
   
   /** Show only news of the given type */
-  private JComboBox<String> mNewsTypeSelection;
+  private JComboBox mNewsTypeSelection;
 
   /** The scroll pane. */
   private JScrollPane mScrollPane;
@@ -137,7 +137,7 @@ public class NewsDialog implements WindowClosingIf {
     main.setPreferredSize(new Dimension(500, 350));
     mDialog.setContentPane(main);
     
-    mNewsTypeSelection = new JComboBox<String>();
+    mNewsTypeSelection = new JComboBox();
     
     mNewsTypeSelection.addItem(mLocalizer.msg("type.all", "All"));
     mNewsTypeSelection.addItem(mLocalizer.msg("type.tvbrowser", "TV-Browser"));
