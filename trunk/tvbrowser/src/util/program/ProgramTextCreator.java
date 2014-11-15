@@ -242,6 +242,7 @@ public class ProgramTextCreator {
     Color foreground = Color.black;
     Color background = Color.white;
     Color infoColor = Color.gray;
+    Color episodeColor = new Color(0x0,0x33,0x66);
     
     if(useThemeColors) {
       foreground = UIManager.getColor("List.foreground");
@@ -253,14 +254,16 @@ public class ProgramTextCreator {
       
       infoColor = new Color(r,g,b);
       
-      double test2 = (0.2126 * background.getRed()) + (0.7152 * background.getGreen()) + (0.0722 * background.getBlue());
-      double test1 = (0.2126 * infoColor.getRed()) + (0.7152 * infoColor.getGreen()) + (0.0722 * infoColor.getBlue());
+      double testBackground = (0.2126 * background.getRed()) + (0.7152 * background.getGreen()) + (0.0722 * background.getBlue());
+      double testInfoColor = (0.2126 * infoColor.getRed()) + (0.7152 * infoColor.getGreen()) + (0.0722 * infoColor.getBlue());
+      double testInfoEpisode = (0.2126 * episodeColor.getRed()) + (0.7152 * episodeColor.getGreen()) + (0.0722 * episodeColor.getBlue());
       
-      if(test2 - test1 > 90) {
+      if(testBackground - testInfoColor > 90) {
         infoColor = new Color(infoColor.getRed()+30,infoColor.getGreen()+30,infoColor.getBlue()+30);
       }
-      else if(test2 - test1 < -90) {
-        infoColor = infoColor.darker();
+      
+      if(testBackground - testInfoEpisode < -30) {
+        episodeColor = episodeColor.brighter().brighter();
       }
     }
     
@@ -343,7 +346,7 @@ public class ProgramTextCreator {
     buffer.append("</b></div>");
     String seriesField = prog.getTextField(ProgramFieldType.SERIES_TYPE);
     if (seriesField != null) {
-      buffer.append("<div style=\"color:#003366; margin-top:1em; font-size:");
+      buffer.append("<div style=\"color:"+HTMLTextHelper.getCssRgbColorEntry(episodeColor)+"; margin-top:1em; font-size:");
 
       buffer.append(mBodyFontSize);
 
@@ -352,7 +355,7 @@ public class ProgramTextCreator {
       buffer.append("</b></div>");
       
     }
-    buffer.append("<div style=\"color:#003366; font-size:");
+    buffer.append("<div style=\"color:"+HTMLTextHelper.getCssRgbColorEntry(episodeColor)+"; font-size:");
 
     buffer.append(titleSize);
 
