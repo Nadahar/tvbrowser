@@ -630,6 +630,7 @@ public class ReminderPlugin {
           @Override
           public void actionPerformed(ActionEvent e) {
             item.setMinutes(value.getMinutes());
+            saveReminders();
           }
         }, item.getMinutes() == value.getMinutes()));
       }
