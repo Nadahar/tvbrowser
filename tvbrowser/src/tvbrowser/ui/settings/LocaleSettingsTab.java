@@ -43,9 +43,12 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Locale;
 import java.util.TimeZone;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.ButtonGroup;
-import javax.swing.DefaultListCellRenderer;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -80,10 +83,6 @@ import com.jgoodies.forms.factories.CC;
 import com.jgoodies.forms.factories.DefaultComponentFactory;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Locale Settings
@@ -391,22 +390,25 @@ public class LocaleSettingsTab implements devplugin.SettingsTab {
     
     final SelectableItemList list = new SelectableItemList(new LocaleLink[0], availableLocales.toArray(new LocaleLink[availableLocales.size()]));
     list.addCenterRendererComponent(LocaleLink.class, new SelectableItemRendererCenterComponentIf() {
-      private DefaultListCellRenderer mRenderer = new DefaultListCellRenderer();
-      
       @Override
       public JPanel createCenterPanel(JList list, Object value, int index, boolean isSelected, boolean isEnabled,
           JScrollPane parentScrollPane, int leftColumnWidth) {
-        DefaultListCellRenderer label = (DefaultListCellRenderer) mRenderer
-            .getListCellRendererComponent(list, value, index, isSelected,
-                false);
+        JLabel label = new JLabel(value.toString());
         
         if(((LocaleLink)value).isInstalled()) {
           label.setFont(label.getFont().deriveFont(Font.BOLD));
         }
         
+        if(isSelected) {
+          label.setForeground(list.getSelectionForeground());          
+        }
+        else {
+          label.setForeground(list.getForeground());
+        }
+        
         JPanel panel = new JPanel(new BorderLayout());
         panel.setOpaque(false);
-        panel.add(label,BorderLayout.CENTER);
+        panel.add(label, BorderLayout.CENTER);
         
         return panel;
       }
