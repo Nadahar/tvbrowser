@@ -718,7 +718,7 @@
    	  <fileset dir="${linux.dir}" includes="tvbrowser.sh"/>
    	</copy>
    	<copy todir="${tvbrowser-transportable.runtime.dir}">
-   	  <fileset dir="${osx.dir}" includes="tvbrowser-transportable-mac.sh"/>
+   	  <fileset dir="${osx.dir}" includes="tvbrowser-transportable-mac.command"/>
    	</copy>
    	<move file="${tvbrowser-transportable.runtime.dir}/tvbrowser.sh" tofile="${tvbrowser-transportable.runtime.dir}/tvbrowser-transportable.sh"/>
 
@@ -731,7 +731,7 @@
       	filemode="755" includes="**/tvbrowser-transportable.sh"/>
       <zipfileset prefix="tvbrowser-transportable"
 	                  dir="${tvbrowser-transportable.runtime.dir}"
-      	filemode="755" includes="**/tvbrowser-transportable-mac.sh"/>
+      	filemode="755" includes="**/tvbrowser-transportable-mac.command"/>
     </zip>
   </target>
 
