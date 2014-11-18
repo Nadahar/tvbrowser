@@ -1445,7 +1445,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     mCurrentFilterName = filter.getName();
     
     mProgramTableScrollPane.requestFocusInWindow();
-    
+        
     new Thread("SEND FILTER TO CENTER PANELS") {
       @Override
       public void run() {
@@ -2070,6 +2070,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     mConfigAssistantDialog = null;
 
     Settings.handleChangedSettings();
+    mProgramTableScrollPane.updateChannelPanel();
 
     boolean dataAvailable = TvDataBase.getInstance().dataAvailable(new Date());
 
@@ -2488,6 +2489,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
           UiUtilities.centerAndShow(dlg);
 
           int daysToDownload = dlg.getResult();
+                    
           if(daysToDownload != UpdateDlg.CANCEL && licenseForTvDataServicesWasAccepted(dlg.getSelectedTvDataServices())) {
             runUpdateThread(daysToDownload, dlg.getSelectedTvDataServices(),false);
           }
@@ -2531,12 +2533,12 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
         LicenseBox box=new LicenseBox(this, serviceProxy.getInfo().getLicense(), true);
         util.ui.UiUtilities.centerAndShow(box);
         accept = accept && box.agreed();
-
+        
         if(box.agreed()) {
           String[] oldIds = Settings.propAcceptedLicenseArrForServiceIds.getStringArray();
           String[] newIds = new String[oldIds.length + 1];
 
-          System.arraycopy(acceptedFor,0,newIds,0,oldIds.length);
+          System.arraycopy(oldIds,0,newIds,0,oldIds.length);
           newIds[newIds.length-1] = serviceProxy.getId();
 
           Settings.propAcceptedLicenseArrForServiceIds.setStringArray(newIds);
@@ -2544,6 +2546,8 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
       }
     }
 
+    System.out.println(accept);
+    
     return accept;
   }
 

@@ -579,7 +579,7 @@ public class ProgramTable extends JPanel
       mBackgroundPainter.layoutChanged(mLayout, mModel);
     }
     
-    updateUI();
+   // updateUI();
   }
 
 

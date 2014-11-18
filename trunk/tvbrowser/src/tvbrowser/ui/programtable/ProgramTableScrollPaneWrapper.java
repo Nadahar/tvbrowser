@@ -85,15 +85,15 @@ public class ProgramTableScrollPaneWrapper extends PluginCenterPanel {
     mInfoPanel = new InfoPanel(type, name);
     
     mMainPanel.add(mInfoPanel, BorderLayout.CENTER);
-    mMainPanel.updateUI();
+    mMainPanel.repaint();
   }
   
-  public void removeInfoPanel(int type) {
+  public void removeInfoPanel(int type) {System.out.println("hier " + mInfoPanel + " " + type);
     if(mInfoPanel != null && mInfoPanel.isType(type)) {
       mMainPanel.removeAll();
       mInfoPanel = null;
       mMainPanel.add(mProgramTableScrollPane, BorderLayout.CENTER);
-      mMainPanel.updateUI();
+      mMainPanel.repaint();
     }
   }
   
