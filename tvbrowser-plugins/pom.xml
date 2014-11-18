@@ -61,7 +61,6 @@
     <module>plugin-bbcdataservice</module>
     <module>plugin-blogthis</module>
     <module>plugin-calendarexport</module>
-    <module>plugin-capture</module>
     <module>plugin-checker</module>
     <module>plugin-clipboard</module>
     <module>plugin-countrycode</module>
@@ -135,6 +134,14 @@
     <module>plugin-unityglobalmenusupport</module>
     <module>plugin-schedulesdirectdataservice</module>
   </modules>
+    <profiles>
+    <profile>
+      <id>expensive-modules-to-build</id>
+      <modules>
+        <module>plugin-capture</module>
+      </modules>
+    </profile>
+  </profiles>
   <dependencyManagement>
     <dependencies>
       <dependency>
