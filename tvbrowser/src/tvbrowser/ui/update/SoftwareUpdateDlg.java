@@ -276,6 +276,10 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
       
       if(country.equals(Locale.GERMANY.getCountry()) || country.equals("ES") || country.equals("IT") || country.equals("FR") || country.equals("DK") || country.equals("CH") || country.equals("AT") || Locale.getDefault().getLanguage().equals("de")) {
         selectedDataServices.add("TvBrowserDataService");
+        
+        if(country.equals(Locale.GERMANY.getCountry()) || country.equals("CH") || country.equals("AT") || Locale.getDefault().getLanguage().equals("de")) {
+          selectedDataServices.add("EPGdonateData");
+        }
       }
       else if(country.equals(Locale.CANADA.getCountry()) || country.equals(Locale.US.getCountry())) {
         selectedDataServices.add("SchedulesDirectDataService");
