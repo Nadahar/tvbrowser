@@ -467,7 +467,7 @@ public class PluginManagerImpl implements PluginManager {
         if(yesterday != null) {
           for(int i = yesterday.getProgramCount()-1; i >= 0; i--) {
             if(yesterday.getProgramAt(i).getDate().equals(date)) {
-              newList.add(yesterday.getProgramAt(i));
+              newList.add(0,yesterday.getProgramAt(i));
             }
             else {
               break;
