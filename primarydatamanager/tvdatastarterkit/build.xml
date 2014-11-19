@@ -200,6 +200,18 @@
 	<unjar src="${lib.dir}/${lib.opencsv.name}-${lib.opencsv.version}.jar" dest="${unpacked.dir}/${lib.opencsv.name}.jar" />
     <unjar src="${lib.dir}/${lib.htmlparser.name}-${lib.htmlparser.version}.jar" dest="${unpacked.dir}/${lib.htmlparser.name}.jar" />
 -->
+
+    <!-- Pack the NewsEditor.jar -->
+    <jar jarfile="${tvdatatools.runtime.dir}/NewsEditor.jar"
+         compress="false"
+         index="true">
+      <manifest>
+        <attribute name="Main-Class" value="helper.newseditor.NewsEditor"/>
+      </manifest>
+      <fileset dir="${classes.dir}" includes="helper/newseditor/**"/>
+      <fileset dir="${unpacked.dir}" includes="tvbrowserdataservice/GroupNews*"/>
+    </jar>
+
     <!-- Pack the MirrorUpdater.jar -->
     <jar jarfile="${tvdatatools.runtime.dir}/MirrorUpdater.jar"
          compress="false"
@@ -308,6 +320,7 @@
     <mkdir dir="${tvdatakit.runtime.dir}/java"/>
     <mkdir dir="${tvdatakit.runtime.dir}/classes"/>
     <mkdir dir="${tvdatakit.runtime.dir}/lib"/>
+    <mkdir dir="${tvdatakit.runtime.dir}/tools"/>
     <mkdir dir="${tvdatakit.runtime.dir}/prepared"/>
     <javac destdir="${tvdatakit.runtime.dir}/classes"
            debug="${debug}"
@@ -331,8 +344,11 @@
       <fileset dir="tvdatakit" excludes="**/CVS/**"/>
     </copy>
     <copy todir="${tvdatakit.runtime.dir}/lib">
-      <fileset dir="${tvdatatools.runtime.dir}" includes="*.jar"/>
+      <fileset dir="${tvdatatools.runtime.dir}" includes="*.jar" excludes="NewsEditor.jar"/>
       <fileset dir="${txt.dir}" includes="LICENSE.txt"/>
+    </copy>
+    <copy todir="${tvdatakit.runtime.dir}/tools">
+      <fileset dir="${tvdatatools.runtime.dir}" includes="NewsEditor.jar"/>
     </copy>
 
   </target>
@@ -349,8 +365,8 @@
     <mkdir dir="${public.dir}"/>
 
     <zip destfile="${public.dir}/TvDataStarterKit-${tvdatakit.version}.zip">
-      <zipfileset prefix="TvDataStarterKit-${tvdatakit.version}" dir="${tvdatakit.runtime.dir}" excludes="**/*.sh"/>
-   	  <zipfileset prefix="TvDataStarterKit-${tvdatakit.version}" dir="${tvdatakit.runtime.dir}" includes="**/*.sh" filemode="755"/>
+      <zipfileset prefix="TvDataStarterKit-${tvdatakit.version}" dir="${tvdatakit.runtime.dir}" excludes="**/*.sh, **/*.jar"/>
+   	  <zipfileset prefix="TvDataStarterKit-${tvdatakit.version}" dir="${tvdatakit.runtime.dir}" includes="**/*.sh, **/*.jar" filemode="755"/>
     </zip>
   </target>
 
