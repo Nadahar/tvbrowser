@@ -71,7 +71,7 @@ public final class WirSchauenPlugin extends Plugin
   /**
    * the version of this plugin.
    */
-  private static final Version VERSION = new Version(0, 22, 3, IS_STABLE);
+  private static final Version VERSION = new Version(0, 22, 4, IS_STABLE);
 
   /**
    * this class is a singleton. kind of. the constructor is not restricted so
@@ -127,6 +127,7 @@ public final class WirSchauenPlugin extends Plugin
     mAllowedChannels.add("tvbrowserdataservice.TvBrowserDataService:kabel1classic");
     mAllowedChannels.add("tvbrowserdataservice.TvBrowserDataService:sat1comedy");
     mAllowedChannels.add("tvbrowserdataservice.TvBrowserDataService:pro7fun");
+    mAllowedChannels.add("tvbrowserdataservice.TvBrowserDataService:tele5");
   }
 
   /**
