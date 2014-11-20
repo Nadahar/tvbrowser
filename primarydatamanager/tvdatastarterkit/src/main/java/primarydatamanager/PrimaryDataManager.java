@@ -27,10 +27,9 @@ package primarydatamanager;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.File;
-import java.io.FileFilter;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -150,7 +149,9 @@ public class PrimaryDataManager {
     }
     
     // Update the news
-    updateNews();
+    for (int i=0; i<mGroupNameArr.length; i++) {
+      updateNews(mGroupNameArr[i]);
+    }
 
     //Create the channel list file
     createChannelList();
@@ -255,16 +256,23 @@ public class PrimaryDataManager {
     }
   }
 
-  private void updateNews() {
+  private void updateNews(String groupName) {
     mLog.fine("Updating the group news");
 
-    File newsInfo = new File(mConfigDir,"news_info.gz");
+    File newsInfo = new File(mConfigDir,groupName+"_news_info.gz");
+    File newsFile = new File(mConfigDir,groupName+"_news.gz");
     
-    if(!newsInfo.isFile()) {
+    if(!newsInfo.isFile() || !newsFile.isFile()) {
       GZIPOutputStream out = null;
       
       try {
-        out = new GZIPOutputStream(new FileOutputStream(newsInfo));
+        FileOutputStream fileOut = new FileOutputStream(newsInfo);
+        fileOut.getChannel().truncate(0);
+        
+        out = new GZIPOutputStream(fileOut);
+        DataOutputStream dataOut = new DataOutputStream(out);
+        
+        dataOut.writeLong(-1);
       } catch (IOException e) {
         // Ignore news are not that important
       }
@@ -289,18 +297,11 @@ public class PrimaryDataManager {
       // Ignore news are not that important
     }
     
-    File[] newsFiles = mConfigDir.listFiles(new FileFilter() {
-      @Override
-      public boolean accept(File f) {
-        return f.isFile() && f.getName().endsWith("_news.gz");
-      }
-    });
-    
-    for(File newsFile : newsFiles) {
-      File target =  new File(mWorkDir,newsFile.getName());
+    if(newsFile.isFile()) {
+      File newsFileTarget = new File(mWorkDir,newsFile.getName());
       
       try {
-        IOUtilities.copy(newsFile, target);
+        IOUtilities.copy(newsFile, newsFileTarget);
       } catch (IOException e) {
         // Ignore news are not that important
       }

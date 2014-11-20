@@ -349,11 +349,11 @@ public class MirrorUpdater {
     
     // Copy the news files
     try {
-      if (mChannelGroupArr!=null) {
-        data = mDataSource.loadFile("news_info.gz");
-        mDataTarget.writeFile("news_info.gz", data);
-        
+      if (mChannelGroupArr!=null) {        
         for (String group : mChannelGroupArr) {
+          data = mDataSource.loadFile(group+"_news_info.gz");
+          mDataTarget.writeFile(group+"_news_info.gz", data);
+          
           if(mDataSource.fileExists(group+"_news.gz")) {
             data = mDataSource.loadFile(group+"_news.gz");
             mDataTarget.writeFile(group+"_news.gz", data);
