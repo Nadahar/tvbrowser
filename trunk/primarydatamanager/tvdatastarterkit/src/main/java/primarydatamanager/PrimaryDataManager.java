@@ -28,7 +28,10 @@ package primarydatamanager;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.RandomAccessFile;
@@ -40,6 +43,7 @@ import java.util.logging.FileHandler;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.zip.GZIPOutputStream;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -144,6 +148,9 @@ public class PrimaryDataManager {
           + mRawDir.getAbsolutePath());
       }
     }
+    
+    // Update the news
+    updateNews();
 
     //Create the channel list file
     createChannelList();
@@ -248,7 +255,57 @@ public class PrimaryDataManager {
     }
   }
 
+  private void updateNews() {
+    mLog.fine("Updating the group news");
 
+    File newsInfo = new File(mConfigDir,"news_info.gz");
+    
+    if(!newsInfo.isFile()) {
+      GZIPOutputStream out = null;
+      
+      try {
+        out = new GZIPOutputStream(new FileOutputStream(newsInfo));
+      } catch (IOException e) {
+        // Ignore news are not that important
+      }
+      finally {
+        if(out != null) {
+          try {
+            out.close();
+          } catch (IOException e) {
+            // Ignore news are not that important
+          }
+        }
+      }
+      
+      return;
+    }
+    
+    File newsInfoTarget = new File(mWorkDir,newsInfo.getName());
+    
+    try {
+      IOUtilities.copy(newsInfo, newsInfoTarget);
+    } catch (IOException e1) {
+      // Ignore news are not that important
+    }
+    
+    File[] newsFiles = mConfigDir.listFiles(new FileFilter() {
+      @Override
+      public boolean accept(File f) {
+        return f.isFile() && f.getName().endsWith("_news.gz");
+      }
+    });
+    
+    for(File newsFile : newsFiles) {
+      File target =  new File(mWorkDir,newsFile.getName());
+      
+      try {
+        IOUtilities.copy(newsFile, target);
+      } catch (IOException e) {
+        // Ignore news are not that important
+      }
+    }
+  }
 
   private void createChannelList() throws PreparationException {
     mLog.fine("Updating the channel list");

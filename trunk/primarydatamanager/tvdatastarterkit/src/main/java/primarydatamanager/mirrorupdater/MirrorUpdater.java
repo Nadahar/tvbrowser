@@ -323,6 +323,10 @@ public class MirrorUpdater {
       target.writeFile(group+"_"+fName, data);
     }
   }
+  
+  private void copyNewsFiles(DataTarget target, DataSource source) throws UpdateException {
+    
+  }
 
   private void copyGroupFile(DataTarget target, DataSource source, String fName) throws UpdateException {
     
@@ -342,6 +346,23 @@ public class MirrorUpdater {
 
     // Copy the mirrorlist.gz
     copyGroupFile(mDataTarget,mDataSource,Mirror.MIRROR_LIST_FILE_NAME);
+    
+    // Copy the news files
+    try {
+      if (mChannelGroupArr!=null) {
+        data = mDataSource.loadFile("news_info.gz");
+        mDataTarget.writeFile("news_info.gz", data);
+        
+        for (String group : mChannelGroupArr) {
+          if(mDataSource.fileExists(group+"_news.gz")) {
+            data = mDataSource.loadFile(group+"_news.gz");
+            mDataTarget.writeFile(group+"_news.gz", data);
+          }
+        }
+      }
+    }catch(UpdateException e) {
+      //Ignore news are not that important
+    }
     
     // Copy the summary.gz
     //copyGroupFile(mDataTarget,mDataSource,SummaryFile.SUMMARY_FILE_NAME);
