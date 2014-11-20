@@ -46,6 +46,9 @@ public class SwitchPluginSettingsTab implements SettingsTab {
   private JTextField mApp,mContext,mQuestion;
   private JTextArea mParaArea;
   private JCheckBox mAsk;
+  private JTabbedPane mTabbedPane;
+  
+  private static int CURRENT_TAB_INDEX = 0;
   
   public JPanel createSettingsPanel() {
     SwitchPlugin switchPlugin = SwitchPlugin.getInstance();
@@ -136,14 +139,16 @@ public class SwitchPluginSettingsTab implements SettingsTab {
     
     mAsk.getChangeListeners()[0].stateChanged(null);
     
-    JTabbedPane pane = new JTabbedPane();
-    pane.setBorder(Borders.DIALOG_BORDER);        
-    pane.addTab(mLocalizer.msg("appli","Application/Parameters"),program.getPanel());
-    pane.addTab(mLocalizer.msg("channels","Channels"),tableScrollPane);
-    pane.addTab(mLocalizer.msg("misc","Misc"),misc.getPanel());
+    mTabbedPane = new JTabbedPane();
+    mTabbedPane.setBorder(Borders.DIALOG_BORDER);        
+    mTabbedPane.addTab(mLocalizer.msg("appli","Application/Parameters"),program.getPanel());
+    mTabbedPane.addTab(mLocalizer.msg("channels","Channels"),tableScrollPane);
+    mTabbedPane.addTab(mLocalizer.msg("misc","Misc"),misc.getPanel());
+    
+    mTabbedPane.setSelectedIndex(CURRENT_TAB_INDEX);
 
     JPanel p = new JPanel(new GridLayout());
-    p.add(pane);
+    p.add(mTabbedPane);
 
     return p;
   }
@@ -155,8 +160,13 @@ public class SwitchPluginSettingsTab implements SettingsTab {
     TableModel model = mChannelTable.getModel();    
     StringBuffer buffer = new StringBuffer();
     
-    for(int i = 0; i < model.getRowCount(); i++)
-      buffer.append(((Channel)model.getValueAt(i,0)).getName()).append(";").append(model.getValueAt(i,1) == null || ((String)model.getValueAt(i,1)).trim().length() == 0 ? null : model.getValueAt(i,1)).append(";");
+    for(int i = 0; i < model.getRowCount(); i++) {
+      buffer.append(((Channel)model.getValueAt(i,0)).getDefaultName()).append(";").append(model.getValueAt(i,1) == null || ((String)model.getValueAt(i,1)).trim().length() == 0 ? null : model.getValueAt(i,1)).append(";");
+    }
+    
+    System.out.println(buffer);
+    
+    CURRENT_TAB_INDEX = mTabbedPane.getSelectedIndex();
     
     SwitchPlugin.getInstance().setProperty("channels", buffer.toString());
     SwitchPlugin.getInstance().setProperty("app", mApp.getText().trim());

@@ -44,7 +44,7 @@ public class SwitchPlugin extends Plugin {
   private static SwitchPlugin instance;
   private Properties mProp;
   private Hashtable mChannels = new Hashtable();
-  private static Version mVersion = new Version(0,56,6);
+  private static Version mVersion = new Version(0,57,0);
   private ProgramReceiveTarget[] mReceiveTarget;
   
   public static Version getVersion() {
@@ -60,6 +60,7 @@ public class SwitchPlugin extends Plugin {
   /** Constructor */
   public SwitchPlugin() {
     instance = this;
+    mProp = new Properties();
   }
 
   public Properties storeSettings() {
@@ -83,8 +84,9 @@ public class SwitchPlugin extends Plugin {
   }
 
   public ActionMenu getContextMenuActions(final Program p) {
-    if (mProp.getProperty("app", "").trim().length() < 1)
+    if (p == null || (!p.equals(getPluginManager().getExampleProgram()) && mProp.getProperty("app", "").trim().length() < 1)) {
       return null;
+    }
 
     String text = mProp.getProperty("context", mLocalizer.msg("run", "Switch"));
 
@@ -284,7 +286,9 @@ public class SwitchPlugin extends Plugin {
     Object[][] channelTableValues = new Object[ch.length][2];
 
     for (int i = 0; i < ch.length; i++) {
-      String entry = (String) mChannels.get(ch[i].toString());
+      System.out.println(ch[i].toString());
+      
+      String entry = (String) mChannels.get(ch[i].getDefaultName());
 
       channelTableValues[i][0] = ch[i];
       channelTableValues[i][1] = entry;
