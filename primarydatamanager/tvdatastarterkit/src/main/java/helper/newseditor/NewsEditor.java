@@ -43,6 +43,7 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Properties;
 import java.util.zip.GZIPOutputStream;
 
 import javax.swing.BorderFactory;
@@ -200,6 +201,8 @@ public class NewsEditor {
     selectConfig.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
+        createNewsInfo();
+        
         JFileChooser chooser = new JFileChooser();
         chooser.setDialogTitle("Select config directory of your data");
         chooser.setMultiSelectionEnabled(false);
@@ -344,6 +347,7 @@ public class NewsEditor {
       @Override
       public void windowClosed(WindowEvent e) {
         saveGroup((String)mGroupSelection.getSelectedItem());
+        createNewsInfo();
         
         System.exit(0);
       }
@@ -351,6 +355,7 @@ public class NewsEditor {
       @Override
       public void windowClosing(WindowEvent e) {
         saveGroup((String)mGroupSelection.getSelectedItem());
+        createNewsInfo();
         
         System.exit(0);
       }
@@ -367,6 +372,52 @@ public class NewsEditor {
       }
       
       writeGroupNews(group, news.toArray(new GroupNews[news.size()]));
+    }
+  }
+  
+  private void createNewsInfo() {
+    if(mConfigDirectory != null && mConfigDirectory.isDirectory()) {
+      File newsInfoFile = new File(mConfigDirectory,"news_info.gz");
+      Properties newsInfo = new Properties();
+      
+      File[] newsFiles = mConfigDirectory.listFiles(new FileFilter() {
+        @Override
+        public boolean accept(File f) {
+          return f.isFile() && f.getName().endsWith("_news.gz");
+        }
+      });
+      
+      for(File newsFile : newsFiles) {
+        newsInfo.setProperty(newsFile.getName(), String.valueOf(newsFile.lastModified()));
+      }
+      
+      GZIPOutputStream out = null;
+      
+      if(newsInfoFile.isFile()) {
+        newsInfoFile.delete();
+      }
+      
+      try {
+        out = new GZIPOutputStream(new FileOutputStream(newsInfoFile));
+        
+        newsInfo.store(out, "Group news info");
+      } catch (FileNotFoundException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      } catch (IOException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+      finally {
+        if(out != null) {
+          try {
+            out.close();
+          } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+          }
+        }
+      }
     }
   }
   
