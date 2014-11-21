@@ -257,7 +257,7 @@ public class PrimaryDataManager {
   }
 
   private void updateNews(String groupName) {
-    mLog.fine("Updating the group news");
+    mLog.fine("Updating the group news for group: " + groupName);
 
     File newsInfo = new File(mConfigDir,groupName+"_news_info.gz");
     File newsFile = new File(mConfigDir,groupName+"_news.gz");
@@ -274,35 +274,41 @@ public class PrimaryDataManager {
         
         dataOut.writeLong(-1);
       } catch (IOException e) {
+        mLog.info("Writing news info file for group '"+groupName+"' to '" + newsInfo.getAbsolutePath() + "' didn't work.");
         // Ignore news are not that important
       }
       finally {
         if(out != null) {
           try {
+            out.flush();
             out.close();
           } catch (IOException e) {
             // Ignore news are not that important
           }
         }
       }
-      
-      return;
     }
     
     File newsInfoTarget = new File(mWorkDir,newsInfo.getName());
     
+    mLog.info("Copying news info file '" + newsInfo.getAbsolutePath() + "' to '" + newsInfoTarget.getAbsolutePath() + "'");
+    
     try {
       IOUtilities.copy(newsInfo, newsInfoTarget);
     } catch (IOException e1) {
+      mLog.info("Copying of news info file '" + newsInfo.getAbsolutePath() + "' didn't work.");
       // Ignore news are not that important
     }
     
     if(newsFile.isFile()) {
       File newsFileTarget = new File(mWorkDir,newsFile.getName());
       
+      mLog.info("Copying news file '" + newsFile.getAbsolutePath() + "' to '" + newsFileTarget.getAbsolutePath() + "'");
+      
       try {
         IOUtilities.copy(newsFile, newsFileTarget);
       } catch (IOException e) {
+        mLog.info("Copying of news file '" + newsFile.getAbsolutePath() + "' didn't work.");
         // Ignore news are not that important
       }
     }
