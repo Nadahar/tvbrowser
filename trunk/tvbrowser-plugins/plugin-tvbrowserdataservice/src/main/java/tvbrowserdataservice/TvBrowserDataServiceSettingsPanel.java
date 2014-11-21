@@ -67,7 +67,7 @@ import util.ui.progress.Progress;
 import util.ui.progress.ProgressWindow;
 
 import com.jgoodies.forms.factories.Borders;
-import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.factories.CC;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.Sizes;
 
@@ -93,6 +93,8 @@ public class TvBrowserDataServiceSettingsPanel extends SettingsPanel implements 
 
   private TvBrowserDataServiceChannelGroup mGroup;
 
+  private JCheckBox mShowNews;
+  
   private static SettingsPanel mInstance;
 
   /** The localizer for this class. */
@@ -108,12 +110,11 @@ public class TvBrowserDataServiceSettingsPanel extends SettingsPanel implements 
     JTabbedPane tabbedPane = new JTabbedPane();
 
     /* level list pane */
-    CellConstraints cc = new CellConstraints();
     EnhancedPanelBuilder levelList = new EnhancedPanelBuilder("5dlu,default:grow");
-    levelList.setDefaultDialogBorder();
+    levelList.border(Borders.DIALOG);
 
     levelList.addRow();
-    levelList.addSeparator(mLocalizer.msg("downloadLevel", "Download this data"), cc.xyw(1,levelList.getRow(),2));
+    levelList.addSeparator(mLocalizer.msg("downloadLevel", "Download this data"), CC.xyw(1,levelList.getRow(),2));
 
     TvDataLevel[] levelArr = DayProgramFile.getLevels();
 
@@ -123,7 +124,7 @@ public class TvBrowserDataServiceSettingsPanel extends SettingsPanel implements 
     for (int i = 0; i < levelArr.length; i++) {
       mLevelCheckboxes[i] = new JCheckBox(levelArr[i].getDescription());
       levelList.addRow();
-      levelList.add(mLevelCheckboxes[i], cc.xy(2,levelList.getRow()));
+      levelList.add(mLevelCheckboxes[i], CC.xy(2,levelList.getRow()));
       if (levelArr[i].isRequired()) {
         mLevelCheckboxes[i].setSelected(true);
         mLevelCheckboxes[i].setEnabled(false);
@@ -136,15 +137,23 @@ public class TvBrowserDataServiceSettingsPanel extends SettingsPanel implements 
       }
     }
 
+    mShowNews = new JCheckBox(mLocalizer.msg("showNews", "Show news for subscribed channels"),settings.showNews());
+    
+    /* basic settings pane */
+    
+    JPanel basic = new JPanel(new FormLayout("5dlu,100dlu:grow","default"));
+    basic.setBorder(Borders.DLU4);
+    basic.add(mShowNews, CC.xy(2, 1));
+    
     /* group list pane */
 
     EnhancedPanelBuilder groupListPanel = new EnhancedPanelBuilder("5dlu,0dlu:grow");
-    groupListPanel.setDefaultDialogBorder();
+    groupListPanel.border(Borders.DIALOG);
 
     JTextArea ta = UiUtilities.createHelpTextArea(mLocalizer.msg("channelgroup.description","description"));
 
     groupListPanel.addRow();
-    groupListPanel.add(ta, cc.xyw(1,groupListPanel.getRow(),2));
+    groupListPanel.add(ta, CC.xyw(1,groupListPanel.getRow(),2));
 
     JPanel panel2 = new JPanel(new BorderLayout(10, 0));
 
@@ -195,15 +204,16 @@ public class TvBrowserDataServiceSettingsPanel extends SettingsPanel implements 
     groupInfoPanel.add(mGroupDescriptionTA, BorderLayout.CENTER);
 
     groupListPanel.addGrowingRow();
-    groupListPanel.add(panel2, cc.xy(2,groupListPanel.getRow()));
+    groupListPanel.add(panel2, CC.xy(2,groupListPanel.getRow()));
 
     groupListPanel.addRow();
-    groupListPanel.add(groupInfoPanel, cc.xy(2,groupListPanel.getRow()));
+    groupListPanel.add(groupInfoPanel, CC.xy(2,groupListPanel.getRow()));
 
+    tabbedPane.add(mLocalizer.msg("basicSettings","Basic settings"), basic);
     tabbedPane.add(mLocalizer.msg("datalevel", "data level"), levelList.getPanel());
     tabbedPane.add(mLocalizer.msg("channelgroups", "channel groups"), groupListPanel.getPanel());
 
-    add(tabbedPane, cc.xy(1,1));
+    add(tabbedPane, CC.xy(1,1));
 
     mGroupList.addListSelectionListener(new ListSelectionListener() {
 
@@ -264,6 +274,7 @@ public class TvBrowserDataServiceSettingsPanel extends SettingsPanel implements 
     TvBrowserDataService.getInstance().setTvDataLevel(levelList.toArray(new TvDataLevel[levelList.size()]));
 
     mSettings.setLevelIds(levelIds);
+    mSettings.setShowNews(mShowNews.isSelected());
 
     storeGroups();
 
