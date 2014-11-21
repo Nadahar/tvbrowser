@@ -67,7 +67,7 @@ public class GroupNewsEditor extends JDialog {
   private HashMap<JCheckBox, GroupNewsChannel> mRestrictedChannelMap;
   
   public GroupNewsEditor(String group, GroupNews news, Window parent, GroupNewsChannel[] groupChannels) {
-    super(parent, "Edit GroupNews for Group: " + group, ModalityType.APPLICATION_MODAL);
+    super(parent, NewsEditor.getTextFor(NewsEditor.NEWS_EDITOR_TITLE_TEXT) + group, ModalityType.APPLICATION_MODAL);
     
     mRestrictedChannelMap = new HashMap<JCheckBox, GroupNewsChannel>(groupChannels.length);
     
@@ -106,7 +106,7 @@ public class GroupNewsEditor extends JDialog {
     c.gridwidth = 1;
     c.weighty = 0;
     
-    mainPanel.add(new JLabel("English title:"), c);
+    mainPanel.add(new JLabel(NewsEditor.getTextFor(NewsEditor.EN_TITLE_TEXT)), c);
     
     c.gridy = 0;
     c.gridx = 1;
@@ -119,7 +119,7 @@ public class GroupNewsEditor extends JDialog {
     c.gridwidth = 2;
     c.weightx = 0;
     
-    mainPanel.add(new JLabel("English news text (html format possible):"), c);
+    mainPanel.add(new JLabel(NewsEditor.getTextFor(NewsEditor.EN_NEWS_TEXT)), c);
     
     c.gridy = 2;
     c.weighty = 0.4;
@@ -140,7 +140,7 @@ public class GroupNewsEditor extends JDialog {
     c.gridy = 4;
     c.gridwidth = 1;
     
-    mainPanel.add(new JLabel("German title:"), c);
+    mainPanel.add(new JLabel(NewsEditor.getTextFor(NewsEditor.DE_TITLE_TEXT)), c);
     
     c.gridx = 1;
     c.weightx = 1;
@@ -152,7 +152,7 @@ public class GroupNewsEditor extends JDialog {
     c.gridwidth = 2;
     c.weightx = 0;
     
-    mainPanel.add(new JLabel("German news text (html format possible):"), c);
+    mainPanel.add(new JLabel(NewsEditor.getTextFor(NewsEditor.DE_NEWS_TEXT)), c);
     
     c.gridy = 6;
     c.weighty = 0.4;
@@ -173,7 +173,7 @@ public class GroupNewsEditor extends JDialog {
     c.gridy = 8;
     c.insets = new Insets(2, 2, 2, 2);
     
-    JButton cancel = new JButton("Cancel");
+    JButton cancel = new JButton(NewsEditor.getTextFor(NewsEditor.CANCEL_TEXT));
     cancel.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -181,7 +181,7 @@ public class GroupNewsEditor extends JDialog {
       }
     });
     
-    JButton save = new JButton("Save");
+    JButton save = new JButton(NewsEditor.getTextFor(NewsEditor.SAVE_TEXT));
     save.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -219,7 +219,7 @@ public class GroupNewsEditor extends JDialog {
     c.gridheight = 1;
     c.gridwidth = 1;
     
-    mainPanel.add(new JLabel("Restrict news to channels:"), c);
+    mainPanel.add(new JLabel(NewsEditor.getTextFor(NewsEditor.RESTRICT_CHANNELS_TEXT)), c);
     
     c.insets = new Insets(0, 10, 2, 2);
     c.fill = GridBagConstraints.BOTH;
