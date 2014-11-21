@@ -26,33 +26,68 @@
 package tvbrowserdataservice;
 
 
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.Properties;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import javax.swing.AbstractAction;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JEditorPane;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
 
 import tvbrowserdataservice.file.DayProgramFile;
 import tvbrowserdataservice.file.SummaryFile;
 import tvbrowserdataservice.file.TvDataLevel;
 import tvdataservice.SettingsPanel;
 import tvdataservice.TvDataUpdateManager;
+import util.browserlauncher.Launch;
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
 import util.io.DownloadManager;
 import util.io.IOUtilities;
 import util.io.Mirror;
+import util.ui.Localizer;
+import util.ui.TVBrowserIcons;
+import util.ui.UiUtilities;
+import util.ui.html.ExtendedHTMLEditorKit;
+import util.ui.html.HTMLTextHelper;
+
+import com.jgoodies.forms.factories.Borders;
+
+import devplugin.ActionMenu;
 import devplugin.Channel;
+import devplugin.ChannelGroup;
 import devplugin.Date;
 import devplugin.Plugin;
 import devplugin.PluginInfo;
@@ -74,7 +109,7 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
   public static final util.ui.Localizer mLocalizer
           = util.ui.Localizer.getLocalizerFor(TvBrowserDataService.class);
 
-  private static final Version VERSION = new Version(3,07,2);
+  private static final Version VERSION = new Version(3,07,4);
 
   protected static final String CHANNEL_GROUPS_FILENAME = "groups.txt";
   private static final String DEFAULT_CHANNEL_GROUPS_URL = "http://tvbrowser.org/listings";
@@ -92,7 +127,7 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
           new String[] {"http://www.tvbrowser.org/mirrorlists"},
           new String[] {"http://www.tvbrowser.org/mirrorlists"},
           new String[] {"http://www.tvbrowser.org/mirrorlists"},
-          new String[] {"http://bodos.tvbrowserdaten.de/"},
+          new String[] {"http://bodos.tvbrowserdaten.de"},
 
   };
 
@@ -128,6 +163,41 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
     mSettings = new TvBrowserDataServiceSettings(new Properties());
     mInstance=this;
     mAvailableChannelGroupsSet =new HashSet<TvBrowserDataServiceChannelGroup>();
+  }
+  
+  @Override
+  public ActionMenu getButtonAction() {
+    AbstractAction action = new AbstractAction(mLocalizer.msg("buttonActionShowNews", "Show news for channels of EPGfree data"),
+        TVBrowserIcons.plugin(TVBrowserIcons.SIZE_SMALL)) {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        showNews(loadGroupNewsFromDataDir(), false);
+      }
+    };
+    
+    return mSettings.showNews() ? new ActionMenu(action) : null;
+  }
+  
+  private HashMap<ChannelGroup, GroupNews[]> loadGroupNewsFromDataDir() {
+    HashMap<ChannelGroup, GroupNews[]> newsMap = new HashMap<ChannelGroup, GroupNews[]>();
+    
+    Channel[] subscribed = getPluginManager().getSubscribedChannels();
+    
+    for(Channel ch : subscribed) {
+      if(ch.getDataServiceId().equals(getId())) {
+        GroupNews[] groupNews = newsMap.get(ch.getGroup());
+        
+        if(groupNews == null) {
+          File newsFile = new File(mDataDir,ch.getGroup().getId()+"_news.gz");
+          
+          groupNews = GroupNews.loadNews(newsFile);
+          
+          newsMap.put(ch.getGroup(), groupNews);
+        }
+      }
+    }
+    
+    return newsMap;
   }
 
 
@@ -173,7 +243,69 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
     }
     return null;
   }
+  
+  private long getNewsInfo(String groupId, Mirror mirror) {
+    long time = -1;
+    File newsInfo = new File(mDataDir,groupId+"_news_info.gz");
+    
+    if(newsInfo.isFile()) {
+      newsInfo.delete();
+    }
+    
+    try {
+      String url = mirror.getUrl()+"/"+newsInfo.getName();
+      IOUtilities.download(new URL(url),newsInfo);
+    } catch (Exception e) {
+      // ignore, can be that not news_info.gz exists because server uses old data tools
+    }
+    System.out.println(newsInfo.getAbsolutePath() + " " + newsInfo.isFile());
+    if(newsInfo.isFile()) {
+      InputStream in = null;
+      try {
+        in = IOUtilities.openSaveGZipInputStream(new FileInputStream(newsInfo));
+        DataInputStream dataIn = new DataInputStream(in);
+        time = dataIn.readLong();
+      } catch (Exception e) {e.printStackTrace();
+        // Ignore news are not that important
+      }
+      finally {
+        if(in != null) {
+          try {
+            in.close();
+          } catch (IOException e) {
+            // Ignore
+          }
+        }
+      }
+    }
+    
+    System.out.println(time);
+    
+    return time;
+  }
 
+  private GroupNews[] loadGroupNewsForGroup(TvBrowserDataServiceChannelGroup group) {
+    File groupNews = new File(mDataDir,group.getId()+"_news.gz");
+    GroupNews[] newsArr = new GroupNews[0];
+    
+    if(groupNews.isFile()) {
+      groupNews.delete();
+    }
+    
+    try {
+      String url = group.getMirror().getUrl()+"/"+groupNews.getName();
+      IOUtilities.download(new URL(url), groupNews);
+    } catch (Exception e) {
+      // Ignore news are not that important
+    }
+    
+    if(groupNews.isFile()) {
+      newsArr = GroupNews.loadNews(groupNews);
+    }
+    
+    return newsArr;
+  }
+  
 
   /**
    * Updates the TV listings provided by this data service.
@@ -194,11 +326,12 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
 
     mUpdateManager=updateManager;
     mProgressMonitor = monitor;
-
+    
     HashSet<TvBrowserDataServiceChannelGroup> groups=new HashSet<TvBrowserDataServiceChannelGroup>();
+    HashMap<ChannelGroup, GroupNews[]> newsMap = new HashMap<ChannelGroup, GroupNews[]>();
     
     monitor.setMaximum(channelArr.length);
-    int i=0;    
+    int i=0;
     for (Channel element : channelArr) {
       monitor.setValue(i++);
       TvBrowserDataServiceChannelGroup curGroup=getChannelGroupById(element.getGroup().getId());
@@ -213,6 +346,24 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
 
         try {
           curGroup.chooseMirrors();
+          
+          long lastNewsTime = -1;
+          
+          if(mSettings.showNews()) {
+            lastNewsTime = getNewsInfo(curGroup.getId(), curGroup.getMirror());
+            
+            if(lastNewsTime > mSettings.getLastGroupNewsDateForGroupId(curGroup.getId())) {
+              GroupNews[] news = loadGroupNewsForGroup(curGroup);
+              
+              Arrays.sort(news);
+              
+              if(news.length > 0) {
+                newsMap.put(curGroup, news);
+              }
+              
+              mSettings.setLastGroupNewsDateForGroupId(curGroup.getId(), lastNewsTime);
+            }
+          }
         } catch(TvBrowserException e) {
           try {
             if(!groupsWereAlreadyUpdated) {
@@ -308,9 +459,260 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
       mUpdateManager = null;
       mProgressMonitor = null;
     }
-
+    
     mHasRightToDownloadIcons = false;
+    
+    showNews(newsMap,true);
   }
+  
+  private void showNews(HashMap<ChannelGroup, GroupNews[]> newsMap, boolean onlyNew) {
+    if(mSettings.showNews() && !newsMap.isEmpty()) {
+      StringBuilder newsText = new StringBuilder();
+      StringBuilder subText = new StringBuilder();
+      
+      Set<ChannelGroup> keys = newsMap.keySet();
+      
+      final HashMap<ChannelGroup, java.util.Date> lastNewsDateMap = new HashMap<ChannelGroup, java.util.Date>(); 
+      
+      String language = Locale.getDefault().getLanguage();
+      DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.SHORT);
+      
+      for(ChannelGroup group : keys) {
+        GroupNews[] news = newsMap.get(group);
+        
+        if(news != null) {
+          for(GroupNews newsItem : news) {
+            boolean addNews = false;
+            
+            if(newsItem.isValid()) {
+              if(newsItem.getChannelIds().length > 0) {
+                Channel[] subscribed = getPluginManager().getSubscribedChannels();
+                
+                for(Channel ch : subscribed) {
+                  if(newsItem.isChannelRestricted(ch.getId()) && ch.getGroup() != null && ch.getGroup().equals(group)) {
+                    addNews = true;
+                    break;
+                  }
+                }
+              }
+              else {
+                addNews = true;
+              }
+            }
+            if(addNews) {
+              if(!onlyNew || (newsItem.getDate().getTime() > mSettings.getLastShownGroupNewsDateForGroupId(group.getId()))) {
+                if(subText.toString().trim().length() > 0) {
+                  subText.append("<hr>");
+                }
+                
+                java.util.Date test = lastNewsDateMap.get(group);
+                
+                if(test == null) {
+                  test = newsItem.getDate();
+                  lastNewsDateMap.put(group, test);
+                }
+                else if(test.compareTo(newsItem.getDate()) < 0){
+                  lastNewsDateMap.put(group, test);
+                }
+                
+                subText.append("<i>");
+                subText.append(dateFormat.format(newsItem.getDate()));
+                subText.append("</i>");
+                
+                subText.append("<h2>");
+                
+                if(language.equals("de") && newsItem.getTitleDe().trim().length() > 0) {
+                  subText.append(newsItem.getTitleDe());
+                }
+                else {
+                  subText.append(newsItem.getTitleEn());
+                }
+                
+                subText.append("</h2>");
+                
+                if(language.equals("de") && newsItem.getTextDe().trim().length() > 0) {
+                  subText.append(newsItem.getTextDe());
+                }
+                else {
+                  subText.append(newsItem.getTextEn());
+                }
+              }
+            }
+          }
+          
+          if(subText.toString().trim().length() > 0) {
+            if(newsText.toString().trim().length() > 0) {
+              newsText.append("<hr>");
+            }
+            newsText.append("<h2><u>").append(group.getName()).append(" (").append(group.getProviderName()).append(")").append("</u></h2>");
+            newsText.append("<div style=\"padding-left:10px;padding-bottom:20px\">");
+            newsText.append(subText);
+            newsText.append("</div>");
+            
+            subText.delete(0, subText.length());
+          }
+        }
+      }
+      
+      if(newsText.toString().trim().length() > 0) {
+        final JEditorPane newsPane = new JEditorPane();
+        newsPane.setEditorKit(new ExtendedHTMLEditorKit());
+        newsPane.setEditable(false);
+        newsPane.addHyperlinkListener(new HyperlinkListener() {
+          public void hyperlinkUpdate(HyperlinkEvent evt) {
+            if (evt.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+              URL url = evt.getURL();
+              if (url != null) {
+                Launch.openURL(url.toString());
+              }
+            }
+          }
+        });
+        newsPane.setBackground(UIManager.getColor("List.background"));
+        
+        final String newsTextToShow = "<html><body style=\"padding:5px;color:"+HTMLTextHelper.getCssRgbColorEntry(UIManager.getColor("List.foreground"))+";background:"+HTMLTextHelper.getCssRgbColorEntry(UIManager.getColor("List.background"))+"\">"+newsText.toString()+"</body></html>";
+        
+        final JScrollPane scrollPane = new JScrollPane(newsPane);
+        
+        final JDialog newsDialog = new JDialog(getParentFrame());
+        newsDialog.setTitle(mLocalizer.msg("newsDialogTitle", "News for channels of EPGfree data"));
+        newsDialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        newsDialog.addWindowListener(new WindowAdapter() {
+          @Override
+          public void windowClosed(WindowEvent e) {
+            Set<ChannelGroup> keys = lastNewsDateMap.keySet();
+            
+            for(ChannelGroup group : keys) {
+              mSettings.setLastShownGroupNewsDateForGroupId(group.getId(), lastNewsDateMap.get(group).getTime());
+            }
+          }
+          
+          @Override
+          public void windowOpened(WindowEvent e) {
+            newsPane.setText(newsTextToShow);
+          }
+        });
+        
+        JButton close = new JButton(Localizer.getLocalization(Localizer.I18N_CLOSE));
+        close.addActionListener(new ActionListener() {
+          @Override
+          public void actionPerformed(ActionEvent e) {
+            newsDialog.dispose();
+          }
+        });
+        
+        JPanel mainPanel = new JPanel(new BorderLayout(5,5));
+        mainPanel.setBorder(Borders.DIALOG);
+        mainPanel.add(scrollPane, BorderLayout.CENTER);
+        mainPanel.add(close, BorderLayout.SOUTH);
+        
+        newsDialog.setContentPane(mainPanel);
+        newsDialog.setSize(500, 400);
+        newsDialog.setLocationRelativeTo(null);
+        newsDialog.setVisible(true);
+        
+        SwingUtilities.invokeLater(new Runnable() {
+          @Override
+          public void run() {
+            scrollPane.getVerticalScrollBar().setValue(0);
+          }
+        });
+      }
+      else if(!onlyNew) {
+        JOptionPane.showMessageDialog(UiUtilities.getLastModalChildOf(getParentFrame()), mLocalizer.msg("noNews", "No news for your subscribed channels of EPGfree data available."), Localizer.getLocalization(Localizer.I18N_INFO), JOptionPane.INFORMATION_MESSAGE);
+      }
+    }
+  }
+    
+ /*   /**
+     * Gets the html text.
+     *
+     * @param doc The document to create the text for.
+     * @return The html text.
+     */
+/*    private String createHtmlText(ExtendedHTMLDocument doc) {
+      DateFormat dateFormat = DateFormat.getDateInstance();
+
+      StringBuilder buf = new StringBuilder("<html><head>"
+        + "<style type=\"text/css\" media=\"screen\"><!--"
+        + "body { font-family: Dialog; color: "+ HTMLTextHelper.getCssRgbColorEntry(UIManager.getColor("List.foreground")) + "; }"
+        + "td.time { font-size: small; font-style: italic; }"
+        + "td.title { font-weight: bold; }"
+        + "td.author { text-align: right; font-style: italic; }"
+        + "td.spacer { border-bottom: 1px solid black; }"
+        + "--></style>" +
+        "</head><body style=\"background:"+HTMLTextHelper.getCssRgbColorEntry(UIManager.getColor("List.background"))+"\">");
+      if (mNewsList.size() == 0) {
+        buf.append("<p align=\"center\">");
+        buf.append(mLocalizer.msg("no.news", "There are no news..."));
+        buf.append("</p>");
+      } else {
+        if (mNewIcon == null) {
+          mNewIcon = TVBrowserIcons.newIcon(TVBrowserIcons.SIZE_LARGE);
+        }
+
+        StringBuilder newsText = new StringBuilder();
+        
+        // Show the news - backwards (newest first)
+        int newsCount = mNewsList.size();
+        for (int i = 0; i < newsCount; i++) {
+          if ((mOnlyNewChB != null) && mOnlyNewChB.isSelected()
+            && (i >= mNewNewsCount))
+          {
+            // Show only the new ones
+            break;
+          }
+
+          News news = mNewsList.get(i);
+          
+          String acceptedNewsType = News.TYPE_ALL;
+          
+          switch(mNewsTypeSelection.getSelectedIndex()) {
+            case 1: acceptedNewsType = News.TYPE_TV_BROWSER;break;
+            case 2: acceptedNewsType = News.TYPE_TV_DESKTOP;break;
+            case 3: acceptedNewsType = News.TYPE_TV_ANDROID;break;
+            case 4: acceptedNewsType = News.TYPE_TV_WEBSITE;break;
+          }
+          
+          if(news.isAcceptableType(acceptedNewsType)) {
+            if (i != 0) {
+              newsText.append("<hr>");
+            }
+    
+            newsText.append("<table width=\"100%\">");
+            newsText.append("<tr>");
+            if (i < mNewNewsCount) {
+              newsText.append("<td rowspan=\"4\" width=\"30\" valign=\"top\">");
+              JLabel iconLabel = new JLabel(mNewIcon);
+              iconLabel.setToolTipText(mLocalizer.msg("newNews", "This news is new"));
+              newsText.append(doc.createCompTag(iconLabel));
+              newsText.append("</td>");
+            }
+            newsText.append("<td class=\"time\">" + dateFormat.format(news.getTime()) + ":</td></tr>");
+    
+            newsText.append("<tr><td class=\"title\">" + news.getTitle() + "</td></tr>");
+    
+            String text = news.getText();
+            text = IOUtilities.replace(text, "&lt;", "<");
+            text = IOUtilities.replace(text, "&gt;", ">");
+            text = IOUtilities.replace(text, "/>", ">"); // JEditorPane knows no XHTML
+            newsText.append("<tr><td class=\"text\">" + text + "</td></tr>");
+    
+            newsText.append("<tr><td class=\"author\">" + news.getAuthor() + "</td></tr>");
+            newsText.append("</table>");
+          }
+        }
+        
+        buf.append(newsText);
+        
+        mHasNews = newsText.toString().trim().length() > 0;
+      }
+      
+      buf.append("</body></html>");
+      
+      return buf.toString();
+    }
+  }*/
 
 
   private void deleteOutdatedFiles() {

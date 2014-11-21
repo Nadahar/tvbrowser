@@ -25,6 +25,9 @@ public class TvBrowserDataServiceSettings {
   private static final String KEY_GROUPNAME = "groupname";
   private static final String LEVEL_SEPARATOR = ":::";
   private static final String KEY_LEVEL = "level";
+  private static final String KEY_SHOW_NEWS = "showNews";
+  private static final String KEY_LAST_GROUP_NEWS_DATE_PREFIX = "lastGroupNewsDate_";
+  private static final String KEY_LAST_SHOWN_GROUP_NEWS_DATE_PREFIX = "lastShownGroupNewsDate_";
 
   public TvBrowserDataServiceSettings(final Properties properties) {
     if (properties != null) {
@@ -82,5 +85,29 @@ public class TvBrowserDataServiceSettings {
 
   public void setProvider(final String id, final String providerName) {
     mProperties.setProperty(id + "_provider", providerName);
+  }
+  
+  public boolean showNews() {
+    return mProperties.getProperty(KEY_SHOW_NEWS,"true").equals("true");
+  }
+  
+  public void setShowNews(boolean showNews) {
+    mProperties.setProperty(KEY_SHOW_NEWS, String.valueOf(showNews));
+  }
+  
+  public long getLastGroupNewsDateForGroupId(String groupId) {
+    return Long.parseLong(mProperties.getProperty(KEY_LAST_GROUP_NEWS_DATE_PREFIX+groupId, "0"));
+  }
+  
+  public void setLastGroupNewsDateForGroupId(String groupId, long value) {
+    mProperties.setProperty(KEY_LAST_GROUP_NEWS_DATE_PREFIX+groupId, String.valueOf(value));
+  }
+  
+  public long getLastShownGroupNewsDateForGroupId(String groupId) {
+    return Long.parseLong(mProperties.getProperty(KEY_LAST_SHOWN_GROUP_NEWS_DATE_PREFIX+groupId,"0"));
+  }
+  
+  public void setLastShownGroupNewsDateForGroupId(String groupId, long value) {
+    mProperties.setProperty(KEY_LAST_SHOWN_GROUP_NEWS_DATE_PREFIX+groupId, String.valueOf(value));
   }
 }
