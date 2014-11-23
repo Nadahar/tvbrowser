@@ -593,7 +593,7 @@ public class NewsEditor {
         
         try {
             out = new GZIPOutputStream(new FileOutputStream(target));
-            XMLStreamWriter writer = factory.createXMLStreamWriter(out);
+            XMLStreamWriter writer = factory.createXMLStreamWriter(out,"UTF-8");
             
             writer.writeStartDocument();
               writer.writeStartElement("newslist");
@@ -612,7 +612,7 @@ public class NewsEditor {
             if(oldNews.isFile()) {
               oldNews.delete();
             }
-        } catch (Exception e) {
+        } catch (Exception e) {e.printStackTrace();
           if(target.isFile()) {
             target.delete();
           }
