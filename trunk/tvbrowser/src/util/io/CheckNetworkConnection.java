@@ -106,15 +106,26 @@ class CheckNetworkConnection {
    * @return true, if a connection can be established
    */
   public boolean checkConnection(final URL url) {
+    return checkConnection(url, Settings.propNetworkCheckTimeout.getInt()/100, true);
+  }
+  
+  /**
+   * Checks if a internet connection to a specific Server can be established
+   * 
+   * @param url check this Server
+   * @param timeout the timeout for the check in milliseconds.
+   * @param showWaitingDialog <code>true</code> if a waiting dialog should be shown, <code>false</code> otherwise.
+   * @return <code>true</code>, if a connection can be established
+   */
+  public boolean checkConnection(final URL url, int timeout, boolean showWaitingDialog) {
     mResult = false;
     mRunningCount.set(0);
     
-    boolean check = checkConnectionInternal(url);
+    boolean check = checkConnectionInternal(url, timeout, showWaitingDialog);
     
     hideDialog();
     return check;
   }
-    
 
   /**
    * Checks if a internet connection to a specific Server can be established
@@ -123,6 +134,16 @@ class CheckNetworkConnection {
    * @return true, if a connection can be established
    */
   private boolean checkConnectionInternal(final URL url) {
+    return checkConnectionInternal(url, Settings.propNetworkCheckTimeout.getInt()/100, true);
+  }
+  
+  /**
+   * Checks if a internet connection to a specific Server can be established
+   * 
+   * @param url check this Server
+   * @return true, if a connection can be established
+   */
+  private boolean checkConnectionInternal(final URL url, int timeout, final boolean showWaitingDialog) {
 	mRunningCount.incrementAndGet();
 	
     // Start Check in second Thread
@@ -155,16 +176,15 @@ class CheckNetworkConnection {
     }, "Check network connection").start();
     
     int num = 0;
-    // Wait till second Thread is finished or Settings.propNetworkCheckTimeout is reached
-    int timeout = Settings.propNetworkCheckTimeout.getInt()/100;
     
+    // Wait till second Thread is finished or Settings.propNetworkCheckTimeout is reached
     while (mRunningCount.get() > 0 && (num < timeout)) {
       num++;
       if (num == 7) {
         // Show the Dialog after 700 MS
         SwingUtilities.invokeLater(new Runnable() {
           public void run() {
-            if(!mResult) {
+            if(!mResult && showWaitingDialog) {
               showDialog();
             }
           };
