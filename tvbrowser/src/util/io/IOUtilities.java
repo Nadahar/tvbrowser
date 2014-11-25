@@ -43,8 +43,12 @@ import java.io.Writer;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+import java.rmi.ConnectException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipEntry;
@@ -89,16 +93,32 @@ public class IOUtilities {
    * @see #loadFileFromHttpServer(URL)
    */
   public static void download(URL url, File targetFile) throws IOException {
+    download(url, targetFile, Settings.propDefaultNetworkConnectionTimeout.getInt());
+  }
+  
+  /**
+   * Downloads a file from a HTTP server.
+   *
+   * @param url The URL of the file to download.
+   * @param targetFile The file where to store the downloaded data.
+   * @param timeout Timeout in milliseconds.
+   * @throws IOException When download or saving failed.
+   * @see #loadFileFromHttpServer(URL)
+   * @return <code>true</code> the file was successfully downloaded, <code>false</code> otherwise.
+   */
+  public static boolean download(URL url, File targetFile, int timeout) throws IOException {
     mLog.info("Downloading '" + url + "' to '"
-      + targetFile.getAbsolutePath() + "'");
+      + targetFile.getAbsolutePath() + "' timeout: " + timeout);
 
+    boolean result = false;
+    
     InputStream stream = null;
     try {
-      stream = new BufferedInputStream(getStream(url), 0x4000);
+      stream = new BufferedInputStream(getStream(url, true, timeout), 0x4000);
       if (stream == null) {
         throw new IOException("Can't connect to '" + url + "'!");
       }
-      saveStream(stream, targetFile);
+      result = saveStream(stream, targetFile, timeout + 2000);
     }
     finally {
       try {
@@ -107,9 +127,9 @@ public class IOUtilities {
         }
       } catch (IOException exc) {}
     }
+    
+    return result;
   }
-
-
 
   /**
    * Saves the data from an InputStream into a file.
@@ -118,15 +138,34 @@ public class IOUtilities {
    * @param targetFile The file where to store the data.
    * @throws IOException When saving failed or when the InputStream throws an
    *         IOException.
+   * @return <code>true</code> if stream could be saved, <code>false</code> otherwise.
    */
-  public static void saveStream(InputStream stream, File targetFile)
+  public static boolean saveStream(InputStream stream, File targetFile)
+    throws IOException
+  {
+    return saveStream(stream, targetFile, Settings.propDefaultNetworkConnectionTimeout.getInt());
+  }
+
+  /**
+   * Saves the data from an InputStream into a file.
+   *
+   * @param stream The stream to read the data from.
+   * @param targetFile The file where to store the data.
+   * @param timeout The timeout in milliseconds.
+   * @throws IOException When saving failed or when the InputStream throws an
+   *         IOException.
+   * @return <code>true</code> if stream could be saved, <code>false</code> otherwise.
+   */
+  public static boolean saveStream(InputStream stream, File targetFile, int timeout)
     throws IOException
   {
     BufferedOutputStream out = null;
+    boolean result = false;
+    
     try {
       out = new BufferedOutputStream(new FileOutputStream(targetFile), 0x4000);
 
-      pipeStreams(stream, out);
+      result = pipeStreams(stream, out, timeout);
     }
     finally {
       try {
@@ -135,6 +174,8 @@ public class IOUtilities {
         }
       } catch (IOException exc) {}
     }
+    
+    return result;
   }
 
   /**
@@ -210,7 +251,7 @@ public class IOUtilities {
    * @throws IOException if something went wrong.
    * @return a stream reading data from the specified URL.
    */
-  public static InputStream getStream(URL page, boolean followRedirects, int timeout, String userName, String userPassword)
+  public static InputStream getStream(URL page, boolean followRedirects, final int timeout, String userName, String userPassword)
     throws IOException
   {
     URLConnection conn = page.openConnection();
@@ -224,14 +265,57 @@ public class IOUtilities {
     if (timeout > 0) {
       conn.setReadTimeout(timeout);
     }
-
+    
     if (followRedirects && (conn instanceof HttpURLConnection)) {
-      HttpURLConnection hconn = (HttpURLConnection) conn;
+      final HttpURLConnection hconn = (HttpURLConnection) conn;
       hconn.setInstanceFollowRedirects(false);
 
-      int response = hconn.getResponseCode();
-      boolean redirect = (response >= 300 && response <= 399);
-
+      final AtomicInteger response = new AtomicInteger(HttpURLConnection.HTTP_CLIENT_TIMEOUT);
+      final AtomicReference<IOException> possibleException = new AtomicReference<IOException>(null);
+      
+      Thread resonseThread = new Thread("GET RESPONSE CODE THREAD") {
+        @Override
+        public void run() {
+          try {
+            int responseCode = hconn.getResponseCode();
+            response.set(responseCode);
+          } catch (IOException e) {
+            possibleException.set(e);
+          }
+        }
+      };
+      resonseThread.start();
+      
+      Thread wait = new Thread("GET RESPONSE CODE THREAD WAITING THREAD") {
+        public void run() {
+          int count = 0;
+          
+          while((response.get() == HttpURLConnection.HTTP_CLIENT_TIMEOUT) && count++ < (timeout / 100) && possibleException.get() == null) {
+            try {
+              sleep(20);
+            } catch (InterruptedException e) {}
+          }
+        };
+      };
+      wait.start();
+      
+      try {
+        wait.join();
+      } catch (InterruptedException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+      
+      if(possibleException.get() != null) {
+        throw possibleException.get();
+      }
+      
+      if(response.get() == HttpURLConnection.HTTP_CLIENT_TIMEOUT) {
+        throw new ConnectException("Connection timeout '" + timeout + "' reached.");
+      }
+      
+      boolean redirect = (response.get() >= 300 && response.get() <= 399);
+      
       // In the case of a redirect, we want to actually change the URL
       // that was input to the new, redirected URL
       if (redirect) {
@@ -329,8 +413,6 @@ public class IOUtilities {
     }
   }
 
-
-
   /**
    * Pipes all data from the specified InputStream to the specified OutputStream,
    * until the InputStream has no more data.
@@ -340,15 +422,70 @@ public class IOUtilities {
    * @param from The stream to read the data from.
    * @param to The stream to write the data to.
    * @throws IOException Thrown if something goes wrong.
+   * @return <code>true</code> if stream were successfully piped, <code>false</code> otherwise.
    */
-  public static void pipeStreams(InputStream from, OutputStream to)
+  public static boolean pipeStreams(final InputStream from, final OutputStream to)
     throws IOException
   {
-    int len;
-    byte[] buffer = new byte[10240];
-    while ((len = (from.read(buffer))) != -1) {
-      to.write(buffer, 0, len);
+    return pipeStreams(from, to, Settings.propDefaultNetworkConnectionTimeout.getInt());
+  }
+
+  /**
+   * Pipes all data from the specified InputStream to the specified OutputStream,
+   * until the InputStream has no more data.
+   * <p>
+   * Note: None of the streams is closed! You have to do that for yourself!
+   *
+   * @param from The stream to read the data from.
+   * @param to The stream to write the data to.
+   * @param timeout Timeout in milliseconds.
+   * @throws IOException Thrown if something goes wrong.
+   * @return <code>true</code> if stream were successfully piped, <code>false</code> otherwise.
+   */
+  public static boolean pipeStreams(final InputStream from, final OutputStream to, final int timeout)
+    throws IOException
+  {
+    final AtomicBoolean wasSaved = new AtomicBoolean(false);
+    final AtomicReference<IOException> possibleException = new AtomicReference<IOException>(null);
+    
+    new Thread("PIPE STREAM THREAD") {
+      public void run() {
+        int len;
+        byte[] buffer = new byte[10240];
+        try {
+          while ((len = (from.read(buffer))) != -1) {
+            to.write(buffer, 0, len);
+          }
+          
+          wasSaved.set(true);
+        }catch(IOException e) {
+          possibleException.set(e);
+        }
+      };
+    }.start();
+    
+    Thread wait = new Thread("PIPE STREAM WAITING THREAD") {
+      public void run() {
+        int count = 0;
+        
+        while(!wasSaved.get() && count++ < (timeout / 100) && possibleException.get() == null) {
+          try {
+            sleep(20);
+          } catch (InterruptedException e) {}
+        }
+      };
+    };
+    wait.start();
+        
+    try {
+      wait.join();
+    } catch (InterruptedException e) {}
+    
+    if(possibleException.get() != null) {
+      throw possibleException.get();
     }
+    
+    return wasSaved.get();
   }
 
 
