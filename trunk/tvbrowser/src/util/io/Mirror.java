@@ -35,6 +35,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -417,6 +418,54 @@ public class Mirror {
 
     throw new TvBrowserException(caller, "error.2", "No mirror found\ntried following mirrors: ", name, buf.toString());
   }
+  
+  /**
+   * Chooses a mirror that can be connected to.
+   *
+   * @param mirrorArr The mirror array to check.
+   * @param monitor The progress monitor to use.
+   * @param name The name of the file to check.
+   * @param id The id of the file to check.
+   * @param caller The caller class.
+   * @param additionalErrorMsg An additional error message value.
+   * @param timeout The timeout of the check in milliseconds.
+   * @return The choosen mirror or <code>null</code>, if no up to date mirror was found or something went wrong.
+   * @since 3.4.1 
+   * @throws TvBrowserException
+   */
+  public static Mirror chooseWorkingMirror(Mirror[] mirrorArr, ProgressMonitor monitor, String name, String id, Class caller, String additionalErrorMsg, int timeout) throws TvBrowserException {
+    Mirror mirror = null;
+    
+    for(int i = 0; i < mirrorArr.length; i++) {
+      Mirror oldMirror = mirror;
+      
+      if(oldMirror != null) {
+        mLog.info("Mirror " + oldMirror.getUrl() + " is down. Choosing " + mirror.getUrl() + " instead.");
+        if (monitor != null) {
+          monitor.setMessage(mLocalizer.msg("info.4", "Mirror {0} is out of date or down. Choosing {1}", oldMirror.getUrl(), mirror
+                  .getUrl()));
+        }
+      }
+      
+      mirror = chooseMirror(mirrorArr, mirror, name, caller);
+      
+      if (monitor != null) {
+        monitor.setMessage(mLocalizer.msg("info.3", "Try to connect to mirror {0}", mirror.getUrl()));
+      }
+      
+      try {
+        if(NetworkUtilities.checkConnection(new URL(mirror.getUrl()), timeout, false)) {
+          break;
+        }
+        else {
+          String blockedServer = getServerBase(mirror.getUrl());
+          BLOCKEDSERVERS.add(blockedServer);
+        }
+      } catch (MalformedURLException e) {}
+    }
+    
+    return mirror;
+  }
 
   /**
    * Chooses a up to date mirror.
@@ -452,8 +501,8 @@ public class Mirror {
         } else {
           // This one is not up to date, remember old one if newest so far
           if (currentLastUpdate < chosenLastUpdate) {
-        	chosenLastUpdate = currentLastUpdate;
-        	chosenMirror = mirror;
+          	chosenLastUpdate = currentLastUpdate;
+          	chosenMirror = mirror;
           }          
           // -> choose another one
           Mirror oldMirror = mirror;

@@ -64,6 +64,18 @@ public class NetworkUtilities {
     return new CheckNetworkConnection().checkConnection(url);
   }
 
+  /**
+   * Checks if a Internet connection to a specific Server can be established
+   *
+   * @param url check this Server
+   * @param timeout the timeout for the check in milliseconds.
+   * @param showWaitingDialog <code>true</code> if a waiting dialog should be shown, <code>false</code> otherwise.
+   * @return true, if a connection can be established
+   * @since 3.4.1
+   */
+  public static boolean checkConnection(URL url, int timeout, boolean showWaitingDialog) {
+    return new CheckNetworkConnection().checkConnection(url, timeout, showWaitingDialog);
+  }
 
   /**
    * get the time difference from a NTP server

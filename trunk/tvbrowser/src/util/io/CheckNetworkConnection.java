@@ -144,7 +144,7 @@ class CheckNetworkConnection {
    * @return true, if a connection can be established
    */
   private boolean checkConnectionInternal(final URL url, int timeout, final boolean showWaitingDialog) {
-	mRunningCount.incrementAndGet();
+	  mRunningCount.incrementAndGet();
 	
     // Start Check in second Thread
     new Thread(new Runnable() {
