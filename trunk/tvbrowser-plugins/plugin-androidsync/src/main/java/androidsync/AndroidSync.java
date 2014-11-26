@@ -117,7 +117,7 @@ public class AndroidSync extends Plugin {
   private static final String PLUGIN_TYPE = "PLUGIN_TYPE";
   private static final String FILTER_TYPE = "FILTER_TYPE";
   
-  private static final Version mVersion = new Version(0, 19, 0, false);
+  private static final Version mVersion = new Version(0, 20, 0, true);
   private final String CrLf = "\r\n";
   private Properties mProperties;
   
@@ -269,7 +269,7 @@ public class AndroidSync extends Plugin {
     });
     backSync.putValue(Plugin.BIG_ICON, createImageIcon("actions","export-programs",22));
     
-    ContextMenuAction channels = new ContextMenuAction(mLocalizer.msg("syncChannels", "Export my subscribed EPGfree channels to TV-Browser server"),createImageIcon("actions","export-channels",16));
+    ContextMenuAction channels = new ContextMenuAction(mLocalizer.msg("syncChannels", "Export my subscribed EPGfree/EPGdonate channels to TV-Browser server"),createImageIcon("actions","export-channels",16));
     channels.setActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -737,36 +737,31 @@ public class AndroidSync extends Plugin {
       
       Channel[] subscribed = getPluginManager().getSubscribedChannels();
       
-      for(Channel ch : subscribed) {
+      for(Channel ch : subscribed) {System.out.println(ch.getDataServicePackageName());
         if(ch.getDataServicePackageName().equals("tvbrowserdataservice")) {
           channels.append("1:");
           channels.append(ch.getGroup().getId());
           channels.append(":");
           channels.append(ch.getId());
           
-          try {
-            Method getSortNumber = ch.getClass().getMethod("getSortNumber", new Class<?>[0]);
-            Object value = getSortNumber.invoke(ch, new Object[0]);
-            
-            if(value != null && value instanceof String && value.toString().trim().length() > 0) {
-              channels.append(":");
-              channels.append(value);
-            }
-          } catch (SecurityException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-          } catch (NoSuchMethodException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-          } catch (IllegalArgumentException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-          } catch (IllegalAccessException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-          } catch (InvocationTargetException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+          String sortNumber = getSortNumber(ch);
+          
+          if(sortNumber != null) {
+            channels.append(":");
+            channels.append(sortNumber);
+          }
+          
+          channels.append("\n");
+        }
+        else if(ch.getDataServicePackageName().equals("epgdonatedata")) {
+          channels.append("2:");
+          channels.append(ch.getId());
+          
+          String sortNumber = getSortNumber(ch);
+          
+          if(sortNumber != null) {
+            channels.append(":");
+            channels.append(sortNumber);
           }
           
           channels.append("\n");
@@ -834,6 +829,36 @@ public class AndroidSync extends Plugin {
     }
     
     return new byte[0];
+  }
+  
+  private String getSortNumber(Channel ch) {
+    String result = null;
+    
+    try {
+      Method getSortNumber = ch.getClass().getMethod("getSortNumber", new Class<?>[0]);
+      Object value = getSortNumber.invoke(ch, new Object[0]);
+      
+      if(value != null && value instanceof String && value.toString().trim().length() > 0) {
+        result = (String)value;
+      }
+    } catch (SecurityException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    } catch (NoSuchMethodException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    } catch (IllegalArgumentException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    } catch (IllegalAccessException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    } catch (InvocationTargetException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    
+    return result;
   }
   
   private byte[] getCompressedData(byte[] uncompressed) {
