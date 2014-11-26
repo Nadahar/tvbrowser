@@ -117,7 +117,7 @@ public class AndroidSync extends Plugin {
   private static final String PLUGIN_TYPE = "PLUGIN_TYPE";
   private static final String FILTER_TYPE = "FILTER_TYPE";
   
-  private static final Version mVersion = new Version(0, 20, 0, true);
+  private static final Version mVersion = new Version(0, 21, 0, true);
   private final String CrLf = "\r\n";
   private Properties mProperties;
   
@@ -695,9 +695,9 @@ public class AndroidSync extends Plugin {
         
         for(Marker mark : marker) {
           if(compare.compareTo(prog.getDate()) >= 0) {
-            
+            System.err.println(prog.getChannel().getDataServicePackageName());
             if(((pluginType && (internal.contains(mark.getId()) || plugins.contains(mark.getId()))) || (!pluginType && filter.accept(prog)))
-                && prog.getChannel().getDataServicePackageName().equals("tvbrowserdataservice")) {
+                && (prog.getChannel().getDataServicePackageName().equals("tvbrowserdataservice") || prog.getChannel().getDataServicePackageName().equals("epgdonatedata"))) {
               toExport.add(prog);
             }
           }
@@ -716,16 +716,19 @@ public class AndroidSync extends Plugin {
         dat.append(time);
         dat.append(";");
         
+        String id = null;
+        
         if(prog.getChannel().getDataServicePackageName().equals("tvbrowserdataservice")) {
-          dat.append("1");
+          id = "1:" + prog.getChannel().getGroup().getId() + ":";
+        }
+        else if(prog.getChannel().getDataServicePackageName().equals("epgdonatedata")) {
+          id = "2:";
         }
         else {
-          dat.append(prog.getChannel().getDataServicePackageName());
+          id = prog.getChannel().getDataServicePackageName() + ":" + prog.getChannel().getGroup().getId() + ":";
         }
         
-        dat.append(":");
-        dat.append(prog.getChannel().getGroup().getId());
-        dat.append(":");
+        dat.append(id);
         dat.append(prog.getChannel().getId());
         dat.append("\n");
       }
@@ -814,13 +817,20 @@ public class AndroidSync extends Plugin {
         if(prog.getChannel().getDataServicePackageName().equals("tvbrowserdataservice")) {
           dat.append("1");
         }
+        else if(prog.getChannel().getDataServicePackageName().equals("epgdonatedata")) {
+          dat.append("2");
+        }
         else {
           dat.append(prog.getChannel().getDataServicePackageName());
         }
         
         dat.append(":");
-        dat.append(prog.getChannel().getGroup().getId());
-        dat.append(":");
+        
+        if(!prog.getChannel().getDataServicePackageName().equals("epgdonatedata")) {
+          dat.append(prog.getChannel().getGroup().getId());
+          dat.append(":");
+        }
+        
         dat.append(prog.getChannel().getId());
         dat.append("\n");
       }
@@ -952,12 +962,14 @@ public class AndroidSync extends Plugin {
             ArrayList<Program> newReminders = new ArrayList<Program>();
             
             while((line = read.readLine()) != null) {
-              System.out.println(line);
               if(line.trim().length() > 0) {
                 String[] parts = line.split(";");
-                
+                                
                 if(parts[1].startsWith("1:")) {
                   parts[1] = "tvbrowserdataservice.TvBrowserDataService" + parts[1].substring(1);
+                }
+                else if(parts[1].startsWith("2:")) {
+                  parts[1] = "epgdonatedata.EPGdonateData_group.epgdonate" + parts[1].substring(1);
                 }
                 
                 String id = parts[1].replace(":", "_");
@@ -985,6 +997,11 @@ public class AndroidSync extends Plugin {
                 
                 if(timeZone != null) {
                   Calendar cal = Calendar.getInstance(timeZone);
+                  
+                  if(timeZone.getID().equals("UTC")) {
+                    cal = Calendar.getInstance();
+                  }
+                  
                   cal.setTimeInMillis(Long.parseLong(parts[0]) * 60000);
                   Date date = new Date(cal);
                   
