@@ -258,7 +258,7 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
     } catch (Exception e) {
       // ignore, can be that not news_info.gz exists because server uses old data tools
     }
-    System.out.println(newsInfo.getAbsolutePath() + " " + newsInfo.isFile());
+    
     if(newsInfo.isFile()) {
       InputStream in = null;
       try {
@@ -278,8 +278,6 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
         }
       }
     }
-    
-    System.out.println(time);
     
     return time;
   }
