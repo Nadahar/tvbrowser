@@ -447,6 +447,7 @@ public class IOUtilities {
   {
     final AtomicBoolean wasSaved = new AtomicBoolean(false);
     final AtomicReference<IOException> possibleException = new AtomicReference<IOException>(null);
+    final AtomicInteger count = new AtomicInteger(0);
     
     new Thread("PIPE STREAM THREAD") {
       public void run() {
@@ -455,6 +456,7 @@ public class IOUtilities {
         try {
           while ((len = (from.read(buffer))) != -1) {
             to.write(buffer, 0, len);
+            count.set(0);
           }
           
           wasSaved.set(true);
@@ -466,9 +468,7 @@ public class IOUtilities {
     
     Thread wait = new Thread("PIPE STREAM WAITING THREAD") {
       public void run() {
-        int count = 0;
-        
-        while(!wasSaved.get() && count++ < (timeout / 100) && possibleException.get() == null) {
+        while(!wasSaved.get() && count.getAndIncrement() < (timeout / 100) && possibleException.get() == null) {
           try {
             sleep(20);
           } catch (InterruptedException e) {}
