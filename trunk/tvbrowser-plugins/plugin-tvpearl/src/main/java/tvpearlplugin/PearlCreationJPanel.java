@@ -308,7 +308,7 @@ public class PearlCreationJPanel extends JPanel {
         if(comboBox != null && formating != null && formating.toString() != null && formating.getContentValue() != null && formating.getEncodingValue() != null && formating.getName() != null) {
           try {
             comboBox.addItem(formating);
-          }catch(Exception e) {e.printStackTrace();}
+          }catch(Exception e) {}
         }
       }
       

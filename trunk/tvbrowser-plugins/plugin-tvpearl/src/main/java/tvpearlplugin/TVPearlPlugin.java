@@ -74,7 +74,7 @@ public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
 {
 
 	private static final boolean PLUGIN_IS_STABLE = true;
-  private static final Version PLUGIN_VERSION = new Version(0, 26, 1, PLUGIN_IS_STABLE);
+  private static final Version PLUGIN_VERSION = new Version(0, 26, 2, PLUGIN_IS_STABLE);
 
   private static final String TARGET_PEARL_COPY = "pearlCopy";
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer
@@ -160,22 +160,15 @@ public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
 		mTVPearls = new TVPearl();
 		mComposerFilter = new Vector<String>();
 		
-		SwingUtilities.invokeLater(new Runnable() {
+    mCenterPanelDisplayWrapper = UiUtilities.createPersonaBackgroundPanel();
+    mCenterPanelCreationWrappper = UiUtilities.createPersonaBackgroundPanel();
+    
+    mDisplayWrapper = new PluginCenterPanelWrapper() {
       @Override
-      public void run() {
-        mCenterPanelDisplayWrapper = UiUtilities.createPersonaBackgroundPanel();
-        mCenterPanelCreationWrappper = UiUtilities.createPersonaBackgroundPanel();
-        
-        mDisplayWrapper = new PluginCenterPanelWrapper() {
-          @Override
-          public PluginCenterPanel[] getCenterPanels() {
-            return new PluginCenterPanel[] {new PearlCenterPanel(),new PearlCreationPanel()};
-          }
-        };
-        
-        addCenterPanel();
+      public PluginCenterPanel[] getCenterPanels() {
+        return new PluginCenterPanel[] {new PearlCenterPanel(),new PearlCreationPanel()};
       }
-    });
+    };
 	}
 	
   private void addCenterPanel() {
@@ -584,6 +577,13 @@ public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
 	public void handleTvBrowserStartFinished()
 	{
 		mHasRightToDownload = true;
+		
+		SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        addCenterPanel();
+      }
+    });
 
 		if (mSettings.getUpdatePearlsAfterStart())
 		{
