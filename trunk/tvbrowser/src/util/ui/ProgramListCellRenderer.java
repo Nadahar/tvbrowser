@@ -50,6 +50,7 @@ import javax.swing.event.ListDataListener;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
+import tvbrowser.core.Settings;
 import util.settings.ProgramPanelSettings;
 import devplugin.Date;
 import devplugin.Program;
@@ -180,7 +181,7 @@ public class ProgramListCellRenderer extends DefaultListCellRenderer {
       Program program = (Program) value;
       
       Insets borderInsets = label.getBorder().getBorderInsets(label);
-      mProgramPanel.setWidth(list.getWidth() - borderInsets.left - borderInsets.right);
+      mProgramPanel.setWidth(Math.max(120,list.getWidth() - borderInsets.left - borderInsets.right));
       mProgramPanel.setProgram(program);
       mProgramPanel.setPaintExpiredProgramsPale(!isSelected);
       mProgramPanel.setTextColor(label.getForeground());

@@ -532,7 +532,12 @@ private static Font getDynamicFontSize(Font font, int offset) {
         pictureWidth = Math.min(156, textIconWidth);
       }
       
-      mPictureAreaIcon = new PictureAreaIcon(program,mNormalFont, pictureWidth, mSettings.isShowingPictureDescription(), true, false, mSettings.isShowingPictureBorder());
+      if(pictureWidth > 0 && pictureWidth < getWidth() - WIDTH_RIGHT - 4 - mLogoWidth) {
+        mPictureAreaIcon = new PictureAreaIcon(program,mNormalFont, pictureWidth, mSettings.isShowingPictureDescription(), true, false, mSettings.isShowingPictureBorder());
+      }
+      else {
+        mPictureAreaIcon = new PictureAreaIcon();
+      }
     } else {
       mPictureAreaIcon = new PictureAreaIcon();
     }
@@ -1361,11 +1366,13 @@ private static Font getDynamicFontSize(Font font, int offset) {
   }
 
   public void setWidth(int newWidth) {
-    int oldWidth = getWidth();
-    
-    int textIconWidth = getTextIconWidth(newWidth);
-    if (oldWidth != newWidth && newWidth > 0 || (textIconWidth != mDescriptionIcon.getIconWidth() && textIconWidth > 0)) {
-      recreateTextIcons(newWidth);
+    if(newWidth > Settings.MIN_COLUMN_WIDTH) {
+      int oldWidth = getWidth();
+      
+      int textIconWidth = getTextIconWidth(newWidth);
+      if (oldWidth != newWidth && newWidth > 0 || (textIconWidth != mDescriptionIcon.getIconWidth() && textIconWidth > 0)) {
+        recreateTextIcons(newWidth);
+      }
     }
   }
 
