@@ -532,12 +532,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
         pictureWidth = Math.min(156, textIconWidth);
       }
       
-      if(pictureWidth > 0 && pictureWidth < getWidth() - WIDTH_RIGHT - 4 - mLogoWidth) {
-        mPictureAreaIcon = new PictureAreaIcon(program,mNormalFont, pictureWidth, mSettings.isShowingPictureDescription(), true, false, mSettings.isShowingPictureBorder());
-      }
-      else {
-        mPictureAreaIcon = new PictureAreaIcon();
-      }
+      mPictureAreaIcon = new PictureAreaIcon(program,mNormalFont, pictureWidth, mSettings.isShowingPictureDescription(), true, false, mSettings.isShowingPictureBorder());
     } else {
       mPictureAreaIcon = new PictureAreaIcon();
     }

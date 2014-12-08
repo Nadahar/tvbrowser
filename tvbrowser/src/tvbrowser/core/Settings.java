@@ -1869,7 +1869,7 @@ public class Settings {
   /**
    * minimum width of the program table columns
    */
-  public static final int MIN_COLUMN_WIDTH = 90;
+  public static final int MIN_COLUMN_WIDTH = 120;
 
   /** The setting that contains the global picture settings value */
   public static final IntProperty propPluginsPictureSetting = new IntProperty(

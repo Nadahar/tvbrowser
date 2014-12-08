@@ -181,7 +181,7 @@ public class ProgramListCellRenderer extends DefaultListCellRenderer {
       Program program = (Program) value;
       
       Insets borderInsets = label.getBorder().getBorderInsets(label);
-      mProgramPanel.setWidth(Math.max(120,list.getWidth() - borderInsets.left - borderInsets.right));
+      mProgramPanel.setWidth(list.getWidth() - borderInsets.left - borderInsets.right);
       mProgramPanel.setProgram(program);
       mProgramPanel.setPaintExpiredProgramsPale(!isSelected);
       mProgramPanel.setTextColor(label.getForeground());
