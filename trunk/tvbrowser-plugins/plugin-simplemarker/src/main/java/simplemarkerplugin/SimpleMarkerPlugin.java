@@ -81,7 +81,7 @@ import devplugin.Version;
  * @author René Mach
  */
 public class SimpleMarkerPlugin extends Plugin {
-  private static final Version mVersion = new Version(3,23,6,true);
+  private static final Version mVersion = new Version(3,23,7,true);
 
   /** The localizer for this class. */
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(SimpleMarkerPlugin.class);
@@ -135,9 +135,9 @@ public class SimpleMarkerPlugin extends Plugin {
     mMarkListVector = new MarkListsVector();
     updateTree(true);
     
-    SwingUtilities.invokeLater(new Runnable() {
+    /*SwingUtilities.invokeLater(new Runnable() {
       @Override
-      public void run() {
+      public void run() {*/
         mCenterPanelWrapper = UiUtilities.createPersonaBackgroundPanel();
         
         mWrapper = new PluginCenterPanelWrapper() {
@@ -147,9 +147,9 @@ public class SimpleMarkerPlugin extends Plugin {
           }
         };
         
-        addCenterPanel();
-      }
-    });
+        
+     /* }
+    });*/
   }
   
   private void addCenterPanel() {
@@ -373,6 +373,8 @@ public class SimpleMarkerPlugin extends Plugin {
   }
 
   public void handleTvBrowserStartFinished() {
+    addCenterPanel();
+    
     mStartFinished  = true;
     if(mMarkListVector.isEmpty()) {
       mMarkListVector.addElement(new MarkList(mLocalizer.msg("default","default")));
