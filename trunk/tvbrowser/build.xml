@@ -528,7 +528,8 @@
 		    shortversion="${tvbrowser.version}"
 		    applicationCategory="public.app-category.entertainment"
 		    workingDirectory="$APP_ROOT/Contents/Resources"
-		    mainclassname="tvbrowser.TVBrowser">
+		    mainclassname="tvbrowser.TVBrowser"
+		    highResolutionCapable="false">
 		<classpath dir="${tvbrowser-default.runtime.dir}">
 		    <include name="*.jar"/>
 		</classpath>
