@@ -232,7 +232,7 @@ public class ColorMe extends Plugin {
   
   private void readSet(ObjectInputStream in, HashSet<Program> set) throws IOException {
     int size = in.readInt();
-    
+    //TODO defer loading of programs to after
     for(int i = 0; i < size; i++) {
       String progID = in.readUTF();
       
