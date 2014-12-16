@@ -487,6 +487,8 @@ public class TVBrowser {
     if(!mSafeMode) {
       PluginLoader.getInstance().loadAllPlugins();
     }
+    
+    SearchPlugin.getInstance();
 
     mLog.info("Loading TV listings service...");
     splashRef.get().setMessage(mLocalizer.msg("startScreen.dataService", "Loading TV listings service..."));

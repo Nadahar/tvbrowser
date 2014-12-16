@@ -78,12 +78,14 @@ public class SearchPlugin {
    * Select time in repetition-dialog
    */
   private int mRepetitionTimeSelect = 3;
+  
+  private static boolean mAlwaysSearchExpert;
 
   /**
    * Creates a new instance of SearchPlugin.
    */
   private SearchPlugin() {
-    mInstance = this;
+    mAlwaysSearchExpert = false;
     mConfigurationHandler = new ConfigurationHandler(DATAFILE_PREFIX);
     load();
   }
@@ -118,7 +120,7 @@ public class SearchPlugin {
   private void readData(ObjectInputStream in) throws IOException,
       ClassNotFoundException {
     int version = in.readInt();
-
+    
     int historySize = in.readInt();
     mSearchHistory = new SearchFormSettings[historySize];
     for (int i = 0; i < historySize; i++) {
@@ -176,11 +178,14 @@ public class SearchPlugin {
     if (version >= 4) {
       mRepetitionTimeSelect = in.readInt();
     }
-
+    
+    if(version >= 6) {
+      mAlwaysSearchExpert = in.readBoolean();
+    }
   }
 
   private void writeData(ObjectOutputStream out) throws IOException {
-    out.writeInt(5); // version
+    out.writeInt(6); // version
 
     if (mSearchHistory == null) {
       out.writeInt(0); // length
@@ -192,6 +197,7 @@ public class SearchPlugin {
     }
 
     out.writeInt(mRepetitionTimeSelect);
+    out.writeBoolean(mAlwaysSearchExpert);
   }
 
   protected static ActionMenu getButtonAction() {
@@ -231,7 +237,7 @@ public class SearchPlugin {
 
   public static synchronized SearchPlugin getInstance() {
     if (mInstance == null) {
-      new SearchPlugin();
+      mInstance = new SearchPlugin();
     }
 
     return mInstance;
@@ -295,13 +301,29 @@ public class SearchPlugin {
     openSearchDialog(text, null);
   }
 
-  private static void searchRepetitions(final Program program) {try {
-    Window parent = UiUtilities
-        .getLastModalChildOf(MainFrame.getInstance());
-    Channel channel = program.getChannel();
-    RepetitionDialog dlg = new RepetitionDialog(parent, channel);
+  private static void searchRepetitions(final Program program) {try {    
+    if(mAlwaysSearchExpert) {
+      SearchPlugin.getInstance().openSearchDialog(program.getTitle());
+    }
+    else {
+      Window parent = UiUtilities
+          .getLastModalChildOf(MainFrame.getInstance());
 
-    dlg.setPatternText(program.getTitle());
-    UiUtilities.centerAndShow(dlg);}catch(Throwable t) {t.printStackTrace();}
+      Channel channel = program.getChannel();
+      RepetitionDialog dlg = new RepetitionDialog(parent, channel);
+  
+      dlg.setPatternText(program.getTitle());
+      UiUtilities.centerAndShow(dlg);
+    }
+    }catch(Throwable t) {t.printStackTrace();}
+  }
+  
+  public static boolean getAlwaysSearchExpert() {
+    return SearchPlugin.mAlwaysSearchExpert;
+  }
+  
+  public static void setAlwaysSearchExpert(boolean value) {
+    SearchPlugin.mAlwaysSearchExpert = value;
+    SearchPlugin.getInstance().store();
   }
 }

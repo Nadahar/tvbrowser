@@ -30,6 +30,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.Icon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 
 import util.ui.SearchFormSettings;
@@ -37,7 +38,7 @@ import util.ui.TVBrowserIcons;
 
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.factories.Borders;
-import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.factories.CC;
 import com.jgoodies.forms.layout.FormLayout;
 
 import devplugin.SettingsTab;
@@ -53,16 +54,17 @@ class SearchSettingsTab implements SettingsTab {
   private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(SearchSettingsTab.class);
 
-
+  private JCheckBox mAlwaysExpertMode;
   /**
    * Create the Settings-Panel
    * @return Settings-Panel
    */
   public JPanel createSettingsPanel() {
-    PanelBuilder pb = new PanelBuilder(new FormLayout("5dlu,pref,0dlu:grow","pref,5dlu,pref"));
+    PanelBuilder pb = new PanelBuilder(new FormLayout("5dlu,default,0dlu:grow","default,5dlu,default,2dlu,default"));
     pb.border(Borders.DIALOG);
-    CellConstraints cc = new CellConstraints();
-
+    
+    mAlwaysExpertMode = new JCheckBox(mLocalizer.msg("alwaysExpert", "Use expert mode for repetition search also"), SearchPlugin.getAlwaysSearchExpert());
+    
     JButton clearHistory = new JButton(mLocalizer.msg("clearHistory", "Clear Search History"));
 
     clearHistory.addActionListener(new ActionListener() {
@@ -71,8 +73,9 @@ class SearchSettingsTab implements SettingsTab {
       }
     });
 
-    pb.addSeparator(mLocalizer.msg("title", "Search"), cc.xyw(1,1,3));
-    pb.add(clearHistory, cc.xy(2,3));
+    pb.addSeparator(mLocalizer.msg("title", "Search"), CC.xyw(1,1,3));
+    pb.add(mAlwaysExpertMode, CC.xyw(2,3,2));
+    pb.add(clearHistory, CC.xy(2,5));
 
     return pb.getPanel();
   }
@@ -81,6 +84,7 @@ class SearchSettingsTab implements SettingsTab {
    * Save Settings
    */
   public void saveSettings() {
+    SearchPlugin.setAlwaysSearchExpert(mAlwaysExpertMode.isSelected());
   }
 
   /**
