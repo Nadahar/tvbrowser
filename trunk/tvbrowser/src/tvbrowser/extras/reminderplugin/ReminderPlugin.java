@@ -803,7 +803,7 @@ public class ReminderPlugin {
     return mRootNode;
   }
 
-  void updateRootNode(boolean save, boolean scroll) {
+  synchronized void updateRootNode(boolean save, boolean scroll) {
     mRootNode.removeAllActions();
     mRootNode.getMutableTreeNode().setIcon(IconLoader.getInstance().getIconFromTheme("apps", "appointment", 16));
 
