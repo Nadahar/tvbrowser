@@ -518,65 +518,67 @@ public class PluginTreeNode implements Comparable<PluginTreeNode> {
    * @param listNew list of new programs
    */
   public synchronized void addPrograms(final List<Program> listNew) {
-    Iterator<Program> newIt = listNew.iterator();
-    // create sorted lists of current and new programs, but only if this node contains any children at all!
-    if (mChildNodes != null && mChildNodes.size() > 0) {
-      Program[] currentProgs = getPrograms();
-      ArrayList<Program> listCurrent = new ArrayList<Program>(currentProgs.length);
-      for (Program currentProg : currentProgs) {
-        listCurrent.add(currentProg);
-      }
-      Comparator<Program> comp = ProgramUtilities.getProgramComparator();
-      Collections.sort(listCurrent, comp);
-      Collections.sort(listNew, comp);
-      Iterator<Program> currentIt = listCurrent.iterator();
-
-      // iterate both lists in parallel and add only new programs
-      if (currentIt.hasNext() && newIt.hasNext()) {
-        Program newProg = newIt.next();
-        Program currentProg = currentIt.next();
-        while (newProg != null && currentProg != null) {
-          int comparison = comp.compare(newProg, currentProg);
-          // new program is sorted first -> add it and investigate next new
-          if (comparison < 0) {
-            markAndAdd(newProg);
-            if (newIt.hasNext()) {
-              newProg = newIt.next();
+    synchronized (listNew) {
+      Iterator<Program> newIt = listNew.iterator();
+      // create sorted lists of current and new programs, but only if this node contains any children at all!
+      if (mChildNodes != null && mChildNodes.size() > 0) {
+        Program[] currentProgs = getPrograms();
+        ArrayList<Program> listCurrent = new ArrayList<Program>(currentProgs.length);
+        for (Program currentProg : currentProgs) {
+          listCurrent.add(currentProg);
+        }
+        Comparator<Program> comp = ProgramUtilities.getProgramComparator();
+        Collections.sort(listCurrent, comp);
+        Collections.sort(listNew, comp);
+        Iterator<Program> currentIt = listCurrent.iterator();
+        
+        // iterate both lists in parallel and add only new programs
+        if (currentIt.hasNext() && newIt.hasNext()) {
+          Program newProg = newIt.next();
+          Program currentProg = currentIt.next();
+          while (newProg != null && currentProg != null) {
+            int comparison = comp.compare(newProg, currentProg);
+            // new program is sorted first -> add it and investigate next new
+            if (comparison < 0) {
+              markAndAdd(newProg);
+              if (newIt.hasNext()) {
+                newProg = newIt.next();
+              }
+              else {
+                newProg = null;
+              }
             }
-            else {
-              newProg = null;
+            // old program is sorted first -> go to next old program for comparison
+            else if (comparison > 0) {
+              if (currentIt.hasNext()) {
+                currentProg = currentIt.next();
+              }
+              else {
+                currentProg = null;
+              }
             }
-          }
-          // old program is sorted first -> go to next old program for comparison
-          else if (comparison > 0) {
-            if (currentIt.hasNext()) {
-              currentProg = currentIt.next();
-            }
-            else {
-              currentProg = null;
-            }
-          }
-          // program already available -> skip
-          else if (comparison == 0) {
-            if (currentIt.hasNext()) {
-              currentProg = currentIt.next();
-            }
-            else {
-              currentProg = null;
-            }
-            if (newIt.hasNext()) {
-              newProg = newIt.next();
-            }
-            else {
-              newProg = null;
+            // program already available -> skip
+            else if (comparison == 0) {
+              if (currentIt.hasNext()) {
+                currentProg = currentIt.next();
+              }
+              else {
+                currentProg = null;
+              }
+              if (newIt.hasNext()) {
+                newProg = newIt.next();
+              }
+              else {
+                newProg = null;
+              }
             }
           }
         }
       }
-    }
-    // add all remaining new programs
-    while (newIt.hasNext()) {
-      markAndAdd(newIt.next());
+      // add all remaining new programs
+      while (newIt.hasNext()) {
+        markAndAdd(newIt.next());
+      }
     }
   }
 
