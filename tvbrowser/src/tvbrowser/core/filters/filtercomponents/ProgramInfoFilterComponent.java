@@ -33,6 +33,7 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
 import javax.swing.DefaultListCellRenderer;
+import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -135,8 +136,6 @@ public class ProgramInfoFilterComponent extends AbstractFilterComponent {
     mList = new SelectableItemList(selectedItems.toArray(), allItems);
     mList.addCenterRendererComponent(String.class,
         new SelectableItemRendererCenterComponentIf() {
-          private DefaultListCellRenderer mRenderer = new DefaultListCellRenderer();
-
           @Override
           public void calculateSize(JList list, int index, JPanel contentPane) {
           }
@@ -145,22 +144,19 @@ public class ProgramInfoFilterComponent extends AbstractFilterComponent {
           public JPanel createCenterPanel(JList list, Object value, int index,
               boolean isSelected, boolean isEnabled,
               JScrollPane parentScrollPane, int leftColumnWidth) {
-            DefaultListCellRenderer label = (DefaultListCellRenderer) mRenderer
-                .getListCellRendererComponent(list, value, index, isSelected,
-                    false);
+            JLabel label = new JLabel(value.toString());
             label.setIcon(ProgramInfoHelper.getInfoIcons()[index]);
             label.setHorizontalAlignment(SwingConstants.LEADING);
             label.setVerticalAlignment(SwingConstants.CENTER);
-            label.setOpaque(false);
 
             JPanel panel = new JPanel(new BorderLayout());
             if (isSelected && isEnabled) {
               panel.setOpaque(true);
-              panel.setForeground(list.getSelectionForeground());
+              label.setForeground(list.getSelectionForeground());
               panel.setBackground(list.getSelectionBackground());
             } else {
               panel.setOpaque(false);
-              panel.setForeground(list.getForeground());
+              label.setForeground(list.getForeground());
               panel.setBackground(list.getBackground());
             }
             panel.add(label, BorderLayout.WEST);
