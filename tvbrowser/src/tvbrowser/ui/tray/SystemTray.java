@@ -54,6 +54,7 @@ import javax.swing.event.PopupMenuListener;
 import tvbrowser.TVBrowser;
 import tvbrowser.core.Settings;
 import tvbrowser.core.TvDataBase;
+import tvbrowser.core.filters.FilterManagerImpl;
 import tvbrowser.core.plugin.ButtonActionIf;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
@@ -73,7 +74,9 @@ import devplugin.ActionMenu;
 import devplugin.Channel;
 import devplugin.ChannelFilter;
 import devplugin.Date;
+import devplugin.Marker;
 import devplugin.Program;
+import devplugin.ProgramFilter;
 import devplugin.SettingsItem;
 
 /**
@@ -523,6 +526,26 @@ public class SystemTray {
     }
   }
 
+  private static final class FilterAndMarkedAcceptFilter implements ProgramFilter {
+    private ProgramFilter mFilter;
+    
+    public FilterAndMarkedAcceptFilter(ProgramFilter filter) {
+      mFilter = filter;
+    }
+    
+    @Override
+    public boolean accept(Program program) {
+      Marker[] test = program.getMarkerArr();
+      
+      return (test != null && test.length > 0) || mFilter.accept(program);
+    }
+
+    @Override
+    public String getName() {
+      return "TRAY ONLY MARKED OR FILTER";
+    }
+  }
+  
   /**
    * Adds the important programs to the menu.
    *
@@ -532,7 +555,16 @@ public class SystemTray {
    * @return The filled menu menu.
    */
   private JComponent addToImportantMenu(JComponent menu) {
-    Program[] p = MarkedProgramsMap.getInstance().getTimeSortedProgramsForTray(MainFrame.getInstance().getProgramFilter(), Settings.propTrayImportantProgramsPriority.getInt(),
+    ProgramFilter filter = MainFrame.getInstance().getProgramFilter();
+    
+    if(Settings.propTrayFilterNot.getBoolean()) {
+      filter = FilterManagerImpl.getInstance().getAllFilter();
+    }
+    else if(Settings.propTrayFilterNotMarked.getBoolean()) {
+      filter = new FilterAndMarkedAcceptFilter(filter);
+    }
+    
+    Program[] p = MarkedProgramsMap.getInstance().getTimeSortedProgramsForTray(filter, Settings.propTrayImportantProgramsPriority.getInt(),
         Settings.propTrayImportantProgramsSize.getInt(), !Settings.propTrayNowProgramsEnabled.getBoolean());
 
     boolean added = false;
@@ -648,6 +680,15 @@ public class SystemTray {
   private void createTimeProgramMenu(JMenu menu, int time) {
     // the menu is empty, so search for the programs at the time
     if (menu.getMenuComponentCount() < 1) {
+      ProgramFilter filter = MainFrame.getInstance().getProgramFilter();
+      
+      if(Settings.propTrayFilterNot.getBoolean()) {
+        filter = FilterManagerImpl.getInstance().getAllFilter();
+      }
+      else if(Settings.propTrayFilterNotMarked.getBoolean()) {
+        filter = new FilterAndMarkedAcceptFilter(filter);
+      }
+      
       Channel[] c = Settings.propSubscribedChannels.getChannelArray();
 
       ArrayList<ProgramMenuItem> programs = new ArrayList<ProgramMenuItem>();
@@ -681,7 +722,7 @@ public class SystemTray {
           int start = p.getStartTime();
           int end = p.getStartTime() + p.getLength();
 
-          if (start <= time && time < end && MainFrame.getInstance().getProgramFilter().accept(p)) {
+          if (start <= time && time < end && filter.accept(p)) {
             if (isOnChannelList(ch)) {
               programs.set(getIndexOfChannel(ch), new ProgramMenuItem(p, ProgramMenuItem.ON_TIME_TYPE, time, -1));
               
@@ -728,7 +769,7 @@ public class SystemTray {
               start = p.getStartTime();
               end = p.getStartTime() + p.getLength();
 
-              if (start <= temptime && temptime < end && MainFrame.getInstance().getProgramFilter().accept(p)) {
+              if (start <= temptime && temptime < end && filter.accept(p)) {
                 if (isOnChannelList(ch)) {
                   programs.set(getIndexOfChannel(ch), new ProgramMenuItem(p, ProgramMenuItem.ON_TIME_TYPE, time, -1));
                   
