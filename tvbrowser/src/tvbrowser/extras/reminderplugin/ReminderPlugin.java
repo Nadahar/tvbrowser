@@ -835,7 +835,10 @@ public class ReminderPlugin {
     for (ReminderListItem reminderItem : items) {
       listNewPrograms.add(reminderItem.getProgram());
     }
-    mRootNode.addPrograms(listNewPrograms);
+    
+    try {
+      mRootNode.addPrograms(listNewPrograms);
+    }catch(Throwable t) {}
 
     mRootNode.update();
 
