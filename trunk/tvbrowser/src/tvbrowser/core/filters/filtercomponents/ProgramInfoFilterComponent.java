@@ -32,15 +32,19 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
-import javax.swing.DefaultListCellRenderer;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
 
+import util.ui.UiUtilities;
 import util.ui.customizableitems.SelectableItemList;
 import util.ui.customizableitems.SelectableItemRendererCenterComponentIf;
+
+import com.jgoodies.forms.factories.CC;
+import com.jgoodies.forms.layout.FormLayout;
+
 import devplugin.Program;
 import devplugin.ProgramInfoHelper;
 
@@ -121,7 +125,7 @@ public class ProgramInfoFilterComponent extends AbstractFilterComponent {
    * @see tvbrowser.core.filters.FilterComponent#getSettingsPanel()
    */
   public JPanel getSettingsPanel() {
-    final JPanel centerPanel = new JPanel(new BorderLayout());
+    final JPanel centerPanel = new JPanel(new FormLayout("50dlu:grow","default,fill:default:grow"));
     String[] infoMessages = ProgramInfoHelper.getInfoIconMessages();
     int[] infoBits = ProgramInfoHelper.getInfoBits();
     final String[] allItems = new String[infoMessages.length];
@@ -163,7 +167,10 @@ public class ProgramInfoFilterComponent extends AbstractFilterComponent {
             return panel;
           }
         });
-    centerPanel.add(mList, BorderLayout.CENTER);
+    centerPanel.add(mList, CC.xy(1, 2));
+    
+    centerPanel.add(UiUtilities.createHtmlHelpTextArea(mLocalizer.msg("help", "ATTENTION: The list items are conjunctions so if you select two or more items that are contradictions no program will be accepted. (For example, a program cannot be mono and stereo at the same time.)")), CC.xy(1, 1));
+    
     return centerPanel;
   }
 
