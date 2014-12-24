@@ -4,7 +4,7 @@
   <jar>../launcher/bin/JarWinJavaExeLauncher.jar</jar>
   <outfile>../../../runtime/tvbrowser_transportable/tvbrowser-transportable.exe</outfile>
   <errTitle></errTitle>
-  <cmdLine>/start tvbrowser.jar -Xmx320m</cmdLine>
+  <cmdLine>/start tvbrowser.jar -Xmx512m</cmdLine>
   <chdir>.</chdir>
   <priority>normal</priority>
   <downloadUrl>http://java.com/download</downloadUrl>

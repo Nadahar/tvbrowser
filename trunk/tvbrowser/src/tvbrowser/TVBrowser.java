@@ -141,47 +141,23 @@ public class TVBrowser {
 
   private static String curLookAndFeel;
 
-  private static final boolean mIsStable = false;
+  private static final boolean mIsStable = true;
   private static final int mMajorVersion = 3;
-  private static final int mMinorVersion = 40;
-  private static final int mSubMinorVersion = 99;
+  private static final int mMinorVersion = 41;
+  private static final int mSubMinorVersion = 0;
 
   /* If you want to change the version string, add it to the beginning of this array.
      We need the old version strings to import the settings.
   */
   /** The string array with the names of the earlier versions. */
   private static final String[] ALL_VERSIONS = new String[] {
-          "3.4.0.99 RC",
-          "3.4.0.98 RC",
-          "3.4.0.97 RC",
-          "3.4.0.96 RC",
-          "3.4.0.95 Beta",
-          "3.4.0.50-SVN",
+          "3.4.1", "3.4.0.99 RC", "3.4.0.98 RC", "3.4.0.97 RC", "3.4.0.96 RC", "3.4.0.95 Beta", "3.4.0.50-SVN",
           "3.4.0.1 Hotfix",
-          "3.4",
-          "3.3.97 RC",
-          "3.3.96 Beta",
-          "3.3.95 Beta",
-          "3.3.3.51 SVN",
-          "3.3.3.50 SVN",
-          "3.3.3",
-          "3.3.3beta1",
-          "3.3.2.50 SVN",
-          "3.3.2",
-          "3.3.2beta1",
-          "3.3.1.50 SVN",
-          "3.3.1",
-          "3.3.1RC1",
-          "3.3.1beta1",
-          "3.3.0.51 SVN",
-	        "3.3.0.50 SVN",
-	        "3.3a",
-	        "3.3",
-	        "3.3RC2",
-          "3.3RC1",
-          "3.3beta1",
-          "3.2.1.51 SVN",
-          "3.2.1.50 SVN",
+          "3.4", "3.3.97 RC", "3.3.96 Beta", "3.3.95 Beta", "3.3.3.51 SVN", "3.3.3.50 SVN",
+          "3.3.3", "3.3.3beta1", "3.3.2.50 SVN",
+          "3.3.2", "3.3.2beta1", "3.3.1.50 SVN", 
+          "3.3.1", "3.3.1RC1", "3.3.1beta1", "3.3.0.51 SVN", "3.3.0.50 SVN",
+	      "3.3a", "3.3", "3.3RC2", "3.3RC1", "3.3beta1", "3.2.1.51 SVN", "3.2.1.50 SVN",
           "3.2.1", "3.2.1RC1", "3.2.1beta2", "3.2.1beta1", "3.2.0.50 SVN",
           "3.2", "3.2RC1", "3.2beta2", "3.2beta1", "3.1.0.50 SVN",
           "3.1", "3.1RC2", "3.1RC1", "3.1beta2", "3.1beta1",
