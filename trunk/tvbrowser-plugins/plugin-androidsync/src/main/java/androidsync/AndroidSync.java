@@ -23,6 +23,7 @@
  */
 package androidsync;
 
+import java.awt.Dimension;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -50,14 +51,17 @@ import java.util.TimeZone;
 import java.util.zip.GZIPOutputStream;
 
 import javax.swing.ButtonGroup;
+import javax.swing.DefaultListModel;
 import javax.swing.Icon;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JEditorPane;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
 import org.apache.commons.codec.binary.Base64;
@@ -66,6 +70,7 @@ import tvbrowser.extras.reminderplugin.ReminderPlugin;
 import tvdataservice.MarkedProgramsList;
 import util.browserlauncher.Launch;
 import util.io.IOUtilities;
+import util.ui.ChannelListCellRenderer;
 import util.ui.DefaultMarkingPrioritySelectionPanel;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
@@ -117,7 +122,7 @@ public class AndroidSync extends Plugin {
   private static final String PLUGIN_TYPE = "PLUGIN_TYPE";
   private static final String FILTER_TYPE = "FILTER_TYPE";
   
-  private static final Version mVersion = new Version(0, 21, 0, true);
+  private static final Version mVersion = new Version(0, 22, 0, true);
   private final String CrLf = "\r\n";
   private Properties mProperties;
   
@@ -657,7 +662,11 @@ public class AndroidSync extends Plugin {
     }
   }
   
+  private Channel[] mNotSynchronizedChannels;
+  
   private byte[] getXmlBytes(String address) {
+    mNotSynchronizedChannels = null;
+    
     if(address.equals(FAVORITE_SYNC_ADDRESS)) {
       StringBuilder dat = new StringBuilder();
       
@@ -736,6 +745,7 @@ public class AndroidSync extends Plugin {
       return getCompressedData(dat.toString().getBytes());
     }
     else if(address.equals(CHANNEL_SYNC_ADDRESS)) {
+      ArrayList<Channel> notUpdateChannels = new ArrayList<Channel>();
       StringBuilder channels = new StringBuilder();
       
       Channel[] subscribed = getPluginManager().getSubscribedChannels();
@@ -769,6 +779,13 @@ public class AndroidSync extends Plugin {
           
           channels.append("\n");
         }
+        else {
+          notUpdateChannels.add(ch);
+        }
+      }
+      
+      if(!notUpdateChannels.isEmpty()) {
+        mNotSynchronizedChannels = notUpdateChannels.toArray(new Channel[notUpdateChannels.size()]);
       }
       
       return getCompressedData(channels.toString().getBytes());
@@ -1149,14 +1166,49 @@ public class AndroidSync extends Plugin {
           } while (len > 0);
 
           System.out.println("DONE");
+
+          Object message = mLocalizer.msg("success", "The data were send successfully.");
+          String title = mLocalizer.msg("successTitle", "Success");
           
           if(address != null && address.equals(CHANNEL_SYNC_ADDRESS)) {
+            if(mNotSynchronizedChannels != null) {
+              title = mLocalizer.msg("partlySuccessTitle", "Not all channels were synchronized");
+              message = mLocalizer.msg("partlySuccessMessage", "The following channel could not be\nsynchronized, because the data plugins\nof that channels are not supported\nin the TV-Browser Android app:");
+              
+              DefaultListModel model =  new DefaultListModel();
+              
+              StringBuilder plugins = new StringBuilder();
+              
+              for(Channel ch : mNotSynchronizedChannels) {
+                model.addElement(ch);
+                
+                String dataServiceName = getPluginManager().getDataServiceProxy(ch.getDataServiceId()).getInfo().getName();
+                
+                if(!plugins.toString().contains(dataServiceName)) {
+                  if(plugins.length() > 0) {
+                    plugins.append(";");
+                  }
+                  
+                  plugins.append(dataServiceName);
+                }
+              }
+              
+              JList notSynchronized = new JList(model);
+              notSynchronized.setCellRenderer(new ChannelListCellRenderer(true, true));
+              notSynchronized.setPreferredSize(new Dimension(100, 80));
+
+              JScrollPane pane = new JScrollPane(notSynchronized);
+              pane.setPreferredSize(new Dimension(100,100));
+              
+              message = new Object[] {message, pane, mLocalizer.msg("partlySuccessDataService", "These channels are provided by\nthe following data-plugins:") , plugins.toString().split(";")};
+            }
+            
             mUsedChannelArr = getPluginManager().getSubscribedChannels();
             saveMe();
           }
           
           if(info) {
-            JOptionPane.showMessageDialog(getParentFrame(), mLocalizer.msg("success", "The data were send successfully."), mLocalizer.msg("successTitle", "Success"), JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(getParentFrame(), message, title, JOptionPane.INFORMATION_MESSAGE);
           }
       } catch (Exception e) {
         int response = 0;
