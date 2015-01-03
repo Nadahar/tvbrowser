@@ -100,4 +100,27 @@ public class SearchTextField extends JTextField implements FocusListener{
 
     repaint();
   }
+  
+  @Override
+  public void setText(String t) {
+    StackTraceElement[] els = Thread.currentThread().getStackTrace();
+    
+    for(StackTraceElement el : els) {
+      System.out.println(el.toString());
+    }
+    super.setText(t);
+  }
+  
+  @Override
+  public void replaceSelection(String content) {
+    if (getSelectionStart() == getSelectionEnd() && getText().equals(mLocalizer.ellipsisMsg("search","Search"))) {
+      setText("");
+      setSelectionStart(0);
+      setSelectionEnd(0);
+    }
+    
+    super.replaceSelection(content);
+    
+    requestFocus();
+  }
 }
