@@ -122,7 +122,7 @@ public class AndroidSync extends Plugin {
   private static final String PLUGIN_TYPE = "PLUGIN_TYPE";
   private static final String FILTER_TYPE = "FILTER_TYPE";
   
-  private static final Version mVersion = new Version(0, 22, 0, true);
+  private static final Version mVersion = new Version(0, 22, 1, true);
   private final String CrLf = "\r\n";
   private Properties mProperties;
   
@@ -1086,7 +1086,7 @@ public class AndroidSync extends Plugin {
     String car = mProperties.getProperty(CAR_KEY);
     String bicycle = mProperties.getProperty(BICYCLE_KEY);
     
-    if(car != null && bicycle != null) {
+    if(car != null && car.trim().length() > 0 && bicycle != null && bicycle.trim().length() > 0) {
       URLConnection conn = null;
       OutputStream os = null;
       InputStream is = null;
@@ -1246,7 +1246,7 @@ public class AndroidSync extends Plugin {
           } catch (Exception e) {
           }
       }
-  }
+    }
     else {
       JOptionPane.showMessageDialog(getParentFrame(), mLocalizer.msg("setupFirst", "You have to enter user name and password first."), mLocalizer.msg("noUser", "No user name and/or password"), JOptionPane.ERROR_MESSAGE);
     }
