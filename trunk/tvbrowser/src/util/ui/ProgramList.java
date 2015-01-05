@@ -433,7 +433,7 @@ public class ProgramList extends JList implements ChangeListener,
         int x = point.x - bounds.x;
         int y = point.y - bounds.y;
         Component component = getCellRenderer()
-            .getListCellRendererComponent(this, mPrograms.elementAt(index),
+            .getListCellRendererComponent(this, getModel().getElementAt(index),
                 index, false, false);
         if (component != null && component instanceof Container) {
           Container container = (Container) component;
