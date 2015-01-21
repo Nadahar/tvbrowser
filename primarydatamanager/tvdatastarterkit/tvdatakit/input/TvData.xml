@@ -32,9 +32,9 @@ all these tags are not required you don't have to use them.
    |   showview:  The showview number
    +-->
   <programme channel="test24"
-             start="200809101030"
-             stop="200809101100"
-             vps-start="200809101045"
+             start="20080910103000 +0100"
+             stop="20080910110000 +0100"
+             vps-start="20080910104500 +0100"
              showview="563 123">
 
     <!--
@@ -92,10 +92,10 @@ all these tags are not required you don't have to use them.
     <live>yes</live> <!-- Program.INFO_LIVE -->
 
     <!-- Specifies that this program is a repition -->
-    <previously-shown start="200407081030"/>
+    <previously-shown start="20040708103000 +0100"/>
 
     <!-- (TV-Browser only) Specifies that this program will be repeated -->
-    <next-time-shown start="200407121030"/>
+    <next-time-shown start="20040712103000 +0100"/>
 
     <!-- The net playing time -->
     <length units="minutes">25</length>
@@ -201,23 +201,23 @@ all these tags are not required you don't have to use them.
 
 
   <!-- A minium program. -->
-  <programme channel="test24" start="200809101100">
+  <programme channel="test24" start="20080910110000 +0100">
     <title>Nachrichten</title>
   </programme>
 
 
   <!-- Some other programs -->
-  <programme channel="test24" start="200809101115">
+  <programme channel="test24" start="20080910111500 +0100">
     <title>Rambo</title>
     <desc>Ein Mann wird ramponiert</desc>
   </programme>
 
-  <programme channel="test24" start="200809101500">
+  <programme channel="test24" start="20080910150000 +0100">
     <title>Nachmittags-Report</title>
     <desc>News from all over the world</desc>
   </programme>
 
-  <programme channel="test24" start="200809101600">
+  <programme channel="test24" start="20080910160000 +0100">
     <title>Bla bla</title>
     <desc>News from all over the world</desc>
   </programme>
