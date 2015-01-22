@@ -1267,7 +1267,7 @@ public class PluginProxyManager {
    * Calls for every subscribed plugin the handleTvDataUpdateFinished(Date until) method,
    * so the plugin can react on the new data/prepare for data update.
    *
-   * @see PluginProxy#handleTvDataUpdateFinished(Date until)
+   * @see PluginProxy#handleTvDataUpdateStarted(Date until)
    */
   private void fireTvDataUpdateStarted(Date until) {
     for (PluginListItem item : getPluginListCopy()) {
