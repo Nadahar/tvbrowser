@@ -109,4 +109,18 @@ public class DreamboxChannel implements ExternalChannelIf {
         }
     }
 
+    public boolean equals( Object otherIn ) {
+      if (null == otherIn)
+        return false;
+      if (otherIn.getClass() != this.getClass())
+        return false;
+      DreamboxChannel other = (DreamboxChannel) otherIn;
+      if (! mReference.equals(other.mReference))
+        return false;
+      if (! mName.equals(other.mName))
+        return false;
+      if (! mBouqetName.equals(other.mBouqetName))
+        return false;
+      return true;
+    }
 }
