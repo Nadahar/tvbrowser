@@ -895,6 +895,8 @@ private static Font getDynamicFontSize(Font font, int offset) {
       grp.setColor(col);
     }
     
+    int channelWidth = 0;
+    
     if(mChannelLabel != null) {
       try {
         int yTranslation = getHeight()/2-mChannelLabel.getHeight()/2;
@@ -902,8 +904,8 @@ private static Font getDynamicFontSize(Font font, int offset) {
         grp.translate(1, yTranslation);
         
         mChannelLabel.paint(grp);
-        
-        grp.translate(46, -yTranslation);
+        channelWidth = 46;
+        grp.translate(channelWidth, -yTranslation);
       }catch(Exception e) {
         mLog.log(Level.SEVERE, "Error in drawing channel logo for program '" + mProgram + "'", e);
       }
@@ -1015,10 +1017,10 @@ private static Font getDynamicFontSize(Font font, int offset) {
       }
       // remember the size of this area for tooltip
       if (colCount == 1) {
-        mInfoIconRect = new Rectangle(iconsTopLeft.x, iconsTopLeft.y, currentX
+        mInfoIconRect = new Rectangle(iconsTopLeft.x + channelWidth, iconsTopLeft.y, currentX
             - iconsTopLeft.x, y - iconsTopLeft.y);
       } else {
-        mInfoIconRect = new Rectangle(iconsTopLeft.x, iconsTopLeft.y, maxWidth,
+        mInfoIconRect = new Rectangle(iconsTopLeft.x + channelWidth, iconsTopLeft.y, maxWidth,
             y - iconsTopLeft.y + iconHeight);
       }
     }
@@ -1305,7 +1307,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
       int[] infoBitArr = ProgramInfoHelper.getInfoBits();
       Icon[] infoIcons = ProgramInfoHelper.getInfoIcons();
       String[] infoMsgArr = ProgramInfoHelper.getInfoIconMessages();
-
+      
       for (int i = 0; i < infoBitArr.length; i++) {
         if (ProgramInfoHelper.bitSet(info, infoBitArr[i])) {
           if (infoIcons[i] != null) {
