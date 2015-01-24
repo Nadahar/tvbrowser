@@ -56,7 +56,6 @@ import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.settings.ContextMenuMouseActionSetting;
-import util.settings.StringProperty;
 import util.ui.CustomComboBoxRenderer;
 import util.ui.EnhancedPanelBuilder;
 import util.ui.Localizer;
