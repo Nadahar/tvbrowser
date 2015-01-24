@@ -28,8 +28,6 @@ package util.program;
 
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -39,7 +37,6 @@ import java.util.regex.Pattern;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.UIManager;
 
@@ -50,11 +47,9 @@ import tvbrowser.extras.common.InternalPluginProxyList;
 import tvbrowser.extras.favoritesplugin.FavoritesPluginProxy;
 import tvbrowser.extras.favoritesplugin.core.Favorite;
 import tvbrowser.extras.favoritesplugin.dlgs.FavoriteTreeModel;
-import tvbrowser.extras.programinfo.ProgramInfo;
 import util.settings.PluginPictureSettings;
 import util.settings.ProgramPanelSettings;
 import util.ui.Localizer;
-import util.ui.TVBrowserIcons;
 import util.ui.UiUtilities;
 import util.ui.html.ExtendedHTMLDocument;
 import util.ui.html.HTMLTextHelper;
@@ -923,6 +918,10 @@ public class ProgramTextCreator {
 
             // delete "..." at the end, but only for duplication check, not for display
             while (shortInfo.toString().endsWith(".")) {
+              shortInfo.deleteCharAt(shortInfo.length() - 1);
+            }
+            
+            if(shortInfo.toString().endsWith("\u2026")) {
               shortInfo.deleteCharAt(shortInfo.length() - 1);
             }
 
