@@ -36,6 +36,7 @@ import tvbrowserdataservice.file.DayProgramFile;
 import tvbrowserdataservice.file.ProgramField;
 import tvbrowserdataservice.file.ProgramFrame;
 import util.io.FileFormatException;
+import util.io.IOUtilities;
 import devplugin.Program;
 import devplugin.ProgramFieldType;
 
@@ -139,6 +140,8 @@ public class DayProgramFileTranslator {
           if (type == ProgramFieldType.INFO_TYPE) {
             int info = field.getIntData();
             writer.println(programInfoToString(info));
+          } else if (type == ProgramFieldType.EPISODE_NUMBER_TYPE) {
+            writer.println(IOUtilities.decodeSingleFieldValueToMultipleEpisodeString(field.getIntData()));
           } else {
             if (field.getBinaryData() == null) {
               writer.println("(delete)");
