@@ -161,7 +161,7 @@ public class DayProgramFileTranslator {
                   break;
                 case ProgramFieldType.BINARY_FORMAT:
                     binNumber++;
-                    writeBinary(new File(destDir, binFileName + "-" + binNumber + ".bin"), field.getBinaryData());
+                    writeBinary(new File(destDir, binFileName + "-" + String.format("%03d", binNumber) + ".bin"), field.getBinaryData());
                     break;
                 default:
                   writer.println("(binary data)");
