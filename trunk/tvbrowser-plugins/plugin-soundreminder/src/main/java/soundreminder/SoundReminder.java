@@ -92,7 +92,7 @@ import devplugin.Version;
  * @author René Mach
  */
 public class SoundReminder extends Plugin {
-  private static final Version VERSION = new Version(0,11,4,true);
+  private static final Version VERSION = new Version(0,11,5,true);
   
   protected static final Localizer mLocalizer = Localizer
       .getLocalizerFor(SoundReminder.class);

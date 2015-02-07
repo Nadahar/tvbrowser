@@ -52,6 +52,7 @@ import util.ui.Localizer;
 import util.ui.UiUtilities;
 import devplugin.Plugin;
 import devplugin.Program;
+import devplugin.ProgramFilter;
 
 /**
  * The entry class for the sound files.
@@ -225,28 +226,17 @@ public class SoundEntry {
   }
 
   /* Copied from IDontWant2SeeListEntry */
-  private boolean matchesTitle(final String title) {
+  protected boolean matches(final Program p) {
     boolean matches = false;
     
     for(SearchValue value : mSearchValues) {
-      if(value.matchesTitle(title,mCaseSensitive)) {
+      if(value.matches(p,mCaseSensitive)) {
         matches = true;
         break;
       }
     }
     
     return matches;
-  }
-
-  /* Copied from IDontWant2SeeListEntry */
-  protected boolean matches(final Program p) {
-    final String title = p.getTitle();
-    boolean found = matchesTitle(title);
-    final String suffix = " (Fortsetzung)";
-    if ((!found) && title.endsWith(suffix)) {
-      found = matchesTitle(title.substring(0, title.length() - suffix.length()));
-    }
-    return found;
   }
   
   protected Object playSound() {
@@ -405,7 +395,7 @@ public class SoundEntry {
     public SearchValue(String searchText, boolean caseSensitive) {
       mSearchText = searchText;
       
-      if (searchText.indexOf('*') != -1) {
+      if (!searchText.trim().startsWith("Filter:") && searchText.indexOf('*') != -1) {
         final String[] searchParts = searchText.split("\\*");
 
         if(searchParts != null && searchParts.length > 0) {
@@ -487,6 +477,31 @@ public class SoundEntry {
       }
 
       return matches;
+    }
+    
+    /* Copied from IDontWant2SeeListEntry */
+    protected boolean matches(final Program p, boolean caseSensitive) {
+      String title = p.getTitle();
+      
+      if(mSearchText.trim().startsWith("Filter:")) {
+        title = mSearchText.substring(mSearchText.indexOf(":")+1, mSearchText.length()).trim();
+        
+        ProgramFilter[] filters = Plugin.getPluginManager().getFilterManager().getAvailableFilters();
+        
+        for(ProgramFilter filter : filters) {
+          if(title.equals(filter.getName())) {
+            return filter.accept(p);
+          }
+        }
+      }
+      
+      boolean found = matchesTitle(title, caseSensitive);
+      final String suffix = " (Fortsetzung)";
+      if ((!found) && title.endsWith(suffix)) {
+        found = matchesTitle(title.substring(0, title.length() - suffix.length()), caseSensitive);
+      }
+      
+      return found;
     }
   }
 }
