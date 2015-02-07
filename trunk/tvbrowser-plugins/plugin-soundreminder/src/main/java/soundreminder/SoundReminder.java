@@ -92,7 +92,7 @@ import devplugin.Version;
  * @author René Mach
  */
 public class SoundReminder extends Plugin {
-  private static final Version VERSION = new Version(0,11,3,true);
+  private static final Version VERSION = new Version(0,11,4,true);
   
   protected static final Localizer mLocalizer = Localizer
       .getLocalizerFor(SoundReminder.class);
@@ -159,7 +159,7 @@ public class SoundReminder extends Plugin {
   }
   
   public void writeData(final ObjectOutputStream out) throws IOException {
-    out.writeInt(4); // write version
+    out.writeInt(5); // write version
     out.writeInt(mSoundEntryList.size());
     
     for(SoundEntry entry : mSoundEntryList) {
