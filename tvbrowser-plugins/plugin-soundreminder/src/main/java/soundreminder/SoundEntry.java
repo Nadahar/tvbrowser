@@ -62,37 +62,65 @@ public class SoundEntry {
   static final String DUMMY_ENTRY = "DUMMY-ENTRY";
   static final String DUMMY_FILE = "DUMMY-FILE"; 
   
-  private String mSearchText;
   private String mPath;
-
-  private String mPreSearchPart;
-  private Pattern mSearchPattern;
+  
   private boolean mCaseSensitive = false;
-
-
+  private SearchValue[] mSearchValues;
+  
   protected SoundEntry(final String searchText, final boolean caseSensitive,
       final String path) {
     setValues(searchText, caseSensitive, path);
   }
 
-  protected SoundEntry(final ObjectInputStream in, final int version)
-      throws IOException {
-    mSearchText = in.readUTF();
-    mPath = in.readUTF();
-    
-    if(version < 4) {
-      mPath = checkForRelativePath(mPath);
+  protected SoundEntry(final ObjectInputStream in, final int version) throws IOException {
+    if(version <= 4) {
+      String searchText = in.readUTF();
+      mPath = in.readUTF();
+      
+      if(version < 4) {
+        mPath = checkForRelativePath(mPath);
+      }
+      
+      String preSearchPart = null;
+      
+      if(in.readBoolean()) {
+        preSearchPart = in.readUTF();
+      }
+      
+      mSearchValues = new SearchValue[] {
+          new SearchValue(searchText, preSearchPart, mCaseSensitive)
+      };
     }
-
-    if(in.readBoolean()) {
-      mPreSearchPart = in.readUTF();
-      mSearchPattern = createSearchPattern(mSearchText, mCaseSensitive);
+    else {
+      mPath = in.readUTF();
+      
+      if(version < 4) {
+        mPath = checkForRelativePath(mPath);
+      }
+      
+      mCaseSensitive = in.readBoolean();
+      
+      mSearchValues = new SearchValue[in.readInt()];
+      
+      for(int i = 0; i < mSearchValues.length; i++) {
+        mSearchValues[i] = new SearchValue(in, version, mCaseSensitive);
+      }
     }
   }
 
   /* Copied from IDontWant2SeeListEntry */
   protected String getSearchText() {
-    return mSearchText;
+    StringBuilder builder = new StringBuilder();
+    
+    for(int i = 0; i < mSearchValues.length-1; i++) {
+      builder.append(mSearchValues[i].mSearchText).append(";");
+    }
+    
+    if(mSearchValues.length > 0) {
+      builder.append(mSearchValues[mSearchValues.length-1].mSearchText);
+    }
+    
+    return builder.toString();
   }
   
   private static String translateRelativePath(String path) {
@@ -181,70 +209,32 @@ public class SoundEntry {
   }
   
   /* Copied from IDontWant2SeeListEntry */
-  protected void setValues(final String searchText,
-      final boolean caseSensitive, final String path) {
-    mPreSearchPart = null;
-    mSearchPattern = null;
+  protected void setValues(final String searchText, final boolean caseSensitive, final String path) {
+    mSearchValues = null;
     
     mPath = checkForRelativePath(path);
 
-    mSearchText = searchText;
+    String[] searchValues = searchText.split(";");
+    
+    mSearchValues = new SearchValue[searchValues.length];
     mCaseSensitive = caseSensitive;
 
-    if (searchText.indexOf('*') != -1) {
-      final String[] searchParts = searchText.split("\\*");
-
-      if(searchParts != null && searchParts.length > 0) {
-        mPreSearchPart = searchParts[0];
-        for(int i = 1; i < searchParts.length; i++) {
-          if(mPreSearchPart.length() < searchParts[i].length()) {
-            mPreSearchPart = searchParts[i];
-          }
-        }
-
-        if(!caseSensitive) {
-          mPreSearchPart = mPreSearchPart.toLowerCase();
-        }
-
-        mSearchPattern = createSearchPattern(searchText,caseSensitive);
-      }
+    for(int i = 0; i < searchValues.length; i++) {
+      mSearchValues[i] = new SearchValue(searchValues[i], caseSensitive);
     }
-  }
-
-  /* Copied from IDontWant2SeeListEntry */
-  private Pattern createSearchPattern(final String searchText,
-      final boolean caseSensitive) {
-    int flags = Pattern.DOTALL;
-    if (! caseSensitive) {
-      flags |= Pattern.CASE_INSENSITIVE;
-      flags |= Pattern.UNICODE_CASE;
-    }
-
-    // Comment copied from tvbrowser.core.search.regexsearch.RegexSearcher.java:
-    // NOTE: All words are quoted with "\Q" and "\E". This way regex code will
-    //       be ignored within the search text. (A search for "C++" will not
-    //       result in an syntax error)
-    return Pattern.compile("\\Q" + searchText.replace("*","\\E.*\\Q") + "\\E",flags);
   }
 
   /* Copied from IDontWant2SeeListEntry */
   private boolean matchesTitle(final String title) {
     boolean matches = false;
-
-    if(mPreSearchPart == null) {
-      // match full title
-      matches = mCaseSensitive ? title.equals(mSearchText) : title
-          .equalsIgnoreCase(mSearchText);
-    } else {
-      // or match with wild card
-      final String preSearchValue = mCaseSensitive ? title : title
-          .toLowerCase();
-      if (preSearchValue.indexOf(mPreSearchPart) != -1) {
-        final Matcher match = mSearchPattern.matcher(title);
-        matches = match.matches();
+    
+    for(SearchValue value : mSearchValues) {
+      if(value.matchesTitle(title,mCaseSensitive)) {
+        matches = true;
+        break;
       }
     }
-
+    
     return matches;
   }
 
@@ -396,17 +386,107 @@ public class SoundEntry {
   }
 
   /* Copied from IDontWant2SeeListEntry */
-  protected void writeData(final ObjectOutputStream out) throws IOException {
-    out.writeUTF(mSearchText);
+  protected void writeData(final ObjectOutputStream out) throws IOException {    
     out.writeUTF(mPath);
-
-    out.writeBoolean(mPreSearchPart != null);
-
-    if(mPreSearchPart != null) {
-      out.writeUTF(mPreSearchPart);
-      mSearchPattern = createSearchPattern(mSearchText, mCaseSensitive);
+    out.writeBoolean(mCaseSensitive);
+    
+    out.writeInt(mSearchValues.length);
+    
+    for(SearchValue value : mSearchValues) {
+      value.writeData(out);
     }
   }
 
+  private final static class SearchValue {
+    private String mPreSearchPart;
+    private Pattern mSearchPattern;
+    private String mSearchText;
+    
+    public SearchValue(String searchText, boolean caseSensitive) {
+      mSearchText = searchText;
+      
+      if (searchText.indexOf('*') != -1) {
+        final String[] searchParts = searchText.split("\\*");
 
+        if(searchParts != null && searchParts.length > 0) {
+          mPreSearchPart = searchParts[0];
+          for(int i = 1; i < searchParts.length; i++) {
+            if(mPreSearchPart.length() < searchParts[i].length()) {
+              mPreSearchPart = searchParts[i];
+            }
+          }
+
+          if(!caseSensitive) {
+            mPreSearchPart = mPreSearchPart.toLowerCase();
+          }
+
+          mSearchPattern = createSearchPattern(searchText,caseSensitive);
+        }
+      }
+    }
+    
+    public SearchValue(String searchText, String preSearchPart, boolean caseSensitive) {
+      mSearchText = searchText;
+      mPreSearchPart = preSearchPart;
+      
+      if(preSearchPart != null) {
+        mSearchPattern = createSearchPattern(searchText, caseSensitive);
+      }
+    }
+    
+    SearchValue(ObjectInputStream in, int version, boolean caseSensitve) throws IOException {
+      mSearchText = in.readUTF();
+      
+      if(in.readBoolean()) {
+        mPreSearchPart = in.readUTF();
+        mSearchPattern = createSearchPattern(mSearchText, caseSensitve);
+      }
+    }
+    
+    void writeData(final ObjectOutputStream out) throws IOException {
+      out.writeUTF(mSearchText);
+      
+      out.writeBoolean(mPreSearchPart != null);
+
+      if(mPreSearchPart != null) {
+        out.writeUTF(mPreSearchPart);
+      }
+    }
+    
+    /* Copied from IDontWant2SeeListEntry */
+    private Pattern createSearchPattern(final String searchText, final boolean caseSensitive) {
+      int flags = Pattern.DOTALL;
+      if (! caseSensitive) {
+        flags |= Pattern.CASE_INSENSITIVE;
+        flags |= Pattern.UNICODE_CASE;
+      }
+
+      // Comment copied from tvbrowser.core.search.regexsearch.RegexSearcher.java:
+      // NOTE: All words are quoted with "\Q" and "\E". This way regex code will
+      //       be ignored within the search text. (A search for "C++" will not
+      //       result in an syntax error)
+      return Pattern.compile("\\Q" + searchText.replace("*","\\E.*\\Q") + "\\E",flags);
+    }
+    
+    /* Copied from IDontWant2SeeListEntry */
+    private boolean matchesTitle(final String title, boolean caseSensitive) {
+      boolean matches = false;
+
+      if(mPreSearchPart == null) {
+        // match full title
+        matches = caseSensitive ? title.equals(mSearchText) : title
+            .equalsIgnoreCase(mSearchText);
+      } else {
+        // or match with wild card
+        final String preSearchValue = caseSensitive ? title : title
+            .toLowerCase();
+        if (preSearchValue.indexOf(mPreSearchPart) != -1) {
+          final Matcher match = mSearchPattern.matcher(title);
+          matches = match.matches();
+        }
+      }
+
+      return matches;
+    }
+  }
 }
