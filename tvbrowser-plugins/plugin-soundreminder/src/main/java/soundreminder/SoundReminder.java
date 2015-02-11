@@ -25,15 +25,20 @@ package soundreminder;
 
 import java.awt.Dimension;
 import java.awt.Frame;
+import java.awt.Point;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
 import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -43,9 +48,10 @@ import java.util.Locale;
 
 import javax.sound.midi.Sequencer;
 import javax.sound.sampled.LineEvent;
+import javax.sound.sampled.LineEvent.Type;
 import javax.sound.sampled.LineListener;
 import javax.sound.sampled.SourceDataLine;
-import javax.sound.sampled.LineEvent.Type;
+import javax.swing.DefaultCellEditor;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -58,10 +64,14 @@ import javax.swing.JRootPane;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JTable;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.event.CaretEvent;
+import javax.swing.event.CaretListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.text.BadLocationException;
 
 import util.ui.ExtensionFileFilter;
 import util.ui.Localizer;
@@ -81,6 +91,7 @@ import devplugin.ContextMenuAction;
 import devplugin.Plugin;
 import devplugin.PluginInfo;
 import devplugin.Program;
+import devplugin.ProgramFilter;
 import devplugin.ProgramReceiveTarget;
 import devplugin.SettingsTab;
 import devplugin.ThemeIcon;
@@ -92,7 +103,7 @@ import devplugin.Version;
  * @author René Mach
  */
 public class SoundReminder extends Plugin {
-  private static final Version VERSION = new Version(0,11,5,true);
+  private static final Version VERSION = new Version(0,12,0,true);
   
   protected static final Localizer mLocalizer = Localizer
       .getLocalizerFor(SoundReminder.class);
@@ -536,6 +547,204 @@ public class SoundReminder extends Plugin {
       mTable.getColumnModel().getColumn(2).setCellRenderer(renderer);
       mTable.getTableHeader().setReorderingAllowed(false);
       mTable.getTableHeader().setResizingAllowed(false);
+      
+      final JTextField cellEdit = new JTextField();
+      cellEdit.addCaretListener(new CaretListener() {
+        private int mCurrentLine = 0;
+        
+        public void caretUpdate(CaretEvent e) {try {
+          String text = cellEdit.getText();
+          
+          if(!text.isEmpty() && cellEdit.isVisible()) {
+            if(e.getDot() > 0) {
+              final int filterIndex = e.getDot() != text.length() ? text.lastIndexOf("Filter:",e.getDot()) +"Filter:".length() : text.endsWith("Filter:") ? e.getDot() : -1;
+              int testIndex = text.indexOf(";",e.getDot());
+              
+              if(testIndex == -1) {
+                testIndex = text.length();
+              }
+              
+              final int separatorIndex = testIndex;
+              
+              if(filterIndex == e.getDot()) {
+                final JDialog dialog = new JDialog(UiUtilities.getLastModalChildOf(getParentFrame()));
+                
+                final JTextArea area = new JTextArea();
+                final JScrollPane pane = new JScrollPane(area);
+                
+                area.setEditable(false);
+                area.setFocusable(true);
+                area.setLineWrap(false);
+                
+                final Runnable setFilter = new Runnable() {
+                  public void run() {
+                    dialog.dispose();
+                    String text = area.getSelectedText().trim();
+                    
+                    if(text != null && !text.isEmpty()) {
+                      String searchText = cellEdit.getText();
+                      
+                      String part1 = searchText.substring(0, filterIndex)+text;
+                      String part2 = searchText.substring(separatorIndex, searchText.length());
+                      
+                      cellEdit.setText(part1+part2);
+                      cellEdit.setCaretPosition(part1.length());
+                    }
+                  };
+                };
+                
+                KeyListener[] listener = area.getKeyListeners();
+                
+                for(KeyListener l : listener) {
+                  area.removeKeyListener(l);
+                }
+                
+                area.addKeyListener(new KeyAdapter() {
+                  boolean firstEvent = true;
+                  
+                  public void keyReleased(KeyEvent e) {
+                    if(firstEvent) {
+                      firstEvent = false;
+                      
+                      if(e.getKeyCode() == KeyEvent.VK_LEFT || e.getKeyCode() == KeyEvent.VK_RIGHT) {
+                        return;
+                      }
+                    }
+                    
+                    if(e.getKeyCode() == KeyEvent.VK_DOWN) {
+                      if(!area.getText().trim().isEmpty()) {
+                        mCurrentLine++;
+                        
+                        if(mCurrentLine >= area.getLineCount()) {
+                          mCurrentLine = 0;
+                        }
+                        
+                        try {
+                          area.setSelectionStart(area.getLineStartOffset(mCurrentLine));
+                          area.setSelectionEnd(area.getLineEndOffset(mCurrentLine));
+                          area.scrollRectToVisible(area.modelToView(area.getSelectionStart()));
+                        } catch (BadLocationException e1) {}
+                      }
+                    }
+                    else if(e.getKeyCode() == KeyEvent.VK_UP) {
+                      if(!area.getText().trim().isEmpty()) {
+                        mCurrentLine--;
+                        
+                        if(mCurrentLine < 0) {
+                          mCurrentLine = area.getLineCount()-1;
+                        }
+                        
+                        try {
+                          area.setSelectionStart(area.getLineStartOffset(mCurrentLine));
+                          area.setSelectionEnd(area.getLineEndOffset(mCurrentLine));
+                          area.scrollRectToVisible(area.modelToView(area.getSelectionStart()));
+                        } catch (BadLocationException e1) {}
+                      }
+                    }
+                    else if(e.getKeyCode() == KeyEvent.VK_ESCAPE || e.getKeyCode() == KeyEvent.VK_LEFT || e.getKeyCode() == KeyEvent.VK_RIGHT) {
+                      dialog.dispose();
+                    }
+                    else if(e.getKeyCode() == KeyEvent.VK_ENTER) {
+                      setFilter.run();
+                    }
+                  }
+                });
+                
+                area.addMouseListener(new MouseAdapter() {
+                  public void mouseClicked(MouseEvent e) {
+                    try {
+                      int line = area.getLineOfOffset(area.getCaret().getDot());
+                      
+                      area.setSelectionStart(area.getLineStartOffset(line));
+                      area.setSelectionEnd(area.getLineEndOffset(line));
+                      
+                      setFilter.run();
+                    } catch (BadLocationException e1) {}
+                    
+                    dialog.dispose();
+                  };
+                });
+                
+                ProgramFilter[] filters = Plugin.getPluginManager().getFilterManager().getAvailableFilters();
+                
+                String currentSelection = filterIndex != separatorIndex ? cellEdit.getText().substring(filterIndex, separatorIndex) : null;
+                
+                for(int i = 0; i < filters.length; i++) {
+                  area.append(filters[i].getName());
+    
+                  if(i < filters.length-1) {
+                    area.append("\n");
+                  }
+                }
+                
+                if(currentSelection != null) {
+                  try {
+                    mCurrentLine = area.getLineOfOffset(area.getText().indexOf(currentSelection));
+                  } catch (BadLocationException e1) {}
+                }
+                
+                try {
+                  area.setSelectionStart(area.getLineStartOffset(mCurrentLine));
+                  area.setSelectionEnd(area.getLineEndOffset(mCurrentLine));
+                } catch (BadLocationException e1) {}
+                
+                area.addFocusListener(new FocusAdapter() {
+                  public void focusLost(FocusEvent e) {
+                    dialog.dispose();
+                  }
+                });
+    
+                dialog.addWindowFocusListener(new WindowAdapter() {
+                  @Override
+                  public void windowOpened(java.awt.event.WindowEvent e) {
+                    try {
+                      area.scrollRectToVisible(area.modelToView(area.getSelectionStart()));
+                    } catch (BadLocationException e1) {}
+                  };
+                });
+                
+                Point location = cellEdit.getLocationOnScreen();
+                location.setLocation(location.x, location.y+cellEdit.getHeight());
+                
+                dialog.setUndecorated(true);
+                dialog.setContentPane(pane);
+                dialog.setSize(300,150);
+                dialog.setAlwaysOnTop(true);
+                dialog.setVisible(true);
+                dialog.setLocation(location);
+                dialog.toFront();
+                area.grabFocus();
+              }
+            }
+          }
+        }catch(Throwable t) {}
+        }
+        
+      });
+      
+      mTable.getColumnModel().getColumn(0).setCellEditor(new DefaultCellEditor(cellEdit) {
+        @Override
+        public boolean stopCellEditing() {try {
+          String text = cellEdit.getText().replaceAll("\\s*Filter:\\s*;", "");
+          
+          if(text.trim().endsWith("Filter:")) {
+            text = text.substring(0, text.lastIndexOf("Filter:"));
+          }
+          
+          if(text.trim().endsWith(";")) {
+            text = text.substring(0, text.lastIndexOf(";"));
+          }
+          
+          if(text.trim().length() == 0) {
+            cancelCellEditing();
+            return false;
+          }
+          
+          cellEdit.setText(text);
+        }catch(Throwable t) {}
+          return super.stopCellEditing();
+        }
+      });
       
       final JScrollPane scrollPane = new JScrollPane(mTable);
       
