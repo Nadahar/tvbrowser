@@ -45,6 +45,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Locale;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.sound.midi.Sequencer;
 import javax.sound.sampled.LineEvent;
@@ -103,7 +104,7 @@ import devplugin.Version;
  * @author René Mach
  */
 public class SoundReminder extends Plugin {
-  private static final Version VERSION = new Version(0,12,0,true);
+  private static final Version VERSION = new Version(0,12,1,true);
   
   protected static final Localizer mLocalizer = Localizer
       .getLocalizerFor(SoundReminder.class);
@@ -529,6 +530,7 @@ public class SoundReminder extends Plugin {
   }
   
   private class SoundTablePanel extends JPanel {
+    private static final String FILTER_PATTERN = "Filter:";
     private JTable mTable;
     private SoundReminderSettingsTableModel mTableModel;
     
@@ -550,23 +552,41 @@ public class SoundReminder extends Plugin {
       
       final JTextField cellEdit = new JTextField();
       cellEdit.addCaretListener(new CaretListener() {
+        
         private int mCurrentLine = 0;
         
         public void caretUpdate(CaretEvent e) {try {
           String text = cellEdit.getText();
           
-          if(!text.isEmpty() && cellEdit.isVisible()) {
+          if(!text.isEmpty() && cellEdit.isVisible() && text.contains(FILTER_PATTERN)) {
             if(e.getDot() > 0) {
-              final int filterIndex = e.getDot() != text.length() ? text.lastIndexOf("Filter:",e.getDot()) +"Filter:".length() : text.endsWith("Filter:") ? e.getDot() : -1;
-              int testIndex = text.indexOf(";",e.getDot());
+              int lastIndex = text.indexOf(";",e.getDot());
+              int firstIndex = 0;
               
-              if(testIndex == -1) {
-                testIndex = text.length();
+              if(lastIndex == -1) {
+                lastIndex = e.getDot();
               }
               
-              final int separatorIndex = testIndex;
+              firstIndex = text.lastIndexOf(";", lastIndex-1);
+                            
+              if(firstIndex == -1) {
+                firstIndex = 0;
+              }
               
-              if(filterIndex == e.getDot()) {
+              int testIndex = text.indexOf(FILTER_PATTERN, firstIndex);
+              
+              if(testIndex > 0 && text.charAt(testIndex-1) != ';') {
+                return;
+              }
+              
+              final AtomicInteger filterIndex = new AtomicInteger(((testIndex + FILTER_PATTERN.length()) == e.getDot()) ? e.getDot() : -1);
+              final AtomicInteger separatorIndex = new AtomicInteger(text.indexOf(";",e.getDot()));
+              
+              if(separatorIndex.get() == -1) {
+                separatorIndex.set(text.length());
+              }
+              
+              if(filterIndex.get() == e.getDot()) {
                 final JDialog dialog = new JDialog(UiUtilities.getLastModalChildOf(getParentFrame()));
                 
                 final JTextArea area = new JTextArea();
@@ -584,8 +604,8 @@ public class SoundReminder extends Plugin {
                     if(text != null && !text.isEmpty()) {
                       String searchText = cellEdit.getText();
                       
-                      String part1 = searchText.substring(0, filterIndex)+text;
-                      String part2 = searchText.substring(separatorIndex, searchText.length());
+                      String part1 = searchText.substring(0, filterIndex.get())+text;
+                      String part2 = searchText.substring(separatorIndex.get(), searchText.length());
                       
                       cellEdit.setText(part1+part2);
                       cellEdit.setCaretPosition(part1.length());
@@ -606,7 +626,7 @@ public class SoundReminder extends Plugin {
                     if(firstEvent) {
                       firstEvent = false;
                       
-                      if(e.getKeyCode() == KeyEvent.VK_LEFT || e.getKeyCode() == KeyEvent.VK_RIGHT) {
+                      if(e.getKeyCode() == KeyEvent.VK_LEFT || e.getKeyCode() == KeyEvent.VK_RIGHT || e.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
                         return;
                       }
                     }
@@ -641,7 +661,7 @@ public class SoundReminder extends Plugin {
                         } catch (BadLocationException e1) {}
                       }
                     }
-                    else if(e.getKeyCode() == KeyEvent.VK_ESCAPE || e.getKeyCode() == KeyEvent.VK_LEFT || e.getKeyCode() == KeyEvent.VK_RIGHT) {
+                    else if(e.getKeyCode() == KeyEvent.VK_ESCAPE || e.getKeyCode() == KeyEvent.VK_LEFT || e.getKeyCode() == KeyEvent.VK_RIGHT || e.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
                       dialog.dispose();
                     }
                     else if(e.getKeyCode() == KeyEvent.VK_ENTER) {
@@ -667,7 +687,7 @@ public class SoundReminder extends Plugin {
                 
                 ProgramFilter[] filters = Plugin.getPluginManager().getFilterManager().getAvailableFilters();
                 
-                String currentSelection = filterIndex != separatorIndex ? cellEdit.getText().substring(filterIndex, separatorIndex) : null;
+                String currentSelection = filterIndex != separatorIndex ? cellEdit.getText().substring(filterIndex.get(), separatorIndex.get()) : null;
                 
                 for(int i = 0; i < filters.length; i++) {
                   area.append(filters[i].getName());
@@ -725,10 +745,10 @@ public class SoundReminder extends Plugin {
       mTable.getColumnModel().getColumn(0).setCellEditor(new DefaultCellEditor(cellEdit) {
         @Override
         public boolean stopCellEditing() {try {
-          String text = cellEdit.getText().replaceAll("\\s*Filter:\\s*;", "");
+          String text = cellEdit.getText().replaceAll("\\s*"+FILTER_PATTERN+"\\s*;", "");
           
-          if(text.trim().endsWith("Filter:")) {
-            text = text.substring(0, text.lastIndexOf("Filter:"));
+          if(text.trim().endsWith(FILTER_PATTERN)) {
+            text = text.substring(0, text.lastIndexOf(FILTER_PATTERN));
           }
           
           if(text.trim().endsWith(";")) {
