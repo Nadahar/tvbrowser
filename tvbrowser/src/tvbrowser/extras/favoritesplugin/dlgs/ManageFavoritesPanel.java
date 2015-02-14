@@ -1041,6 +1041,7 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction, Tree
     if(((FavoriteNode)path.getLastPathComponent()).isDirectoryNode()) {
       FavoriteTreeModel.getInstance().sort((FavoriteNode)path.getLastPathComponent(), comp, title);
       mFavoriteTree.reload((FavoriteNode)path.getLastPathComponent());
+      FavoritesPlugin.getInstance().store();
     }
   }
 
