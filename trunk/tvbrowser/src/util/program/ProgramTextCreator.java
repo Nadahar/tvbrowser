@@ -608,7 +608,7 @@ public class ProgramTextCreator {
         type = (ProgramFieldType) id;
 
         if (type == ProgramFieldType.DESCRIPTION_TYPE) {
-          String description = checkDescription(prog.getDescription());
+          String description = removeMultipleLineBreaksFromDescription(prog.getDescription());
           if (description != null
               && description.length() > 0) {
             addEntry(doc, buffer, prog, ProgramFieldType.DESCRIPTION_TYPE, true,
@@ -774,34 +774,12 @@ public class ProgramTextCreator {
     return result.toString();
   }
 
-  private static String checkDescription(String desc) {
+  private static String removeMultipleLineBreaksFromDescription(String desc) {
     if (desc != null) {
-      desc = desc.trim();
-      // remove duplicate lines directly after each other
-      StringBuilder buffer = new StringBuilder();
-      String[] lines = desc.split("\n");
-      for (int i = 0; i < lines.length; i++) {
-        if (i == 0 || ! lines[i].equals(lines[i - 1])) {
-          if (buffer.length() > 0) {
-            buffer.append('\n');
-          }
-          buffer.append(lines[i]);
-        }
-      }
-      desc = buffer.toString();
-      int size = 50;
-      if (desc.length() >= size) {
-        // search re-occurings in the description, independent of line breaks
-        int index = desc.indexOf(desc.substring(0, size), size);
-        if (index >= size) {
-          if (desc.indexOf(desc.substring(0, index - 1).trim(), index) == index) {
-            desc = desc.substring(index).trim();
-          }
-        }
-      }
-      return desc;
+      desc = desc.replaceAll("\n{3,}", "\n\n");
     }
-    return null;
+    
+    return desc;
   }
 
   private static String addPersonLink(final String name, Color foreground) {
@@ -904,16 +882,16 @@ public class ProgramTextCreator {
       if (fieldType.getFormat() == ProgramFieldType.TEXT_FORMAT) {
         text = prog.getTextField(fieldType);
         if (fieldType == ProgramFieldType.SHORT_DESCRIPTION_TYPE) {
-          text = checkDescription(text);
+          text = removeMultipleLineBreaksFromDescription(text);
         }
 
         // Lazily add short description, but only if it differs from description
         if (fieldType == ProgramFieldType.DESCRIPTION_TYPE) {
-          String description = checkDescription(prog.getDescription());
+          String description = removeMultipleLineBreaksFromDescription(prog.getDescription());
           text = description;
 
           if (prog.getShortInfo() != null) {
-            StringBuilder shortInfo = new StringBuilder(checkDescription(prog.getShortInfo())
+            StringBuilder shortInfo = new StringBuilder(removeMultipleLineBreaksFromDescription(prog.getShortInfo())
                 .trim());
 
             // delete "..." at the end, but only for duplication check, not for display
@@ -931,7 +909,6 @@ public class ProgramTextCreator {
             }
           }
           text = text.replace("\\-", ""); // replace conditional dashes
-          text = removeArtificialLineBreaks(text);
           text = HTMLTextHelper.convertTextToHtml(text, createLinks);
           // scan for moderation in beginning of description
           String[] lines = text.split("<br>");
@@ -1122,34 +1099,7 @@ public class ProgramTextCreator {
   private static String[] splitPersons(final String textField) {
     return ProgramUtilities.splitPersons(textField);
   }
-
-  /**
-   * remove line breaks from description texts which are formatted as block text
-   * with lines up to around 80 characters
-   *
-   * @param text
-   * @return floating text
-   */
-  private static String removeArtificialLineBreaks(String text) {
-    String[] lines = text.split("\n");
-    if (lines.length > 5) {
-      int avg = (text.length() - lines.length + 1) / lines.length;
-      if (avg < 120 && avg > 50) {
-        StringBuilder result = new StringBuilder();
-        for (String line : lines) {
-          result.append(line);
-          if (line.length() < avg - 10) {
-            result.append('\n');
-          } else {
-            result.append(' ');
-          }
-        }
-        return result.toString();
-      }
-    }
-    return text;
-  }
-
+  
   private static void startInfoSection(StringBuilder buffer, String section, Color infoForeground, Color foreground) {
     
     
