@@ -43,7 +43,6 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -107,7 +106,7 @@ public final class IDontWant2See extends Plugin implements AWTEventListener {
   private static final String DONT_WANT_TO_SEE_IMPORT_SYNC_ADDRESS = "http://android.tvbrowser.org/data/scripts/syncDown.php?type=dontWantToSee";
   
   private static final boolean PLUGIN_IS_STABLE = true;
-  private static final Version PLUGIN_VERSION = new Version(0, 15, 7, PLUGIN_IS_STABLE);
+  private static final Version PLUGIN_VERSION = new Version(0, 15, 8, PLUGIN_IS_STABLE);
 
   private static final String RECEIVE_TARGET_EXCLUDE_EXACT = "target_exclude_exact";
 
@@ -444,12 +443,12 @@ public final class IDontWant2See extends Plugin implements AWTEventListener {
         
         read = new BufferedReader(new InputStreamReader(IOUtilities.openSaveGZipInputStream(conn.getInputStream()),"UTF-8"));
         
-        String dateValue = read.readLine();
+        /*String dateValue = read.readLine();
         
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
         java.util.Date syncDate = dateFormat.parse(dateValue.trim());
-        
-        if(syncDate.getTime() > System.currentTimeMillis()) {
+        System.out.println(syncDate);
+        if(syncDate.getTime() > System.currentTimeMillis()) {*/
           String line = null;
                       
           ArrayList<String> importExclusions = new ArrayList<String>();
@@ -463,8 +462,8 @@ public final class IDontWant2See extends Plugin implements AWTEventListener {
           if(!importExclusions.isEmpty()) {
             updateExclusions(importExclusions.toArray(new String[importExclusions.size()]));
           }
-        }
-      }catch(Exception e) {}
+       // }
+      }catch(Exception e) {e.printStackTrace();}
     }
   }
   
