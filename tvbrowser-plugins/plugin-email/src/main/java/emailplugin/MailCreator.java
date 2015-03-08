@@ -122,7 +122,7 @@ public class MailCreator {
     boolean userDefinedMail = false;
     
     if(OperatingSystem.isMacOs() || OperatingSystem.isWindows()) {
-      userDefinedMail = mSettings.getUseDefaultApplication();
+      userDefinedMail = !mSettings.getUseDefaultApplication();
     }
     else {
       userDefinedMail = !StringUtils.isBlank(mSettings.getApplication());

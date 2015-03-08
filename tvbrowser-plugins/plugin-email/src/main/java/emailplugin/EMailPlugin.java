@@ -52,7 +52,7 @@ import devplugin.Version;
  * @author bodum
  */
 public class EMailPlugin extends Plugin {
-  private static final Version mVersion = new Version(3,03,3);
+  private static final Version mVersion = new Version(3,03,4);
 
   /** Translator */
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(EMailPlugin.class);
