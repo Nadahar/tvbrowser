@@ -118,7 +118,17 @@ public class MailCreator {
   private void mail(final Frame parent, final String content, final String title) {
     // Java 6 desktop API
     boolean sent = false;
-    if (Desktop.isDesktopSupported()) {
+    
+    boolean userDefinedMail = false;
+    
+    if(OperatingSystem.isMacOs() || OperatingSystem.isWindows()) {
+      userDefinedMail = mSettings.getUseDefaultApplication();
+    }
+    else {
+      userDefinedMail = !StringUtils.isBlank(mSettings.getApplication());
+    }
+    
+    if (Desktop.isDesktopSupported() && !userDefinedMail) {
       Desktop desktop = Desktop.getDesktop();
       try {
         URI uriMailTo = new URI("mailto", mSettings.getReceiver() + "?body=" + content + "&subject=" + title, null);
