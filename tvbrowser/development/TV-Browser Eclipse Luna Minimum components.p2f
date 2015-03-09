@@ -1,0 +1,36 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<?p2f version='1.0.0'?>
+<p2f version='1.0.0'>
+  <ius size='6'>
+    <iu id='epp.package.java' name='Eclipse IDE for Java Developers' version='4.4.1.20150109-0740'>
+      <repositories size='1'>
+        <repository location='http://download.eclipse.org/releases/luna'/>
+      </repositories>
+    </iu>
+    <iu id='org.sonatype.m2e.subversive.feature.feature.group' name='Maven SCM Handler for Subversive' version='0.13.0.201302121311'>
+      <repositories size='1'>
+        <repository location='http://repo1.maven.org/maven2/.m2e/connectors/m2eclipse-subversive/0.13.0/N/0.13.0.201302121311/'/>
+      </repositories>
+    </iu>
+    <iu id='com.essiembre.eclipse.rbe.feature.group' name='ResourceBundle Editor' version='1.0.4'>
+      <repositories size='1'>
+        <repository location='https://raw.githubusercontent.com/essiembre/eclipse-rbe/master/eclipse-rbe-update-site/site.xml'/>
+      </repositories>
+    </iu>
+    <iu id='org.polarion.eclipse.team.svn.connector.feature.group' name='Subversive SVN Connectors' version='4.1.2.I20141224-1700'>
+      <repositories size='1'>
+        <repository location='http://community.polarion.com/projects/subversive/download/eclipse/4.0/luna-site/'/>
+      </repositories>
+    </iu>
+    <iu id='org.eclipse.team.svn.feature.group' name='Subversive SVN Team Provider' version='2.0.1.I20140907-1700'>
+      <repositories size='1'>
+        <repository location='http://download.eclipse.org/releases/luna'/>
+      </repositories>
+    </iu>
+    <iu id='org.polarion.eclipse.team.svn.connector.svnkit18.feature.group' name='SVNKit 1.8.7 Implementation (Optional)' version='4.1.2.I20141224-1700'>
+      <repositories size='1'>
+        <repository location='http://community.polarion.com/projects/subversive/download/eclipse/4.0/luna-site/'/>
+      </repositories>
+    </iu>
+  </ius>
+</p2f>
