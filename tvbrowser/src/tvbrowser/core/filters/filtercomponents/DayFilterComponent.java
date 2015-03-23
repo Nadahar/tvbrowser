@@ -33,7 +33,6 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import util.ui.customizableitems.SelectableItemList;
@@ -126,10 +125,10 @@ public class DayFilterComponent extends AbstractFilterComponent {
     if ((day == Calendar.TUESDAY) && ((mSelectedDays & 2) > 0)) {
       return true;
     }
-    if ((day == Calendar.WEDNESDAY) && ((mSelectedDays & 8) > 0)) {
+    if ((day == Calendar.WEDNESDAY) && ((mSelectedDays & 4) > 0)) {
       return true;
     }
-    if ((day == Calendar.THURSDAY) && ((mSelectedDays & 4) > 0)) {
+    if ((day == Calendar.THURSDAY) && ((mSelectedDays & 8) > 0)) {
       return true;
     }
     if ((day == Calendar.FRIDAY) && ((mSelectedDays & 16) > 0)) {
