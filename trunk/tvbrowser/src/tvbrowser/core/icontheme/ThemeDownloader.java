@@ -55,7 +55,7 @@ public class ThemeDownloader {
     Matcher matcher;
     
     try {
-      BufferedReader read = new BufferedReader(new InputStreamReader(IOUtilities.getStream(specs)));
+      BufferedReader read = new BufferedReader(new InputStreamReader(IOUtilities.getStream(specs),"UTF-8"));
       
       String line = null;
       ThemeDownloadItem item = null;
