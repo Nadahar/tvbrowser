@@ -53,7 +53,7 @@ import devplugin.Version;
 
 public class TvbInfoServer extends Plugin {
   private static final String PORT_KEY = "serverPort";
-  private static final Version VERSION = new Version(0,4,0,false);
+  private static final Version VERSION = new Version(0,6,0,false);
   
   private ServerSocket mSocket;
   private Thread mServerThread;
@@ -71,7 +71,7 @@ public class TvbInfoServer extends Plugin {
   public void onActivation() {
     mSettings = new Properties();
     try {
-      mSocket = new ServerSocket(8080);
+      mSocket = new ServerSocket(getPort());
       mServerIsRunning = true;
       startThread();
     } catch (IOException e) {
@@ -157,7 +157,7 @@ public class TvbInfoServer extends Plugin {
               PrintStream pout = new PrintStream(out);
               
               try {
-                if(!connection.getInetAddress().getHostName().equals("localhost")) {
+                if(!connection.getInetAddress().isLoopbackAddress()) {
                   errorReport(pout, connection, "403", "Forbidden",
                       "You don't have permission to access the requested URL.");
                 }
