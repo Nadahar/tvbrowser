@@ -680,11 +680,11 @@ public class ProgramListPanel extends JPanel implements PersonaListener, FilterC
 
   @Override
   public void filterRemoved(ProgramFilter filter) {
-    ProgramFilter selected = (ProgramFilter)mFilterBox.getSelectedItem();
+    String selectedFilterName = (String)mFilterBox.getSelectedItem();
     
     mFilterBox.removeItem(filter.getName());
     
-    if(selected != null && selected.equals(filter)) {
+    if(selectedFilterName != null && selectedFilterName.equals(filter.getName())) {
       fillProgramList();
     }
   }
