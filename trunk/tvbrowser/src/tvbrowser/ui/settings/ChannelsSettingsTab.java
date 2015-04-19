@@ -37,6 +37,12 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -71,10 +77,14 @@ import javax.swing.event.ListSelectionListener;
 
 import tvbrowser.core.ChannelList;
 import tvbrowser.core.DummyChannel;
+import tvbrowser.core.PluginLoader;
 import tvbrowser.core.Settings;
 import tvbrowser.core.filters.FilterComponentList;
 import tvbrowser.core.filters.FilterList;
 import tvbrowser.core.icontheme.IconLoader;
+import tvbrowser.core.plugin.PluginManagerImpl;
+import tvbrowser.core.plugin.PluginProxy;
+import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.core.tvdataservice.ChannelGroupManager;
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
@@ -87,6 +97,8 @@ import tvbrowser.ui.settings.channel.ChannelListModel;
 import tvbrowser.ui.settings.channel.FilterItem;
 import tvbrowser.ui.settings.channel.FilteredChannelListCellRenderer;
 import tvbrowser.ui.settings.channel.MultiChannelConfigDlg;
+import util.exc.TvBrowserException;
+import util.io.IOUtilities;
 import util.io.NetworkUtilities;
 import util.ui.ChannelContextMenu;
 import util.ui.ChannelListCellRenderer;
@@ -108,6 +120,8 @@ import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.Sizes;
 
 import devplugin.Channel;
+import devplugin.PluginAccess;
+import devplugin.PluginCommunication;
 import devplugin.SettingsTab;
 
 /**
@@ -187,10 +201,20 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
   private boolean mShowPlugins = (TvDataServiceProxyManager
   .getInstance().getDataServices().length > 1);
 
+  private JButton mSynchronize;
+  private PluginCommunication mSyncCommunication;
+  
+  private boolean mIsWizard = false;
+  
   /**
    * Create the SettingsTab
    */
   public ChannelsSettingsTab() {
+    this(false);
+  }
+  
+  public ChannelsSettingsTab(boolean isWizard) {
+    mIsWizard = isWizard;
   }
 
   /**
@@ -284,7 +308,20 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
         mSubscribedChannels, mAllChannels, this, mDnDHandler);
 
     restoreForPopup();
-
+    
+    mSynchronize = new JButton(mLocalizer.msg("synchronize", "Synchronize channels with AndroidSync"));
+    mSynchronize.setVisible(false);
+    mSynchronize.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        synchronizeChannels();
+      }
+    });
+    
+    loadSyncCommunication();
+    
+    listBoxPnRight.add(mSynchronize, BorderLayout.NORTH);
+    
     listBoxPnRight.add(new JScrollPane(mSubscribedChannels),
         BorderLayout.CENTER);
 
@@ -431,10 +468,169 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
       public void ancestorMoved(AncestorEvent event) {}
     });
 
+    if(mIsWizard) {
+      SwingUtilities.invokeLater(new Runnable() {
+        @Override
+        public void run() {
+          askForSynchronization(mSyncCommunication == null);
+        }
+      });
+    }
+    
     result.setBorder(BorderFactory.createEmptyBorder(9, 9, 9, 9));
     return result;
   }
+  
+  private void loadSyncCommunication() {
+    PluginAccess androidSync = PluginManagerImpl.getInstance().getActivatedPluginForId("java.androidsync.AndroidSync");
+    
+    if(androidSync != null) {
+      mSyncCommunication = androidSync.getCommunicationClass();
+      mSynchronize.setVisible(true);
+    }
+  }
+  
+  private void askForSynchronization(boolean installPlugin) {try {
+    PluginProxy plugin = null;
+    
+    if(installPlugin) {
+      plugin = PluginProxyManager.getInstance().getPluginForId("java.androidsync.AndroidSync");
+      
+      System.out.println("plugin " + plugin + " " + installPlugin);
+      if(plugin == null) {
+        if(JOptionPane.showConfirmDialog(null, mLocalizer.msg("syncInstallPluginMsg","You can synchronize your channels with the AndroidSync plugin, therefor it needs to be installed.\n\nDo you want to install the AndroidSync plugin now and synchronize the channels?"), mLocalizer.msg("syncInstallPluginTitle","Install AndroidSync plugin?"), JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.OK_OPTION) {
+          File target = new File(Settings.propPluginsDirectory.getString(),"AndroidSync.jar");
+          boolean error = false;
+          
+          try {
+            IOUtilities.download(new URL("http://www.tvbrowser.org/scripts/download-plugin.php?plugin=1381591864575_786"), target);
+            
+            PluginLoader.getInstance().loadPlugin(target, true);
+            
+            plugin = PluginProxyManager.getInstance().getPluginForId("java.androidsync.AndroidSync");
+            PluginProxyManager.getInstance().activatePlugin(plugin);
+            
+            loadSyncCommunication();
+            
+            if(!synchronizeChannels()) {
+              JOptionPane.showMessageDialog(null, mLocalizer.msg("syncNotPossibleMsg", "Channels could not be synchronized.\n\nPlease select the channels manually"), mLocalizer.msg("syncNotPossibleTitle", "Channels were not synchronized"), JOptionPane.ERROR_MESSAGE);
+            }
+          } catch (MalformedURLException e) {
+            error = true;
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+          } catch (IOException e) {
+            error = true;
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+          }
+          
+          if(error) {
+            JOptionPane.showMessageDialog(null, mLocalizer.msg("syncNotInstalledMsg", "Plugin could not be installed.\n\nPlease select the channels manually"), mLocalizer.msg("syncNotInstalledTitle", "AndroidSync could not be installed"), JOptionPane.ERROR_MESSAGE);
+          }
+        }
+      }
+      else if(!plugin.isActivated() && JOptionPane.showConfirmDialog(null, mLocalizer.msg("syncActivateMsg", "You can synchronize your channels with the AndroidSync plugin, therefor it needs to be activated.\n\nDo you want to activate the AndroidSync plugin now?"), mLocalizer.msg("syncActivateTitle", "Activate AndroidSync?"), JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.OK_OPTION) {
+        try {
+          PluginProxyManager.getInstance().activatePlugin(plugin);
+          
+          loadSyncCommunication();
+          
+          if(!synchronizeChannels()) {
+            JOptionPane.showMessageDialog(null, mLocalizer.msg("syncNotPossibleMsg", "Channels could not be synchronized.\n\nPlease select the channels manually"), mLocalizer.msg("syncNotPossibleTitle", "Channels were not synchronized"), JOptionPane.ERROR_MESSAGE);
+          }
+        } catch (TvBrowserException e) {
+          JOptionPane.showMessageDialog(null, mLocalizer.msg("syncNotActivatedMsg", "Plugin could not be activated.\n\nPlease select the channels manually"), mLocalizer.msg("syncNotActivatedTitle", "AndroidSync could not be activated"), JOptionPane.ERROR_MESSAGE);
+        }
+      }
+    }
+    }catch(Throwable t)  {t.printStackTrace();}
+  }
 
+  private boolean synchronizeChannels() {
+    boolean methodResult = false;
+    try {  
+      if(mSyncCommunication != null) {
+        try {
+          Method getStoredChannels = mSyncCommunication.getClass().getMethod("getStoredChannels", new Class<?>[0]);
+          Object result = getStoredChannels.invoke(mSyncCommunication, new Object[0]);
+          
+          if(result != null) {
+            mCountryCB.setSelectedIndex(0);
+            mCategoryCB.setSelectedIndex(0);
+            mPluginCB.setSelectedItem(0);
+            
+            fillAvailableChannelsListBox();
+            
+            if(mSubscribedChannels.getModel().getSize() > 0) {
+              mSubscribedChannels.setSelectionInterval(0, mSubscribedChannels.getModel().getSize()-1);
+              UiUtilities.moveSelectedItems(mSubscribedChannels, mAllChannels);
+            }
+            
+            String[] channels = (String[])result;
+            
+            Channel[] available = ChannelList.getAvailableChannels();
+            
+            for(String syncChannel : channels) {
+              for(Channel ch : available) {
+                String[] parts = syncChannel.split(":");
+                
+                int index = -1;
+                
+                if(ch.getDataServicePackageName().equals(parts[0])) {
+                  if(parts[0].equals("tvbrowserdataservice")) {
+                    if(ch.getGroup().getId().equals(parts[1]) && ch.getId().equals(parts[2])) {
+                      index = ((DefaultListModel)mAllChannels.getModel()).indexOf(ch);
+                      if(parts.length > 3) {
+                        ch.setSortNumber(parts[3]);
+                      }
+                    }
+                  }
+                  else {
+                    if(ch.getId().equals(parts[1])) {
+                      index = ((DefaultListModel)mAllChannels.getModel()).indexOf(ch);
+                      
+                      if(parts.length > 2) {
+                        ch.setSortNumber(parts[2]);
+                      }
+                    }
+                  }
+                }
+                
+                if(index != -1) {
+                  mAllChannels.setSelectedIndex(index);
+                  UiUtilities.moveSelectedItems(mAllChannels, mSubscribedChannels);
+                  break;
+                }
+              }
+            }
+            
+            methodResult = true;
+            
+            JOptionPane.showMessageDialog(null, mLocalizer.msg("synched", "Channels were successfully synchronized."), mLocalizer.msg("syncSuccess", "Synchronization success"), JOptionPane.INFORMATION_MESSAGE);
+          }
+        } catch (SecurityException e1) {
+          // TODO Auto-generated catch block
+          e1.printStackTrace();
+        } catch (NoSuchMethodException e1) {
+          // TODO Auto-generated catch block
+          e1.printStackTrace();
+        } catch (IllegalArgumentException e1) {
+          // TODO Auto-generated catch block
+          e1.printStackTrace();
+        } catch (IllegalAccessException e1) {
+          // TODO Auto-generated catch block
+          e1.printStackTrace();
+        } catch (InvocationTargetException e1) {
+          // TODO Auto-generated catch block
+          e1.printStackTrace();
+        }
+      }
+    }catch(Throwable t) {t.printStackTrace();}
+    
+    return methodResult;
+  }
+  
   /**
    * Create the Panel with the Filter-Interface
    *
