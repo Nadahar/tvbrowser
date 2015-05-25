@@ -99,7 +99,7 @@ public class ParamLibrary {
     String[] str = { "title", "original_title", "start_day", "start_month", "start_year", "start_hour", "start_minute",
         "end_month", "end_year", "end_day", "end_hour", "end_minute", "length_minutes", "length_sec", "short_info",
         "description", "episode", "original_episode", "episode_number", "channel_name", "url", "start_day_of_week", "start_month_name",
-        "genre", "start_unix", "end_unix", "custom", "production_year", "actors"};
+        "genre", "start_unix", "end_unix", "custom", "production_year", "actors", "origin"};
     return str;
   }
 
@@ -155,6 +155,8 @@ public class ParamLibrary {
       return program.getTitle();
     } else if (key.equalsIgnoreCase("original_title")) {
       return removeNull(program.getTextField(ProgramFieldType.ORIGINAL_TITLE_TYPE));
+    } else if (key.equalsIgnoreCase("origin")) {
+        return removeNull(program.getTextField(ProgramFieldType.ORIGIN_TYPE));
     } else if (key.equalsIgnoreCase("start_day")) {
       return String.valueOf(program.getDate().getDayOfMonth());
     } else if (key.equalsIgnoreCase("start_month")) {
