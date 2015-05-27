@@ -43,6 +43,15 @@ look_for_java()
 
 check_version()
 {
+  TOOL_OPTIONS=`echo $JAVA_TOOL_OPTIONS`
+  
+  size=${#TOOL_OPTIONS}
+  
+  if [[ $size -ne 0 ]] ; then
+    echo "unset JAVA_TOOL_OPTIONS"
+    unset JAVA_TOOL_OPTIONS
+  fi
+
   JAVA_HEADER=`${JAVA_PROGRAM_DIR}java -version 2>&1 | head -n 1`
   JAVA_IMPL=`echo ${JAVA_HEADER} | cut -f1 -d' '`
   if [ "$JAVA_IMPL" = "java" ] ; then
