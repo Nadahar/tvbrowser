@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
@@ -62,9 +63,11 @@ public class TVPearl {
   private boolean mReindexAll = true;
   private static final TVPProgram EXAMPLE_PEARL = new TVPProgram("Me", "http://hilfe.tvbrowser.org", Calendar
       .getInstance(), "Example", "Channel", Calendar.getInstance(), "Info", "ID");
-
+  private HashMap<String, TVPProgram> mRepetitions;
+  
   public TVPearl() {
     mProgramList = new ArrayList<TVPProgram>();
+    mRepetitions = new HashMap<String, TVPProgram>();
     mLastUpdate = Calendar.getInstance();
     mLastUpdate.set(Calendar.HOUR_OF_DAY, mLastUpdate.get(Calendar.HOUR_OF_DAY) - 13);
   }
@@ -253,6 +256,13 @@ public class TVPearl {
     if (program.equals(TVPearlPlugin.getPluginManager().getExampleProgram())) {
       return EXAMPLE_PEARL;
     }
+    
+    TVPProgram test = program != null ? mRepetitions.get(program.getUniqueID()) : null;
+    
+    if(test != null) {
+      return test;
+    }
+    
     for (TVPProgram p : mProgramList) {
       if (p.getProgramID().equalsIgnoreCase(program.getID()) && program.getDate().equals(p.getDate())) {
         return p;
@@ -407,7 +417,7 @@ public class TVPearl {
         if (program.wasFound()) {
           final Program p = program.getProgram();
           if (p != null) {
-            markProgram(p, TVPearlPlugin.getSettings().getMarkPearls() && TVPProgramFilter.showProgram(program));
+            markProgram(p, TVPearlPlugin.getSettings().getMarkPearls() && TVPProgramFilter.showProgram(program), program);
           }
         }
       }
@@ -423,8 +433,9 @@ public class TVPearl {
    * @param program
    * @param setMark
    *          whether to mark or unmark the program
+   * @param pearl The pearl of the program
    */
-  private void markProgram(final Program program, final boolean setMark) {
+  private void markProgram(final Program program, final boolean setMark, TVPProgram pearl) {
     // set or remove mark
     if (setMark) {
       program.mark(TVPearlPlugin.getInstance());
@@ -443,8 +454,10 @@ public class TVPearl {
             && nextProg.getTitle().substring(0, program.getTitle().length()).equalsIgnoreCase(program.getTitle())) {
           if (setMark) {
             nextProg.mark(TVPearlPlugin.getInstance());
+            mRepetitions.put(nextProg.getUniqueID(), pearl);
           } else {
             nextProg.unmark(TVPearlPlugin.getInstance());
+            mRepetitions.remove(nextProg.getUniqueID());
           }
           nextProg.validateMarking();
         }
