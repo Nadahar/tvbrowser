@@ -49,9 +49,9 @@ import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 import util.ui.persona.Persona;
-
 import devplugin.ActionMenu;
 import devplugin.Channel;
+import devplugin.Date;
 import devplugin.Plugin;
 import devplugin.PluginCenterPanel;
 import devplugin.PluginCenterPanelWrapper;
@@ -71,7 +71,7 @@ import devplugin.Version;
 public class ProgramListPlugin extends Plugin {
   static final Localizer mLocalizer = Localizer.getLocalizerFor(ProgramListPlugin.class);
 
-  private static Version mVersion = new Version(3, 24, 2, true);
+  private static Version mVersion = new Version(3, 25, 0, true);
   
   private static final int MAX_DIALOG_LIST_SIZE = 5000;
   static final int MAX_PANEL_LIST_SIZE = 2500;
@@ -122,6 +122,27 @@ public class ProgramListPlugin extends Plugin {
           public void timeEvent() {
             if(mCenterPanelEntry != null) {
               mCenterPanelEntry.timeEvent();
+            }
+          }
+          
+          @Override
+          public void scrolledToDate(Date date) {
+            if(mCenterPanelEntry != null) {
+              mCenterPanelEntry.dateSelected(date);
+            }
+          }
+          
+          @Override
+          public void scrolledToNow() {
+            if(mCenterPanelEntry != null) {
+              mCenterPanelEntry.nowSelected();
+            }
+          }
+          
+          @Override
+          public void scrolledToTime(int time) {
+            if(mCenterPanelEntry != null) {
+              mCenterPanelEntry.scrollToTime(time);
             }
           }
         };
@@ -184,6 +205,7 @@ public class ProgramListPlugin extends Plugin {
   
   public void handleTvDataUpdateFinished() {
     if(mCenterPanelEntry != null) {
+      mCenterPanelEntry.fillDateBox();
       mCenterPanelEntry.fillProgramList();
     }
   }

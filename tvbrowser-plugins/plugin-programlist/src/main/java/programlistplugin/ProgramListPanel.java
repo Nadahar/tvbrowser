@@ -34,6 +34,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -48,6 +49,7 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.ListCellRenderer;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
@@ -99,7 +101,8 @@ public class ProgramListPanel extends JPanel implements PersonaListener, FilterC
   private ProgramPanelSettings mProgramPanelSettings;
   private JCheckBox mShowDescription;
   private JComboBox mFilterBox;
-  private JLabel mChannelLabel, mFilterLabel;
+  private JComboBox mDateBox;
+  private JLabel mChannelLabel, mFilterLabel, mDateLabel;
   private Thread mListThread;
   private Thread mUpdateThread;
 
@@ -175,48 +178,99 @@ public class ProgramListPanel extends JPanel implements PersonaListener, FilterC
     }
 
     fillFilterBox();
+    
+    mDateBox = new JComboBox() {
+      @Override
+      public void setSelectedItem(Object anObject) {
+        if(!(anObject instanceof JSeparator)) {
+          super.setSelectedItem(anObject);
+        }
+      }
+    };
+    
+    mDateBox.setRenderer(new DefaultListCellRenderer() {
+      @Override
+      public Component getListCellRendererComponent(JList list, Object value,
+          int index, boolean isSelected, boolean cellHasFocus) {
+        JLabel c = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected,
+            cellHasFocus);
+        
+        if(value instanceof Integer) {
+          c.setText(mLocalizer.msg("dateFromNow", "From now"));
+        }
+        else if(value instanceof Date) {
+          c.setText(((Date)value).getLongDateString());
+        }
+        else if(value instanceof JSeparator) {
+          JSeparator sep = new JSeparator();
+          return sep;
+        }
+        
+        c.setBorder(BorderFactory.createEmptyBorder(3, 0, 3, 0));
+        
+        return c;
+      }
+    });
+    
+    fillDateBox();
 
     mFilterBox.addItemListener(new ItemListener() {
       public void itemStateChanged(ItemEvent e) {
-        ProgramFilter[] filterArr = ProgramListPlugin.getPluginManager().getFilterManager().getAvailableFilters();
-        
-        boolean found = false;
-        
-        for(ProgramFilter filter : filterArr) {
-          if(filter.getName().equals(mFilterBox.getSelectedItem())) {
-            mFilter = filter;
-            
-            if (mFilter != ProgramListPlugin.getInstance().getReceiveFilter()) {
-              mSettings.setFilterName(mFilter.getName());
-              found = true;
-              break;
+        if(e == null || e.getStateChange() == ItemEvent.SELECTED) {
+          ProgramFilter[] filterArr = ProgramListPlugin.getPluginManager().getFilterManager().getAvailableFilters();
+          
+          boolean found = false;
+          
+          for(ProgramFilter filter : filterArr) {
+            if(filter.getName().equals(mFilterBox.getSelectedItem())) {
+              mFilter = filter;
+              
+              if (mFilter != ProgramListPlugin.getInstance().getReceiveFilter()) {
+                mSettings.setFilterName(mFilter.getName());
+                found = true;
+                break;
+              }
             }
           }
+          
+          if(!found) {
+            fillFilterBox();
+          }
+          
+          mChannelBox.getItemListeners()[0].itemStateChanged(null);
         }
-        
-        if(!found) {
-          fillFilterBox();
-        }
-        
-        mChannelBox.getItemListeners()[0].itemStateChanged(null);
       }
     });
 
     mChannelBox.addItemListener(new ItemListener() {
       public void itemStateChanged(ItemEvent e) {
-        fillProgramList();
+        if(e == null || e.getStateChange() == ItemEvent.SELECTED) {
+          fillProgramList();
+        }
+        
         mSettings.setIndex(mChannelBox.getSelectedIndex());
+      }
+    });
+    
+    mDateBox.addItemListener(new ItemListener() {
+      @Override
+      public void itemStateChanged(ItemEvent e) {
+        if(e == null || e.getStateChange() == ItemEvent.SELECTED) {
+          fillProgramList();
+        }
       }
     });
 
     CellConstraints cc = new CellConstraints();
 
-    JPanel panel = new JPanel(new FormLayout("1dlu,default,3dlu,default:grow", "pref,2dlu,pref,2dlu"));
+    JPanel panel = new JPanel(new FormLayout("1dlu,default,3dlu,default:grow", "default,2dlu,default,2dlu,default,2dlu"));
     panel.setOpaque(false);
-    panel.add(mChannelLabel = new JLabel(Localizer.getLocalization(Localizer.I18N_CHANNELS) + ":"), cc.xy(2, 1));
-    panel.add(mChannelBox, cc.xy(4, 1));
-    panel.add(mFilterLabel = new JLabel(mLocalizer.msg("filter", "Filter:")), cc.xy(2, 3));
-    panel.add(mFilterBox, cc.xy(4, 3));
+    panel.add(mDateLabel = new JLabel(mLocalizer.msg("date", "Date:")), cc.xy(2, 1));
+    panel.add(mDateBox, cc.xy(4, 1));
+    panel.add(mChannelLabel = new JLabel(Localizer.getLocalization(Localizer.I18N_CHANNELS) + ":"), cc.xy(2, 3));
+    panel.add(mChannelBox, cc.xy(4, 3));
+    panel.add(mFilterLabel = new JLabel(mLocalizer.msg("filter", "Filter:")), cc.xy(2, 5));
+    panel.add(mFilterBox, cc.xy(4, 5));
 
     mPreviousDay = new JButton(TVBrowserIcons.left(TVBrowserIcons.SIZE_SMALL));
     mPreviousDay.setToolTipText(mLocalizer.msg("prevDay", "Scrolls to previous day from current view position (if there is previous day in the list)"));
@@ -369,7 +423,7 @@ public class ProgramListPanel extends JPanel implements PersonaListener, FilterC
     add(southPanel, BorderLayout.SOUTH);
     
     mUpdateList = false;
-    mLastAncestorRemoved = 0;
+    mLastAncestorRemoved = -1;
     
     addAncestorListener(new AncestorListener() {
       @Override
@@ -385,12 +439,17 @@ public class ProgramListPanel extends JPanel implements PersonaListener, FilterC
       public void ancestorAdded(AncestorEvent event) {
         mUpdateList = true;
         
-        if(System.currentTimeMillis() - mLastAncestorRemoved > ANCHESTOR_UPDATE_TIMEOUT) {
-          mCurrentSelection = mList.getSelectedValue();
-          mCurrentVisible = mList.getVisibleRect();
-          mCurrentCount = mModel.getSize();
-          
-          mChannelBox.getItemListeners()[0].itemStateChanged(null);
+        if(mLastAncestorRemoved == -1) {
+          fillProgramList();
+        }
+        else {
+          if(System.currentTimeMillis() - mLastAncestorRemoved > ANCHESTOR_UPDATE_TIMEOUT) {
+            mCurrentSelection = mList.getSelectedValue();
+            mCurrentVisible = mList.getVisibleRect();
+            mCurrentCount = mModel.getSize();
+            
+            mChannelBox.getItemListeners()[0].itemStateChanged(null);
+          }
         }
       }
     });
@@ -451,6 +510,27 @@ public class ProgramListPanel extends JPanel implements PersonaListener, FilterC
     }
 
   }
+  
+  void fillDateBox() {
+    Object currentDate = mDateBox.getSelectedItem();
+    JSeparator sep = new JSeparator();
+    
+    mDateBox.removeAllItems();
+    mDateBox.addItem(Integer.valueOf(-1));
+    mDateBox.addItem(sep);
+    
+    for(Date d = Date.getCurrentDate().addDays(-1); Plugin.getPluginManager().isDataAvailable(d); d = d.addDays(1)) {
+      if(d.isFirstDayOfWeek() && mDateBox.getItemCount() > 2) {
+        mDateBox.addItem(sep);
+      }
+      
+      mDateBox.addItem(d);
+    }
+    
+    if(currentDate != null) {
+      mDateBox.setSelectedItem(currentDate);
+    }
+  }
 
   void fillProgramList() {
     if(mUpdateList && (mListThread == null || !mListThread.isAlive())) {
@@ -476,28 +556,28 @@ public class ProgramListPanel extends JPanel implements PersonaListener, FilterC
                 setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
                 mModel.clear();
                 mPrograms.clear();
-      
-                boolean showExpired = false;
-      
+                
                 Channel[] channels = mChannelBox.getSelectedItem() instanceof String ? Plugin.getPluginManager()
                     .getSubscribedChannels() : new Channel[] { (Channel) mChannelBox.getSelectedItem() };
-      
-                Date date = channels.length > 1
-                    && mFilter.equals(Plugin.getPluginManager().getFilterManager().getAllFilter()) ? Plugin
-                    .getPluginManager().getCurrentDate() : Date.getCurrentDate();
+                
+                boolean dateSelected = mDateBox.getSelectedItem() instanceof Date;
+                    
+                Date date = dateSelected ? (Date)mDateBox.getSelectedItem() : Date.getCurrentDate();
       
                 int startTime = Plugin.getPluginManager().getTvBrowserSettings().getProgramTableStartOfDay();
                 int endTime = Plugin.getPluginManager().getTvBrowserSettings().getProgramTableEndOfDay();
       
-                int maxDays = channels.length > 1
-                    && mFilter.equals(Plugin.getPluginManager().getFilterManager().getAllFilter()) ? 2 : 28;
+                int maxDays = dateSelected ? 2 : 28;
+                
+                boolean showExpired = date.compareTo(Date.getCurrentDate()) < 0;
+                
                 for (int d = 0; d < maxDays; d++) {
                   if (Plugin.getPluginManager().isDataAvailable(date)) {
                     for (Channel channel : channels) {
                       for (Iterator<Program> it = Plugin.getPluginManager().getChannelDayProgram(date, channel); it.hasNext();) {
                         Program program = it.next();
                         if ((showExpired || !program.isExpired()) && mFilter.accept(program)) {
-                          if (mFilter.equals(Plugin.getPluginManager().getFilterManager().getAllFilter())) {
+                          if (dateSelected) {
                             if ((d == 0 && program.getStartTime() >= startTime)
                                 || (d == 1 && program.getStartTime() <= endTime)) {
                               mPrograms.add(program);
@@ -551,6 +631,10 @@ public class ProgramListPanel extends JPanel implements PersonaListener, FilterC
                 
                 if(currentSelectionNewIndex != -1) {
                   index = currentSelectionNewIndex;
+                }
+                
+                if(index == -1 && showExpired) {
+                  index = 0;
                 }
                 
                 updateList(model, forceScrollingIndex, index, currentSelectionNewIndex != -1);
@@ -621,6 +705,7 @@ public class ProgramListPanel extends JPanel implements PersonaListener, FilterC
     
     mChannelLabel.setForeground(mShowDescription.getForeground());
     mFilterLabel.setForeground(mShowDescription.getForeground());
+    mDateLabel.setForeground(mShowDescription.getForeground());
   }
   
   private Object mCurrentSelection = null;
@@ -697,6 +782,57 @@ public class ProgramListPanel extends JPanel implements PersonaListener, FilterC
       mCurrentCount = mModel.getSize();
       
       fillProgramList();
+    }
+  }
+  
+  void dateSelected(Date date) {
+    if(mDateBox.getSelectedItem() == null || !mDateBox.getSelectedItem().equals(date)) {
+      mDateBox.setSelectedItem(date);
+    }
+  }
+  
+  private Thread mTimeScrollWaitingThread;
+  private static final int TIME_SCROLL_WAITING_TIME = 150;
+  
+  void nowSelected() {
+    if(mTimeScrollWaitingThread != null && mTimeScrollWaitingThread.isAlive()) {
+      mTimeScrollWaitingThread.interrupt();
+    }
+    
+    if(mDateBox.getSelectedIndex() != 0) {
+      mDateBox.setSelectedIndex(0);
+    }
+    else if(mUpdateList) {
+      mList.scrollRectToVisible(new Rectangle(0,0));
+    }
+  }
+  
+  void scrollToTime(final int time) {
+    if(mUpdateList) {
+      mTimeScrollWaitingThread = new Thread("PROGRAM LIST SCROLL TO TIME THREAD") {
+        @Override
+        public void run() {
+          try {
+            sleep(TIME_SCROLL_WAITING_TIME);
+            
+            SwingUtilities.invokeLater(new Runnable() {
+              @Override
+              public void run() {
+                try {
+                  Method scrollToFirstOccurrenceOfTimeFromCurrentViewOnwardIfAvailable = mList.getClass().getMethod("scrollToFirstOccurrenceOfTimeFromCurrentViewOnwardIfAvailable", new Class<?>[] {int.class});
+                  scrollToFirstOccurrenceOfTimeFromCurrentViewOnwardIfAvailable.invoke(mList, time);
+                } catch (Exception e) {
+                  // Ignore
+                }
+              }
+            });
+          } catch (InterruptedException e1) {
+            // Ignore
+          }
+        };
+      };
+      mTimeScrollWaitingThread.start();
+      
     }
   }
 }
