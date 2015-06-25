@@ -71,7 +71,7 @@ import devplugin.Version;
 public class ProgramListPlugin extends Plugin {
   static final Localizer mLocalizer = Localizer.getLocalizerFor(ProgramListPlugin.class);
 
-  private static Version mVersion = new Version(3, 25, 0, true);
+  private static Version mVersion = new Version(3, 25, 1, true);
   
   private static final int MAX_DIALOG_LIST_SIZE = 5000;
   static final int MAX_PANEL_LIST_SIZE = 2500;
@@ -143,6 +143,13 @@ public class ProgramListPlugin extends Plugin {
           public void scrolledToTime(int time) {
             if(mCenterPanelEntry != null) {
               mCenterPanelEntry.scrollToTime(time);
+            }
+          }
+          
+          @Override
+          public void scrolledToChannel(Channel channel) {
+            if(mCenterPanelEntry != null) {
+              mCenterPanelEntry.selectChannel(channel);
             }
           }
         };

@@ -835,4 +835,10 @@ public class ProgramListPanel extends JPanel implements PersonaListener, FilterC
       
     }
   }
+  
+  void selectChannel(Channel ch) {
+    if(mChannelBox.getSelectedItem() == null || !mChannelBox.getSelectedItem().equals(ch)) {
+      mChannelBox.setSelectedItem(ch);
+    }
+  }
 }
