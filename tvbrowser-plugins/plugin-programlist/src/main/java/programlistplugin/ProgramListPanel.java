@@ -818,11 +818,11 @@ public class ProgramListPanel extends JPanel implements PersonaListener, FilterC
             SwingUtilities.invokeLater(new Runnable() {
               @Override
               public void run() {
-                try {
-                  Method scrollToFirstOccurrenceOfTimeFromCurrentViewOnwardIfAvailable = mList.getClass().getMethod("scrollToFirstOccurrenceOfTimeFromCurrentViewOnwardIfAvailable", new Class<?>[] {int.class});
-                  scrollToFirstOccurrenceOfTimeFromCurrentViewOnwardIfAvailable.invoke(mList, time);
-                } catch (Exception e) {
-                  // Ignore
+                if(ProgramListPlugin.getInstance().getSettings().tabTimeScrollAround()) {
+                  mList.scrollToFirstOccurrenceOfTimeFromCurrentViewOnwardIfAvailable(time);
+                }
+                else {
+                  mList.scrollToTimeFromCurrentViewIfAvailable(time);
                 }
               }
             });

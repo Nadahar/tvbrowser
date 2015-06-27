@@ -31,6 +31,7 @@ public class ProgramListSettings extends PropertyBasedSettings {
   private static final String KEY_PROVIDE_TAB = "provideTab";
   private static final String KEY_SHOW_DATE_SEPARATOR = "showDateSeparator";
   private static final String KEY_REACT_ON_FILTER_CHANGE = "reactOnFilterChange";
+  private static final String KEY_TAB_TIME_SCROLL_AROUND = "tabTimeScrollAround";
 
   public ProgramListSettings(final Properties properties) {
     super(properties);
@@ -82,5 +83,13 @@ public class ProgramListSettings extends PropertyBasedSettings {
   
   public void setReactOnFilterChange(final boolean react) {
     set(KEY_REACT_ON_FILTER_CHANGE, react);
+  }
+  
+  public boolean tabTimeScrollAround() {
+    return get(KEY_TAB_TIME_SCROLL_AROUND, false);
+  }
+  
+  public void setTabTimeScrollAround(final boolean value) {
+    set(KEY_TAB_TIME_SCROLL_AROUND, value);
   }
 }
