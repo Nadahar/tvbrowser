@@ -35,6 +35,7 @@ import java.util.Properties;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.ButtonGroup;
 import javax.swing.Icon;
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
@@ -75,7 +76,7 @@ import devplugin.Version;
 public class ProgramListPlugin extends Plugin {
   static final Localizer mLocalizer = Localizer.getLocalizerFor(ProgramListPlugin.class);
 
-  private static Version mVersion = new Version(3, 25, 2, true);
+  private static Version mVersion = new Version(3, 25, 3, true);
   
   private static final int MAX_DIALOG_LIST_SIZE = 5000;
   static final int MAX_PANEL_LIST_SIZE = 2500;
@@ -422,6 +423,11 @@ public class ProgramListPlugin extends Plugin {
         mTabTimeScrollNext = new JRadioButton(mLocalizer.msg("timeButtonScrollNext", "Scroll to next occurence of time from shown programs onward"), !getSettings().tabTimeScrollAround());
         mTabTimeScrollDay = new JRadioButton(mLocalizer.msg("timeButtonScrollDay", "Scroll to occurence of time on shown day in list"), getSettings().tabTimeScrollAround());
         
+        ButtonGroup bg = new ButtonGroup();
+        
+        bg.add(mTabTimeScrollNext);
+        bg.add(mTabTimeScrollDay);
+        
         panel.add(mShowDateSeparator, CC.xyw(2, 2, 3));
         panel.add(mProvideTab, CC.xyw(2, 3, 3));
         
@@ -453,6 +459,7 @@ public class ProgramListPlugin extends Plugin {
         getSettings().setProvideTab(mProvideTab.isSelected());
         getSettings().setShowDateSeparator(mShowDateSeparator.isSelected());
         getSettings().setReactOnFilterChange(mReactOnFilterChange.isSelected());
+        getSettings().setTabTimeScrollAround(mTabTimeScrollDay.isSelected());
         
         addPanel();
       }
