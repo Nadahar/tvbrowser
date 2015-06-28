@@ -199,7 +199,21 @@ public class ProgramListPanel extends JPanel implements PersonaListener, FilterC
           c.setText(mLocalizer.msg("dateFromNow", "From now"));
         }
         else if(value instanceof Date) {
-          c.setText(((Date)value).getLongDateString());
+          Date date = (Date)value;
+          
+          String dateString = date.getLongDateString();
+          
+          if(date.addDays(1).equals(Date.getCurrentDate())) {
+            dateString = Localizer.getLocalization(Localizer.I18N_YESTERDAY) + ", " + dateString;
+          }
+          else if(date.equals(Date.getCurrentDate())) {
+            dateString = Localizer.getLocalization(Localizer.I18N_TODAY) + ", " + dateString;
+          }
+          else if(date.addDays(-1).equals(Date.getCurrentDate())) {
+            dateString = Localizer.getLocalization(Localizer.I18N_TOMORROW) + ", " + dateString;
+          }
+          
+          c.setText(dateString);
         }
         else if(value instanceof JSeparator) {
           JSeparator sep = new JSeparator();
@@ -819,10 +833,10 @@ public class ProgramListPanel extends JPanel implements PersonaListener, FilterC
               @Override
               public void run() {
                 if(ProgramListPlugin.getInstance().getSettings().tabTimeScrollAround()) {
-                  mList.scrollToFirstOccurrenceOfTimeFromCurrentViewOnwardIfAvailable(time);
+                  mList.scrollToTimeFromCurrentViewIfAvailable(time);
                 }
                 else {
-                  mList.scrollToTimeFromCurrentViewIfAvailable(time);
+                  mList.scrollToFirstOccurrenceOfTimeFromCurrentViewOnwardIfAvailable(time);
                 }
               }
             });
