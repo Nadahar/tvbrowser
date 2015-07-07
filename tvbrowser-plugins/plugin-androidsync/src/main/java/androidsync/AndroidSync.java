@@ -125,7 +125,7 @@ public class AndroidSync extends Plugin {
   private static final String PLUGIN_TYPE = "PLUGIN_TYPE";
   private static final String FILTER_TYPE = "FILTER_TYPE";
   
-  private static final Version mVersion = new Version(0, 23, 0, true);
+  private static final Version mVersion = new Version(0, 23, 1, true);
   private final String CrLf = "\r\n";
   private Properties mProperties;
   
@@ -510,10 +510,10 @@ public class AndroidSync extends Plugin {
         pb.add(mSynchroReminders, CC.xyw(2, 5, 4));
         pb.add(mPluginType, CC.xyw(2, 7, 4));
         pb.add(mPluginSelection, CC.xyw(3, 8, 3));
-        pb.add(mFilterType, CC.xyw(2, 9, 4));
-        pb.add(mFilterSelection, CC.xyw(3, 10, 3));
+        pb.add(mFilterType, CC.xyw(2, 10, 4));
+        pb.add(mFilterSelection, CC.xyw(3, 11, 3));
         
-        pb.add(mMarkingsPanel, CC.xyw(2, 11, 4));
+        pb.add(mMarkingsPanel, CC.xyw(2, 12, 4));
         
         pb.add(UiUtilities.createHtmlHelpTextArea("The Android robot is reproduced or modified from work created and shared by Google and used according to terms described in the Creative Commons 3.0 Attribution License."), CC.xyw(2, 14, 4));
         
