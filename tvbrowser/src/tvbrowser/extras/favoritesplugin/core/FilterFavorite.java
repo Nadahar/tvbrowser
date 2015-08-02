@@ -163,7 +163,7 @@ public class FilterFavorite extends Favorite implements PendingFilterLoader {
   }
   
   @Override
-  public boolean accept(Program p) {
+  public boolean matches(Program p) {
     ProgramFilter test = getProgramFilter();
     
     if(mFilterIsAcceptable) {
