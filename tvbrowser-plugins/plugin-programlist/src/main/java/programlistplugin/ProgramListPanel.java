@@ -34,7 +34,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -56,10 +55,6 @@ import javax.swing.UIManager;
 import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
 
-import com.jgoodies.forms.factories.Borders;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
-
 import util.program.ProgramUtilities;
 import util.settings.PluginPictureSettings;
 import util.settings.ProgramPanelSettings;
@@ -70,6 +65,11 @@ import util.ui.TVBrowserIcons;
 import util.ui.UiUtilities;
 import util.ui.persona.Persona;
 import util.ui.persona.PersonaListener;
+
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+
 import devplugin.Channel;
 import devplugin.Date;
 import devplugin.FilterChangeListenerV2;
@@ -690,7 +690,8 @@ public class ProgramListPanel extends JPanel implements PersonaListener, FilterC
         mCurrentVisible = null;
         mCurrentCount = 0;
         
-        setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));                
+        setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));   
+        mList.updateUI();
       }
     });
   }
@@ -806,7 +807,7 @@ public class ProgramListPanel extends JPanel implements PersonaListener, FilterC
   }
   
   private Thread mTimeScrollWaitingThread;
-  private static final int TIME_SCROLL_WAITING_TIME = 150;
+  private static final int TIME_SCROLL_WAITING_TIME = 250;
   
   void nowSelected() {
     if(mTimeScrollWaitingThread != null && mTimeScrollWaitingThread.isAlive()) {
