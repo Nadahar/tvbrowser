@@ -101,6 +101,7 @@ import util.settings.VariableIntProperty;
 import util.settings.VersionProperty;
 import util.settings.WindowSetting;
 import util.ui.Localizer;
+import util.ui.UiUtilities;
 import util.ui.persona.Persona;
 import util.ui.view.SplitViewProperty;
 import devplugin.Channel;
@@ -2095,6 +2096,9 @@ public class Settings {
   
   public static final IntProperty propShowChannelLogoForProgramPanel = new IntProperty(
       mProp, "showChannelLogoForProgramPanel", ProgramPanelSettings.SHOW_CHANNEL_LOGO_PLUGINS_CONTROL);
+  
+  public static final StringProperty propLastChannelExportFile = new StringProperty(
+      mProp, "lastChannelExportFile", System.getProperty("user.home") + "/TVB-channel-export.txt");
   
   /**
    * Sets the window position and size for the given window with the values of

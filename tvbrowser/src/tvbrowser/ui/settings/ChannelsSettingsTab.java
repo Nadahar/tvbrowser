@@ -37,8 +37,14 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
@@ -59,10 +65,13 @@ import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
@@ -74,6 +83,9 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.event.PopupMenuEvent;
+import javax.swing.event.PopupMenuListener;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import tvbrowser.core.ChannelList;
 import tvbrowser.core.DummyChannel;
@@ -201,8 +213,9 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
   private boolean mShowPlugins = (TvDataServiceProxyManager
   .getInstance().getDataServices().length > 1);
 
-  private JButton mSynchronize;
+  private JButton mImExportChannels;
   private PluginCommunication mSyncCommunication;
+  private long mLastImExportChannelsPopupClosed = 0;
   
   private boolean mIsWizard = false;
   
@@ -309,18 +322,17 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
 
     restoreForPopup();
     
-    mSynchronize = new JButton(mLocalizer.msg("synchronize", "Synchronize channels with AndroidSync"));
-    mSynchronize.setVisible(false);
-    mSynchronize.addActionListener(new ActionListener() {
+    mImExportChannels = new JButton(mLocalizer.msg("imExportChannels", "Export/import channels"));
+    mImExportChannels.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        synchronizeChannels();
+        showImExportSelection();
       }
     });
     
     loadSyncCommunication();
     
-    listBoxPnRight.add(mSynchronize, BorderLayout.NORTH);
+    listBoxPnRight.add(mImExportChannels, BorderLayout.NORTH);
     
     listBoxPnRight.add(new JScrollPane(mSubscribedChannels),
         BorderLayout.CENTER);
@@ -486,7 +498,6 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
     
     if(androidSync != null) {
       mSyncCommunication = androidSync.getCommunicationClass();
-      mSynchronize.setVisible(true);
     }
   }
   
@@ -546,7 +557,219 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
     }
     }catch(Throwable t)  {t.printStackTrace();}
   }
-
+  
+  private void showImExportSelection() {
+    if(mLastImExportChannelsPopupClosed + 200 < System.currentTimeMillis()) {
+      JPopupMenu imExportChannelsPopup = new JPopupMenu();
+      
+      imExportChannelsPopup.addPopupMenuListener(new PopupMenuListener() {
+        @Override
+        public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
+          mLastImExportChannelsPopupClosed = System.currentTimeMillis();
+        }
+        
+        @Override
+        public void popupMenuWillBecomeVisible(PopupMenuEvent e) {}        
+        @Override
+        public void popupMenuCanceled(PopupMenuEvent e) {}
+      });
+      
+      if(mSyncCommunication != null) {
+        JMenuItem item = new JMenuItem(mLocalizer.msg("synchronize", "Synchronize channels with AndroidSync"));
+        item.addActionListener(new ActionListener() {
+          @Override
+          public void actionPerformed(ActionEvent e) {
+            synchronizeChannels();
+          }
+        });
+        
+        imExportChannelsPopup.add(item);
+        imExportChannelsPopup.addSeparator();
+      }
+      
+      JMenuItem item = new JMenuItem(mLocalizer.msg("exportChannelsBtn", "Export channels to file"));
+      item.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+          exportChannelsToFile();
+        }
+      });
+      
+      imExportChannelsPopup.add(item);
+      
+      item = new JMenuItem(mLocalizer.msg("importChannelsBtn", "Import channels from file"));
+      item.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+          importChannelsFromFile();
+        }
+      });
+      
+      imExportChannelsPopup.add(item);
+      
+      imExportChannelsPopup.show(mImExportChannels, 0, mImExportChannels.getHeight());
+    }
+  }
+  
+  private void importChannelsFromFile() {
+    FileNameExtensionFilter filter = new FileNameExtensionFilter(mLocalizer.msg("textFileType", "Text files"), "txt");
+    
+    JFileChooser chooser = new JFileChooser();
+    chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+    chooser.setDialogTitle(mLocalizer.msg("exportChannels", "Export channels"));
+    chooser.addChoosableFileFilter(filter);
+    chooser.setFileFilter(filter);
+    chooser.setSelectedFile(new File(IOUtilities.translateRelativePath(Settings.propLastChannelExportFile.getString())));
+    chooser.setAcceptAllFileFilterUsed(false);
+    
+    if(chooser.showOpenDialog(UiUtilities.getLastModalChildOf(MainFrame.getInstance())) == JFileChooser.APPROVE_OPTION) {
+      File file = chooser.getSelectedFile();
+      
+      if(file != null && file.isFile()) {
+        ArrayList<String> channelList = new ArrayList<String>();
+        
+        BufferedReader in = null;
+        
+        try {
+          in = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"));
+          
+          String line = null;
+          
+          while((line = in.readLine()) != null) {
+            channelList.add(line);
+          }
+        } catch (IOException e) {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        }finally {
+          if(in != null) {
+            try {
+              in.close();
+            } catch (IOException e) {}
+          }
+        }
+        
+        if(!channelList.isEmpty() && importChannels(channelList.toArray(new String[channelList.size()]))) {
+          JOptionPane.showMessageDialog(null, mLocalizer.msg("synched", "Channels were successfully synchronized."), mLocalizer.msg("importSuccess", "Channels were imported successfully."), JOptionPane.INFORMATION_MESSAGE);
+        }
+      }
+    }
+  }
+  
+  private void exportChannelsToFile() {
+    FileNameExtensionFilter filter = new FileNameExtensionFilter(mLocalizer.msg("textFileType", "Text files"), "txt");
+    
+    JFileChooser chooser = new JFileChooser();
+    chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+    chooser.setDialogTitle(mLocalizer.msg("exportChannels", "Export channels"));
+    chooser.addChoosableFileFilter(filter);
+    chooser.setFileFilter(filter);
+    chooser.setSelectedFile(new File(IOUtilities.translateRelativePath(Settings.propLastChannelExportFile.getString())));
+    chooser.setAcceptAllFileFilterUsed(false);
+    
+    if(chooser.showSaveDialog(UiUtilities.getLastModalChildOf(MainFrame.getInstance())) == JFileChooser.APPROVE_OPTION) {
+      File file = chooser.getSelectedFile();
+      
+      if(!file.getName().toLowerCase().endsWith(".txt")) {
+        file = new File(file.getAbsolutePath()+".txt");
+      }
+      
+      boolean save = true;
+      
+      if(file.isFile() && JOptionPane.showConfirmDialog(UiUtilities.getLastModalChildOf(MainFrame.getInstance()), mLocalizer.msg("exportOverrideMsg", "The file already exists.\nDo you want to override it?"), mLocalizer.msg("exportOverrideTitle", "Override file?"), JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) != JOptionPane.YES_OPTION) {
+        save = false;
+      }
+      
+      if(save) {
+        Settings.propLastChannelExportFile.setString(IOUtilities.checkForRelativePath(file.getAbsolutePath()));
+        
+        BufferedWriter out = null;
+        
+        try {
+          FileOutputStream fOut = new FileOutputStream(file);
+          fOut.getChannel().truncate(0);
+          
+          out = new BufferedWriter(new OutputStreamWriter(fOut,"UTF-8"));
+          
+          for(int i = 0; i < mSubscribedChannels.getModel().getSize(); i++) {
+            Channel ch = (Channel)mSubscribedChannels.getModel().getElementAt(i);
+            
+            out.write(ch.getDataServicePackageName());
+            out.write(":");
+            
+            if(!ch.getDataServicePackageName().equals("epgdonatedata")) {
+              out.write(ch.getGroup().getId());
+              out.write(":");
+            }
+            
+            out.write(ch.getId());
+            
+            if(ch.getSortNumber().trim().length() > 0) {
+              out.write(":");
+              out.write(ch.getSortNumber());
+            }
+            
+            out.write("\n");
+          }
+          
+          out.flush();
+        }catch(IOException ioe) {
+          ioe.printStackTrace();
+        }finally {
+          if(out != null) {
+            try {
+              out.close();
+            }catch(Throwable t) {}
+          }
+        }
+      }
+    }
+  }
+  
+  private boolean importChannels(String[] channels) {
+    boolean result = false;
+    
+    if(channels != null && channels.length > 0) {
+      Channel[] available = ChannelList.getAvailableChannels();
+      
+      for(String syncChannel : channels) {System.out.println(syncChannel);
+        for(Channel ch : available) {
+          String[] parts = syncChannel.split(":");
+          
+          int index = -1;
+          
+          if(ch.getDataServicePackageName().equals(parts[0])) {
+            if(parts[0].equals("epgdonatedata")) {
+              if(ch.getId().equals(parts[1])) {
+                index = ((DefaultListModel)mAllChannels.getModel()).indexOf(ch);
+                
+                if(parts.length > 2) {
+                  ch.setSortNumber(parts[2]);
+                }
+              }
+            }
+            else {
+              if(ch.getGroup().getId().equals(parts[1]) && ch.getId().equals(parts[2])) {
+                index = ((DefaultListModel)mAllChannels.getModel()).indexOf(ch);
+                if(parts.length > 3) {
+                  ch.setSortNumber(parts[3]);
+                }
+              }
+            }
+          }
+          
+          if(index != -1) {
+            mAllChannels.setSelectedIndex(index);
+            UiUtilities.moveSelectedItems(mAllChannels, mSubscribedChannels);
+            break;
+          }
+        }
+      }
+    }
+    
+    return result;
+  }
+  
   private boolean synchronizeChannels() {
     boolean methodResult = false;
     try {  
@@ -567,47 +790,11 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
               UiUtilities.moveSelectedItems(mSubscribedChannels, mAllChannels);
             }
             
-            String[] channels = (String[])result;
+            methodResult = importChannels((String[])result);
             
-            Channel[] available = ChannelList.getAvailableChannels();
-            
-            for(String syncChannel : channels) {
-              for(Channel ch : available) {
-                String[] parts = syncChannel.split(":");
-                
-                int index = -1;
-                
-                if(ch.getDataServicePackageName().equals(parts[0])) {
-                  if(parts[0].equals("tvbrowserdataservice")) {
-                    if(ch.getGroup().getId().equals(parts[1]) && ch.getId().equals(parts[2])) {
-                      index = ((DefaultListModel)mAllChannels.getModel()).indexOf(ch);
-                      if(parts.length > 3) {
-                        ch.setSortNumber(parts[3]);
-                      }
-                    }
-                  }
-                  else {
-                    if(ch.getId().equals(parts[1])) {
-                      index = ((DefaultListModel)mAllChannels.getModel()).indexOf(ch);
-                      
-                      if(parts.length > 2) {
-                        ch.setSortNumber(parts[2]);
-                      }
-                    }
-                  }
-                }
-                
-                if(index != -1) {
-                  mAllChannels.setSelectedIndex(index);
-                  UiUtilities.moveSelectedItems(mAllChannels, mSubscribedChannels);
-                  break;
-                }
-              }
+            if(methodResult) {
+              JOptionPane.showMessageDialog(null, mLocalizer.msg("synched", "Channels were successfully synchronized."), mLocalizer.msg("syncSuccess", "Synchronization success"), JOptionPane.INFORMATION_MESSAGE);
             }
-            
-            methodResult = true;
-            
-            JOptionPane.showMessageDialog(null, mLocalizer.msg("synched", "Channels were successfully synchronized."), mLocalizer.msg("syncSuccess", "Synchronization success"), JOptionPane.INFORMATION_MESSAGE);
           }
         } catch (SecurityException e1) {
           // TODO Auto-generated catch block
