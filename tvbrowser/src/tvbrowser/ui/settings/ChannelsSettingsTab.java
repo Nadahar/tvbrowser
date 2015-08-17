@@ -732,7 +732,7 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
     if(channels != null && channels.length > 0) {
       Channel[] available = ChannelList.getAvailableChannels();
       
-      for(String syncChannel : channels) {System.out.println(syncChannel);
+      for(String syncChannel : channels) {
         for(Channel ch : available) {
           String[] parts = syncChannel.split(":");
           
@@ -761,6 +761,7 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
           if(index != -1) {
             mAllChannels.setSelectedIndex(index);
             UiUtilities.moveSelectedItems(mAllChannels, mSubscribedChannels);
+            result = true;
             break;
           }
         }
