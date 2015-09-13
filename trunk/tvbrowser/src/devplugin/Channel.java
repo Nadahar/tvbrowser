@@ -1291,4 +1291,12 @@ public class Channel implements Comparable<Channel> {
   public boolean isAccessControl() {
     return mAccessControl;
   }
+  
+  /**
+   * @return A hash-code which never changes during tv-browser runtime.
+   * @since 3.4.1
+   */
+  public int hashCode() {
+        return getUniqueId().hashCode();
+  }  
 }
