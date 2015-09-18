@@ -75,7 +75,7 @@ import devplugin.Version;
 public class ProgramListPlugin extends Plugin {
   static final Localizer mLocalizer = Localizer.getLocalizerFor(ProgramListPlugin.class);
 
-  private static Version mVersion = new Version(3, 25, 5, true);
+  private static Version mVersion = new Version(3, 26, 0, true);
   
   private static final int MAX_DIALOG_LIST_SIZE = 5000;
   static final int MAX_PANEL_LIST_SIZE = 2500;
@@ -118,7 +118,7 @@ public class ProgramListPlugin extends Plugin {
           }
           
           public void filterSelected(ProgramFilter filter) {
-            if(mCenterPanelEntry != null && getSettings().reactOnFilterChange()) {
+            if(mCenterPanelEntry != null && getSettings().getBooleanValue(ProgramListSettings.KEY_TAB_REACT_ON_FILTER_CHANGE)) {
               mCenterPanelEntry.updateFilter(filter);
             }
           }
@@ -131,28 +131,28 @@ public class ProgramListPlugin extends Plugin {
           
           @Override
           public void scrolledToDate(Date date) {
-            if(mCenterPanelEntry != null) {
+            if(mCenterPanelEntry != null && getSettings().getBooleanValue(ProgramListSettings.KEY_TAB_REACT_ON_DATE)) {
               mCenterPanelEntry.dateSelected(date);
             }
           }
           
           @Override
           public void scrolledToNow() {
-            if(mCenterPanelEntry != null) {
+            if(mCenterPanelEntry != null && getSettings().getBooleanValue(ProgramListSettings.KEY_TAB_REACT_ON_TIME)) {
               mCenterPanelEntry.nowSelected();
             }
           }
           
           @Override
           public void scrolledToTime(int time) {
-            if(mCenterPanelEntry != null) {
+            if(mCenterPanelEntry != null && getSettings().getBooleanValue(ProgramListSettings.KEY_TAB_REACT_ON_TIME)) {
               mCenterPanelEntry.scrollToTime(time);
             }
           }
           
           @Override
           public void scrolledToChannel(Channel channel) {
-            if(mCenterPanelEntry != null) {
+            if(mCenterPanelEntry != null && getSettings().getBooleanValue(ProgramListSettings.KEY_TAB_REACT_ON_CHANNEL)) {
               mCenterPanelEntry.selectChannel(channel);
             }
           }
@@ -187,7 +187,7 @@ public class ProgramListPlugin extends Plugin {
     SwingUtilities.invokeLater(new Runnable() {
       @Override
       public void run() {
-        if(getSettings().provideTab()) {
+        if(getSettings().getBooleanValue(ProgramListSettings.KEY_PROVIDE_TAB)) {
           mCenterPanelEntry = new ProgramListPanel(null, false, MAX_PANEL_LIST_SIZE);
           Persona.getInstance().registerPersonaListener(mCenterPanelEntry);
           getPluginManager().getFilterManager().registerFilterChangeListener(mCenterPanelEntry);
@@ -405,22 +405,33 @@ public class ProgramListPlugin extends Plugin {
     return new SettingsTab() {
       private JCheckBox mProvideTab;
       private JCheckBox mShowDateSeparator;
-      private JCheckBox mReactOnFilterChange;
       
       private JRadioButton mTabTimeScrollNext;
       private JRadioButton mTabTimeScrollDay;
       
+      private JCheckBox mReactOnFilterChange;
+      private JCheckBox mReactOnTime;
+      private JCheckBox mReactOnDate;
+      private JCheckBox mReactOnChannel;
+      
       @Override
       public JPanel createSettingsPanel() {
-        JPanel panel = new JPanel(new FormLayout("5dlu,10dlu,10dlu,min:grow","5dlu,default,default,5dlu,default,5dlu,default,default,3dlu,default"));
+        JPanel panel = new JPanel(new FormLayout("5dlu,10dlu,10dlu,min:grow",
+            "5dlu,default,default,5dlu,default,5dlu,default,default,default,default,5dlu,default,5dlu,default,default"));
         
-        mShowDateSeparator = new JCheckBox(mLocalizer.msg("showDateSeparator", "Show date separator in list"), getSettings().showDateSeparator());
-        mProvideTab = new JCheckBox(mLocalizer.msg("provideTab", "Provide tab in TV-Browser main window"), getSettings().provideTab());
-        mReactOnFilterChange = new JCheckBox(mLocalizer.msg("reactOnFilterChange", "React on filter changes and updates of program table"), getSettings().reactOnFilterChange());
+        mShowDateSeparator = new JCheckBox(mLocalizer.msg("showDateSeparator", "Show date separator in list"), getSettings().getBooleanValue(ProgramListSettings.KEY_SHOW_DATE_SEPARATOR));
+        mProvideTab = new JCheckBox(mLocalizer.msg("provideTab", "Provide tab in TV-Browser main window"), getSettings().getBooleanValue(ProgramListSettings.KEY_PROVIDE_TAB));
+        
+        final JLabel tabReactOnLabel = new JLabel(mLocalizer.msg("reactOn", "React on selection of the following actions in main window:"));
+        
+        mReactOnTime = new JCheckBox(mLocalizer.msg("reactOnTime", "Time"), getSettings().getBooleanValue(ProgramListSettings.KEY_TAB_REACT_ON_TIME));
+        mReactOnDate = new JCheckBox(mLocalizer.msg("reactOnDate", "Date"), getSettings().getBooleanValue(ProgramListSettings.KEY_TAB_REACT_ON_DATE));
+        mReactOnChannel = new JCheckBox(mLocalizer.msg("reactOnChannel", "Channel"), getSettings().getBooleanValue(ProgramListSettings.KEY_TAB_REACT_ON_CHANNEL));
+        mReactOnFilterChange = new JCheckBox(mLocalizer.msg("reactOnFilterChange", "Filter (also changes)"), getSettings().getBooleanValue(ProgramListSettings.KEY_TAB_REACT_ON_FILTER_CHANGE));
         
         final JLabel tabTimeScrollLabel = new JLabel(mLocalizer.msg("timeButtonBehaviour", "Time buttons behaviour:"));
-        mTabTimeScrollNext = new JRadioButton(mLocalizer.msg("timeButtonScrollNext", "Scroll to next occurence of time from shown programs onward"), !getSettings().tabTimeScrollAround());
-        mTabTimeScrollDay = new JRadioButton(mLocalizer.msg("timeButtonScrollDay", "Scroll to occurence of time on shown day in list"), getSettings().tabTimeScrollAround());
+        mTabTimeScrollNext = new JRadioButton(mLocalizer.msg("timeButtonScrollNext", "Scroll to next occurence of time from shown programs onward"), !getSettings().getBooleanValue(ProgramListSettings.KEY_TAB_TIME_SCROLL_AROUND));
+        mTabTimeScrollDay = new JRadioButton(mLocalizer.msg("timeButtonScrollDay", "Scroll to occurence of time on shown day in list"), getSettings().getBooleanValue(ProgramListSettings.KEY_TAB_TIME_SCROLL_AROUND));
         
         ButtonGroup bg = new ButtonGroup();
         
@@ -430,23 +441,45 @@ public class ProgramListPlugin extends Plugin {
         panel.add(mShowDateSeparator, CC.xyw(2, 2, 3));
         panel.add(mProvideTab, CC.xyw(2, 3, 3));
         
-        panel.add(tabTimeScrollLabel, CC.xyw(3, 5, 2));
-        panel.add(mTabTimeScrollNext, CC.xy(4, 7));
-        panel.add(mTabTimeScrollDay, CC.xy(4, 8));
-        panel.add(mReactOnFilterChange, CC.xyw(3, 10, 2));
+        panel.add(tabReactOnLabel, CC.xyw(3, 5, 2));
+        panel.add(mReactOnTime, CC.xy(4, 7));
+        panel.add(mReactOnDate, CC.xy(4, 8));
+        panel.add(mReactOnChannel, CC.xy(4, 9));
+        panel.add(mReactOnFilterChange, CC.xy(4, 10));
+        
+        panel.add(tabTimeScrollLabel, CC.xyw(3, 12, 2));
+        panel.add(mTabTimeScrollNext, CC.xy(4, 14));
+        panel.add(mTabTimeScrollDay, CC.xy(4, 15));
         
         mReactOnFilterChange.setEnabled(mProvideTab.isSelected());
-        tabTimeScrollLabel.setEnabled(mProvideTab.isSelected());
-        mTabTimeScrollNext.setEnabled(mProvideTab.isSelected());
-        mTabTimeScrollDay.setEnabled(mProvideTab.isSelected());
+        tabTimeScrollLabel.setEnabled(mProvideTab.isSelected() && mReactOnTime.isSelected());
+        mTabTimeScrollNext.setEnabled(tabTimeScrollLabel.isEnabled());
+        mTabTimeScrollDay.setEnabled(tabTimeScrollLabel.isEnabled());
+        tabReactOnLabel.setEnabled(mProvideTab.isSelected());
+        mReactOnTime.setEnabled(mProvideTab.isSelected());
+        mReactOnDate.setEnabled(mProvideTab.isSelected());
+        mReactOnChannel.setEnabled(mProvideTab.isSelected());
+        
+        mReactOnTime.addItemListener(new ItemListener() {
+          @Override
+          public void itemStateChanged(ItemEvent e) {
+            tabTimeScrollLabel.setEnabled(e.getStateChange() == ItemEvent.SELECTED && mProvideTab.isSelected());
+            mTabTimeScrollNext.setEnabled(tabTimeScrollLabel.isEnabled());
+            mTabTimeScrollDay.setEnabled(tabTimeScrollLabel.isEnabled());
+          }
+        });
         
         mProvideTab.addItemListener(new ItemListener() {
           @Override
           public void itemStateChanged(ItemEvent e) {
+            tabTimeScrollLabel.setEnabled(e.getStateChange() == ItemEvent.SELECTED && mReactOnTime.isSelected());
+            mTabTimeScrollNext.setEnabled(tabTimeScrollLabel.isEnabled());
+            mTabTimeScrollDay.setEnabled(tabTimeScrollLabel.isEnabled());
             mReactOnFilterChange.setEnabled(e.getStateChange() == ItemEvent.SELECTED);
-            tabTimeScrollLabel.setEnabled(mReactOnFilterChange.isEnabled());
-            mTabTimeScrollNext.setEnabled(mReactOnFilterChange.isEnabled());
-            mTabTimeScrollDay.setEnabled(mReactOnFilterChange.isEnabled());
+            tabReactOnLabel.setEnabled(e.getStateChange() == ItemEvent.SELECTED);
+            mReactOnTime.setEnabled(e.getStateChange() == ItemEvent.SELECTED);
+            mReactOnDate.setEnabled(e.getStateChange() == ItemEvent.SELECTED);
+            mReactOnChannel.setEnabled(e.getStateChange() == ItemEvent.SELECTED);
           }
         });
         
@@ -455,10 +488,15 @@ public class ProgramListPlugin extends Plugin {
       
       @Override
       public void saveSettings() {
-        getSettings().setProvideTab(mProvideTab.isSelected());
-        getSettings().setShowDateSeparator(mShowDateSeparator.isSelected());
-        getSettings().setReactOnFilterChange(mReactOnFilterChange.isSelected());
-        getSettings().setTabTimeScrollAround(mTabTimeScrollDay.isSelected());
+        getSettings().setBooleanValue(ProgramListSettings.KEY_PROVIDE_TAB, mProvideTab.isSelected());
+        
+        getSettings().setBooleanValue(ProgramListSettings.KEY_TAB_REACT_ON_TIME, mReactOnTime.isSelected());
+        getSettings().setBooleanValue(ProgramListSettings.KEY_TAB_REACT_ON_DATE, mReactOnDate.isSelected());
+        getSettings().setBooleanValue(ProgramListSettings.KEY_TAB_REACT_ON_CHANNEL, mReactOnChannel.isSelected());
+        getSettings().setBooleanValue(ProgramListSettings.KEY_TAB_REACT_ON_FILTER_CHANGE, mReactOnFilterChange.isSelected());
+        
+        getSettings().setBooleanValue(ProgramListSettings.KEY_SHOW_DATE_SEPARATOR, mShowDateSeparator.isSelected());
+        getSettings().setBooleanValue(ProgramListSettings.KEY_TAB_TIME_SCROLL_AROUND, mTabTimeScrollDay.isSelected());
         
         addPanel();
       }
@@ -476,7 +514,7 @@ public class ProgramListPlugin extends Plugin {
   }
   
   public PluginCenterPanelWrapper getPluginCenterPanelWrapper() {
-    return getSettings().provideTab() ? mWrapper : null;
+    return getSettings().getBooleanValue(ProgramListSettings.KEY_PROVIDE_TAB) ? mWrapper : null;
   }
   
   private class ProgramListCenterPanel extends PluginCenterPanel {

@@ -130,7 +130,7 @@ public class ProgramListPanel extends JPanel implements PersonaListener, FilterC
     
     
     mModel = new DefaultListModel();
-    boolean showDescription = mSettings.getShowDescription();
+    boolean showDescription = mSettings.getBooleanValue(ProgramListSettings.KEY_SHOW_DESCRIPTION);
     mProgramPanelSettings = new ProgramPanelSettings(new PluginPictureSettings(
         PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE), !showDescription, ProgramPanelSettings.X_AXIS);
     mList = new ProgramList(mModel, mProgramPanelSettings);
@@ -167,9 +167,19 @@ public class ProgramListPanel extends JPanel implements PersonaListener, FilterC
     mChannelBox.insertItemAt(mLocalizer.msg("allChannels", "All channels"), 0);
     mChannelBox.setRenderer(new ChannelListCellRenderer());
     mChannelBox.setSelectedIndex(mSettings.getIndex());
+    
     if (selectedChannel != null) {
       mChannelBox.setSelectedItem(selectedChannel);
     }
+    
+    JButton resetChannelBox = new JButton(ProgramListPlugin.getInstance().createImageIcon("actions", "edit-undo", TVBrowserIcons.SIZE_SMALL));
+    resetChannelBox.setToolTipText(mLocalizer.msg("reset", "Reset"));
+    resetChannelBox.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        mChannelBox.setSelectedIndex(0);
+      }
+    });
 
     mFilterBox = new JComboBox();
 
@@ -178,6 +188,23 @@ public class ProgramListPanel extends JPanel implements PersonaListener, FilterC
     }
 
     fillFilterBox();
+    
+    JButton resetFilterBox = new JButton(ProgramListPlugin.getInstance().createImageIcon("actions", "edit-undo", TVBrowserIcons.SIZE_SMALL));
+    resetFilterBox.setToolTipText(mLocalizer.msg("reset", "Reset"));
+    resetFilterBox.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        updateFilter(Plugin.getPluginManager().getFilterManager().getDefaultFilter());
+        /*String defaultFilterName = Plugin.getPluginManager().getFilterManager().getDefaultFilter().getName();
+        
+        for(int i = 0; i < mFilterBox.getItemCount(); i++) {
+          if(mFilterBox.getItemAt(i).equals(defaultFilterName)) {
+            mFilterBox.setSelectedIndex(0);
+            break;
+          }
+        }*/
+      }
+    });
     
     mDateBox = new JComboBox() {
       @Override
@@ -228,6 +255,15 @@ public class ProgramListPanel extends JPanel implements PersonaListener, FilterC
     
     fillDateBox();
 
+    JButton resetDateBox = new JButton(ProgramListPlugin.getInstance().createImageIcon("actions", "edit-undo", TVBrowserIcons.SIZE_SMALL));
+    resetDateBox.setToolTipText(mLocalizer.msg("reset", "Reset"));
+    resetDateBox.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        mDateBox.setSelectedIndex(0);
+      }
+    });
+    
     mFilterBox.addItemListener(new ItemListener() {
       public void itemStateChanged(ItemEvent e) {
         if(e == null || e.getStateChange() == ItemEvent.SELECTED) {
@@ -277,14 +313,17 @@ public class ProgramListPanel extends JPanel implements PersonaListener, FilterC
 
     CellConstraints cc = new CellConstraints();
 
-    JPanel panel = new JPanel(new FormLayout("1dlu,default,3dlu,default:grow", "default,2dlu,default,2dlu,default,2dlu"));
+    JPanel panel = new JPanel(new FormLayout("1dlu,default,3dlu,default:grow,3dlu,default", "default,2dlu,default,2dlu,default,2dlu"));
     panel.setOpaque(false);
     panel.add(mDateLabel = new JLabel(mLocalizer.msg("date", "Date:")), cc.xy(2, 1));
     panel.add(mDateBox, cc.xy(4, 1));
+    panel.add(resetDateBox, cc.xy(6, 1));
     panel.add(mChannelLabel = new JLabel(Localizer.getLocalization(Localizer.I18N_CHANNELS) + ":"), cc.xy(2, 3));
     panel.add(mChannelBox, cc.xy(4, 3));
+    panel.add(resetChannelBox, cc.xy(6, 3));
     panel.add(mFilterLabel = new JLabel(mLocalizer.msg("filter", "Filter:")), cc.xy(2, 5));
     panel.add(mFilterBox, cc.xy(4, 5));
+    panel.add(resetFilterBox, cc.xy(6, 5));
 
     mPreviousDay = new JButton(TVBrowserIcons.left(TVBrowserIcons.SIZE_SMALL));
     mPreviousDay.setToolTipText(mLocalizer.msg("prevDay", "Scrolls to previous day from current view position (if there is previous day in the list)"));
@@ -343,7 +382,7 @@ public class ProgramListPanel extends JPanel implements PersonaListener, FilterC
               Object test = mList.getModel().getElementAt(i);
               
               if(test instanceof Program && current.compareTo(((Program)test).getDate()) < 0) {
-                Point p = mList.indexToLocation(i-(ProgramListPlugin.getInstance().getSettings().showDateSeparator() ? 1 : 0));
+                Point p = mList.indexToLocation(i-(ProgramListPlugin.getInstance().getSettings().getBooleanValue(ProgramListSettings.KEY_SHOW_DATE_SEPARATOR) ? 1 : 0));
                 mList.scrollRectToVisible(new Rectangle(p.x,p.y,1,mList.getVisibleRect().height));
                 return;
               }
@@ -404,7 +443,7 @@ public class ProgramListPanel extends JPanel implements PersonaListener, FilterC
           ProgramListPlugin.getInstance().updateDescriptionSelection(e.getStateChange() == ItemEvent.SELECTED);
         }
         
-        mSettings.setShowDescription(e.getStateChange() == ItemEvent.SELECTED);
+        mSettings.setBooleanValue(ProgramListSettings.KEY_SHOW_DESCRIPTION,e.getStateChange() == ItemEvent.SELECTED);
         mList.updateUI();
         if (topRow != -1) {
           mList.ensureIndexIsVisible(topRow);
@@ -618,7 +657,7 @@ public class ProgramListPanel extends JPanel implements PersonaListener, FilterC
                 
                 for (Program program : mPrograms) {
                   if (model.size() < mMaxListSize) {
-                    if(ProgramListPlugin.getInstance().getSettings().showDateSeparator() && 
+                    if(ProgramListPlugin.getInstance().getSettings().getBooleanValue(ProgramListSettings.KEY_SHOW_DATE_SEPARATOR) && 
                         (lastProgram == null || program.getDate().compareTo(lastProgram.getDate()) > 0)) {
                       model.addElement(DATE_SEPARATOR);
                     }
@@ -630,7 +669,7 @@ public class ProgramListPanel extends JPanel implements PersonaListener, FilterC
                     }
                     
                     if (!program.isExpired() && index == -1) {
-                      index = model.getSize() - (ProgramListPlugin.getInstance().getSettings().showDateSeparator() ? 2 : 1);
+                      index = model.getSize() - (ProgramListPlugin.getInstance().getSettings().getBooleanValue(ProgramListSettings.KEY_SHOW_DATE_SEPARATOR) ? 2 : 1);
                     }
                     
                     lastProgram = program;
@@ -833,7 +872,7 @@ public class ProgramListPanel extends JPanel implements PersonaListener, FilterC
             SwingUtilities.invokeLater(new Runnable() {
               @Override
               public void run() {
-                if(ProgramListPlugin.getInstance().getSettings().tabTimeScrollAround()) {
+                if(ProgramListPlugin.getInstance().getSettings().getBooleanValue(ProgramListSettings.KEY_TAB_TIME_SCROLL_AROUND)) {
                   mList.scrollToTimeFromCurrentViewIfAvailable(time);
                 }
                 else {
