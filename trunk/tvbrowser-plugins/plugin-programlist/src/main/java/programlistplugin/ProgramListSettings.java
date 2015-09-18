@@ -16,6 +16,7 @@
  */
 package programlistplugin;
 
+import java.util.HashMap;
 import java.util.Properties;
 
 import util.settings.PropertyBasedSettings;
@@ -27,11 +28,29 @@ import util.settings.PropertyBasedSettings;
 public class ProgramListSettings extends PropertyBasedSettings {
   private static final String KEY_INDEX = "index";
   private static final String KEY_FILTER = "filter";
-  private static final String KEY_SHOW_DESCRIPTION = "showDescription";
-  private static final String KEY_PROVIDE_TAB = "provideTab";
-  private static final String KEY_SHOW_DATE_SEPARATOR = "showDateSeparator";
-  private static final String KEY_REACT_ON_FILTER_CHANGE = "reactOnFilterChange";
-  private static final String KEY_TAB_TIME_SCROLL_AROUND = "tabTimeScrollAround";
+  public static final String KEY_SHOW_DESCRIPTION = "showDescription";
+  public static final String KEY_PROVIDE_TAB = "provideTab";
+  public static final String KEY_SHOW_DATE_SEPARATOR = "showDateSeparator";
+  public static final String KEY_TAB_REACT_ON_FILTER_CHANGE = "reactOnFilterChange";
+  public static final String KEY_TAB_TIME_SCROLL_AROUND = "tabTimeScrollAround";
+  public static final String KEY_TAB_REACT_ON_TIME = "tabReactOnTime";
+  public static final String KEY_TAB_REACT_ON_CHANNEL = "tabReactOnChannel";
+  public static final String KEY_TAB_REACT_ON_DATE = "tabReactOnDate";
+  
+  private static final HashMap<String, Boolean> mDefaultMap;
+  
+  static {
+    mDefaultMap = new HashMap<String, Boolean>();
+    
+    mDefaultMap.put(KEY_SHOW_DESCRIPTION, true);
+    mDefaultMap.put(KEY_PROVIDE_TAB, true);
+    mDefaultMap.put(KEY_SHOW_DATE_SEPARATOR, true);
+    mDefaultMap.put(KEY_TAB_REACT_ON_FILTER_CHANGE, true);
+    mDefaultMap.put(KEY_TAB_TIME_SCROLL_AROUND, false);
+    mDefaultMap.put(KEY_TAB_REACT_ON_TIME, true);
+    mDefaultMap.put(KEY_TAB_REACT_ON_CHANNEL, true);
+    mDefaultMap.put(KEY_TAB_REACT_ON_DATE, true);
+  }
 
   public ProgramListSettings(final Properties properties) {
     super(properties);
@@ -40,15 +59,7 @@ public class ProgramListSettings extends PropertyBasedSettings {
   public int getIndex() {
     return get(KEY_INDEX, 0);
   }
-
-  public boolean getShowDescription() {
-    return get(KEY_SHOW_DESCRIPTION, true);
-  }
-
-  public void setShowDescription(final boolean show) {
-    set(KEY_SHOW_DESCRIPTION, show);
-  }
-
+  
   public void setIndex(int index) {
     set(KEY_INDEX, index);
   }
@@ -61,35 +72,17 @@ public class ProgramListSettings extends PropertyBasedSettings {
     set(KEY_FILTER, name);
   }
   
-  public boolean provideTab() {
-    return get(KEY_PROVIDE_TAB, true);
+  public void setBooleanValue(final String key, final boolean value) {
+    set(key, value);
   }
   
-  public void setProvideTab(final boolean value) {
-    set(KEY_PROVIDE_TAB, value);
-  }
-  
-  public boolean showDateSeparator() {
-    return get(KEY_SHOW_DATE_SEPARATOR, true);
-  }
-  
-  public void setShowDateSeparator(final boolean show) {
-    set(KEY_SHOW_DATE_SEPARATOR, show);
-  }
-  
-  public boolean reactOnFilterChange() {
-    return get(KEY_REACT_ON_FILTER_CHANGE, true);
-  }
-  
-  public void setReactOnFilterChange(final boolean react) {
-    set(KEY_REACT_ON_FILTER_CHANGE, react);
-  }
-  
-  public boolean tabTimeScrollAround() {
-    return get(KEY_TAB_TIME_SCROLL_AROUND, false);
-  }
-  
-  public void setTabTimeScrollAround(final boolean value) {
-    set(KEY_TAB_TIME_SCROLL_AROUND, value);
+  public boolean getBooleanValue(final String key) {
+    Boolean defaultValue = mDefaultMap.get(key);
+    
+    if(defaultValue == null) {
+      defaultValue = new Boolean(false);
+    }
+    
+    return get(key, defaultValue.booleanValue());
   }
 }
