@@ -177,7 +177,12 @@ public class ProgramListPanel extends JPanel implements PersonaListener, FilterC
     resetChannelBox.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        mChannelBox.setSelectedIndex(0);
+        SwingUtilities.invokeLater(new Runnable() {
+          @Override
+          public void run() {
+            mChannelBox.setSelectedIndex(0);
+          }
+        });
       }
     });
 
@@ -195,14 +200,6 @@ public class ProgramListPanel extends JPanel implements PersonaListener, FilterC
       @Override
       public void actionPerformed(ActionEvent e) {
         updateFilter(Plugin.getPluginManager().getFilterManager().getDefaultFilter());
-        /*String defaultFilterName = Plugin.getPluginManager().getFilterManager().getDefaultFilter().getName();
-        
-        for(int i = 0; i < mFilterBox.getItemCount(); i++) {
-          if(mFilterBox.getItemAt(i).equals(defaultFilterName)) {
-            mFilterBox.setSelectedIndex(0);
-            break;
-          }
-        }*/
       }
     });
     
@@ -260,7 +257,12 @@ public class ProgramListPanel extends JPanel implements PersonaListener, FilterC
     resetDateBox.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        mDateBox.setSelectedIndex(0);
+        SwingUtilities.invokeLater(new Runnable() {
+          @Override
+          public void run() {
+            mDateBox.setSelectedIndex(0);
+          }
+        });
       }
     });
     
