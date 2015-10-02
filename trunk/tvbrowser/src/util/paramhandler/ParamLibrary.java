@@ -98,8 +98,9 @@ public class ParamLibrary {
   public String[] getPossibleKeys() {
     String[] str = { "title", "original_title", "start_day", "start_month", "start_year", "start_hour", "start_minute",
         "end_month", "end_year", "end_day", "end_hour", "end_minute", "length_minutes", "length_sec", "short_info",
-        "description", "episode", "original_episode", "episode_number", "channel_name", "url", "start_day_of_week", "start_month_name",
-        "genre", "start_unix", "end_unix", "custom", "production_year", "actors", "origin"};
+        "description", "episode", "original_episode", "episode_number", "channel_name", "channel_sort_number", "url",
+        "start_day_of_week", "start_month_name", "genre", "start_unix", "end_unix", "custom", "production_year", "actors",
+        "origin"};
     return str;
   }
 
@@ -196,6 +197,8 @@ public class ParamLibrary {
       return removeNull(program.getTextField(ProgramFieldType.ORIGINAL_EPISODE_TYPE));
     } else if (key.equalsIgnoreCase("channel_name")) {
       return removeNull(program.getChannel().getName());
+    } else if (key.equalsIgnoreCase("channel_sort_number")) {
+      return removeNull(program.getChannel().getSortNumber());
     } else if (key.equalsIgnoreCase("url")) {
       return removeNull(program.getTextField(ProgramFieldType.URL_TYPE));
     } else if (key.equalsIgnoreCase("start_day_of_week")) {
