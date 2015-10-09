@@ -166,7 +166,9 @@ public class ProgramListPanel extends JPanel implements PersonaListener, FilterC
     mChannelBox = new JComboBox(subscribedChannels);
     mChannelBox.insertItemAt(mLocalizer.msg("allChannels", "All channels"), 0);
     mChannelBox.setRenderer(new ChannelListCellRenderer());
-    mChannelBox.setSelectedIndex(mSettings.getIndex());
+    if (mSettings.getIndex() < mChannelBox.getItemCount()) {
+      mChannelBox.setSelectedIndex(mSettings.getIndex());
+    }
     
     if (selectedChannel != null) {
       mChannelBox.setSelectedItem(selectedChannel);
