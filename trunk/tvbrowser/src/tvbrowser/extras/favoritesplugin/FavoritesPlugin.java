@@ -287,10 +287,12 @@ public class FavoritesPlugin {
       public void tvDataUpdateStarted(devplugin.Date until) {
         mHasRightToSave = false;
         mSendPluginsTable.clear();
-
-        for (Favorite favorite : FavoriteTreeModel.getInstance().getFavoriteArr()) {
-          favorite.clearNewPrograms();
-          favorite.clearRemovedPrograms();
+        
+        if(mInfoPanel == null) {
+          for (Favorite favorite : FavoriteTreeModel.getInstance().getFavoriteArr()) {
+            favorite.clearNewPrograms();
+            favorite.clearRemovedPrograms();
+          }
         }
       }
 
