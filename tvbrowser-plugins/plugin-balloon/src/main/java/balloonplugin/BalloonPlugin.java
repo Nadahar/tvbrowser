@@ -16,10 +16,8 @@
  */
 package balloonplugin;
 
-import java.io.File;
-import java.io.IOException;
+import java.awt.TrayIcon.MessageType;
 
-import util.misc.OperatingSystem;
 import devplugin.Plugin;
 import devplugin.PluginInfo;
 import devplugin.Program;
@@ -29,7 +27,7 @@ import devplugin.Version;
 public class BalloonPlugin extends Plugin {
 
   private static final boolean PLUGIN_IS_STABLE = true;
-  private static final Version PLUGIN_VERSION = new Version(2, 70, 1, PLUGIN_IS_STABLE);
+  private static final Version PLUGIN_VERSION = new Version(2, 80, 0, PLUGIN_IS_STABLE);
 
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer
   .getLocalizerFor(BalloonPlugin.class);
@@ -37,8 +35,6 @@ public class BalloonPlugin extends Plugin {
   private static final String TARGET = "BALLOON_TARGET";
 
   private PluginInfo mPluginInfo;
-
-  private JarApplicationExecuter mExecuter;
 
   public static Version getVersion() {
     return PLUGIN_VERSION;
@@ -49,7 +45,7 @@ public class BalloonPlugin extends Plugin {
       final String name = mLocalizer.msg("name", "Balloon Tips");
       final String desc = mLocalizer
           .msg("description",
-              "Show balloon tip as reminder for programs (only Windows XP or better).");
+              "Show balloon tip as reminder for programs.");
       mPluginInfo = new PluginInfo(BalloonPlugin.class, name, desc,
           "Michael Keppler", "GPL 3");
     }
@@ -58,7 +54,7 @@ public class BalloonPlugin extends Plugin {
   }
 
   public boolean canReceiveProgramsWithTarget() {
-    return OperatingSystem.isWindows();
+    return true;
   }
 
   public ProgramReceiveTarget[] getProgramReceiveTargets() {
@@ -75,27 +71,26 @@ public class BalloonPlugin extends Plugin {
     if (!canReceiveProgramsWithTarget()) {
       return false;
     }
-    for (Program program : programArr) {
-      showNotification(program);
-    }
+    
+    Thread showNotifications = new Thread() {
+	  @Override
+	  public void run() {
+        for (Program program : programArr) {
+          showNotification(program);
+          try {
+            sleep(5000);
+          } catch (InterruptedException e) {}
+        }
+      }
+    };
+    showNotifications.start();
+    
     return true;
   }
 
   private void showNotification(final Program program) {
-    if (mExecuter == null) {
-      mExecuter = new JarApplicationExecuter("notifu.exe");
-    }
-    final File curDir = new File(".");
-    String dir = "";
-    try {
-      dir = "/i \"" + curDir.getCanonicalPath() + "\\imgs\\systray.ico\"";
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-    final String parameters = "/m \"" + program.getChannel().getName() + " "
-        + program.getTimeString() + "\\n" + program.getTitle()
-        + "\" /p \"TV-Browser\" " + dir + " /d 600000";
-    mExecuter.execute(parameters);
+    getPluginManager().showBalloonTip(program.getChannel().getName() + " "
+        + program.getTimeString() + " (" + program.getDateString()+")", program.getTitle(), MessageType.INFO);
   }
 
   @Override
