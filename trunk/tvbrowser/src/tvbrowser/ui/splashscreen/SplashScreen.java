@@ -114,12 +114,12 @@ public class SplashScreen implements Splash {
     grp.setFont(MESSAGE_FONT);
 
     // Draw the message itself
-    grp.setColor(new Color(0,0,0,128));
+    /*grp.setColor(new Color(0,0,0,128));
     grp.drawString(mMessage, mMsgX+2, mMsgY+38);
     grp.drawString(INFO, mMsgX+2, mMsgY+2);
-    
+    */
     grp.setColor(Color.white);
-    grp.drawString(mMessage, mMsgX, mMsgY+36);
+    grp.drawString(mMessage, mMsgX, mMsgY+32);
     grp.drawString(INFO, mMsgX, mMsgY);
 
     grp.setFont(VERSION_FONT);
@@ -199,15 +199,15 @@ public class SplashScreen implements Splash {
     Thread thread = new Thread("Splash screen creation") {
       @Override
       public void run() {
-        mMsgY = 100;
+        mMsgY = 93;
 
-        mDomainX = getWidth() - UiUtilities.getStringWidth(DOMAIN_FONT, DOMAIN)-45;
-        mDomainY = getHeight() - 30;
+        mDomainX = getWidth() - UiUtilities.getStringWidth(DOMAIN_FONT, DOMAIN)-15;
+        mDomainY = getHeight() - 15;
 
-        mMsgX = 24;
+        mMsgX = 15;
         
-        mVersionX = 24;
-        mVersionY = getHeight() - 30;
+        mVersionX = 15;
+        mVersionY = getHeight() - 15;
         
         if(mSplashWindow != null) {
           mSplashWindow.setLocationRelativeTo(null);
