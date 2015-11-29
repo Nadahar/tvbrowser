@@ -497,7 +497,7 @@ public class Settings {
            + "', show import directory selection dialog: '" + (oldDir == null || !oldDir.isDirectory() || !oldDir.exists()) + "'");
         if (oldDir != null && oldDir.isDirectory() && oldDir.exists() && !oldDir.getAbsolutePath().startsWith(new File("settings").getAbsolutePath())) {
           try {
-            UIManager.setLookAndFeel(getDefaultLookAndFeelClassName());
+            UIManager.setLookAndFeel(UiUtilities.getDefaultLookAndFeelClassName(false));
           }catch(Exception e) { /*ignore*/}
   
           String[] options = {MainFrame.mLocalizer.msg("import","Import settings"),
@@ -524,7 +524,7 @@ public class Settings {
         }
         else if(oldDir == null || !oldDir.isDirectory() || !oldDir.exists()) {
           try {
-            UIManager.setLookAndFeel(getDefaultLookAndFeelClassName());
+            UIManager.setLookAndFeel(UiUtilities.getDefaultLookAndFeelClassName(false));
           }catch(Exception e) { /*ignore*/}
           
           String[] options = {MainFrame.mLocalizer.msg("importTransportable","Select import directory"),
@@ -1455,22 +1455,7 @@ public class Settings {
 
   public static final StringProperty propLookAndFeel = new StringProperty(
       mProp, "lookandfeel1_1", mDefaultSettings.getProperty("lookandfeel",
-          getDefaultLookAndFeelClassName()));
-
-  private static String getDefaultLookAndFeelClassName() {
-    String lnf = UIManager.getSystemLookAndFeelClassName();
-    if (StringUtils.containsIgnoreCase(lnf, "metal")) {
-      LookAndFeelInfo[] lnfs = UIManager.getInstalledLookAndFeels();
-      if (lnfs != null) {
-        for (LookAndFeelInfo lookAndFeel : lnfs) {
-          if (StringUtils.containsIgnoreCase(lookAndFeel.getName(),"Nimbus")) {
-            lnf = lookAndFeel.getClassName();
-          }
-        }
-      }
-    }
-    return lnf;
-  }
+          UiUtilities.getDefaultLookAndFeelClassName(false)));
 
   public static final IntProperty propColumnWidth = new VariableIntProperty(mProp,
       "columnwidth", 200);

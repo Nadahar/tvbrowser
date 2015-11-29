@@ -35,12 +35,18 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.RandomAccessFile;
 import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
 import java.lang.management.ManagementFactory;
 import java.lang.reflect.InvocationTargetException;
 import java.net.Authenticator;
@@ -52,6 +58,8 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
 import java.util.TimeZone;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Formatter;
@@ -75,6 +83,15 @@ import org.apache.commons.lang3.StringUtils;
 import org.pushingpixels.substance.api.SubstanceLookAndFeel;
 import org.pushingpixels.substance.api.skin.SkinInfo;
 
+import com.jgoodies.looks.LookUtils;
+import com.l2fprod.gui.plaf.skin.SkinLookAndFeel;
+
+import ca.beq.util.win32.registry.RegistryKey;
+import ca.beq.util.win32.registry.RegistryValue;
+import ca.beq.util.win32.registry.RootKey;
+import devplugin.Date;
+import devplugin.ProgramFieldType;
+import devplugin.Version;
 import tvbrowser.core.ChannelList;
 import tvbrowser.core.PendingMarkings;
 import tvbrowser.core.PluginLoader;
@@ -113,16 +130,6 @@ import util.ui.Localizer;
 import util.ui.UIThreadRunner;
 import util.ui.UiUtilities;
 import util.ui.textcomponentpopup.TextComponentPopupEventQueue;
-import ca.beq.util.win32.registry.RegistryKey;
-import ca.beq.util.win32.registry.RegistryValue;
-import ca.beq.util.win32.registry.RootKey;
-
-import com.jgoodies.looks.LookUtils;
-import com.l2fprod.gui.plaf.skin.SkinLookAndFeel;
-
-import devplugin.Date;
-import devplugin.ProgramFieldType;
-import devplugin.Version;
 
 /**
  * TV-Browser
@@ -1365,7 +1372,60 @@ public class TVBrowser {
       // ignore any exception for optional skins
       e1.printStackTrace();
     }
-
+    
+    /*
+     * Workaround for GTK look and feel problems with assistive_technologies=org.GNOME.Accessibility.AtkWrapper
+     * for OpenJDK under Linux. The GTK+ look and feel is removed from the selection list, if it is available
+     * and OpenJDK is used with the problematic property.
+     */
+    if (OperatingSystem.isLinux() && System.getProperty("java.runtime.name","").startsWith("OpenJDK")) {
+      String[] parts = System.getProperty("java.version","").split("\\.");
+      
+      if(parts.length > 1) {
+        File test = new File("/etc/java-"+parts[1]+"-openjdk/accessibility.properties");
+        
+        if(test.isFile()) {
+          BufferedReader in = null;
+          
+          try {
+            in = new BufferedReader(new InputStreamReader(new FileInputStream(test), "UTF-8"));
+            
+            String line = null;
+            
+            while((line = in.readLine()) != null) {
+              if(!line.trim().startsWith("#") && line.contains("assistive_technologies") && line.contains("org.GNOME.Accessibility.AtkWrapper")) {
+                Settings.propLookAndFeel.setDefault(UiUtilities.getDefaultLookAndFeelClassName(true));
+                
+                LookAndFeelInfo[] lnfs = UIManager.getInstalledLookAndFeels();
+                
+                ArrayList<LookAndFeelInfo> cleanedLooksList = new ArrayList<>(lnfs.length-1);
+                
+                if (lnfs != null) {
+                  for (LookAndFeelInfo lookAndFeel : lnfs) {
+                    if (!lookAndFeel.getClassName().equals("com.sun.java.swing.plaf.gtk.GTKLookAndFeel")) {
+                      cleanedLooksList.add(lookAndFeel);
+                    }
+                  }
+                }
+                
+                UIManager.setInstalledLookAndFeels(cleanedLooksList.toArray(new LookAndFeelInfo[cleanedLooksList.size()]));
+              }
+            }
+          } catch (IOException e) {
+            e.printStackTrace();
+          }
+          finally {
+            if(in != null) {
+              try {
+                in.close();
+              } catch (IOException e) {}
+            }
+          }
+        }
+      }
+    }
+    
+    
     if (Settings.propLookAndFeel.getString().equals(
         "com.l2fprod.gui.plaf.skin.SkinLookAndFeel")) {
       String themepack = Settings.propSkinLFThemepack.getString();
@@ -1505,7 +1565,6 @@ public class TVBrowser {
    * Called when TV-Browser shuts down.
    * <p>
    * Stops the save thread and saves the settings.
-   * @param log If it should be written to the log.
    */
   public static void shutdown(boolean log) {
     mSaveThreadShouldStop = true;
