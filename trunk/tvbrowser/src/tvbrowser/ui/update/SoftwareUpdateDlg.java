@@ -280,6 +280,10 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
         if(country.equals(Locale.GERMANY.getCountry()) || country.equals("CH") || country.equals("AT") || Locale.getDefault().getLanguage().equals("de")) {
           selectedDataServices.add("EPGdonateData");
         }
+        
+        if(country.equals(Locale.GERMANY.getCountry())) {
+          selectedDataServices.add("EPGpaidData");
+        }
       }
       else if(country.equals(Locale.CANADA.getCountry()) || country.equals(Locale.US.getCountry())) {
         selectedDataServices.add("SchedulesDirectDataService");
@@ -307,15 +311,14 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
     }
     
     for (SoftwareUpdateItem item : itemArr) {
-			if ((item.isAlreadyInstalled() && item.getInstalledVersion().compareTo(item.getVersion()) < 0) ||
-			    (selectedDataServices.contains(item.getClassName())) || mIsVersionChange) {
-				selectedItems.add(item);
-				
-	      if(mIsVersionChange && (item.getEssentialTvbVersion() != null && mOldTvbVersion != null && mOldTvbVersion.compareTo(item.getEssentialTvbVersion()) < 0)) {
-	        notSelectableItems.add(item);
-	      }
-			}
-		}
+      if ((item.isAlreadyInstalled() && item.getInstalledVersion().compareTo(item.getVersion()) < 0) ||
+		   (selectedDataServices.contains(item.getClassName())) || mIsVersionChange) {
+			selectedItems.add(item);
+		if(mIsVersionChange && (item.getEssentialTvbVersion() != null && mOldTvbVersion != null && mOldTvbVersion.compareTo(item.getEssentialTvbVersion()) < 0)) {
+	      notSelectableItems.add(item);
+	    }
+      }
+    }
     
     mDownloadBtn.setEnabled(!selectedItems.isEmpty());
     
