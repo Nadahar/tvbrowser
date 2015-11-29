@@ -35,18 +35,15 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.RandomAccessFile;
 import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
 import java.lang.management.ManagementFactory;
 import java.lang.reflect.InvocationTargetException;
 import java.net.Authenticator;
@@ -58,8 +55,6 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
 import java.util.TimeZone;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Formatter;
@@ -83,15 +78,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.pushingpixels.substance.api.SubstanceLookAndFeel;
 import org.pushingpixels.substance.api.skin.SkinInfo;
 
-import com.jgoodies.looks.LookUtils;
-import com.l2fprod.gui.plaf.skin.SkinLookAndFeel;
-
-import ca.beq.util.win32.registry.RegistryKey;
-import ca.beq.util.win32.registry.RegistryValue;
-import ca.beq.util.win32.registry.RootKey;
-import devplugin.Date;
-import devplugin.ProgramFieldType;
-import devplugin.Version;
 import tvbrowser.core.ChannelList;
 import tvbrowser.core.PendingMarkings;
 import tvbrowser.core.PluginLoader;
@@ -130,6 +116,16 @@ import util.ui.Localizer;
 import util.ui.UIThreadRunner;
 import util.ui.UiUtilities;
 import util.ui.textcomponentpopup.TextComponentPopupEventQueue;
+import ca.beq.util.win32.registry.RegistryKey;
+import ca.beq.util.win32.registry.RegistryValue;
+import ca.beq.util.win32.registry.RootKey;
+
+import com.jgoodies.looks.LookUtils;
+import com.l2fprod.gui.plaf.skin.SkinLookAndFeel;
+
+import devplugin.Date;
+import devplugin.ProgramFieldType;
+import devplugin.Version;
 
 /**
  * TV-Browser
@@ -1398,7 +1394,7 @@ public class TVBrowser {
                 
                 LookAndFeelInfo[] lnfs = UIManager.getInstalledLookAndFeels();
                 
-                ArrayList<LookAndFeelInfo> cleanedLooksList = new ArrayList<>(lnfs.length-1);
+                ArrayList<LookAndFeelInfo> cleanedLooksList = new ArrayList<LookAndFeelInfo>(lnfs.length-1);
                 
                 if (lnfs != null) {
                   for (LookAndFeelInfo lookAndFeel : lnfs) {
