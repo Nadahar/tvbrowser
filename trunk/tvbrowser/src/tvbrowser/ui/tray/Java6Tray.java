@@ -44,6 +44,7 @@ import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 
 import util.misc.JavaVersion;
+import util.misc.OperatingSystem;
 import util.ui.UiUtilities;
 
 /**
@@ -129,17 +130,23 @@ public class Java6Tray {
               BufferedImage trayIconImage = null;
               Color backgroundColor = null;
 
+              int widthSub = 0;
+              
+              if(OperatingSystem.isLinux()) {
+                widthSub = 2;
+              }
+              
               if(trayIconSize.height > 16 && trayIconSize.height <= 32 && new File("imgs/tvbrowser32.png").isFile()) {
                 trayIconImage = UiUtilities.scaleIconToBufferedImage(ImageIO.read(new File("imgs/tvbrowser32.png")),
-                    trayIconSize.width, trayIconSize.height, BufferedImage.TYPE_INT_ARGB, backgroundColor);
+                    trayIconSize.width-widthSub, trayIconSize.height, BufferedImage.TYPE_INT_ARGB, backgroundColor);
               }
               else if(trayIconSize.height > 32 && trayIconSize.height <= 48 && new File("imgs/tvbrowser48.png").isFile()) {
                 trayIconImage = UiUtilities.scaleIconToBufferedImage(ImageIO.read(new File("imgs/tvbrowser48.png")),
-                    trayIconSize.width, trayIconSize.height, BufferedImage.TYPE_INT_ARGB, backgroundColor);
+                    trayIconSize.width-widthSub, trayIconSize.height, BufferedImage.TYPE_INT_ARGB, backgroundColor);
               }
               else if(trayIconSize.height > 48 && new File("imgs/tvbrowser128.png").isFile()) {
                 trayIconImage = UiUtilities.scaleIconToBufferedImage(ImageIO.read(new File("imgs/tvbrowser128.png")),
-                    trayIconSize.width, trayIconSize.height, BufferedImage.TYPE_INT_ARGB, backgroundColor);
+                    trayIconSize.width-widthSub, trayIconSize.height, BufferedImage.TYPE_INT_ARGB, backgroundColor);
               }
               else {
                 trayIconImage = ImageIO.read(new File("imgs/tvbrowser16.png"));
