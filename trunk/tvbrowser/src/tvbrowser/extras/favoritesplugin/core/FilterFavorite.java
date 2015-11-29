@@ -149,7 +149,7 @@ public class FilterFavorite extends Favorite implements PendingFilterLoader {
 
     ProgramFilter test = getProgramFilter();
     
-    if(mFilterIsAcceptable) {
+    if(mFilterIsAcceptable && test != null) {
       Program[] programs = super.internalSearchForPrograms();
       
       for(Program prog : programs) {
@@ -166,7 +166,7 @@ public class FilterFavorite extends Favorite implements PendingFilterLoader {
   public boolean matches(Program p) {
     ProgramFilter test = getProgramFilter();
     
-    if(mFilterIsAcceptable) {
+    if(mFilterIsAcceptable && test != null) {
       return test.accept(p);
     }
     
