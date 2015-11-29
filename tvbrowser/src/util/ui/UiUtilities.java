@@ -78,6 +78,7 @@ import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
 import javax.swing.ListCellRenderer;
 import javax.swing.UIManager;
+import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.border.Border;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
@@ -1161,4 +1162,34 @@ public class UiUtilities {
   public static boolean isGTKLookAndFeel() {
     return UIManager.getLookAndFeel().getClass().getCanonicalName().equals("com.sun.java.swing.plaf.gtk.GTKLookAndFeel");
   }
+  
+  /**
+   * 
+   * @param excludeGTK <code>true</code> if the GTK+ look and feel should not
+   * be considered to be the default look and feel.
+   * 
+   * @return The default LookAndFeel class name
+   * @since 3.4.2
+   */
+  public static String getDefaultLookAndFeelClassName(boolean excludeGTK) {
+    String lnf = UIManager.getSystemLookAndFeelClassName();
+    
+    if(excludeGTK && lnf.equals("com.sun.java.swing.plaf.gtk.GTKLookAndFeel")) {
+      lnf = UIManager.getCrossPlatformLookAndFeelClassName();
+    }
+    
+    if (StringUtils.containsIgnoreCase(lnf, "metal")) {
+      LookAndFeelInfo[] lnfs = UIManager.getInstalledLookAndFeels();
+      if (lnfs != null) {
+        for (LookAndFeelInfo lookAndFeel : lnfs) {
+          if (StringUtils.containsIgnoreCase(lookAndFeel.getName(),"Nimbus")) {
+            lnf = lookAndFeel.getClassName();
+            break;
+          }
+        }
+      }
+    }
+    return lnf;
+  }
+
 }
