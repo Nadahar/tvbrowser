@@ -151,6 +151,13 @@ public class TVBrowser {
 
   /* If you want to change the version string, add it to the beginning of this array.
      We need the old version strings to import the settings.
+     
+     !!!!!!!!!!!!
+     
+     ATTENTION: NEVER USE - IN THE NAME OF A VERSION. IT WILL CAUSE PROBLEMS FOR NIGHTLY
+                USERS!!!
+                
+     !!!!!!!!!!!!
   */
   /** The string array with the names of the earlier versions. */
   private static final String[] ALL_VERSIONS = new String[] {
