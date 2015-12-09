@@ -40,6 +40,7 @@ import util.ui.UiUtilities;
 import util.ui.persona.Persona;
 
 import devplugin.ProgressMonitor;
+import devplugin.ProgressMonitorExtended;
 
 /**
  * Statusbar
@@ -118,15 +119,23 @@ updatePersona();
   }
 
   public ProgressMonitor createProgressMonitor() {
-    return new ProgressMonitor(){
+    return new ProgressMonitorExtended() {
+      @Override
       public void setMaximum(int maximum) {
         mProgressBar.setMaximum(maximum);
       }
-
+      
+      @Override
       public void setValue(int value) {
         mProgressBar.setValue(value);
       }
-
+      
+      @Override
+      public void setIndeterminate(boolean newValue) {
+        mProgressBar.setIndeterminate(newValue);
+      }
+      
+      @Override
       public void setMessage(String msg) {
         mInfoLabel.setText(msg);
       }
