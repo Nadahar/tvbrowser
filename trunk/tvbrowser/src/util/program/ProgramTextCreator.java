@@ -1058,7 +1058,13 @@ public class ProgramTextCreator {
                 int index = persons[i].indexOf('(');
                 String topic = persons[i].substring(0, index).trim();
                 link = addSearchLink(topic,foreground) + " " + persons[i].substring(index).trim();
-              } else {
+              } 
+              if (persons[i].contains(":")) {
+                int index = persons[i].indexOf(':')+1;
+                String label = persons[i].substring(0, index).trim();
+                link = label + " " + addSearchLink(persons[i].substring(index).trim(),foreground);
+              } 
+              else {
                 link = addSearchLink(persons[i],foreground);
               }
               text = text.replace(persons[i], link);
