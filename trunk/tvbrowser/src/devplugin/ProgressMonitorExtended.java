@@ -33,4 +33,5 @@ public interface ProgressMonitorExtended extends ProgressMonitor {
   
   public void setIndeterminate(boolean newValue);
   
+  public void setVisible(boolean newValue);
 }

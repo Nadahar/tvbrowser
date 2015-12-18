@@ -139,6 +139,11 @@ updatePersona();
       public void setMessage(String msg) {
         mInfoLabel.setText(msg);
       }
+
+      @Override
+      public void setVisible(boolean newValue) {
+        mProgressBar.setVisible(newValue);
+      }
     };
   }
   
