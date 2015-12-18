@@ -552,5 +552,5 @@ public interface PluginManager {
    * @return The progress monitor of TV-Browser
    * @since 3.4.2
    */
-  public ProgressMonitor createProgressMonitor();
+  public ProgressMonitorExtended createProgressMonitor();
 }
