@@ -80,6 +80,7 @@ import devplugin.ProgramRatingIf;
 import devplugin.ProgramReceiveIf;
 import devplugin.ProgramReceiveTarget;
 import devplugin.ProgramSearcher;
+import devplugin.ProgressMonitor;
 import devplugin.ThemeIcon;
 import devplugin.TvBrowserSettings;
 import devplugin.Version;
@@ -1255,5 +1256,10 @@ public class PluginManagerImpl implements PluginManager {
   @Override
   public boolean isTvBrowserStartFinished() {
     return mTvBrowserStartFinished;
+  }
+
+  @Override
+  public ProgressMonitor createProgressMonitor() {
+    return MainFrame.getInstance().createProgressMonitor();
   }
 }
