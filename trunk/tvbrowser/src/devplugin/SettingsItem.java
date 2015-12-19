@@ -47,6 +47,7 @@ public class SettingsItem {
   public static final String SEARCH = "#search";
   public static final String FAVORITE = "#favorite";
   public static final String CHANNELS = "#channels";
+  public static final String DATA_PLUGIN_POST_PROCESSING = "#dataPluginPostProcessing";
   public static final String WEBBROWSER = "#webbrowser";
   public static final String CONTEXTMENU = "#contextmenu";
   public static final String LOOKANDFEEL = "#lookandfeel";

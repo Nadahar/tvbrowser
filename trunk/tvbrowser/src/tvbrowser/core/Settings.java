@@ -48,7 +48,6 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
-import javax.swing.UIManager.LookAndFeelInfo;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -2084,6 +2083,9 @@ public class Settings {
   
   public static final StringProperty propLastChannelExportFile = new StringProperty(
       mProp, "lastChannelExportFile", System.getProperty("user.home") + "/TVB-channel-export.txt");
+  
+  public static final StringArrayProperty propDataPluginPostProcessingOrder = new StringArrayProperty(
+      mProp, "dataPluginPostProcessingOrder", new String[0]);
   
   /**
    * Sets the window position and size for the given window with the values of
