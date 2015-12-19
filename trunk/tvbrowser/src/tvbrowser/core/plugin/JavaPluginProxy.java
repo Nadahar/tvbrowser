@@ -73,6 +73,7 @@ import devplugin.Program;
 import devplugin.ProgramRatingIf;
 import devplugin.ProgramReceiveTarget;
 import devplugin.SettingsTab;
+import devplugin.ToolTipIcon;
 
 /**
  * A plugin proxy for Java plugins.
@@ -794,5 +795,10 @@ public class JavaPluginProxy extends AbstractPluginProxy {
   @Override
   protected boolean doGetAllowsArtificialPluginTree() {
     return mPlugin.isAllowingArtificialPluginTree();
+  }
+
+  @Override
+  protected ToolTipIcon[] doGetProgramTableToolTipIcons(Program program) {
+    return mPlugin.getProgramTableToolTipIcons(program);
   }
 }
