@@ -376,6 +376,8 @@ public class SettingsDialog implements WindowClosingIf {
 
     generalSettings.add(new SettingNode(new ChannelsSettingsTab(),
         SettingsItem.CHANNELS));
+    generalSettings.add(new SettingNode(new DataPluginPostProcessingOrderSettingsTab(),
+        SettingsItem.DATA_PLUGIN_POST_PROCESSING));
     generalSettings.add(new SettingNode(new LocaleSettingsTab(this)));
     generalSettings.add(new SettingNode(new ContextmenuSettingsTab(),
         SettingsItem.CONTEXTMENU));

@@ -29,6 +29,8 @@ import java.awt.Component;
 import java.awt.Frame;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -1193,7 +1195,9 @@ public class PluginProxyManager {
    */
   private void fireTvDataAdded(final MutableChannelDayProgram newProg) {
     /* We have to run it as blocking method to let plugins change the program before the progam is saved */
-    for (PluginListItem item : getPluginListCopy()) {
+    final ArrayList<PluginListItem> items = sortPluginProxiesForDataPostProcessing(getPluginListCopy());
+    
+    for (PluginListItem item : items) {
       if (item.getPlugin().isActivated()) {
         final AbstractPluginProxy plugin = item.getPlugin();
         try {
@@ -1431,5 +1435,51 @@ public class PluginProxyManager {
     }
 
   } // inner class PluginListItem
+  
+  private static ArrayList<PluginListItem> sortPluginProxiesForDataPostProcessing(ArrayList<PluginListItem> toSort) {
+    final String[] sortedPlugins = Settings.propDataPluginPostProcessingOrder.getStringArray();
+    
+    Collections.sort(toSort, new Comparator<PluginListItem>() {
 
+      @Override
+      public int compare(PluginListItem pp1, PluginListItem pp2) {
+        int result = 0;
+        
+        int pp1Index = -1;
+        int pp2Index = -1;
+        
+        
+        for(int i = 0; i < sortedPlugins.length; i++) {
+          if(pp1.getPlugin().getId().equals(sortedPlugins[i])) {
+            pp1Index = i;
+          }
+          else if(pp2.getPlugin().getId().equals(sortedPlugins[i])) {
+            pp2Index = i;
+          }
+        }
+        
+        if(pp1Index != -1 && pp2Index != -1) {
+          if(pp1Index > pp2Index) {
+            result = 1;
+          }
+          else if(pp1Index < pp2Index) {
+            result = -1;
+          }
+        }
+        else if(pp1Index == -1 && pp2Index == -1) {
+          result = pp1.getPlugin().getInfo().getName().compareToIgnoreCase(pp2.getPlugin().getInfo().getName());
+        }
+        else if(pp1Index == -1) {
+          result = -1;
+        }
+        else if(pp2Index == -1) {
+          result = 1;
+        }
+        
+        return result;
+      }
+    });
+    
+    return toSort;
+  }
 }
