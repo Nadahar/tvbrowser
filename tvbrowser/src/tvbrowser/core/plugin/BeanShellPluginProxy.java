@@ -29,6 +29,7 @@ import devplugin.PluginsProgramFilter;
 import devplugin.Program;
 import devplugin.ProgramRatingIf;
 import devplugin.ProgramReceiveTarget;
+import devplugin.ToolTipIcon;
 import devplugin.beanshell.BeanShellScriptIf;
 
 
@@ -331,5 +332,11 @@ public class BeanShellPluginProxy extends AbstractPluginProxy {
     @Override
     protected boolean doGetAllowsArtificialPluginTree() {
       return true;
+    }
+
+    @Override
+    protected ToolTipIcon[] doGetProgramTableToolTipIcons(Program program) {
+      // TODO Auto-generated method stub
+      return null;
     }
  }

@@ -76,6 +76,7 @@ import devplugin.PluginAccess;
 import devplugin.Program;
 import devplugin.ProgramFieldType;
 import devplugin.ProgramInfoHelper;
+import devplugin.ToolTipIcon;
 
 /**
  * A ProgramPanel is a JComponent representing a single program.
@@ -1321,10 +1322,18 @@ private static Font getDynamicFontSize(Font font, int offset) {
     // plugin icons
     for (PluginProxy proxy : PluginProxyManager.getInstance().getActivatedPlugins()) {
       Icon[] pluginIcons = proxy.getProgramTableIcons(mProgram);
-      if (pluginIcons != null && pluginIcons.length > 0) {
-        buffer.append(
-            "<tr><td valign=\"middle\" align=\"center\">&nbsp;</td><td>&nbsp;")
-            .append(proxy.getProgramTableIconText()).append("</td></tr>");
+      String singleText = proxy.getProgramTableIconText();
+      
+      ToolTipIcon[] toolTipIcons = proxy.getProgramTableToolTipIcons(mProgram);
+      
+      if (toolTipIcons == null && pluginIcons != null && pluginIcons.length > 0 && singleText != null) {
+          buffer.append("<tr><td valign=\"middle\" align=\"center\"></td><td>&nbsp;")
+            .append(singleText).append("</td></tr>");
+      }
+      else if(toolTipIcons != null) {
+        for(ToolTipIcon icons : toolTipIcons) {
+          icons.append(buffer);
+        }
       }
     }
     // HTML header and footer

@@ -472,7 +472,24 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
   public String getProgramTableIconText() {
     return null;
   }
-
+  
+  /**
+   * Gets the ToolTipIcons for the program table icons provided by this
+   * Plugin.
+   * <p>
+   * Override this method if your plugin provides icons for the program table
+   * (shown below the start time) and you want the icons to be shown in the tooltip.
+   *
+   * @param program The program to get the ToolTipIcons for.
+   * @return The description text for the program table icons or
+   *         <code>null</code> if the plugin does not provide this feature.
+   *
+   * @see #getProgramTableIcons(Program)
+   * @since 3.4.2
+   */
+  public ToolTipIcon[] getProgramTableToolTipIcons(Program program) {
+    return null;
+  }
 
   /**
    * Gets the icons this Plugin provides for the given program. These icons will
