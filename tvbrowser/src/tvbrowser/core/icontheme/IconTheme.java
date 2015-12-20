@@ -181,6 +181,13 @@ abstract public class IconTheme implements Comparable<IconTheme> {
         StringBuilder iconFile = new StringBuilder(dir.getName()).append("/")
             .append(icon.getName()).append(".png");
         if (entryExists(iconFile.toString())) {
+          if(getBase().isDirectory()) {
+            icon.setAddress(getBase().getAbsolutePath() + "/" + iconFile.toString());
+          }
+          else if(getBase().isFile()) {
+            icon.setAddress(getBase().getAbsolutePath() + "!/" + iconFile.toString());
+          }
+          
           return getImageFromTheme(iconFile.toString());
         }
       }
@@ -194,6 +201,13 @@ abstract public class IconTheme implements Comparable<IconTheme> {
         StringBuilder iconFile = new StringBuilder(dir.getName()).append("/")
             .append(icon.getName()).append(".png");
         if (entryExists(iconFile.toString())) {
+          if(getBase().isDirectory()) {
+            icon.setAddress(getBase().getAbsolutePath() + "/" + iconFile.toString());
+          }
+          else if(getBase().isFile()) {
+            icon.setAddress(getBase().getAbsolutePath() + "!/" + iconFile.toString());
+          }
+          
           return getImageFromTheme(iconFile.toString());
         }
       }
@@ -211,6 +225,13 @@ abstract public class IconTheme implements Comparable<IconTheme> {
         StringBuilder iconFile = new StringBuilder(dir.getName()).append("/")
             .append(icon.getName()).append(".png");
         if (entryExists(iconFile.toString())) {
+          if(getBase().isDirectory()) {
+            icon.setAddress(getBase().getAbsolutePath() + "/" + iconFile.toString());
+          }
+          else if(getBase().isFile()) {
+            icon.setAddress(getBase().getAbsolutePath() + "!/" + iconFile.toString());
+          }
+          
           closestMatch = iconFile.toString();
           minSize = distance;
         }
@@ -219,7 +240,7 @@ abstract public class IconTheme implements Comparable<IconTheme> {
 
     // Found closest match, resize it
     if (closestMatch != null) {
-      Icon closestIcon = getImageFromTheme(closestMatch);
+      ImageIcon closestIcon = getImageFromTheme(closestMatch);
       return (ImageIcon) UiUtilities.scaleIcon(closestIcon, icon.getSize(), icon.getSize());
     }
     

@@ -43,7 +43,9 @@ public class ThemeIcon {
   private String mName;
   /** Size of the Icon */
   private int mSize;
-
+  /** The full address of the icon */
+  private String mAddress;
+  
   /**
    * Create a ThemeIcon
    * @param category Category of the Icon (action, apps, devices etc)
@@ -125,5 +127,24 @@ public class ThemeIcon {
     }
     return true;
   }
+  
+  /**
+   * Sets the full address of this icon
+   * <p>
+   * @param address The full address of this icon
+   * @since 3.4.2
+   */
+  public void setAddress(String address) {
+    mAddress = address;
+  }
 
+  /**
+   * Gets the address of this icon or <code>null</code> if no address is set.
+   * <p>
+   * @return The full address or <code>null</code>
+   * @since 3.4.2 
+   */
+  public String getAddress() {
+    return mAddress;
+  }
 }

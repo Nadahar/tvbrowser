@@ -16,4 +16,9 @@ public final class ToolTipIcon {
     
     return builder;
   }
+  
+  @Override
+  public String toString() {
+    return mToolTipText;
+  }
 }

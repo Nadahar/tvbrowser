@@ -350,7 +350,8 @@ public class IconLoader {
           icon.getSize()).append("x").append(icon.getSize()).append("/")
           .append(icon.getCategory()).append("/").append(icon.getName())
           .append(".png");
-
+      icon.setAddress(buffer.toString());
+      
       InputStream stream = plugin.getClass().getResourceAsStream(buffer.toString());
       if (stream != null) {
         try {

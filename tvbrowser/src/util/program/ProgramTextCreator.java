@@ -61,6 +61,7 @@ import devplugin.PluginAccess;
 import devplugin.Program;
 import devplugin.ProgramFieldType;
 import devplugin.ProgramInfoHelper;
+import devplugin.ToolTipIcon;
 
 /**
  * Creates the String for the ProgramInfoDialog
@@ -505,11 +506,23 @@ public class ProgramTextCreator {
     ArrayList<JLabel> iconLabels = new ArrayList<JLabel>();
     for (PluginAccess plugin : plugins) {
       Icon[] icons = plugin.getProgramTableIcons(prog);
+      ToolTipIcon[] toolTips = plugin.getProgramTableToolTipIcons(prog);
+      String singleText = plugin.getProgramTableIconText();
 
       if (icons != null) {
-        for (Icon icon : icons) {
-          JLabel iconLabel = new JLabel(icon);
-          iconLabel.setToolTipText(plugin.getInfo().getName());
+        for (int i = 0; i < icons.length; i++) {
+          JLabel iconLabel = new JLabel(icons[i]);
+          
+          if(toolTips != null && toolTips.length > i) {
+            iconLabel.setToolTipText(toolTips[i].toString());
+          }
+          else if(singleText != null) {
+            iconLabel.setToolTipText(singleText);
+          }
+          else {
+            iconLabel.setToolTipText(plugin.getInfo().getName());
+          }
+          
           iconLabels.add(iconLabel);
         }
       }
@@ -525,7 +538,7 @@ public class ProgramTextCreator {
 
       buffer.append("\"><b>");
       buffer.append("Plugin-Icons");
-      buffer.append("</b></td><td valign=\"top\" style=\"font-size:4\">");
+      buffer.append("</b></td><td valign=\"middle\" style=\"font-size:4\">");
 
       openPara(buffer, "info");
       // Workaround: Without the &nbsp; the component are not put in one line.
