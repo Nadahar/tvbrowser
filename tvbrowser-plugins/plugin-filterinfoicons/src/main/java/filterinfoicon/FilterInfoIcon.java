@@ -22,15 +22,19 @@ import java.awt.Dialog.ModalityType;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashSet;
 import java.util.Iterator;
 
 import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JRootPane;
@@ -52,6 +56,7 @@ import devplugin.Plugin;
 import devplugin.PluginInfo;
 import devplugin.Program;
 import devplugin.ProgramFilter;
+import devplugin.ThemeIcon;
 import devplugin.Version;
 
 /**
@@ -62,15 +67,49 @@ import devplugin.Version;
  */
 public class FilterInfoIcon extends Plugin implements FilterChangeListenerV2 {
   static final Localizer LOCALIZER = Localizer.getLocalizerFor(FilterInfoIcon.class);
-  private static final Version VERSION = new Version(0,11,0,false);
-  private static Icon DEFAULT_ICON;
+  private static final Version VERSION = new Version(0,12,0,false);
+  private static ImageIcon DEFAULT_ICON;
   private HashSet<FilterEntry> mFilterSet;
   private static String LAST_USED_ICON_PATH;
   
   private long mLastUpdate;
   
   public FilterInfoIcon() {
-    DEFAULT_ICON = UiUtilities.scaleIcon(createImageIcon("status", "view-filter-set", TVBrowserIcons.SIZE_SMALL), 13);
+    final ThemeIcon themeIcon = new ThemeIcon("status", "view-filter-set", TVBrowserIcons.SIZE_SMALL);
+    
+    DEFAULT_ICON = (ImageIcon)UiUtilities.scaleIcon(createImageIcon(themeIcon), 13);
+    
+    try {
+      final Method getAddress = themeIcon.getClass().getMethod("getAddress");
+      String address = getAddress.invoke(themeIcon).toString();
+      
+      if(address != null) {
+        File test = new File(address);
+        
+        if(test.isFile()) {
+          DEFAULT_ICON.setDescription("file://"+address);
+        }
+        else if(address.toLowerCase().contains(".zip!") || address.toLowerCase().contains(".jar!")) {
+          DEFAULT_ICON.setDescription("jar:file:"+address);
+        }
+      }
+    } catch (NoSuchMethodException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    } catch (SecurityException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    } catch (IllegalAccessException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    } catch (IllegalArgumentException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    } catch (InvocationTargetException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    
     mFilterSet = new HashSet<FilterEntry>();
     LAST_USED_ICON_PATH = null;
     mLastUpdate = 0;
@@ -171,6 +210,33 @@ public class FilterInfoIcon extends Plugin implements FilterChangeListenerV2 {
     mLastUpdate = System.currentTimeMillis();
   }
   
+  @Override
+  public devplugin.ToolTipIcon[] getProgramTableToolTipIcons(Program program) {
+    if(getPluginManager().getExampleProgram().equals(program)) {
+      return null;
+    }
+    
+    ArrayList<devplugin.ToolTipIcon> shownEntryIcons = new ArrayList<devplugin.ToolTipIcon>();
+    
+    for(Iterator<FilterEntry> it = mFilterSet.iterator(); it.hasNext();) {
+      FilterEntry entry = it.next();
+      
+      if(entry.accepts(program)) {
+        if(entry.getIcon() != null) {
+          shownEntryIcons.add(new devplugin.ToolTipIcon("file://"+entry.getIconFilePath().getAbsolutePath(), entry.toString()));
+        }
+        else {
+          shownEntryIcons.add(new devplugin.ToolTipIcon(DEFAULT_ICON.getDescription(), entry.toString()));
+        }
+      }
+    }
+    
+    if(!shownEntryIcons.isEmpty()) {
+      return shownEntryIcons.toArray(new devplugin.ToolTipIcon[shownEntryIcons.size()]);
+    }
+    
+    return null;
+  }
   
   @Override
   public String getProgramTableIconText() {
