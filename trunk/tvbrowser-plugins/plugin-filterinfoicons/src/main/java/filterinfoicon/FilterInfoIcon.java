@@ -87,10 +87,10 @@ public class FilterInfoIcon extends Plugin implements FilterChangeListenerV2 {
         File test = new File(address);
         
         if(test.isFile()) {
-          DEFAULT_ICON.setDescription("file:/"+address.replace("\\", "/").replace("#", "%23"));
+          DEFAULT_ICON.setDescription("file:///"+address.replace("\\", "/").replace("#", "%23"));
         }
         else if(address.toLowerCase().contains(".zip!") || address.toLowerCase().contains(".jar!")) {
-          DEFAULT_ICON.setDescription("jar:file:/"+address.replace("\\", "/").replace("#", "%23"));
+          DEFAULT_ICON.setDescription("jar:file:///"+address.replace("\\", "/").replace("#", "%23"));
         }
       }
     } catch (NoSuchMethodException e) {
@@ -223,7 +223,7 @@ public class FilterInfoIcon extends Plugin implements FilterChangeListenerV2 {
       
       if(entry.accepts(program)) {
         if(entry.getIcon() != null) {
-          shownEntryIcons.add(new devplugin.ToolTipIcon("file:/"+entry.getIconFilePath().getAbsolutePath(), entry.toString()));
+          shownEntryIcons.add(new devplugin.ToolTipIcon("file:///"+entry.getIconFilePath().getAbsolutePath(), entry.toString()));
         }
         else {
           shownEntryIcons.add(new devplugin.ToolTipIcon(DEFAULT_ICON.getDescription(), entry.toString()));
