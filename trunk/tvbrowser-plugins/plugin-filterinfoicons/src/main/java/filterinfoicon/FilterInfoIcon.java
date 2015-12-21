@@ -67,7 +67,7 @@ import devplugin.Version;
  */
 public class FilterInfoIcon extends Plugin implements FilterChangeListenerV2 {
   static final Localizer LOCALIZER = Localizer.getLocalizerFor(FilterInfoIcon.class);
-  private static final Version VERSION = new Version(0,12,0,false);
+  private static final Version VERSION = new Version(0,13,0,false);
   private static ImageIcon DEFAULT_ICON;
   private HashSet<FilterEntry> mFilterSet;
   private static String LAST_USED_ICON_PATH;
@@ -87,10 +87,10 @@ public class FilterInfoIcon extends Plugin implements FilterChangeListenerV2 {
         File test = new File(address);
         
         if(test.isFile()) {
-          DEFAULT_ICON.setDescription("file://"+address);
+          DEFAULT_ICON.setDescription("file:/"+address.replace("\\", "/").replace("#", "%23"));
         }
         else if(address.toLowerCase().contains(".zip!") || address.toLowerCase().contains(".jar!")) {
-          DEFAULT_ICON.setDescription("jar:file:"+address);
+          DEFAULT_ICON.setDescription("jar:file:/"+address.replace("\\", "/").replace("#", "%23"));
         }
       }
     } catch (NoSuchMethodException e) {
@@ -223,7 +223,7 @@ public class FilterInfoIcon extends Plugin implements FilterChangeListenerV2 {
       
       if(entry.accepts(program)) {
         if(entry.getIcon() != null) {
-          shownEntryIcons.add(new devplugin.ToolTipIcon("file://"+entry.getIconFilePath().getAbsolutePath(), entry.toString()));
+          shownEntryIcons.add(new devplugin.ToolTipIcon("file:/"+entry.getIconFilePath().getAbsolutePath(), entry.toString()));
         }
         else {
           shownEntryIcons.add(new devplugin.ToolTipIcon(DEFAULT_ICON.getDescription(), entry.toString()));
