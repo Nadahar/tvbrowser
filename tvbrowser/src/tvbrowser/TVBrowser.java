@@ -144,10 +144,10 @@ public class TVBrowser {
 
   private static String curLookAndFeel;
 
-  private static final boolean mIsStable = false;
+  private static final boolean mIsStable = true;
   private static final int mMajorVersion = 3;
-  private static final int mMinorVersion = 41;
-  private static final int mSubMinorVersion = 96;
+  private static final int mMinorVersion = 42;
+  private static final int mSubMinorVersion = 0;
 
   /* If you want to change the version string, add it to the beginning of this array.
      We need the old version strings to import the settings.
@@ -161,6 +161,7 @@ public class TVBrowser {
   */
   /** The string array with the names of the earlier versions. */
   private static final String[] ALL_VERSIONS = new String[] {
+          "3.4.2",
           "3.4.1.96 RC1",
           "3.4.1.95 Beta1",
           "3.4.1.50-SVN",
