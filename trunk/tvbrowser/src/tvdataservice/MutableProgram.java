@@ -205,25 +205,24 @@ public class MutableProgram implements Program {
       mNormalizedDate = mNormalizedDate.addDays(-1);
     }
     
-    if  (mChannel.getDataServiceId() != null) {
-      String dataServiceId = mChannel.getDataServiceId();
-      String groupId = mChannel.getGroup().getId();
-      String channelId = mChannel.getId();
-      String country = mChannel.getBaseCountry();
-      String date = new SimpleDateFormat(ID_DATE_FORMAT).format(getDate().getCalendar().getTime());
+    String dataServiceId = mChannel.getDataServiceId() != null ? mChannel.getDataServiceId() : "UnknownDataService";
+    String groupId = mChannel.getGroup() != null ? mChannel.getGroup().getId() : "UnknownChannelGroup";
+    String channelId = mChannel.getId() != null ? mChannel.getId() : "UnknownChannelId";
+    String country = mChannel.getBaseCountry() != null ? mChannel.getBaseCountry() : "UnknownCountry";
+    
+    String date = new SimpleDateFormat(ID_DATE_FORMAT).format(getDate().getCalendar().getTime());
 
-      mId = (new StringBuilder(dataServiceId).append('_').append(groupId)
-          .append('_').append(country).append('_').append(channelId).append(
-              '_').append(getHours()).append(':').append(getMinutes())
-          .append(':').append(TimeZone.getDefault().getRawOffset() / 60000))
-          .toString();      
+    mId = (new StringBuilder(dataServiceId).append('_').append(groupId)
+        .append('_').append(country).append('_').append(channelId).append(
+            '_').append(getHours()).append(':').append(getMinutes())
+        .append(':').append(TimeZone.getDefault().getRawOffset() / 60000))
+        .toString();      
 
-      mUniqueId = (new StringBuilder(dataServiceId).append('_').append(
-          groupId).append('_').append(country).append('_').append(channelId)
-          .append('_').append(date).append('_').append(getHours())
-          .append(':').append(getMinutes()).append(':').append(TimeZone
-          .getDefault().getRawOffset() / 60000)).toString();
-    }
+    mUniqueId = (new StringBuilder(dataServiceId).append('_').append(
+        groupId).append('_').append(country).append('_').append(channelId)
+        .append('_').append(date).append('_').append(getHours())
+        .append(':').append(getMinutes()).append(':').append(TimeZone
+        .getDefault().getRawOffset() / 60000)).toString();
   }
 
 
