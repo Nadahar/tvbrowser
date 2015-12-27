@@ -1057,7 +1057,7 @@ public class Channel implements Comparable<Channel> {
    */
   public String getUniqueId() {
     if (mUniqueId == null) {
-      mUniqueId = new StringBuilder(mDataServiceID).append('_').append(getGroup().getId()).append('_').append(getBaseCountry()).append('_').append(getId()).toString();
+      mUniqueId = new StringBuilder(mDataServiceID != null ? mDataServiceID : "UnknownDataService").append('_').append(getGroup() != null ? getGroup().getId() : "UnknownChannelGroup").append('_').append(getBaseCountry() != null ? getBaseCountry() : "UnknownCountry").append('_').append(getId() != null ? getId() : "UnknownChannelId").toString();
     }
     return mUniqueId;
   }
