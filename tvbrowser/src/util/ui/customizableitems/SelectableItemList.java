@@ -340,7 +340,7 @@ public class SelectableItemList extends JPanel implements ListSelectionListener{
    * @since 3.0
    */
   public void setSelectedIndex(int index) {
-    mList.setSelectedIndex(0);
+    mList.setSelectedIndex(index);
   }
 
   /**
@@ -644,5 +644,15 @@ public class SelectableItemList extends JPanel implements ListSelectionListener{
       mComponents[i] = mItemRenderer.getListCellRendererComponent(mList, mListModel.getElementAt(i), i, mList.isSelectedIndex(i), true); 
     }
     
+  }
+  
+  /**
+   * Gets if this selectable item list is empty.
+   * <p>
+   * @return <code>true</code> if this list is empty.
+   * @since 3.4.3
+   */
+  public boolean isEmpty() {
+    return mListModel.getSize() == 0;
   }
 }

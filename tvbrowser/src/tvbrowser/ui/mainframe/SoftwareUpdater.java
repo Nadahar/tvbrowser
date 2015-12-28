@@ -267,18 +267,25 @@ public final class SoftwareUpdater {
             it.remove();
           }
           
+          if(item.isAlreadyInstalled() && item.getInstalledVersion().compareTo(item.getVersion()) < 0) {
+            item.setPreSelected(true);
+          }
+          
           PluginProxyManager.getInstance().firePluginBlockListRenewed();
         }
         else {
           PluginBaseInfo baseInfo = getBaseInfoFor(pluginId,baseInfos);
           
-          if(baseInfo == null) {
+          if(baseInfo == null && !item.getCategory().equals(Plugin.ADDITONAL_DATA_SERVICE_SOFTWARE_CATEGORY) && !item.getCategory().equals(Plugin.ADDITONAL_DATA_SERVICE_HARDWARE_CATEGORY)) {
             it.remove();
             continue;
           }
-          else if(baseInfo.getVersion().compareTo(item.getVersion()) >= 0) {
+          else if(baseInfo != null && baseInfo.getVersion().compareTo(item.getVersion()) >= 0) {
             it.remove();
             continue;
+          }
+          else if(baseInfo != null) {
+            item.setPreSelected(true);
           }
         }
       }
