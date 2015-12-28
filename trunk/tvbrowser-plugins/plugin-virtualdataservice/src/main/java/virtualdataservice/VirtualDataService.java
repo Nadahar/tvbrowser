@@ -128,7 +128,7 @@ public class VirtualDataService extends AbstractTvDataService
 
   public static Version getVersion()
   {
-    return new Version(0, 4, 0, false);
+    return new Version(0, 5, 0, false);
   }
 
   public PluginInfo getInfo()
@@ -281,7 +281,14 @@ public class VirtualDataService extends AbstractTvDataService
 // added by jb :
 
   public ActionMenu getContextMenuActions(final Program program){
-
+    if(program != null && getPluginManager().getExampleProgram().equals(program)) {
+      final Action mainaction = new devplugin.ContextMenuAction();
+      mainaction.putValue(Action.NAME, mLocalizer.msg("name", "VirtualDataService"));
+      mainaction.putValue(Action.SMALL_ICON, vcIcon);
+      
+      return new ActionMenu(mainaction);
+    }
+    
     final VirtualChannelManager vcm = new VirtualChannelManager(mWorkingDir
         .getAbsolutePath());
     final List<VirtualChannel> channels = vcm.getChannels();
@@ -371,11 +378,9 @@ public class VirtualDataService extends AbstractTvDataService
     if (actions.length == 0) {
       return null;
      }
-    final Action mainaction = new devplugin.ContextMenuAction();
-    mainaction.putValue(Action.NAME, mLocalizer.msg("name", "VirtualDataService"));
-    mainaction.putValue(Action.SMALL_ICON, vcIcon);
-    return new ActionMenu(mainaction, actions);
-    }
+    
+    return new ActionMenu(mLocalizer.msg("name", "VirtualDataService"), vcIcon, actions);
+  }
 
 
   private void delProgram(final VirtualChannel channel, final Program program,
@@ -524,7 +529,7 @@ public class VirtualDataService extends AbstractTvDataService
   }
   
   public boolean allowCopyForPrograms() {
-    return mProperties.getProperty(KEY_ALLOW_COPY_FOR_PROGRAMS, "true").equals("true");
+    return mProperties == null || mProperties.getProperty(KEY_ALLOW_COPY_FOR_PROGRAMS, "true").equals("true");
   }
   
   }
