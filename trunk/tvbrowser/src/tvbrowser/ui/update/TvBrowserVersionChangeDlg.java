@@ -123,8 +123,14 @@ public class TvBrowserVersionChangeDlg extends JDialog implements WindowClosingI
           if(updateItems.length > 0) {
             Settings.propPluginBetaWarning.setBoolean(false);
             SoftwareUpdateDlg updateDlg = new SoftwareUpdateDlg(null,SoftwareUpdater.ONLY_UPDATE_TYPE,updateItems,true,oldTvBrowserVersion);
-            updateDlg.setLocationRelativeTo(null);
-            updateDlg.setVisible(true);
+            
+            if(!updateDlg.isEmpty()) {
+              updateDlg.setLocationRelativeTo(null);
+              updateDlg.setVisible(true);
+            }
+            else {
+              Settings.propPluginBetaWarning.setBoolean(true);
+            }
           }
           
           mCloseTvBrowser = false;

@@ -253,7 +253,7 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
     JLabel info = new JLabel(mLocalizer.msg("header","Here you can download new plugins and updates for it."));
     
     if(dialogType == SoftwareUpdater.ONLY_UPDATE_TYPE) {
-      info.setText(mLocalizer.msg("updateHeader","Updates for installed plugins were found."));
+      info.setText(mLocalizer.msg("updateHeader","Updates for installed plugins/new matching data plugins were found."));
     }
     else if(dialogType == SoftwareUpdater.ONLY_DATA_SERVICE_TYPE) {
       info.setText(mLocalizer.msg("dataServiceHeader","TV-Browser is based on Plugins. You will need at least one of the listed data Plugins."));
@@ -271,7 +271,7 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
     
     ArrayList<String> selectedDataServices = new ArrayList<String>(0);
     
-    if(dialogType == SoftwareUpdater.ONLY_DATA_SERVICE_TYPE) {
+    if(dialogType == SoftwareUpdater.ONLY_DATA_SERVICE_TYPE || mIsVersionChange) {
       String country = Locale.getDefault().getCountry();
       
       if(country.equals(Locale.GERMANY.getCountry()) || country.equals("ES") || country.equals("IT") || country.equals("FR") || country.equals("DK") || country.equals("CH") || country.equals("AT") || Locale.getDefault().getLanguage().equals("de")) {
@@ -310,19 +310,25 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
       }
     }
     
+    ArrayList<SoftwareUpdateItem> mItemList = new ArrayList<SoftwareUpdateItem>();
+    
     for (SoftwareUpdateItem item : itemArr) {
-      if ((item.isAlreadyInstalled() && item.getInstalledVersion().compareTo(item.getVersion()) < 0) ||
-		   (selectedDataServices.contains(item.getClassName())) || mIsVersionChange) {
-			selectedItems.add(item);
-		if(mIsVersionChange && (item.getEssentialTvbVersion() != null && mOldTvbVersion != null && mOldTvbVersion.compareTo(item.getEssentialTvbVersion()) < 0)) {
-	      notSelectableItems.add(item);
-	    }
+      if(item.isPreSelected() || (selectedDataServices.contains(item.getClassName()) && mIsVersionChange)) {
+        if(mIsVersionChange) {
+          mItemList.add(item);
+        }
+        
+        selectedItems.add(item);
+        
+    	if(mIsVersionChange && (item.getEssentialTvbVersion() != null && mOldTvbVersion != null && mOldTvbVersion.compareTo(item.getEssentialTvbVersion()) < 0)) {
+    	  notSelectableItems.add(item);
+    	}
       }
     }
-    
+    System.out.println("SELECTED ITEMS SIZE " + selectedItems.size() + " " + notSelectableItems.size());
     mDownloadBtn.setEnabled(!selectedItems.isEmpty());
     
-    mSoftwareUpdateItemList = new SelectableItemList(selectedItems.toArray(new SoftwareUpdateItem[selectedItems.size()]),itemArr,notSelectableItems.toArray(new SoftwareUpdateItem[notSelectableItems.size()]));
+    mSoftwareUpdateItemList = new SelectableItemList(selectedItems.toArray(new SoftwareUpdateItem[selectedItems.size()]),mIsVersionChange ? mItemList.toArray(new SoftwareUpdateItem[mItemList.size()]) : itemArr,notSelectableItems.toArray(new SoftwareUpdateItem[notSelectableItems.size()]));
     mSoftwareUpdateItemList.addListSelectionListener(this);
     mSoftwareUpdateItemList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     mSoftwareUpdateItemList.setListUI(new MyListUI());
@@ -529,7 +535,17 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
 
     UiUtilities.registerForClosing(this);
   }
-
+  
+  /**
+   * Gets if this update dialog contains selectable items.
+   * <p>
+   * @return <code>true</code> if this dialog doesn't contains selectable items.
+   * @since 3.4.3
+   */
+  public boolean isEmpty() {
+    return mSoftwareUpdateItemList.isEmpty();
+  }
+  
   public void actionPerformed(ActionEvent event) {
     if (event.getSource() == mCloseBtn) {
       close();

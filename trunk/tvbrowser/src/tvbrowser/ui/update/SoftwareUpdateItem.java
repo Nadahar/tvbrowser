@@ -69,6 +69,7 @@ public abstract class SoftwareUpdateItem {
 
   private HashMap<String, String> mPropertyMap;
   private String mClassName;
+  private boolean mPreSelected;
 
   /**
    * Creates an instances of this class.
@@ -78,6 +79,7 @@ public abstract class SoftwareUpdateItem {
   public SoftwareUpdateItem(String className) {
     mClassName = className;
     mPropertyMap = new HashMap<String, String>();
+    mPreSelected = false;
   }
 
   /**
@@ -234,6 +236,26 @@ public abstract class SoftwareUpdateItem {
    */
   public Version getEssentialTvbVersion() {
     return getVersion(getProperty(ESSENTIAL_KEY));
+  }
+  
+  /**
+   * Sets the preselected state of this update.
+   * <p>
+   * @param preSelected <code>true</code> if this update should be preselected.
+   * @since 3.4.3
+   */
+  public void setPreSelected(boolean preSelected) {
+    mPreSelected = preSelected;
+  }
+  
+  /**
+   * Gets if this update should be preselected.
+   * <p>
+   * @return <code>true</code> if this update should be preselected.
+   * @since 3.4.3
+   */
+  public boolean isPreSelected() {
+    return mPreSelected;
   }
 
   /**
