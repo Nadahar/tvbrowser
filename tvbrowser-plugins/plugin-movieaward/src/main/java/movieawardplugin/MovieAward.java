@@ -92,19 +92,28 @@ public class MovieAward implements Comparable<MovieAward> {
   }
 
   public boolean containsAwardFor(final Program program) {
+    boolean result = false;
+    
     // At first try to find movies in the award-data
-    final ArrayList<Movie> movies = mMovies.getMovies(program);
-    if (movies != null) {
-      for (Movie movie : movies) {
-        if (movie.matchesProgram(program) && mAwards.containsKey(movie.getId())) {
-          return true;
+    if(program != null && program.getUniqueID() != null) {
+      final ArrayList<Movie> movies = mMovies.getMovies(program);
+      if (movies != null) {
+        for (Movie movie : movies) {
+          if (movie.matchesProgram(program) && mAwards.containsKey(movie.getId())) {
+            result = true;
+            break;
+          }
         }
       }
+  
+      if(!result) {
+        // No movie found, try to find a movie-id in the global movie database
+        final Movie movie = mMovieDatabase.getMovieFor(program);
+        result = (movie != null) && (mAwards.containsKey(movie.getId()));
+      }
     }
-
-    // No movie found, try to find a movie-id in the global movie database
-    final Movie movie = mMovieDatabase.getMovieFor(program);
-    return (movie != null) && (mAwards.containsKey(movie.getId()));
+    
+    return result;
   }
 
   public Award[] getAwardsFor(final Program program) {
