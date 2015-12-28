@@ -80,7 +80,7 @@ final public class MovieAwardPlugin extends Plugin {
    */
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(MovieAwardPlugin.class);
   private static final Logger mLog = Logger.getLogger(MovieAwardPlugin.class.getName());
-  private static final Version mVersion = new Version(0, 14, 2);
+  private static final Version mVersion = new Version(0, 14, 3);
 
   private PluginInfo mPluginInfo;
   private ArrayList<MovieAward> mMovieAwards;
@@ -262,9 +262,10 @@ final public class MovieAwardPlugin extends Plugin {
 			if (mMovieAwards == null) {
 			  initDatabase();
 			}
-			// no awards for very short programs
+						
+			// no awards for very short programs and for example program
 			final int length = program.getLength();
-			if (length > 0 && length < 5) {
+			if (length > 0 && length < 5 || program.getUniqueID() == null) {
 			  return false;
 			}
 
