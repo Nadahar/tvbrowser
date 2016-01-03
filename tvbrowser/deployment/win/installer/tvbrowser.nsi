@@ -302,6 +302,9 @@ Section "$(STD_SECTION_NAME)" SEC_STANDARD
 
   SetOutPath "$INSTDIR\imgs"
   File "${RUNTIME_DIR}\imgs\*.*"
+  
+  SetOutPath "$INSTDIR\plugins"
+  File "${RUNTIME_DIR}\plugins\*.*"
 
   SetOutPath "$INSTDIR\personas"
   File /r "${RUNTIME_DIR}\personas\*.*"
@@ -604,6 +607,11 @@ Section "Uninstall"
   deletePluginsDir:
   RMDir /r "$INSTDIR\plugins"
   noDeletePluginsDir:
+  
+  IfFileExists "$INSTDIR\plugins\NewsPlugin.jar" deletePluginsDir1 noDeletePluginsDir1
+  deletePluginsDir1:
+  RMDir /r "$INSTDIR\plugins"
+  noDeletePluginsDir1:
   
   RMDir /r "$INSTDIR\personas"
 
