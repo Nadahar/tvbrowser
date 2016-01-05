@@ -316,7 +316,6 @@ public class SystemTray {
     mTrayMenu.addSeparator();
 
     mPluginsMenu = createPluginsMenu();
-    mPluginsMenu.addSeparator();
 
     mTrayMenu.add(mPluginsMenu);
     mTrayMenu.addSeparator();
@@ -1047,13 +1046,19 @@ public class SystemTray {
       }
     }
 
-    pluginsMenu.addSeparator();
-
+    ArrayList<ActionMenu> buttonActions = new ArrayList<ActionMenu>();
     for (PluginProxy plugin : plugins) {
       ActionMenu action = plugin.getButtonAction();
       if (action != null) {
-        pluginsMenu.add(MenuUtil.createMenuItem(action, false));
+    	buttonActions.add(action); 
       }
+    }
+    
+    if (!buttonActions.isEmpty()) {
+      pluginsMenu.addSeparator();
+      for (ActionMenu action : buttonActions) {
+      	pluginsMenu.add(MenuUtil.createMenuItem(action, false));
+	  }
     }
   }
   
