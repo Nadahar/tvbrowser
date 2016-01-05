@@ -313,7 +313,7 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
     ArrayList<SoftwareUpdateItem> mItemList = new ArrayList<SoftwareUpdateItem>();
     
     for (SoftwareUpdateItem item : itemArr) {
-      if(item.isPreSelected() || (selectedDataServices.contains(item.getClassName()) && mIsVersionChange)) {
+      if(item.isPreSelected() || (selectedDataServices.contains(item.getClassName()) && (mIsVersionChange || dialogType == SoftwareUpdater.ONLY_DATA_SERVICE_TYPE))) {
         if(mIsVersionChange) {
           mItemList.add(item);
         }
