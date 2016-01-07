@@ -439,7 +439,9 @@ public class PluginSettingsTab implements devplugin.SettingsTab, TableModelListe
           }
         });
       menu.add(enableMI);
-
+    }
+    
+    if(plugin instanceof PluginProxy || plugin instanceof TvDataServiceProxy) {
       //delete
       JMenuItem deleteMI = new JMenuItem(mLocalizer.msg("remove","Remove"),  TVBrowserIcons.delete(TVBrowserIcons.SIZE_SMALL));
       deleteMI.addActionListener(new ActionListener(){
@@ -452,19 +454,26 @@ public class PluginSettingsTab implements devplugin.SettingsTab, TableModelListe
           }
         }
       });
-      deleteMI.setEnabled(PluginLoader.getInstance().isPluginDeletable((PluginProxy)plugin));
+      
+      if(plugin instanceof PluginProxy) {
+        deleteMI.setEnabled(PluginLoader.getInstance().isPluginDeletable((PluginProxy)plugin));
+      }
+      else if(plugin instanceof TvDataServiceProxy) {
+        deleteMI.setEnabled(PluginLoader.getInstance().isDataServiceDeletable((TvDataServiceProxy)plugin));
+      }
+      
       menu.add(deleteMI);
     }
     
     //help
-      JMenuItem helpMI = new JMenuItem(mLocalizer.msg("pluginHelp","Online help"), IconLoader.getInstance().getIconFromTheme("apps", "help-browser", 16));
-      helpMI.addActionListener(new ActionListener(){
-        public void actionPerformed(ActionEvent e) {
-          String url = PluginInfo.getHelpUrl(plugin.getId());
-          Launch.openURL(url);
-        }
-      });
-      menu.add(helpMI);
+    JMenuItem helpMI = new JMenuItem(mLocalizer.msg("pluginHelp","Online help"), IconLoader.getInstance().getIconFromTheme("apps", "help-browser", 16));
+    helpMI.addActionListener(new ActionListener(){
+      public void actionPerformed(ActionEvent e) {
+        String url = PluginInfo.getHelpUrl(plugin.getId());
+        Launch.openURL(url);
+      }
+    });
+    menu.add(helpMI);
     
     menu.addSeparator();
 
