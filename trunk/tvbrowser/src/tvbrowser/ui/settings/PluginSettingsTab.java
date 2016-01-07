@@ -132,7 +132,7 @@ public class PluginSettingsTab implements devplugin.SettingsTab, TableModelListe
 
   public JPanel createSettingsPanel() {
 
-    JPanel contentPanel = new JPanel(new FormLayout("default:grow, default", "default, 2dlu, default, 3dlu, fill:default:grow, 3dlu, default"));
+    JPanel contentPanel = new JPanel(new FormLayout("default:grow, default", "default, 2dlu, default, 3dlu, fill:100dlu:grow, 3dlu, default"));
     contentPanel.setBorder(Borders.DLU4);
     
     CellConstraints cc = new CellConstraints();
