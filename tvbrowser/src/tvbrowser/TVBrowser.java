@@ -86,6 +86,7 @@ import tvbrowser.core.TvDataBase;
 import tvbrowser.core.TvDataUpdater;
 import tvbrowser.core.filters.FilterComponentList;
 import tvbrowser.core.filters.GenericFilterMap;
+import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.core.plugin.programformating.GlobalPluginProgramFormatingManager;
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
@@ -1693,6 +1694,33 @@ public class TVBrowser {
         TvDataServiceProxyManager.getInstance().init();
         ChannelList.createForTvBrowserStart();
         ChannelList.initSubscribedChannels();
+        
+        String[] deactivatedPlugins = PluginProxyManager.getInstance().getDeactivatedPluginIds();
+        
+        if(deactivatedPlugins.length > 0) {
+          String[] propDeactivatedPlugins = Settings.propDeactivatedPlugins.getStringArray();
+          
+          for(String deactivatedPlugin : deactivatedPlugins) {
+            boolean activate = true;
+            
+            for(String test : propDeactivatedPlugins) {
+              if(test.equals(deactivatedPlugin)) {
+                activate = false;
+                break;
+              }
+            }
+            
+            if(activate) {
+              PluginProxy deactivated = PluginProxyManager.getInstance().getPluginForId(deactivatedPlugin);
+              
+              try {
+                PluginProxyManager.getInstance().activatePlugin(deactivated);
+              } catch (TvBrowserException e) {}
+            }
+          }
+          
+          mainFrame.updatePluginsMenu();
+        }
       }
     } catch (IOException e1) {
   }
