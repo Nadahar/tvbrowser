@@ -68,7 +68,6 @@ import org.apache.commons.codec.binary.Base64;
 
 import tvbrowser.extras.reminderplugin.ReminderPlugin;
 import tvdataservice.MarkedProgramsList;
-import util.browserlauncher.Launch;
 import util.io.IOUtilities;
 import util.ui.ChannelListCellRenderer;
 import util.ui.DefaultMarkingPrioritySelectionPanel;
@@ -125,12 +124,13 @@ public class AndroidSync extends Plugin {
   private static final String PLUGIN_TYPE = "PLUGIN_TYPE";
   private static final String FILTER_TYPE = "FILTER_TYPE";
   
-  private static final Version mVersion = new Version(0, 23, 1, true);
+  private static final Version mVersion = new Version(0, 23, 2, true);
   private final String CrLf = "\r\n";
   private Properties mProperties;
   
-  private static final String CAR_KEY = "CAR_KEY";
-  private static final String BICYCLE_KEY = "BICYCLE_KEY";
+  private static final String KEY_SHOWN_DIALOG_CREDENTIALS = "SHOWN_DIALOG_CREDENTIALS";
+  private static final String KEY_CAR = "CAR_KEY";
+  private static final String KEY_BICYCLE = "BICYCLE_KEY";
   
   private ArrayList<Program> mBackSyncedPrograms;
   private ArrayList<Program> mExportedReminders;
@@ -181,28 +181,35 @@ public class AndroidSync extends Plugin {
   
   @Override
   public void handleTvBrowserStartFinished() {
-    if(mProperties.getProperty(CAR_KEY,"").trim().length() == 0 || mProperties.getProperty(BICYCLE_KEY,"").trim().length() == 0) {
-      String[] options = {
-          mLocalizer.msg("enterNow", "Save user data"),
-          Localizer.getLocalization(Localizer.I18N_CANCEL)
-      };
-      
-      if(getParentFrame() != null) {
-        Window w = UiUtilities.getLastModalChildOf(getParentFrame());
+    if(!hasCredentials()) {
+      if(mProperties.getProperty(KEY_SHOWN_DIALOG_CREDENTIALS, "false").equals("false")) {
+        String[] options = {
+            mLocalizer.msg("enterNow", "Save user data"),
+            Localizer.getLocalization(Localizer.I18N_CANCEL)
+        };
         
-        UserPanel userPanel = new UserPanel(mProperties.getProperty(CAR_KEY,""), mProperties.getProperty(BICYCLE_KEY,""), true);
-        
-        int selected = JOptionPane.showOptionDialog(w, new Object[] {mLocalizer.msg("notSetup", "No user data found for synchronization of TV-Browser for Android.\n\nDo you want to enter them now or do you want to create new user data (Internet access needed)?\n"), userPanel}, getInfo().getName() + ": " + mLocalizer.msg("notSetupTitle", "No user data found"), JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, createImageIcon("apps", "android_robot", 22), options, options[0]);
-        
-        if(selected == JOptionPane.OK_OPTION) {
-          mProperties.put(CAR_KEY, userPanel.getCar());
-          mProperties.put(BICYCLE_KEY, userPanel.getBicycle());
+        if(getParentFrame() != null) {
+          mProperties.setProperty(KEY_SHOWN_DIALOG_CREDENTIALS, String.valueOf(true));
+          Window w = UiUtilities.getLastModalChildOf(getParentFrame());
+          
+          UserPanel userPanel = new UserPanel(mProperties.getProperty(KEY_CAR,""), mProperties.getProperty(KEY_BICYCLE,""), true);
+          
+          int selected = JOptionPane.showOptionDialog(w, new Object[] {mLocalizer.msg("notSetup", "No user data found for synchronization of TV-Browser for Android.\n\nDo you want to enter them now or do you want to create new user data (Internet access needed)?\n"), userPanel}, getInfo().getName() + ": " + mLocalizer.msg("notSetupTitle", "No user data found"), JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, createImageIcon("apps", "android_robot", 22), options, options[0]);
+          
+          if(selected == JOptionPane.OK_OPTION) {
+            mProperties.put(KEY_CAR, userPanel.getCar());
+            mProperties.put(KEY_BICYCLE, userPanel.getBicycle());
+          }
         }
       }
     }
     else {
       updateChannels();
     }
+  }
+  
+  private boolean hasCredentials() {
+    return (mProperties.getProperty(KEY_CAR,"").trim().length() > 0 && mProperties.getProperty(KEY_BICYCLE,"").trim().length() > 0);
   }
   
   private void updateChannels() {
@@ -316,28 +323,31 @@ public class AndroidSync extends Plugin {
     
     return menu;
   }
+  
   @Override
   public void handleTvDataUpdateFinished() {
-    String date = mProperties.getProperty(LAST_UPLOAD,"1970-01-01");
-    
-    String[] parts = date.split("-");
-    
-    Date lastUpload = new Date(Short.parseShort(parts[0]), Short.parseShort(parts[1]), Short.parseShort(parts[2]));
-    
-    if(lastUpload.compareTo(Date.getCurrentDate()) < 0) {
-      upload(FAVORITE_SYNC_ADDRESS,false);
-      Date today = Date.getCurrentDate();
-      mProperties.setProperty(LAST_UPLOAD, today.getYear() + "-" + today.getMonth() + "-" + today.getDayOfMonth());
+    if(hasCredentials()) {
+      String date = mProperties.getProperty(LAST_UPLOAD,"1970-01-01");
       
-      download(BACK_SYNC_ADDRESS,false,false);
+      String[] parts = date.split("-");
+      
+      Date lastUpload = new Date(Short.parseShort(parts[0]), Short.parseShort(parts[1]), Short.parseShort(parts[2]));
+      
+      if(lastUpload.compareTo(Date.getCurrentDate()) < 0) {
+        upload(FAVORITE_SYNC_ADDRESS,false);
+        Date today = Date.getCurrentDate();
+        mProperties.setProperty(LAST_UPLOAD, today.getYear() + "-" + today.getMonth() + "-" + today.getDayOfMonth());
+        
+        download(BACK_SYNC_ADDRESS,false,false);
+      }
+      
+      if(mProperties.getProperty(SYNCHRONIZE_REMINDER, "true").trim().equals("true")) {
+        download(REMINDER_BACK_SYNC_ADDRESS, false,false);
+        upload(REMINDER_UP_SYNC_ADDRESS, false);
+      }
+      
+      updateChannels();
     }
-    
-    if(mProperties.getProperty(SYNCHRONIZE_REMINDER, "true").trim().equals("true")) {
-      download(REMINDER_BACK_SYNC_ADDRESS, false,false);
-      upload(REMINDER_UP_SYNC_ADDRESS, false);
-    }
-    
-    updateChannels();
   }
   
   @Override
@@ -358,11 +368,11 @@ public class AndroidSync extends Plugin {
       
       @Override
       public void saveSettings() {
-        String oldCar = mProperties.getProperty(CAR_KEY, "");
-        String oldBicycle = mProperties.getProperty(BICYCLE_KEY, "");
+        String oldCar = mProperties.getProperty(KEY_CAR, "");
+        String oldBicycle = mProperties.getProperty(KEY_BICYCLE, "");
         
-        mProperties.setProperty(CAR_KEY, mUserPanel.getCar());
-        mProperties.setProperty(BICYCLE_KEY, mUserPanel.getBicycle());
+        mProperties.setProperty(KEY_CAR, mUserPanel.getCar());
+        mProperties.setProperty(KEY_BICYCLE, mUserPanel.getBicycle());
         
         if(mPluginType.isSelected()) {
           mProperties.setProperty(TYPE, PLUGIN_TYPE);
@@ -399,8 +409,8 @@ public class AndroidSync extends Plugin {
         
         mProperties.setProperty(SELECTED_FILTER, ((ProgramFilter)mFilterSelection.getSelectedItem()).getName());
         
-        if(mProperties.getProperty(CAR_KEY,"").trim().length() > 0 && mProperties.getProperty(BICYCLE_KEY,"").trim().length() > 0 &&
-            (!oldCar.equals(mProperties.getProperty(CAR_KEY,"")) || !oldBicycle.equals(mProperties.getProperty(BICYCLE_KEY,"")))) {
+        if(mProperties.getProperty(KEY_CAR,"").trim().length() > 0 && mProperties.getProperty(KEY_BICYCLE,"").trim().length() > 0 &&
+            (!oldCar.equals(mProperties.getProperty(KEY_CAR,"")) || !oldBicycle.equals(mProperties.getProperty(KEY_BICYCLE,"")))) {
           String[] options = new String[] {
               mLocalizer.msg("optionExport", "Export channels"),
               mLocalizer.msg("optionNotNow", "Not now")
@@ -503,7 +513,7 @@ public class AndroidSync extends Plugin {
         mPluginSelection.setEnabled(mPluginType.isSelected());
         mFilterSelection.setEnabled(mFilterType.isSelected());
         
-        pb.add(mUserPanel = new UserPanel(mProperties.getProperty(CAR_KEY,""), mProperties.getProperty(BICYCLE_KEY,""), true), CC.xyw(2, 1, 4));
+        pb.add(mUserPanel = new UserPanel(mProperties.getProperty(KEY_CAR,""), mProperties.getProperty(KEY_BICYCLE,""), true), CC.xyw(2, 1, 4));
         
         pb.addSeparator(mLocalizer.msg("exportPlugins", "Export programs of"), CC.xyw(1, 3, 5));
         
@@ -925,8 +935,8 @@ public class AndroidSync extends Plugin {
   }
   
   private String[] download(String address, boolean info, boolean showUserdataInput) {
-    String car = mProperties.getProperty(CAR_KEY,"");
-    String bicycle = mProperties.getProperty(BICYCLE_KEY,"");
+    String car = mProperties.getProperty(KEY_CAR,"");
+    String bicycle = mProperties.getProperty(KEY_BICYCLE,"");
     String[] result = null;
     
     boolean backSync = address.equals(BACK_SYNC_ADDRESS);
@@ -941,8 +951,8 @@ public class AndroidSync extends Plugin {
         car = userPanel.getCar();
         bicycle = userPanel.getBicycle();
         
-        mProperties.setProperty(CAR_KEY, car);
-        mProperties.setProperty(BICYCLE_KEY, bicycle);
+        mProperties.setProperty(KEY_CAR, car);
+        mProperties.setProperty(KEY_BICYCLE, bicycle);
       }
     }
     
@@ -1115,8 +1125,8 @@ public class AndroidSync extends Plugin {
   }
   
   private void upload(String address, boolean info) {
-    String car = mProperties.getProperty(CAR_KEY);
-    String bicycle = mProperties.getProperty(BICYCLE_KEY);
+    String car = mProperties.getProperty(KEY_CAR);
+    String bicycle = mProperties.getProperty(KEY_BICYCLE);
     
     if(car != null && car.trim().length() > 0 && bicycle != null && bicycle.trim().length() > 0) {
       URLConnection conn = null;
