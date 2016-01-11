@@ -65,7 +65,7 @@ public class HtmlMirrorVisualizer implements MirrorVisualizer {
         ".group_header { font-size : 12pt; font-family : Verdana, Arial, Sans-serif;font-weight: bold;white-space:nowrap;background-color : #FF8080; }" +
         ".group_info { font-size : 8pt; font-family : Verdana, Arial, Sans-serif; white-space:nowrap; text-align : right; }" +
         ".group_summary { font-size : 8pt; font-family : Verdana, Arial, Sans-serif; white-space:nowrap; #background-color : #FF8080; }" +
-        " .table_content { font-size : 8pt; font-family : Verdana, Arial, Sans-serif; white-space:nowrap; background-color : #80FF80; }" +
+        " .table_content { font-size : 8pt; font-family : Verdana, Arial, Sans-serif; white-space:nowrap; background-color : #80FF80; color : #59b259; text-align:center;}" +
         " .table_empty { font-size : 8pt; font-family : Verdana, Arial, Sans-serif; white-space:nowrap; background-color : #FF8080; }" +
         " .error { font-size : 12pt; font-family : Verdana, Arial, Sans-serif; font-weight: bold; color : #FF0000; white-space:nowrap; }";
   
@@ -170,8 +170,15 @@ public class HtmlMirrorVisualizer implements MirrorVisualizer {
         
       for (int i=0; i< DAY_COUNT; i++) {
         int version = summaryFile.getDayProgramVersion(TODAY.addDays(i), channel.getBaseCountry(), channel.getId(), 0);
+        int pictVersion = Math.max(summaryFile.getDayProgramVersion(TODAY.addDays(i), channel.getBaseCountry(), channel.getId(), 3),summaryFile.getDayProgramVersion(TODAY.addDays(i), channel.getBaseCountry(), channel.getId(), 4));
+        
         if (version >= 0) {
-          mOut.print("<td class=\"table_content\"></td>");
+          if(pictVersion >= 0) {
+            mOut.print("<td class=\"table_content\">pict</td>");
+          }
+          else {
+            mOut.print("<td class=\"table_content\"></td>");
+          }
         }
         else {
           mOut.print("<td class=\"table_empty\"></td>");
