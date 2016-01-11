@@ -81,7 +81,7 @@ public final class DataViewerPlugin extends Plugin implements Runnable {
   private int mMinRowHeight = 10;
   private int mMinColumnWidth = 20;
 
-  private static final Version mVersion = new Version(1,20,1,true);
+  private static final Version mVersion = new Version(1,20,2,true);
 
   private static DataViewerPlugin mInstance;
 
@@ -561,12 +561,18 @@ public final class DataViewerPlugin extends Plugin implements Runnable {
               Program p1 = it.next();
               picture = picture
                   || p1.hasFieldValue(ProgramFieldType.PICTURE_TYPE);
+              /*
+              if(p1.hasFieldValue(ProgramFieldType.PICTURE_TYPE)) {
+                ImageIcon test = new ImageIcon(p1.getBinaryField(ProgramFieldType.PICTURE_TYPE));
+                
+                System.out.println(test.getIconWidth() + "x"+test.getIconHeight());
+              }*/
 
               if (dateOffset != -1) {
                 int length = last[channelIndex].getStartTime() + last[channelIndex].getLength();
 
                 if(endTimeLimit - startTimeLimit < 0) {
-                  length = length >= 1439 ? length - 1439 : length;
+                  length = length >= 1440 ? length - 1440 : length;
 
                   if(length >= endTimeLimit && length < startTimeLimit) {
                     length = p1.getStartTime();
@@ -578,7 +584,7 @@ public final class DataViewerPlugin extends Plugin implements Runnable {
                   }
                 }
 
-                length = length >= 1439 ? length - 1439 : length;
+                length = length >= 1440 ? length - 1440 : length;
 
                 if (p1.getStartTime() - acceptableGap > length || p1.getStartTime() + acceptableGap < length || p1.getLength() > acceptableDuration * 60) {
                   putInHashMap(err, p1, mChannels[channelIndex], channels[channelIndex].size());
