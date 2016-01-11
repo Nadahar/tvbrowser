@@ -166,7 +166,7 @@ public class HtmlMirrorVisualizer implements MirrorVisualizer {
     
     for (int ch = 0; ch < channelList.getChannelCount(); ch++) {
       Channel channel = channelList.getChannelAt(ch);
-      mOut.print  ("<tr><th class=\"header_channel\" align=\"right\">" + channel + "</th>");
+      mOut.print  ("<tr><th class=\"header_channel\" align=\"right\">" + replaceUmlauts(channel.getName()) + "</th>");
         
       for (int i=0; i< DAY_COUNT; i++) {
         int version = summaryFile.getDayProgramVersion(TODAY.addDays(i), channel.getBaseCountry(), channel.getId(), 0);
@@ -228,6 +228,16 @@ public class HtmlMirrorVisualizer implements MirrorVisualizer {
     mOut.println("</html>");
   }
 
-
+  private String replaceUmlauts(String value) {
+    value = value.replaceAll("\u00c4|Ä", "&Auml;");
+    value = value.replaceAll("\u00e4|ä", "&auml;");
+    value = value.replaceAll("\u00d6|Ö", "&Ouml;");
+    value = value.replaceAll("\u00f6|ö", "&ouml;");
+    value = value.replaceAll("\u00dc|Ü", "&Uuml;");
+    value = value.replaceAll("\u00fc|ü", "&uuml;");
+    value = value.replaceAll("\u00df|ß", "&szlig;");
+    
+    return value;
+  }
 	
 }
