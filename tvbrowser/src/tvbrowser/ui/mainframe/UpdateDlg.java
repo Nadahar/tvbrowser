@@ -78,11 +78,13 @@ public class UpdateDlg extends JDialog implements ActionListener, WindowClosingI
 
   private JButton mCancelBtn, mUpdateBtn;
   private int mResult = 0;
-  private JComboBox mComboBox;
+  private JComboBox mManuelDownloadPeriodSelection;
+  private JComboBox mAutoDownloadPeriodSelection;
   private TvDataServiceCheckBox[] mDataServiceCbArr;
   private TvDataServiceProxy[] mSelectedTvDataServiceArr;
 
   private JCheckBox mAutoUpdate;
+  private JCheckBox mSaveAsDefault;
 
   private JRadioButton mStartUpdate;
   private JRadioButton mRecurrentUpdate;
@@ -129,12 +131,14 @@ public class UpdateDlg extends JDialog implements ActionListener, WindowClosingI
     }
 
     // then time selection
-    PanelBuilder panel1 = new PanelBuilder(new FormLayout("10dlu,default,5dlu:grow,5dlu","default,5dlu,default"));
+    PanelBuilder panel1 = new PanelBuilder(new FormLayout("10dlu,default,5dlu:grow,5dlu","default,5dlu,default,default"));
     panel1.addSeparator(mLocalizer.msg("period", "Update program for"), CC.xyw(1,1,4));
     
-    mComboBox = new JComboBox(PeriodItem.getPeriodItems());
+    mManuelDownloadPeriodSelection = new JComboBox(PeriodItem.getPeriodItems());
+    mSaveAsDefault = new JCheckBox(mLocalizer.msg("saveDefault", "Save as default"),true);
     
-    panel1.add(mComboBox, CC.xyw(2,3,2));
+    panel1.add(mManuelDownloadPeriodSelection, CC.xyw(2,3,2));
+    panel1.add(mSaveAsDefault, CC.xyw(2,4,2));
     
     northPanel.add(panel1.getPanel());
 
@@ -180,25 +184,38 @@ public class UpdateDlg extends JDialog implements ActionListener, WindowClosingI
 
     int period = Settings.propDownloadPeriod.getInt();
     PeriodItem pi = new PeriodItem(period);
-    mComboBox.setSelectedItem(pi);
+    mManuelDownloadPeriodSelection.setSelectedItem(pi);
 
     PanelBuilder pb = new PanelBuilder(new FormLayout("10dlu,default:grow,5dlu,default","10dlu,default,5dlu,default"));
     
     pb.addSeparator(mLocalizer.msg("autoUpdateTitle", "Automatic update"), CC.xyw(1,2,2));
 
-    final JPanel boxPanel = new JPanel(new FormLayout("10dlu,default:grow","default,2dlu,default,default"));
-    CellConstraints cc = new CellConstraints();
+    final JPanel boxPanel = new JPanel(new FormLayout("10dlu,0dlu,default:grow","default,2dlu,default,default,4dlu,default,3dlu,default"));
     
-
     mAutoUpdate = new JCheckBox(mLocalizer.msg("autoUpdateMessage", "Update data automatically"), !Settings.propAutoDownloadType.getString().equals("never"));
     boxPanel.setVisible(!mAutoUpdate.isSelected());
     
     mStartUpdate = new JRadioButton(mLocalizer.msg("onStartUp", "Only on TV-Browser startup"), !Settings.propAutoDataDownloadEnabled.getBoolean() && mAutoUpdate.isSelected());
     mRecurrentUpdate = new JRadioButton(mLocalizer.msg("recurrent", "Recurrent"), Settings.propAutoDataDownloadEnabled.getBoolean());
     
-    boxPanel.add(mAutoUpdate, cc.xyw(1,1,2));
-    boxPanel.add(mStartUpdate, cc.xy(2,3));
-    boxPanel.add(mRecurrentUpdate, cc.xy(2,4));
+    mAutoDownloadPeriodSelection = new JComboBox(PeriodItem.getPeriodItems());
+    
+    period = Settings.propAutoDownloadPeriod.getInt();
+    pi = new PeriodItem(period);
+    mAutoDownloadPeriodSelection.setSelectedItem(pi);
+    
+    final JLabel label = new JLabel(mLocalizer.msg("period", "Update program for")+":");
+    
+    boxPanel.add(mAutoUpdate, CC.xyw(1,1,3));
+    boxPanel.add(mStartUpdate, CC.xyw(2,3,2));
+    boxPanel.add(mRecurrentUpdate, CC.xyw(2,4,2));
+    boxPanel.add(label, CC.xyw(2, 6, 2));
+    boxPanel.add(mAutoDownloadPeriodSelection, CC.xy(3, 8));
+    
+    mRecurrentUpdate.setEnabled(mAutoUpdate.isSelected());
+    mStartUpdate.setEnabled(mAutoUpdate.isSelected());
+    label.setEnabled(mAutoUpdate.isSelected());
+    mAutoDownloadPeriodSelection.setEnabled(mAutoUpdate.isSelected());
 
     pb.add(boxPanel, CC.xyw(2,4,2));
 
@@ -215,6 +232,8 @@ public class UpdateDlg extends JDialog implements ActionListener, WindowClosingI
       public void itemStateChanged(ItemEvent e) {
         mRecurrentUpdate.setEnabled(e.getStateChange() == ItemEvent.SELECTED);
         mStartUpdate.setEnabled(e.getStateChange() == ItemEvent.SELECTED);
+        label.setEnabled(e.getStateChange() == ItemEvent.SELECTED);
+        mAutoDownloadPeriodSelection.setEnabled(e.getStateChange() == ItemEvent.SELECTED);
       }
     });
 
@@ -270,7 +289,7 @@ public class UpdateDlg extends JDialog implements ActionListener, WindowClosingI
       mResult = CANCEL;
       setVisible(false);
     } else if (source == mUpdateBtn) {
-      PeriodItem pi = (PeriodItem) mComboBox.getSelectedItem();
+      PeriodItem pi = (PeriodItem) mManuelDownloadPeriodSelection.getSelectedItem();
       mResult = pi.getDays();
 
       if (mDataServiceCbArr == null) { // there is only one tvdataservice
@@ -287,8 +306,10 @@ public class UpdateDlg extends JDialog implements ActionListener, WindowClosingI
             .size()];
         dataServiceList.toArray(mSelectedTvDataServiceArr);
       }
-
-      Settings.propDownloadPeriod.setInt(mResult);
+      
+      if(mSaveAsDefault.isSelected()) {
+        Settings.propDownloadPeriod.setInt(mResult);
+      }
 
       String[] dataServiceArr = new String[mSelectedTvDataServiceArr.length];
       for (int i = 0; i < dataServiceArr.length; i++) {
@@ -296,22 +317,19 @@ public class UpdateDlg extends JDialog implements ActionListener, WindowClosingI
       }
       Settings.propDataServicesForUpdate.setStringArray(dataServiceArr);
 
-      //if (mStartUpdate != null) {
-        if (mAutoUpdate.isSelected()) {
-          if(Settings.propAutoDownloadType.getString().equals("never")) {
-            Settings.propAutoDownloadType.setString(Settings.propAutoDownloadType.getDefault());
-          }
-          
-          Settings.propAutoDownloadPeriod.setInt(mResult);
-        }
-        else {
-          Settings.propAutoDownloadType.setString("never");
+      if (mAutoUpdate.isSelected()) {
+        if(Settings.propAutoDownloadType.getString().equals("never")) {
+          Settings.propAutoDownloadType.setString(Settings.propAutoDownloadType.getDefault());
         }
         
-        Settings.propAutoDataDownloadEnabled.setBoolean(mAutoUpdate.isSelected() && mRecurrentUpdate.isSelected());
+        Settings.propAutoDownloadPeriod.setInt(((PeriodItem)mAutoDownloadPeriodSelection.getSelectedItem()).getDays());
+      }
+      else {
+        Settings.propAutoDownloadType.setString("never");
+      }
+      
+      Settings.propAutoDataDownloadEnabled.setBoolean(mAutoUpdate.isSelected() && mRecurrentUpdate.isSelected());
         
-        
-      //}
       setVisible(false);
     }
   }
@@ -324,7 +342,7 @@ public class UpdateDlg extends JDialog implements ActionListener, WindowClosingI
   public void setNumberOfDays(int numberOfDays) {
     for (PeriodItem item : PeriodItem.getPeriodItems()) {
       if (item.getDays() >= numberOfDays) {
-        mComboBox.setSelectedItem(item);
+        mManuelDownloadPeriodSelection.setSelectedItem(item);
         return;
       }
     }
