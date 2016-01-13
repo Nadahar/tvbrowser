@@ -50,6 +50,7 @@ import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.mainframe.PeriodItem;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
+import util.ui.WideComboBox;
 import ca.beq.util.win32.registry.RegistryKey;
 import ca.beq.util.win32.registry.RootKey;
 
@@ -66,7 +67,9 @@ import com.jgoodies.forms.layout.RowSpec;
  * @author Martin Oberhauser
  */
 public class StartupSettingsTab implements devplugin.SettingsTab {
-
+  public static final int VALUE_AUTO_CHANNEL_UPDATE_DISABLED = -1;
+  private static final DayPeriod VALUE_AUTO_CHANNEL_UPDATE_PERIOD_DEFAULT = new DayPeriod(14);
+  
   /** The localizer for this class. */
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer
       .getLocalizerFor(StartupSettingsTab.class);
@@ -86,12 +89,14 @@ public class StartupSettingsTab implements devplugin.SettingsTab {
   };
 
   private JCheckBox mAutoDownload;
+  private JCheckBox mAutoChannelDownload;
 
   private JRadioButton mStartDownload;
   private JRadioButton mRecurrentDownload;
 
   private JComboBox mAutoDownloadCombo;
-
+  private WideComboBox mAutoChannelDownloadPeriod;
+  
   private JComboBox mAutoDownloadPeriodCB;
 
   private JRadioButton mAskBeforeDownloadRadio;
@@ -236,6 +241,13 @@ public class StartupSettingsTab implements devplugin.SettingsTab {
         .isSelected());
     Settings.propStartScreenShow.setBoolean(mShowStartScreenChB.isSelected());
     Settings.propIsUsingFullscreen.setBoolean(mStartFullscreen.isSelected());
+    
+    if(mAutoChannelDownload.isSelected()) {
+      Settings.propAutoChannelUpdatePeriod.setInt(((DayPeriod)mAutoChannelDownloadPeriod.getSelectedItem()).mDays);
+    }
+    else {
+      Settings.propAutoChannelUpdatePeriod.setInt(VALUE_AUTO_CHANNEL_UPDATE_DISABLED);
+    }
 
     if(mAutostartWithWindows != null) {
         if (mAutostartWithWindows.isSelected()) {
@@ -319,15 +331,17 @@ public class StartupSettingsTab implements devplugin.SettingsTab {
   }
 
   private JPanel createRefreshPanel() {
-    PanelBuilder refreshSettings = new PanelBuilder(new FormLayout("5dlu, 9dlu, pref, 3dlu, pref, fill:3dlu:grow, 3dlu",
-    "pref, 5dlu, pref, 3dlu, pref, pref, 3dlu, pref, 5dlu, pref, 3dlu, pref"));
+    PanelBuilder refreshSettings = new PanelBuilder(new FormLayout("5dlu, 9dlu, default, 3dlu, default, fill:3dlu:grow, 3dlu",
+    "default, 5dlu, default, 3dlu, default, default, 3dlu, default, 5dlu, default, 3dlu, default,10dlu,default,3dlu,default"));
 
     CellConstraints cc = new CellConstraints();
 
+    int y = 1;
+    
     refreshSettings.addSeparator(mLocalizer.msg("titleRefresh", "Startup"), cc.xyw(
-        1, 1, 6));
+        1, y, 6));
 
-    mAutoDownload = new JCheckBox(mLocalizer.msg("autoUpdate","Update TV listings automatically"));
+    mAutoDownload = new JCheckBox(mLocalizer.msg("autoUpdate","Automatically update TV listings"));
 
     mStartDownload = new JRadioButton(mLocalizer.msg("onStartUp", "Only on TV-Browser startup"));
     mRecurrentDownload = new JRadioButton(mLocalizer.msg("recurrent","Recurrent"));
@@ -337,10 +351,14 @@ public class StartupSettingsTab implements devplugin.SettingsTab {
     bg.add(mStartDownload);
     bg.add(mRecurrentDownload);
 
-    refreshSettings.add(mAutoDownload, cc.xyw(2, 3, 5));
+    y += 2;
+    
+    refreshSettings.add(mAutoDownload, cc.xyw(2, y, 5));
 
-    refreshSettings.add(mStartDownload, cc.xyw(3, 5, 4));
-    refreshSettings.add(mRecurrentDownload, cc.xyw(3, 6, 4));
+    y += 2;
+    
+    refreshSettings.add(mStartDownload, cc.xyw(3, y++, 4));
+    refreshSettings.add(mRecurrentDownload, cc.xyw(3, y, 4));
 
     mAutoDownloadCombo = new JComboBox(AUTO_DOWNLOAD_MSG_ARR);
     String dlType = Settings.propAutoDownloadType.getString();
@@ -424,20 +442,60 @@ public class StartupSettingsTab implements devplugin.SettingsTab {
 
     panel.add(waitingPanel, cc.xyw(1,7,4));
 
-    refreshSettings.add(panel, cc.xyw(3, 8, 4));
+    y += 2;
+    
+    refreshSettings.add(panel, cc.xyw(3, y, 4));
 
     mDateCheck = new JCheckBox(mLocalizer.msg("checkDate", "Check date via NTP if data download fails"));
     mDateCheck.setSelected(Settings.propNTPTimeCheck.getBoolean());
 
-    refreshSettings.add(mDateCheck, cc.xyw(2, 10, 5));
+    y += 2;
+    
+    refreshSettings.add(mDateCheck, cc.xyw(2, y, 5));
 
     mShowFinishDialog = new JCheckBox(mLocalizer.msg("showFinishDialog", "Show dialog when update is done"));
     mShowFinishDialog.setSelected(!Settings.propHiddenMessageBoxes.containsItem("downloadDone"));
 
-    refreshSettings.add(mShowFinishDialog, cc.xyw(2, 12, 5));
+    y += 2;
+    
+    refreshSettings.add(mShowFinishDialog, cc.xyw(2, y, 5));
 
     setAutoDownloadEnabled(mAutoDownload.isSelected());
-
+    
+    mAutoChannelDownload = new JCheckBox(mLocalizer.msg("autoChannelUpdate","Automatically update available channels"));
+    mAutoChannelDownloadPeriod = new WideComboBox();
+    
+    mAutoChannelDownloadPeriod.addItem(new DayPeriod(1));
+    mAutoChannelDownloadPeriod.addItem(new DayPeriod(7));
+    mAutoChannelDownloadPeriod.addItem(VALUE_AUTO_CHANNEL_UPDATE_PERIOD_DEFAULT);
+    mAutoChannelDownloadPeriod.addItem(new DayPeriod(30));
+    mAutoChannelDownloadPeriod.addItem(new DayPeriod(61));
+    mAutoChannelDownloadPeriod.addItem(new DayPeriod(183));
+    
+    if(Settings.propAutoChannelUpdatePeriod.getInt() > VALUE_AUTO_CHANNEL_UPDATE_DISABLED) {
+      mAutoChannelDownload.setSelected(true);
+      mAutoChannelDownloadPeriod.setSelectedItem(new DayPeriod(Settings.propAutoChannelUpdatePeriod.getDefault()));
+    }
+    else {
+      mAutoChannelDownloadPeriod.setSelectedItem(VALUE_AUTO_CHANNEL_UPDATE_PERIOD_DEFAULT);
+      mAutoChannelDownloadPeriod.setEnabled(false);
+    }
+    
+    mAutoChannelDownload.addItemListener(new ItemListener() {
+      @Override
+      public void itemStateChanged(ItemEvent e) {
+        mAutoChannelDownloadPeriod.setEnabled(e.getStateChange() == ItemEvent.SELECTED);
+      }
+    });
+    
+    y += 2;
+    
+    refreshSettings.add(mAutoChannelDownload, cc.xyw(2, y, 5));
+    
+    y += 2;
+    
+    refreshSettings.add(mAutoChannelDownloadPeriod, cc.xyw(3, y, 1));
+    
     return refreshSettings.getPanel();
   }
 
@@ -511,6 +569,28 @@ public class StartupSettingsTab implements devplugin.SettingsTab {
      */
     public boolean hasTarget(File file) {
       return new File(mTarget).equals(file);
+    }
+  }
+  
+  private static final class DayPeriod {
+    int mDays;
+    
+    DayPeriod(int days) {
+      mDays = days;
+    }
+    
+    @Override
+    public String toString() {
+      return mLocalizer.msg("autoChannelUpdate.every"+mDays+"days", "Every " + mDays + " days");
+    }
+    
+    @Override
+    public boolean equals(Object obj) {
+      if(obj instanceof DayPeriod) {
+        return mDays == ((DayPeriod)obj).mDays;
+      }
+      
+      return super.equals(obj);
     }
   }
 }

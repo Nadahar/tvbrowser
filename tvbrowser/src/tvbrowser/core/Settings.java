@@ -1954,6 +1954,13 @@ public class Settings {
 
   public static final BooleanProperty propAutoDownloadWaitingEnabled = new BooleanProperty(
       mProp, "autoDownloadWaitingEnabled", true);
+  
+  /** check for channel changes every 14 days by default */
+  public static final IntProperty propAutoChannelUpdatePeriod = new IntProperty(
+      mProp, "autoChannelUpdatePeriod", 14);
+  
+  public static final DateProperty propLastChannelUpdate = new DateProperty(
+      mProp, "lastChannelUpdate", null);
 
   /**
    * if a long program title is to be shown in the program table, shall it be
@@ -1988,7 +1995,7 @@ public class Settings {
   public static final BlockedPluginArrayProperty propBlockedPluginArray = new BlockedPluginArrayProperty(mProp, "blockedPlugins");
 
   /**
-   * id of the last active program receive target plugin
+   * id of the  active program receive target plugin
    * @since 3.0
    */
   public static final StringProperty propLastUsedReceivePlugin = new StringProperty(

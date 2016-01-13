@@ -2545,8 +2545,6 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
         }
       }
     }
-
-    System.out.println(accept);
     
     return accept;
   }
