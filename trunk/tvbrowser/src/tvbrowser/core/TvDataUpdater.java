@@ -36,7 +36,10 @@ import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.logging.Level;
@@ -59,6 +62,7 @@ import com.jgoodies.forms.layout.FormLayout;
 
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
+import tvbrowser.core.tvdataservice.ChannelGroupManager;
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
 import tvbrowser.extras.common.InternalPluginProxyIf;
@@ -66,6 +70,9 @@ import tvbrowser.extras.common.InternalPluginProxyList;
 import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
 import tvbrowser.ui.DontShowAgainOptionBox;
 import tvbrowser.ui.mainframe.MainFrame;
+import tvbrowser.ui.settings.ChannelListChangesDialog;
+import tvbrowser.ui.settings.SettingsDialog;
+import tvbrowser.ui.settings.StartupSettingsTab;
 import tvdataservice.MarkedProgramsMap;
 import tvdataservice.MutableChannelDayProgram;
 import tvdataservice.TvDataUpdateManager;
@@ -267,6 +274,8 @@ public class TvDataUpdater {
         downloadException = thr;
       }
     }
+    
+    checkAndUpdateChannelList(new ProgressBarProgressMonitor(progressBar, label));
 
     // Show the exception if there was one
     if (downloadException != null) {
@@ -321,6 +330,29 @@ public class TvDataUpdater {
     // reset flag to avoid unnecessary favorite updates
     mTvDataWasChanged = false;
     showInfoDialog();
+  }
+  
+  private void checkAndUpdateChannelList(ProgressMonitor monitor) {
+    final int channelAutoUpdatePeriod = Settings.propAutoChannelUpdatePeriod.getInt();
+    
+    if(channelAutoUpdatePeriod > StartupSettingsTab.VALUE_AUTO_CHANNEL_UPDATE_DISABLED) {
+      final Date compare = new Date().addDays(-channelAutoUpdatePeriod+1);
+      
+      if(Settings.propLastChannelUpdate.getDate() == null || Settings.propLastChannelUpdate.getDate().compareTo(compare) < 0) {
+        final Channel[] currentChannels = ChannelList.getAvailableChannels();
+        
+        final int currentNetworkTimeout = Settings.propDefaultNetworkConnectionTimeout.getInt();
+        
+        Settings.propDefaultNetworkConnectionTimeout.setInt(5000);
+        
+        ChannelGroupManager.getInstance().checkForAvailableGroupsAndChannels(monitor);
+        ChannelList.reload();
+        
+        Settings.propDefaultNetworkConnectionTimeout.setInt(currentNetworkTimeout);
+        
+        ChannelListChangesDialog.showChannelChanges(UiUtilities.getLastModalChildOf(MainFrame.getInstance()), Arrays.asList(currentChannels), Arrays.asList(ChannelList.getAvailableChannels()),true);
+      }
+    }
   }
   
   private void showInfoDialog() {

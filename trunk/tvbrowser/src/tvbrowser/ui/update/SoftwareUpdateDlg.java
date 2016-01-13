@@ -325,7 +325,7 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
     	}
       }
     }
-    System.out.println("SELECTED ITEMS SIZE " + selectedItems.size() + " " + notSelectableItems.size());
+    
     mDownloadBtn.setEnabled(!selectedItems.isEmpty());
     
     mSoftwareUpdateItemList = new SelectableItemList(selectedItems.toArray(new SoftwareUpdateItem[selectedItems.size()]),mIsVersionChange ? mItemList.toArray(new SoftwareUpdateItem[mItemList.size()]) : itemArr,notSelectableItems.toArray(new SoftwareUpdateItem[notSelectableItems.size()]));

@@ -26,6 +26,7 @@ package tvbrowser.ui.settings;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -36,15 +37,20 @@ import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
 
+import tvbrowser.core.Settings;
+import tvbrowser.core.plugin.PluginManagerImpl;
 import tvbrowser.ui.settings.channel.ChannelJList;
 import util.ui.ChannelListCellRenderer;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 import devplugin.Channel;
+import devplugin.SettingsItem;
 
 public class ChannelListChangesDialog extends JDialog {
   /** The localizer for this class. */
@@ -52,21 +58,28 @@ public class ChannelListChangesDialog extends JDialog {
       .getLocalizerFor(ChannelListChangesDialog.class);
 
   private ArrayList<Channel> mAddedList;
-
   private ArrayList<Channel> mDeletedList;
 
-  public ChannelListChangesDialog(JDialog owner,
-      ArrayList<Channel> addedList, ArrayList<Channel> deletedList) {
-    super(owner, true);
+  public ChannelListChangesDialog(JDialog owner, ArrayList<Channel> addedList, ArrayList<Channel> deletedList, boolean showSettingsLink) {
+    super(owner,true);
+    createGui(addedList, deletedList, showSettingsLink);
+  }
+  
+  public ChannelListChangesDialog(JFrame owner, ArrayList<Channel> addedList, ArrayList<Channel> deletedList, boolean showSettingsLink) {
+    super(owner,true);
+    createGui(addedList, deletedList, showSettingsLink);
+  }
+  
+  private void createGui(ArrayList<Channel> addedList, ArrayList<Channel> deletedList, boolean showSettingsLink) {
     mAddedList = addedList;
     mDeletedList = deletedList;
-    createGui();
+    createGui(showSettingsLink);
   }
 
   /**
    * Creates the GUI
    */
-  private void createGui() {
+  private void createGui(boolean showSettingsLink) {
     setTitle(mLocalizer.msg("title", "Channel changes"));
 
     setLocationRelativeTo(getParent());
@@ -99,11 +112,32 @@ public class ChannelListChangesDialog extends JDialog {
     panelDeleted.add(new JScrollPane(list), BorderLayout.CENTER);
 
     JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-    JButton ok = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
+    
+    if(showSettingsLink) {
+      JButton openSettings = new JButton(mLocalizer.msg("openSettings", "Open channel settings"));
+      openSettings.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+          setVisible(false);
+          SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+              PluginManagerImpl.getInstance().showSettings(SettingsItem.CHANNELS);
+            }
+          });
+          
+          dispose();
+        }
+      });
+      
+      btnPanel.add(openSettings);
+    }
+    
+    JButton ok = new JButton(Localizer.getLocalization(Localizer.I18N_CLOSE));
     ok.addActionListener(new ActionListener() {
 
       public void actionPerformed(ActionEvent e) {
-        setVisible(false);
+        dispose();
       }
 
     });
@@ -111,17 +145,14 @@ public class ChannelListChangesDialog extends JDialog {
 
     contentPanel.add(panelAdded);
     contentPanel.add(panelDeleted);
+    
     JPanel pane = (JPanel) getContentPane();
     pane.add(contentPanel, BorderLayout.CENTER);
     pane.add(btnPanel, BorderLayout.SOUTH);
     pane.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-
-    pack();
-
   }
 
-  public static void showChannelChanges(JDialog owner,
-      ArrayList<Channel> channelsBefore, List<Channel> channelsAfter) {
+  public static void showChannelChanges(Window owner, List<Channel> channelsBefore, List<Channel> channelsAfter, boolean showSettingsLink) {
     // compute changed channels
     ArrayList<Channel> addedList = new ArrayList<Channel>();
     ArrayList<Channel> deletedList = new ArrayList<Channel>();
@@ -139,11 +170,24 @@ public class ChannelListChangesDialog extends JDialog {
     Collections.sort(deletedList);
     // show changes
     if (addedList.isEmpty() && deletedList.isEmpty()) {
-      JOptionPane.showMessageDialog(owner, mLocalizer.msg("noChanges.message", "There are no changes in the list of available channels."), mLocalizer.msg("noChanges.title", "No changes"), JOptionPane.INFORMATION_MESSAGE);
+      if(!showSettingsLink) {
+        JOptionPane.showMessageDialog(owner, mLocalizer.msg("noChanges.message", "There are no changes in the list of available channels."), mLocalizer.msg("noChanges.title", "No changes"), JOptionPane.INFORMATION_MESSAGE);
+      }
     }
     else {
-      ChannelListChangesDialog changesDialog = new ChannelListChangesDialog(SettingsDialog.getInstance().getDialog(), addedList, deletedList);
-      UiUtilities.centerAndShow(changesDialog);
+      ChannelListChangesDialog changesDialog = null;
+      
+      if(owner instanceof JDialog) {
+        changesDialog = new ChannelListChangesDialog((JDialog)owner, addedList, deletedList, showSettingsLink);
+      }
+      else if(owner instanceof JFrame) {
+        changesDialog = new ChannelListChangesDialog((JFrame)owner, addedList, deletedList, showSettingsLink);
+      }
+      
+      if(changesDialog != null) {
+        Settings.layoutWindow("channelListChangesDialog", changesDialog);
+        changesDialog.setVisible(true);
+      }
     }
   }
 }

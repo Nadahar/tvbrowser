@@ -507,7 +507,6 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
     if(installPlugin) {
       plugin = PluginProxyManager.getInstance().getPluginForId("java.androidsync.AndroidSync");
       
-      System.out.println("plugin " + plugin + " " + installPlugin);
       if(plugin == null) {
         if(JOptionPane.showConfirmDialog(null, mLocalizer.msg("syncInstallPluginMsg","You can synchronize your channels with the AndroidSync plugin, therefor it needs to be installed.\n\nDo you want to install the AndroidSync plugin now and synchronize the channels?"), mLocalizer.msg("syncInstallPluginTitle","Install AndroidSync plugin?"), JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.OK_OPTION) {
           File target = new File(Settings.propPluginsDirectory.getString(),"AndroidSync.jar");
@@ -1441,7 +1440,7 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
     Channel[] channelsAfterArr = new Channel[channels.length];
     System.arraycopy(channels, 0, channelsAfterArr, 0, channelsAfterArr.length);
     List<Channel> channelsAfter = Arrays.asList(channelsAfterArr);
-    ChannelListChangesDialog.showChannelChanges(SettingsDialog.getInstance().getDialog(), channelsBefore, channelsAfter);
+    ChannelListChangesDialog.showChannelChanges(SettingsDialog.getInstance().getDialog(), channelsBefore, channelsAfter, false);
   }
   
   private void setSortNumbers() {

@@ -36,6 +36,7 @@ import util.exc.TvBrowserException;
 import util.ui.progress.ProgressMonitorGroup;
 import devplugin.Channel;
 import devplugin.ChannelGroup;
+import devplugin.Date;
 import devplugin.ProgressMonitor;
 
 public class ChannelGroupManager {
@@ -181,6 +182,8 @@ public class ChannelGroupManager {
         }
       }
     }
+    
+    Settings.propLastChannelUpdate.setDate(new Date());
   }
 
   private String createId(TvDataServiceProxy service, ChannelGroup group) {
