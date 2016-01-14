@@ -38,6 +38,7 @@ class ProgramInfoSettings {
   private static final int DEFAULT_BODY_STYLE = Font.PLAIN;
   private static final int DEFAULT_TITLE_STYLE = Font.BOLD;
   private static final String KEY_FIELD_ORDER = "order";
+  private static final String KEY_FIELD_KNOWN_ORDER = "knownOrder";
   private static final String KEY_LOOK = "look";
   private static final String DEFAULT_BODY_FONT_NAME = "Verdana";
   private static final String DEFAULT_TITLE_FONT_NAME = "Verdana";
@@ -268,54 +269,105 @@ class ProgramInfoSettings {
 
   protected Object[] getFieldOrder() {
     if (!getSetupwasdone()) {
-      return ProgramTextCreator.getDefaultOrder();
+      return ProgramTextCreator.getDefaultOrderWithActivatedPluginInfo();
     }
-    StringBuilder defaultOrder = new StringBuilder();
-    for (Object field : ProgramTextCreator.getDefaultOrder()) {
+    final StringBuilder defaultOrder = new StringBuilder();
+    final Object[] defaultOrderArr = ProgramTextCreator.getDefaultOrderWithActivatedPluginInfo();
+    final devplugin.ProgramInfo[] defaultPluginOrderArr = ProgramTextCreator.getDefaultOrderOfActivatedPluginInfo();
+    
+    for (Object field : defaultOrderArr) {
       defaultOrder.append(field.toString()).append(";");
     }
+    
     final String[] id = getProperty(KEY_FIELD_ORDER, defaultOrder.toString()).trim().split(";");
     ArrayList<Object> result = new ArrayList<Object>(id.length);
+    
     for (int i = 0; i < id.length; i++) {
       try {
-        final int parsedId = Integer.parseInt(id[i]);
-        
-        if (parsedId >= 0) {
-          ProgramFieldType type = ProgramFieldType.getTypeForId(parsedId);
-          
-          if(type.getFormat() != ProgramFieldType.UNKNOWN_FORMAT) {
-            result.add(type);
+        if(id[i].startsWith("plugin:")) {
+          for(devplugin.ProgramInfo pluginAdditonalInfo : defaultPluginOrderArr) {
+            if(id[i].equals(pluginAdditonalInfo.getPluginUniqueId())) {
+              result.add(pluginAdditonalInfo);
+            }
           }
-          else if (!result.contains(ProgramTextCreator.getDurationTypeString()) && parsedId == ProgramInfoSettings.DURATION_END_TYPE_VALUE) {
-            result.add(ProgramTextCreator.getDurationTypeString());
-          }
-        } else {
-          CompoundedProgramFieldType type = CompoundedProgramFieldType.getCompoundedProgramFieldTypeForId(parsedId);
+        }
+        else {
+          final int parsedId = Integer.parseInt(id[i]);
           
-          if(type != null) {
-            result.add(type);
+          if (parsedId >= 0) {
+            ProgramFieldType type = ProgramFieldType.getTypeForId(parsedId);
+            
+            if(type.getFormat() != ProgramFieldType.UNKNOWN_FORMAT) {
+              result.add(type);
+            }
+            else if (!result.contains(ProgramTextCreator.getDurationTypeString()) && parsedId == ProgramInfoSettings.DURATION_END_TYPE_VALUE) {
+              result.add(ProgramTextCreator.getDurationTypeString());
+            }
+          } else {
+            CompoundedProgramFieldType type = CompoundedProgramFieldType.getCompoundedProgramFieldTypeForId(parsedId);
+            
+            if(type != null) {
+              result.add(type);
+            }
           }
         }
       }catch(NumberFormatException e) {
         return ProgramTextCreator.getDefaultOrder();
       }
     }
-    return result.toArray(new Object[result.size()]);
+    
+    final String[] knownIds = getProperty(KEY_FIELD_KNOWN_ORDER, defaultOrder.toString()).trim().split(";");
+    
+    for(Object orderDefault : defaultOrderArr) {
+      boolean found = false;
+      
+      for(String knownId : knownIds) {
+        System.out.println("'"+orderDefault + "' '" + knownId+"'" + " " + (orderDefault instanceof CompoundedProgramFieldType));
+        if(orderDefault instanceof devplugin.ProgramInfo && knownId.equals(((devplugin.ProgramInfo)orderDefault).getPluginUniqueId())
+            || orderDefault instanceof ProgramFieldType && knownId.equals(String.valueOf(((ProgramFieldType)orderDefault).getTypeId()))
+            || orderDefault instanceof String && knownId.equals(String.valueOf(ProgramInfoSettings.DURATION_END_TYPE_VALUE))
+            || orderDefault instanceof CompoundedProgramFieldType && knownId.equals(String.valueOf(((CompoundedProgramFieldType)orderDefault).getId()))) {
+          found = true;
+          break;
+        }
+      }
+      
+      System.out.println(found+"\n\n");
+      
+      if(!found) {
+        result.add(orderDefault);
+      }
+    }
+    
+    Object[] fields = result.toArray(new Object[result.size()]);
+    
+    setFieldOrder(fields);
+    setFieldOrder(defaultOrderArr, KEY_FIELD_KNOWN_ORDER);
+    
+    return fields;
   }
 
   protected void setFieldOrder(final Object[] order) {
+    setFieldOrder(order, KEY_FIELD_ORDER);
+  }
+  
+  private void setFieldOrder(final Object[] order, String key) {
     final StringBuilder temp = new StringBuilder();
 
     for (Object object : order) {
+      
       if (object instanceof String) {
         temp.append(ProgramInfoSettings.DURATION_END_TYPE_VALUE).append(';');
+      } else if(object instanceof devplugin.ProgramInfo) {
+        temp.append(((devplugin.ProgramInfo)object).getPluginUniqueId()).append(';');
       } else if (object instanceof CompoundedProgramFieldType) {
         temp.append(((CompoundedProgramFieldType) object).getId()).append(';');
       } else {
         temp.append(((ProgramFieldType) object).getTypeId()).append(';');
       }
     }
-    setProperty(KEY_FIELD_ORDER, temp.toString());
+    
+    setProperty(key, temp.toString());
   }
 
   protected void setHighlightColor(final Color color) {

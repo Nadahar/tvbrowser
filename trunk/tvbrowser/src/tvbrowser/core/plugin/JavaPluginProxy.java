@@ -70,6 +70,7 @@ import devplugin.PluginTreeNode;
 import devplugin.PluginsFilterComponent;
 import devplugin.PluginsProgramFilter;
 import devplugin.Program;
+import devplugin.ProgramInfo;
 import devplugin.ProgramRatingIf;
 import devplugin.ProgramReceiveTarget;
 import devplugin.SettingsTab;
@@ -800,5 +801,10 @@ public class JavaPluginProxy extends AbstractPluginProxy {
   @Override
   protected ToolTipIcon[] doGetProgramTableToolTipIcons(Program program) {
     return mPlugin.getProgramTableToolTipIcons(program);
+  }
+
+  @Override
+  public ProgramInfo[] doGetAddtionalProgramInfoForProgram(Program p, String uniqueId) {
+    return mPlugin.getAddtionalProgramInfoForProgram(p, uniqueId);
   }
 }

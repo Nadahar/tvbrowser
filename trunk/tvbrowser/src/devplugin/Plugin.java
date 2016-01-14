@@ -1,6 +1,6 @@
 /*
 * TV-Browser
-* Copyright (C) 04-2003 Martin Oberhauser (darras@users.sourceforge.net)
+* Copyright (C) 2016 TV-Browser team (dev@tvbrowser.org)
 *
 * This program is free software; you can redistribute it and/or
 * modify it under the terms of the GNU General Public License
@@ -16,9 +16,7 @@
 * along with this program; if not, write to the Free Software
 * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 *
-* CVS information:
-*  $RCSfile$
-*   $Source$
+* SVN information:
 *     $Date$
 *   $Author$
 * $Revision$
@@ -1078,5 +1076,23 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
    */
   public boolean isAllowingArtificialPluginTree() {
     return !canUseProgramTree();
+  }
+  
+  /**
+   * Gets additional program infos for the given program.
+   * This method should return an array with all possible
+   * infos when called with the TV-Browser {@link PluginManager#getExampleProgram() example Program}
+   * and it's names and an emptry value String.
+   * 
+   * Every additional info must have an unique ID, so the
+   * name might be changed but the ID never must.
+   * <p>
+   * @param p The program to get the additional program info for.
+   * @return An array with the additional program info or <code>null</code> if no additional info is available.
+   * @param uniqueId If not <code>null</code> the id of the program info to get.
+   * @since 3.4.4
+   */
+  public ProgramInfo[] getAddtionalProgramInfoForProgram(Program p, String uniqueId) {
+    return null;
   }
 }
