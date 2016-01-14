@@ -24,7 +24,7 @@
 package devplugin;
 
 /**
- * A class with unique ID a name and a generic value to store.
+ * A class with unique ID, a name and a generic value to store.
  * <p>
  * @author René Mach
  * @since 3.4.4
