@@ -322,7 +322,6 @@ class ProgramInfoSettings {
       boolean found = false;
       
       for(String knownId : knownIds) {
-        System.out.println("'"+orderDefault + "' '" + knownId+"'" + " " + (orderDefault instanceof CompoundedProgramFieldType));
         if(orderDefault instanceof devplugin.ProgramInfo && knownId.equals(((devplugin.ProgramInfo)orderDefault).getPluginUniqueId())
             || orderDefault instanceof ProgramFieldType && knownId.equals(String.valueOf(((ProgramFieldType)orderDefault).getTypeId()))
             || orderDefault instanceof String && knownId.equals(String.valueOf(ProgramInfoSettings.DURATION_END_TYPE_VALUE))
