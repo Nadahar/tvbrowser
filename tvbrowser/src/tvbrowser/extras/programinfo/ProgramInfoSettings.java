@@ -331,8 +331,6 @@ class ProgramInfoSettings {
         }
       }
       
-      System.out.println(found+"\n\n");
-      
       if(!found) {
         result.add(orderDefault);
       }
