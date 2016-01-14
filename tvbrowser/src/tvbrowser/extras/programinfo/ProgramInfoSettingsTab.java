@@ -231,7 +231,7 @@ public class ProgramInfoSettingsTab implements SettingsTab {
     mOldOrder = settings.getFieldOrder();
     mOldSetupState = ProgramInfo.getInstance().getSettings().getSetupwasdone();
 
-    mList = new OrderChooser(mOldOrder, ProgramTextCreator.getDefaultOrder(),
+    mList = new OrderChooser(mOldOrder, ProgramTextCreator.getDefaultOrderWithActivatedPluginInfo(),
         true);
 
     JButton previewBtn = new JButton(ProgramInfo.mLocalizer.msg("preview", "Preview"));
@@ -387,9 +387,11 @@ public class ProgramInfoSettingsTab implements SettingsTab {
 
     return base;
   }
+  
+  
 
   private void resetSettings() {
-    mList.setOrder(ProgramTextCreator.getDefaultOrder(),ProgramTextCreator.getDefaultOrder());
+    mList.setOrder(ProgramTextCreator.getDefaultOrderWithActivatedPluginInfo(),ProgramTextCreator.getDefaultOrderWithActivatedPluginInfo());
     mAntiAliasing.setSelected(false);
     mUserFont.setSelected(false);
 

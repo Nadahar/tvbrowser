@@ -42,6 +42,9 @@ import javax.swing.UIManager;
 
 import org.apache.commons.lang3.StringUtils;
 
+import tvbrowser.core.plugin.PluginManagerImpl;
+import tvbrowser.core.plugin.PluginProxy;
+import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.extras.common.InternalPluginProxyIf;
 import tvbrowser.extras.common.InternalPluginProxyList;
 import tvbrowser.extras.favoritesplugin.FavoritesPluginProxy;
@@ -62,6 +65,7 @@ import devplugin.Program;
 import devplugin.ProgramFieldType;
 import devplugin.ProgramInfoHelper;
 import devplugin.ToolTipIcon;
+import devplugin.UniqueIdNameGenericValue;
 
 /**
  * Creates the String for the ProgramInfoDialog
@@ -602,6 +606,33 @@ public class ProgramTextCreator {
 
             closePara(buffer);
 
+            buffer.append("</td></tr>");
+            addSeparator(doc, buffer);
+          }
+        }
+      } else if(id instanceof devplugin.ProgramInfo) {
+        String pluginId = ((devplugin.ProgramInfo)id).getPluginId();
+        
+        PluginProxy plugin = PluginProxyManager.getInstance().getActivatedPluginForId(pluginId);
+        
+        if(plugin != null) {
+          devplugin.ProgramInfo[] infos = plugin.getAddtionalProgramInfoForProgram(prog,((devplugin.ProgramInfo)id).getUniqueId());
+          
+          for(devplugin.ProgramInfo info : infos) {
+            buffer.append("<tr><td valign=\"top\" style=\"color:").append(HTMLTextHelper.getCssRgbColorEntry(infoColor)).append("; font-size:");
+    
+            buffer.append(mBodyFontSize);
+        
+            buffer.append("\"><b>");
+            buffer.append(info.getName());
+            buffer.append("</b></td><td style=\"color:").append(HTMLTextHelper.getCssRgbColorEntry(foreground)).append("; font-size:");
+        
+            buffer.append(mBodyFontSize);
+        
+            buffer.append("\">");
+            
+            buffer.append(info.getValue());
+    
             buffer.append("</td></tr>");
             addSeparator(doc, buffer);
           }
@@ -1205,6 +1236,41 @@ public class ProgramTextCreator {
       }
     }
     return list.toArray();
+  }
+  
+  public static devplugin.ProgramInfo[] getDefaultOrderOfActivatedPluginInfo() {
+    final ArrayList<devplugin.ProgramInfo> defaultOrderList = new ArrayList<devplugin.ProgramInfo>();
+    final PluginProxy[] activated = PluginProxyManager.getInstance().getActivatedPlugins();
+    
+    for(final PluginProxy proxy : activated) {
+      final devplugin.ProgramInfo[] pluginProgramInfo = proxy.getAddtionalProgramInfoForProgram(PluginManagerImpl.getInstance().getExampleProgram(),null);
+      
+      if(pluginProgramInfo != null) {
+        defaultOrderList.addAll(Arrays.asList(pluginProgramInfo));
+      }
+    }
+    
+    return defaultOrderList.toArray(new devplugin.ProgramInfo[defaultOrderList.size()]);
+  }
+  
+  public static Object[] getDefaultOrderWithActivatedPluginInfo() {
+    final ArrayList<Object> defaultOrderList = new ArrayList<Object>();
+    
+    final Object[] defaultOrder = ProgramTextCreator.getDefaultOrder();
+    
+    defaultOrderList.addAll(Arrays.asList(defaultOrder));
+    
+    final PluginProxy[] activated = PluginProxyManager.getInstance().getActivatedPlugins();
+    
+    for(final PluginProxy proxy : activated) {
+      final devplugin.ProgramInfo[] pluginProgramInfo = proxy.getAddtionalProgramInfoForProgram(PluginManagerImpl.getInstance().getExampleProgram(),null);
+      
+      if(pluginProgramInfo != null) {
+        defaultOrderList.addAll(Arrays.asList(pluginProgramInfo));
+      }
+    }
+    
+    return defaultOrderList.toArray();
   }
 
   /**

@@ -26,7 +26,6 @@
 package tvbrowser.core.plugin;
 
 import javax.swing.Icon;
-import javax.swing.JPanel;
 
 import tvdataservice.MutableProgram;
 import devplugin.ActionMenu;
@@ -38,9 +37,11 @@ import devplugin.ImportanceValue;
 import devplugin.InfoIf;
 import devplugin.PluginAccess;
 import devplugin.PluginCenterPanelWrapper;
+import devplugin.PluginManager;
 import devplugin.PluginTreeNode;
 import devplugin.PluginsProgramFilter;
 import devplugin.Program;
+import devplugin.ProgramInfo;
 import devplugin.ProgramRatingIf;
 
 /**
@@ -268,4 +269,18 @@ public interface PluginProxy extends PluginAccess, InfoIf {
    * @since 3.3.3
    */
   public void handleTvDataUpdateStarted(Date until);
+  
+  /**
+   * Gets additional program infos for the given program.
+   * This method should return an array with all possible
+   * infos when called with the TV-Browser {@link PluginManager#getExampleProgram() example Program}.
+   * Every additional info must have an unique ID, so the
+   * name might be changed but the ID never must.
+   * <p>
+   * @param p The program to get the additional program info for.
+   * @param uniqueId If not <code>null</code> the id of the program info to get.
+   * @return An array with the additional program info or <code>null</code> if no additional info is available.
+   * @since 3.4.4
+   */
+  public ProgramInfo[] getAddtionalProgramInfoForProgram(Program p, String uniqueId);
 }
