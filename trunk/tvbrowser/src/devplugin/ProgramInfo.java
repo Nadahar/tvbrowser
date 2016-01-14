@@ -42,6 +42,12 @@ public class ProgramInfo extends UniqueIdNameGenericValue<String> {
     mPlugin = plugin;
   }
   
+  public void setValue(Plugin plugin, String value) {
+    if(mPlugin.equals(plugin)) {
+      setValue(value);
+    }
+  }
+  
   public String getPluginUniqueId() {
     return "plugin:"+mPlugin.getId()+":"+super.getUniqueId();
   }

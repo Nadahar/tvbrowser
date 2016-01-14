@@ -58,7 +58,7 @@ public class UniqueIdNameGenericValue<T> {
     return mValue;
   }
   
-  public void setValue(T value) {
+  protected void setValue(T value) {
     mValue = value;
   }
   
