@@ -6,8 +6,7 @@
     <version>0.1-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <groupId>org.tvbrowser</groupId>
-    <artifactId>tvbrowser-plugins-dvbdataservice</artifactId>
+  <artifactId>tvbrowser-plugins-dvbdataservice</artifactId>
     <name>DVB Viewer Dataservice</name>
     <developers>
       <developer>
