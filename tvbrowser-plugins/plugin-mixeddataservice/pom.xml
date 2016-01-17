@@ -6,7 +6,6 @@
     <version>0.1-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <groupId>org.tvbrowser</groupId>
   <artifactId>tvbrowser-plugins-mixeddataservice</artifactId>
   <name>Mixed Data Service</name>
   <developers>
