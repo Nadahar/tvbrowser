@@ -18,7 +18,7 @@
  */
 package tvbrowser.ui.settings;
 
-import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -36,13 +36,16 @@ import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
-import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
+import javax.swing.JTextArea;
 import javax.swing.SpinnerDateModel;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
+import tvbrowser.TVBrowser;
 import tvbrowser.core.Settings;
 import tvbrowser.extras.favoritesplugin.FavoritesPluginProxy;
 import tvbrowser.extras.reminderplugin.ReminderPluginProxy;
@@ -58,7 +61,7 @@ import util.ui.UiUtilities;
 
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.factories.Borders;
-import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.factories.CC;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
 
@@ -90,10 +93,21 @@ public class PictureSettingsTab extends AbstractSettingsTab {
 
   private PluginsPictureSettingsPanel mPluginsPictureSettings;
 
-private JSpinner mDescriptionLines;
+  private JSpinner mDescriptionLines;
 
-private JLabel mDescriptionLabel;
+  private JLabel mDescriptionLabel;
 
+  private JTextArea mRestartMessage;
+  
+  private JButton mRestartButton;
+  
+  private SettingsDialog mSettingsDialog;
+  
+  private static int PLUGIN_PICTURE_SELECTION_ORIGINAL = -1;
+    
+  public PictureSettingsTab(SettingsDialog settingsDialog) {
+    mSettingsDialog = settingsDialog;
+  }
 
   public JPanel createSettingsPanel() {
     try {
@@ -148,13 +162,13 @@ private JLabel mDescriptionLabel;
           }
         }
       });
-
-      CellConstraints cc = new CellConstraints();
-
+      
+      
       FormLayout layout = new FormLayout(
-              "5dlu, 12dlu, 15dlu, pref, 5dlu, pref, 5dlu, pref:grow, 5dlu",
-              "pref,5dlu,pref,pref,pref,2dlu,pref,pref,2dlu,pref" +
-                      ",2dlu,pref,pref,5dlu,pref,pref,pref,10dlu,pref,5dlu,pref,10dlu,pref,5dlu");
+              "5dlu, 12dlu, 15dlu, default, 5dlu, default, 5dlu, default:grow, default, 5dlu",
+              "default,5dlu,default,default,default,2dlu,default,default,2dlu,default," +
+              "2dlu,default,default,5dlu,default,default,default,10dlu,default,5dlu,"+
+              "default,10dlu,default,5dlu,fill:0dlu:grow,default");
 
       PanelBuilder pb = new PanelBuilder(layout, new ScrollableJPanel());
 
@@ -162,21 +176,21 @@ private JLabel mDescriptionLabel;
 
       int y = 1;
 
-      pb.addSeparator(mLocalizer.msg("basics", "Picture settings for the program table"), cc.xyw(1, y, 9));
+      pb.addSeparator(mLocalizer.msg("basics", "Picture settings for the program table"), CC.xyw(1, y, 10));
 
-      pb.add(mShowPicturesNever, cc.xyw(2, y+=2, 8));
-      pb.add(mShowPicturesEver, cc.xyw(2, y+=1, 8));
-      pb.add(mShowPicturesForSelection, cc.xyw(2, y+=1, 8));
+      pb.add(mShowPicturesNever, CC.xyw(2, y+=2, 9));
+      pb.add(mShowPicturesEver, CC.xyw(2, y+=1, 9));
+      pb.add(mShowPicturesForSelection, CC.xyw(2, y+=1, 9));
 
-      pb.add(mShowPicturesInTimeRange, cc.xyw(3, y+=2, 7));
-      mStartLabel = pb.addLabel(mLocalizer.msg("startTime", "From:"), cc.xy(4, y+=1));
-      pb.add(mPictureStartTime, cc.xy(6, y));
-      mEndLabel = pb.addLabel(mLocalizer.msg("endTime", "To:"), cc.xy(4, y+=2));
-      pb.add(mPictureEndTime, cc.xy(6, y));
+      pb.add(mShowPicturesInTimeRange, CC.xyw(3, y+=2, 8));
+      mStartLabel = pb.addLabel(mLocalizer.msg("startTime", "From:"), CC.xy(4, y+=1));
+      pb.add(mPictureStartTime, CC.xy(6, y));
+      mEndLabel = pb.addLabel(mLocalizer.msg("endTime", "To:"), CC.xy(4, y+=2));
+      pb.add(mPictureEndTime, CC.xy(6, y));
 
-      pb.add(mShowPicturesForDuration, cc.xyw(3, y+=2, 7));
-      pb.add(mDuration, cc.xy(6, y+=1));
-      final JLabel minutesLabel = pb.addLabel(mLocalizer.msg("minutes", "Minutes"), cc.xy(8, y));
+      pb.add(mShowPicturesForDuration, CC.xyw(3, y+=2, 8));
+      pb.add(mDuration, CC.xy(6, y+=1));
+      final JLabel minutesLabel = pb.addLabel(mLocalizer.msg("minutes", "Minutes"), CC.xy(8, y));
       y++;
       if (Settings.propPicturePluginIds.getStringArray() != null) {
         JPanel mSubPanel = new JPanel(new FormLayout("15dlu,pref:grow,5dlu,pref", "pref,2dlu,pref"));
@@ -229,24 +243,24 @@ private JLabel mDescriptionLabel;
 
         handlePluginSelection();
 
-        mSubPanel.add(mShowPicturesForPlugins, cc.xyw(1, 1, 4));
-        mSubPanel.add(mPluginLabel, cc.xy(2, 3));
-        mSubPanel.add(choose, cc.xy(4, 3));
+        mSubPanel.add(mShowPicturesForPlugins, CC.xyw(1, 1, 4));
+        mSubPanel.add(mPluginLabel, CC.xy(2, 3));
+        mSubPanel.add(choose, CC.xy(4, 3));
 
         layout.insertRow(y, RowSpec.decode("2dlu"));
         layout.insertRow(y+=1, RowSpec.decode("pref"));
-        pb.add(mSubPanel, cc.xyw(3, y, 6));
+        pb.add(mSubPanel, CC.xyw(3, y, 7));
         layout.insertRow(y+=1, RowSpec.decode("2dlu"));
         y++;
       }
 
-      pb.add(mShowDescription, cc.xyw(2, y+=1, 8));
+      pb.add(mShowDescription, CC.xyw(2, y+=1, 9));
 
       mDescriptionLines = new JSpinner(new SpinnerNumberModel(Settings.propPictureDescriptionLines.getInt(), 1, 20, 1));
-      pb.add(mDescriptionLines, cc.xyw(3, y+=1, 4));
+      pb.add(mDescriptionLines, CC.xyw(3, y+=1, 4));
       mDescriptionLabel = new JLabel(mLocalizer.msg("lines", "lines"));
-	  pb.add(mDescriptionLabel, cc.xy(8, y));
-      pb.add(mShowPictureBorderProgramTable, cc.xyw(3,y+=1,7));
+	  pb.add(mDescriptionLabel, CC.xy(8, y));
+      pb.add(mShowPictureBorderProgramTable, CC.xyw(3,y+=1,8));
 	  mDescriptionLabel.setEnabled(mShowDescription.isSelected());
 	  mDescriptionLines.setEnabled(mShowDescription.isSelected());
 	  mShowPictureBorderProgramTable.setEnabled(!mShowDescription.isSelected());
@@ -258,10 +272,41 @@ private JLabel mDescriptionLabel;
 		  mDescriptionLabel.setEnabled(mShowDescription.isSelected());
 		}});
     
-      pb.addSeparator(mLocalizer.msg("pluginPictureTitle", "Default picture settings for the program lists of the Plugins"), cc.xyw(1, y+=2, 8));
-      pb.add(mPluginsPictureSettings = new PluginsPictureSettingsPanel(new PluginPictureSettings(Settings.propPluginsPictureSetting.getInt()), true), cc.xyw(2, y+=2, 7));
-      pb.add(helpLabel, cc.xyw(1, y+=2, 9));
-
+      pb.addSeparator(mLocalizer.msg("pluginPictureTitle", "Default picture settings for the program lists of the Plugins"), CC.xyw(1, y+=2, 9));
+      pb.add(mPluginsPictureSettings = new PluginsPictureSettingsPanel(new PluginPictureSettings(Settings.propPluginsPictureSetting.getInt()), true), CC.xyw(2, y+=2, 8));
+      pb.add(helpLabel, CC.xyw(1, y+=2, 10));
+      
+      if(PLUGIN_PICTURE_SELECTION_ORIGINAL == -1) {
+        PLUGIN_PICTURE_SELECTION_ORIGINAL = mPluginsPictureSettings.getSettings().getType();
+      }
+      
+      mRestartMessage = UiUtilities.createHelpTextArea(mLocalizer.msg("restartNote", "Please Restart"));
+      mRestartMessage.setForeground(Color.RED);
+      mRestartMessage.setVisible(PLUGIN_PICTURE_SELECTION_ORIGINAL != mPluginsPictureSettings.getSettings().getType());
+      
+      mRestartButton = new JButton(mLocalizer.msg("restart", "Restart now"));
+      mRestartButton.setVisible(PLUGIN_PICTURE_SELECTION_ORIGINAL != mPluginsPictureSettings.getSettings().getType());
+      mRestartButton.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+          mSettingsDialog.saveSettings();
+          TVBrowser.addRestart();
+          MainFrame.getInstance().quit();
+        }
+      });
+      
+      mPluginsPictureSettings.addChangeListener(new ChangeListener() {
+        @Override
+        public void stateChanged(ChangeEvent e) {
+          mRestartMessage.setVisible(PLUGIN_PICTURE_SELECTION_ORIGINAL != mPluginsPictureSettings.getSettings().getType());
+          mRestartButton.setVisible(PLUGIN_PICTURE_SELECTION_ORIGINAL != mPluginsPictureSettings.getSettings().getType());
+        }
+      });
+      
+      y+=3;
+      pb.add(mRestartMessage, CC.xyw(1, y, 8));
+      pb.add(mRestartButton, CC.xy(9, y));
+      
       mShowPicturesInTimeRange.addItemListener(new ItemListener() {
         public void itemStateChanged(ItemEvent e) {
           mPictureStartTime.setEnabled(mShowPicturesInTimeRange.isSelected());

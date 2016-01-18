@@ -23,17 +23,23 @@
  */
 package util.ui;
 
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.util.ArrayList;
+
 import javax.swing.ButtonGroup;
 import javax.swing.JEditorPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
 import tvbrowser.ui.settings.SettingsDialog;
 import util.settings.PluginPictureSettings;
 
-import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.factories.CC;
 import com.jgoodies.forms.layout.FormLayout;
 
 import devplugin.SettingsItem;
@@ -52,6 +58,8 @@ public class PluginsPictureSettingsPanel extends JPanel {
   private JRadioButton mOnlyPictures;
   private JRadioButton mNoPictures;
   
+  private ArrayList<ChangeListener> mChangeListenerList;
+  
   /**
    * Creates an instance of this class.
    * 
@@ -61,21 +69,34 @@ public class PluginsPictureSettingsPanel extends JPanel {
    * ne shown and the global plugin settings button is shown.
    */
   public PluginsPictureSettingsPanel(PluginPictureSettings settings, boolean showDisableButtonDontShowAllButton) {
-    setLayout(new FormLayout("14dlu,default:grow","default," + (!showDisableButtonDontShowAllButton ? "2dlu,default,5dlu,"  : "") + "2dlu,default,2dlu,default"));
+    mChangeListenerList = new ArrayList<ChangeListener>();
     
-    CellConstraints cc = new CellConstraints();
+    setLayout(new FormLayout("14dlu,default:grow","default," + (!showDisableButtonDontShowAllButton ? "2dlu,default,5dlu,"  : "") + "2dlu,default,2dlu,default"));
+
+    final ItemListener itemListener = new ItemListener() {
+      @Override
+      public void itemStateChanged(ItemEvent e) {
+        if(e.getStateChange() == ItemEvent.SELECTED) {
+          fireChangeEvent();
+        }
+      }
+    };
     
     mGlobalSettings = new JRadioButton(mLocalizer.msg("globalSettings","Use default settings for plugins"), settings.getType() == PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE);
     mPictureAndDescription = new JRadioButton(mLocalizer.msg("pictureAndDesc","Show picture and picture description (if available)"), settings.getType() == PluginPictureSettings.PICTURE_AND_DISCRIPTION_TYPE);
     mOnlyPictures = new JRadioButton(mLocalizer.msg("onlyPictures","Show only pictures (if available)"), settings.getType() == PluginPictureSettings.ONLY_PICTURE_TYPE);
     
-    ButtonGroup bg = new ButtonGroup();
+    mGlobalSettings.addItemListener(itemListener);
+    mPictureAndDescription.addItemListener(itemListener);
+    mOnlyPictures.addItemListener(itemListener);
+    
+    final ButtonGroup bg = new ButtonGroup();
     
     short y = 1;
     
     if(!showDisableButtonDontShowAllButton) {
       bg.add(mGlobalSettings);
-      add(mGlobalSettings, cc.xyw(1,y++,2));
+      add(mGlobalSettings, CC.xyw(1,y++,2));
       
       JEditorPane helpLabel = UiUtilities.createHtmlHelpTextArea(mLocalizer.msg("help","The default plugin setting can be changed in the <a href=\"#link\">picture settings</a>."), new HyperlinkListener() {
         public void hyperlinkUpdate(HyperlinkEvent e) {
@@ -85,20 +106,21 @@ public class PluginsPictureSettingsPanel extends JPanel {
         }
       });
       
-      add(helpLabel, cc.xy(2,++y));
+      add(helpLabel, CC.xy(2,++y));
       y += 3;
     }
     bg.add(mPictureAndDescription);
     bg.add(mOnlyPictures);
     
-    add(mPictureAndDescription, cc.xyw(1,y,2));
+    add(mPictureAndDescription, CC.xyw(1,y,2));
     y += 2;
-    add(mOnlyPictures, cc.xyw(1,y++,2));
+    add(mOnlyPictures, CC.xyw(1,y++,2));
     
     if(showDisableButtonDontShowAllButton) {
       mNoPictures = new JRadioButton(mLocalizer.msg("noPictures","Don't show pictures and description"), settings.getType() == PluginPictureSettings.NO_PICTURE_TYPE);
+      mNoPictures.addItemListener(itemListener);
       bg.add(mNoPictures);
-      add(mNoPictures, cc.xyw(1,++y,2));
+      add(mNoPictures, CC.xyw(1,++y,2));
     }
   }
   
@@ -130,5 +152,37 @@ public class PluginsPictureSettingsPanel extends JPanel {
    */
   public static String getTitle() {
     return mLocalizer.msg("title","Picture setting of the program list");
+  }
+  
+  /**
+   * Adds a change listener, that listens for setting changes.
+   * <p>
+   * @param listener The listener to add.
+   * @since 3.4.4
+   */
+  public void addChangeListener(ChangeListener listener) {
+    if(!mChangeListenerList.contains(listener)) {
+      mChangeListenerList.add(listener);
+    }
+  }
+  
+  /**
+   * Removes a change listener from listening of setting changes.
+   * <p>
+   * @param listener The listener to remove.
+   * @since 3.4.4
+   */
+  public void removeChangeListener(ChangeListener listener) {
+    mChangeListenerList.remove(listener);
+  }
+  
+  private void fireChangeEvent() {
+    if(!mChangeListenerList.isEmpty()) {
+      final ChangeEvent e = new ChangeEvent(this);
+      
+      for(ChangeListener listener : mChangeListenerList) {
+        listener.stateChanged(e);
+      }
+    }
   }
 }
