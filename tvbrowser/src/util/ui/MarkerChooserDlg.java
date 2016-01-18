@@ -34,11 +34,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
+import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import tvbrowser.core.plugin.PluginManagerImpl;
 import tvbrowser.extras.favoritesplugin.FavoritesPluginProxy;
 import tvbrowser.extras.reminderplugin.ReminderPluginProxy;
 import util.ui.customizableitems.SelectableItemList;
@@ -137,7 +139,8 @@ public class MarkerChooserDlg extends JDialog implements WindowClosingIf {
     list.add(ReminderPluginProxy.getInstance());
     
     for (PluginAccess plugin : pluginAccess) {
-      if (plugin.getMarkIcon() != null) {
+      Icon[] markIcons = plugin.getMarkIcons(PluginManagerImpl.getInstance().getExampleProgram());
+      if (markIcons != null && markIcons.length > 0) {
         list.add(plugin);
       }
     }
