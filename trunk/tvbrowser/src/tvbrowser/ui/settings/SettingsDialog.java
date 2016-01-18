@@ -388,7 +388,7 @@ public class SettingsDialog implements WindowClosingIf {
     generalSettings.add(new SettingNode(new ButtonsSettingsTab(),
         SettingsItem.TIMEBUTTONS));
 
-    graphicalSettings.add(new SettingNode(new PictureSettingsTab(),
+    graphicalSettings.add(new SettingNode(new PictureSettingsTab(this),
         SettingsItem.PICTURES));
     graphicalSettings.add(new SettingNode(new CenterPanelSettingsTab(),
         SettingsItem.CENTERPANELSETUP));    
