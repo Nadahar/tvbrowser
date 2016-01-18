@@ -35,6 +35,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.regex.Pattern;
 
+import tvbrowser.core.filters.filtercomponents.AcceptAllFilterComponent;
 import tvbrowser.core.filters.filtercomponents.BeanShellFilterComponent;
 import tvbrowser.core.filters.filtercomponents.FavoritesFilterComponent;
 import tvbrowser.core.filters.filtercomponents.PluginFilterComponent;
@@ -396,8 +397,14 @@ public class UserFilter implements devplugin.ProgramFilter {
     if (component != null) {
       return new ItemNode(component);
     }
-    throw new ParserException(mLocalizer.msg("invalidCompName",
-        "{0} is not a valid component name", tk.value));
+    else {
+      AcceptAllFilterComponent acceptAll = new AcceptAllFilterComponent(tk.value);
+      
+      FilterComponentList.getInstance().add(acceptAll);
+      return new ItemNode(acceptAll);
+    }
+    /*throw new ParserException(mLocalizer.msg("invalidCompName",
+        "{0} is not a valid component name", tk.value));*/
   }
 
   public boolean accept(devplugin.Program prog) {

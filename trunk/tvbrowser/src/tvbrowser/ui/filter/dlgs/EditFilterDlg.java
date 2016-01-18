@@ -71,6 +71,7 @@ import tvbrowser.core.filters.FilterComponentList;
 import tvbrowser.core.filters.FilterList;
 import tvbrowser.core.filters.ParserException;
 import tvbrowser.core.filters.UserFilter;
+import tvbrowser.core.filters.filtercomponents.AcceptAllFilterComponent;
 import tvbrowser.core.filters.filtercomponents.SingleChannelFilterComponent;
 import util.ui.DragAndDropMouseListener;
 import util.ui.ListDragAndDropHandler;
@@ -216,6 +217,10 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
           else if(item.getComponent().getDescription().length() > 0) {
             label.setText(label.getText() + " [" + item.getComponent().getDescription() + "]");
           }
+          
+          if(item.getComponent() instanceof AcceptAllFilterComponent) {
+            label.setText("<html><span style=\"color:orange;\"><s>"+label.getText()+"</s></span></html>");
+          }
         }
         
         return label;
@@ -265,6 +270,10 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
           }
           else {
             panel.add(label,CC.xy(item.getLevel()+1,1));
+
+            if(item.getComponent() instanceof AcceptAllFilterComponent) {
+              label.setText("<html><span style=\"color:orange;\"><s>"+label.getText()+"</s></span></html>");
+            }
           }
 
           if(index > 0) {
@@ -274,7 +283,7 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
             if(index < list.getModel().getSize() - 2) {
               test2 = (FilterItem)list.getModel().getElementAt(index+1);
             }
-            
+                        
             if(test.isCloseBracketItem() && !item.isAndItem() && !item.isOrItem() && !item.isCloseBracketItem()) {
               label.setForeground(Color.red);
             }
@@ -372,8 +381,9 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
     if(mFilterComponentList.getSelectedIndex() > 0) {
       FilterItem item = (FilterItem)mFilterComponentList.getSelectedValue();
       
-      mEditBtn.setEnabled(!item.isAndItem() && !item.isOrItem() && !item.isNotItem() && !item.isOpenBracketItem() && !item.isCloseBracketItem() && !(item.getComponent() instanceof SingleChannelFilterComponent));
-      mRemoveBtn.setEnabled(mEditBtn.isEnabled());
+      mRemoveBtn.setEnabled(!item.isAndItem() && !item.isOrItem() && !item.isNotItem() && !item.isOpenBracketItem() && !item.isCloseBracketItem() && !(item.getComponent() instanceof SingleChannelFilterComponent));
+      
+      mEditBtn.setEnabled(mRemoveBtn.isEnabled() && !(item.getComponent() instanceof AcceptAllFilterComponent));
     }
     else {
       mEditBtn.setEnabled(false);
