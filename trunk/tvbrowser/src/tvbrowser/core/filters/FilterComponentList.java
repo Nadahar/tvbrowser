@@ -38,7 +38,7 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 import tvbrowser.core.ChannelList;
-import tvbrowser.core.filters.filtercomponents.AcceptAllFilterComponent;
+import tvbrowser.core.filters.filtercomponents.AcceptNoneFilterComponent;
 import tvbrowser.core.filters.filtercomponents.AgeLimitFilterComponent;
 import tvbrowser.core.filters.filtercomponents.BeanShellFilterComponent;
 import tvbrowser.core.filters.filtercomponents.ChannelFilterComponent;
@@ -150,7 +150,7 @@ public class FilterComponentList {
     ArrayList<Channel> toAdd = new ArrayList<Channel>();
     toAdd.addAll(Arrays.asList(channels));
     
-    ArrayList<String> acceptAllFilterComponentNames = new ArrayList<String>();
+    ArrayList<String> acceptNoneFilterComponentNames = new ArrayList<String>();
     
     for(Iterator<FilterComponent> it = mComponentList.iterator(); it.hasNext(); ) {
       FilterComponent test = it.next();
@@ -170,8 +170,8 @@ public class FilterComponentList {
           toRemove.add((SingleChannelFilterComponent)test);
         }
       }
-      else if(test instanceof AcceptAllFilterComponent) {
-        acceptAllFilterComponentNames.add(test.getName());
+      else if(test instanceof AcceptNoneFilterComponent) {
+        acceptNoneFilterComponentNames.add(test.getName());
       }
     }
     
@@ -182,7 +182,7 @@ public class FilterComponentList {
     for(Channel ch : toAdd) {
       SingleChannelFilterComponent test = new SingleChannelFilterComponent(ch);
       
-      if(acceptAllFilterComponentNames.contains(test.getName())) {
+      if(acceptNoneFilterComponentNames.contains(test.getName())) {
         remove(test.getName());
       }
       
@@ -299,8 +299,8 @@ public class FilterComponentList {
       filterComponent = new TimeFilterComponent(name, description);
     } else if (className.endsWith(".SingleChannelFilterComponent")) {
       filterComponent = new SingleChannelFilterComponent(null);
-    } else if (className.endsWith(".AcceptAllFilterComponent")) {
-      filterComponent = new AcceptAllFilterComponent(name);
+    } else if (className.endsWith(".AcceptNoneFilterComponent")) {
+      filterComponent = new AcceptNoneFilterComponent(name);
     }
     else {
       try {

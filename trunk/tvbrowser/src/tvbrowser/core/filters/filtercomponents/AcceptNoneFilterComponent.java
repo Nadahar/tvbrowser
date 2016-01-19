@@ -31,8 +31,8 @@ import javax.swing.JPanel;
 
 import devplugin.Program;
 
-public class AcceptAllFilterComponent extends AbstractFilterComponent {
-  public AcceptAllFilterComponent(String name) {
+public class AcceptNoneFilterComponent extends AbstractFilterComponent {
+  public AcceptNoneFilterComponent(String name) {
     super(name, "");
   }
 
@@ -43,7 +43,7 @@ public class AcceptAllFilterComponent extends AbstractFilterComponent {
 
   @Override
   public boolean accept(Program program) {
-    return true;
+    return false;
   }
 
   @Override
