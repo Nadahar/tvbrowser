@@ -35,7 +35,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.regex.Pattern;
 
-import tvbrowser.core.filters.filtercomponents.AcceptAllFilterComponent;
+import tvbrowser.core.filters.filtercomponents.AcceptNoneFilterComponent;
 import tvbrowser.core.filters.filtercomponents.BeanShellFilterComponent;
 import tvbrowser.core.filters.filtercomponents.FavoritesFilterComponent;
 import tvbrowser.core.filters.filtercomponents.PluginFilterComponent;
@@ -398,7 +398,7 @@ public class UserFilter implements devplugin.ProgramFilter {
       return new ItemNode(component);
     }
     else {
-      AcceptAllFilterComponent acceptAll = new AcceptAllFilterComponent(tk.value);
+      AcceptNoneFilterComponent acceptAll = new AcceptNoneFilterComponent(tk.value);
       
       FilterComponentList.getInstance().add(acceptAll);
       return new ItemNode(acceptAll);

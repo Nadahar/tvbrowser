@@ -71,7 +71,7 @@ import tvbrowser.core.filters.FilterComponentList;
 import tvbrowser.core.filters.FilterList;
 import tvbrowser.core.filters.ParserException;
 import tvbrowser.core.filters.UserFilter;
-import tvbrowser.core.filters.filtercomponents.AcceptAllFilterComponent;
+import tvbrowser.core.filters.filtercomponents.AcceptNoneFilterComponent;
 import tvbrowser.core.filters.filtercomponents.SingleChannelFilterComponent;
 import util.ui.DragAndDropMouseListener;
 import util.ui.ListDragAndDropHandler;
@@ -218,7 +218,7 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
             label.setText(label.getText() + " [" + item.getComponent().getDescription() + "]");
           }
           
-          if(item.getComponent() instanceof AcceptAllFilterComponent) {
+          if(item.getComponent() instanceof AcceptNoneFilterComponent) {
             label.setText("<html><span style=\"color:orange;\"><s>"+label.getText()+"</s></span></html>");
           }
         }
@@ -271,7 +271,7 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
           else {
             panel.add(label,CC.xy(item.getLevel()+1,1));
 
-            if(item.getComponent() instanceof AcceptAllFilterComponent) {
+            if(item.getComponent() instanceof AcceptNoneFilterComponent) {
               label.setText("<html><span style=\"color:orange;\"><s>"+label.getText()+"</s></span></html>");
             }
           }
@@ -383,7 +383,7 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
       
       mRemoveBtn.setEnabled(!item.isAndItem() && !item.isOrItem() && !item.isNotItem() && !item.isOpenBracketItem() && !item.isCloseBracketItem() && !(item.getComponent() instanceof SingleChannelFilterComponent));
       
-      mEditBtn.setEnabled(mRemoveBtn.isEnabled() && !(item.getComponent() instanceof AcceptAllFilterComponent));
+      mEditBtn.setEnabled(mRemoveBtn.isEnabled() && !(item.getComponent() instanceof AcceptNoneFilterComponent));
     }
     else {
       mEditBtn.setEnabled(false);
