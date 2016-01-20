@@ -54,6 +54,11 @@ import org.apache.commons.lang3.StringUtils;
 import tvbrowser.TVBrowser;
 import tvbrowser.core.contextmenu.ContextMenuManager;
 import tvbrowser.core.contextmenu.SeparatorMenuItem;
+import tvbrowser.core.filters.FilterComponentList;
+import tvbrowser.core.filters.FilterList;
+import tvbrowser.core.filters.ParserException;
+import tvbrowser.core.filters.UserFilter;
+import tvbrowser.core.filters.filtercomponents.SingleChannelFilterComponent;
 import tvbrowser.core.plugin.DefaultSettings;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.core.settings.DeferredFontProperty;
@@ -106,6 +111,7 @@ import util.ui.view.SplitViewProperty;
 import devplugin.Channel;
 import devplugin.Date;
 import devplugin.ProgramFieldType;
+import devplugin.ProgramFilter;
 import devplugin.Version;
 
 /**
@@ -2155,5 +2161,33 @@ public class Settings {
     public int getSize() {
       return UIManager.getFont("MenuItem.font").getSize() + mOffset;
     }
+  }
+  
+  public static void updateChannelFilters(Channel[] channelArr) {
+    final ArrayList<SingleChannelFilterComponent> channelNameUpdateList = FilterComponentList.getInstance().updateChannels(channelArr);
+    
+    if(!channelNameUpdateList.isEmpty()) {
+      final ProgramFilter[] filters = FilterList.getInstance().getFilterArr();
+      
+      for(SingleChannelFilterComponent scFilter : channelNameUpdateList) {
+        for(ProgramFilter filter : filters) {
+          if(filter instanceof UserFilter) {
+            final String rule = ((UserFilter)filter).getRule();
+            try {
+              ((UserFilter) filter).setRule(rule.replace(scFilter.getLoadName(), scFilter.getName()));
+            } catch (ParserException e) {
+              e.printStackTrace();
+            }
+          }
+        }
+        
+        scFilter.updateName();
+      }
+    }
+    
+    FilterComponentList.getInstance().store();
+    
+    FilterList.getInstance().updateAvailableChannels(channelArr);
+    FilterList.getInstance().store();
   }
 }

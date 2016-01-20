@@ -1220,14 +1220,8 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
 
     Settings.propChannelsWereConfigured.setBoolean(ChannelList.getNumberOfSubscribedChannels() > 0);
     
-    FilterComponentList.getInstance().updateChannels(channelArr);
-    FilterComponentList.getInstance().store();
+    Settings.updateChannelFilters(channelArr);
     
-    FilterList.getInstance().updateAvailableChannels(channelArr);
-    FilterList.getInstance().store();
-    
-    
-
     if (!Settings.propTrayUseSpecialChannels.getBoolean()) {
       Channel[] tempArr = new Channel[channelArr.length > 10 ? 10
           : channelArr.length];
@@ -1441,6 +1435,8 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
     System.arraycopy(channels, 0, channelsAfterArr, 0, channelsAfterArr.length);
     List<Channel> channelsAfter = Arrays.asList(channelsAfterArr);
     ChannelListChangesDialog.showChannelChanges(SettingsDialog.getInstance().getDialog(), channelsBefore, channelsAfter, false);
+    
+    Settings.updateChannelFilters(channels);
   }
   
   private void setSortNumbers() {

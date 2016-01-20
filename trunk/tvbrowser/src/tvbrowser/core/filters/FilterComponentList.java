@@ -65,6 +65,7 @@ import util.io.stream.StreamUtilities;
 import devplugin.Channel;
 import devplugin.PluginAccess;
 import devplugin.PluginsFilterComponent;
+import devplugin.ProgramFilter;
 
 public class FilterComponentList {
 
@@ -145,22 +146,24 @@ public class FilterComponentList {
       updateChannels(ChannelList.getSubscribedChannels());
   }
   
-  public void updateChannels(Channel[] channels) {
+  public ArrayList<SingleChannelFilterComponent> updateChannels(Channel[] channels) {
     ArrayList<SingleChannelFilterComponent> toRemove = new ArrayList<SingleChannelFilterComponent>();
     ArrayList<Channel> toAdd = new ArrayList<Channel>();
     toAdd.addAll(Arrays.asList(channels));
     
     ArrayList<String> acceptNoneFilterComponentNames = new ArrayList<String>();
+    ArrayList<SingleChannelFilterComponent> chammelNameUpdateList = new ArrayList<SingleChannelFilterComponent>();
     
     for(Iterator<FilterComponent> it = mComponentList.iterator(); it.hasNext(); ) {
       FilterComponent test = it.next();
       
       if(test instanceof SingleChannelFilterComponent) {
-        boolean found = false;
+        boolean found = false;        
         
         for(Channel ch : channels) {
           if(((SingleChannelFilterComponent)test).containsChannel(ch)) {
             toAdd.remove(ch);
+            
             found = true;
             break;
           }
@@ -168,6 +171,8 @@ public class FilterComponentList {
         
         if(!found) {
           toRemove.add((SingleChannelFilterComponent)test);
+        } else if(((SingleChannelFilterComponent)test).isNameToUpdate()) {
+          chammelNameUpdateList.add((SingleChannelFilterComponent)test);
         }
       }
       else if(test instanceof AcceptNoneFilterComponent) {
@@ -188,6 +193,8 @@ public class FilterComponentList {
       
       mComponentList.add(test);
     }
+    
+    return chammelNameUpdateList;
   }
   
   public void store() {
