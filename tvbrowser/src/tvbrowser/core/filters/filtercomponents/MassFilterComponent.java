@@ -22,8 +22,6 @@
  */
 package tvbrowser.core.filters.filtercomponents;
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -41,6 +39,10 @@ import util.exc.TvBrowserException;
 import util.ui.LineNumberHeader;
 import util.ui.SearchFormSettings;
 import util.ui.UiUtilities;
+
+import com.jgoodies.forms.factories.CC;
+import com.jgoodies.forms.layout.FormLayout;
+
 import devplugin.Program;
 import devplugin.ProgramSearcher;
 
@@ -139,17 +141,15 @@ public class MassFilterComponent extends AbstractFilterComponent {
   public JPanel getSettingsPanel() {
     mNewSearchFormSettings = mSearchFormSettings;
 
-    mSettingsPanel = new JPanel(new BorderLayout());
+    mSettingsPanel = new JPanel(new FormLayout("default:grow,default","fill:50dlu:grow,2dlu,default"));
 
     mTextInput = new JTextArea(mText);
     JScrollPane scrollPane = new JScrollPane(mTextInput);
     LineNumberHeader header = new LineNumberHeader(mTextInput);
     scrollPane.setRowHeaderView(header);
 
-    mSettingsPanel.add(scrollPane, BorderLayout.CENTER);
-
-    JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-
+    mSettingsPanel.add(scrollPane, CC.xyw(1, 1, 2));
+    
     JButton config = new JButton(mLocalizer.msg("configure", "Search options"));
 
     config.addActionListener(new ActionListener() {
@@ -159,10 +159,8 @@ public class MassFilterComponent extends AbstractFilterComponent {
       }
 
     });
-
-    buttonPanel.add(config);
-
-    mSettingsPanel.add(buttonPanel, BorderLayout.SOUTH);
+    
+    mSettingsPanel.add(config, CC.xy(2, 3));
 
     return mSettingsPanel;
   }
