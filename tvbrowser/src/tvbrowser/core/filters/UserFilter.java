@@ -41,6 +41,7 @@ import tvbrowser.core.filters.filtercomponents.FavoritesFilterComponent;
 import tvbrowser.core.filters.filtercomponents.PluginFilterComponent;
 import tvbrowser.core.filters.filtercomponents.ProgramMarkingPriorityFilterComponent;
 import tvbrowser.core.filters.filtercomponents.ReminderFilterComponent;
+import tvbrowser.core.filters.filtercomponents.SingleChannelFilterComponent;
 import util.exc.ErrorHandler;
 import util.io.stream.ObjectInputStreamProcessor;
 import util.io.stream.ObjectOutputStreamProcessor;
@@ -392,19 +393,33 @@ public class UserFilter implements devplugin.ProgramFilter {
           "component name expected."));
     }
 
-    FilterComponent component = FilterComponentList.getInstance()
-        .getFilterComponentByName(tk.value);
+    FilterComponent component = FilterComponentList.getInstance().getFilterComponentByName(tk.value);
+    ItemNode result = null;
+    
     if (component != null) {
-      return new ItemNode(component);
+      result = new ItemNode(component);
     }
     else {
-      AcceptNoneFilterComponent acceptAll = new AcceptNoneFilterComponent(tk.value);
+      FilterComponent[] filterComponents = FilterComponentList.getInstance().getAvailableFilterComponents();
       
-      FilterComponentList.getInstance().add(acceptAll);
-      return new ItemNode(acceptAll);
+      for(FilterComponent filterComponent : filterComponents) {
+        if(filterComponent instanceof SingleChannelFilterComponent
+            && ((SingleChannelFilterComponent)filterComponent).isNameToUpdate()
+            && tk.value.equals(((SingleChannelFilterComponent)filterComponent).getLoadName())) {
+          result = new ItemNode(filterComponent);
+          break;
+        }
+      }
     }
-    /*throw new ParserException(mLocalizer.msg("invalidCompName",
-        "{0} is not a valid component name", tk.value));*/
+    
+    if(result == null) {
+      AcceptNoneFilterComponent acceptNone = new AcceptNoneFilterComponent(tk.value);
+      
+      FilterComponentList.getInstance().add(acceptNone);
+      result = new ItemNode(acceptNone);
+    }
+    
+    return result;
   }
 
   public boolean accept(devplugin.Program prog) {
