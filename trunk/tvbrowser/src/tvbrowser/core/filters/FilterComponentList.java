@@ -378,6 +378,15 @@ public class FilterComponentList {
 
   public void add(FilterComponent comp) {
     synchronized (mComponentList) {
+      final String name = comp.getName();
+      
+      for(int i = 0; i < mComponentList.size(); i++) {
+        if(name.equals(mComponentList.get(i).getName()) && mComponentList.get(i) instanceof AcceptNoneFilterComponent) {
+          mComponentList.remove(i);
+          break;
+        }
+      }
+      
       mComponentList.add(comp);
     }
     
@@ -390,9 +399,12 @@ public class FilterComponentList {
   }
 
   public boolean exists(String name) {
-    return getFilterComponentByName(name) != null;
+    FilterComponent c = getFilterComponentByName(name);
+    
+    return  c != null && !(c instanceof AcceptNoneFilterComponent);
     //return mComponentMap.containsKey(name.toUpperCase());
   }
+  
   public void remove(String filterCompName) {
     FilterComponent filterComp = getFilterComponentByName(filterCompName);
     
