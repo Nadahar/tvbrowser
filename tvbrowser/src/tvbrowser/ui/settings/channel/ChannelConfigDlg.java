@@ -49,6 +49,7 @@ import javax.swing.JTextField;
 import javax.swing.SpinnerDateModel;
 import javax.swing.SwingConstants;
 
+import tvbrowser.core.ChannelList;
 import tvbrowser.core.Settings;
 import util.io.IOUtilities;
 import util.ui.CaretPositionCorrector;
@@ -260,7 +261,7 @@ public class ChannelConfigDlg extends JDialog implements ActionListener, WindowC
     panel.add(builder.getPanel(), cc.xyw(1, ++y, 3));
     
     pack();
-    Settings.layoutWindow("channelConfig", this, new Dimension(420,380));
+    Settings.layoutWindow("channelConfig", this, new Dimension(420,420));
   }
   
   private void setTimeDate(JSpinner toSet, int time) {
@@ -351,6 +352,8 @@ public class ChannelConfigDlg extends JDialog implements ActionListener, WindowC
       mChannel.setStartTimeLimit(getTimeInMinutes(mStartTimeLimit));
       mChannel.setEndTimeLimit(getTimeInMinutes(mEndTimeLimit));
       mChannel.setSortNumber(mSortNumber.getText().trim());
+      
+      Settings.updateChannelFilters(ChannelList.getSubscribedChannels());
       
       setVisible(false);
     } else if (o == mCloseBt) {

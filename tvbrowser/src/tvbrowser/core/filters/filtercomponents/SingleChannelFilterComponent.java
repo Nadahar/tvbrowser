@@ -35,14 +35,22 @@ import devplugin.Program;
 
 public class SingleChannelFilterComponent implements FilterComponent {
   private Channel mChannel;
+  private String mLoadName;
   
   public SingleChannelFilterComponent(Channel ch) {
     mChannel = ch;
+    
+    if(ch != null) {
+      mLoadName = "_" + mChannel.getName().replaceAll("\\s+|\\p{Punct}", "_");
+    }
+    else {
+      mLoadName = "[INVALID]";
+    }
   }
   
   @Override
   public int getVersion() {
-    return 0;
+    return 1;
   }
 
   @Override
@@ -55,6 +63,25 @@ public class SingleChannelFilterComponent implements FilterComponent {
       ClassNotFoundException {
     if(in.readBoolean()) {
       mChannel = Channel.readData(in, true);
+      
+      if(version == 0) {
+        if(mChannel != null) {
+          mLoadName = "_" + mChannel.getName().replaceAll("\\s+|\\p{Punct}", "_");
+        }
+        else {
+          mLoadName = "[INVALID]";
+        }
+      }
+      else {
+        mLoadName = in.readUTF();
+        
+        if(mLoadName.trim().length() == 0) {
+          mLoadName = "[INVALID]";
+        }
+      }
+    }
+    else {
+      mLoadName = "[INVALID]";
     }
   }
 
@@ -65,6 +92,8 @@ public class SingleChannelFilterComponent implements FilterComponent {
     if(mChannel != null) {
       mChannel.writeData(out);
     }
+    
+    out.writeUTF(mLoadName);
   }
 
   @Override
@@ -105,6 +134,18 @@ public class SingleChannelFilterComponent implements FilterComponent {
   @Override
   public void setDescription(String desc) {
     // Do nothing
+  }
+  
+  public String getLoadName() {
+    return mLoadName;
+  }
+  
+  public boolean isNameToUpdate() {
+    return !mLoadName.equals(getName());
+  }
+  
+  public void updateName() {
+    mLoadName = getName();
   }
   
   public boolean isValidChannel() {
