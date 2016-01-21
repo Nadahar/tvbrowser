@@ -2164,6 +2164,10 @@ public class Settings {
   }
   
   public static void updateChannelFilters(Channel[] channelArr) {
+    updateChannelFilters(channelArr, true);
+  }
+  
+  public static void updateChannelFilters(Channel[] channelArr, boolean updateAll) {
     final ArrayList<SingleChannelFilterComponent> channelNameUpdateList = FilterComponentList.getInstance().updateChannels(channelArr);
     
     if(!channelNameUpdateList.isEmpty()) {
@@ -2183,11 +2187,13 @@ public class Settings {
         
         scFilter.updateName();
       }
+      
+      FilterComponentList.getInstance().store();
     }
     
-    FilterComponentList.getInstance().store();
-    
-    FilterList.getInstance().updateAvailableChannels(channelArr);
-    FilterList.getInstance().store();
+    if(!channelNameUpdateList.isEmpty() || updateAll) {
+      FilterList.getInstance().updateAvailableChannels(channelArr);
+      FilterList.getInstance().store();
+    }
   }
 }

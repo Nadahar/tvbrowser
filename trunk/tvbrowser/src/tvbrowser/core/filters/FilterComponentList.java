@@ -38,6 +38,7 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 import tvbrowser.core.ChannelList;
+import tvbrowser.core.Settings;
 import tvbrowser.core.filters.filtercomponents.AcceptNoneFilterComponent;
 import tvbrowser.core.filters.filtercomponents.AgeLimitFilterComponent;
 import tvbrowser.core.filters.filtercomponents.BeanShellFilterComponent;
@@ -65,7 +66,6 @@ import util.io.stream.StreamUtilities;
 import devplugin.Channel;
 import devplugin.PluginAccess;
 import devplugin.PluginsFilterComponent;
-import devplugin.ProgramFilter;
 
 public class FilterComponentList {
 
@@ -142,8 +142,7 @@ public class FilterComponentList {
             }
           });
       }
-      
-      updateChannels(ChannelList.getSubscribedChannels());
+      //updateChannels(ChannelList.getSubscribedChannels());
   }
   
   public ArrayList<SingleChannelFilterComponent> updateChannels(Channel[] channels) {
@@ -378,6 +377,7 @@ public class FilterComponentList {
   public static synchronized FilterComponentList getInstance() {
     if (mInstance == null) {
       mInstance = new FilterComponentList();
+      Settings.updateChannelFilters(ChannelList.getSubscribedChannels(),false);
     }
     
     return mInstance;
