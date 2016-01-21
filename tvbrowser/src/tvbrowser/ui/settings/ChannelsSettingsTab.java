@@ -1436,7 +1436,7 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
     List<Channel> channelsAfter = Arrays.asList(channelsAfterArr);
     ChannelListChangesDialog.showChannelChanges(SettingsDialog.getInstance().getDialog(), channelsBefore, channelsAfter, false);
     
-    Settings.updateChannelFilters(channels);
+    Settings.updateChannelFilters(ChannelList.getSubscribedChannels());
   }
   
   private void setSortNumbers() {

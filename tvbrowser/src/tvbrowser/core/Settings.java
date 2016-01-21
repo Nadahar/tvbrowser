@@ -2187,11 +2187,11 @@ public class Settings {
         
         scFilter.updateName();
       }
-      
-      FilterComponentList.getInstance().store();
     }
     
     if(!channelNameUpdateList.isEmpty() || updateAll) {
+      FilterComponentList.getInstance().store();
+      
       FilterList.getInstance().updateAvailableChannels(channelArr);
       FilterList.getInstance().store();
     }
