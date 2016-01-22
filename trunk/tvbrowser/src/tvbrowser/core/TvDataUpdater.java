@@ -351,6 +351,8 @@ public class TvDataUpdater {
         Settings.propDefaultNetworkConnectionTimeout.setInt(currentNetworkTimeout);
         
         ChannelListChangesDialog.showChannelChanges(UiUtilities.getLastModalChildOf(MainFrame.getInstance()), Arrays.asList(currentChannels), Arrays.asList(ChannelList.getAvailableChannels()),true);
+        
+        Settings.updateChannelFilters(ChannelList.getSubscribedChannels());
       }
     }
   }
