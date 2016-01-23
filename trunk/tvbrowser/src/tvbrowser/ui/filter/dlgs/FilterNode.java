@@ -431,6 +431,10 @@ public class FilterNode extends DefaultMutableTreeNode {
                 (Settings.propDefaultFilter.getString().trim().length() < 1 && test.getFilter() instanceof ShowAllFilter)) {
               item.setFont(item.getFont().deriveFont(Font.BOLD));
             }
+            
+            if(test.getFilter() instanceof UserFilter && ((UserFilter)test.getFilter()).containsNoneFilterComponent()) {
+              item.setText("<html><span style=\"color:orange;text-decoration:underline;\">"+item.getText()+"</span></html>");
+            }
           }
           else if(test.containsSeparator()) {
             parent.addSeparator();
