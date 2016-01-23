@@ -68,14 +68,13 @@ import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 import devplugin.ProgramFilter;
-
 import tvbrowser.core.Settings;
 import tvbrowser.core.filters.FilterList;
 import tvbrowser.core.filters.ShowAllFilter;
 import tvbrowser.core.filters.UserFilter;
+import tvbrowser.core.filters.filtercomponents.AcceptNoneFilterComponent;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.ui.mainframe.MainFrame;
-
 import util.ui.Localizer;
 import util.ui.OverlayListener;
 import util.ui.TVBrowserIcons;
@@ -778,6 +777,16 @@ public class FilterTree extends JTree implements DragGestureListener, DropTarget
               label.setBackground(UIManager.getColor("Tree.selectionBackground"));
               label.setForeground(UIManager.getColor("Tree.selectionForeground"));
             }
+          }
+          
+          System.out.println(test.getFilter());
+          
+          if(test.getFilter() instanceof UserFilter) {
+            System.out.println(((UserFilter)test.getFilter()).containsNoneFilterComponent());
+          }
+          
+          if(test.getFilter() instanceof UserFilter && ((UserFilter)test.getFilter()).containsNoneFilterComponent()) {
+            label.setText("<html><span style=\"color:orange;text-decoration:underline;\">"+label.getText()+"</span></html>");
           }
         }
         else if(test.containsSeparator()) {

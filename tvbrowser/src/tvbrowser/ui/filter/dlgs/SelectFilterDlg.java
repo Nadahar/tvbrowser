@@ -387,4 +387,10 @@ public class SelectFilterDlg extends JDialog implements ActionListener, WindowCl
     mFilterTree.updateUI();
     mFilterTree.getModel().fireFilterDefaultChanged(node.getFilter());
   }
+  
+  public static void updateFilterTreeUI() {
+    if(mInstance != null) {
+      mInstance.mFilterTree.updateUI();
+    }
+  }
 }

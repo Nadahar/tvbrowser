@@ -46,6 +46,7 @@ import util.exc.ErrorHandler;
 import util.io.stream.ObjectInputStreamProcessor;
 import util.io.stream.ObjectOutputStreamProcessor;
 import util.io.stream.StreamUtilities;
+import devplugin.Channel;
 import devplugin.ProgramFilter;
 
 class Token {
@@ -459,6 +460,22 @@ public class UserFilter implements devplugin.ProgramFilter {
     }
     return mRoot.containsRuleComponent(comp);
   }
+  
+  public boolean containsNoneFilterComponent() {
+    boolean result = false;
+    
+    if (mRoot != null) {
+      result = mRoot.containsNoneFilterComponent();
+    }
+    
+    return result; 
+  }
+  
+  public void updateSingleChannelFilters(Channel[] channels) {
+    if(mRoot != null) {
+      mRoot.updateSingleChannelFilters(channels);
+    }
+  }
 
   public boolean equals(Object o) {
     if (o instanceof ProgramFilter) {
@@ -524,6 +541,28 @@ abstract class Node {
       }
     }
     return false;
+  }
+  
+  public boolean containsNoneFilterComponent() {
+    boolean result = false;
+    
+    final Iterator<Node> it = mNodes.iterator();
+    while (it.hasNext()) {
+      Node n = it.next();
+      if (n.containsNoneFilterComponent()) {
+        return true;
+      }
+    }
+    
+    return result;
+  }
+  
+  public void updateSingleChannelFilters(Channel[] channels) {
+    final Iterator<Node> it = mNodes.iterator();
+    
+    while (it.hasNext()) {
+      it.next().updateSingleChannelFilters(channels);
+    }
   }
 }
 
@@ -605,5 +644,39 @@ class ItemNode extends Node {
 
   public boolean containsRuleComponent(String compName) {
     return (mRule.getName().equalsIgnoreCase(compName));
-  }  
+  }
+  
+  @Override
+  public boolean containsNoneFilterComponent() {
+    return mRule instanceof AcceptNoneFilterComponent;
+  }
+  
+  public void updateSingleChannelFilters(Channel[] channels) {
+    if(mRule instanceof SingleChannelFilterComponent) {
+      final SingleChannelFilterComponent component = (SingleChannelFilterComponent)mRule;
+      
+      boolean found = false;
+      
+      for(final Channel ch : channels) {
+        if(component.containsChannel(ch)) {
+          found = true;
+          break;
+        }
+      }
+      
+      if(!found) {
+        mRule = new AcceptNoneFilterComponent(mRule.getName());
+      }
+    }
+    else if(mRule instanceof AcceptNoneFilterComponent) {
+      for(final Channel ch : channels) {
+        final SingleChannelFilterComponent component = new SingleChannelFilterComponent(ch);
+        
+        if(mRule.getName().equals(component.getName())) {
+          mRule = component;
+          break;
+        }
+      }
+    }
+  }
 }

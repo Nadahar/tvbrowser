@@ -45,6 +45,7 @@ import tvbrowser.core.Settings;
 import tvbrowser.core.filters.FilterManagerImpl;
 import tvbrowser.core.filters.ShowAllFilter;
 import tvbrowser.core.filters.SingleChannelFilter;
+import tvbrowser.core.filters.UserFilter;
 import tvbrowser.core.plugin.PluginManagerImpl;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.ui.Localizer;
@@ -252,6 +253,9 @@ public class FilterTreeModel extends DefaultTreeModel {
             ((FilterNode)node.getParent()).remove(node);
             fireFilterRemoved(filter);
           }
+        }
+        else if(node.getUserObject() instanceof UserFilter) {
+          ((UserFilter)node.getUserObject()).updateSingleChannelFilters(channels);
         }
       }
     }while(!list.isEmpty());
