@@ -72,6 +72,7 @@ import tvbrowser.core.filters.FilterList;
 import tvbrowser.core.filters.ParserException;
 import tvbrowser.core.filters.UserFilter;
 import tvbrowser.core.filters.filtercomponents.AcceptNoneFilterComponent;
+import tvbrowser.core.filters.filtercomponents.ChannelFilterComponent;
 import tvbrowser.core.filters.filtercomponents.SingleChannelFilterComponent;
 import util.ui.DragAndDropMouseListener;
 import util.ui.ListDragAndDropHandler;
@@ -218,8 +219,11 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
             label.setText(label.getText() + " [" + item.getComponent().getDescription() + "]");
           }
           
-          if(item.getComponent() instanceof AcceptNoneFilterComponent) {
+          if(item.getComponent() instanceof AcceptNoneFilterComponent || (item.getComponent() instanceof ChannelFilterComponent && ((ChannelFilterComponent)item.getComponent()).isEmpty())) {
             label.setText("<html><span style=\"color:orange;\"><s>"+label.getText()+"</s></span></html>");
+          }
+          else if(item.getComponent() instanceof ChannelFilterComponent && ((ChannelFilterComponent)item.getComponent()).isBroken()) {
+            label.setText("<html><span style=\"color:orange;\"><u>"+label.getText()+"</u></span></html>");
           }
         }
         
@@ -271,8 +275,11 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
           else {
             panel.add(label,CC.xy(item.getLevel()+1,1));
 
-            if(item.getComponent() instanceof AcceptNoneFilterComponent) {
+            if(item.getComponent() instanceof AcceptNoneFilterComponent || (item.getComponent() instanceof ChannelFilterComponent && ((ChannelFilterComponent)item.getComponent()).isEmpty())) {
               label.setText("<html><span style=\"color:orange;\"><s>"+label.getText()+"</s></span></html>");
+            }
+            else if(item.getComponent() instanceof ChannelFilterComponent && ((ChannelFilterComponent)item.getComponent()).isBroken()) {
+              label.setText("<html><span style=\"color:orange;\"><u>"+label.getText()+"</u></span></html>");
             }
           }
 

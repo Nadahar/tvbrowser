@@ -37,6 +37,7 @@ import java.util.regex.Pattern;
 
 import tvbrowser.core.filters.filtercomponents.AcceptNoneFilterComponent;
 import tvbrowser.core.filters.filtercomponents.BeanShellFilterComponent;
+import tvbrowser.core.filters.filtercomponents.ChannelFilterComponent;
 import tvbrowser.core.filters.filtercomponents.FavoritesFilterComponent;
 import tvbrowser.core.filters.filtercomponents.PluginFilterComponent;
 import tvbrowser.core.filters.filtercomponents.ProgramMarkingPriorityFilterComponent;
@@ -461,11 +462,15 @@ public class UserFilter implements devplugin.ProgramFilter {
     return mRoot.containsRuleComponent(comp);
   }
   
-  public boolean containsNoneFilterComponent() {
+  /**
+   * @return <code>true</code> if at least one contained channel filter
+   * contains not avaiable channels.
+   */
+  public boolean containsBrokenChannelFilterComponent() {
     boolean result = false;
     
     if (mRoot != null) {
-      result = mRoot.containsNoneFilterComponent();
+      result = mRoot.containsBrokenChannelFilterComponent();
     }
     
     return result; 
@@ -473,7 +478,7 @@ public class UserFilter implements devplugin.ProgramFilter {
   
   public void updateSingleChannelFilters(Channel[] channels) {
     if(mRoot != null) {
-      mRoot.updateSingleChannelFilters(channels);
+      mRoot.updateChannelFilters(channels);
     }
   }
 
@@ -543,13 +548,13 @@ abstract class Node {
     return false;
   }
   
-  public boolean containsNoneFilterComponent() {
+  public boolean containsBrokenChannelFilterComponent() {
     boolean result = false;
     
     final Iterator<Node> it = mNodes.iterator();
     while (it.hasNext()) {
       Node n = it.next();
-      if (n.containsNoneFilterComponent()) {
+      if (n.containsBrokenChannelFilterComponent()) {
         return true;
       }
     }
@@ -557,11 +562,11 @@ abstract class Node {
     return result;
   }
   
-  public void updateSingleChannelFilters(Channel[] channels) {
+  public void updateChannelFilters(Channel[] channels) {
     final Iterator<Node> it = mNodes.iterator();
     
     while (it.hasNext()) {
-      it.next().updateSingleChannelFilters(channels);
+      it.next().updateChannelFilters(channels);
     }
   }
 }
@@ -647,11 +652,11 @@ class ItemNode extends Node {
   }
   
   @Override
-  public boolean containsNoneFilterComponent() {
-    return mRule instanceof AcceptNoneFilterComponent;
+  public boolean containsBrokenChannelFilterComponent() {
+    return mRule instanceof AcceptNoneFilterComponent || (mRule instanceof ChannelFilterComponent && ((ChannelFilterComponent)mRule).isBroken());
   }
   
-  public void updateSingleChannelFilters(Channel[] channels) {
+  public void updateChannelFilters(Channel[] channels) {
     if(mRule instanceof SingleChannelFilterComponent) {
       final SingleChannelFilterComponent component = (SingleChannelFilterComponent)mRule;
       
@@ -677,6 +682,9 @@ class ItemNode extends Node {
           break;
         }
       }
+    }
+    else if(mRule instanceof ChannelFilterComponent) {
+      ((ChannelFilterComponent)mRule).updateAvailableChannels(channels);
     }
   }
 }

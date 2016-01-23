@@ -49,10 +49,12 @@ public class ChannelFilterComponent extends AbstractFilterComponent {
 
   private OrderChooser mList;
   private Channel[] mSelectedChannels;
+  private ArrayList<String> mSelectedChannelsIdList;
 
   public ChannelFilterComponent(String name, String desc) {
     super(name, desc);
     mSelectedChannels = new Channel[0];
+    mSelectedChannelsIdList = new ArrayList<String>(0);
   }
 
   public ChannelFilterComponent() {
@@ -80,19 +82,41 @@ public class ChannelFilterComponent extends AbstractFilterComponent {
         if (ch != null) {
           channels.add(ch);
         }
-      } else {
+      } else if(version < 4) {
         Channel ch = Channel.readData(in, true);
 
         if (ch != null) {
           channels.add(ch);
+          mSelectedChannelsIdList.add(ch.getUniqueId());
         }
+      } else {
+        mSelectedChannelsIdList.add(in.readUTF());
       }
     }
+    
+    if(version >= 4) {
+      channelCnt = in.readInt();
+      
+      for(int i = 0; i < channelCnt; i++) {
+        Channel ch = Channel.readData(in, true);
+
+        if (ch != null) {
+          channels.add(ch);
+        }        
+      }
+    }
+    
     mSelectedChannels = new Channel[channels.size()];
     channels.toArray(mSelectedChannels);
   }
 
   public void write(ObjectOutputStream out) throws IOException {
+    out.writeInt(mSelectedChannelsIdList.size());
+    
+    for(String id : mSelectedChannelsIdList) {
+      out.writeUTF(id);
+    }
+    
     out.writeInt(mSelectedChannels.length);
 
     for (Channel selectedChannel : mSelectedChannels) {
@@ -108,8 +132,11 @@ public class ChannelFilterComponent extends AbstractFilterComponent {
   public void saveSettings() {
     Object[] o = mList.getOrder();
     mSelectedChannels = new Channel[o.length];
+    mSelectedChannelsIdList.clear();
+    
     for (int i = 0; i < o.length; i++) {
       mSelectedChannels[i] = (Channel) o[i];
+      mSelectedChannelsIdList.add(mSelectedChannels[i].getUniqueId());
     }
   }
   
@@ -142,11 +169,34 @@ public class ChannelFilterComponent extends AbstractFilterComponent {
   }
 
   public int getVersion() {
-    return 3;
+    return 4;
   }
 
   public Channel[] getChannels() {
     return mSelectedChannels;
   }
-
+  
+  public void updateAvailableChannels(Channel[] channels) {
+    ArrayList<Channel> selectedAvailable = new ArrayList<Channel>();
+    
+    for(Channel ch : channels) {
+      if(mSelectedChannelsIdList.contains(ch.getUniqueId())) {
+        selectedAvailable.add(ch);
+      }
+    }
+    
+    mSelectedChannels = selectedAvailable.toArray(new Channel[selectedAvailable.size()]);
+  }
+  
+  /**
+   * @return <code>true</code> if at least one previously selected channel is
+   * not available anymore. 
+   */
+  public boolean isBroken() {
+    return mSelectedChannels.length != mSelectedChannelsIdList.size();
+  }
+  
+  public boolean isEmpty() {
+    return mSelectedChannels.length == 0;
+  }
 }
