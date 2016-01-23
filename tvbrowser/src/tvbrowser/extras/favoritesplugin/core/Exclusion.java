@@ -36,6 +36,7 @@ import tvbrowser.core.filters.FilterManagerImpl;
 import tvbrowser.extras.common.ChannelItem;
 import tvbrowser.extras.common.DayListCellRenderer;
 import tvbrowser.extras.common.LimitationConfiguration;
+import util.ui.WrapperFilter;
 import devplugin.Channel;
 import devplugin.Program;
 import devplugin.ProgramFieldType;
@@ -376,7 +377,7 @@ public class Exclusion implements Comparable<Exclusion> {
   
   @Override
   public String toString() {
-    StringBuilder textValue = new StringBuilder();
+    StringBuilder textValue = new StringBuilder("<html>");
     ProgramFilter filter = getFilter();
     String timeMsg = createTimeMessage(getTimeLowerBound(), getTimeUpperBound(), getDayOfWeek());
     
@@ -399,7 +400,7 @@ public class Exclusion implements Comparable<Exclusion> {
       textValue.append(" ").append(mLocalizer.msg("exclude.appendFilter","of the filter '")).append(filter.getName()).append("'");
     }
     else if(filter != null) {
-      textValue.append(mLocalizer.msg("exclude.filter","Exclude all programs of the filter '")).append(filter.getName()).append("'");
+      textValue.append(mLocalizer.msg("exclude.filter","Exclude all programs of the filter '")).append(new WrapperFilter(filter).toString().replaceAll("</*html>", "")).append("'");
     }
     if(mChannel.getChannel() != null && (mTitle != null || mTopic != null || mEpisodeTitle != null || filter != null)) {
       textValue.append(" ").append(mLocalizer.msg("exclude.appendChannel","on channel '")).append(mChannel.getChannel().getName()).append("'");
@@ -433,6 +434,8 @@ public class Exclusion implements Comparable<Exclusion> {
       
       textValue.append(mLocalizer.msg("exclude.appendix","."));
     }
+    
+    textValue.append("</html>");
     
     return textValue.toString();
   }

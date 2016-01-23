@@ -2195,5 +2195,7 @@ public class Settings {
       FilterList.getInstance().updateAvailableChannels(channelArr);
       FilterList.getInstance().store();
     }
+    
+    MainFrame.updateFilterPanelLabel();
   }
 }

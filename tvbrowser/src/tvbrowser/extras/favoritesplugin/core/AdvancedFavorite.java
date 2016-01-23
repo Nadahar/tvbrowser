@@ -50,6 +50,7 @@ import util.exc.TvBrowserException;
 import util.ui.SearchForm;
 import util.ui.SearchFormSettings;
 import util.ui.UiUtilities;
+import util.ui.WrapperFilter;
 
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -346,7 +347,7 @@ public class AdvancedFavorite extends Favorite implements PendingFilterLoader {
       
       for(ProgramFilter filter : availableFilter) {
         if(!(filter instanceof FavoriteFilter)) {
-          ((DefaultComboBoxModel)mFilterCombo.getModel()).addElement(filter);
+          ((DefaultComboBoxModel)mFilterCombo.getModel()).addElement(new WrapperFilter(filter));
         }
       }
       
@@ -365,11 +366,11 @@ public class AdvancedFavorite extends Favorite implements PendingFilterLoader {
           
           for(ProgramFilter filter : availableFilter) {
             if(!(filter instanceof FavoriteFilter)) {
-              ((DefaultComboBoxModel)mFilterCombo.getModel()).addElement(filter);
+              ((DefaultComboBoxModel)mFilterCombo.getModel()).addElement(new WrapperFilter(filter));
             }
           }
           
-          mFilterCombo.setSelectedItem(selected);
+          mFilterCombo.setSelectedItem(new WrapperFilter((ProgramFilter)selected));
         }
       });
       
@@ -377,7 +378,7 @@ public class AdvancedFavorite extends Favorite implements PendingFilterLoader {
             
       if (mFilter != null) {
         mFilterCheckbox.setSelected(true);
-        mFilterCombo.setSelectedItem(mFilter);
+        mFilterCombo.setSelectedItem(new WrapperFilter(mFilter));
       }
       else {
         mFilterCombo.setEnabled(false);
@@ -405,7 +406,7 @@ public class AdvancedFavorite extends Favorite implements PendingFilterLoader {
       FavoritesPlugin.getInstance().setDefaultProgramFieldTypeSelection(settings.getUserDefaultFieldTypes());
       
       if (mFilterCheckbox.isSelected()) {
-        mFilter = (ProgramFilter)mFilterCombo.getSelectedItem();
+        mFilter = ((WrapperFilter)mFilterCombo.getSelectedItem()).getFilter();
         if (mFilter instanceof ShowAllFilter) {
           mFilter = null;
         }

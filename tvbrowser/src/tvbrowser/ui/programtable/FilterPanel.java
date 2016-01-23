@@ -19,6 +19,7 @@ import javax.swing.UIManager;
 
 import tvbrowser.core.filters.FilterManagerImpl;
 import tvbrowser.ui.mainframe.MainFrame;
+import util.ui.WrapperFilter;
 import util.ui.persona.Persona;
 import devplugin.ProgramFilter;
 
@@ -32,7 +33,7 @@ import devplugin.ProgramFilter;
 public class FilterPanel extends JPanel {
   /** Label that is used */
   private JLabel mFilterLabel;
-
+  
   /**
    * remember current filter name to avoid repeated UI updates
    */
@@ -129,7 +130,7 @@ public class FilterPanel extends JPanel {
    * @param filter current selected Filter
    */
   public void setCurrentFilter(ProgramFilter filter) {
-    setFilterLabel(filter.getName());
+    setFilterLabel(new WrapperFilter(filter).toString());
   }
 
   /**
@@ -156,6 +157,10 @@ public class FilterPanel extends JPanel {
 
     g2d.setPaint(paint);
     g2d.fillRect(0, 0, width, height);
+  }
+  
+  public void updateLabel(ProgramFilter filter) {
+    setFilterLabel(new WrapperFilter(filter).toString());
   }
   
   /**

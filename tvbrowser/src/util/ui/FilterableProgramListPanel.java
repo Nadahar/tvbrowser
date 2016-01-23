@@ -168,7 +168,7 @@ public class FilterableProgramListPanel extends JPanel implements FilterChangeLi
     
     mAllPrograms = programs;
     
-    filterPrograms((ProgramFilter)mProgramFilterBox.getSelectedItem());
+    filterPrograms(((WrapperFilter)mProgramFilterBox.getSelectedItem()).getFilter());
   }
   
   /**
@@ -201,7 +201,7 @@ public class FilterableProgramListPanel extends JPanel implements FilterChangeLi
         @Override
         public void itemStateChanged(ItemEvent e) {
           if(e.getStateChange() == ItemEvent.SELECTED) {
-            filterPrograms((ProgramFilter)mProgramFilterBox.getSelectedItem());
+            filterPrograms(((WrapperFilter)mProgramFilterBox.getSelectedItem()).getFilter());
             scrollToFirstNotExpiredIndex(false);
           }
         }
@@ -214,7 +214,7 @@ public class FilterableProgramListPanel extends JPanel implements FilterChangeLi
       refresh.addActionListener(new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-          filterPrograms((ProgramFilter)mProgramFilterBox.getSelectedItem());
+          filterPrograms(((WrapperFilter)mProgramFilterBox.getSelectedItem()).getFilter());
         }
       });
       
@@ -228,7 +228,7 @@ public class FilterableProgramListPanel extends JPanel implements FilterChangeLi
       y++;
     }
     else {
-      mProgramFilterBox.addItem(FilterManagerImpl.getInstance().getAllFilter());
+      mProgramFilterBox.addItem(new WrapperFilter(FilterManagerImpl.getInstance().getAllFilter()));
     }
     
     if(type == TYPE_NAME_AND_PROGRAM_FILTER || type == TYPE_NAME_ONLY_FILTER) {
@@ -276,15 +276,15 @@ public class FilterableProgramListPanel extends JPanel implements FilterChangeLi
     ProgramFilter[] filters = FilterManagerImpl.getInstance().getAvailableFilters();
     
     for(ProgramFilter filter : filters) {
-      mProgramFilterBox.addItem(filter);
+      mProgramFilterBox.addItem(new WrapperFilter(filter));
     }
     
     switch (startType) {
-      case FILTER_START_DEFAULT_TYPE: mProgramFilterBox.setSelectedItem(FilterManagerImpl.getInstance().getDefaultFilter());break;
-      case FILTER_START_CURRENT_TYPE: mProgramFilterBox.setSelectedItem(FilterManagerImpl.getInstance().getCurrentFilter());break;
-      case FILTER_START_FILTER_TYPE: mProgramFilterBox.setSelectedItem(startFilter);break;
+      case FILTER_START_DEFAULT_TYPE: mProgramFilterBox.setSelectedItem(new WrapperFilter(FilterManagerImpl.getInstance().getDefaultFilter()));break;
+      case FILTER_START_CURRENT_TYPE: mProgramFilterBox.setSelectedItem(new WrapperFilter(FilterManagerImpl.getInstance().getCurrentFilter()));break;
+      case FILTER_START_FILTER_TYPE: mProgramFilterBox.setSelectedItem(new WrapperFilter(startFilter));break;
       
-      default: mProgramFilterBox.setSelectedItem(FilterManagerImpl.getInstance().getAllFilter());break;
+      default: mProgramFilterBox.setSelectedItem(new WrapperFilter(FilterManagerImpl.getInstance().getAllFilter()));break;
     }
   }
 
@@ -299,7 +299,7 @@ public class FilterableProgramListPanel extends JPanel implements FilterChangeLi
   public void filterRemoved(ProgramFilter filter) {
     if(mType == TYPE_NAME_AND_PROGRAM_FILTER || mType == TYPE_PROGRAM_ONLY_FILTER) {
       if(mProgramFilterBox.getSelectedItem().equals(filter)) {
-        mProgramFilterBox.setSelectedItem(FilterManagerImpl.getInstance().getAllFilter());
+        mProgramFilterBox.setSelectedItem(new WrapperFilter(FilterManagerImpl.getInstance().getAllFilter()));
       }
       
       mProgramFilterBox.removeItem(filter);
@@ -333,7 +333,7 @@ public class FilterableProgramListPanel extends JPanel implements FilterChangeLi
       ArrayList<ProgramFilter> titleFilterValues = new ArrayList<ProgramFilter>();
       HashMap<String, String> titleMap = new HashMap<String, String>();
             
-      if(FilterManagerImpl.getInstance().getAllFilter().equals(filter) && ((ProgramFilter)mProgramFilterBox.getSelectedItem()).equals(FilterManagerImpl.getInstance().getAllFilter())) {
+      if(FilterManagerImpl.getInstance().getAllFilter().equals(filter) && ((WrapperFilter)mProgramFilterBox.getSelectedItem()).equals(FilterManagerImpl.getInstance().getAllFilter())) {
         for(Program p : mAllPrograms) {
           model.addElement(p);
           
@@ -347,7 +347,7 @@ public class FilterableProgramListPanel extends JPanel implements FilterChangeLi
         ProgramFilter check = FilterManagerImpl.getInstance().getAllFilter();
         
         if(filter instanceof SimpleTitleFilter || filter.equals(check)) {
-          check = (ProgramFilter)mProgramFilterBox.getSelectedItem();
+          check = ((WrapperFilter)mProgramFilterBox.getSelectedItem()).getFilter();
         }
         
         for(Program p : mAllPrograms) {
@@ -495,7 +495,7 @@ public class FilterableProgramListPanel extends JPanel implements FilterChangeLi
    * @param filter The filter to select in the program filter box*/
   public void selectFilter(ProgramFilter filter) {
     if((mType == TYPE_NAME_AND_PROGRAM_FILTER || mType == TYPE_PROGRAM_ONLY_FILTER) && filter != null) {
-      mProgramFilterBox.setSelectedItem(filter);
+      mProgramFilterBox.setSelectedItem(new WrapperFilter(filter));
     }
   }
   
@@ -503,7 +503,7 @@ public class FilterableProgramListPanel extends JPanel implements FilterChangeLi
    * @return The filter name of the selected program filter.
    */
   public String getSelectedProgramFilterName() {
-    return ((ProgramFilter)mProgramFilterBox.getSelectedItem()).getName();
+    return ((WrapperFilter)mProgramFilterBox.getSelectedItem()).getName();
   }
   
   private static final class SimpleTitleFilter implements ProgramFilter {
