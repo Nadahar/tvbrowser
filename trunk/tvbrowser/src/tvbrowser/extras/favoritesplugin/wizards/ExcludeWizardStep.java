@@ -55,6 +55,7 @@ import tvbrowser.ui.filter.dlgs.SelectFilterDlg;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.ui.TimePeriodChooser;
 import util.ui.UiUtilities;
+import util.ui.WrapperFilter;
 
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.factories.CC;
@@ -201,15 +202,15 @@ public class ExcludeWizardStep extends AbstractWizardStep {
     
     ProgramFilter[] avilableFilter = FilterManagerImpl.getInstance().getAvailableFilters();
     
-    ArrayList<ProgramFilter> useableFilter = new ArrayList<ProgramFilter>();
+    ArrayList<WrapperFilter> useableFilter = new ArrayList<WrapperFilter>();
     
     for(ProgramFilter filter : avilableFilter) {
       if(!(filter instanceof FavoriteFilter)) {
-        useableFilter.add(filter);
+        useableFilter.add(new WrapperFilter(filter));
       }
     }
     
-    mFilterChooser = new JComboBox(useableFilter.toArray(new ProgramFilter[useableFilter.size()]));
+    mFilterChooser = new JComboBox(useableFilter.toArray(new WrapperFilter[useableFilter.size()]));
 
     mDayChooser = new JComboBox(new Object[] {
         LimitationConfiguration.DAYLIMIT_WEEKDAY,
@@ -472,7 +473,7 @@ public class ExcludeWizardStep extends AbstractWizardStep {
     }
 
     if(mFilterCb.isSelected()) {
-      filterName = ((ProgramFilter)mFilterChooser.getSelectedItem()).getName();
+      filterName = ((WrapperFilter)mFilterChooser.getSelectedItem()).getName();
     }
 
     if (mChannelCb.isSelected()) {

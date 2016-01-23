@@ -3575,4 +3575,10 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     updateFilterPanel();
     mToolBarModel.setFilterButtonSelected(!getProgramFilter().equals(filter));
   }
+  
+  public static void updateFilterPanelLabel() {
+    if(mSingleton != null && mSingleton.mFilterPanel.isVisible() && mSingleton.getProgramFilter() != null) {
+      mSingleton.mFilterPanel.updateLabel(mSingleton.getProgramFilter());
+    }
+  }
 }
