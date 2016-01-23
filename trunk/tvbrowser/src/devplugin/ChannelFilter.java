@@ -79,6 +79,18 @@ public final class ChannelFilter implements ProgramFilter {
     return mChannelFilterComponent.getName();
   }
   
+  @Override
+  public String toString() {
+    if(mChannelFilterComponent.isEmpty()) {
+      return "<html><span style=\"color:orange;\"><s>"+getName()+"</s></span></html>";
+    }
+    else if(mChannelFilterComponent.isBroken()) {
+      return "<html><span style=\"color:orange;\"><u>"+getName()+"</u></span></html>";
+    }
+
+    return getName();
+  }
+  
   /**
    * Gets all the channels of this channel filter.
    * <p>

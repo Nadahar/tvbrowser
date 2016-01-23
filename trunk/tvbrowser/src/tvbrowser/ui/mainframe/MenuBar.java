@@ -84,6 +84,7 @@ import tvbrowser.ui.mainframe.toolbar.ContextMenu;
 import tvbrowser.ui.settings.ToolBarDragAndDropSettings;
 import tvdataservice.MarkedProgramsMap;
 import util.browserlauncher.Launch;
+import util.exc.TvBrowserException;
 import util.misc.OperatingSystem;
 import util.ui.FixedSizeIcon;
 import util.ui.Localizer;
@@ -579,20 +580,29 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 		});
 		// selective groups
 		menu.add(menuItem);
-		String[] channelFilterNames = FilterComponentList.getInstance()
-				.getChannelFilterNames();
+		String[] channelFilterNames = FilterComponentList.getInstance().getChannelFilterNames();
+		
 		for (final String filterName : channelFilterNames) {
-			menuItem = new JRadioButtonMenuItem(filterName);
-			menuItem.addActionListener(new ActionListener() {
+			try {
+        menuItem = new JRadioButtonMenuItem(ChannelFilter.createChannelFilterForName(filterName).toString());
+        
+        menuItem.addActionListener(new ActionListener() {
 
-				public void actionPerformed(ActionEvent e) {
-					MainFrame.getInstance().setChannelFilter(ChannelFilterList.getInstance().getChannelFilterForName(filterName));
-				}
-			});
-			menu.add(menuItem);
-			if (channelFilterName != null && filterName.equals(channelFilterName)) {
-				menuItem.setSelected(true);
-			}
+          public void actionPerformed(ActionEvent e) {
+            MainFrame.getInstance().setChannelFilter(ChannelFilterList.getInstance().getChannelFilterForName(filterName));
+          }
+        });
+        menu.add(menuItem);
+        if (channelFilterName != null && filterName.equals(channelFilterName)) {
+          menuItem.setSelected(true);
+        }
+      } catch (ClassCastException e1) {
+        // TODO Auto-generated catch block
+        e1.printStackTrace();
+      } catch (TvBrowserException e1) {
+        // TODO Auto-generated catch block
+        e1.printStackTrace();
+      }
 		}
 		menu.add(new JSeparator());
 		// new channel group

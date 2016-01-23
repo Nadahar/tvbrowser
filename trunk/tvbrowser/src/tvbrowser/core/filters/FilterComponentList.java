@@ -436,7 +436,7 @@ public class FilterComponentList {
     store();
     //mComponentMap.remove(filterCompName.toUpperCase());
   }
-
+    
   public String[] getChannelFilterNames() {
     ArrayList<String> channelFilters = new ArrayList<String>();
     for (FilterComponent component : getAvailableFilterComponents()) {
