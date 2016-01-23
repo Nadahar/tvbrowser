@@ -778,13 +778,7 @@ public class FilterTree extends JTree implements DragGestureListener, DropTarget
               label.setForeground(UIManager.getColor("Tree.selectionForeground"));
             }
           }
-          
-          System.out.println(test.getFilter());
-          
-          if(test.getFilter() instanceof UserFilter) {
-            System.out.println(((UserFilter)test.getFilter()).containsNoneFilterComponent());
-          }
-          
+                    
           if(test.getFilter() instanceof UserFilter && ((UserFilter)test.getFilter()).containsNoneFilterComponent()) {
             label.setText("<html><span style=\"color:orange;text-decoration:underline;\">"+label.getText()+"</span></html>");
           }
