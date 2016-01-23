@@ -193,7 +193,7 @@ public class ChannelFilterComponent extends AbstractFilterComponent {
    * not available anymore. 
    */
   public boolean isBroken() {
-    return mSelectedChannels.length != mSelectedChannelsIdList.size();
+    return mSelectedChannels.length != mSelectedChannelsIdList.size() || isEmpty();
   }
   
   public boolean isEmpty() {
