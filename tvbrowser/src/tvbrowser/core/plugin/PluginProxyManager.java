@@ -49,6 +49,7 @@ import tvbrowser.core.TvDataUpdater;
 import tvbrowser.core.contextmenu.ContextMenuManager;
 import tvbrowser.core.filters.FilterList;
 import tvbrowser.core.filters.FilterManagerImpl;
+import tvbrowser.ui.filter.dlgs.FilterTreeModel;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvdataservice.MarkedProgramsMap;
 import tvdataservice.MutableChannelDayProgram;
@@ -633,6 +634,9 @@ public class PluginProxyManager {
         }
       }
     }
+    
+    MainFrame.getInstance().updateFilterMenu();
+    MainFrame.updateFilterPanelLabel();
   }
 
   /**
@@ -780,6 +784,9 @@ public class PluginProxyManager {
         };
       }.start();
     }
+    
+    MainFrame.getInstance().updateFilterMenu();
+    MainFrame.updateFilterPanelLabel();
   }
 
   /**

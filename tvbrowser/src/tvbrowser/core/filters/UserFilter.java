@@ -697,7 +697,9 @@ class ItemNode extends Node {
   
   @Override
   public boolean isBrokenPartially() {
-    boolean result = mRule instanceof AcceptNoneFilterComponent;
+    /* if the filter component is broken completely it's
+       also broken partially */
+    boolean result = isBrokenCompletely();
     
     if(!result) {
       try {
