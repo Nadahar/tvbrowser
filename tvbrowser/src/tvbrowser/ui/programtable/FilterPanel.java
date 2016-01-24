@@ -56,39 +56,64 @@ public class FilterPanel extends JPanel {
     mFilterLabel = new JLabel() {
       protected void paintComponent(Graphics g) {
         if(Persona.getInstance().getHeaderImage() != null) {
-
-          String info = mLocalizer.msg("filterActive", "Active Filter:") + ": ";
+          final String info = mLocalizer.msg("filterActive", "Active Filter:") + ": ";
           
-          Font boldFont = getFont().deriveFont(Font.BOLD);
+          final Font boldFont = getFont().deriveFont(Font.BOLD);
           
-          FontMetrics metrics = g.getFontMetrics(boldFont);
-          int textWidth = metrics.stringWidth(info);
-          int baseLine = getBaseline(getWidth(),getHeight());
+          final FontMetrics metrics = g.getFontMetrics(boldFont);
+          final int textWidth = metrics.stringWidth(info);
+          final int baseLine = getBaseline(getWidth(),getHeight());
         
+          final String text = mCurrentName.replaceAll("</*span.*?>|</*s>|</*u>|</*b>", "");
+          final boolean orange = mCurrentName.contains("color:orange");
       
-        if(!Persona.getInstance().getShadowColor().equals(Persona.getInstance().getTextColor())) {
-          g.setColor(Persona.getInstance().getShadowColor());
+          if(!Persona.getInstance().getShadowColor().equals(Persona.getInstance().getTextColor())) {
+            g.setColor(Persona.getInstance().getShadowColor());
+            
+            g.setFont(boldFont);
+            g.drawString(info,getIconTextGap()+getInsets().left+1,baseLine+1);
+            g.drawString(info,getIconTextGap()+getInsets().left+2,baseLine+2);
+            
+            g.setFont(getFont());
+            g.drawString(text,getIconTextGap()+getInsets().left+1+textWidth,baseLine+1);
+            g.drawString(text,getIconTextGap()+getInsets().left+2+textWidth,baseLine+2);
+          }
+          
+          g.setColor(Persona.getInstance().getTextColor());
           
           g.setFont(boldFont);
-          g.drawString(info,getIconTextGap()+getInsets().left+1,baseLine+1);
-          g.drawString(info,getIconTextGap()+getInsets().left+2,baseLine+2);
+          g.drawString(info,getIconTextGap()+getInsets().left,baseLine);
+          
+          if(orange) {
+            g.setColor(new Color(255,125,0));
+          }
+          
+          boolean strikeThrough = mCurrentName.contains("text-decoration:line-through") || mCurrentName.contains("<s>");
+          boolean underline = mCurrentName.contains("text-decoration:underline") || mCurrentName.contains("<u>");
+  
+          int x = getIconTextGap()+getInsets().left+textWidth;
           
           g.setFont(getFont());
-          g.drawString(mCurrentName,getIconTextGap()+getInsets().left+1+textWidth,baseLine+1);
-          g.drawString(mCurrentName,getIconTextGap()+getInsets().left+2+textWidth,baseLine+2);
+          g.drawString(text,x,baseLine);
+          
+          if(strikeThrough || underline) {
+            int textWidth2 = g.getFontMetrics(getFont()).stringWidth(text);
+            
+            int y = baseLine+1;
+            
+            if(strikeThrough) {
+              y = baseLine-baseLine/4;
+            }
+            
+            g.drawLine(x, y, x + textWidth2-getInsets().left-getInsets().right, y);
+          }
+          
+          g.setFont(getFont());
+          g.drawString(text,x,baseLine);
         }
-        
-        g.setColor(Persona.getInstance().getTextColor());
-        
-        g.setFont(boldFont);
-        g.drawString(info,getIconTextGap()+getInsets().left,baseLine);
-        
-        g.setFont(getFont());
-        g.drawString(mCurrentName,getIconTextGap()+getInsets().left+textWidth,baseLine);
-      }
-      else {
-        super.paintComponent(g);
-      }
+        else {
+          super.paintComponent(g);
+        }
       }
     };
     mFilterLabel.addKeyListener(keyListener);
@@ -120,8 +145,9 @@ public class FilterPanel extends JPanel {
     if (name.equals(mCurrentName)) {
       return;
     }
-    mCurrentName = name;
-    mFilterLabel.setText("<html><body><b>" + mLocalizer.msg("filterActive", "Active Filter:")+ ":</b> "+name+"</body></html>");
+    mCurrentName = name.replaceAll("</*html>", "");
+    
+    mFilterLabel.setText("<html><body><b>" + mLocalizer.msg("filterActive", "Active Filter:")+ ":</b> "+mCurrentName+"</body></html>");
   }
 
   /**
@@ -180,6 +206,4 @@ public class FilterPanel extends JPanel {
       }
     }
   }
-  
-
 }

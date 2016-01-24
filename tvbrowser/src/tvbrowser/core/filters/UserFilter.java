@@ -30,6 +30,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -463,17 +464,44 @@ public class UserFilter implements devplugin.ProgramFilter {
   }
   
   /**
-   * @return <code>true</code> if at least one contained channel filter
-   * contains not avaiable channels.
+   * @return <code>true</code> if all contained filter components
+   * are marked as broken.
    */
-  public boolean containsBrokenChannelFilterComponent() {
+  private boolean isBrokenCompletely() {
+    boolean result = true;
+    
+    if(mRoot != null) {
+      result = mRoot.isBrokenCompletely();
+    }
+    
+    return result;
+  }
+  
+  /**
+   * @return <code>true</code> if at least one contained filter
+   * component is marked as broken.
+   */
+  private boolean isBrokenPartially() {
     boolean result = false;
     
     if (mRoot != null) {
-      result = mRoot.containsBrokenChannelFilterComponent();
+      result = mRoot.isBrokenPartially();
     }
     
     return result; 
+  }
+  
+  public String getViewString() {
+    String result = mName;
+    
+    if(isBrokenCompletely()) {
+      result = "<html><span style=\"color:orange;text-decoration:line-through;\">"+result+"</span></html>";
+    }
+    else if(isBrokenPartially()) {
+      result = "<html><span style=\"color:orange;text-decoration:underline;\">"+result+"</span></html>";
+    }
+    
+    return result;
   }
   
   public void updateSingleChannelFilters(Channel[] channels) {
@@ -548,14 +576,30 @@ abstract class Node {
     return false;
   }
   
-  public boolean containsBrokenChannelFilterComponent() {
+  public boolean isBrokenCompletely() {
+    boolean result = true;
+    
+    final Iterator<Node> it = mNodes.iterator();
+    while (it.hasNext()) {
+      Node n = it.next();
+      if (!n.isBrokenCompletely()) {
+        result = false;
+        break;
+      }
+    }
+    
+    return result;
+  }
+  
+  public boolean isBrokenPartially() {
     boolean result = false;
     
     final Iterator<Node> it = mNodes.iterator();
     while (it.hasNext()) {
       Node n = it.next();
-      if (n.containsBrokenChannelFilterComponent()) {
-        return true;
+      if (n.isBrokenPartially()) {
+        result = true;
+        break;
       }
     }
     
@@ -652,9 +696,44 @@ class ItemNode extends Node {
   }
   
   @Override
-  public boolean containsBrokenChannelFilterComponent() {
-    return mRule instanceof AcceptNoneFilterComponent || (mRule instanceof ChannelFilterComponent && ((ChannelFilterComponent)mRule).isBroken());
+  public boolean isBrokenPartially() {
+    boolean result = mRule instanceof AcceptNoneFilterComponent;
+    
+    if(!result) {
+      try {
+        Method isBroken = mRule.getClass().getMethod("isBrokenPartially");
+        Object brokenResult = isBroken.invoke(mRule);
+        
+        if(brokenResult instanceof Boolean) {
+          result = ((Boolean)brokenResult).booleanValue();
+        }
+      } catch (Exception e) {
+        //e.printStackTrace();
+      }
+    }
+    
+    return result;
   }
+  
+  @Override
+  public boolean isBrokenCompletely() {
+    boolean result = mRule instanceof AcceptNoneFilterComponent;
+    
+    if(!result) {
+      try {
+        Method isBroken = mRule.getClass().getMethod("isBrokenCompletely");
+        Object brokenResult = isBroken.invoke(mRule);
+        
+        if(brokenResult instanceof Boolean) {
+          result = ((Boolean)brokenResult).booleanValue();
+        }
+      } catch (Exception e) {
+      //  e.printStackTrace();
+      }
+    }
+    
+    return result;
+  }  
   
   public void updateChannelFilters(Channel[] channels) {
     if(mRule instanceof SingleChannelFilterComponent) {

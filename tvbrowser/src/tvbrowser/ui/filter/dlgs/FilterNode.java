@@ -432,8 +432,8 @@ public class FilterNode extends DefaultMutableTreeNode {
               item.setFont(item.getFont().deriveFont(Font.BOLD));
             }
             
-            if(test.getFilter() instanceof UserFilter && ((UserFilter)test.getFilter()).containsBrokenChannelFilterComponent()) {
-              item.setText("<html><span style=\"color:orange;text-decoration:underline;\">"+item.getText()+"</span></html>");
+            if(test.getFilter() instanceof UserFilter) {
+              item.setText(((UserFilter)test.getFilter()).getViewString());
             }
           }
           else if(test.containsSeparator()) {

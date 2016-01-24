@@ -35,6 +35,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -64,7 +65,6 @@ import javax.swing.text.PlainDocument;
 
 import org.apache.commons.lang3.StringUtils;
 
-import tvbrowser.core.ChannelList;
 import tvbrowser.core.Settings;
 import tvbrowser.core.filters.FilterComponent;
 import tvbrowser.core.filters.FilterComponentList;
@@ -88,8 +88,6 @@ import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.factories.CC;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
-
-import devplugin.Channel;
 
 public class EditFilterDlg extends JDialog implements ActionListener, DocumentListener, CaretListener, WindowClosingIf, ListDropAction {
 
@@ -205,7 +203,7 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
     mFilterComponentListModel = new DefaultListModel();
     
     mFilterComponentList = new JList(mFilterComponentListModel);
-    mFilterComponentList.setCellRenderer(new DefaultListCellRenderer() {
+    mFilterComponentList.setCellRenderer(new DefaultListCellRenderer() {      
       public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
         JLabel label = (JLabel) super.getListCellRendererComponent(list,value,index,isSelected,cellHasFocus);
         
@@ -219,12 +217,7 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
             label.setText(label.getText() + " [" + item.getComponent().getDescription() + "]");
           }
           
-          if(item.getComponent() instanceof AcceptNoneFilterComponent || (item.getComponent() instanceof ChannelFilterComponent && ((ChannelFilterComponent)item.getComponent()).isEmpty())) {
-            label.setText("<html><span style=\"color:orange;\"><s>"+label.getText()+"</s></span></html>");
-          }
-          else if(item.getComponent() instanceof ChannelFilterComponent && ((ChannelFilterComponent)item.getComponent()).isBroken()) {
-            label.setText("<html><span style=\"color:orange;\"><u>"+label.getText()+"</u></span></html>");
-          }
+          label.setText(FilterComponentList.getLabelForComponent(item.getComponent(), label.getText()));
         }
         
         return label;
@@ -275,12 +268,7 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
           else {
             panel.add(label,CC.xy(item.getLevel()+1,1));
 
-            if(item.getComponent() instanceof AcceptNoneFilterComponent || (item.getComponent() instanceof ChannelFilterComponent && ((ChannelFilterComponent)item.getComponent()).isEmpty())) {
-              label.setText("<html><span style=\"color:orange;\"><s>"+label.getText()+"</s></span></html>");
-            }
-            else if(item.getComponent() instanceof ChannelFilterComponent && ((ChannelFilterComponent)item.getComponent()).isBroken()) {
-              label.setText("<html><span style=\"color:orange;\"><u>"+label.getText()+"</u></span></html>");
-            }
+            label.setText(FilterComponentList.getLabelForComponent(item.getComponent(), label.getText()));
           }
 
           if(index > 0) {
@@ -380,6 +368,7 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
     Settings.layoutWindow("editFilterDlg",this,getMinimumSize(),mParent);
     setVisible(true);
   }
+  
 
   private void updateBtns() {
     if (mFilterComponentList == null) {

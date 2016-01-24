@@ -779,8 +779,8 @@ public class FilterTree extends JTree implements DragGestureListener, DropTarget
             }
           }
                     
-          if(test.getFilter() instanceof UserFilter && ((UserFilter)test.getFilter()).containsBrokenChannelFilterComponent()) {
-            label.setText("<html><span style=\"color:orange;text-decoration:underline;\">"+label.getText()+"</span></html>");
+          if(test.getFilter() instanceof UserFilter) {
+            label.setText(((UserFilter)test.getFilter()).getViewString());
           }
         }
         else if(test.containsSeparator()) {
