@@ -291,7 +291,7 @@ public class FilterableProgramListPanel extends JPanel implements FilterChangeLi
   @Override
   public void filterAdded(ProgramFilter filter) {
     if(mType == TYPE_NAME_AND_PROGRAM_FILTER || mType == TYPE_PROGRAM_ONLY_FILTER) {
-      mProgramFilterBox.addItem(filter);
+      mProgramFilterBox.addItem(new WrapperFilter(filter));
     }
   }
 
