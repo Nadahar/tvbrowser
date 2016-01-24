@@ -34,6 +34,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -115,6 +116,16 @@ public class ProgramListPanel extends JPanel implements PersonaListener, FilterC
   private boolean mUpdateList;
   
   private long mLastAncestorRemoved;
+  
+  private static Class<?> mWrapperFilter;
+  
+  static {
+    try {
+      mWrapperFilter = Class.forName("util.ui.WrapperFilter");
+    } catch (ClassNotFoundException e) {
+      mWrapperFilter = null;
+    }
+  }
   
   public ProgramListPanel(final Channel selectedChannel, boolean showClose, int maxListSize) {
     mMaxListSize = maxListSize;
@@ -276,7 +287,7 @@ public class ProgramListPanel extends JPanel implements PersonaListener, FilterC
           boolean found = false;
           
           for(ProgramFilter filter : filterArr) {
-            if(filter.getName().equals(mFilterBox.getSelectedItem())) {
+            if(mFilterBox.getSelectedItem().equals(filter)) {
               mFilter = filter;
               
               if (mFilter != ProgramListPlugin.getInstance().getReceiveFilter()) {
@@ -534,19 +545,21 @@ public class ProgramListPanel extends JPanel implements PersonaListener, FilterC
       boolean found = false;
 
       for (int i = 0; i < mFilterBox.getItemCount(); i++) {
-        if (filter != null && filter.getName().equals(mFilterBox.getItemAt(i))) {
+        if (filter != null && mFilterBox.getItemAt(i).equals(filter)) {
           found = true;
           break;
         }
       }
 
       if (!found) {
-        mFilterBox.addItem(filter.getName());
+        final Object item = getItemForFilter(filter);
+        
+        mFilterBox.addItem(item);
 
         if ((receiveFilter == null && filter.getName().equals(ProgramListPlugin.getInstance().getSettings().getFilterName()))
             || (receiveFilter != null && filter.getName().equals(receiveFilter.getName()))) {
           mFilter = filter;
-          mFilterBox.setSelectedItem(filter.getName());
+          mFilterBox.setSelectedItem(item);
         }
       }
     }
@@ -555,7 +568,7 @@ public class ProgramListPanel extends JPanel implements PersonaListener, FilterC
       boolean found = false;
 
       for (ProgramFilter filter : filters) {
-        if (filter.getName().equals(mFilterBox.getItemAt(i))) {
+        if (mFilterBox.getItemAt(i).equals(filter)) {
           found = true;
           break;
         }
@@ -565,7 +578,6 @@ public class ProgramListPanel extends JPanel implements PersonaListener, FilterC
         mFilterBox.removeItemAt(i);
       }
     }
-
   }
   
   void fillDateBox() {
@@ -772,13 +784,15 @@ public class ProgramListPanel extends JPanel implements PersonaListener, FilterC
   
   synchronized void updateFilter(ProgramFilter filter) {
     if(mListThread == null || !mListThread.isAlive()) {
-      if(mFilterBox.getSelectedItem() != null && mFilterBox.getSelectedItem().toString().equals(filter.getName())) {
+      final Object selected = mFilterBox.getSelectedItem();
+      
+      if(selected != null && selected.equals(filter)) {
         mCurrentVisible = mList.getVisibleRect();
         mCurrentCount = mModel.getSize();
       }
       
       fillFilterBox();
-      mFilterBox.setSelectedItem(filter.getName());
+      mFilterBox.setSelectedItem(getItemForFilter(filter));
     }
   }
   
@@ -815,7 +829,7 @@ public class ProgramListPanel extends JPanel implements PersonaListener, FilterC
 
   @Override
   public void filterAdded(ProgramFilter filter) {
-    mFilterBox.addItem(filter.getName());
+    mFilterBox.addItem(getItemForFilter(filter));
   }
 
   @Override
@@ -823,18 +837,20 @@ public class ProgramListPanel extends JPanel implements PersonaListener, FilterC
 
   @Override
   public void filterRemoved(ProgramFilter filter) {
-    String selectedFilterName = (String)mFilterBox.getSelectedItem();
+    final Object selectedFilter = mFilterBox.getSelectedItem();
     
-    mFilterBox.removeItem(filter.getName());
+    mFilterBox.removeItem(getItemForFilter(filter));
     
-    if(selectedFilterName != null && selectedFilterName.equals(filter.getName())) {
+    if(selectedFilter != null && selectedFilter.equals(filter)) {
       fillProgramList();
     }
   }
 
   @Override
   public void filterTouched(ProgramFilter filter) {
-    if(mFilterBox.getSelectedItem() != null && mFilterBox.getSelectedItem().toString().equals(filter.getName())) {
+    final Object selected = mFilterBox.getSelectedItem();
+    
+    if(selected != null && selected.equals(filter)) {
       mCurrentSelection = mList.getSelectedValue();
       mCurrentVisible = mList.getVisibleRect();
       mCurrentCount = mModel.getSize();
@@ -898,5 +914,22 @@ public class ProgramListPanel extends JPanel implements PersonaListener, FilterC
     if(mChannelBox.getSelectedItem() == null || !mChannelBox.getSelectedItem().equals(ch)) {
       mChannelBox.setSelectedItem(ch);
     }
+  }
+  
+  private Object getItemForFilter(ProgramFilter filter) {
+    Object result = filter;
+    
+    if(mWrapperFilter != null) {
+      try {
+        Constructor<?> constructor = mWrapperFilter.getConstructor(ProgramFilter.class);
+        result = constructor.newInstance(filter);
+        
+      } catch (Exception e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+    }
+    
+    return result;
   }
 }
