@@ -81,14 +81,7 @@ public final class ChannelFilter implements ProgramFilter {
   
   @Override
   public String toString() {
-    if(mChannelFilterComponent.isEmpty()) {
-      return "<html><span style=\"color:orange;\"><s>"+getName()+"</s></span></html>";
-    }
-    else if(mChannelFilterComponent.isBroken()) {
-      return "<html><span style=\"color:orange;\"><u>"+getName()+"</u></span></html>";
-    }
-
-    return getName();
+    return FilterComponentList.getLabelForComponent(mChannelFilterComponent, getName());
   }
   
   /**

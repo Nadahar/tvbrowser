@@ -44,8 +44,8 @@ public final class WrapperFilter {
   public String toString() {
     String result = mFilter.toString();
     
-    if(mFilter instanceof UserFilter && ((UserFilter)mFilter).containsBrokenChannelFilterComponent()) {
-      result = "<html><span style=\"color:orange;\"><u>"+result+"</u></span></html>";
+    if(mFilter instanceof UserFilter) {
+      result = ((UserFilter)mFilter).getViewString();
     }
     
     return result;

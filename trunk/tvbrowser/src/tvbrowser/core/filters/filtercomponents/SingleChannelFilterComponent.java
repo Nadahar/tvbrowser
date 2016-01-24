@@ -155,4 +155,12 @@ public class SingleChannelFilterComponent implements FilterComponent {
   public boolean containsChannel(Channel ch) {
     return mChannel != null && mChannel.equals(ch);
   }
+  
+  public boolean isBrokenPartially() {
+    return isBrokenCompletely();
+  }
+  
+  public boolean isBrokenCompletely() {
+    return !isValidChannel();
+  }
 }

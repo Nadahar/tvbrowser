@@ -30,6 +30,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -448,5 +449,43 @@ public class FilterComponentList {
     channelFilters.toArray(sortedArray);
     Arrays.sort(sortedArray);
     return sortedArray;
+  }
+  
+  private static final int TYPE_BROKEN_FILTER_COMPONENT_NONE = 0;
+  private static final int TYPE_BROKEN_FILTER_COMPONENT_PARTLY = 1;
+  private static final int TYPE_BROKEN_FILTER_COMPONENT_COMPLETELY = 2;
+  
+  public static final String getLabelForComponent(FilterComponent component, String label) {
+    String result = component != null && label == null ? component.getName() : (label != null ? label : null);
+    int type = component instanceof AcceptNoneFilterComponent ? TYPE_BROKEN_FILTER_COMPONENT_COMPLETELY : TYPE_BROKEN_FILTER_COMPONENT_NONE;
+    
+    if(type == TYPE_BROKEN_FILTER_COMPONENT_NONE) {
+      try {
+        final Method isBrokenCompletely = component.getClass().getMethod("isBrokenCompletely");
+        Object brokenResult = isBrokenCompletely.invoke(component);
+        
+        if(brokenResult instanceof Boolean && ((Boolean)brokenResult).booleanValue()) {
+          type = TYPE_BROKEN_FILTER_COMPONENT_COMPLETELY;          
+        }
+        else {
+          final Method isBrokenPartially = component.getClass().getMethod("isBrokenPartially");
+          brokenResult = isBrokenPartially.invoke(component);
+          
+          if(brokenResult instanceof Boolean && ((Boolean)brokenResult).booleanValue()) {
+            type = TYPE_BROKEN_FILTER_COMPONENT_PARTLY;
+          }
+        }
+        
+      }catch(Exception e) {
+        //e.printStackTrace();
+      }
+    }
+    
+    switch(type) {
+      case TYPE_BROKEN_FILTER_COMPONENT_COMPLETELY: result = "<html><span style=\"color:orange;text-decoration:line-through\">"+result+"</span></html>";break;
+      case TYPE_BROKEN_FILTER_COMPONENT_PARTLY: result = "<html><span style=\"color:orange;text-decoration:underline\">"+result+"</span></html>";break;
+    }
+    
+    return result;
   }
 }

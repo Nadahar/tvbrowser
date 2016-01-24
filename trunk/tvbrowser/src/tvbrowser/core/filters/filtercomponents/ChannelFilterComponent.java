@@ -192,11 +192,11 @@ public class ChannelFilterComponent extends AbstractFilterComponent {
    * @return <code>true</code> if at least one previously selected channel is
    * not available anymore. 
    */
-  public boolean isBroken() {
-    return mSelectedChannels.length != mSelectedChannelsIdList.size() || isEmpty();
+  public boolean isBrokenPartially() {
+    return mSelectedChannels.length != mSelectedChannelsIdList.size() || isBrokenCompletely();
   }
   
-  public boolean isEmpty() {
+  public boolean isBrokenCompletely() {
     return mSelectedChannels.length == 0;
   }
 }
