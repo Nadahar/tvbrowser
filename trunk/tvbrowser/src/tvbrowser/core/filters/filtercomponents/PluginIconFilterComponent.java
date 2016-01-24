@@ -116,5 +116,8 @@ public class PluginIconFilterComponent extends AbstractFilterComponent {
   public int getVersion() {
     return 1;
   }
-
+  
+  public boolean isBrokenCompletely() {
+    return mPlugin == null || PluginProxyManager.getInstance().getActivatedPluginForId(mPlugin.getId()) == null;
+  }
 }

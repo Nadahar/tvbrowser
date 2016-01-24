@@ -130,5 +130,8 @@ public class PluginFilterComponent extends AbstractFilterComponent {
   public int getVersion() {
     return 2;
   }
-
+    
+  public boolean isBrokenCompletely() {
+    return mPluginId == null || PluginProxyManager.getInstance().getActivatedPluginForId(mPluginId) == null;
+  }
 }
