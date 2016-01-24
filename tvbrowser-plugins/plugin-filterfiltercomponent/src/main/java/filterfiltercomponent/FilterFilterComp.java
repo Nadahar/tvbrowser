@@ -21,6 +21,8 @@ import java.awt.BorderLayout;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -97,8 +99,38 @@ public class FilterFilterComp extends PluginsFilterComponent  {
     JLabel info = new JLabel(FilterFilterComponent.LOCALIZER.msg("settings.info", "Select filter to use for this component."));
     info.setAlignmentX(JLabel.LEFT_ALIGNMENT);
     
-    mFilterSelection = new JComboBox(Plugin.getPluginManager().getFilterManager().getAvailableFilters());
-    mFilterSelection.setSelectedItem(mFilter);
+    mFilterSelection = new JComboBox();
+    
+    final ProgramFilter[] filters = Plugin.getPluginManager().getFilterManager().getAvailableFilters();
+    
+    Class<?> wrapperFilterClass = null;
+    Constructor<?> wrapperFilterContructor = null;
+    
+    try {
+      wrapperFilterClass = Class.forName("util.ui.WrapperFilter");
+      wrapperFilterContructor = wrapperFilterClass.getConstructor(ProgramFilter.class);
+    } catch (Exception e) {
+      // e.printStackTrace();
+    }
+    
+    for(ProgramFilter filter : filters) {
+      if(wrapperFilterClass != null && wrapperFilterContructor != null) {
+        try {
+          Object item = wrapperFilterContructor.newInstance(filter);
+          
+          mFilterSelection.addItem(item);
+        } catch (Exception e) {
+        }
+      }
+      else {
+        mFilterSelection.addItem(filter);        
+      }
+      
+      if(mFilter != null && filter.equals(mFilter)) {
+        mFilterSelection.setSelectedIndex(mFilterSelection.getItemCount()-1);
+      }
+    }
+    
     mFilterSelection.setAlignmentX(JLabel.LEFT_ALIGNMENT);
     
     settings.add(info, BorderLayout.NORTH);
@@ -116,8 +148,65 @@ public class FilterFilterComp extends PluginsFilterComponent  {
   @Override
   public void saveSettings() {
     if(mFilterSelection != null) {
-      mFilter = (ProgramFilter)mFilterSelection.getSelectedItem();
+      Object item = mFilterSelection.getSelectedItem();
+      
+      if(!(item instanceof ProgramFilter)) {
+        try {
+          Method getFilter = item.getClass().getMethod("getFilter");
+          item = getFilter.invoke(item);
+        } catch (Exception e) {
+        }
+      }
+      
+      mFilter = (ProgramFilter)item;      
       mName = mFilter.getName();
     }
+  }
+ 
+  public boolean isBrokenPartially() {
+    boolean result = isBrokenCompletely();
+    
+    if(!result && mFilter != null) {
+      try {
+        Method isBrokenPartially = mFilter.getClass().getMethod("isBrokenPartially");
+        Object brokenResult = isBrokenPartially.invoke(mFilter);
+        
+        if(brokenResult instanceof Boolean) {
+          result = ((Boolean)brokenResult).booleanValue();
+        }
+      } catch (Exception e) {
+        //e.printStackTrace();
+      }
+    }
+    
+    return result;
+  }
+  
+  public boolean isBrokenCompletely() {
+    
+    boolean result = true;
+    
+    ProgramFilter[] available = Plugin.getPluginManager().getFilterManager().getAvailableFilters();
+    
+    for(ProgramFilter filter : available) {
+      if(filter.getName().equals(mName)) {
+        result = false;
+        
+        try {
+          Method isBrokenCompletely = filter.getClass().getMethod("isBrokenCompletely");
+          Object brokenResult = isBrokenCompletely.invoke(filter);
+            
+          if(brokenResult instanceof Boolean) {
+            result = ((Boolean)brokenResult).booleanValue();
+          }
+        } catch (Exception e) {
+            //e.printStackTrace();
+        }
+        
+        break;
+      }
+    }
+    
+    return result;
   }
 }

@@ -30,7 +30,7 @@ import devplugin.Version;
  */
 public class FilterFilterComponent extends Plugin {
   static final Localizer LOCALIZER = Localizer.getLocalizerFor(FilterFilterComponent.class);
-  private static final Version VERSION = new Version(1, 0, true);
+  private static final Version VERSION = new Version(1, 1, true);
   
   public static Version getVersion() {
     return VERSION;
