@@ -467,7 +467,7 @@ public class UserFilter implements devplugin.ProgramFilter {
    * @return <code>true</code> if all contained filter components
    * are marked as broken.
    */
-  private boolean isBrokenCompletely() {
+  public boolean isBrokenCompletely() {
     boolean result = true;
     
     if(mRoot != null) {
@@ -481,7 +481,7 @@ public class UserFilter implements devplugin.ProgramFilter {
    * @return <code>true</code> if at least one contained filter
    * component is marked as broken.
    */
-  private boolean isBrokenPartially() {
+  public boolean isBrokenPartially() {
     boolean result = false;
     
     if (mRoot != null) {
