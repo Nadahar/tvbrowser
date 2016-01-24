@@ -854,6 +854,7 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
     }
     FilterComponentList.getInstance().add(newRule);
     mFilterComponentListModel.addElement(new FilterItem(newRule,0));
+    mFilterConstruction.repaint();
     
     updateBtns();
   }
