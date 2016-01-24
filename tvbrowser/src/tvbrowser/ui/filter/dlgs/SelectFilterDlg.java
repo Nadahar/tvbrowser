@@ -271,6 +271,7 @@ public class SelectFilterDlg extends JDialog implements ActionListener, WindowCl
   }
 
   public void close() {
+    MainFrame.updateFilterPanelLabel();
     mFilterList.store();
     //FilterManagerImpl.getInstance().setCurrentFilter(FilterManagerImpl.getInstance().getCurrentFilter());
     setVisible(false);
