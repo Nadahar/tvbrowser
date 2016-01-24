@@ -17,9 +17,9 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  *
  * SVN information:
- *     $Date: 2011-03-26 17:33:19 +0100 (Sa, 26 Mrz 2011) $
- *   $Author: bananeweizen $
- * $Revision: 6970 $
+ *     $Date$
+ *   $Author$
+ * $Revision$
  */
 package util.ui;
 
