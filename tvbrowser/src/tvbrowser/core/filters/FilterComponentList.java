@@ -482,8 +482,8 @@ public class FilterComponentList {
     }
     
     switch(type) {
-      case TYPE_BROKEN_FILTER_COMPONENT_COMPLETELY: result = "<html><span style=\"color:orange;text-decoration:line-through\">"+result+"</span></html>";break;
-      case TYPE_BROKEN_FILTER_COMPONENT_PARTLY: result = "<html><span style=\"color:orange;text-decoration:underline\">"+result+"</span></html>";break;
+      case TYPE_BROKEN_FILTER_COMPONENT_COMPLETELY: result = UserFilter.getLabelForBrokenCompletely(result);break;
+      case TYPE_BROKEN_FILTER_COMPONENT_PARTLY: result = UserFilter.getLabelForBrokenPartially(result);break;
     }
     
     return result;

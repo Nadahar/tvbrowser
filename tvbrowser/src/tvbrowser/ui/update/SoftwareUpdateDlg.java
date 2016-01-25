@@ -281,7 +281,7 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
           selectedDataServices.add("EPGdonateData");
         }
         
-        if(country.equals(Locale.GERMANY.getCountry())) {
+        if(country.equals(Locale.GERMANY.getCountry()) || country.equals("CH") || Locale.getDefault().toString().equals("de_DE") || Locale.getDefault().toString().equals("de_CH")) {
           selectedDataServices.add("EPGpaidData");
         }
       }

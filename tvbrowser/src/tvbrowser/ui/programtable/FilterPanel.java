@@ -66,6 +66,7 @@ public class FilterPanel extends JPanel {
         
           final String text = mCurrentName.replaceAll("</*span.*?>|</*s>|</*u>|</*b>", "");
           final boolean orange = mCurrentName.contains("color:orange");
+          final boolean darkred = mCurrentName.contains("color:red");
       
           if(!Persona.getInstance().getShadowColor().equals(Persona.getInstance().getTextColor())) {
             g.setColor(Persona.getInstance().getShadowColor());
@@ -86,6 +87,9 @@ public class FilterPanel extends JPanel {
           
           if(orange) {
             g.setColor(new Color(255,125,0));
+          }
+          else if(darkred) {
+            g.setColor(Color.RED);
           }
           
           boolean strikeThrough = mCurrentName.contains("text-decoration:line-through") || mCurrentName.contains("<s>");
