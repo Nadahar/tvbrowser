@@ -604,7 +604,7 @@ abstract class Node {
     
     final Iterator<Node> it = mNodes.iterator();
     while (it.hasNext()) {
-      Node n = it.next();
+      final Node n = it.next();
       if (n.isBrokenPartially()) {
         result = true;
         break;
@@ -685,6 +685,16 @@ class NotNode extends Node {
 
   public boolean accept(devplugin.Program prog) {
     return !mNode.accept(prog);
+  }
+  
+  @Override
+  public boolean isBrokenPartially() {
+    return mNode.isBrokenPartially();
+  }
+  
+  @Override
+  public boolean isBrokenCompletely() {
+    return mNode.isBrokenCompletely(); 
   }
 }
 
