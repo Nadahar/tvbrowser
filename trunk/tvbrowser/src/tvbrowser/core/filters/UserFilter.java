@@ -100,7 +100,15 @@ public class UserFilter implements devplugin.ProgramFilter {
   private static Token mCurToken;
 
   private Node mRoot;
-
+  
+  public static final String getLabelForBrokenPartially(String label) {
+    return "<html><span style=\"color:orange;text-decoration:underline\">"+label+"</span></html>";
+  }
+  
+  public static final String getLabelForBrokenCompletely(String label) {
+    return "<html><span style=\"color:red;text-decoration:line-through\">"+label+"</span></html>";
+  }
+  
   public UserFilter(String name) {
     mName = name;
   }
@@ -495,10 +503,10 @@ public class UserFilter implements devplugin.ProgramFilter {
     String result = mName;
     
     if(isBrokenCompletely()) {
-      result = "<html><span style=\"color:orange;text-decoration:line-through;\">"+result+"</span></html>";
+      result = getLabelForBrokenCompletely(result);
     }
     else if(isBrokenPartially()) {
-      result = "<html><span style=\"color:orange;text-decoration:underline;\">"+result+"</span></html>";
+      result = getLabelForBrokenPartially(result);
     }
     
     return result;
