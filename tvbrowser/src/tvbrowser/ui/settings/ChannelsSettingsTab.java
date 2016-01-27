@@ -25,6 +25,8 @@
 package tvbrowser.ui.settings;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
@@ -62,6 +64,7 @@ import java.util.TimerTask;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -109,6 +112,7 @@ import tvbrowser.ui.settings.channel.ChannelListModel;
 import tvbrowser.ui.settings.channel.FilterItem;
 import tvbrowser.ui.settings.channel.FilteredChannelListCellRenderer;
 import tvbrowser.ui.settings.channel.MultiChannelConfigDlg;
+import tvbrowser.ui.settings.util.LineButton;
 import util.exc.TvBrowserException;
 import util.io.IOUtilities;
 import util.io.NetworkUtilities;
@@ -210,6 +214,9 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
 
   private JButton mRightButton;
   
+  private JButton mButtonAddSeparator;
+  private JButton mButtonDeleteSeparator;
+  
   private boolean mShowPlugins = (TvDataServiceProxyManager
   .getInstance().getDataServices().length > 1);
 
@@ -295,8 +302,44 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
         moveChannelsToLeft();
       }
     });
+    
+    mButtonAddSeparator = new LineButton();
+    mButtonAddSeparator.setToolTipText(mLocalizer.msg("addSeparator", "Add separator"));
+    mButtonAddSeparator.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        int index = mSubscribedChannels.getSelectedIndex()+1;
+        Object test = mSubscribedChannels.getSelectedValue();
+        
+        if(test instanceof Channel && ((Channel) test).getJointChannel() != null) {
+          index++;
+        }
+        
+        ((DefaultListModel)mSubscribedChannels.getModel()).insertElementAt(Channel.SEPARATOR,index);
+      }
+    });
+    
+    mButtonAddSeparator.setSize(TVBrowserIcons.SIZE_LARGE, TVBrowserIcons.SIZE_LARGE);
 
-    JPanel btnPanel = createButtonPn(mRightButton, mLeftButton);
+    mButtonDeleteSeparator = new JButton(TVBrowserIcons.delete(TVBrowserIcons.SIZE_LARGE));
+    mButtonAddSeparator.setToolTipText(mLocalizer.msg("deleteSeparator", "Delete selected separator"));
+    mButtonDeleteSeparator.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        int index = mSubscribedChannels.getSelectedIndex();
+        
+        ((DefaultListModel)mSubscribedChannels.getModel()).remove(index);
+        mButtonDeleteSeparator.setEnabled(false);
+        
+        if(index < mSubscribedChannels.getModel().getSize()) {
+          mSubscribedChannels.setSelectedIndex(index);
+        }
+      }
+    });
+    
+    mButtonDeleteSeparator.setEnabled(false);
+    
+    JPanel btnPanel = createButtonPn(mRightButton, mLeftButton, mButtonAddSeparator, mButtonDeleteSeparator);
     btnPanel.setBorder(BorderFactory.createEmptyBorder(0, Sizes
         .dialogUnitXAsPixel(3, btnPanel), 0, Sizes.dialogUnitXAsPixel(3,
         btnPanel)));
@@ -359,12 +402,17 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
     
     mSubscribedChannels.addListSelectionListener(new ListSelectionListener() {
       public void valueChanged(ListSelectionEvent e) {
-        if (mSubscribedChannels.getSelectedValues().length > 0 && !(mSubscribedChannels.getSelectedValue() instanceof DummyChannel)) {
+        if (mSubscribedChannels.getSelectedValues().length > 0 && !(mSubscribedChannels.getSelectedValue() instanceof DummyChannel) && !(mSubscribedChannels.getSelectedValue() instanceof String)) {
           configureChannels.setEnabled(true);
           setSortNumbers.setEnabled(true);
+          mButtonDeleteSeparator.setEnabled(false);
         } else {
           configureChannels.setEnabled(false);
           setSortNumbers.setEnabled(false);
+          
+          if(mSubscribedChannels.getSelectedValue() instanceof String) {
+            mButtonDeleteSeparator.setEnabled(true);
+          }
         }
       }
     });
@@ -1194,26 +1242,50 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
   private void saveSettingsInternal(boolean autoUpdate) {
     saveChannels(((DefaultListModel) mSubscribedChannels.getModel())
         .toArray(),autoUpdate);
+    MainFrame.getInstance().updateChannelChooser();
   }
   
   static void saveChannels(Object[] list, boolean autoUpdate) {
  // Convert the list into a Channel[] and fill channels
     ArrayList<String> groups = new ArrayList<String>();
-
-    Channel[] channelArr = new Channel[list.length];
+    ArrayList<Channel> channels = new ArrayList<Channel>();
+    ArrayList<String> separators = new ArrayList<String>();
+    
+    String lastChannelId = "";
+    
+    //Channel[] channelArr = new Channel[list.length];
     for (int i = 0; i < list.length; i++) {
-      channelArr[i] = (Channel) list[i];
-
-      if (!groups.contains(channelArr[i].getGroup().getId())) {
-        groups
-            .add(new StringBuilder(channelArr[i].getDataServiceId())
-                .append('.').append(channelArr[i].getGroup().getId())
-                .toString());
+      if(list[i] instanceof Channel) {
+        channels.add((Channel) list[i]);
+  
+        if (!groups.contains(channels.get(channels.size()-1).getGroup().getId())) {
+          groups
+              .add(new StringBuilder(channels.get(channels.size()-1).getDataServiceId())
+                  .append('.').append(channels.get(channels.size()-1).getGroup().getId())
+                  .toString());
+        }
+        
+        if(lastChannelId.endsWith(Channel.SEPARATOR)) {
+          separators.add(lastChannelId+";"+channels.get(channels.size()-1).getUniqueId());
+          lastChannelId = "";
+        }
+        
+        lastChannelId = channels.get(channels.size()-1).getUniqueId();
+      }
+      else if(list[i] instanceof String && !lastChannelId.endsWith(Channel.SEPARATOR)) {
+        lastChannelId += ";"+Channel.SEPARATOR;
       }
     }
+    
+    if(lastChannelId.endsWith(Channel.SEPARATOR)) {
+      separators.add(lastChannelId);
+    }
 
+    Channel[] channelArr = channels.toArray(new Channel[channels.size()]);
+    
     ChannelList.setSubscribeChannels(channelArr, autoUpdate);
     ChannelList.storeAllSettings();
+    Settings.propSubscribedChannelsSeparators.setStringArray(separators.toArray(new String[separators.size()]));
     Settings.propSubscribedChannels.setChannelArray(channelArr);
     Settings.propUsedChannelGroups.setStringArray(groups
         .toArray(new String[groups.size()]));
@@ -1274,8 +1346,24 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
       }
     }
 
+    String[] separatorArr = Settings.propSubscribedChannelsSeparators.getStringArray();
+    
+    Channel previousChannel = null;
+    int lastSeparatorIndex = 0;
+    
     for (Channel aSubscribedChannelArr : subscribedChannelArr) {
       if(aSubscribedChannelArr != null) {
+        for(int i = lastSeparatorIndex; i < separatorArr.length; i++) {
+          String separator = separatorArr[i];
+          
+          if(separator.endsWith(aSubscribedChannelArr.getUniqueId()) && 
+              previousChannel != null && separator.startsWith(previousChannel.getUniqueId()) ) {
+            ((DefaultListModel) mSubscribedChannels.getModel()).addElement(Channel.SEPARATOR);
+            lastSeparatorIndex = i+1;
+          }
+        }
+        
+        previousChannel = aSubscribedChannelArr;
         ((DefaultListModel) mSubscribedChannels.getModel())
             .addElement(aSubscribedChannelArr);
       }
@@ -1556,7 +1644,7 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
    */
   private void moveChannelsToLeft() {
     Object[] objects = UiUtilities.moveSelectedItems(mSubscribedChannels,
-        mAllChannels);
+        mAllChannels,String.class);
     for (Object object : objects) {
       mChannelListModel.unsubscribeChannel((Channel) object);
     }
@@ -1581,6 +1669,34 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
       moveChannelsToLeft();
     } else if (source.equals(mSubscribedChannels)
         && target.equals(mSubscribedChannels)) {
+      if(n > 0) {
+        Object test = mSubscribedChannels.getSelectedValue();
+        
+        if(test instanceof String) {
+          Object targetObject = mSubscribedChannels.getModel().getElementAt(n-1);
+          Object targetObject2 = mSubscribedChannels.getModel().getElementAt(n);
+          
+          if(targetObject instanceof Channel && ((Channel)targetObject).getJointChannel() != null 
+              && targetObject2 instanceof Channel && ((Channel)targetObject2).getBaseChannel() != null
+              && ((Channel)targetObject2).getBaseChannel().equals(targetObject)) {
+            Object[] values = mSubscribedChannels.getSelectedValues();
+            
+            boolean containsChannel = false;
+            
+            for(Object value : values) {
+              if(value instanceof Channel) {
+                containsChannel = true;
+                break;
+              }
+            }
+            
+            if(!containsChannel) {
+              n++;
+            }
+          }
+        }
+      }
+      
       UiUtilities.moveSelectedItems(target, n, true);
     } else if (source.equals(mAllChannels)
         && target.equals(mSubscribedChannels)) {

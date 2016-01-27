@@ -25,13 +25,16 @@
  */
 package tvbrowser.ui.settings.channel;
 
-import java.awt.Color;
 import java.awt.Component;
 
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.UIManager;
+import javax.swing.JPanel;
+import javax.swing.JSeparator;
+
+import com.jgoodies.forms.factories.CC;
+import com.jgoodies.forms.layout.FormLayout;
 
 import tvbrowser.core.ChannelList;
 import tvbrowser.core.DuplicateChannelNameCounter;
@@ -49,6 +52,8 @@ public class FilteredChannelListCellRenderer extends DefaultListCellRenderer {
   private ChannelFilter mFilter;
 
   private DuplicateChannelNameCounter mChannelCounter;
+  
+  private JPanel mSeparator;
 
   public FilteredChannelListCellRenderer(ChannelFilter filter) {
     mFilter = filter;
@@ -58,44 +63,62 @@ public class FilteredChannelListCellRenderer extends DefaultListCellRenderer {
       boolean cellHasFocus) {
     JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 
-    if (mChannel == null) {
-      mChannel = new ChannelLabel(true, true, false, false, false, true, true);
-    }
-
-    if (mChannelCounter == null) {
-      mChannelCounter = new DuplicateChannelNameCounter(ChannelList.getAvailableChannels());
-    }
-
-    mChannel.setShowCountry(mChannelCounter.isDuplicate((Channel)value));
-    mChannel.setShowService(mChannelCounter.isDuplicateIncludingCountry((Channel)value));
-    mChannel.setShowTimeLimitation(((Channel)value).isTimeLimited());
-
-    if (value instanceof Channel) {
-      mChannel.setChannel((Channel) value);
-      mChannel.setOpaque(isSelected);
-      mChannel.setBackground(label.getBackground());
-      mChannel.setForeground(label.getForeground());
-      mChannel.setEnabled(mFilter.accept((Channel)value),isSelected);
-      /*
-      if() {
-        Color disabledColor = UIManager.getColor("Label.disabledForeground");
-        
-        mChannel.setEnabled(true);
-        
-        if(isSelected) {
-          UIManager.put("Label.disabledForeground", list.getSelectionForeground());
+    if(value instanceof Channel) {
+      if (mChannel == null) {
+        mChannel = new ChannelLabel(true, true, false, false, false, true, true);
+      }
+  
+      if (mChannelCounter == null) {
+        mChannelCounter = new DuplicateChannelNameCounter(ChannelList.getAvailableChannels());
+      }
+  
+      mChannel.setShowCountry(mChannelCounter.isDuplicate((Channel)value));
+      mChannel.setShowService(mChannelCounter.isDuplicateIncludingCountry((Channel)value));
+      mChannel.setShowTimeLimitation(((Channel)value).isTimeLimited());
+  
+      if (value instanceof Channel) {
+        mChannel.setChannel((Channel) value);
+        mChannel.setOpaque(isSelected);
+        mChannel.setBackground(label.getBackground());
+        mChannel.setForeground(label.getForeground());
+        mChannel.setEnabled(mFilter.accept((Channel)value),isSelected);
+        /*
+        if() {
+          Color disabledColor = UIManager.getColor("Label.disabledForeground");
+          
+          mChannel.setEnabled(true);
+          
+          if(isSelected) {
+            UIManager.put("Label.disabledForeground", list.getSelectionForeground());
+          }
+          
+          mChannel.setEnabled(false);
+          UIManager.put("Label.disabledForeground", disabledColor);
         }
-        
-        mChannel.setEnabled(false);
-        UIManager.put("Label.disabledForeground", disabledColor);
+        else {
+          mChannel.setEnabled(true);
+        }
+        */
+        return mChannel;
+      }
+    }
+    else if(value instanceof String) {
+      if(mSeparator == null) {
+        mSeparator = new JPanel(new FormLayout("0dlu:grow","3dlu,default,3dlu"));
+        mSeparator.add(new JSeparator(JSeparator.HORIZONTAL), CC.xy(1, 2));
+        mSeparator.setBackground(list.getSelectionBackground());
+      }
+      
+      if(isSelected) {
+        mSeparator.setOpaque(true);
       }
       else {
-        mChannel.setEnabled(true);
+        mSeparator.setOpaque(false);
       }
-      */
-      return mChannel;
+      
+      return mSeparator;
     }
-
+    
     return label;
   }
   
