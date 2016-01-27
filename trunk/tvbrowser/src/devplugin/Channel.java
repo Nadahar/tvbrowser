@@ -54,6 +54,8 @@ import util.ui.TVBrowserIcons;
  * A class that defines a TV-Browser channel
  */
 public class Channel implements Comparable<Channel> {
+  public static final String SEPARATOR = "##SEPARATOR##";
+  
   /** The identifier for a channel that fits in no other category */
   public static final int CATEGORY_NONE = 0;
   /** The identifier for a channel that is in the category TV */

@@ -30,6 +30,11 @@ import java.awt.Component;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JSeparator;
+
+import com.jgoodies.forms.factories.CC;
+import com.jgoodies.forms.layout.FormLayout;
 
 import tvbrowser.core.ChannelList;
 import tvbrowser.core.DuplicateChannelNameCounter;
@@ -51,6 +56,8 @@ public class ChannelListCellRenderer extends DefaultListCellRenderer {
   private boolean mShowJointChannelInfo;
   private Channel[] mChannels;
 
+  private JPanel mSeparator;
+  
   public ChannelListCellRenderer() {
     this(true,false,false);
   }
@@ -117,48 +124,56 @@ public class ChannelListCellRenderer extends DefaultListCellRenderer {
     mShowCountry = showCountry;
     mChannels = channels;
     mShowJointChannelInfo = showJointChannelInfo;
+    mSeparator = new JPanel(new FormLayout("0dlu:grow","3dlu,default,3dlu"));
+    mSeparator.add(new JSeparator(JSeparator.HORIZONTAL), CC.xy(1, 2));
+    mSeparator.setOpaque(false);
   }
 
   public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
       boolean cellHasFocus) {
     JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 
-    if (mChannel == null) {
-      mChannel = new ChannelLabel(mChannelIconsVisible, mTextVisible,mDefaultValues, false, mShowJointChannelInfo, false);
-    }
-
-    if (mShowCountry) {
-      if (mChannelCounter == null) {
-        mChannelCounter = new DuplicateChannelNameCounter(ChannelList.getAvailableChannels());
+    if(value instanceof Channel) {
+      if (mChannel == null) {
+        mChannel = new ChannelLabel(mChannelIconsVisible, mTextVisible,mDefaultValues, false, mShowJointChannelInfo, false);
       }
-
-      if(value instanceof Channel) {
-        mChannel.setShowCountry(mChannelCounter.isDuplicate((Channel)value));
-        mChannel.setShowService(mChannelCounter.isDuplicateIncludingCountry((Channel)value));
-      }
-    }
-
-    if (value instanceof Channel) {
-      mChannel.setChannel((Channel) value);
-      mChannel.setOpaque(isSelected);
-      mChannel.setBackground(label.getBackground());
-      mChannel.setForeground(label.getForeground());
-
-      boolean found = (mChannels == null);
-      if (mChannels != null) {
-        for (Channel mChannel2 : mChannels) {
-          Channel channel = Channel.getChannelForChannel(mChannel2);
-          if (channel.equals(value)) {
-            found = true;
-            break;
-          }
+  
+      if (mShowCountry) {
+        if (mChannelCounter == null) {
+          mChannelCounter = new DuplicateChannelNameCounter(ChannelList.getAvailableChannels());
+        }
+  
+        if(value instanceof Channel) {
+          mChannel.setShowCountry(mChannelCounter.isDuplicate((Channel)value));
+          mChannel.setShowService(mChannelCounter.isDuplicateIncludingCountry((Channel)value));
         }
       }
-      mChannel.setEnabled(found);
-      
-      return mChannel;
+  
+      if (value instanceof Channel) {
+        mChannel.setChannel((Channel) value);
+        mChannel.setOpaque(isSelected);
+        mChannel.setBackground(label.getBackground());
+        mChannel.setForeground(label.getForeground());
+  
+        boolean found = (mChannels == null);
+        if (mChannels != null) {
+          for (Channel mChannel2 : mChannels) {
+            Channel channel = Channel.getChannelForChannel(mChannel2);
+            if (channel.equals(value)) {
+              found = true;
+              break;
+            }
+          }
+        }
+        mChannel.setEnabled(found);
+        
+        return mChannel;
+      }
     }
-
+    else if(value instanceof String) {
+      return mSeparator;
+    }
+    
     return label;
   }
   

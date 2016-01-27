@@ -555,6 +555,19 @@ public class UiUtilities {
    * @return Moved Elements
    */
   public static Object[] moveSelectedItems(JList fromList, JList toList) {
+    return moveSelectedItems(fromList,toList,null);
+  }
+  
+  /**
+   * Moves Selected Items from one List to another
+   *
+   * @param fromList
+   *          Move from this List
+   * @param toList
+   *          Move into this List
+   * @return Moved Elements
+   */
+  public static Object[] moveSelectedItems(JList fromList, JList toList, Class... typeRemoveOnly) {
     DefaultListModel fromModel = (DefaultListModel) fromList.getModel();
     DefaultListModel toModel = (DefaultListModel) toList.getModel();
 
@@ -584,10 +597,27 @@ public class UiUtilities {
       toList.setModel(new DefaultListModel());
     }
 
+    int moveCount = 0;
+    
     // move the elements
     for (int i = selection.length - 1; i >= 0; i--) {
       Object value = fromModel.remove(selection[i]);
-      toModel.add(targetPos, value);
+      
+      boolean move = true;
+      
+      if(typeRemoveOnly != null) {
+        for(Class exclude : typeRemoveOnly) {
+          if(exclude.equals(value.getClass())) {
+            move = false;
+            break;
+          }
+        }
+      }
+      
+      if(move) {
+        toModel.add(targetPos, value);
+        moveCount++;
+      }
     }
 
     if (selection.length >= 5) {
@@ -612,7 +642,7 @@ public class UiUtilities {
     }
 
     // change selection of the toList
-    toList.setSelectionInterval(targetPos, targetPos + selection.length - 1);
+    toList.setSelectionInterval(targetPos, targetPos + moveCount - 1);
 
     // ensure the selection is visible
     toList.ensureIndexIsVisible(toList.getMaxSelectionIndex());

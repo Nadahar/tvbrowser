@@ -1197,6 +1197,9 @@ public class Settings {
    */
   public static final ChannelArrayProperty propSubscribedChannels = new ChannelArrayProperty(
       mProp, "subscribedchannels", new Channel[0]);
+  
+  public static final StringArrayProperty propSubscribedChannelsSeparators =  new StringArrayProperty(
+      mProp, "subscribedChannelsSeparators", new String[0]);
 
   public static final ChoiceProperty propTableLayout = new ChoiceProperty(
       mProp, "table.layout", LAYOUT_OPTIMIZED_COMPACT_TIME_BLOCK, new String[] {

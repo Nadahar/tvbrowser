@@ -640,8 +640,23 @@ public class DefaultToolBarModel implements ToolBarModel, DateListener {
       popup = menu.getPopupMenu();
 
       Channel[] channels = Settings.propSubscribedChannels.getChannelArray();
+      int lastSeparatorIndex = 0;
+      String[] separatorArr = Settings.propSubscribedChannelsSeparators.getStringArray();
+      Channel previousChannel = null;
       
       for (int i = 0; i < channels.length; i++) {
+        for(int j = lastSeparatorIndex; j < separatorArr.length; j++) {
+          String separator = separatorArr[j];
+          
+          if(separator.endsWith(channels[i].getUniqueId()) && 
+              previousChannel != null && separator.startsWith(previousChannel.getUniqueId()) ) {
+            menu.addSeparator();
+            lastSeparatorIndex = j+1;
+          }
+        }
+        
+        previousChannel = channels[i];
+        
         menu.add(createChannelMenuItem(channels[i], btn));
         
         if(channels[i].getJointChannel() != null) {

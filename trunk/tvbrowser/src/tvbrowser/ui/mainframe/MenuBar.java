@@ -793,12 +793,29 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 	public void updateChannelItems() {
 		mGotoChannelMenu.removeAll();
 		Channel[] channels = ChannelList.getSubscribedChannels();
+		String[] separatorArr = Settings.propSubscribedChannelsSeparators.getStringArray();
+		
+		Channel previousChannel = null;
+		int lastSeparatorIndex = 0;
 		
     if(channels.length > 0) {
       mGotoChannelMenu.add(createChannelMenuItem(channels[0]));
+      previousChannel = channels[0];
     }
     
     for (int i = 1; i < channels.length; i++) {
+      for(int j = lastSeparatorIndex; j < separatorArr.length; j++) {
+        String separator = separatorArr[j];
+        
+        if(separator.endsWith(channels[i].getUniqueId()) && 
+            previousChannel != null && separator.startsWith(previousChannel.getUniqueId()) ) {
+          mGotoChannelMenu.addSeparator();
+          lastSeparatorIndex = j+1;
+        }
+      }
+      
+      previousChannel = channels[i];
+      
       if(channels[i-1].getJointChannel() == null || 
           !channels[i-1].getJointChannel().equals(channels[i])) {
         mGotoChannelMenu.add(createChannelMenuItem(channels[i]));
