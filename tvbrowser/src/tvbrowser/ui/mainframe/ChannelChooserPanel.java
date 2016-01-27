@@ -222,33 +222,53 @@ public class ChannelChooserPanel extends JPanel implements ListDropAction {
 
     // Convert the list into a Channel[] and fill channels
     ArrayList<Channel> tempList = new ArrayList<Channel>();
+    ArrayList<String> separators = new ArrayList<String>();
+    
+    String lastChannelId = "";
     
     for (int i = 0; i < list.length; i++) {
-      Channel joint = ((Channel)list[i]).getJointChannel();
-      
-      if(additional != null && joint != null && additional.equals(joint)) {
-        joint = null;
-      }
-      
-      if(i == pos) {
-        if(additional != null) {
-          tempList.add(additional);
+      if(list[i] instanceof Channel) {
+        Channel joint = ((Channel)list[i]).getJointChannel();
+        
+        if(additional != null && joint != null && additional.equals(joint)) {
+          joint = null;
         }
-        tempList.add((Channel)list[i]);
+        
+        if(i == pos) {
+          if(additional != null) {
+            tempList.add(additional);
+          }
+          tempList.add((Channel)list[i]);
+        }
+        else {
+          tempList.add((Channel)list[i]);
+        }
+        
+        if(joint != null) {
+          tempList.add(joint);
+        }
+        
+        if(lastChannelId.endsWith(Channel.SEPARATOR)) {
+          separators.add(lastChannelId+";"+tempList.get(tempList.size()-1).getUniqueId());
+          lastChannelId = "";
+        }
+        
+        lastChannelId = tempList.get(tempList.size()-1).getUniqueId();
       }
-      else {
-        tempList.add((Channel)list[i]);
+      else if(list[i] instanceof String && !lastChannelId.endsWith(Channel.SEPARATOR)) {
+        lastChannelId += ";"+Channel.SEPARATOR;
       }
-      
-      if(joint != null) {
-        tempList.add(joint);
-      }
+    }
+    
+    if(lastChannelId.endsWith(Channel.SEPARATOR)) {
+      separators.add(lastChannelId);
     }
     
     Channel[] channelArr = tempList.toArray(new Channel[tempList.size()]);
 
     ChannelList.setSubscribeChannels(channelArr);
     Settings.propSubscribedChannels.setChannelArray(channelArr);
+    Settings.propSubscribedChannelsSeparators.setStringArray(separators.toArray(new String[separators.size()]));
 
     if (!Settings.propTrayUseSpecialChannels.getBoolean()) {
       Channel[] tempArr = new Channel[channelArr.length > 10 ? 10 : channelArr.length];
