@@ -330,7 +330,8 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
           if(((e.getModifiersEx() & KeyEvent.ALT_DOWN_MASK) != KeyEvent.ALT_DOWN_MASK) &&
               ((e.getModifiersEx() & Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()) != 
               Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()) &&
-              ((e.getModifiersEx() & KeyEvent.CTRL_DOWN_MASK) != KeyEvent.CTRL_DOWN_MASK)) {
+              ((e.getModifiersEx() & KeyEvent.CTRL_DOWN_MASK) != KeyEvent.CTRL_DOWN_MASK) &&
+              ((e.getModifiersEx() & KeyEvent.META_DOWN_MASK) != KeyEvent.META_DOWN_MASK)) {
             if(Character.isLetterOrDigit(e.getKeyChar()) || e.getKeyCode() == KeyEvent.VK_SPACE) {
               mFindAsYouType.setText(String.valueOf(e.getKeyChar()));
             }
