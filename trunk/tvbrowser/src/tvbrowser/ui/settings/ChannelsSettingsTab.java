@@ -26,9 +26,21 @@ package tvbrowser.ui.settings;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.Graphics;
+import java.awt.Cursor;
 import java.awt.GridLayout;
 import java.awt.Window;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.Transferable;
+import java.awt.dnd.DnDConstants;
+import java.awt.dnd.DragGestureEvent;
+import java.awt.dnd.DragGestureListener;
+import java.awt.dnd.DragSource;
+import java.awt.dnd.DropTarget;
+import java.awt.dnd.DropTargetDragEvent;
+import java.awt.dnd.DropTargetDropEvent;
+import java.awt.dnd.DropTargetEvent;
+import java.awt.dnd.DropTargetListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
@@ -64,7 +76,6 @@ import java.util.TimerTask;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -80,6 +91,7 @@ import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingUtilities;
+import javax.swing.TransferHandler;
 import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
 import javax.swing.event.DocumentEvent;
@@ -94,8 +106,6 @@ import tvbrowser.core.ChannelList;
 import tvbrowser.core.DummyChannel;
 import tvbrowser.core.PluginLoader;
 import tvbrowser.core.Settings;
-import tvbrowser.core.filters.FilterComponentList;
-import tvbrowser.core.filters.FilterList;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.plugin.PluginManagerImpl;
 import tvbrowser.core.plugin.PluginProxy;
@@ -244,7 +254,7 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
    */
   public JPanel createSettingsPanel() {
     mChannelListModel = new ChannelListModel();
-    JPanel panel = new JPanel(new BorderLayout());
+    final JPanel panel = new JPanel(new BorderLayout());
 
     JPanel northPn = new JPanel(new GridLayout(1, 2));
     JPanel centerPn = new JPanel(new GridLayout(1, 2));
@@ -308,6 +318,7 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
     mButtonAddSeparator.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
+        System.out.println(e);
         int index = mSubscribedChannels.getSelectedIndex()+1;
         Object test = mSubscribedChannels.getSelectedValue();
         
@@ -320,9 +331,18 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
     });
     
     mButtonAddSeparator.setSize(TVBrowserIcons.SIZE_LARGE, TVBrowserIcons.SIZE_LARGE);
-
+    
+    (new DragSource()).createDefaultDragGestureRecognizer(mButtonAddSeparator,
+        DnDConstants.ACTION_MOVE, new DragGestureListener() {
+          @Override
+          public void dragGestureRecognized(DragGestureEvent dge) {            
+            dge.startDrag(null, new StringSelection(Channel.SEPARATOR));
+            dge.getComponent().dispatchEvent(new MouseEvent(dge.getComponent(), MouseEvent.MOUSE_EXITED, System.currentTimeMillis(), 0, 0, 0, 0, false, MouseEvent.NOBUTTON));
+          }
+        });
+    
     mButtonDeleteSeparator = new JButton(TVBrowserIcons.delete(TVBrowserIcons.SIZE_LARGE));
-    mButtonAddSeparator.setToolTipText(mLocalizer.msg("deleteSeparator", "Delete selected separator"));
+    mButtonDeleteSeparator.setToolTipText(mLocalizer.msg("deleteSeparator", "Delete selected separator"));
     mButtonDeleteSeparator.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
@@ -352,9 +372,9 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
     mSubscribedChannels = channelList.getList();
     mFilter = new ChannelFilter();
     mSubscribedChannels.setCellRenderer(new FilteredChannelListCellRenderer(mFilter));
-
+    
     // Register DnD on the lists.
-    mDnDHandler = new ListDragAndDropHandler(mAllChannels, mSubscribedChannels, this);
+    mDnDHandler = new ListDragAndDropHandler(mAllChannels, mSubscribedChannels, this, false, true);
     mDnDHandler.setPaintCueLine(false, true);
 
     // Register the listener for DnD on the lists.
@@ -362,7 +382,7 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
         mDnDHandler);
     mSubscribedChannelListener = new DragAndDropMouseListener(
         mSubscribedChannels, mAllChannels, this, mDnDHandler);
-
+    
     restoreForPopup();
     
     mImExportChannels = new JButton(mLocalizer.msg("imExportChannels", "Export/import channels"));
@@ -1646,7 +1666,9 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
     Object[] objects = UiUtilities.moveSelectedItems(mSubscribedChannels,
         mAllChannels,String.class);
     for (Object object : objects) {
-      mChannelListModel.unsubscribeChannel((Channel) object);
+      if(object instanceof Channel) {
+        mChannelListModel.unsubscribeChannel((Channel) object);
+      }
     }
     mLeftButton.setEnabled(mSubscribedChannels.getModel().getSize() > 0);
     fillAvailableChannelsListBox();
@@ -1674,7 +1696,7 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
         
         if(test instanceof String) {
           Object targetObject = mSubscribedChannels.getModel().getElementAt(n-1);
-          Object targetObject2 = mSubscribedChannels.getModel().getElementAt(n);
+          Object targetObject2 = n < mSubscribedChannels.getModel().getSize()-1 ? mSubscribedChannels.getModel().getElementAt(n) : null;
           
           if(targetObject instanceof Channel && ((Channel)targetObject).getJointChannel() != null 
               && targetObject2 instanceof Channel && ((Channel)targetObject2).getBaseChannel() != null
