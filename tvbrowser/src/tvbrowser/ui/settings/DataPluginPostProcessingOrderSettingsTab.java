@@ -80,7 +80,7 @@ public class DataPluginPostProcessingOrderSettingsTab implements SettingsTab {
     pb.addRow("default",false);
     pb.add(UiUtilities.createHelpTextArea(LOCALIZER.msg("help", "The order set here is used to defines the priority every plugin has to post process and change the updated data. The plugin at the top of this is called last to post process to give it the chance to be the last to change data.")), CC.xy(3, pb.getRowCount()));
     pb.addRow("3dlu",false);
-    pb.addRow("fill:300dlu:grow",false);
+    pb.addRow("fill:100dlu:grow",false);
     pb.add(mSortablePluginList, CC.xy(3, pb.getRowCount()));
     
     return pb.getPanel();
