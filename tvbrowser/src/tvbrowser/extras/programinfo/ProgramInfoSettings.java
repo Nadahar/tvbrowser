@@ -316,7 +316,7 @@ class ProgramInfoSettings {
       }
     }
     
-    final String[] knownIds = getProperty(KEY_FIELD_KNOWN_ORDER, defaultOrder.toString()).trim().split(";");
+    final String[] knownIds = getProperty(KEY_FIELD_KNOWN_ORDER, getProperty(KEY_FIELD_ORDER, defaultOrder.toString())).trim().split(";");
     
     for(Object orderDefault : defaultOrderArr) {
       boolean found = false;
