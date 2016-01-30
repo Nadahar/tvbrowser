@@ -40,6 +40,9 @@ import util.exc.TvBrowserException;
  * @author Til Schneider, www.murfman.de
  */
 public class RegexSearcher extends AbstractSearcher {
+  public static final int TYPE_EXACT = 0;
+  public static final int TYPE_KEYWORD = 1;
+  public static final int TYPE_WHOLE_TERM = 2;
 
   /** The regex pattern. Is null if the pattern would match everything. */
   private Pattern mPattern;
@@ -130,8 +133,7 @@ public class RegexSearcher extends AbstractSearcher {
 
     return pattern;
   }
-
-
+  
   /**
    * Creates a regex from a search text.
    * <p>
@@ -139,13 +141,14 @@ public class RegexSearcher extends AbstractSearcher {
    * ignore differences in whitespace.
    *
    * @param searchText The search text to create a regex for.
-   * @param matchKeyword Specifies whether the regex should match a keyword
-   *        (= substring). If false the returned regex will only match if the
-   *        checked String matches exactly
+   * @param type Value from:
+   *            {@link #TYPE_EXACT} To match only the exact regex.
+   *            {@link #TYPE_KEYWORD} To match a keyword (= substring).
+   *            {@link #TYPE_WHOLE_TERM} To match a whole term.
    *
    * @return The search text as regular expression
-   */
-  public static String searchTextToRegex(String searchText, boolean matchKeyword) {
+   */  
+  public static String searchTextToRegex(String searchText, int type) {
     // TODO: To avoid that the a search pattern matches everything (which takes
     //       a long time and may mess everything up), we return an empty String
     //       if the search text is empty.
@@ -163,11 +166,13 @@ public class RegexSearcher extends AbstractSearcher {
     //       result in an syntax error)
     String regex = "\\Q" + searchText.replaceAll("\\s+", "\\\\E\\\\s+\\\\Q") + "\\E";
 
-    // Add '.*' to beginning an end to match keywords
-    if (matchKeyword) {
-      regex = ".*" + regex + ".*";
+    switch(type) {
+      // Add '.*' to beginning an end to match keywords
+      case TYPE_KEYWORD: regex = ".*" + regex + ".*";break;
+      // Match only terms with word boundaries
+      case TYPE_WHOLE_TERM: regex = ".*(?!-|\\B|\\+)" + regex + "(?!-|\\B|\\+).*";break;
     }
-
+    
     return regex;
   }
 
