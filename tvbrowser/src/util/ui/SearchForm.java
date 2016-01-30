@@ -55,7 +55,7 @@ import tvbrowser.core.Settings;
 import com.jgoodies.forms.builder.ButtonBarBuilder;
 import com.jgoodies.forms.builder.DefaultFormBuilder;
 import com.jgoodies.forms.builder.PanelBuilder;
-import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.factories.CC;
 import com.jgoodies.forms.layout.FormLayout;
 
 import devplugin.PluginManager;
@@ -110,6 +110,7 @@ public class SearchForm extends JPanel {
   private JRadioButton mSearcherTypeKeywordRB;
   private JRadioButton mSearcherTypeRegexRB;
   private JRadioButton mSearcherTypeBooleanRB;
+  private JRadioButton mSearcherTypeWholeTermRB;
   private JCheckBox mCaseSensitiveChB;
 
   private ProgramFieldType[] mUserDefinedFieldTypeArr;
@@ -157,19 +158,16 @@ public class SearchForm extends JPanel {
   public SearchForm(boolean showInputfield, boolean showHistory, boolean showTimeSelection, int layout, final boolean showDefaultSelection) {
     super();
 
-    FormLayout layoutTop = new FormLayout("pref, 3dlu, fill:10dlu:grow", "");
-    FormLayout layoutSearchIn = new FormLayout("3dlu, pref:grow","pref, 3dlu, pref, pref, pref");
-    FormLayout layoutOptions = new FormLayout("3dlu, pref, fill:pref:grow","pref, 3dlu, pref, pref, pref, pref, pref, 3dlu, pref");
+    final FormLayout layoutTop = new FormLayout("default, 3dlu, fill:10dlu:grow", "");
+    final FormLayout layoutSearchIn = new FormLayout("3dlu, default:grow","default, 3dlu, default, default, default");
+    final FormLayout layoutOptions = new FormLayout("3dlu, default, fill:default:grow","default, 3dlu, default, default, default, default, default, default, 3dlu, default");
 
-    JPanel topPanel = new JPanel(layoutTop);
-    PanelBuilder searchInPanel = new PanelBuilder(layoutSearchIn);
-    PanelBuilder optionsPanel = new PanelBuilder(layoutOptions);
+    final JPanel topPanel = new JPanel(layoutTop);
+    final PanelBuilder searchInPanel = new PanelBuilder(layoutSearchIn);
+    final PanelBuilder optionsPanel = new PanelBuilder(layoutOptions);
 
-    DefaultFormBuilder topBuilder = new DefaultFormBuilder(layoutTop, topPanel);
-
-    CellConstraints cc = new CellConstraints();
-
-
+    final DefaultFormBuilder topBuilder = new DefaultFormBuilder(layoutTop, topPanel);
+    
     ButtonGroup bg;
 
     if (showInputfield) {
@@ -204,9 +202,9 @@ public class SearchForm extends JPanel {
     bg = new ButtonGroup();
     String msg;
 
-    searchInPanel.addSeparator(mLocalizer.msg("searchIn", "Search in"), cc.xyw(1,1,2));
+    searchInPanel.addSeparator(mLocalizer.msg("searchIn", "Search in"), CC.xyw(1,1,2));
 
-    ActionListener updateEnabledListener = new ActionListener() {
+    final ActionListener updateEnabledListener = new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
         updateEnabled();
       }
@@ -216,13 +214,13 @@ public class SearchForm extends JPanel {
     mSearchTitleRB.setSelected(true);
     mSearchTitleRB.addActionListener(updateEnabledListener);
     bg.add(mSearchTitleRB);
-    searchInPanel.add(mSearchTitleRB, cc.xy(2,3));
+    searchInPanel.add(mSearchTitleRB, CC.xy(2,3));
 
     msg = mLocalizer.msg("allFields", "All fields");
     mSearchAllRB = new JRadioButton(msg);
     mSearchAllRB.addActionListener(updateEnabledListener);
     bg.add(mSearchAllRB);
-    searchInPanel.add(mSearchAllRB, cc.xy(2,4));
+    searchInPanel.add(mSearchAllRB, CC.xy(2,4));
 
     mSearchUserDefinedRB = new JRadioButton(mLocalizer.msg("certainFields", "Certain Fields"));
     mSearchUserDefinedRB.addActionListener(updateEnabledListener);
@@ -236,38 +234,42 @@ public class SearchForm extends JPanel {
     });
 
     JPanel panel = new JPanel(new FormLayout("pref,1dlu:grow,pref","pref"));
-    panel.add(mSearchUserDefinedRB, cc.xy(1,1));
-    panel.add(mChangeSearchFieldsBt, cc.xy(3,1));
-    searchInPanel.add(panel, cc.xy(2,5));
+    panel.add(mSearchUserDefinedRB, CC.xy(1,1));
+    panel.add(mChangeSearchFieldsBt, CC.xy(3,1));
+    searchInPanel.add(panel, CC.xy(2,5));
 
-    optionsPanel.addSeparator(Localizer.getLocalization(Localizer.I18N_OPTIONS), cc.xyw(1,1,3));
+    optionsPanel.addSeparator(Localizer.getLocalization(Localizer.I18N_OPTIONS), CC.xyw(1,1,3));
 
     mCaseSensitiveChB = new JCheckBox(mLocalizer.msg("caseSensitive", "Case sensitive"));
-    optionsPanel.add(mCaseSensitiveChB, cc.xy(2,3));
+    optionsPanel.add(mCaseSensitiveChB, CC.xy(2,3));
 
     bg = new ButtonGroup();
     mSearcherTypeExactlyRB = new JRadioButton(mLocalizer.msg("matchExactly", "Match exactly"));
     bg.add(mSearcherTypeExactlyRB);
-    optionsPanel.add(mSearcherTypeExactlyRB, cc.xy(2,4));
-
+    optionsPanel.add(mSearcherTypeExactlyRB, CC.xy(2,4));
+    
+    mSearcherTypeWholeTermRB = new JRadioButton(mLocalizer.msg("wholeTerm", "Whole term"));
+    bg.add(mSearcherTypeWholeTermRB);
+    optionsPanel.add(mSearcherTypeWholeTermRB, CC.xy(2,5));
+    
     mSearcherTypeKeywordRB = new JRadioButton(mLocalizer.msg("matchSubstring", "Term is a keyword"));
     mSearcherTypeKeywordRB.setSelected(true);
     bg.add(mSearcherTypeKeywordRB);
-    optionsPanel.add(mSearcherTypeKeywordRB, cc.xy(2,5));
-
+    optionsPanel.add(mSearcherTypeKeywordRB, CC.xy(2,6));
+    
     mSearcherTypeBooleanRB = new JRadioButton(mLocalizer.msg("matchBoolean", "Term is a boolean (with AND, OR, a.s.o.)"));
     bg.add(mSearcherTypeBooleanRB);
-    optionsPanel.add(mSearcherTypeBooleanRB, cc.xy(2,6));
+    optionsPanel.add(mSearcherTypeBooleanRB, CC.xy(2,7));
 
     mSearcherTypeRegexRB = new JRadioButton(mLocalizer.msg("matchRegex", "Term is a regular expression"));
     bg.add(mSearcherTypeRegexRB);
-    optionsPanel.add(mSearcherTypeRegexRB, cc.xy(2,7));
+    optionsPanel.add(mSearcherTypeRegexRB, CC.xy(2,8));
 
-    LinkButton b = new LinkButton(
+    final LinkButton b = new LinkButton(
             "("+mLocalizer.msg("regExHelp","Help for regular expressions")+")",
             mLocalizer.msg("regExUrl","http://wiki.tvbrowser.org/index.php/Regul%C3%A4re_Ausdr%C3%BCcke"));
     b.setHorizontalAlignment(SwingConstants.CENTER);
-    optionsPanel.add(b, cc.xy(2,9));
+    optionsPanel.add(b, CC.xy(2,10));
 
 
     // Set the default settings
@@ -277,15 +279,15 @@ public class SearchForm extends JPanel {
 
     if (layout == LAYOUT_HORIZONTAL) {
       setLayout(new FormLayout("pref:grow, 3dlu, pref:grow","pref, 3dlu, top:pref"));
-      add(topPanel, cc.xyw(1,1, 3));
-      add(searchInPanel.getPanel(), cc.xy(1,3));
-      add(optionsPanel.getPanel(), cc.xy(3,3));
+      add(topPanel, CC.xyw(1,1, 3));
+      add(searchInPanel.getPanel(), CC.xy(1,3));
+      add(optionsPanel.getPanel(), CC.xy(3,3));
     }
     else if (layout == LAYOUT_VERTICAL) {
       setLayout(new FormLayout("pref:grow", "pref, 3dlu, pref, 3dlu, pref"));
-      add(topPanel, cc.xy(1,1));
-      add(searchInPanel.getPanel(), cc.xy(1,3));
-      add(optionsPanel.getPanel(), cc.xy(1,5));
+      add(topPanel, CC.xy(1,1));
+      add(searchInPanel.getPanel(), CC.xy(1,3));
+      add(optionsPanel.getPanel(), CC.xy(1,5));
     }
     else {
       throw new IllegalArgumentException("invalid layout type: "+layout);
@@ -393,13 +395,15 @@ public class SearchForm extends JPanel {
     mUserDefaultFieldTypeArr = settings.getUserDefaultFieldTypes();
 
     switch (settings.getSearcherType()) {
-      case PluginManager.SEARCHER_TYPE_EXACTLY:
+      case PluginManager.TYPE_SEARCHER_EXACTLY:
         mSearcherTypeExactlyRB.setSelected(true); break;
-      case PluginManager.SEARCHER_TYPE_KEYWORD:
+      case PluginManager.TYPE_SEARCHER_WHOLE_TERM:
+        mSearcherTypeWholeTermRB.setSelected(true); break;
+      case PluginManager.TYPE_SEARCHER_KEYWORD:
         mSearcherTypeKeywordRB.setSelected(true); break;
-      case PluginManager.SEARCHER_TYPE_REGULAR_EXPRESSION:
+      case PluginManager.TYPE_SEARCHER_REGULAR_EXPRESSION:
         mSearcherTypeRegexRB.setSelected(true); break;
-      case PluginManager.SEARCHER_TYPE_BOOLEAN:
+      case PluginManager.TYPE_SEARCHER_BOOLEAN:
         mSearcherTypeBooleanRB.setSelected(true); break;
     }
 
@@ -431,14 +435,17 @@ public class SearchForm extends JPanel {
 
     int searcherType;
     if (mSearcherTypeExactlyRB.isSelected()) {
-      searcherType = PluginManager.SEARCHER_TYPE_EXACTLY;
+      searcherType = PluginManager.TYPE_SEARCHER_EXACTLY;
+    } else if (mSearcherTypeWholeTermRB.isSelected()) {
+      searcherType = PluginManager.TYPE_SEARCHER_WHOLE_TERM;
     } else if (mSearcherTypeKeywordRB.isSelected()) {
-      searcherType = PluginManager.SEARCHER_TYPE_KEYWORD;
+      searcherType = PluginManager.TYPE_SEARCHER_KEYWORD;
     } else if (mSearcherTypeRegexRB.isSelected()) {
-      searcherType = PluginManager.SEARCHER_TYPE_REGULAR_EXPRESSION;
+      searcherType = PluginManager.TYPE_SEARCHER_REGULAR_EXPRESSION;
     } else {
-      searcherType = PluginManager.SEARCHER_TYPE_BOOLEAN;
+      searcherType = PluginManager.TYPE_SEARCHER_BOOLEAN;
     }
+    
     settings.setSearcherType(searcherType);
 
     settings.setCaseSensitive(mCaseSensitiveChB.isSelected());

@@ -92,7 +92,7 @@ public class SearchFormSettings {
   public SearchFormSettings(String searchText) {
     mSearchText = searchText;
     mSearchIn = SEARCH_IN_TITLE;
-    mSearcherType = PluginManager.SEARCHER_TYPE_KEYWORD;
+    mSearcherType = PluginManager.TYPE_SEARCHER_KEYWORD;
     mCaseSensitive = false;
     mNrDays=14;
   }

@@ -34,7 +34,6 @@ import javax.swing.JPopupMenu;
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import util.exc.TvBrowserException;
 import util.program.AbstractPluginProgramFormating;
-import util.programmouseevent.ProgramMouseEventHandler;
 
 /**
  * The PluginManager provides some useful methods for a plugin.
@@ -43,16 +42,30 @@ import util.programmouseevent.ProgramMouseEventHandler;
  * @author Martin Oberhauser
  */
 public interface PluginManager {
-
   /** Specifies, that the search term has to match exactly. */
-  public static final int SEARCHER_TYPE_EXACTLY = 1;
+  public static final int TYPE_SEARCHER_EXACTLY = 1;
   /** Specifies, that the search term is a keyword (= substring). */
-  public static final int SEARCHER_TYPE_KEYWORD = 2;
+  public static final int TYPE_SEARCHER_KEYWORD = 2;
   /** Specifies, that the search term is a regular expression. */
-  public static final int SEARCHER_TYPE_REGULAR_EXPRESSION = 3;
+  public static final int TYPE_SEARCHER_REGULAR_EXPRESSION = 3;
   /** Specifies, that the search term is a boolean expression. */
-  public static final int SEARCHER_TYPE_BOOLEAN = 4;
+  public static final int TYPE_SEARCHER_BOOLEAN = 4;
+  /** Specifies, that the search term is a whole term
+   * (word boundaries are taken into account). */
+  public static final int TYPE_SEARCHER_WHOLE_TERM = 5;
 
+  /** Specifies, that the search term has to match exactly. 
+   * @deprecated sine 3.4.4 use {@link #TYPE_SEARCHER_EXACTLY} instead */
+  public static final int SEARCHER_TYPE_EXACTLY = TYPE_SEARCHER_EXACTLY;
+  /** Specifies, that the search term is a keyword (= substring). 
+   * @deprecated sine 3.4.4 use {@link #TYPE_SEARCHER_KEYWORD} instead*/
+  public static final int SEARCHER_TYPE_KEYWORD = TYPE_SEARCHER_KEYWORD;
+  /** Specifies, that the search term is a regular expression. 
+   * @deprecated sine 3.4.4 use {@link #TYPE_SEARCHER_REGULAR_EXPRESSION} instead*/
+  public static final int SEARCHER_TYPE_REGULAR_EXPRESSION = TYPE_SEARCHER_REGULAR_EXPRESSION;
+  /** Specifies, that the search term is a boolean expression. 
+   * @deprecated sine 3.4.4 use {@link #TYPE_SEARCHER_BOOLEAN} instead*/
+  public static final int SEARCHER_TYPE_BOOLEAN = TYPE_SEARCHER_BOOLEAN;
 
   /**
    * Gets a program.

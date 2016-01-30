@@ -529,18 +529,22 @@ public class PluginManagerImpl implements PluginManager {
       throws TvBrowserException
   {
     switch(type) {
-      case SEARCHER_TYPE_EXACTLY: {
-        String regex = RegexSearcher.searchTextToRegex(searchTerm, false);
+      case TYPE_SEARCHER_EXACTLY: {
+        String regex = RegexSearcher.searchTextToRegex(searchTerm, RegexSearcher.TYPE_EXACT);
         return new RegexSearcher(regex, caseSensitive, searchTerm);
       }
-      case SEARCHER_TYPE_KEYWORD: {
+      case TYPE_SEARCHER_WHOLE_TERM: {
+        String regex = RegexSearcher.searchTextToRegex(searchTerm, RegexSearcher.TYPE_WHOLE_TERM);
+        return new RegexSearcher(regex, caseSensitive, searchTerm);
+      }
+      case TYPE_SEARCHER_KEYWORD: {
         searchTerm = searchTerm.trim();
-        String regex = RegexSearcher.searchTextToRegex(searchTerm, true);
+        String regex = RegexSearcher.searchTextToRegex(searchTerm, RegexSearcher.TYPE_KEYWORD);
         return new RegexSearcher(regex, caseSensitive, searchTerm);
       }
-      case SEARCHER_TYPE_REGULAR_EXPRESSION:
+      case TYPE_SEARCHER_REGULAR_EXPRESSION:
         return new RegexSearcher(searchTerm, caseSensitive);
-      case SEARCHER_TYPE_BOOLEAN:
+      case TYPE_SEARCHER_BOOLEAN:
         try {
           return new BooleanSearcher(searchTerm, caseSensitive);
         }catch (ParserException e) {
