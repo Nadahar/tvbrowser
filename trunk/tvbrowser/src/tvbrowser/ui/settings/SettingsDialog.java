@@ -396,7 +396,7 @@ public class SettingsDialog implements WindowClosingIf {
         SettingsItem.PROGRAMTABLELOOK));
     graphicalSettings.add(new SettingNode(
         new ProgramPanelSettingsTab(), SettingsItem.PROGRAMPANELLOOK));
-    graphicalSettings.add(new SettingNode(new ChannelIconAndNameSettingsTab()));
+    graphicalSettings.add(new SettingNode(new ChannelIconAndNameSettingsTab(this)));
     graphicalSettings.add(new SettingNode(new MarkingsSettingsTab(),
         SettingsItem.PROGRAMPANELMARKING));
     graphicalSettings.add(new SettingNode(new FontsSettingsTab()));
