@@ -50,7 +50,7 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
 
   private static final Logger mLog = Logger.getLogger(SweDBTvDataService.class.getName());
 
-  private static final Version VERSION = new Version(3,03);
+  private static final Version VERSION = new Version(3,03,1);
 
   private File mWorkingDirectory;
 
@@ -79,8 +79,8 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
   public SweDBTvDataService() {
     mHasRightToDownloadIcons = false;
     mChannelGroups = new HashMap<String, DataHydraChannelGroup>();
-    addGroup(new DataHydraChannelGroup("SweDB", "SweDB.se", "(c) swedb.se", "http://tv.swedb.se", "swedb_channels.xml.gz", "se"));
-    addGroup(new DataHydraChannelGroup("MSPC", "mspc.no", "(c) mspc.no", "http://www.mspc.no", "mspc_channels.xml.gz", "no"));
+    addGroup(new DataHydraChannelGroup("SweDB", "TVsajten.com", "(c) TVsajten.com", "http://tvsajten.com", "swedb_channels.xml.gz", "se"));
+    //addGroup(new DataHydraChannelGroup("MSPC", "mspc.no", "(c) mspc.no", "http://www.mspc.no", "mspc_channels.xml.gz", "no"));
     addGroup(new DataHydraChannelGroup("gonix", "gonix.net", "(c) gonix.net", "http://www.gonix.net", "hrv_channels.xml.gz", "hr", false));
     addGroup(new DataHydraChannelGroup("oztivo", "oztivo.net", "(c) oztivo.net", "http://www.oztivo.net/", "au_channels.xml.gz", "au"));
   }
@@ -275,7 +275,7 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
       String urlMirror = getMirror().getUrl();
 
       URL url = new URL(urlMirror + (urlMirror.endsWith("/") ? "" : "/") + hydraGroup.getChannelFile());
-
+      
       // Download the mirror list for the next run
       try {
         IOUtilities.download(new URL(urlMirror + (urlMirror.endsWith("/") ? "" : "/") + "main_" + Mirror.MIRROR_LIST_FILE_NAME), new File(mWorkingDirectory , "main_" + Mirror.MIRROR_LIST_FILE_NAME));
@@ -314,7 +314,7 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
         }
         else {
           DataHydraChannelContainer[] DataHydracontainers = DataHydraChannelParser.parse(IOUtilities.openSaveGZipInputStream(con.getInputStream()));
-
+          
           if (monitor != null) {
             monitor.setMessage(mLocalizer.msg("Progressmessage.40", "Found {0} channels, downloading channel icons...", DataHydracontainers.length));
           }
@@ -325,6 +325,11 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
           ArrayList<Channel> loadedChannels = new ArrayList<Channel>();
 
           for (DataHydraChannelContainer container : DataHydracontainers) {
+            if(container.getIconUrl() != null && container.getIconUrl().contains("http://www2.gonix.net")) {
+              container.setIconUrl(container.getIconUrl().replace("http://www2.gonix.net", "http://www.gonix.net"));
+            }
+            
+            //container
             initializeIconLoader(hydraGroup);
             Channel ch = createTVBrowserChannel(hydraGroup, container);
             closeIconLoader(hydraGroup);
