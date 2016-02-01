@@ -27,6 +27,7 @@
 package tvbrowser.ui.mainframe;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -37,6 +38,7 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -58,9 +60,9 @@ import util.ui.WindowClosingIf;
 
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.factories.CC;
-import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
+import com.jgoodies.forms.layout.Sizes;
 
 import devplugin.Channel;
 
@@ -84,7 +86,8 @@ public class UpdateDlg extends JDialog implements ActionListener, WindowClosingI
   private TvDataServiceProxy[] mSelectedTvDataServiceArr;
 
   private JCheckBox mAutoUpdate;
-  private JCheckBox mSaveAsDefault;
+  private JCheckBox mSaveAsDefaultPeriod;
+  private JCheckBox mSaveAsDefaultDataservices;
 
   private JRadioButton mStartUpdate;
   private JRadioButton mRecurrentUpdate;
@@ -94,16 +97,15 @@ public class UpdateDlg extends JDialog implements ActionListener, WindowClosingI
 
     UiUtilities.registerForClosing(this);
 
-    String msg;
-
     mResult = CANCEL;
 
-    JPanel contentPane = (JPanel) getContentPane();
+    final JPanel contentPane = (JPanel) getContentPane();
     contentPane.setLayout(new BorderLayout());
     contentPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
     this.setTitle(mLocalizer.msg("dlgTitle", "TV data update"));
-    JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.TRAILING));
+    
+    final JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.TRAILING));
     buttonPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
 
     mUpdateBtn = new JButton(mLocalizer.msg("updateNow", "Update now"));
@@ -117,58 +119,66 @@ public class UpdateDlg extends JDialog implements ActionListener, WindowClosingI
 
     contentPane.add(buttonPanel, BorderLayout.SOUTH);
 
-    JPanel northPanel = new JPanel();
+    final JPanel northPanel = new JPanel();
     northPanel.setLayout(new BoxLayout(northPanel, BoxLayout.Y_AXIS));
 
     // first show reason of update
     if (reason != null && !reason.isEmpty()) {
-      String question = mLocalizer.msg("question", "Do you want to update now?");
-      JLabel lbReason = new JLabel("<html>" + reason + "<br>" + question + "</html>");
-      JPanel panelReason = new JPanel(new BorderLayout(7, 0));
+      final String question = mLocalizer.msg("question", "Do you want to update now?");
+      final JLabel lbReason = new JLabel("<html>" + reason + "<br>" + question + "</html>");
+      final JPanel panelReason = new JPanel(new BorderLayout(7, 0));
+      
       panelReason.add(lbReason, BorderLayout.WEST);
       northPanel.add(panelReason);
       northPanel.add(new JLabel(" "));
     }
 
     // then time selection
-    PanelBuilder panel1 = new PanelBuilder(new FormLayout("10dlu,default,5dlu:grow,5dlu","default,5dlu,default,default"));
+    final PanelBuilder panel1 = new PanelBuilder(new FormLayout("10dlu,default,5dlu:grow,5dlu","default,5dlu,default,default"));
     panel1.addSeparator(mLocalizer.msg("period", "Update program for"), CC.xyw(1,1,4));
     
     mManuelDownloadPeriodSelection = new JComboBox(PeriodItem.getPeriodItems());
-    mSaveAsDefault = new JCheckBox(mLocalizer.msg("saveDefault", "Save as default"),true);
+    mSaveAsDefaultPeriod = new JCheckBox(mLocalizer.msg("saveDefault", "Save as default"),true);
     
     panel1.add(mManuelDownloadPeriodSelection, CC.xyw(2,3,2));
-    panel1.add(mSaveAsDefault, CC.xyw(2,4,2));
+    panel1.add(mSaveAsDefaultPeriod, CC.xyw(2,4,2));
     
     northPanel.add(panel1.getPanel());
 
     // channel selection
-    TvDataServiceProxy[] serviceArr = getActiveDataServices();
+    final TvDataServiceProxy[] serviceArr = getActiveDataServices();
+    
     if (serviceArr.length > 1) {
-      FormLayout layout = new FormLayout("default");
-      JPanel dataServicePanel = new JPanel(layout);
+      final JPanel dataServicePanel = new JPanel();
       
       dataServicePanel.setLayout(new BoxLayout(dataServicePanel,
           BoxLayout.Y_AXIS));
       mDataServiceCbArr = new TvDataServiceCheckBox[serviceArr.length];
 
-      String[] checkedServiceNames = Settings.propDataServicesForUpdate
+      final String[] checkedServiceNames = Settings.propDataServicesForUpdate
           .getStringArray();
 
       boolean expand = false;
+      
       for (int i = 0; i < serviceArr.length; i++) {
         mDataServiceCbArr[i] = new TvDataServiceCheckBox(serviceArr[i]);
-        boolean isSelected = tvDataServiceIsChecked(serviceArr[i],
-            checkedServiceNames);
+        
+        final boolean isSelected = tvDataServiceIsChecked(serviceArr[i], checkedServiceNames);
         mDataServiceCbArr[i].setSelected(isSelected);
+        
         if (!isSelected) {
           expand = true;
         }
-        layout.appendRow(RowSpec.decode("default"));
-        dataServicePanel.add(mDataServiceCbArr[i], CC.xy(1,layout.getRowCount()));
+        
+        dataServicePanel.add(mDataServiceCbArr[i]);
       }
       
-      PanelBuilder ds = new PanelBuilder(new FormLayout("10dlu,default:grow,5dlu,default","10dlu,default,5dlu,default"));
+      mSaveAsDefaultDataservices = new JCheckBox(mLocalizer.msg("saveDefault", "Save as default"),true);
+      
+      dataServicePanel.add(Box.createRigidArea(new Dimension(0,Sizes.dialogUnitXAsPixel(5, dataServicePanel))));
+      dataServicePanel.add(mSaveAsDefaultDataservices);
+      
+      final PanelBuilder ds = new PanelBuilder(new FormLayout("10dlu,default:grow,5dlu,default","10dlu,default,5dlu,default"));
       ds.add(dataServicePanel, CC.xyw(2,4,3));
       
       ds.addSeparator(mLocalizer.msg("dataSources", "Data sources"), CC.xyw(1,2,2));
@@ -183,10 +193,11 @@ public class UpdateDlg extends JDialog implements ActionListener, WindowClosingI
     }
 
     int period = Settings.propDownloadPeriod.getInt();
+    
     PeriodItem pi = new PeriodItem(period);
     mManuelDownloadPeriodSelection.setSelectedItem(pi);
 
-    PanelBuilder pb = new PanelBuilder(new FormLayout("10dlu,default:grow,5dlu,default","10dlu,default,5dlu,default"));
+    final PanelBuilder pb = new PanelBuilder(new FormLayout("10dlu,default:grow,5dlu,default","10dlu,default,5dlu,default"));
     
     pb.addSeparator(mLocalizer.msg("autoUpdateTitle", "Automatic update"), CC.xyw(1,2,2));
 
@@ -219,12 +230,12 @@ public class UpdateDlg extends JDialog implements ActionListener, WindowClosingI
 
     pb.add(boxPanel, CC.xyw(2,4,2));
 
-    ButtonGroup bg = new ButtonGroup();
+    final ButtonGroup bg = new ButtonGroup();
 
     bg.add(mStartUpdate);
     bg.add(mRecurrentUpdate);
     
-    PanelButton open = new PanelButton(boxPanel,this);
+    final PanelButton open = new PanelButton(boxPanel,this);
     
     pb.add(open, CC.xy(4,2));
 
@@ -307,16 +318,20 @@ public class UpdateDlg extends JDialog implements ActionListener, WindowClosingI
         dataServiceList.toArray(mSelectedTvDataServiceArr);
       }
       
-      if(mSaveAsDefault.isSelected()) {
+      if(mSaveAsDefaultPeriod.isSelected()) {
         Settings.propDownloadPeriod.setInt(mResult);
       }
-
-      String[] dataServiceArr = new String[mSelectedTvDataServiceArr.length];
-      for (int i = 0; i < dataServiceArr.length; i++) {
-        dataServiceArr[i] = mSelectedTvDataServiceArr[i].getId();
+      
+      if(mSaveAsDefaultDataservices.isSelected()) {
+        final String[] dataServiceArr = new String[mSelectedTvDataServiceArr.length];
+        
+        for (int i = 0; i < dataServiceArr.length; i++) {
+          dataServiceArr[i] = mSelectedTvDataServiceArr[i].getId();
+        }
+        
+        Settings.propDataServicesForUpdate.setStringArray(dataServiceArr);
       }
-      Settings.propDataServicesForUpdate.setStringArray(dataServiceArr);
-
+      
       if (mAutoUpdate.isSelected()) {
         if(Settings.propAutoDownloadType.getString().equals("never")) {
           Settings.propAutoDownloadType.setString(Settings.propAutoDownloadType.getDefault());
