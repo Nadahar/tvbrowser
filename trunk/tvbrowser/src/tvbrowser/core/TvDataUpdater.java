@@ -275,8 +275,6 @@ public class TvDataUpdater {
       }
     }
     
-    checkAndUpdateChannelList(new ProgressBarProgressMonitor(progressBar, label));
-
     // Show the exception if there was one
     if (downloadException != null) {
       String msg = mLocalizer.msg("error.1", "Couldn't download the whole program!");
@@ -320,6 +318,8 @@ public class TvDataUpdater {
     TvDataBase.getInstance().sendNewProgramsToTvDataListener();
     
     FavoritesPlugin.getInstance().waitForFinishingUpdateThreads();
+    
+    checkAndUpdateChannelList(new ProgressBarProgressMonitor(progressBar, label));
     
     // Inform the listeners
     fireTvDataUpdateFinished();
