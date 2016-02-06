@@ -138,7 +138,7 @@ public class UpdateDlg extends JDialog implements ActionListener, WindowClosingI
     panel1.addSeparator(mLocalizer.msg("period", "Update program for"), CC.xyw(1,1,4));
     
     mManuelDownloadPeriodSelection = new JComboBox(PeriodItem.getPeriodItems());
-    mSaveAsDefaultPeriod = new JCheckBox(mLocalizer.msg("saveDefault", "Save as default"),true);
+    mSaveAsDefaultPeriod = new JCheckBox(mLocalizer.msg("saveDefault", "Save as default"), Settings.propSaveDefaultDataUpdateValuesDefault.getBoolean());
     
     panel1.add(mManuelDownloadPeriodSelection, CC.xyw(2,3,2));
     panel1.add(mSaveAsDefaultPeriod, CC.xyw(2,4,2));
@@ -173,7 +173,7 @@ public class UpdateDlg extends JDialog implements ActionListener, WindowClosingI
         dataServicePanel.add(mDataServiceCbArr[i]);
       }
       
-      mSaveAsDefaultDataservices = new JCheckBox(mLocalizer.msg("saveDefault", "Save as default"),true);
+      mSaveAsDefaultDataservices = new JCheckBox(mLocalizer.msg("saveDefault", "Save as default"), Settings.propSaveDefaultDataUpdateValuesDefault.getBoolean());
       
       dataServicePanel.add(Box.createRigidArea(new Dimension(0,Sizes.dialogUnitXAsPixel(5, dataServicePanel))));
       dataServicePanel.add(mSaveAsDefaultDataservices);
