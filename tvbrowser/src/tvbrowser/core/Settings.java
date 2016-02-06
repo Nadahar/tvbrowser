@@ -1566,6 +1566,9 @@ public class Settings {
 
   public static final BooleanProperty propAskForAutoDownload = new BooleanProperty(
       mProp, "askForAutoDownload", false);
+  
+  public static final BooleanProperty propSaveDefaultDataUpdateValuesDefault = new BooleanProperty(
+      mProp, "saveDefaultDataUpdateValuesDefault", true);
 
   public static final DateProperty propLastDownloadDate = new DateProperty(
       mProp, "lastdownload", Date.getCurrentDate().addDays(-100));
