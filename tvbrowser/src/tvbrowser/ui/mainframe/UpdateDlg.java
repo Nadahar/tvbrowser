@@ -322,7 +322,7 @@ public class UpdateDlg extends JDialog implements ActionListener, WindowClosingI
         Settings.propDownloadPeriod.setInt(mResult);
       }
       
-      if(mSaveAsDefaultDataservices.isSelected()) {
+      if(mSaveAsDefaultDataservices != null && mSaveAsDefaultDataservices.isSelected()) {
         final String[] dataServiceArr = new String[mSelectedTvDataServiceArr.length];
         
         for (int i = 0; i < dataServiceArr.length; i++) {
