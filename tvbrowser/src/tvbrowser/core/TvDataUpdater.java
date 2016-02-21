@@ -132,7 +132,7 @@ public class TvDataUpdater {
   }
 
 
-  public static TvDataUpdater getInstance() {
+  public static synchronized TvDataUpdater getInstance() {
     if (mSingleton == null) {
       mSingleton = new TvDataUpdater();
     }
