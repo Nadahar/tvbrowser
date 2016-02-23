@@ -52,6 +52,7 @@ import util.ui.WindowClosingIf;
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.Sizes;
 
 /**
  * This is the Main-Class for the Config Assistent
@@ -84,7 +85,7 @@ public class ConfigAssistant extends JDialog implements ActionListener, PrevNext
 
     setTitle(mLocalizer.msg("title", "Setup assistant"));
     JPanel contentPane = (JPanel) getContentPane();
-    contentPane.setLayout(new FormLayout("fill:250px:grow", "fill:pref:grow, 1px, pref"));
+    contentPane.setLayout(new FormLayout("fill:250px:grow", "fill:50dlu:grow, 1px, pref"));
 
     JPanel centerPanel = new JPanel(new BorderLayout());
 
@@ -132,7 +133,7 @@ public class ConfigAssistant extends JDialog implements ActionListener, PrevNext
 
     mCurCardPanel = welcomePanel;
 
-    FormLayout layout = new FormLayout("fill:pref:grow, pref, 3dlu, pref, 3dlu, pref", "pref");
+    FormLayout layout = new FormLayout("fill:0dlu:grow, pref, 3dlu, pref, 3dlu, pref", "pref");
     layout.setColumnGroups(new int[][] { { 2, 4, 6 } });
     JPanel buttonPanel = new JPanel(layout);
 
@@ -152,9 +153,8 @@ public class ConfigAssistant extends JDialog implements ActionListener, PrevNext
     contentPane.add(black, cc.xy(1, 2));
 
     contentPane.add(buttonPanel, cc.xy(1, 3));
-
-    setSize(700, 550);
-
+    
+    setSize(Sizes.dialogUnitXAsPixel(350, this), Sizes.dialogUnitYAsPixel(320, this));
   }
 
   private boolean isDynamicChannelListSupported() {
