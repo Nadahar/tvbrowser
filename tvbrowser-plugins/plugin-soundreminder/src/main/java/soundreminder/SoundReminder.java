@@ -70,10 +70,13 @@ import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.text.BadLocationException;
 
+import soundreminder.SoundEntry.SoundPlay;
 import util.ui.ExtensionFileFilter;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
@@ -104,7 +107,7 @@ import devplugin.Version;
  * @author René Mach
  */
 public class SoundReminder extends Plugin {
-  private static final Version VERSION = new Version(0,12,1,true);
+  private static final Version VERSION = new Version(0,12,2,true);
   
   protected static final Localizer mLocalizer = Localizer
       .getLocalizerFor(SoundReminder.class);
@@ -951,6 +954,13 @@ public class SoundReminder extends Plugin {
             }
           });
         }
+        else if(mTestSound instanceof SoundPlay) {
+          ((SoundPlay) mTestSound).setChangeListener(new ChangeListener() {
+            public void stateChanged(ChangeEvent ce) {
+              ((JButton)e.getSource()).setText(mLocalizer.msg("settings.test", "Test"));
+            }
+          });
+        }
         else if(mTestSound instanceof Sequencer) {
           new Thread("Test MIDI sound") {
             public void run() {
@@ -970,6 +980,8 @@ public class SoundReminder extends Plugin {
     else if(mTestSound != null) {
       if(mTestSound instanceof SourceDataLine && ((SourceDataLine)mTestSound).isRunning()) {
         ((SourceDataLine)mTestSound).stop();
+      } else if(mTestSound instanceof SoundPlay && ((SoundPlay)mTestSound).isRunning()) {
+        ((SoundPlay)mTestSound).stop();
       } else if(mTestSound instanceof Sequencer && ((Sequencer)mTestSound).isRunning()) {
         ((Sequencer)mTestSound).stop();
       }
