@@ -47,7 +47,10 @@ import javax.sound.sampled.LineEvent.Type;
 import javax.sound.sampled.LineListener;
 import javax.sound.sampled.SourceDataLine;
 import javax.swing.JOptionPane;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
+import util.io.ExecutionHandler;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 import devplugin.Plugin;
@@ -278,6 +281,12 @@ public class SoundEntry {
         }.start();
 
         return sequencer;
+      } else if(System.getProperty("os.name").contains("Linux") || System.getProperty("os.name").contains("buntu")
+            || System.getProperty("os.name").contains("Fedora") || System.getProperty("os.name").contains("Mint")) {
+        final SoundPlay play = new SoundPlay(fileName);
+        play.start();
+        
+        return play;
       } else {
         final AudioInputStream ais = AudioSystem.getAudioInputStream(new File(
             fileName));
@@ -502,6 +511,61 @@ public class SoundEntry {
       }
       
       return found;
+    }
+  }
+  
+  public static final class SoundPlay {
+    private ExecutionHandler mHandler;
+    private Thread mWaitingThread;
+    private ChangeListener mChangeListener;
+    
+    private SoundPlay(String fileName) {
+      mHandler = new ExecutionHandler(new String[] {"/usr/bin/aplay",fileName});
+    }
+    
+    private void start() {
+      try {
+        mWaitingThread = new Thread() {
+          @Override
+          public void run() {
+            final Process p = mHandler.getProcess();
+            
+            if(p != null) {
+              try {
+                p.waitFor();
+              } catch (InterruptedException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+              }
+              
+              mChangeListener.stateChanged(new ChangeEvent(this));
+            }
+          };
+        };
+        mHandler.execute();
+        mWaitingThread.start();
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+    }
+    
+    public void stop() {
+      if(mWaitingThread != null && mWaitingThread.isAlive()) {
+        final Process p = mHandler.getProcess();
+        
+        if(p != null) {
+          p.destroy();
+          mChangeListener.stateChanged(new ChangeEvent(this));
+        }
+      }
+    }
+    
+    public boolean isRunning() {
+      return mWaitingThread != null && mWaitingThread.isAlive();
+    }
+    
+    public void setChangeListener(ChangeListener listener) {
+      mChangeListener = listener;
     }
   }
 }
