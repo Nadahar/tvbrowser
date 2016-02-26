@@ -58,6 +58,7 @@ import com.jgoodies.forms.layout.FormLayout;
 import devplugin.ActionMenu;
 import devplugin.AfterDataUpdateInfoPanel;
 import devplugin.ContextMenuAction;
+import devplugin.Date;
 import devplugin.ImportanceValue;
 import devplugin.Plugin;
 import devplugin.PluginCenterPanel;
@@ -81,7 +82,7 @@ import devplugin.Version;
  * @author René Mach
  */
 public class SimpleMarkerPlugin extends Plugin {
-  private static final Version mVersion = new Version(3,23,7,true);
+  private static final Version mVersion = new Version(3,23,8,true);
 
   /** The localizer for this class. */
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(SimpleMarkerPlugin.class);
@@ -324,6 +325,11 @@ public class SimpleMarkerPlugin extends Plugin {
     }
 
     return priority;
+  }
+  
+  @Override
+  public void handleTvDataUpdateStarted(Date until) {
+    mInfoPanel = null;
   }
   
   public void handleTvDataUpdateFinished() {
