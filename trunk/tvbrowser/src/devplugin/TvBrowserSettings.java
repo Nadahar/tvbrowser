@@ -155,4 +155,12 @@ public interface TvBrowserSettings {
    * @since 3.2.1
    */
   public String getTimePattern();
+  
+  /**
+   * Gets if the TV-Browser internal channel update is activated.
+   * <p>
+   * @return <code>true</code> if the TV-Browser internal channel update is activated.
+   * @since 3.4.4
+   */
+  public boolean isChannelUpdateActivated();
 }
