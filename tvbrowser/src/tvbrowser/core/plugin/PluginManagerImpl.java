@@ -60,6 +60,7 @@ import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
 import tvbrowser.extras.reminderplugin.ReminderPluginProxy;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.settings.SettingsDialog;
+import tvbrowser.ui.settings.StartupSettingsTab;
 import tvdataservice.MarkedProgramsMap;
 import tvdataservice.MutableProgram;
 import util.exc.TvBrowserException;
@@ -966,6 +967,15 @@ public class PluginManagerImpl implements PluginManager {
       public String getTimePattern() {
         return Settings.getTimePattern();
       }
+
+      @Override
+      public boolean isChannelUpdateActivated() {
+        System.out.println(Settings.propAutoChannelUpdatePeriod.getInt() + " " + StartupSettingsTab.VALUE_AUTO_CHANNEL_UPDATE_DISABLED);
+        
+        return Settings.propAutoChannelUpdatePeriod.getInt() > StartupSettingsTab.VALUE_AUTO_CHANNEL_UPDATE_DISABLED;
+      }
+      
+      
     };
   }
 

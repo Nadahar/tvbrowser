@@ -1146,7 +1146,7 @@ public class TVBrowser {
     if(log) {
       mLog.info("Channel Settings (day light saving time corrections/icons)");
     }
-    ChannelList.storeAllSettings();
+    //ChannelList.storeAllSettings();
 
     SearchPlugin.getInstance().store();
     ProgramInfo.getInstance().store();

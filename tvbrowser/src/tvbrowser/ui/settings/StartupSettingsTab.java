@@ -474,7 +474,7 @@ public class StartupSettingsTab implements devplugin.SettingsTab {
     
     if(Settings.propAutoChannelUpdatePeriod.getInt() > VALUE_AUTO_CHANNEL_UPDATE_DISABLED) {
       mAutoChannelDownload.setSelected(true);
-      mAutoChannelDownloadPeriod.setSelectedItem(new DayPeriod(Settings.propAutoChannelUpdatePeriod.getDefault()));
+      mAutoChannelDownloadPeriod.setSelectedItem(new DayPeriod(Settings.propAutoChannelUpdatePeriod.getInt()));
     }
     else {
       mAutoChannelDownloadPeriod.setSelectedItem(VALUE_AUTO_CHANNEL_UPDATE_PERIOD_DEFAULT);
