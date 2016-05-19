@@ -33,6 +33,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -51,7 +52,9 @@ import util.io.stream.InputStreamProcessor;
 import util.io.stream.StreamUtilities;
 import devplugin.Channel;
 import devplugin.ChannelGroupImpl;
+import devplugin.Plugin;
 import devplugin.ProgressMonitor;
+import devplugin.TvBrowserSettings;
 
 /**
  * The ChannelGroup implementation of the TvBrowserDataService
@@ -88,6 +91,9 @@ public class TvBrowserDataServiceChannelGroup extends ChannelGroupImpl {
       .getLocalizerFor(TvBrowserDataServiceChannelGroup.class);
 
   private static final int MAX_META_DATA_AGE = 2;
+  
+  private static final int TYPE_META_DATA_DEFAULT = 0;
+  private static final int TYPE_META_DATA_CHANNELS = 1;
 
   /**
    * Creates a new ChannelGroup
@@ -395,10 +401,37 @@ public class TvBrowserDataServiceChannelGroup extends ChannelGroupImpl {
   }
 
   private boolean needsUpdate(File file) {
+    return needsUpdate(file,TYPE_META_DATA_DEFAULT);
+  }
+  
+  private boolean needsUpdate(File file, int type) {
     if (!file.exists()) {
       return true;
     } else {
-      long minLastModified = System.currentTimeMillis() - (MAX_META_DATA_AGE * 24L * 60L * 60L * 1000L);
+      int maxMetaDataAge = MAX_META_DATA_AGE;
+      
+      if(type == TYPE_META_DATA_CHANNELS) {
+        final TvBrowserSettings settings = Plugin.getPluginManager().getTvBrowserSettings();
+        
+        try {
+          final Method isChannelUpdateActivated = settings.getClass().getMethod("isChannelUpdateActivated");
+          
+          if(isChannelUpdateActivated != null) {
+            isChannelUpdateActivated.setAccessible(true);
+            
+            final Object result = isChannelUpdateActivated.invoke(settings);
+                        
+            if(result instanceof Boolean && ((Boolean)result).booleanValue()) {
+              maxMetaDataAge = 2000;
+            }
+          }
+        } catch (Exception e) {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        }
+      }
+      
+      final long minLastModified = System.currentTimeMillis() - (maxMetaDataAge * 24L * 60L * 60L * 1000L);
       return file.lastModified() < minLastModified;
     }
   }
@@ -420,19 +453,21 @@ public class TvBrowserDataServiceChannelGroup extends ChannelGroupImpl {
   }
 
   private void updateChannelList(Mirror mirror, boolean forceUpdate) throws TvBrowserException {
-    String fileName = getId() + "_" + ChannelList.FILE_NAME;
-    File file = new File(mDataDir, fileName + ".new");
-    if (forceUpdate || needsUpdate(file)) {
-      String url = mirror.getUrl() + (mirror.getUrl().endsWith("/") ? "" : "/") + fileName;
+    final String fileName = getId() + "_" + ChannelList.FILE_NAME;
+    final File oldFile = new File(mDataDir, fileName);
+    final File file = new File(mDataDir, fileName + ".new");
+    
+    if (forceUpdate || needsUpdate(oldFile,TYPE_META_DATA_CHANNELS)) {
+      final String url = mirror.getUrl() + (mirror.getUrl().endsWith("/") ? "" : "/") + fileName;
+      
       try {
         IOUtilities.download(new URL(url), file);
         if (file.canRead() && file.length() > 0) {
           // try reading the file
           devplugin.ChannelGroup group = new devplugin.ChannelGroupImpl(getId(), getName(), null, getProviderName());
-          ChannelList channelList = new ChannelList(group);
+          final ChannelList channelList = new ChannelList(group);
           channelList.readFromFile(file, mDataService);
           // ok, we can read it, so use this new file instead of the old
-          File oldFile = new File(mDataDir, fileName);
           oldFile.delete();
           file.renameTo(oldFile);
           // Invalidate the channel list
