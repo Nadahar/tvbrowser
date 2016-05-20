@@ -28,6 +28,7 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JToggleButton;
 
+import tvbrowser.core.Settings;
 import tvbrowser.core.TvDataBase;
 import devplugin.Date;
 
@@ -40,7 +41,10 @@ public class CalendarPanel extends AbstractCalendarPanel {
 
   private KeyListener mKeyListener;
   
+  private int mFirstDayOfWeek = Calendar.MONDAY;
+  
   public CalendarPanel(KeyListener keyListener) {
+    mFirstDayOfWeek = Settings.propFirstDayOfWeek.getInt();
     mKeyListener = keyListener;
     rebuildControls();
     addMouseListener(this);
@@ -51,7 +55,7 @@ public class CalendarPanel extends AbstractCalendarPanel {
     removeAll();
     setLayout(new GridLayout(ROWS, COLUMNS));
     Date date = getFirstDate();
-    while (date.getDayOfWeek() != Calendar.MONDAY) {
+    while (date.getDayOfWeek() != mFirstDayOfWeek) {
       date = date.addDays(-1);
     }
     Date weekday = date;

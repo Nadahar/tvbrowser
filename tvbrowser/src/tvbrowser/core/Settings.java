@@ -38,6 +38,7 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Properties;
@@ -1850,6 +1851,9 @@ public class Settings {
    */
   public static final BooleanProperty propTwelveHourFormat = new BooleanProperty(
       mProp, "uswTwelveHourFormat", false);
+  
+  public static final IntProperty propFirstDayOfWeek = new IntProperty(
+      mProp, "firstDayOfWeek", Calendar.getInstance().getFirstDayOfWeek());
 
   /** An array with the ids of the TV data service which license was accepted. */
   public static final StringArrayProperty propAcceptedLicenseArrForServiceIds = new StringArrayProperty(
