@@ -22,6 +22,7 @@ import java.util.Calendar;
 
 import javax.swing.table.AbstractTableModel;
 
+import tvbrowser.core.Settings;
 import devplugin.Date;
 
 public final class CalendarTableModel extends AbstractTableModel {
@@ -30,10 +31,13 @@ public final class CalendarTableModel extends AbstractTableModel {
   private static final int ROWS = 5;
   private Date[][] mDate = new Date[ROWS][COLUMNS];
   private Date mCurrentDate = Date.getCurrentDate();
+  private int mFirstDayOfWeek = Calendar.MONDAY;
 
   public CalendarTableModel(final Date firstDate) {
     Date date = firstDate;
-    while (date.getDayOfWeek() != Calendar.MONDAY) {
+    mFirstDayOfWeek = Settings.propFirstDayOfWeek.getInt();
+    
+    while (date.getDayOfWeek() != mFirstDayOfWeek) {
       date = date.addDays(-1);
     }
     for (int y = 0; y < ROWS; y++) {
@@ -62,7 +66,7 @@ public final class CalendarTableModel extends AbstractTableModel {
   @Override
   public String getColumnName(int column) {
     String[] days = new SimpleDateFormat().getDateFormatSymbols().getWeekdays();
-    int index = column + Calendar.MONDAY;
+    int index = column + mFirstDayOfWeek;
     if (index > Calendar.SATURDAY) {
       index -= 7;
     }

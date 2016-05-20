@@ -34,6 +34,7 @@ import java.util.Locale;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
+import tvbrowser.core.Settings;
 import util.ui.Localizer;
 
 /**
@@ -639,12 +640,15 @@ public class Date implements Comparable<Date>
   }
 
   /**
-   * is this a Monday?
-   * @return <code>true</code>, if this is a Monday
+   * ATTENTION: Altered with 3.4.3
+   * is this the day of the week, which was setup as first
+   * day of the week by the user or the default first day of
+   * the week of the current Locale ?
+   * @return <code>true</code>, if this is the first day of the week.
    * @since 2.6
    */
   public boolean isFirstDayOfWeek() {
-    return getDayOfWeek() == Calendar.MONDAY;
+    return getDayOfWeek() == Settings.propFirstDayOfWeek.getInt();
   }
 
   /**

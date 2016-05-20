@@ -39,6 +39,7 @@ import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Locale;
@@ -94,14 +95,14 @@ public class LocaleSettingsTab implements devplugin.SettingsTab {
   
   private JPanel mSettingsPn;
 
-  private JComboBox mLanguageCB, mTimezoneCB;
+  private JComboBox mLanguageCB, mTimezoneCB, mFirstDayOfWeek;
 
   private JLabel mTimezoneLB;
 
   private JRadioButton mTwelveHourFormat;
 
   private JRadioButton mTwentyfourHourFormat;
-
+  
   private JTextArea mInfoArea;
 
   private static boolean mSomethingChanged = false;
@@ -109,6 +110,7 @@ public class LocaleSettingsTab implements devplugin.SettingsTab {
   private static int mStartLanguageIndex;
   private static int mStartTimeZoneIndex;
   private static boolean mTwelveHourFormatIsSelected;
+  private static int mFirstDayOfWeekIndex;
   
   private SettingsDialog mSettingsDialog;
   private JButton mRestartButton;
@@ -125,7 +127,7 @@ public class LocaleSettingsTab implements devplugin.SettingsTab {
    */
   public JPanel createSettingsPanel() {
     mSettingsPn = new JPanel(new FormLayout("5dlu, pref, 3dlu, default, 5dlu, default, fill:3dlu:grow, 3dlu",
-        "pref, 5dlu, pref, 10dlu, pref, 5dlu, pref, 10dlu, pref, 5dlu, pref, 2dlu, pref, fill:3dlu:grow, pref"));
+        "default, 5dlu, default, 10dlu, default, 5dlu, default, 10dlu, default, 5dlu, default, 2dlu, default, 10dlu, default, 5dlu, default, fill:3dlu:grow, default"));
     mSettingsPn.setBorder(Borders.DIALOG);
     mSettingsPn.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("titleLanguage", "Locale")), CC.xyw(1,1,7));
 
@@ -236,6 +238,31 @@ public class LocaleSettingsTab implements devplugin.SettingsTab {
     } else {
       mTwentyfourHourFormat.setSelected(true);
     }
+    
+    mFirstDayOfWeek = new JComboBox();
+    mFirstDayOfWeek.addItem(Calendar.MONDAY);
+    mFirstDayOfWeek.addItem(Calendar.TUESDAY);
+    mFirstDayOfWeek.addItem(Calendar.WEDNESDAY);
+    mFirstDayOfWeek.addItem(Calendar.THURSDAY);
+    mFirstDayOfWeek.addItem(Calendar.FRIDAY);
+    mFirstDayOfWeek.addItem(Calendar.SATURDAY);
+    mFirstDayOfWeek.addItem(Calendar.SUNDAY);
+    
+    mFirstDayOfWeek.setRenderer(new CustomComboBoxRenderer(mFirstDayOfWeek.getRenderer()) {
+      @Override
+      public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.DAY_OF_WEEK,(Integer)value);
+        
+        return getBackendRenderer().getListCellRendererComponent(list, cal.getDisplayName(Calendar.DAY_OF_WEEK, Calendar.LONG, Locale.getDefault()), index, isSelected, cellHasFocus);
+      }
+    });
+    
+    mFirstDayOfWeek.setSelectedItem(Settings.propFirstDayOfWeek.getInt());
+    
+    mSettingsPn.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("firstDayOfWeek", "First day of week")), CC.xyw(1,15,7));
+    mSettingsPn.add(new JLabel(mLocalizer.msg("firstDayOfWeek", "First day of week")+":"), CC.xy(2,17));
+    mSettingsPn.add(mFirstDayOfWeek, CC.xyw(4,17,3));
 
     mInfoArea = UiUtilities.createHelpTextArea(mLocalizer.msg("restartNote", "Please Restart"));
     mInfoArea.setForeground(Color.RED);
@@ -256,6 +283,7 @@ public class LocaleSettingsTab implements devplugin.SettingsTab {
       mStartLanguageIndex = mLanguageCB.getSelectedIndex();
       mStartTimeZoneIndex = mTimezoneCB.getSelectedIndex();
       mTwelveHourFormatIsSelected = mTwelveHourFormat.isSelected();
+      mFirstDayOfWeekIndex = mFirstDayOfWeek.getSelectedIndex();
     }
 
     ItemListener itemListener= new ItemListener() {
@@ -263,7 +291,8 @@ public class LocaleSettingsTab implements devplugin.SettingsTab {
         mInfoArea.setVisible(mLanguageCB.getSelectedIndex() != mStartLanguageIndex ||
             mTimezoneCB.getSelectedIndex() != mStartTimeZoneIndex ||
             (mTwelveHourFormatIsSelected && !mTwelveHourFormat.isSelected() ||
-                !mTwelveHourFormatIsSelected && !mTwentyfourHourFormat.isSelected()));
+                !mTwelveHourFormatIsSelected && !mTwentyfourHourFormat.isSelected() ||
+                mFirstDayOfWeek.getSelectedIndex() != mFirstDayOfWeekIndex));
         mRestartButton.setVisible(mInfoArea.isVisible());
       }
     };
@@ -272,13 +301,14 @@ public class LocaleSettingsTab implements devplugin.SettingsTab {
     mTimezoneCB.addItemListener(itemListener);
     mTwelveHourFormat.addItemListener(itemListener);
     mTwentyfourHourFormat.addItemListener(itemListener);
+    mFirstDayOfWeek.addItemListener(itemListener);
 
     JPanel restart = new JPanel(new FormLayout("default:grow,5dlu,default","default"));
     
     restart.add(mInfoArea, CC.xy(1, 1));
     restart.add(mRestartButton, CC.xy(3, 1));
     
-    mSettingsPn.add(restart, CC.xyw(1, 15, 7));
+    mSettingsPn.add(restart, CC.xyw(1, 19, 7));
 
     return mSettingsPn;
   }
@@ -308,6 +338,8 @@ public class LocaleSettingsTab implements devplugin.SettingsTab {
     if (mSomethingChanged) {
       PluginLoader.getInstance().deleteAllPluginProxies();
     }
+    
+    Settings.propFirstDayOfWeek.setInt((Integer)mFirstDayOfWeek.getSelectedItem());
   }
 
   /**
