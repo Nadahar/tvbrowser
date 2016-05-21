@@ -25,22 +25,13 @@
 package tvbrowser.ui.settings;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Cursor;
 import java.awt.GridLayout;
 import java.awt.Window;
-import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
-import java.awt.datatransfer.Transferable;
 import java.awt.dnd.DnDConstants;
 import java.awt.dnd.DragGestureEvent;
 import java.awt.dnd.DragGestureListener;
 import java.awt.dnd.DragSource;
-import java.awt.dnd.DropTarget;
-import java.awt.dnd.DropTargetDragEvent;
-import java.awt.dnd.DropTargetDropEvent;
-import java.awt.dnd.DropTargetEvent;
-import java.awt.dnd.DropTargetListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
@@ -1571,7 +1562,7 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
       Channel previous = null;
       
       for(Object channel : channels) {
-        if(!(channel instanceof DummyChannel)) {
+        if(!(channel instanceof DummyChannel) && !(channel instanceof String)) {
           if(previous != null && (previous.getJointChannel() != null && previous.getJointChannel().equals(channel))) {
             value--;
           }
