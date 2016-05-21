@@ -154,7 +154,7 @@ public class ConfigAssistant extends JDialog implements ActionListener, PrevNext
 
     contentPane.add(buttonPanel, cc.xy(1, 3));
     
-    setSize(Sizes.dialogUnitXAsPixel(350, this), Sizes.dialogUnitYAsPixel(320, this));
+    setSize(Sizes.dialogUnitXAsPixel(500, this), Sizes.dialogUnitYAsPixel(320, this));
   }
 
   private boolean isDynamicChannelListSupported() {
