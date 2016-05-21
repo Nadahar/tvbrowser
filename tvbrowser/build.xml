@@ -646,8 +646,8 @@
         todir="${public.dir}"
         package="tvbrowser"
         section="utils"
-        depends="sun-java6-jre | openjdk-6-jre | sun-java7-jre | openjdk-7-jre | openjdk-8-jre | default-jre | java6-runtime | java7-runtime | java8-runtime "
-  	    recommends="openjdk-6-jre">
+        depends="sun-java7-jre | openjdk-7-jre | openjdk-8-jre | default-jre | java7-runtime | java8-runtime "
+  	    recommends="openjdk-7-jre">
 
         <version upstream="${tvbrowser.version}"/>
         <maintainer name="TV-Browser team" email="dev@tvbrowser.org"/>
@@ -707,7 +707,7 @@
   	   	<zipfileset dir="${deployment.dir}/linux"
   	                 prefix="/usr/bin"
   	   	   filemode="755" includes="**/tvbrowser" />
-  		<depends name="java" version="1.6"/>
+  		<depends name="java" version="1.7"/>
   	</rrpm>
   </target>
 	
