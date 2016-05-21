@@ -36,6 +36,7 @@ import java.util.Set;
 import tvbrowser.core.Settings;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
+import tvbrowser.ui.mainframe.MainFrame;
 
 public class GenericFilterMap {
   private static File mGenericFilterDirectory;
@@ -47,6 +48,10 @@ public class GenericFilterMap {
   private final static String GENRIC_FILTER_PROP = "genericfilters.prop";
   
   private HashMap<String, GenericFilterHolder> mGenericPluginFilterMap;
+  
+  private GenericFilterHolder mGenericPictureFilterHolder;
+  
+  private static final String GENERIC_PICTURE_FILTER_NAME = "_picture"; 
   
   private static GenericFilterMap INSTANCE;
   
@@ -100,6 +105,18 @@ public class GenericFilterMap {
             mGenericPluginFilterMap.put(key, holder);
           }
         }
+      }
+      
+      final File pictureFilterFile = new File(mGenericFilterDirectory,GENERIC_PICTURE_FILTER_NAME+".filter");
+      
+      if(pictureFilterFile.isFile()) {
+        mGenericPictureFilterHolder = new GenericFilterHolder(true, pictureFilterFile);
+      }
+      else {
+        mGenericPictureFilterHolder = new GenericFilterHolder();
+        mGenericPictureFilterHolder.setActivated(true);
+        mGenericPictureFilterHolder.setFilter(new UserFilter(GENERIC_PICTURE_FILTER_NAME));
+        mGenericPictureFilterHolder.getFilter().setRule("");
       }
     }catch(Throwable t) {t.printStackTrace();}
   }
@@ -164,7 +181,7 @@ public class GenericFilterMap {
       e.printStackTrace();
     }
   }
-  
+    
   public PluginProxy[] getActivatedGenericPluginFilterProxies() {
     ArrayList<PluginProxy> proxyList = new ArrayList<PluginProxy>();
     
@@ -198,10 +215,28 @@ public class GenericFilterMap {
         }
       }
     }
+        
+    try {
+      mGenericPictureFilterHolder.initialize();
+    } catch (ParserException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
   }
   
   public boolean containsKey(String key) {
     return mGenericPluginFilterMap.containsKey(key);
+  }
+  
+  public UserFilter getGenericPictureFilter() {
+    return mGenericPictureFilterHolder.getFilter();
+  }
+  
+  public void updateGenericPictureFilter(UserFilter filter) {
+    mGenericPictureFilterHolder.setFilter(filter);
+    mGenericPictureFilterHolder.getFilter().store(GENERIC_PLUGIN_FILTER_DIRECTORY, GENERIC_PICTURE_FILTER_NAME);
+    
+    MainFrame.getInstance().getProgramTableScrollPane().forceRepaintAll();
   }
   
   private static final class GenericFilterHolder {
