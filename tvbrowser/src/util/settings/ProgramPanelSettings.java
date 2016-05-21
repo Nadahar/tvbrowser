@@ -373,7 +373,7 @@ public class ProgramPanelSettings {
   
   /**
    * @return If the type of the picture showing is set to show picture for filter.
-   * @since 3.4.3
+   * @since 3.4.4
    */
   public boolean isShowingPictureForFilter() {
     return mType == SHOW_PICTURES_FOR_FILTER;

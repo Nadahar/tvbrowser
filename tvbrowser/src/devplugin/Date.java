@@ -640,7 +640,7 @@ public class Date implements Comparable<Date>
   }
 
   /**
-   * ATTENTION: Altered with 3.4.3
+   * ATTENTION: Altered with 3.4.4
    * is this the day of the week, which was setup as first
    * day of the week by the user or the default first day of
    * the week of the current Locale ?

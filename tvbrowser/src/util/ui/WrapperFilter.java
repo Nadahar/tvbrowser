@@ -31,7 +31,7 @@ import devplugin.ProgramFilter;
  * contains broken channel filter components.
  * 
  * @author René Mach
- * @since 3.4.3
+ * @since 3.4.4
  */
 public final class WrapperFilter {
   private ProgramFilter mFilter;
