@@ -274,14 +274,11 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
     if(dialogType == SoftwareUpdater.ONLY_DATA_SERVICE_TYPE || mIsVersionChange) {
       String country = Locale.getDefault().getCountry();
       
-      if(country.equals(Locale.GERMANY.getCountry()) || country.equals("ES") || country.equals("IT") || country.equals("FR") || country.equals("DK") || country.equals("CH") || country.equals("AT") || Locale.getDefault().getLanguage().equals("de")) {
+      if(country.equals(Locale.GERMANY.getCountry()) || country.equals("ES") || country.equals("IT") || country.equals("FR") || country.equals("DK") || country.equals("CH") || country.equals("AT") || Locale.getDefault().getLanguage().toLowerCase().startsWith("de")) {
         selectedDataServices.add("TvBrowserDataService");
         
-        if(country.equals(Locale.GERMANY.getCountry()) || country.equals("CH") || country.equals("AT") || Locale.getDefault().getLanguage().equals("de")) {
+        if(country.equals(Locale.GERMANY.getCountry()) || country.equals("CH") || country.equals("AT") || Locale.getDefault().getLanguage().toLowerCase().startsWith("de")) {
           selectedDataServices.add("EPGdonateData");
-        }
-        
-        if(country.equals(Locale.GERMANY.getCountry()) || country.equals("CH") || Locale.getDefault().toString().equals("de_DE") || Locale.getDefault().toString().equals("de_CH")) {
           selectedDataServices.add("EPGpaidData");
         }
       }
