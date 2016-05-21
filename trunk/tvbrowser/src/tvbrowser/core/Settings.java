@@ -1179,12 +1179,29 @@ public class Settings {
       mProp, "dir.plugins", mDefaultSettings.getProperty("pluginsdir",
           getDefaultPluginsDir()));
 
+  public static final String getCountry() {
+    final String country = Locale.getDefault().getCountry();
+    String result = Locale.getDefault().getLanguage();
+    
+    if(country.equals(new Locale("de_AT", "AT").getCountry()) || result.toLowerCase().equals(new Locale("de_AT", "AT").getLanguage().toLowerCase())) {
+      result = "at";
+    }
+    else if(country.equals(new Locale("de_CH", "CH").getCountry()) || result.toLowerCase().equals(new Locale("de_CH", "CH").getLanguage().toLowerCase())) {
+      result = "ch";
+    }
+    else if(country.equals(new Locale("de_DE", "DE").getCountry()) || result.toLowerCase().equals(new Locale("de_DE", "DE").getLanguage().toLowerCase())) {
+      result = "de";
+    }
+    
+    return result;
+  }
+  
   /**
    * selected channel country filter in channel settings
    * @since 3.0
    */
   public static final StringProperty propSelectedChannelCountry = new StringProperty(
-      mProp, "selectedChannelCountry", Locale.getDefault().getCountry().toLowerCase());
+      mProp, "selectedChannelCountry", "");
 
   /**
    * selected plugin filter in channel settings

@@ -48,6 +48,7 @@ import java.lang.management.ManagementFactory;
 import java.lang.reflect.InvocationTargetException;
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;
+import java.net.URL;
 import java.nio.channels.FileLock;
 import java.text.DateFormat;
 import java.util.ArrayList;
@@ -62,6 +63,7 @@ import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
+import java.util.zip.GZIPInputStream;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -111,6 +113,8 @@ import tvdataservice.MarkedProgramsMap;
 import util.browserlauncher.Launch;
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
+import util.io.IOUtilities;
+import util.io.Mirror;
 import util.misc.OperatingSystem;
 import util.ui.ImageUtilities;
 import util.ui.Localizer;
@@ -1697,6 +1701,40 @@ public class TVBrowser {
           try {
             PluginProxyManager.getInstance().activatePlugin(epgPaid);
           } catch (TvBrowserException e) { }
+        }
+        
+        /* Download default channel lists for user country */
+        try {
+          PluginAutoUpdater.downloadMirrorList();
+          
+          final Mirror defaultChannelList = PluginAutoUpdater.getPluginUpdatesMirror();
+          final File supportedChannelLists = new File(Settings.getUserSettingsDirName(),"channellist_supported.gz");
+          
+          if(IOUtilities.download(new URL(defaultChannelList.getUrl()+"/"+supportedChannelLists.getName()), supportedChannelLists, 5000)) {
+            final String country = Settings.getCountry();
+            
+            BufferedReader in = null;
+            
+            try {
+              in = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(supportedChannelLists))));
+              
+              String line = null;
+              
+              while((line = in.readLine()) != null) {
+                if(country.equals(line)) {
+                  final File defaultCountryChannels = new File(Settings.getUserSettingsDirName(),"channellist_"+country+".gz");
+                  IOUtilities.download(new URL(defaultChannelList.getUrl()+"/"+defaultCountryChannels.getName()), defaultCountryChannels, 5000);
+                  break;
+                }
+              }
+            }catch(Throwable t) {
+              t.printStackTrace();
+            }finally {
+              IOUtilities.close(in);
+            }
+          }
+        }catch(IOException ioe1) {
+          ioe1.printStackTrace();
         }
         
         TvDataServiceProxyManager.getInstance().init();
