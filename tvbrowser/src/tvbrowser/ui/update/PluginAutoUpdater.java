@@ -57,20 +57,30 @@ public class PluginAutoUpdater {
     "http://tvbrowser.nicht-langweilig.de/data"
   };
   
+  public static boolean downloadMirrorList() {
+    return downloadMirrorList(getPluginUpdatesMirror().getUrl());
+  }
+  
+  private static boolean downloadMirrorList(final String baseUrl) {
+    final String name = PLUGIN_UPDATES_FILENAME.substring(0, PLUGIN_UPDATES_FILENAME.indexOf('.')) + "_" + Mirror.MIRROR_LIST_FILE_NAME;
+    final File target = new File(Settings.getUserSettingsDirName(), name);
+    
+    try {
+      IOUtilities.download(new URL(baseUrl + (baseUrl.endsWith("/") ? "" : "/") + name), target);
+    } catch(Exception ee) {}
+    
+    return target.isFile();
+  }
+  
   /**
    * Gets the the update items for plugins on TV-Browser version change.
    * @return The update items.
    * @throws IOException
    */
   public static SoftwareUpdateItem[] getUpdateItemsForVersionChange() throws IOException {
-    String baseUrl = getPluginUpdatesMirror().getUrl();
+    final String baseUrl = getPluginUpdatesMirror().getUrl();
     
-    try {
-      String name = PLUGIN_UPDATES_FILENAME.substring(0,
-          PLUGIN_UPDATES_FILENAME.indexOf('.'))
-          + "_" + Mirror.MIRROR_LIST_FILE_NAME;
-      IOUtilities.download(new URL(baseUrl + (baseUrl.endsWith("/") ? "" : "/") + name), new File(Settings.getUserSettingsDirName(), name));
-    } catch(Exception ee) {}
+    downloadMirrorList(baseUrl);
     
     java.net.URL url = new java.net.URL(baseUrl + "/" + PluginAutoUpdater.PLUGIN_UPDATES_FILENAME);
     SoftwareUpdater softwareUpdater = new SoftwareUpdater(url,PluginLoader.getInstance().getInfoOfAvailablePlugins());
@@ -89,12 +99,7 @@ public class PluginAutoUpdater {
     if(mirr != null) {
       String baseUrl = mirr.getUrl();
       
-      try {
-        String name = PLUGIN_UPDATES_FILENAME.substring(0,
-            PLUGIN_UPDATES_FILENAME.indexOf('.'))
-            + "_" + Mirror.MIRROR_LIST_FILE_NAME;
-        IOUtilities.download(new URL(baseUrl + (baseUrl.endsWith("/") ? "" : "/") + name), new File(Settings.getUserSettingsDirName(), name));
-      } catch(Exception ee) {}
+      downloadMirrorList(baseUrl);
       
       java.net.URL url = new java.net.URL(baseUrl + "/" + PluginAutoUpdater.PLUGIN_UPDATES_FILENAME);
       SoftwareUpdater softwareUpdater = new SoftwareUpdater(url,SoftwareUpdater.ONLY_DATA_SERVICE_TYPE,null);
@@ -115,20 +120,14 @@ public class PluginAutoUpdater {
         infoLabel.setText(mLocalizer.msg("searchForServer","Search for plugin update server..."));
         String url = getPluginUpdatesMirror().getUrl();
         
-        try {
-          String name = PLUGIN_UPDATES_FILENAME.substring(0,
-              PLUGIN_UPDATES_FILENAME.indexOf('.'))
-              + "_" + Mirror.MIRROR_LIST_FILE_NAME;
-          IOUtilities.download(new URL(url + (url.endsWith("/") ? "" : "/") + name), new File(Settings.getUserSettingsDirName(), name));
-        } catch(Exception ee) {}
+        downloadMirrorList(url);
         
         MainFrame.getInstance().updatePlugins(url, SoftwareUpdater.ONLY_UPDATE_TYPE, infoLabel, !Settings.propAutoUpdatePlugins.getBoolean());
       }
     }.start();
   }
-
-
-  private static Mirror getPluginUpdatesMirror() {
+  
+  public static Mirror getPluginUpdatesMirror() {
     File file = new File(new File(Settings.getUserSettingsDirName()),
         PLUGIN_UPDATES_FILENAME.substring(0, PLUGIN_UPDATES_FILENAME
             .indexOf('.'))

@@ -29,9 +29,11 @@ package tvbrowser.core;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
@@ -40,6 +42,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Logger;
+import java.util.zip.GZIPInputStream;
 
 import javax.swing.SwingUtilities;
 
@@ -288,7 +291,7 @@ public class ChannelList {
   public static void initSubscribedChannels() {
     Channel[] channelArr = Settings.propSubscribedChannels.getChannelArray();
     if (channelArr.length == 0 && mSubscribedChannels.isEmpty()) {
-      channelArr = getDefaultChannels(Settings.propSelectedChannelCountry.getString());
+      channelArr = getDefaultChannels(Settings.getCountry());
     }
     
     for (Channel channel : channelArr) {
@@ -1179,28 +1182,58 @@ public class ChannelList {
    * @since 3.0
    */
   private static Channel[] getDefaultChannels(final String country) {
-    ArrayList<Channel> list = new ArrayList<Channel>();
-    if (country.equalsIgnoreCase("de")) {
-      addChannels(list, DEFAULT_CHANNELS_DE);
+    final ArrayList<Channel> list = new ArrayList<Channel>();
+    
+    final File testForDefaultList = new File(Settings.getUserSettingsDirName(),"channellist_"+country+".gz");
+    
+    if(testForDefaultList.isFile()) {
+      BufferedReader in = null;
+      
+      try {
+        in = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(testForDefaultList)), "UTF-8"));
+        
+        String line = null;
+        
+        final ArrayList<String> availableList = new ArrayList<String>();
+        
+        while((line = in.readLine()) != null) {
+          availableList.add(line);
+        }
+        
+        if(!availableList.isEmpty()) {
+          addChannels(list, availableList.toArray(new String[availableList.size()]));
+        }
+      }catch(Throwable t) {
+        t.printStackTrace();
+      }finally {
+        IOUtilities.close(in);
+      }
     }
-    else if (country.equalsIgnoreCase("at")) {
-      addChannels(list, DEFAULT_CHANNELS_AT);
+    
+    if(list.isEmpty()) {
+      if (country.equalsIgnoreCase("de")) {
+        addChannels(list, DEFAULT_CHANNELS_DE);
+      }
+      else if (country.equalsIgnoreCase("at")) {
+        addChannels(list, DEFAULT_CHANNELS_AT);
+      }
+      else if (country.equalsIgnoreCase("ch")) {
+        addChannels(list, DEFAULT_CHANNELS_CH);
+      }
+      else if (country.equalsIgnoreCase("gb")) {
+        addChannels(list, DEFAULT_CHANNELS_GB);
+      }
+      else if (country.equalsIgnoreCase("se")) {
+        addChannels(list, DEFAULT_CHANNELS_SE);
+      }
+      else if (country.equalsIgnoreCase("no")) {
+        addChannels(list, DEFAULT_CHANNELS_NO);
+      }
+      else if (country.equalsIgnoreCase("dk")) {
+        addChannels(list, DEFAULT_CHANNELS_DK);
+      }
     }
-    else if (country.equalsIgnoreCase("ch")) {
-      addChannels(list, DEFAULT_CHANNELS_CH);
-    }
-    else if (country.equalsIgnoreCase("gb")) {
-      addChannels(list, DEFAULT_CHANNELS_GB);
-    }
-    else if (country.equalsIgnoreCase("se")) {
-      addChannels(list, DEFAULT_CHANNELS_SE);
-    }
-    else if (country.equalsIgnoreCase("no")) {
-      addChannels(list, DEFAULT_CHANNELS_NO);
-    }
-    else if (country.equalsIgnoreCase("dk")) {
-      addChannels(list, DEFAULT_CHANNELS_DK);
-    }
+    
     return list.toArray(new Channel[list.size()]);
   }
 
@@ -1209,6 +1242,24 @@ public class ChannelList {
       Channel channel = getChannel(id);
       if (channel != null) {
         list.add(channel);
+      }
+      else if(id.contains(":")) {
+        final String[] parts = id.split(":");
+        
+        for(Channel ch : mAvailableChannels) {
+          if(ch.getDataServicePackageName().equals(parts[0])) {
+            if(parts[0].equals("epgdonatedata")) {
+              if(ch.getId().equals(parts[1])) {
+                list.add(ch);
+                break;
+              }
+            }
+            else if(ch.getGroup().getId().equals(parts[1]) && ch.getId().equals(parts[2])) {
+              list.add(ch);
+              break;
+            }
+          }
+        }
       }
     }
   }

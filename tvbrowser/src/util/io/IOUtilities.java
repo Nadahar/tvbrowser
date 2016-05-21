@@ -31,6 +31,7 @@ import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -61,10 +62,9 @@ import javax.swing.ImageIcon;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
 
-import devplugin.Plugin;
-
 import tvbrowser.core.Settings;
 import util.ui.TimeFormatter;
+import devplugin.Plugin;
 
 /**
  * A utilities class for I/O stuff. It constists of serveral static
@@ -1292,5 +1292,21 @@ public class IOUtilities {
       }
       
       return path;
+    }
+    
+    /**
+     * Closes the given closeable.
+     * <p>
+     * @param toClose The closeable to close, <code>null</code> value acceptable.
+     * @since 3.4.3
+     */
+    public static final void close(Closeable toClose) {
+      if(toClose != null) {
+        try {
+          toClose.close();
+        } catch (IOException e) {
+          // Ignore
+        }
+      }
     }
 }
