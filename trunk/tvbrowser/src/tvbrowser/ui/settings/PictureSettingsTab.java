@@ -47,8 +47,12 @@ import javax.swing.event.HyperlinkListener;
 
 import tvbrowser.TVBrowser;
 import tvbrowser.core.Settings;
+import tvbrowser.core.filters.FilterList;
+import tvbrowser.core.filters.GenericFilterMap;
+import tvbrowser.core.filters.UserFilter;
 import tvbrowser.extras.favoritesplugin.FavoritesPluginProxy;
 import tvbrowser.extras.reminderplugin.ReminderPluginProxy;
+import tvbrowser.ui.filter.dlgs.EditFilterDlg;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.settings.PluginPictureSettings;
 import util.settings.ProgramPanelSettings;
@@ -79,7 +83,7 @@ import devplugin.SettingsItem;
 public class PictureSettingsTab extends AbstractSettingsTab {
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(PictureSettingsTab.class);
 
-  private JRadioButton mShowPicturesEver, mShowPicturesNever, mShowPicturesForSelection;
+  private JRadioButton mShowPicturesEver, mShowPicturesNever, mShowPicturesForSelection, mShowPicturesForFilter;
   private JCheckBox mShowPicturesInTimeRange, mShowPicturesForDuration, mShowPicturesForPlugins;
   private JSpinner mPictureStartTime, mPictureEndTime, mDuration;
   private JLabel mStartLabel, mEndLabel;
@@ -113,7 +117,8 @@ public class PictureSettingsTab extends AbstractSettingsTab {
     try {
       mShowPicturesNever = new JRadioButton(mLocalizer.msg("showNever", "Show never"), Settings.propPictureType.getInt() == ProgramPanelSettings.SHOW_PICTURES_NEVER);
       mShowPicturesEver = new JRadioButton(mLocalizer.msg("showEver", "Show always"), Settings.propPictureType.getInt() == ProgramPanelSettings.SHOW_PICTURES_EVER);
-      mShowPicturesForSelection = new JRadioButton(mLocalizer.msg("showForSelection", "Selection..."), Settings.propPictureType.getInt() > 1);
+      mShowPicturesForSelection = new JRadioButton(mLocalizer.msg("showForSelection", "Selection..."), Settings.propPictureType.getInt() > 1 && Settings.propPictureType.getInt() < 10);
+      mShowPicturesForFilter = new JRadioButton(mLocalizer.msg("showForFilter", "For filter..."), Settings.propPictureType.getInt() == ProgramPanelSettings.SHOW_PICTURES_FOR_FILTER);
 
       mShowPicturesInTimeRange = new JCheckBox(mLocalizer.msg("showInTimeRange", "Show in time range:"), ProgramPanelSettings.typeContainsType(Settings.propPictureType.getInt(), ProgramPanelSettings.SHOW_PICTURES_IN_TIME_RANGE));
       mShowPicturesForDuration = new JCheckBox(mLocalizer.msg("showForDuration", "Show for duration more than or equals to:"), ProgramPanelSettings.typeContainsType(Settings.propPictureType.getInt(), ProgramPanelSettings.SHOW_PICTURES_FOR_DURATION));
@@ -125,6 +130,7 @@ public class PictureSettingsTab extends AbstractSettingsTab {
       bg.add(mShowPicturesEver);
       bg.add(mShowPicturesNever);
       bg.add(mShowPicturesForSelection);
+      bg.add(mShowPicturesForFilter);
 
       String timePattern = mLocalizer.msg("timePattern", "hh:mm a");
 
@@ -170,7 +176,7 @@ public class PictureSettingsTab extends AbstractSettingsTab {
               "2dlu,default,default,5dlu,default,default,default,10dlu,default,5dlu,"+
               "default,10dlu,default,5dlu,fill:0dlu:grow,default");
 
-      PanelBuilder pb = new PanelBuilder(layout, new ScrollableJPanel());
+      PanelBuilder pb = new PanelBuilder(layout/*, new ScrollableJPanel()*/);
 
       pb.border(Borders.DIALOG);
 
@@ -253,24 +259,60 @@ public class PictureSettingsTab extends AbstractSettingsTab {
         layout.insertRow(y+=1, RowSpec.decode("2dlu"));
         y++;
       }
-
+      
+      final JButton editFilter = new JButton(mLocalizer.msg("editFilter", "Edit filter"));
+      editFilter.setEnabled(mShowPicturesForFilter.isSelected());
+      editFilter.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+          final UserFilter filter = GenericFilterMap.getInstance().getGenericPictureFilter();
+          
+          final EditFilterDlg editFilter = new EditFilterDlg(UiUtilities.getLastModalChildOf(MainFrame.getInstance()), FilterList.getInstance(), filter, false);
+          
+          if(editFilter.getOkWasPressed()) {
+            GenericFilterMap.getInstance().updateGenericPictureFilter(filter);
+          }
+        }
+      });
+      
+      mShowPicturesForFilter.addItemListener(new ItemListener() {
+        @Override
+        public void itemStateChanged(ItemEvent e) {
+          editFilter.setEnabled(e.getStateChange() == ItemEvent.SELECTED);
+        }
+      });
+            
+      layout.insertRow(y, RowSpec.decode("default"));
+      
+      pb.add(mShowPicturesForFilter, CC.xyw(2, y, 9));
+      
+      y++;
+      
+      layout.insertRow(y, RowSpec.decode("2dlu"));
+      
+      y++;
+      
+      layout.insertRow(y, RowSpec.decode("default"));
+      
+      pb.add(editFilter, CC.xyw(3, y++, 4));
+      
       pb.add(mShowDescription, CC.xyw(2, y+=1, 9));
 
       mDescriptionLines = new JSpinner(new SpinnerNumberModel(Settings.propPictureDescriptionLines.getInt(), 1, 20, 1));
       pb.add(mDescriptionLines, CC.xyw(3, y+=1, 4));
       mDescriptionLabel = new JLabel(mLocalizer.msg("lines", "lines"));
-	  pb.add(mDescriptionLabel, CC.xy(8, y));
+  	  pb.add(mDescriptionLabel, CC.xy(8, y));
       pb.add(mShowPictureBorderProgramTable, CC.xyw(3,y+=1,8));
-	  mDescriptionLabel.setEnabled(mShowDescription.isSelected());
-	  mDescriptionLines.setEnabled(mShowDescription.isSelected());
-	  mShowPictureBorderProgramTable.setEnabled(!mShowDescription.isSelected());
-	  mShowDescription.addActionListener(new ActionListener() {
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-		  mDescriptionLines.setEnabled(mShowDescription.isSelected());
-		  mDescriptionLabel.setEnabled(mShowDescription.isSelected());
-		}});
+  	  mDescriptionLabel.setEnabled(mShowDescription.isSelected());
+  	  mDescriptionLines.setEnabled(mShowDescription.isSelected());
+  	  mShowPictureBorderProgramTable.setEnabled(!mShowDescription.isSelected());
+  	  mShowDescription.addActionListener(new ActionListener() {
+  
+  		@Override
+  		public void actionPerformed(ActionEvent e) {
+  		  mDescriptionLines.setEnabled(mShowDescription.isSelected());
+  		  mDescriptionLabel.setEnabled(mShowDescription.isSelected());
+  		}});
     
       pb.addSeparator(mLocalizer.msg("pluginPictureTitle", "Default picture settings for the program lists of the Plugins"), CC.xyw(1, y+=2, 9));
       pb.add(mPluginsPictureSettings = new PluginsPictureSettingsPanel(new PluginPictureSettings(Settings.propPluginsPictureSetting.getInt()), true), CC.xyw(2, y+=2, 8));
@@ -440,6 +482,8 @@ public class PictureSettingsTab extends AbstractSettingsTab {
       if (mShowPicturesInTimeRange.isSelected()) {
         value += ProgramPanelSettings.SHOW_PICTURES_IN_TIME_RANGE;
       }
+    } else if(mShowPicturesForFilter.isSelected()) {
+      value = ProgramPanelSettings.SHOW_PICTURES_FOR_FILTER;
     }
 
     return value;

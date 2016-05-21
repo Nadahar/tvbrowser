@@ -53,6 +53,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import tvbrowser.core.Settings;
+import tvbrowser.core.filters.GenericFilterMap;
 import tvbrowser.core.icontheme.InfoIconTheme;
 import tvbrowser.core.icontheme.InfoThemeLoader;
 import tvbrowser.core.plugin.PluginProxy;
@@ -610,7 +611,8 @@ private static Font getDynamicFontSize(Font font, int offset) {
          !ProgramUtilities.isNotInTimeRange(mSettings.getPictureTimeRangeStart(),mSettings.getPictureTimeRangeEnd(),program)) ||
          (mSettings
             .isShowingPictureForDuration() && mSettings.getDuration() <= program.getLength())
-         )) {
+         ) ||
+         (mSettings.isShowingPictureForFilter() && GenericFilterMap.getInstance().getGenericPictureFilter().accept(program))) {
       dontShow = false;
     }
     

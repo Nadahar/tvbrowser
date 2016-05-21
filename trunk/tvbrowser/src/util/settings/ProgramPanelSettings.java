@@ -37,6 +37,8 @@ public class ProgramPanelSettings {
   public static final int SHOW_PICTURES_FOR_PLUGINS = 3;
   /** Show the pictures for programs with selected duration */
   public static final int SHOW_PICTURES_FOR_DURATION = 4;
+  /** Show the pictures for programs that are accepted by the picture filter */
+  public static final int SHOW_PICTURES_FOR_FILTER = 10;
   
   /** Channel logo is shown for program panels a plugin has set */
   public static final int SHOW_CHANNEL_LOGO_PLUGINS_CONTROL = 0;
@@ -367,6 +369,14 @@ public class ProgramPanelSettings {
    */
   public boolean isShowingPictureNever() {
     return mType == SHOW_PICTURES_NEVER;
+  }
+  
+  /**
+   * @return If the type of the picture showing is set to show picture for filter.
+   * @since 3.4.3
+   */
+  public boolean isShowingPictureForFilter() {
+    return mType == SHOW_PICTURES_FOR_FILTER;
   }
 
   /**
