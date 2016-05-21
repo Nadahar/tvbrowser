@@ -1298,7 +1298,7 @@ public class IOUtilities {
      * Closes the given closeable.
      * <p>
      * @param toClose The closeable to close, <code>null</code> value acceptable.
-     * @since 3.4.3
+     * @since 3.4.4
      */
     public static final void close(Closeable toClose) {
       if(toClose != null) {
