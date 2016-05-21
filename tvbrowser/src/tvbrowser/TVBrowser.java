@@ -1691,6 +1691,14 @@ public class TVBrowser {
         PluginLoader.getInstance().installPendingPlugins();
         PluginLoader.getInstance().loadAllPlugins();
         
+        PluginProxy epgPaid = PluginProxyManager.getInstance().getPluginForId("java.epgpaiddata.EPGpaidData");
+        
+        if(epgPaid != null) {
+          try {
+            PluginProxyManager.getInstance().activatePlugin(epgPaid);
+          } catch (TvBrowserException e) { }
+        }
+        
         TvDataServiceProxyManager.getInstance().init();
         ChannelList.createForTvBrowserStart();
         ChannelList.initSubscribedChannels();
