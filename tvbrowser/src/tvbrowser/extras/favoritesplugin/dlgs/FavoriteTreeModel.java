@@ -182,14 +182,18 @@ public class FavoriteTreeModel extends DefaultTreeModel {
    * @return All favorites in an array.
    */
   public Favorite[] getFavoriteArr() {
+    return getFavoriteArr((FavoriteNode) getRoot(), true);
+  }
+  
+  public Favorite[] getFavoriteArr(FavoriteNode node, boolean withChilds) {
     ArrayList<Favorite> favoriteList = new ArrayList<Favorite>();
-
-    fillFavoriteList((FavoriteNode) getRoot(), favoriteList);
-
+    
+    fillFavoriteList(node, favoriteList, withChilds);
+    
     return favoriteList.toArray(new Favorite[favoriteList.size()]);
   }
 
-  private void fillFavoriteList(FavoriteNode node, ArrayList<Favorite> favoriteList) {
+  private void fillFavoriteList(FavoriteNode node, ArrayList<Favorite> favoriteList, boolean withChilds) {
     if(node.isDirectoryNode()) {
       @SuppressWarnings("unchecked")
       Enumeration<FavoriteNode> e = node.children();
@@ -197,8 +201,8 @@ public class FavoriteTreeModel extends DefaultTreeModel {
       while(e.hasMoreElements()) {
         FavoriteNode child = e.nextElement();
 
-        if(child.isDirectoryNode()) {
-          fillFavoriteList(child, favoriteList);
+        if(withChilds && child.isDirectoryNode()) {
+          fillFavoriteList(child, favoriteList, withChilds);
         } else if(child.containsFavorite()) {
           favoriteList.add(child.getFavorite());
         }
@@ -212,6 +216,16 @@ public class FavoriteTreeModel extends DefaultTreeModel {
    * @param favorite The favorite to delete.
    */
   public void deleteFavorite(Favorite favorite) {
+    deleteFavorite(favorite, true);
+  }
+  
+  /**
+   * Deletes a favorite.
+   *
+   * @param favorite The favorite to delete.
+   * @param updateRootNode If the root node should be updated.
+   */
+  public void deleteFavorite(Favorite favorite, boolean updateRootNode) {
     Program[] delFavPrograms = favorite.getPrograms();
     for (Program program : delFavPrograms) {
       program.unmark(FavoritesPluginProxy.getInstance());
@@ -227,7 +241,9 @@ public class FavoriteTreeModel extends DefaultTreeModel {
       }
     }
 
-    FavoritesPlugin.getInstance().updateRootNode(true);
+    if(updateRootNode) {
+      FavoritesPlugin.getInstance().updateRootNode(true);
+    }
   }
 
   /**
