@@ -1193,7 +1193,7 @@ public class Settings {
       result = "de";
     }
     
-    return result;
+    return result.toLowerCase();
   }
   
   /**
