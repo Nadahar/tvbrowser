@@ -357,6 +357,38 @@ public class FavoriteTree extends JTree implements DragGestureListener, DropTarg
           
           menu.add(item);
           
+          menu.addSeparator();
+          
+          item = new JMenuItem(LOCALIZER.msg("enableAlert","Enable alert for new found programs for all favorites in folder"));
+          item.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+              for(Favorite favorite : favorites) {
+                favorite.setRemindAfterDownload(true);
+              }
+              
+              FavoritesPlugin.getInstance().saveFavorites();
+            }
+          });
+          
+          menu.add(item);
+          
+          item = new JMenuItem(LOCALIZER.msg("disableAlert","Disable alert for new found programs for all favorites in folder"));
+          item.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+              for(Favorite favorite : favorites) {
+                favorite.setRemindAfterDownload(false);
+              }
+              
+              FavoritesPlugin.getInstance().saveFavorites();
+            }
+          });
+          
+          menu.add(item);
+          
+          menu.addSeparator();
+          
           item = new JMenuItem(LOCALIZER.msg("deleteAllFavoritesInFolder", "Delete all Favorites in folder"), TVBrowserIcons.delete(TVBrowserIcons.SIZE_SMALL));
           
           item.addActionListener(new ActionListener() {
@@ -440,7 +472,7 @@ System.out.println(last + " " + last.getParent());
 
         menu.add(item);
       }
-System.out.println("joer");
+      
       menu.show(this, p.x, p.y);
   }catch(Throwable t) {t.printStackTrace();}
   }
