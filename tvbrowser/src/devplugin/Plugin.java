@@ -67,13 +67,28 @@ import util.ui.TVBrowserIcons;
  * @author Til Schneider, www.murfman.de
  */
 abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf {
-  public static final String ALL_CATEGORY = "all";
-  public static final String REMOTE_CONTROL_SOFTWARE_CATEGORY = "remote_soft";
-  public static final String REMOTE_CONTROL_HARDWARE_CATEGORY = "remote_hard";
-  public static final String ADDITONAL_DATA_SERVICE_SOFTWARE_CATEGORY = "datasources_soft";
-  public static final String ADDITONAL_DATA_SERVICE_HARDWARE_CATEGORY = "datasources_hard";
-  public static final String RATINGS_CATEGORY = "ratings";
-  public static final String OTHER_CATEGORY = "misc";
+  public static final String CATEGORY_ALL = "all";
+  public static final String CATEGORY_REMOTE_CONTROL_SOFTWARE = "remote_soft";
+  public static final String CATEGORY_REMOTE_CONTROL_HARDWARE = "remote_hard";
+  public static final String CATEGORY_ADDITONAL_DATA_SERVICE_SOFTWARE = "datasources_soft";
+  public static final String CATEGORY_ADDITONAL_DATA_SERVICE_HARDWARE = "datasources_hard";
+  public static final String CATEGORY_RATINGS = "ratings";
+  public static final String CATEGORY_OTHER = "misc";
+
+  /** @deprecated since 3.4.4 use {@link #CATEGORY_ALL} instead */
+  public static final String ALL_CATEGORY = CATEGORY_ALL;
+  /** @deprecated since 3.4.4 use {@link #CATEGORY_REMOTE_CONTROL_SOFTWARE} instead */
+  public static final String REMOTE_CONTROL_SOFTWARE_CATEGORY = CATEGORY_REMOTE_CONTROL_SOFTWARE;
+  /** @deprecated since 3.4.4 use {@link #CATEGORY_REMOTE_CONTROL_HARDWARE} instead */
+  public static final String REMOTE_CONTROL_HARDWARE_CATEGORY = CATEGORY_REMOTE_CONTROL_HARDWARE;
+  /** @deprecated since 3.4.4 use {@link #CATEGORY_ADDITONAL_DATA_SERVICE_SOFTWARE} instead */
+  public static final String ADDITONAL_DATA_SERVICE_SOFTWARE_CATEGORY = CATEGORY_ADDITONAL_DATA_SERVICE_SOFTWARE;
+  /** @deprecated since 3.4.4 use {@link #CATEGORY_ADDITONAL_DATA_SERVICE_HARDWARE} instead */
+  public static final String ADDITONAL_DATA_SERVICE_HARDWARE_CATEGORY = CATEGORY_ADDITONAL_DATA_SERVICE_HARDWARE;
+  /** @deprecated since 3.4.4 use {@link #CATEGORY_RATINGS} instead */
+  public static final String RATINGS_CATEGORY = CATEGORY_RATINGS;
+  /** @deprecated since 3.4.4 use {@link #CATEGORY_OTHER} instead */
+  public static final String OTHER_CATEGORY = CATEGORY_OTHER;
 
   /**
    * logger for this class.
