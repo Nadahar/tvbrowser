@@ -749,24 +749,28 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
           out = new BufferedWriter(new OutputStreamWriter(fOut,"UTF-8"));
           
           for(int i = 0; i < mSubscribedChannels.getModel().getSize(); i++) {
-            Channel ch = (Channel)mSubscribedChannels.getModel().getElementAt(i);
+            final Object value = mSubscribedChannels.getModel().getElementAt(i);
             
-            out.write(ch.getDataServicePackageName());
-            out.write(":");
-            
-            if(!ch.getDataServicePackageName().equals("epgdonatedata")) {
-              out.write(ch.getGroup().getId());
+            if(value instanceof Channel) {
+              final Channel ch = (Channel)value;
+              
+              out.write(ch.getDataServicePackageName());
               out.write(":");
+              
+              if(!ch.getDataServicePackageName().equals("epgdonatedata")) {
+                out.write(ch.getGroup().getId());
+                out.write(":");
+              }
+              
+              out.write(ch.getId());
+              
+              if(ch.getSortNumber().trim().length() > 0) {
+                out.write(":");
+                out.write(ch.getSortNumber());
+              }
+              
+              out.write("\n");
             }
-            
-            out.write(ch.getId());
-            
-            if(ch.getSortNumber().trim().length() > 0) {
-              out.write(":");
-              out.write(ch.getSortNumber());
-            }
-            
-            out.write("\n");
           }
           
           out.flush();
