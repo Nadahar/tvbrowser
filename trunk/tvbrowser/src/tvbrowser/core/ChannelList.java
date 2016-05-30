@@ -122,20 +122,6 @@ public class ChannelList {
     "swedbtvdataservice.SweDBTvDataService_SweDB_se_kanal9.se",
     "swedbtvdataservice.SweDBTvDataService_SweDB_se_svtb-svt24.svt.se" };
 
-  private static final String[] DEFAULT_CHANNELS_GB = new String[] {
-    "radiotimesdataservice.RadioTimesDataService_radiotimes_gb_RADIOTIMES92", //BBC1
-    "radiotimesdataservice.RadioTimesDataService_radiotimes_gb_RADIOTIMES105", //BBC2
-    "radiotimesdataservice.RadioTimesDataService_radiotimes_gb_RADIOTIMES26", //ITV1 Ld
-    "radiotimesdataservice.RadioTimesDataService_radiotimes_gb_RADIOTIMES132", //Ch4
-    "radiotimesdataservice.RadioTimesDataService_radiotimes_gb_RADIOTIMES134", //Five
-    "radiotimesdataservice.RadioTimesDataService_radiotimes_gb_RADIOTIMES45", //BBC3
-    "radiotimesdataservice.RadioTimesDataService_radiotimes_gb_RADIOTIMES47", //BBC4
-    "radiotimesdataservice.RadioTimesDataService_radiotimes_gb_RADIOTIMES185", //ITV2
-    "radiotimesdataservice.RadioTimesDataService_radiotimes_gb_RADIOTIMES1859", //ITV3
-    "radiotimesdataservice.RadioTimesDataService_radiotimes_gb_RADIOTIMES1961", //ITV4
-    "radiotimesdataservice.RadioTimesDataService_radiotimes_gb_RADIOTIMES158", //E4
-  };
-
   private static final String[] DEFAULT_CHANNELS_NO = new String[] {
     "tvbrowserdataservice.TvBrowserDataService_norge_no_NRK1",
     "tvbrowserdataservice.TvBrowserDataService_norge_no_TV2",
@@ -1219,9 +1205,6 @@ public class ChannelList {
       }
       else if (country.equalsIgnoreCase("ch")) {
         addChannels(list, DEFAULT_CHANNELS_CH);
-      }
-      else if (country.equalsIgnoreCase("gb")) {
-        addChannels(list, DEFAULT_CHANNELS_GB);
       }
       else if (country.equalsIgnoreCase("se")) {
         addChannels(list, DEFAULT_CHANNELS_SE);

@@ -288,7 +288,6 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
       }
       else if(country.equals(Locale.UK.getCountry())) {
         selectedDataServices.add("BBCDataService");
-        selectedDataServices.add("RadioTimesDataService");
         selectedDataServices.add("TvBrowserDataService");
       }
       else if(country.equals("NO")) {
