@@ -166,7 +166,7 @@ public class HtmlMirrorVisualizer implements MirrorVisualizer {
     
     for (int ch = 0; ch < channelList.getChannelCount(); ch++) {
       Channel channel = channelList.getChannelAt(ch);
-      mOut.print  ("<tr><th class=\"header_channel\" align=\"right\">" + replaceUmlauts(channel.getName()) + "</th>");
+      mOut.print  ("<tr><th class=\"header_channel\" align=\"right\"><a name=\""+group+"_"+channel.getId()+"\" href=\"#"+group+"_"+channel.getId()+"\"></a>" + replaceUmlauts(channel.getName()) + "</th>");
         
       for (int i=0; i< DAY_COUNT; i++) {
         int version = summaryFile.getDayProgramVersion(TODAY.addDays(i), channel.getBaseCountry(), channel.getId(), 0);
