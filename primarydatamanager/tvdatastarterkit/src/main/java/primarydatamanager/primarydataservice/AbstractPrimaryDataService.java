@@ -104,7 +104,13 @@ abstract public class AbstractPrimaryDataService implements PrimaryDataService {
    * @see #logMessage(String)
    */
   public final void logException(Exception exc) {
-    exc.printStackTrace(mErr);
+    if(mErr != null) {
+      exc.printStackTrace(mErr);
+    }
+    else {
+      exc.printStackTrace();
+    }
+    
     mThereWhereErrors=true;
   }
   
