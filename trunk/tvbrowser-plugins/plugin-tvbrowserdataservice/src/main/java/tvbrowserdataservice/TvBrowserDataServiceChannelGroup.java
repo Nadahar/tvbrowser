@@ -505,7 +505,12 @@ public class TvBrowserDataServiceChannelGroup extends ChannelGroupImpl {
 
       // Update the channel list
       updateChannelList(mirror, true);
-      return getAvailableChannels();
+    }
+    
+    final Channel[] available = getAvailableChannels();
+    
+    if(available != null) {
+      return available;
     }
     else {
       return new Channel[0];
