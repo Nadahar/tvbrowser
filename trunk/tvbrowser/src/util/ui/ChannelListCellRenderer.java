@@ -170,7 +170,7 @@ public class ChannelListCellRenderer extends DefaultListCellRenderer {
         return mChannel;
       }
     }
-    else if(value instanceof String) {
+    else if(value instanceof String && Channel.SEPARATOR.equals(value)) {
       return mSeparator;
     }
     

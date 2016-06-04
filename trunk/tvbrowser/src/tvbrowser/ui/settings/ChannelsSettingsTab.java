@@ -308,7 +308,6 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
     mButtonAddSeparator.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        System.out.println(e);
         int index = mSubscribedChannels.getSelectedIndex()+1;
         Object test = mSubscribedChannels.getSelectedValue();
         
