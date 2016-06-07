@@ -882,11 +882,20 @@ public class SystemTray {
   }
 
   private boolean acceptedChannel(final ProgramMenuItem item) {
-    ChannelFilter channelFilter = MainFrame.getInstance().getChannelFilter();
-    if (channelFilter == null) {
-      return true;
+    boolean result = false;
+    
+    if(item != null) {
+      ChannelFilter channelFilter = MainFrame.getInstance().getChannelFilter();
+      
+      if (channelFilter == null) {
+        result = true;
+      }
+      else {
+        result = channelFilter.accept(item.getProgram());
+      }
     }
-    return channelFilter.accept(item.getProgram());
+    
+    return result;
   }
 
   private int getMaxItemCount() {
