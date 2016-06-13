@@ -67,6 +67,9 @@ import devplugin.ProgramFieldType;
 import devplugin.ProgramReceiveTarget;
 
 public class RememberMeManagePanel extends JPanel implements PersonaListener {
+  private static final int TYPE_ACTION_REMOVE = 1;
+  private static final int TYPE_ACTION_UPDATE = 2;
+  
   private RememberedProgramsList<RememberedProgram> mPrograms;
   private JList mList;
   private DefaultListModel mModel;
@@ -175,7 +178,7 @@ public class RememberMeManagePanel extends JPanel implements PersonaListener {
     remove.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        removeSelection(rMe);
+        handleAction(TYPE_ACTION_REMOVE,rMe);
       }
     });
     
@@ -223,7 +226,7 @@ public class RememberMeManagePanel extends JPanel implements PersonaListener {
       remove.addActionListener(new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-          removeSelection(rMe);
+          handleAction(TYPE_ACTION_REMOVE,rMe);
         }
       });
       
@@ -513,10 +516,9 @@ public class RememberMeManagePanel extends JPanel implements PersonaListener {
     public boolean hasFieldValue(ProgramFieldType type) {
       return (type == ProgramFieldType.TITLE_TYPE || (type == ProgramFieldType.EPISODE_TYPE && mProgram.getEpisodeTitle() != null));
     }
-    
   }
-  
-  private void removeSelection(RememberMe rMe) {
+    
+  private synchronized void removeSelectionInternal(RememberMe rMe) {
     synchronized (mPrograms) {
       mUndoPrograms.clear();
       Object[] remove = mList.getSelectedValues();
@@ -538,11 +540,21 @@ public class RememberMeManagePanel extends JPanel implements PersonaListener {
       mUndo.setEnabled(!mUndoPrograms.isEmpty());
     }
     
-    updatePanel(rMe);
+    updatePanelInternal(rMe);
   }
-
   
   public synchronized void updatePanel(RememberMe rMe) {
+    handleAction(TYPE_ACTION_UPDATE, rMe);
+  }
+  
+  private synchronized void handleAction(final int actionType, final  RememberMe rMe) {
+    switch(actionType) {
+      case TYPE_ACTION_REMOVE: removeSelectionInternal(rMe);break;
+      case TYPE_ACTION_UPDATE: updatePanelInternal(rMe);break;
+    }
+  }
+  
+  private synchronized void updatePanelInternal(RememberMe rMe) {
     synchronized (mPrograms) {
       mModel.clear();
 
