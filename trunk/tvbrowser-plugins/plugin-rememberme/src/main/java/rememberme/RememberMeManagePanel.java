@@ -45,6 +45,7 @@ import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.event.ChangeListener;
+import javax.swing.plaf.SliderUI;
 
 import tvbrowser.extras.searchplugin.SearchPluginProxy;
 import util.ui.TVBrowserIcons;
@@ -556,15 +557,30 @@ public class RememberMeManagePanel extends JPanel implements PersonaListener {
   
   private synchronized void updatePanelInternal(RememberMe rMe) {
     synchronized (mPrograms) {
+      final Object[] selectedValues = (mList != null ? mList.getSelectedValues() : new Object[0]);
+      
       mModel.clear();
 
       ArrayList<RememberedProgram> toRemove = new ArrayList<RememberedProgram>();
+      
+      int index = 0;
+      int pos = 0;
+      
+      int[] selectedIndices = new int[selectedValues.length];
       
       for(RememberedProgram prog : mPrograms) {
         if(prog.isExpired() && prog.isValid(rMe.getDayCount())) {
           if(!containsProgram(prog)) {
             if(mCurrentDayFilter.accept(prog) && mCurrentTagFilter.accept(prog)) {
               mModel.addElement(prog);
+              
+              for(Object selected : selectedValues) {
+                if(selected.equals(prog)) {
+                  selectedIndices[pos++] = index;
+                }
+              }
+              
+              index++;
             }
           }
           else if(!prog.hasProgram()){
@@ -578,6 +594,16 @@ public class RememberMeManagePanel extends JPanel implements PersonaListener {
       
       for(RememberedProgram prog : toRemove) {
         mPrograms.remove(prog,rMe);
+      }
+      
+      if(pos < selectedIndices.length) {
+        int[] indiciesCopy = new int[pos];
+        System.arraycopy(selectedIndices, 0, indiciesCopy, 0, pos);
+        selectedIndices = indiciesCopy;
+      }
+      
+      if(pos > 0 && mList != null) {
+        mList.setSelectedIndices(selectedIndices);
       }
     }
   }
