@@ -124,7 +124,7 @@ public class AndroidSync extends Plugin {
   private static final String PLUGIN_TYPE = "PLUGIN_TYPE";
   private static final String FILTER_TYPE = "FILTER_TYPE";
   
-  private static final Version mVersion = new Version(0, 23, 2, true);
+  private static final Version mVersion = new Version(0, 23, 3, true);
   private final String CrLf = "\r\n";
   private Properties mProperties;
   
@@ -200,6 +200,8 @@ public class AndroidSync extends Plugin {
             mProperties.put(KEY_CAR, userPanel.getCar());
             mProperties.put(KEY_BICYCLE, userPanel.getBicycle());
           }
+          
+          saveMe();
         }
       }
     }
