@@ -29,6 +29,7 @@ package tvdataservice;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Iterator;
 import java.util.TimeZone;
 import java.util.Vector;
@@ -187,23 +188,24 @@ public class MutableProgram implements Program {
     mState = IS_VALID_STATE;
   }
 
+  private Calendar getNormalizedCalendarForTime(final int localStartTime) {
+    Calendar channelTimeZoneCal = Calendar.getInstance(mChannel.getTimeZone());
+    channelTimeZoneCal.set(mLocalDate.getYear(), mLocalDate.getMonth()-1, mLocalDate.getDayOfMonth(), localStartTime / 60, localStartTime % 60);
+    channelTimeZoneCal.set(Calendar.SECOND, 0);
+    channelTimeZoneCal.set(Calendar.MILLISECOND, 0);
+    
+    Calendar userTimeZoneCal = Calendar.getInstance(mLocalTimeZone);
+    userTimeZoneCal.setTimeInMillis(channelTimeZoneCal.getTimeInMillis());
+    userTimeZoneCal.add(Calendar.MINUTE, mChannel.getTimeZoneCorrectionMinutes());
+    
+    return userTimeZoneCal;
+  }
 
-  private void normalizeTimeZone(final Date localDate, final int localStartTime) {
-    TimeZone channelTimeZone=mChannel.getTimeZone();
-
-    int timeZoneOffset=(mLocalTimeZone.getRawOffset()-channelTimeZone.getRawOffset())/ 60000 + mChannel.getTimeZoneCorrectionMinutes();
-
-    mNormalizedStartTime = (short) (localStartTime + timeZoneOffset);
-    mNormalizedDate=localDate;
-
-    if (mNormalizedStartTime >= (24 * 60)) {
-      mNormalizedStartTime -= (24 * 60);
-      mNormalizedDate = mNormalizedDate.addDays(1);
-    }
-    else if (mNormalizedStartTime < 0) {
-      mNormalizedStartTime += (24 * 60);
-      mNormalizedDate = mNormalizedDate.addDays(-1);
-    }
+  private void normalizeTimeZone(final int localStartTime) {
+    final Calendar userTimeZoneCal = getNormalizedCalendarForTime(localStartTime);
+        
+    mNormalizedStartTime = (short)(userTimeZoneCal.get(Calendar.HOUR_OF_DAY) * 60 + userTimeZoneCal.get(Calendar.MINUTE));
+    mNormalizedDate = new Date(userTimeZoneCal);
     
     String dataServiceId = mChannel.getDataServiceId() != null ? mChannel.getDataServiceId() : "UnknownDataService";
     String groupId = mChannel.getGroup() != null ? mChannel.getGroup().getId() : "UnknownChannelGroup";
@@ -489,26 +491,9 @@ public class MutableProgram implements Program {
     if (value == -1) {
       return null;
     } else {
-
-      // Correct the TimeZone
-      TimeZone channelTimeZone=mChannel.getTimeZone();
-      TimeZone localTimeZone=TimeZone.getDefault();
-
-      int timeZoneOffsetMinutes=(localTimeZone.getRawOffset()-channelTimeZone.getRawOffset())/(60 * 1000) + mChannel.getTimeZoneCorrectionMinutes();
-      value += timeZoneOffsetMinutes;
-
-      int hours = value / 60;
-      int minutes = value % 60;
-
-      if (hours >= 24) {
-        hours -= 24;
-      }
-      else if (hours < 0) {
-        hours += 24;
-      }
-
-      return new StringBuilder().append(hours).append(":").append(
-          (minutes < 10) ? "0" : "").append(minutes).toString();
+      final Calendar userTimeZoneCal = getNormalizedCalendarForTime(value);
+      
+      return IOUtilities.timeToString(userTimeZoneCal.get(Calendar.HOUR_OF_DAY) * 60 + userTimeZoneCal.get(Calendar.MINUTE));
     }
   }
 
@@ -707,7 +692,7 @@ public class MutableProgram implements Program {
     notifyChangedStatus();
 
     if (type == ProgramFieldType.START_TIME_TYPE) {
-      normalizeTimeZone(mLocalDate, value);
+      normalizeTimeZone(value);
     }
   }
 
