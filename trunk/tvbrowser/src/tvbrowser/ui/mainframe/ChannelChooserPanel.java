@@ -80,7 +80,7 @@ public class ChannelChooserPanel extends JPanel implements ListDropAction {
     mList = new JList(mChannelChooserModel) {
       @Override
       public void setSelectedIndex(int index) {
-        if(getModel().getElementAt(index) instanceof String) {
+        if(index >= 0 && getModel().getElementAt(index) instanceof String) {
           int test = getSelectedIndex();
           
           if(test < index) {
