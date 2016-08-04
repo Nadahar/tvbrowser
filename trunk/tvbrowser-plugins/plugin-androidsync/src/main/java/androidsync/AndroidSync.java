@@ -63,6 +63,7 @@ import javax.swing.JPasswordField;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 
 import org.apache.commons.codec.binary.Base64;
 
@@ -106,13 +107,17 @@ import devplugin.Version;
 public class AndroidSync extends Plugin {
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(AndroidSync.class);
   
-  private static final String BACK_SYNC_ADDRESS = "http://android.tvbrowser.org/data/scripts/syncDown.php?type=favortiesFromApp";
-  private static final String FAVORITE_SYNC_ADDRESS = "http://android.tvbrowser.org/data/scripts/syncUp.php?type=favoritesFromDesktop";
-  private static final String CHANNEL_UP_SYNC_ADDRESS = "http://android.tvbrowser.org/data/scripts/syncUp.php?type=channelsFromDesktop";
-  private static final String CHANNEL_DOWN_SYNC_ADDRESS = "http://android.tvbrowser.org/data/scripts/syncDown.php?type=channelsFromDesktop";
+  private static final String URL_BASE = "https://www.tvbrowser-app.de/";
   
-  private static final String REMINDER_UP_SYNC_ADDRESS = "http://android.tvbrowser.org/data/scripts/syncUp.php?type=reminderFromDesktop";
-  private static final String REMINDER_BACK_SYNC_ADDRESS = "http://android.tvbrowser.org/data/scripts/syncDown.php?type=reminderFromApp";
+  private static final String ADDRESS_ACCOUNT_TEST = URL_BASE + "data/scripts/testMyAccount.php";
+  
+  private static final String BACK_SYNC_ADDRESS = URL_BASE + "data/scripts/syncDown.php?type=favortiesFromApp";
+  private static final String FAVORITE_SYNC_ADDRESS = URL_BASE + "data/scripts/syncUp.php?type=favoritesFromDesktop";
+  private static final String CHANNEL_UP_SYNC_ADDRESS = URL_BASE + "data/scripts/syncUp.php?type=channelsFromDesktop";
+  private static final String CHANNEL_DOWN_SYNC_ADDRESS = URL_BASE + "data/scripts/syncDown.php?type=channelsFromDesktop";
+  
+  private static final String REMINDER_UP_SYNC_ADDRESS = URL_BASE + "data/scripts/syncUp.php?type=reminderFromDesktop";
+  private static final String REMINDER_BACK_SYNC_ADDRESS = URL_BASE + "data/scripts/syncDown.php?type=reminderFromApp";
   
   private static final String LAST_UPLOAD = "LAST_UPLOAD";
   private static final String SELECTED_PLUGINS = "SELECTED_PLUGINS";
@@ -124,7 +129,7 @@ public class AndroidSync extends Plugin {
   private static final String PLUGIN_TYPE = "PLUGIN_TYPE";
   private static final String FILTER_TYPE = "FILTER_TYPE";
   
-  private static final Version mVersion = new Version(0, 23, 3, true);
+  private static final Version mVersion = new Version(0, 24, 0, true);
   private final String CrLf = "\r\n";
   private Properties mProperties;
   
@@ -411,7 +416,15 @@ public class AndroidSync extends Plugin {
         
         mProperties.setProperty(SELECTED_FILTER, ((ProgramFilter)mFilterSelection.getSelectedItem()).getName());
         
-        if(mProperties.getProperty(KEY_CAR,"").trim().length() > 0 && mProperties.getProperty(KEY_BICYCLE,"").trim().length() > 0 &&
+        if(!testAccount()) {
+          SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+              JOptionPane.showMessageDialog(UiUtilities.getLastModalChildOf(getParentFrame()), mLocalizer.msg("noLoginMessage", "The entered credentials of AndroidSync could not be validated.\n\nThis may indicate that you entered them wrong. It also might be possible that the server was not reachable for a short time.\n\nPlease check the entered credentials."), mLocalizer.msg("noLoginTitle", "AndroidSync: Credentials could not be validated"), JOptionPane.WARNING_MESSAGE);
+            }
+          });
+        }
+        else if(mProperties.getProperty(KEY_CAR,"").trim().length() > 0 && mProperties.getProperty(KEY_BICYCLE,"").trim().length() > 0 &&
             (!oldCar.equals(mProperties.getProperty(KEY_CAR,"")) || !oldBicycle.equals(mProperties.getProperty(KEY_BICYCLE,"")))) {
           String[] options = new String[] {
               mLocalizer.msg("optionExport", "Export channels"),
@@ -434,7 +447,6 @@ public class AndroidSync extends Plugin {
       
       @Override
       public String getTitle() {
-        // TODO Auto-generated method stub
         return null;
       }
       
@@ -936,6 +948,56 @@ public class AndroidSync extends Plugin {
     root.update();
   }
   
+  private boolean testAccount() {
+    boolean result = false;
+    
+    String car = mProperties.getProperty(KEY_CAR,"");
+    String bicycle = mProperties.getProperty(KEY_BICYCLE,"");
+    
+    if(car.trim().length() > 0 || bicycle.trim().length() > 0) {
+      URLConnection conn = null;
+      BufferedReader read = null;
+      
+      try {
+        URL url = new URL(ADDRESS_ACCOUNT_TEST);
+        System.out.println("url:" + url);
+        conn = url.openConnection();
+        
+        String getmethere = car.trim() + ":" + bicycle.trim();
+        
+        conn.setRequestProperty("Authorization", "Basic " + new String(Base64.encodeBase64(getmethere.getBytes())));
+                
+        int response = ((HttpURLConnection)conn).getResponseCode();
+        System.out.println("RESPONSE " +response);
+        
+        if(response == HttpURLConnection.HTTP_OK) {
+          result = true;
+          read = new BufferedReader(new InputStreamReader(conn.getInputStream(),"UTF-8"));
+          
+          String line = null;
+          
+          while((line = read.readLine()) != null) {
+            System.out.println(line);
+          }
+        }
+      }catch(Exception ioe) {
+        ioe.printStackTrace();
+      }finally {
+        if(read != null) {
+          try {
+            read.close();
+          } catch (IOException e) {
+            // ignore
+          }
+        }
+      }
+    }
+    
+    
+    
+    return result;
+  }
+  
   private String[] download(String address, boolean info, boolean showUserdataInput) {
     String car = mProperties.getProperty(KEY_CAR,"");
     String bicycle = mProperties.getProperty(KEY_BICYCLE,"");
@@ -974,10 +1036,11 @@ public class AndroidSync extends Plugin {
           read = new BufferedReader(new InputStreamReader(IOUtilities.openSaveGZipInputStream(conn.getInputStream()),"UTF-8"));
           
           String dateValue = read.readLine();
-          
+          System.out.println(dateValue);
           SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
-          java.util.Date syncDate = dateFormat.parse(dateValue.trim());
-          System.out.println(syncDate);
+          java.util.Date syncDate = new java.util.Date(System.currentTimeMillis() + 60*60000);
+               /*dateFormat.parse(dateValue.trim());
+          System.out.println(syncDate);*/
           if(syncDate.getTime() > System.currentTimeMillis()) {
             if(backSync) {
               for(int i = mBackSyncedPrograms.size()-1; i >= 0; i--) {
@@ -995,6 +1058,7 @@ public class AndroidSync extends Plugin {
             ArrayList<String> channelList = new ArrayList<String>();
             
             while((line = read.readLine()) != null) {
+              System.out.println(line);
               if(line.trim().length() > 0) {
                 if(channels) {
                   String[] parts = line.split(":");
