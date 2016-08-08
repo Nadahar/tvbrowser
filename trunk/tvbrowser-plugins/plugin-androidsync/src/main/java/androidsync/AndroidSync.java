@@ -129,7 +129,7 @@ public class AndroidSync extends Plugin {
   private static final String PLUGIN_TYPE = "PLUGIN_TYPE";
   private static final String FILTER_TYPE = "FILTER_TYPE";
   
-  private static final Version mVersion = new Version(0, 24, 0, true);
+  private static final Version mVersion = new Version(0, 24, 1, true);
   private final String CrLf = "\r\n";
   private Properties mProperties;
   
@@ -948,6 +948,12 @@ public class AndroidSync extends Plugin {
     root.update();
   }
   
+  private void checkDisableCertificateValidation() {
+    if(!System.getProperty("java.vm.name", "").startsWith("OpenJDK")) {
+      SSLTool.disableCertificateValidation();
+    }
+  }
+  
   private boolean testAccount() {
     boolean result = false;
     
@@ -955,6 +961,8 @@ public class AndroidSync extends Plugin {
     String bicycle = mProperties.getProperty(KEY_BICYCLE,"");
     
     if(car.trim().length() > 0 || bicycle.trim().length() > 0) {
+      checkDisableCertificateValidation();
+      
       URLConnection conn = null;
       BufferedReader read = null;
       
@@ -991,9 +999,9 @@ public class AndroidSync extends Plugin {
           }
         }
       }
+      
+      SSLTool.resetCertificateValidation();
     }
-    
-    
     
     return result;
   }
@@ -1023,6 +1031,7 @@ public class AndroidSync extends Plugin {
     if(car.trim().length() != 0 && bicycle.trim().length() != 0) {
       URLConnection conn = null;
       BufferedReader read = null;
+      checkDisableCertificateValidation();
 
       try {
           URL url = new URL(address);
@@ -1183,6 +1192,8 @@ public class AndroidSync extends Plugin {
           read.close();
         } catch (Exception e) { }
       }
+      
+      SSLTool.resetCertificateValidation();
     }
     
     updateTree();
@@ -1195,6 +1206,8 @@ public class AndroidSync extends Plugin {
     String bicycle = mProperties.getProperty(KEY_BICYCLE);
     
     if(car != null && car.trim().length() > 0 && bicycle != null && bicycle.trim().length() > 0) {
+      checkDisableCertificateValidation();
+      
       URLConnection conn = null;
       OutputStream os = null;
       InputStream is = null;
@@ -1354,6 +1367,8 @@ public class AndroidSync extends Plugin {
           } catch (Exception e) {
           }
       }
+      
+      SSLTool.resetCertificateValidation();
     }
     else {
       JOptionPane.showMessageDialog(getParentFrame(), mLocalizer.msg("setupFirst", "You have to enter user name and password first."), mLocalizer.msg("noUser", "No user name and/or password"), JOptionPane.ERROR_MESSAGE);
