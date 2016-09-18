@@ -452,10 +452,7 @@ public class TvBrowserDataServiceChannelGroup extends ChannelGroupImpl {
       try {
         if(IOUtilities.download(new URL(url), toLoad, Plugin.getPluginManager().getTvBrowserSettings().getDefaultNetworkConnectionTimeout())) {
           if(toLoad.canRead() && toLoad.length() > 0) {
-            //try reading the mirrors from the downloaded file
-            Mirror.readMirrorListFromFile(toLoad);
-            
-            //mirrors could be read, so the downloaded file is usable and the old file can be replaced with it
+            // if old file exists delete it first
             if(file.isFile()) {
               file.delete();
             }
@@ -463,6 +460,7 @@ public class TvBrowserDataServiceChannelGroup extends ChannelGroupImpl {
             toLoad.renameTo(file);
           }
         }
+        
       } catch (Exception exc) {
         throw new TvBrowserException(getClass(), "error.1", "Downloading file from '{0}' to '{1}' failed", url, file
                 .getAbsolutePath(), exc);
