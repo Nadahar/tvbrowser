@@ -441,11 +441,29 @@ public class TvBrowserDataServiceChannelGroup extends ChannelGroupImpl {
 
     // Download the new file if needed
     if (needsUpdate(file)) {
+      File toLoad = new File(mDataDir, metaFileName+".new");
+      
+      if(toLoad.isFile()) {
+        toLoad.delete();
+      }
+      
       String url = serverUrl + "/" + metaFileName;
       mLog.fine("Updating Metafile " + url);
       try {
-        IOUtilities.download(new URL(url), file);
-      } catch (IOException exc) {
+        if(IOUtilities.download(new URL(url), toLoad, Plugin.getPluginManager().getTvBrowserSettings().getDefaultNetworkConnectionTimeout())) {
+          if(toLoad.canRead() && toLoad.length() > 0) {
+            //try reading the mirrors from the downloaded file
+            Mirror.readMirrorListFromFile(toLoad);
+            
+            //mirrors could be read, so the downloaded file is usable and the old file can be replaced with it
+            if(file.isFile()) {
+              file.delete();
+            }
+            
+            toLoad.renameTo(file);
+          }
+        }
+      } catch (Exception exc) {
         throw new TvBrowserException(getClass(), "error.1", "Downloading file from '{0}' to '{1}' failed", url, file
                 .getAbsolutePath(), exc);
       }
@@ -461,17 +479,22 @@ public class TvBrowserDataServiceChannelGroup extends ChannelGroupImpl {
       final String url = mirror.getUrl() + (mirror.getUrl().endsWith("/") ? "" : "/") + fileName;
       
       try {
-        IOUtilities.download(new URL(url), file);
-        if (file.canRead() && file.length() > 0) {
-          // try reading the file
-          devplugin.ChannelGroup group = new devplugin.ChannelGroupImpl(getId(), getName(), null, getProviderName());
-          final ChannelList channelList = new ChannelList(group);
-          channelList.readFromFile(file, mDataService);
-          // ok, we can read it, so use this new file instead of the old
-          oldFile.delete();
-          file.renameTo(oldFile);
-          // Invalidate the channel list
-          mAvailableChannelArr = null;
+        if(IOUtilities.download(new URL(url), file, Plugin.getPluginManager().getTvBrowserSettings().getDefaultNetworkConnectionTimeout())) {
+          if (file.canRead() && file.length() > 0) {
+            // try reading the file
+            devplugin.ChannelGroup group = new devplugin.ChannelGroupImpl(getId(), getName(), null, getProviderName());
+            final ChannelList channelList = new ChannelList(group);
+            channelList.readFromFile(file, mDataService);
+            
+            // ok, we can read it, so use this new file instead of the old
+            if(oldFile.isFile()) {
+              oldFile.delete();
+            }
+            
+            file.renameTo(oldFile);
+            // Invalidate the channel list
+            mAvailableChannelArr = null;
+          }
         }
       } catch (Exception exc) {
         throw new TvBrowserException(getClass(), "error.4", "Server has no channel list: {0}", mirror.getUrl(), exc);
