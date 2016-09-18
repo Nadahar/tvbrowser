@@ -27,14 +27,17 @@ package primarydatamanager;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.RandomAccessFile;
 import java.nio.channels.FileLock;
+import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.StringTokenizer;
@@ -325,16 +328,14 @@ public class PrimaryDataManager {
       File toFile = new File(mWorkDir, mGroupNameArr[i]+"_"+ChannelList.FILE_NAME);
       try {
         mChannelListArr[i].writeToFile(toFile);
+        writeMD5Hash(toFile);
       }
       catch (Exception exc) {
         throw new PreparationException("Writing channel list for group "+mGroupNameArr[i]+" failed", exc);
       }
     }
   }
-
-
-
-
+  
   private void createSummaryFile()
     throws PreparationException
   {
@@ -402,6 +403,7 @@ public class PrimaryDataManager {
       File toFile = new File(mWorkDir, groupNameArr + "_" + Mirror.MIRROR_LIST_FILE_NAME);
       try {
         Mirror.writeMirrorListToFile(toFile, mirrorArr);
+        writeMD5Hash(toFile);
       }
       catch (IOException exc) {
         throw new PreparationException("Writing mirror list for group " + groupNameArr + " failed", exc);
@@ -640,5 +642,51 @@ public class PrimaryDataManager {
     }
   }
 
-
+  /*
+   * Inspired by http://stackoverflow.com/questions/415953/how-can-i-generate-an-md5-hash
+   */
+  private String getMD5Hash(File file) {
+    try {
+         final java.security.MessageDigest md = java.security.MessageDigest.getInstance("MD5");
+         final byte[] array = md.digest(IOUtilities.getBytesFromFile(file));
+         
+         final StringBuilder sb = new StringBuilder();
+         
+         for (int i = 0; i < array.length; ++i) {
+           sb.append(Integer.toHexString((array[i] & 0xFF) | 0x100).substring(1,3));
+        }
+         return sb.toString();
+     } catch (Exception e) {
+       e.printStackTrace();
+     }
+     return null;
+  }
+  
+  private void writeMD5Hash(File toHash) {
+    final File toHashFile = new File(toHash+".md5");
+    mLog.info("TO HASH: " + toHash.getAbsolutePath());
+    
+    FileOutputStream out = null;
+    BufferedWriter outWriter = null;
+    
+    try {
+      out = new FileOutputStream(toHashFile);
+      out.getChannel().truncate(0);
+      
+      outWriter = new BufferedWriter(new OutputStreamWriter(out, "UTF-8"));
+      outWriter.write(getMD5Hash(toHash));
+    }catch(IOException ioe) {
+      mLog.log(Level.SEVERE, "ERROR HASHING", ioe);
+      ioe.printStackTrace();
+    }finally {
+      if(outWriter != null) {
+        try {
+          outWriter.flush();
+          outWriter.close();
+        }catch(IOException ioe2) {
+          ioe2.printStackTrace();
+        }
+      }
+    }
+  }
 }
