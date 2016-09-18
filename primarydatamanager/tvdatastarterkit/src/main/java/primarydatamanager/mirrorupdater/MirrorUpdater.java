@@ -188,6 +188,12 @@ public class MirrorUpdater {
     // Store the (new) channel list
     mDataTarget.writeFile(groupname+"_"+ChannelList.FILE_NAME, data);
     
+    final String md5FileName = groupname+"_"+ChannelList.FILE_NAME+".md5";
+    
+    if(mDataSource.fileExists(md5FileName)) {
+      mDataTarget.writeFile(md5FileName, mDataSource.loadFile(md5FileName));
+    }
+    
     return channelArr;
   }
 
@@ -333,6 +339,12 @@ public class MirrorUpdater {
     for (String group : mChannelGroupArr) {
       byte[] data = mDataSource.loadFile(group+"_"+fName);
       target.writeFile(group+"_"+fName, data);
+      
+      final String md5FileName = group+"_"+fName+".md5";
+      
+      if(source.fileExists(md5FileName)) {
+        target.writeFile(md5FileName, mDataSource.loadFile(md5FileName));
+      }
     }
     
   }
