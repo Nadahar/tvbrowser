@@ -53,7 +53,7 @@ import devplugin.Version;
 
 public class TvbInfoServer extends Plugin {
   private static final String PORT_KEY = "serverPort";
-  private static final Version VERSION = new Version(0,6,0,false);
+  private static final Version VERSION = new Version(0,8,0,false);
   
   private ServerSocket mSocket;
   private Thread mServerThread;
@@ -217,29 +217,7 @@ public class TvbInfoServer extends Plugin {
                             if(value.length() > 1) {
                               value = value.substring(1);
                               
-                              int index = value.indexOf(":");
-                              
-                              int time = 0;
-                              
-                              if(index != -1) {
-                                if(value.length() == 5) {
-                                  try {
-                                    time = Integer.parseInt(value.substring(0,index)) * 60 + Integer.parseInt(value.substring(index+1));
-                                  }catch(NumberFormatException e1) {}
-                                }
-                              }
-                              else if(value.length() == 4) {
-                                try {
-                                  time = Integer.parseInt(value.substring(0,2)) * 60 + Integer.parseInt(value.substring(2));
-                                }catch(NumberFormatException e1) {}
-                              }
-                              else if(value.length() == 2) {
-                                try {
-                                  time = Integer.parseInt(value) * 60;
-                                }catch(NumberFormatException e1) {}
-                              }
-                              
-                              findProgramInTime(time,pout);
+                              searchTime(value, pout);
                             }
                           }
                           else {
@@ -273,13 +251,15 @@ public class TvbInfoServer extends Plugin {
                         searchPrograms(value,pout);
                       }
                     }
-                    else if(req.startsWith("/searchFavorites=") && req.trim().length() > 17) {
-                      String value = req.substring(req.indexOf("=")+1);
+                    else if(req.startsWith("/searchFavorites=") && req.trim().length() > 16) {
+                      int index = req.indexOf("=")+1;
+                      String value = index < req.length() ? req.substring(index) : "";
                       
                       searchForMarkerId(FavoritesPluginProxy.getInstance().getId(),value,pout);
                     }
-                    else if(req.startsWith("/searchReminder=") && req.trim().length() > 16) {
-                      String value = req.substring(req.indexOf("=")+1);
+                    else if(req.startsWith("/searchReminder=") && req.trim().length() > 15) {
+                      int index = req.indexOf("=")+1;
+                      String value = index < req.length() ? req.substring(index) : "";
                       
                       searchForMarkerId(ReminderPluginProxy.getInstance().getId(),value,pout);
                     }
@@ -294,10 +274,7 @@ public class TvbInfoServer extends Plugin {
                     else if(req.startsWith("/searchTime=") && req.trim().length() > 13) {
                       String value = req.substring(req.indexOf("=")+1);
                       
-                      String id = value.substring(0, value.indexOf("&"));
-                      value = value.substring(value.indexOf("&")+1);
-                      
-                      searchForMarkerId(id,value,pout);
+                      searchTime(value, pout);
                     }
                     else if(req.startsWith("/channelIcon=") && req.trim().length() > 13) {
                       String id = req.substring(req.indexOf("=")+1);
@@ -438,6 +415,32 @@ public class TvbInfoServer extends Plugin {
     }
     
     pout.print("</TvbSearch>\r\n");
+  }
+  
+  private void searchTime(String value, PrintStream pout) {     
+    int index = value.indexOf(":");
+    
+    int time = 0;
+    
+    if(index != -1) {
+      if(value.length() == 5) {
+        try {
+          time = Integer.parseInt(value.substring(0,index)) * 60 + Integer.parseInt(value.substring(index+1));
+        }catch(NumberFormatException e1) {}
+      }
+    }
+    else if(value.length() == 4) {
+      try {
+        time = Integer.parseInt(value.substring(0,2)) * 60 + Integer.parseInt(value.substring(2));
+      }catch(NumberFormatException e1) {}
+    }
+    else if(value.length() == 2) {
+      try {
+        time = Integer.parseInt(value) * 60;
+      }catch(NumberFormatException e1) {}
+    }
+    
+    findProgramInTime(time,pout);
   }
   
   private void findProgramInTime(int startTime, PrintStream pout) {
