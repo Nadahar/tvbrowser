@@ -53,7 +53,7 @@ import devplugin.Version;
 
 public class TvbInfoServer extends Plugin {
   private static final String PORT_KEY = "serverPort";
-  private static final Version VERSION = new Version(0,8,0,false);
+  private static final Version VERSION = new Version(0,9,0,false);
   
   private ServerSocket mSocket;
   private Thread mServerThread;
@@ -342,7 +342,7 @@ public class TvbInfoServer extends Plugin {
                 // catch all exceptions to prevent crash of server
               }
               out.flush();
-            } catch (IOException e) {
+            } catch (Throwable e) {
               // TODO Auto-generated catch block
               e.printStackTrace();
             }
