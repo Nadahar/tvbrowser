@@ -5,7 +5,6 @@ import java.awt.image.BufferedImage;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
-
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -21,14 +20,11 @@ import java.util.Properties;
 import javax.imageio.ImageIO;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingUtilities;
-
-import com.jgoodies.forms.builder.PanelBuilder;
-import com.jgoodies.forms.factories.CC;
-import com.jgoodies.forms.layout.FormLayout;
 
 import tvbrowser.extras.favoritesplugin.FavoritesPluginProxy;
 import tvbrowser.extras.programinfo.ProgramInfo;
@@ -39,6 +35,10 @@ import util.ui.SearchFormSettings;
 import util.ui.TimeFormatter;
 import util.ui.UiUtilities;
 
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.factories.CC;
+import com.jgoodies.forms.layout.FormLayout;
+
 import devplugin.Channel;
 import devplugin.Date;
 import devplugin.Marker;
@@ -46,14 +46,17 @@ import devplugin.Plugin;
 import devplugin.PluginInfo;
 import devplugin.Program;
 import devplugin.ProgramFieldType;
+import devplugin.ProgramFilter;
 import devplugin.ProgramSearcher;
 import devplugin.SettingsTab;
 import devplugin.ThemeIcon;
 import devplugin.Version;
 
 public class TvbInfoServer extends Plugin {
-  private static final String PORT_KEY = "serverPort";
-  private static final Version VERSION = new Version(0,9,0,false);
+  private static final String KEY_PORT = "serverPort";
+  private static final String KEY_FILTER_USE = "useFilter";
+  
+  private static final Version VERSION = new Version(0,10,0,false);
   
   private ServerSocket mSocket;
   private Thread mServerThread;
@@ -88,15 +91,19 @@ public class TvbInfoServer extends Plugin {
     return mSettings;
   }
   
-  public int getPort() {
-    return Integer.parseInt(mSettings.getProperty(PORT_KEY,"8080"));
+  private int getPort() {
+    return Integer.parseInt(mSettings.getProperty(KEY_PORT,"8080"));
   }
   
-  public void setPort(int port) {
-    mSettings.setProperty(PORT_KEY, String.valueOf(port));
+  private void setPort(int port) {
+    mSettings.setProperty(KEY_PORT, String.valueOf(port));
     try {
       mServerIsRunning = false;
-      mSocket.close();
+      
+      if(mSocket != null && !mSocket.isClosed()) {
+        mSocket.close();
+      }
+      
       mSocket = new ServerSocket(port);
       mServerIsRunning = true;
       startThread();
@@ -106,6 +113,15 @@ public class TvbInfoServer extends Plugin {
     }
   }
   
+  private void setIsUsingFilter(boolean useFilter) {
+    mSettings.setProperty(KEY_FILTER_USE, String.valueOf(useFilter));
+    saveMe();
+  }
+  
+  private boolean isUsingFilter() {
+    return mSettings.getProperty(KEY_FILTER_USE,"false").equals("true");
+  }
+  
   public ThemeIcon getMarkIconFromTheme() {
     return new ThemeIcon("status", "network-transmit-receive", 16);
   }
@@ -113,10 +129,12 @@ public class TvbInfoServer extends Plugin {
   public SettingsTab getSettingsTab() {
     return new SettingsTab() {
       private JSpinner mPortSelection;
+      private JCheckBox mUseFilter;
       
       @Override
       public void saveSettings() {
         setPort((Integer)mPortSelection.getValue());
+        setIsUsingFilter(mUseFilter.isSelected());
       }
       
       @Override
@@ -131,18 +149,20 @@ public class TvbInfoServer extends Plugin {
       
       @Override
       public JPanel createSettingsPanel() {
-        PanelBuilder pb = new PanelBuilder(new FormLayout("5dlu,default,3dlu,default","5dlu,default"));
+        PanelBuilder pb = new PanelBuilder(new FormLayout("5dlu,default,3dlu,default,0dlu:grow","5dlu,default,10dlu,default"));
         
         mPortSelection = new JSpinner(new SpinnerNumberModel(getPort(), 1024, 65535, 1));
+        mUseFilter = new JCheckBox("Use current TV-Browser filtering for results", isUsingFilter());
         
         pb.addLabel("Server port:", CC.xy(2, 2));
         pb.add(mPortSelection, CC.xy(4, 2));
+        pb.add(mUseFilter, CC.xyw(2, 4, 4));
         
         return pb.getPanel();
       }
     };
   }
-  
+    
   private void startThread() {
     if(mServerThread == null || !mServerThread.isAlive()) {
       mServerThread = new Thread() {
@@ -368,13 +388,23 @@ public class TvbInfoServer extends Plugin {
         
         for(Marker marker : markers) {
           if(marker.getId().equals(id) && (value.trim().length() == 0 || prog.getTitle().toLowerCase().contains(value.toLowerCase()))) {
-            sendItem(prog,pout);
+            sendItem(prog,pout,false);
           }
         }
       }
     }
     
     pout.print("</TvbSearch>\r\n");
+  }
+  
+  private ProgramFilter getProgramFilter(boolean filterAllowed) {
+    ProgramFilter filter = getPluginManager().getFilterManager().getAllFilter();
+    
+    if(filterAllowed && isUsingFilter()) {
+      filter = getPluginManager().getFilterManager().getCurrentFilter();
+    }
+    
+    return filter;
   }
   
   private void searchProgramsInternal(String value, PrintStream pout) {
@@ -386,7 +416,7 @@ public class TvbInfoServer extends Plugin {
       
       for(Program prog : progs) {
         if(!prog.isExpired()) {
-          sendItem(prog,pout);
+          sendItem(prog,pout,true);
         }
       }
     } catch (TvBrowserException e) {
@@ -461,7 +491,7 @@ public class TvbInfoServer extends Plugin {
           Program prog = channelDayProg.next();
           
           if(prog.getStartTime() <= startTime && (prog.getStartTime()+prog.getLength()) > startTime) {
-            sendItem(prog, pout);
+            sendItem(prog, pout, true);
             break;
           }
         }
@@ -483,11 +513,11 @@ public class TvbInfoServer extends Plugin {
           channelDayProg = getPluginManager().getChannelDayProgram(Date.getCurrentDate().addDays(-1), ch);
         }
         else if(p.isOnAir()) {
-          sendItem(p, pout);
+          sendItem(p, pout, true);
           
           while(channelDayProg.hasNext() && followers > 0) {
             followers--;
-            sendItem(channelDayProg.next(), pout);
+            sendItem(channelDayProg.next(), pout, true);
           }
           return;
         }
@@ -503,11 +533,11 @@ public class TvbInfoServer extends Plugin {
         Program p = channelDayProg.next();
         
         if(p.isOnAir()) {
-          sendItem(p,pout);
+          sendItem(p,pout,true);
           
           while(channelDayProg.hasNext() && followers > 0) {
             followers--;
-            sendItem(channelDayProg.next(), pout);
+            sendItem(channelDayProg.next(), pout, true);
           }
           
           if(followers > 0) {
@@ -515,7 +545,7 @@ public class TvbInfoServer extends Plugin {
             
             while(channelDayProg != null && channelDayProg.hasNext() && followers > 0) {
               followers--;
-              sendItem(channelDayProg.next(), pout);
+              sendItem(channelDayProg.next(), pout, true);
             }
           }
           
@@ -587,71 +617,75 @@ public class TvbInfoServer extends Plugin {
   }
   
   
-  private void sendItem(Program p, PrintStream pout) {
-    pout.print("<Item>\r\n");
+  private void sendItem(Program p, PrintStream pout, boolean filterAllowed) {
+    final ProgramFilter filter = getProgramFilter(filterAllowed);
     
-    pout.print("  <UniqueID>");
-    pout.print(p.getUniqueID());
-    pout.print("</UniqueID>\r\n");  
-    
-    pout.print("  <Title>");
-    try {
-      pout.print(URLEncoder.encode(p.getTitle(),"UTF-8"));
-    } catch (UnsupportedEncodingException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
-    pout.print("</Title>\r\n");
-    
-    String description = null;
-    
-    if(p.hasFieldValue(ProgramFieldType.SHORT_DESCRIPTION_TYPE)) {
-      description = p.getTextField(ProgramFieldType.SHORT_DESCRIPTION_TYPE);
-    }
-    else if(p.getDescription() != null) {
-      description = p.getDescription();
-    }
-    
-    if(p.getDescription() != null) {
-      pout.print("  <ShortDescription>");
+    if(filter.accept(p)) {
+      pout.print("<Item>\r\n");
+      
+      pout.print("  <UniqueID>");
+      pout.print(p.getUniqueID());
+      pout.print("</UniqueID>\r\n");  
+      
+      pout.print("  <Title>");
       try {
-        pout.print(URLEncoder.encode(description.substring(0, Math.min(description.length(), 100)),"UTF-8"));
+        pout.print(URLEncoder.encode(p.getTitle(),"UTF-8"));
       } catch (UnsupportedEncodingException e) {
         // TODO Auto-generated catch block
         e.printStackTrace();
       }
-      pout.print("</ShortDescription>\r\n");
+      pout.print("</Title>\r\n");
+      
+      String description = null;
+      
+      if(p.hasFieldValue(ProgramFieldType.SHORT_DESCRIPTION_TYPE)) {
+        description = p.getTextField(ProgramFieldType.SHORT_DESCRIPTION_TYPE);
+      }
+      else if(p.getDescription() != null) {
+        description = p.getDescription();
+      }
+      
+      if(p.getDescription() != null) {
+        pout.print("  <ShortDescription>");
+        try {
+          pout.print(URLEncoder.encode(description.substring(0, Math.min(description.length(), 100)),"UTF-8"));
+        } catch (UnsupportedEncodingException e) {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        }
+        pout.print("</ShortDescription>\r\n");
+      }
+      pout.print("  <StartDate>");
+      pout.print(p.getDateString());
+      pout.print("</StartDate>\r\n");
+      pout.print("  <StartTime>");
+      
+      TimeFormatter timeFormatter = new TimeFormatter();
+      
+      pout.print(timeFormatter.formatTime(p.getStartTime() / 60,p.getStartTime() % 60));
+      pout.print("</StartTime>\r\n");
+      pout.print("  <EndTime>");
+      
+      pout.print(timeFormatter.formatTime((p.getStartTime() + p.getLength()) / 60,(p.getStartTime() + p.getLength()) % 60));
+      pout.print("</EndTime>\r\n");
+      pout.print("  <Channel>");
+      try {
+        pout.print(URLEncoder.encode(p.getChannel().getName(),"UTF-8"));
+      } catch (UnsupportedEncodingException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+      pout.print("</Channel>\r\n");
+      pout.print("  <ChannelIcon>");
+      pout.print(p.getChannel().getUniqueId());
+      pout.print("</ChannelIcon>\r\n");
+  
+      pout.print("  <Picture>");
+      pout.print(p.hasFieldValue(ProgramFieldType.PICTURE_TYPE));
+      pout.print("</Picture>\r\n");
+      
+      pout.print("</Item>\r\n");
     }
-    pout.print("  <StartDate>");
-    pout.print(p.getDateString());
-    pout.print("</StartDate>\r\n");
-    pout.print("  <StartTime>");
-    
-    TimeFormatter timeFormatter = new TimeFormatter();
-    
-    pout.print(timeFormatter.formatTime(p.getStartTime() / 60,p.getStartTime() % 60));
-    pout.print("</StartTime>\r\n");
-    pout.print("  <EndTime>");
-    
-    pout.print(timeFormatter.formatTime((p.getStartTime() + p.getLength()) / 60,(p.getStartTime() + p.getLength()) % 60));
-    pout.print("</EndTime>\r\n");
-    pout.print("  <Channel>");
-    try {
-      pout.print(URLEncoder.encode(p.getChannel().getName(),"UTF-8"));
-    } catch (UnsupportedEncodingException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
-    pout.print("</Channel>\r\n");
-    pout.print("  <ChannelIcon>");
-    pout.print(p.getChannel().getUniqueId());
-    pout.print("</ChannelIcon>\r\n");
-
-    pout.print("  <Picture>");
-    pout.print(p.hasFieldValue(ProgramFieldType.PICTURE_TYPE));
-    pout.print("</Picture>\r\n");
-    
-    pout.print("</Item>\r\n");
   }
   
   private static void errorReport(PrintStream pout, Socket connection,
