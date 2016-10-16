@@ -28,6 +28,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -54,6 +55,7 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -386,12 +388,22 @@ public class PearlCreationJPanel extends JPanel {
       
       response = client.execute(post);
       
+      if(response.getStatusLine().getStatusCode() == 302) {
+        String location = response.getFirstHeader("Location").getValue();
+        if(location!=null) {
+          HttpGet get = new HttpGet(location);
+          response.close();
+          
+          response = client.execute(get);
+        }
+      }        
+      
       if(response.getStatusLine().getStatusCode() == 200) {
         result = response.getEntity();
         
         content = new String(EntityUtils.toString(result).getBytes(utf8),utf8);
         
-        Pattern logout = Pattern.compile("class=\"icon-logout\"><a href=\"(.*?)\"");
+        Pattern logout = Pattern.compile("class=\"small-icon icon-logout\"><a href=\"(.*?)\"");
         m = logout.matcher(content);
         
         m.find();
@@ -440,6 +452,7 @@ public class PearlCreationJPanel extends JPanel {
         m = getInputs.matcher(content);
         
         lastPos = 0;
+        long topicPostID = 0;
         
         System.out.println("Formular entries: ");
         System.out.print("      ");
@@ -454,6 +467,10 @@ public class PearlCreationJPanel extends JPanel {
             
             if(name.equals("lastclick")) {
               value = String.valueOf(Integer.parseInt(value));
+            }
+            
+            if(name.equals("topic_cur_post_id")){
+              topicPostID = Integer.parseInt(value);
             }
             
             if(value == null) {
@@ -498,6 +515,18 @@ public class PearlCreationJPanel extends JPanel {
         
         response = client.execute(post);
         
+        if(response.getStatusLine().getStatusCode() == 302) {
+          String location = response.getFirstHeader("Location").getValue();
+          if(location!=null) {
+            HttpPost post2 = new HttpPost(location);
+            post2.addHeader("Referer",postURL);
+            post2.setEntity(form);
+            response.close();           
+    
+            response = client.execute(post2);            
+          }
+        }
+                
         result = response.getEntity();
         
         content = new String(EntityUtils.toString(result).getBytes(utf8),utf8);
@@ -510,14 +539,17 @@ public class PearlCreationJPanel extends JPanel {
           answer = new ForenAnswer(false, mLocalizer.msg("noSuccess","TV pearls could not be posted:\n\n'{0}'{1}",HTMLTextHelper.convertHtmlToText(m.group(1)),""));
         }
         else {
-          Pattern checkSuccess = Pattern.compile("<div\\s+class=\"panel\"\\s+id=\"message\">.*?<h2>.*?<p>(.*?)<",Pattern.DOTALL);
-          m = checkSuccess.matcher(content);
-          
-          if(m.find()) {
-            String value = m.group(1);
-            
-            if(value.equals("Der Beitrag wurde erfolgreich gespeichert.") || value.equals("This message has been posted successfully.")) {
-              answer = new ForenAnswer(true,value);
+                    
+          final Matcher matcher = TVPGrabber.getPatternContent().matcher(content);
+
+          while (matcher.find())
+          {
+            final String author = matcher.group(4).trim();
+            final String postID = matcher.group(2).trim();
+            int curPostID = Integer.parseInt(postID);
+            if(author.equals(userName) && (curPostID > topicPostID)){
+              answer = new ForenAnswer(true,mLocalizer.msg("success", "TV pearls were posted successfully."));
+              break;
             }
           }
         }
