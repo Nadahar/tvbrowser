@@ -51,7 +51,15 @@ public class TVPGrabber
    * regular expression to grab the content of a TV pearl
    */
   private static final Pattern PATTERN_CONTENT = Pattern
-      .compile("<p class=\"author\"><a href=\"([^\"]*)\">.*?<a href=\"./memberlist.php?[^\"]*\"[^>]*>(.*?)</a></strong> &raquo; </span>(.*?)</p>[\\r\\n\\t ]*?<div class=\"content\">([\\w\\W]*?)(<dl class=\"postprofile\"|<div[^>]*class=\"signature\">|<div class=\"notice\")");
+      .compile("<p class=\"author\"><a href=\"([^\"]*)p(([0-9])*?)\">.*?<a href=\"./memberlist.php?[^\"]*\"[^>]*>(.*?)</a></strong> &raquo; </span>(.*?)</p>[\\r\\n\\t ]*?<div class=\"content\">([\\w\\W]*?)</div>");
+  
+  /**
+   * getter for content pattern
+   * @return PATTERN_CONTENT
+   */
+  public static Pattern getPatternContent() {
+    return PATTERN_CONTENT;
+  }
 
   /**
    * regular expression to grab the URL of the next forum page
@@ -232,10 +240,14 @@ public class TVPGrabber
 
 		while (matcher.find())
 		{
-		  final String author = matcher.group(2).trim();
+		  for(int i=1;i<=matcher.groupCount();i++){
+		    System.out.println("Group " + i + " = " + matcher.group(i));
+		  }
+		  final String author = matcher.group(4).trim();
 		  final String contentUrl = extentUrl(matcher.group(1).trim(), originalUrl);
-			final Date createDate = parseDate(matcher.group(3).trim());
-			String itemContent = matcher.group(4);
+			final Date createDate = parseDate(matcher.group(5).trim());
+			String itemContent = matcher.group(6);
+			//final String postID = matcher.group(2).trim();
 			//itemContent = itemContent.replaceAll("_+__<br[\\w\\W]+$", "");
 			itemContent = itemContent.replace("\n", "").replace("<br />", "\n").replaceAll("<.*?>", "");
 
