@@ -442,25 +442,51 @@ public class TvBrowserDataServiceChannelGroup extends ChannelGroupImpl {
     // Download the new file if needed
     if (needsUpdate(file)) {
       File toLoad = new File(mDataDir, metaFileName+".new");
+      File toLoadMd5 = null;
+      
+      if(metaFileName.endsWith(Mirror.MIRROR_LIST_FILE_NAME)) {
+        toLoadMd5 = new File(mDataDir, metaFileName+".md5");
+      }
       
       if(toLoad.isFile()) {
         toLoad.delete();
+      }
+      
+      if(toLoadMd5 != null && toLoadMd5.isFile()) {
+        toLoadMd5.delete();
       }
       
       String url = serverUrl + "/" + metaFileName;
       mLog.fine("Updating Metafile " + url);
       try {
         if(IOUtilities.download(new URL(url), toLoad, Plugin.getPluginManager().getTvBrowserSettings().getDefaultNetworkConnectionTimeout())) {
-          if(toLoad.canRead() && toLoad.length() > 0) {
-            // if old file exists delete it first
-            if(file.isFile()) {
-              file.delete();
+          if(toLoadMd5 != null) {
+            url += ".md5";
+            IOUtilities.download(new URL(url), toLoadMd5, Plugin.getPluginManager().getTvBrowserSettings().getDefaultNetworkConnectionTimeout());
+          }
+          
+          if(toLoad.canRead() && toLoad.length() > 0 && (toLoadMd5 == null || (toLoadMd5.canRead() && toLoadMd5.length() > 0))) {
+            String toLoadHash = getMD5Hash(toLoad);
+            String toCheckHash = null;
+            
+            if(toLoadMd5 != null) {
+              toCheckHash = readMd5Hash(toLoadMd5);
             }
             
-            toLoad.renameTo(file);
+            if(toCheckHash == null || (toLoadHash.equals(toCheckHash) && toCheckHash.length() > 0)) {
+              // if old file exists delete it first
+              if(file.isFile()) {
+                file.delete();
+              }
+              
+              toLoad.renameTo(file);
+            }
+          }
+          
+          if(toLoadMd5 != null && toLoadMd5.isFile() && !toLoadMd5.delete()) {
+            toLoadMd5.deleteOnExit();
           }
         }
-        
       } catch (Exception exc) {
         throw new TvBrowserException(getClass(), "error.1", "Downloading file from '{0}' to '{1}' failed", url, file
                 .getAbsolutePath(), exc);
@@ -472,26 +498,61 @@ public class TvBrowserDataServiceChannelGroup extends ChannelGroupImpl {
     final String fileName = getId() + "_" + ChannelList.FILE_NAME;
     final File oldFile = new File(mDataDir, fileName);
     final File file = new File(mDataDir, fileName + ".new");
+    final File fileMd5Hash = new File(mDataDir, fileName + ".md5");
     
     if (forceUpdate || needsUpdate(oldFile,TYPE_META_DATA_CHANNELS)) {
-      final String url = mirror.getUrl() + (mirror.getUrl().endsWith("/") ? "" : "/") + fileName;
+      String url = mirror.getUrl() + (mirror.getUrl().endsWith("/") ? "" : "/") + fileName;
       
       try {
         if(IOUtilities.download(new URL(url), file, Plugin.getPluginManager().getTvBrowserSettings().getDefaultNetworkConnectionTimeout())) {
-          if (file.canRead() && file.length() > 0) {
-            // try reading the file
-            devplugin.ChannelGroup group = new devplugin.ChannelGroupImpl(getId(), getName(), null, getProviderName());
-            final ChannelList channelList = new ChannelList(group);
-            channelList.readFromFile(file, mDataService);
-            
-            // ok, we can read it, so use this new file instead of the old
-            if(oldFile.isFile()) {
-              oldFile.delete();
+          url += ".md5";
+          if(IOUtilities.download(new URL(url), fileMd5Hash, Plugin.getPluginManager().getTvBrowserSettings().getDefaultNetworkConnectionTimeout())) {
+            if (file.canRead() && file.length() > 0 && fileMd5Hash.canRead() && fileMd5Hash.length() > 0) {
+              String serverFileHash = readMd5Hash(fileMd5Hash);
+              String fileHash = getMD5Hash(file);
+              
+              if(serverFileHash.length() > 0 && serverFileHash.equals(fileHash)) {
+                // try reading the file
+                devplugin.ChannelGroup group = new devplugin.ChannelGroupImpl(getId(), getName(), null, getProviderName());
+                final ChannelList channelList = new ChannelList(group);
+                channelList.readFromFile(file, mDataService);
+                
+                // ok, we can read it, so use this new file instead of the old
+                if(oldFile.isFile()) {
+                  oldFile.delete();
+                }
+                
+                file.renameTo(oldFile);
+                
+                if(fileMd5Hash.isFile() && !fileMd5Hash.delete()) {
+                  fileMd5Hash.deleteOnExit();
+                }
+                
+                // Invalidate the channel list
+                mAvailableChannelArr = null;
+              }
+              else {
+                if(file.isFile() && !file.delete()) {
+                  file.deleteOnExit();
+                }
+                if(fileMd5Hash.isFile() && !fileMd5Hash.delete()) {
+                  fileMd5Hash.deleteOnExit();
+                }
+              }
             }
-            
-            file.renameTo(oldFile);
-            // Invalidate the channel list
-            mAvailableChannelArr = null;
+            else {
+              if(file.isFile() && !file.delete()) {
+                file.deleteOnExit();
+              }
+              if(fileMd5Hash.isFile() && !fileMd5Hash.delete()) {
+                fileMd5Hash.deleteOnExit();
+              }
+            }
+          }
+          else {
+            if(file.isFile() && !file.delete()) {
+              file.deleteOnExit();
+            }
           }
         }
       } catch (Exception exc) {
@@ -598,5 +659,48 @@ public class TvBrowserDataServiceChannelGroup extends ChannelGroupImpl {
         e.printStackTrace();
       }
     }
+  }
+  
+  private String readMd5Hash(File md5) {
+    String result = ""; 
+    
+    if(md5.isFile() && md5.canRead()) {
+      BufferedReader in = null;
+      
+      try {
+        in = new BufferedReader(new InputStreamReader(new FileInputStream(md5),"UTF-8"));
+        
+        result = in.readLine();
+      }catch(IOException ioe) {
+        ioe.printStackTrace();
+      }finally {
+        if(in != null) {
+          try {
+            in.close();
+          } catch (IOException e) {
+            // ignore
+          }
+        }
+      }
+    }
+    
+    return result;
+  }
+  
+  private String getMD5Hash(File file) {
+    try {
+         final java.security.MessageDigest md = java.security.MessageDigest.getInstance("MD5");
+         final byte[] array = md.digest(IOUtilities.getBytesFromFile(file));
+         
+         final StringBuilder sb = new StringBuilder();
+         
+         for (int i = 0; i < array.length; ++i) {
+           sb.append(Integer.toHexString((array[i] & 0xFF) | 0x100).substring(1,3));
+        }
+         return sb.toString();
+     } catch (Exception e) {
+       e.printStackTrace();
+     }
+     return null;
   }
 }
