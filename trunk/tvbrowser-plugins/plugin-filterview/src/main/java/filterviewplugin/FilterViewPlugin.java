@@ -42,7 +42,7 @@ import devplugin.Version;
 public final class FilterViewPlugin extends Plugin {
   private static final boolean IS_STABLE = false;
 
-  private static final Version mVersion = new Version(2, 71, 2, IS_STABLE);
+  private static final Version mVersion = new Version(2, 71, 3, IS_STABLE);
 
   private PluginInfo mPluginInfo;
 
@@ -92,7 +92,7 @@ public final class FilterViewPlugin extends Plugin {
     return mRootNode;
   }
 
-  void updateRootNode() {
+  synchronized void updateRootNode() {
     int progCount = 0;
     PluginTreeNode root = getRootNode();
     root.clear();
