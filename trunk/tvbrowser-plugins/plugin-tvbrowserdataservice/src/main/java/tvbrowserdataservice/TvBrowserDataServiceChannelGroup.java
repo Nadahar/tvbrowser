@@ -462,7 +462,9 @@ public class TvBrowserDataServiceChannelGroup extends ChannelGroupImpl {
         if(IOUtilities.download(new URL(url), toLoad, Plugin.getPluginManager().getTvBrowserSettings().getDefaultNetworkConnectionTimeout())) {
           if(toLoadMd5 != null) {
             url += ".md5";
-            IOUtilities.download(new URL(url), toLoadMd5, Plugin.getPluginManager().getTvBrowserSettings().getDefaultNetworkConnectionTimeout());
+            try {
+              IOUtilities.download(new URL(url), toLoadMd5, Plugin.getPluginManager().getTvBrowserSettings().getDefaultNetworkConnectionTimeout());
+            }catch(Exception ioe) {/*ignore*/}
           }
           
           if(toLoad.canRead() && toLoad.length() > 0 && (toLoadMd5 == null || (toLoadMd5.canRead() && toLoadMd5.length() > 0))) {
@@ -506,7 +508,13 @@ public class TvBrowserDataServiceChannelGroup extends ChannelGroupImpl {
       try {
         if(IOUtilities.download(new URL(url), file, Plugin.getPluginManager().getTvBrowserSettings().getDefaultNetworkConnectionTimeout())) {
           url += ".md5";
-          if(IOUtilities.download(new URL(url), fileMd5Hash, Plugin.getPluginManager().getTvBrowserSettings().getDefaultNetworkConnectionTimeout())) {
+          boolean result = false;
+          
+          try {
+            result = IOUtilities.download(new URL(url), fileMd5Hash, Plugin.getPluginManager().getTvBrowserSettings().getDefaultNetworkConnectionTimeout());
+          }catch(Exception ioe) {/*ignore*/}
+          
+          if(result) {
             if (file.canRead() && file.length() > 0 && fileMd5Hash.canRead() && fileMd5Hash.length() > 0) {
               String serverFileHash = readMd5Hash(fileMd5Hash);
               String fileHash = getMD5Hash(file);
