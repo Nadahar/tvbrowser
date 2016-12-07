@@ -34,6 +34,8 @@ import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.util.ArrayList;
 
 import javax.swing.JButton;
@@ -54,6 +56,7 @@ import tvbrowser.extras.favoritesplugin.FavoriteConfigurator;
 import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
 import tvbrowser.extras.favoritesplugin.core.Favorite;
 import tvbrowser.extras.favoritesplugin.core.FavoriteFilter;
+import tvbrowser.extras.reminderplugin.ReminderFrame;
 import tvbrowser.extras.reminderplugin.ReminderPlugin;
 import tvbrowser.extras.reminderplugin.ReminderPluginProxy;
 import tvbrowser.ui.mainframe.MainFrame;
@@ -71,6 +74,7 @@ import util.ui.WindowClosingIf;
 import com.jgoodies.forms.builder.ButtonBarBuilder;
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.factories.CC;
 import com.jgoodies.forms.factories.DefaultComponentFactory;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
@@ -94,6 +98,7 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
   private JCheckBox mProvideFilter;
 
   private JCheckBox mUseReminderCb;
+  private JComboBox mReminderMinutesSelection;
 
   private JCheckBox mLimitChannelCb;
 
@@ -389,13 +394,23 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
   }
 
   private JPanel createReminderPanel() {
-    JPanel panel = new JPanel(new GridLayout(-1, 1));
-    panel.add(mUseReminderCb = new JCheckBox(mLocalizer.msg("reminderWindow", "Reminder window")));
+    JPanel panel = new JPanel(new FormLayout("default,5dlu:grow,default","default"));
+    panel.add(mUseReminderCb = new JCheckBox(mLocalizer.msg("reminderWindow", "Reminder window")), CC.xy(1, 1));
+    panel.add(mReminderMinutesSelection = ReminderFrame.getPreReminderMinutesSelection(mFavorite.getReminderMinutesDefault()), CC.xy(3, 1));
 
+    mReminderMinutesSelection.setEnabled(false);
+    mUseReminderCb.addItemListener(new ItemListener() {
+      @Override
+      public void itemStateChanged(ItemEvent e) {
+        mReminderMinutesSelection.setEnabled(e.getStateChange() == ItemEvent.SELECTED);
+      }
+    });
+    
     String[] s = mFavorite.getReminderConfiguration().getReminderServices();
     for (String element : s) {
       if (ReminderConfiguration.REMINDER_DEFAULT.equals(element)) {
         mUseReminderCb.setSelected(true);
+        mReminderMinutesSelection.setEnabled(true);
       }
     }
 
@@ -543,8 +558,10 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
 
     boolean wasReminderEnabled = mFavorite.getReminderConfiguration().containsService(
         ReminderConfiguration.REMINDER_DEFAULT);
+    int reminderMinutesOld = mFavorite.getReminderMinutesDefault();
 
     if (mUseReminderCb.isSelected()) {
+      mFavorite.setReminderMinutesDefault(ReminderFrame.getReminderMinutesSelected(mReminderMinutesSelection));
       mFavorite.getReminderConfiguration().setReminderServices(new String[] { ReminderConfiguration.REMINDER_DEFAULT });
     } else {
       if (wasReminderEnabled) {
@@ -563,10 +580,12 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
     for (ProgramReceiveTarget target : mPassProgramPlugins) {
       target.getReceifeIfForIdOfTarget().receivePrograms(mFavorite.getPrograms(),target);
     }
-
+    
     if (mUseReminderCb.isSelected() && !wasReminderEnabled) {
-      ReminderPlugin.getInstance().addPrograms(mFavorite.getPrograms());
-      ReminderPlugin.getInstance().updateRootNode(true);
+      ReminderPlugin.getInstance().addPrograms(mFavorite.getPrograms(), mFavorite.getReminderMinutesDefault());
+    }
+    else if(mUseReminderCb.isSelected() && reminderMinutesOld != mFavorite.getReminderMinutesDefault()) {
+      ReminderPlugin.getInstance().updatePrograms(mFavorite.getPrograms(), mFavorite.getReminderMinutesDefault(), reminderMinutesOld);
     }
 
     if(mName.getText().length() > 0 && mName.getText().compareTo(mLocalizer.msg("defaultName","Is going to be created automatically")) != 0) {

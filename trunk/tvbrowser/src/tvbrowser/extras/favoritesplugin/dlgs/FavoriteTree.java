@@ -849,7 +849,7 @@ System.out.println(last + " " + last.getParent());
       return this;
     }
 
-    public void mousePressed(MouseEvent e) {System.out.println("mousePressed "+e.isConsumed()+" "+e.isPopupTrigger());
+    public void mousePressed(MouseEvent e) {
       if(!e.isConsumed()) {
         if(e.isPopupTrigger()) {
           showContextMenu(e.getPoint());
@@ -859,7 +859,7 @@ System.out.println(last + " " + last.getParent());
       super.mousePressed(e);
     }
 
-    public void mouseReleased(MouseEvent e) {System.out.println("mouseReleased "+e.isConsumed()+" "+e.isPopupTrigger());
+    public void mouseReleased(MouseEvent e) {
       if(!e.isConsumed()) {
         if(e.isPopupTrigger()) {
           showContextMenu(e.getPoint());
