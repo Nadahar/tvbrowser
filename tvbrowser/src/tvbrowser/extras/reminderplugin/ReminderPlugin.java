@@ -724,7 +724,26 @@ public class ReminderPlugin {
    * @param programArr The programs to add.
    */
   public void addPrograms(Program[] programArr) {
-    mReminderList.addAndCheckBlocked(programArr, getDefaultReminderTime());
+    addPrograms(programArr, getDefaultReminderTime());
+  }
+  
+  /**
+   * Add the given programs to the reminder list.
+   * <p>
+   * @param programArr The programs to add.
+   */
+  public void addPrograms(Program[] programArr, int reminderMinutes) {
+    mReminderList.addAndCheckBlocked(programArr, reminderMinutes);
+    updateRootNode(true);
+  }
+  
+  /**
+   * Add the given programs to the reminder list.
+   * <p>
+   * @param programArr The programs to add.
+   */
+  public void updatePrograms(Program[] programArr, int reminderMinutes, int oldMinutesValue) {
+    mReminderList.update(programArr, reminderMinutes, oldMinutesValue);
     updateRootNode(true);
   }
 

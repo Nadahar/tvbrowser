@@ -627,8 +627,36 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
     
     return minutes;
   }*/
+  
+  public static JComboBox getPreReminderMinutesSelection(int selectedMinutes) {
+    final JComboBox selection = new JComboBox();
+    
+    if(selectedMinutes < 0) {
+      selectedMinutes = ReminderPlugin.getInstance().getDefaultReminderTime();
+    }
+    
+    for(RemindValue value : REMIND_BEFORE_VALUE_ARR) {
+      selection.addItem(value);
+      
+      if(value.getMinutes() == selectedMinutes) {
+        selection.setSelectedIndex(selection.getItemCount()-1);
+      }
+    }
+    
+    return selection;
+  }
 
-
+  public static int getReminderMinutesSelected(JComboBox selection) {
+    int result = DONT_REMIND_AGAIN;
+    
+    Object item = selection.getSelectedItem();
+    
+    if(item != null && item instanceof RemindValue) {
+      result = ((RemindValue)item).getMinutes();
+    }
+    
+    return result;
+  }
   public void stateChanged(final ChangeEvent e) {
     updateRunningTime();
   }

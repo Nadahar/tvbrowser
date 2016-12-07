@@ -196,6 +196,22 @@ public class ReminderList implements ActionListener {
       }
     }
   }
+  
+  /**
+   * Only adds a Program if it's not blocked
+   *
+   * @param programs Programs to add
+   * @param minutes  remind x Minutes before start
+   */
+  public void update(Program[] programs, int minutes, int oldMinutesValue) {
+    for (Program program : programs) {
+      ReminderListItem item = getReminderItem(program);
+      
+      if(item != null && item.getMinutes() == oldMinutesValue) {
+        item.setMinutes(minutes);
+      }
+    }
+  }
 
   public void setReminderTimerListener(ReminderTimerListener listener) {
     this.mListener = listener;
@@ -260,8 +276,11 @@ public class ReminderList implements ActionListener {
     ArrayList<ReminderListItem> localItems = (ArrayList<ReminderListItem>) mList
         .clone();
     for (Program program : programs) {
+      System.out.println(program);
       for (ReminderListItem item : localItems) {
+        System.out.println(item + " " + item.getProgram() + " " + item.getProgram().equals(program));
         if (program != null && item != null && (item.getProgram() == null || item.getProgram().equals(program))) {
+          System.out.println(" REMOVE");
           remove(item);
           break;
         }

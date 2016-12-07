@@ -73,6 +73,7 @@ public abstract class Favorite {
   private boolean mNewProgramsWasRequested;
   private boolean mProvideFilter;
   private long mFilterKey;
+  private int mDefaultReminderMinutes;
 
   /**
    * unsorted list of blacklisted (non-favorite) programs
@@ -90,6 +91,7 @@ public abstract class Favorite {
     mBlackList = null; // defer initialization until needed
     mNewProgramsWasRequested = false;
     mFilterKey = 0;
+    mDefaultReminderMinutes = ReminderFrame.DONT_REMIND_AGAIN;
 
     mForwardPluginArr = new ProgramReceiveTarget[0];
     handleNewGlobalReceiveTargets(new ProgramReceiveTarget[0]);
@@ -162,6 +164,10 @@ public abstract class Favorite {
     else {
       mFilterKey = 0;
       mProvideFilter = false;
+    }
+    
+    if(version > 5) {
+      mDefaultReminderMinutes = in.readInt();
     }
   }
 
@@ -318,7 +324,7 @@ public abstract class Favorite {
    * @throws IOException if something went wrong writing to the stream
    */
   public synchronized void writeData(final ObjectOutputStream out) throws IOException {
-    out.writeInt(5);  // version
+    out.writeInt(6);  // version
     out.writeObject(mName);
     mReminderConfiguration.store(out);
     mLimitationConfiguration.store(out);
@@ -362,7 +368,8 @@ public abstract class Favorite {
     
     out.writeBoolean(mProvideFilter);
     out.writeLong(mFilterKey);
-
+    out.writeInt(mDefaultReminderMinutes);
+    
     internalWriteData(out);
   }
 
@@ -375,6 +382,14 @@ public abstract class Favorite {
     return mExclusionList.toArray(new Exclusion[mExclusionList.size()]);
   }
 
+  public void setReminderMinutesDefault(int minutes) {
+    mDefaultReminderMinutes = minutes;
+  }
+  
+  public int getReminderMinutesDefault() {
+    return mDefaultReminderMinutes;
+  }
+  
   public void addExclusion(final Exclusion exclusion) {
     if (mExclusionList == null) {
       mExclusionList = new ArrayList<Exclusion>(1);
@@ -568,7 +583,7 @@ public abstract class Favorite {
       }
       else if (comparator.compare(p1[inx1], newProgList[inx2]) > 0) {
         // add (p2[inx2]
-        markProgram(newProgList[inx2],ReminderFrame.DONT_REMIND_AGAIN);
+        markProgram(newProgList[inx2],mDefaultReminderMinutes);
         newPrograms.add(newProgList[inx2]);
         resultList.add(newProgList[inx2]);
         inx2++;
@@ -592,7 +607,7 @@ public abstract class Favorite {
     if (inx2 < newProgList.length) {
       // add (p2[inx2]..p2[p2.length-1])
       for (int i=inx2; i< newProgList.length; i++) {
-        markProgram(newProgList[i],ReminderFrame.DONT_REMIND_AGAIN);
+        markProgram(newProgList[i],mDefaultReminderMinutes);
         newPrograms.add(newProgList[i]);
         resultList.add(newProgList[i]);
       }
@@ -719,7 +734,7 @@ public abstract class Favorite {
       return;
     }
     if(mBlackList.remove(program)) {
-      markProgram(program,ReminderFrame.DONT_REMIND_AGAIN);
+      markProgram(program,mDefaultReminderMinutes);
       FavoritesPlugin.getInstance().updateRootNode(true);
       updateManageDialog();
     }
@@ -891,7 +906,7 @@ public abstract class Favorite {
               int reminderMinutes = info.getReminderMinutes();
               
               if(reminderMinutes == ReminderFrame.NO_REMINDER && !info.equals(p)) {
-                reminderMinutes = ReminderFrame.DONT_REMIND_AGAIN;
+                reminderMinutes = mDefaultReminderMinutes;
               }
               
               markProgram(p,reminderMinutes);
@@ -901,7 +916,7 @@ public abstract class Favorite {
 
           if(pos < 0 && !wasOnList) {
             mPrograms.add(p);
-            markProgram(p,ReminderFrame.DONT_REMIND_AGAIN);
+            markProgram(p,mDefaultReminderMinutes);
 
             if(!p.isExpired()) {
               synchronized(mNewPrograms) {
