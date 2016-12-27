@@ -69,10 +69,13 @@ public class FaytFilter implements ProgramFilter {
   public boolean accept(Program program) {
     return program.getTitle().toLowerCase().contains(mText.toLowerCase());
   }
-
+  
   @Override
   public String getName() {
     return "\"" + mText + "\"";
   }
-
+  
+  public String toString() {
+    return getName();
+  };
 }
