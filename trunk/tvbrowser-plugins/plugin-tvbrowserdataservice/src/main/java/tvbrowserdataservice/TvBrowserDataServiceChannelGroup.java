@@ -475,7 +475,7 @@ public class TvBrowserDataServiceChannelGroup extends ChannelGroupImpl {
               toCheckHash = readMd5Hash(toLoadMd5);
             }
             
-            if(toCheckHash == null || (toLoadHash.equals(toCheckHash) && toCheckHash.length() > 0)) {
+            if(toCheckHash == null || (toLoadHash.equals(toCheckHash) && toCheckHash.trim().length() > 0)) {
               // if old file exists delete it first
               if(file.isFile()) {
                 file.delete();
@@ -519,7 +519,7 @@ public class TvBrowserDataServiceChannelGroup extends ChannelGroupImpl {
               String serverFileHash = readMd5Hash(fileMd5Hash);
               String fileHash = getMD5Hash(file);
               
-              if(serverFileHash.length() > 0 && serverFileHash.equals(fileHash)) {
+              if(serverFileHash.trim().length() > 0 && serverFileHash.equals(fileHash)) {
                 // try reading the file
                 devplugin.ChannelGroup group = new devplugin.ChannelGroupImpl(getId(), getName(), null, getProviderName());
                 final ChannelList channelList = new ChannelList(group);
