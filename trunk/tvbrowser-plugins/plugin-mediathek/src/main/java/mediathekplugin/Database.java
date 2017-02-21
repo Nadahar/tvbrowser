@@ -41,23 +41,41 @@ public class Database {
   private static final Logger LOG = Logger.getLogger(Database.class.getName());
 
   /**
-   * tag content in the XML file
-   */
-  private static final String STRING_PATTERN = "([^<]*)";
-  /**
    * pattern for a single line
+   */    
+  private static final Pattern ITEM_PATTERN = Pattern.compile("\\s*\"((?:[^\"\\\\]|\\\\.)*)\"\\s*:\\s*\\[\\s*(?:\"((?:(?:(?:[^\"\\\\]|\\\\.)*)\"\\s*,\\s*\")*(?:(?:[^\"\\\\]|\\\\.)*))\")\\s*\\]");
+  
+  /**
+   * pattern for data separation
    */
-  private static final Pattern ITEM_PATTERN = 
-  	Pattern.compile("(?s)" // match also the line terminator
-      + ".*" // skip beginning
-      + matchField("Sender")
-      + ".*" 
-      + matchField("Thema")
-      + ".*" 
-      + matchField("Titel")
-      + ".*" 
-      + matchField("Url")
-      + ".*"); // skip end
+  private static final Pattern SEPARATOR_PATTERN = Pattern.compile("\"\\s*,\\s*\"");
+
+  /**
+   * headline for Channel
+   */
+  private static final String HEAD_CHANNEL = "Sender";
+  /**
+   * headline for Theme
+   */
+  private static final String HEAD_THEME = "Thema";
+  /**
+   * headline for Title
+   */
+  private static final String HEAD_TITLE = "Titel";
+  /**
+   * headline for URL
+   */
+  private static final String HEAD_URL = "Url";
+  
+  /**
+   * columns
+   */
+  private int mColChannel;
+  private int mColTheme;
+  private int mColTitle;
+  private int mColUrl;
+  private int mColMax;
+  
   /**
    * association of programs and file lines for each channel group
    */
@@ -79,16 +97,12 @@ public class Database {
     readFile();
   }
 
-  private static String matchField(String name) {
-		return Pattern.quote("<" +name +">") + STRING_PATTERN + Pattern.quote("</" + name + ">");
-	}
-
 	private void readFile() {
     int programCount = 0;
     int byteCount = 0;
     if (StringUtils.isEmpty(mFileName)) {
       String separator = System.getProperty("file.separator");
-      mFileName = System.getProperty("user.home") + separator + ".mediathek" + separator + ".filme";
+      mFileName = System.getProperty("user.home") + separator + ".mediathek3" + separator + "filme.json";
     }
     File file = new File(mFileName);
     if (!file.canRead()) {
@@ -96,35 +110,66 @@ public class Database {
     }
     try {
       mChannelItems = new HashMap<String, HashMap<Long, ArrayList<Integer>>>(mChannelItems.size());
+      
+      String channelName = "";
+      String topic = "";
+      
       BufferedReader in = new BufferedReader(new FileReader(mFileName));
       String lineEncoded;
-      while ((lineEncoded = in.readLine()) != null) {
+      while ((lineEncoded = in.readLine()) != null){
         String line = new String(lineEncoded.getBytes(), "UTF-8");
 
         Matcher itemMatcher = ITEM_PATTERN.matcher(line);
-        if (itemMatcher.find()) {
-          String channelName = unifyChannelName(itemMatcher.group(1));
-          Channel channel = findChannel(channelName);
-          if (channel != null) {
-            HashMap<Long, ArrayList<Integer>> programs = mChannelItems.get(channelName);
-            if (programs == null) {
-              programs = new HashMap<Long, ArrayList<Integer>>(500);
-              mChannelItems.put(channelName, programs);
+        if (itemMatcher.find()) {          
+          String[] entry = SEPARATOR_PATTERN.split(itemMatcher.group(2));
+          
+          if (itemMatcher.group(1).equals("Filmliste") && (entry.length > 5)) { //heading
+            mColMax = entry.length;
+            for(int i=0;i<entry.length;i++){
+              if (entry[i].equals(HEAD_CHANNEL)){
+                mColChannel = i;
+              }
+              if (entry[i].equals(HEAD_THEME)){
+                mColTheme = i;
+              }
+              if (entry[i].equals(HEAD_TITLE)){
+                mColTitle = i;
+              }
+              if (entry[i].equals(HEAD_URL)){
+                mColUrl = i;
+              }
             }
-            String topic = itemMatcher.group(2).trim();
-            long key = getKey(topic);
-            // store the URLs byte offset inside the file
-            ArrayList<Integer> list = programs.get(key);
-            if (list == null) {
-              list = new ArrayList<Integer>();
-              programs.put(key, list);
+          } else { //normal entry          
+            if (entry.length<mColMax) continue; //invalid line          
+          
+            if (!entry[mColChannel].isEmpty()) {
+              channelName = unifyChannelName(entry[mColChannel].trim());
             }
-            programCount++;
-            list.add(byteCount);
+            Channel channel = findChannel(channelName);
+            if (channel != null) {
+              HashMap<Long, ArrayList<Integer>> programs = mChannelItems.get(channelName);
+              if (programs == null) {
+                programs = new HashMap<Long, ArrayList<Integer>>(500);
+                mChannelItems.put(channelName, programs);
+              }
+              if (!entry[mColTheme].isEmpty()){
+                topic =  entry[mColTheme].trim();
+              }
+              long key = getKey(topic);
+              // store the URLs byte offset inside the file
+              ArrayList<Integer> list = programs.get(key);
+              if (list == null) {
+                list = new ArrayList<Integer>();
+                programs.put(key, list);
+              }
+              programCount++;
+              list.add(byteCount);
+            }
           }
         }
         byteCount += lineEncoded.length() + 1;
       }
+      in.close();
     } catch (IOException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
@@ -223,12 +268,15 @@ public class Database {
         String lineEncoded = file.readLine();
         String line = new String(lineEncoded.getBytes(), "UTF-8");
         Matcher itemMatcher = ITEM_PATTERN.matcher(line);
-        if (itemMatcher.find()) {
-          String itemTitle = itemMatcher.group(3).trim();
-          String itemUrl = itemMatcher.group(4).trim();
+        if (itemMatcher.find()) {          
+          String[] entry = SEPARATOR_PATTERN.split(itemMatcher.group(2));
+          if (entry.length<mColMax) continue;
+          String itemTitle = entry[mColTitle].trim();
+          String itemUrl = entry[mColUrl].trim();
           result.add(new MediathekProgramItem(itemTitle, itemUrl, null));
         }
       }
+      file.close();
     } catch (FileNotFoundException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
