@@ -48,7 +48,7 @@ public class MediathekSettings extends PropertyBasedSettings {
     String value = getMediathekPath();
     
     if(value.trim().length() == 0) {
-      File test = new File(System.getProperty("user.home"),".mediathek");
+      File test = new File(System.getProperty("user.home"),".mediathek3");
       
       if(test.isDirectory()) {
         test = new File(test,".filme");

@@ -69,7 +69,7 @@ public final class MediathekSettingsTab implements SettingsTab {
           choose.setFileSelectionMode(JFileChooser.FILES_ONLY);
           choose.showDialog(UiUtilities.getLastModalChildOf(MediathekPlugin.getInstance().getFrame()), Localizer.getLocalization(Localizer.I18N_SELECT));
           
-          if(choose.getSelectedFile() != null && choose.getSelectedFile().getName().equals(".filme")) {
+          if(choose.getSelectedFile() != null && choose.getSelectedFile().getName().equals("filme.json")) {
             mPath.setText(choose.getSelectedFile().getAbsolutePath());
           }
         }
