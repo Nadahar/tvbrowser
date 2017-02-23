@@ -42,8 +42,16 @@ public class Database {
 
   /**
    * pattern for a single line
-   */    
-  private static final Pattern ITEM_PATTERN = Pattern.compile("\\s*\"((?:[^\"\\\\]|\\\\.)*)\"\\s*:\\s*\\[\\s*(?:\"((?:(?:(?:[^\"\\\\]|\\\\.)*)\"\\s*,\\s*\")*(?:(?:[^\"\\\\]|\\\\.)*))\")\\s*\\]");
+   */  
+  private static final String QUOTEFREE_PATTERN = "[^\"\\\\]*+(?:\\\\.(?:[^\"\\\\])*+)*";
+  private static final Pattern ITEM_PATTERN = Pattern.compile(
+      "\\s*\"("
+      + QUOTEFREE_PATTERN
+      + ")\"\\s*:\\s*\\[\\s*\"("
+      + QUOTEFREE_PATTERN
+      + "(?:\"\\s*,\\s*\""
+      + QUOTEFREE_PATTERN
+      + ")*)\"\\s*\\]");
   
   /**
    * pattern for data separation
@@ -142,7 +150,7 @@ public class Database {
           } else { //normal entry          
             if (entry.length<mColMax) continue; //invalid line          
           
-            if (!entry[mColChannel].isEmpty()) {
+            if (!entry[mColChannel].isEmpty()) { //if empty: use last one
               channelName = unifyChannelName(entry[mColChannel].trim());
             }
             Channel channel = findChannel(channelName);
@@ -166,7 +174,7 @@ public class Database {
               list.add(byteCount);
             }
           }
-        }
+        } 
         byteCount += lineEncoded.length() + 1;
       }
       in.close();
