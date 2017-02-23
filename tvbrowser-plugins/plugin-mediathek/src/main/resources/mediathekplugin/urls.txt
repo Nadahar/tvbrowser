@@ -32,11 +32,11 @@ http://www.dmax.de/video/
 
 HR Mediathek
 (hr.*)|(hessischer\s?rundfunk.*)
-http://www.hr-online.de/website/radio/home/index.jsp?rubrik=15736
+http://hessenschau.de/tv-sendung/sendungsarchiv
 
 KI.KA Plus
 ki.?ka.*
-http://www.kikaplus.net/clients/kika/kikaplus/
+http://www.kika.de/videos/index.html
 
 MDR Mediathek
 mdr|mdr\s.*|mitteldeutscher\s?rundfunk.*
@@ -44,15 +44,15 @@ http://www.mdr.de/mediathek/
 
 MTV Videos
 mtv($|\s.*)
-http://www.mtv.de/videos
+http://www.mtv.de/shows
 
 N24 Mediencenter
 N24.*
-http://mediencenter.n24.de/
+https://www.welt.de/mediathek/
 
 NDR Mediathek
 ndr|ndr\s.*|norddeutscher\s?rundfunk.*
-http://www.ndr.de/flash/mediathek/index.html
+https://www.ndr.de/mediathek/
 
 NRK Nett-TV
 nrk
@@ -82,25 +82,25 @@ Radio Bremen Mediathek
 rb|radio\s?bremen.*
 http://www.radiobremen.de/mediathek/index.html
 
-RBB Podcasts
+RBB Mediathek
 rbb|rbb\s.*|rundfunk berlin.*brandenburg.*
-http://www.rbb-online.de/radio/podcast_audios/die_lieblingssendung.html
+http://mediathek.rbb-online.de/tv
 
 RTL now
 rtl($|\s.*)
-http://rtl-now.rtl.de/
+http://www.tvnow.de/rtl
 
 RTL2
 rtl\s?2|(rtl\s?2\s.*)
-http://www.rtl2.de/38479.html
+http://www.tvnow.de/rtl2
 
 SAT.1 Videocenter
 sat.?(1|eins).*
-http://www.sat1.de/videocenter/
+http://www.sat1.de/video
 
 Servus.tv Mediathek
 servus.*
-http://www.servustv.com/cs/Satellite/VOD-Mediathek/001259088496198?p=1259088496182
+http://www.servustv.com/at/Videos
 
 SF Videoportal
 sf($|\s.*)
@@ -108,11 +108,11 @@ http://www.videoportal.sf.tv/
 
 Sixx Online-TV
 sixx($|\s.*)
-http://www.sixx.de/online-tv/
+http://www.sixx.de/video
 
 Sky Mediathek
 sky.*
-http://www.sky.de/web/cms/de/sport-mediathek.jsp
+https://www.sky.de/mediathek-1368
 
 SR-Mediathek
 sr|sr\s.*|saarl(ä|ae)ndischer\srundfunk
@@ -120,7 +120,7 @@ http://sr-mediathek.sr-online.de/
 
 SUPER RTL now
 super\s?rtl.*
-http://www.superrtlnow.de/
+http://www.tvnow.de/superrtl
 
 SWR Mediathek
 swr|swr\s.*|s(ü|ue)dwestrundfunk
@@ -132,12 +132,12 @@ http://www.viva.tv/vivavideos/
 
 VOX now
 vox($|\s.*)
-http://www.voxnow.de/
+http://www.tvnow.de/vox
 
 WDR Mediathek
 wdr|wdr\s.*|westdeutscher\srundfunk
-http://www.wdr.de/mediathek/html/home/index.xml
+http://www1.wdr.de/mediathek/video
 
 ZDFmediathek
 zdf.*
-http://www.zdf.de/ZDFmediathek/content/9602?inPopup=true
+https://www.zdf.de/sendung-verpasst
