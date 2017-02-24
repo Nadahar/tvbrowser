@@ -87,7 +87,7 @@ public class Database {
   /**
    * association of programs and file lines for each channel group
    */
-  private HashMap<String, HashMap<Long, ArrayList<Integer>>> mChannelItems = new HashMap<String, HashMap<Long, ArrayList<Integer>>>();
+  private HashMap<String, HashMap<Long, ArrayList<String>>> mChannelItems = new HashMap<String, HashMap<Long, ArrayList<String>>>();
 
   /**
    * marker for channel map, if a channel does not exist in TV-Browser
@@ -107,7 +107,6 @@ public class Database {
 
 	private void readFile() {
     int programCount = 0;
-    int byteCount = 0;
     if (StringUtils.isEmpty(mFileName)) {
       String separator = System.getProperty("file.separator");
       mFileName = System.getProperty("user.home") + separator + ".mediathek3" + separator + "filme.json";
@@ -117,7 +116,7 @@ public class Database {
       return;
     }
     try {
-      mChannelItems = new HashMap<String, HashMap<Long, ArrayList<Integer>>>(mChannelItems.size());
+      mChannelItems = new HashMap<String, HashMap<Long, ArrayList<String>>>(mChannelItems.size());
       
       String channelName = "";
       String topic = "";
@@ -155,9 +154,9 @@ public class Database {
             }
             Channel channel = findChannel(channelName);
             if (channel != null) {
-              HashMap<Long, ArrayList<Integer>> programs = mChannelItems.get(channelName);
+              HashMap<Long, ArrayList<String>> programs = mChannelItems.get(channelName);
               if (programs == null) {
-                programs = new HashMap<Long, ArrayList<Integer>>(500);
+                programs = new HashMap<Long, ArrayList<String>>(500);
                 mChannelItems.put(channelName, programs);
               }
               if (!entry[mColTheme].isEmpty()){
@@ -165,17 +164,16 @@ public class Database {
               }
               long key = getKey(topic);
               // store the URLs byte offset inside the file
-              ArrayList<Integer> list = programs.get(key);
+              ArrayList<String> list = programs.get(key);
               if (list == null) {
-                list = new ArrayList<Integer>();
+                list = new ArrayList<String>();
                 programs.put(key, list);
               }
               programCount++;
-              list.add(byteCount);
+              list.add(itemMatcher.group(2));
             }
           }
-        } 
-        byteCount += lineEncoded.length() + 1;
+        }
       }
       in.close();
     } catch (IOException e) {
@@ -234,7 +232,7 @@ public class Database {
   public ArrayList<MediathekProgramItem> getMediathekPrograms(final Program program) {
     ArrayList<MediathekProgramItem> result = new ArrayList<MediathekProgramItem>();
     String channelName = unifyChannelName(program.getChannel().getName());
-    HashMap<Long, ArrayList<Integer>> programsMap = mChannelItems.get(channelName);
+    HashMap<Long, ArrayList<String>> programsMap = mChannelItems.get(channelName);
     // search parts in brackets like for ARD
     if (programsMap == null && channelName.contains("(")) {
       String bracketPart = StringUtils.substringBetween(channelName, "(", ")");
@@ -246,7 +244,7 @@ public class Database {
       programsMap = mChannelItems.get(firstPart);
     }
     if (programsMap == null) {
-      for (Entry<String, HashMap<Long, ArrayList<Integer>>> entry : mChannelItems.entrySet()) {
+      for (Entry<String, HashMap<Long, ArrayList<String>>> entry : mChannelItems.entrySet()) {
         if (StringUtils.startsWithIgnoreCase(channelName, entry.getKey())) {
           programsMap = entry.getValue();
           break;
@@ -257,7 +255,7 @@ public class Database {
       return result;
     }
     String title = program.getTitle();
-    ArrayList<Integer> programs = programsMap.get(getKey(title));
+    ArrayList<String> programs = programsMap.get(getKey(title));
     if (programs == null && title.endsWith(")") && title.contains("(")) {
       String newTitle = StringUtils.substringBeforeLast(title, "(").trim();
       programs = programsMap.get(getKey(newTitle));
@@ -269,28 +267,12 @@ public class Database {
     if (programs == null) {
       return result;
     }
-    try {
-      RandomAccessFile file = new RandomAccessFile(new File(mFileName), "r");
-      for (Integer byteOffset : programs) {
-        file.seek(byteOffset);
-        String lineEncoded = file.readLine();
-        String line = new String(lineEncoded.getBytes(), "UTF-8");
-        Matcher itemMatcher = ITEM_PATTERN.matcher(line);
-        if (itemMatcher.find()) {          
-          String[] entry = SEPARATOR_PATTERN.split(itemMatcher.group(2));
-          if (entry.length<mColMax) continue;
-          String itemTitle = entry[mColTitle].trim();
-          String itemUrl = entry[mColUrl].trim();
-          result.add(new MediathekProgramItem(itemTitle, itemUrl, null));
-        }
-      }
-      file.close();
-    } catch (FileNotFoundException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    } catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+    for (String entry : programs) {       
+        String[] data = SEPARATOR_PATTERN.split(entry);
+        if (data.length<mColMax) continue;
+        String itemTitle = data[mColTitle].trim();
+        String itemUrl = data[mColUrl].trim();
+        result.add(new MediathekProgramItem(itemTitle, itemUrl, null));
     }
     return result;
   }
