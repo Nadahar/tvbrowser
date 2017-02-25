@@ -16,52 +16,39 @@
  */
 package mediathekplugin;
 
-import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.text.DecimalFormat;
-
 import javax.swing.Icon;
-import javax.swing.ProgressMonitor;
 
 import org.apache.commons.lang3.StringUtils;
 
+import devplugin.Date;
 import util.browserlauncher.Launch;
-import util.io.ExecutionHandler;
-import util.ui.UIThreadRunner;
 
-public final class MediathekProgramItem {
-  /** The localizer used by this class. */
-  private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(MediathekProgramItem.class);
-
-  private static final int TYPE_LINK = 0;
-  private static final int TYPE_AUDIO = 1;
-  private static final int TYPE_IMAGE = 2;
-  private static final int TYPE_VIDEO = 3;
-  private static final Icon ICON_AUDIO = MediathekPlugin.getInstance()
-      .createImageIcon("mimetypes", "audio-x-generic", 16);
-  private static final Icon ICON_IMAGE = MediathekPlugin.getInstance()
-      .createImageIcon("mimetypes", "image-x-generic", 16);
-  private static final Icon ICON_VIDEO = MediathekPlugin.getInstance()
-      .createImageIcon("mimetypes", "video-x-generic", 16);
-
+public final class MediathekProgramItem implements Comparable<MediathekProgramItem>{
+  
   private String mTitle;
   private String mUrl;
-  private int mType = TYPE_LINK;
+  private MediathekQuality mQuality;
+  
+  public MediathekQuality getQuality() {
+    return mQuality;
+  }
+  
+  
+  public Date getDate() {
+    return mDate;
+  }
 
-  public MediathekProgramItem(final String title, final String url,
-      final String contentType) {
+  private Date mDate;
+  
+  
+  public MediathekProgramItem(final String title, final String url, final String date,
+      final MediathekQuality quality) {
     assert url != null;
     assert title != null;
     this.mTitle = title;
     this.mUrl = url;
-    if (contentType != null) {
-      if (contentType.contains("video")) {
-        this.mType = TYPE_VIDEO;
-      } else if (contentType.contains("audio")) {
-        this.mType = TYPE_AUDIO;
-      }
-    }
+    this.mDate = Date.createDDMMYYYY(date, ".");
+    this.mQuality = quality;
   }
 
   public String getUrl() {
@@ -73,92 +60,19 @@ public final class MediathekProgramItem {
   }
 
   public Icon getIcon() {
-    switch (mType) {
-    case TYPE_VIDEO:
-      return ICON_VIDEO;
-    case TYPE_AUDIO:
-      return ICON_AUDIO;
-    case TYPE_IMAGE:
-      return ICON_IMAGE;
-    }
     return MediathekPlugin.getInstance().getWebIcon();
   }
 
   public void show() {
     if (StringUtils.isBlank(mUrl)) {
       return;
-    }
-    if (StringUtils.containsIgnoreCase(mUrl, "--host")) {
-      openStream();
-    }
-    else {
+    } else {
       Launch.openURL(mUrl);
     }
   }
 
-  private void openStream() {
-    Thread streamThread = new Thread("Stream copy") {
-      ProgressMonitor monitor = null;
-      @Override
-      public void run() {
-        try {
-          monitor = new ProgressMonitor(MediathekPlugin.getInstance().getFrame(),mLocalizer.msg("store","Getting local stream copy...")," ", 0, 3);
-          monitor.setMillisToDecideToPopup(0);
-          setNote(0, mLocalizer.ellipsisMsg("temp", "Starting flvstreamer"));
-          File tempFile = File.createTempFile("mediathek", ".flv");
-          String fileName = tempFile.toString();
-          tempFile.delete();
-          String streamParams = mUrl +" --flv " + fileName;
-          ExecutionHandler streamer = new ExecutionHandler(streamParams, "flvstreamer");
-          streamer.execute();
-          DecimalFormat format = new DecimalFormat( "0.00" );
-          setNote(1, mLocalizer.ellipsisMsg("wait", "Waiting for flvstreamer to get some data ({0} MB)", format.format(0.0)));
-          int time = 0;
-          long fileSize = 0;
-          try {
-            while (time < 20 && fileSize < 10 * 1024 * 1024 && !monitor.isCanceled()) {
-              Thread.sleep(500);
-              time++;
-              fileSize = tempFile.length();
-              double mb = fileSize / 1048576.0;
-              setNote(1, mLocalizer.ellipsisMsg("wait", "Waiting for flvstreamer to get some data ({0} MB)", format.format(mb)));
-            }
-          } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-          }
-          if (!monitor.isCanceled()) {
-            setNote(2, mLocalizer.ellipsisMsg("player", "Starting player"));
-            ExecutionHandler player = new ExecutionHandler(fileName, "vlc");
-            player.execute();
-            setNote(3, "");
-          }
-        } catch (IOException e) {
-          // TODO Auto-generated catch block
-          e.printStackTrace();
-        }
-        if (monitor != null) {
-          monitor.close();
-        }
-      }
-      private void setNote(final int progress, final String note) {
-        try {
-          UIThreadRunner.invokeAndWait(new Runnable() {
-
-            public void run() {
-              monitor.setProgress(progress);
-              monitor.setNote(note);
-            }
-          });
-        } catch (InterruptedException e) {
-          // TODO Auto-generated catch block
-          e.printStackTrace();
-        } catch (InvocationTargetException e) {
-          // TODO Auto-generated catch block
-          e.printStackTrace();
-        }
-      }
-    };
-    streamThread.start();
+  public int compareTo(MediathekProgramItem o) {
+    
+    return 0;
   }
 }
