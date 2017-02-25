@@ -58,6 +58,14 @@ public final class MediathekProgramItem implements Comparable<MediathekProgramIt
   public String getTitle() {
     return mTitle;
   }
+  
+  public String getInfo(){
+    return mTitle + " " + mQuality.toAppendix();
+  }
+  
+  public String getInfoDate(){
+    return mDate.toString() + " " + mTitle + " " + mQuality.toAppendix();
+  }
 
   public Icon getIcon() {
     return MediathekPlugin.getInstance().getWebIcon();
@@ -72,7 +80,13 @@ public final class MediathekProgramItem implements Comparable<MediathekProgramIt
   }
 
   public int compareTo(MediathekProgramItem o) {
-    
-    return 0;
+    int c = this.mDate.compareTo(o.mDate);
+    if (c!=0) return c;
+    c = mTitle.compareTo(o.mTitle);
+    if (c!=0) return c;
+    c = mQuality.compareTo(o.mQuality);
+    if (c!=0) return c;
+    c = mUrl.compareTo(o.mUrl);
+    return c;
   }
 }

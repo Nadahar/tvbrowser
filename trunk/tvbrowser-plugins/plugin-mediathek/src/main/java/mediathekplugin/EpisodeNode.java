@@ -54,7 +54,7 @@ public final class EpisodeNode extends PluginTreeNode {
   }
 
   public EpisodeNode(final MediathekProgramItem episode) {
-    super(episode.getTitle());
+    super(episode.getInfoDate());
     final Node treeNode = getMutableTreeNode();
     treeNode.setAllowsChildren(false);
     treeNode.setIcon(episode.getIcon());
