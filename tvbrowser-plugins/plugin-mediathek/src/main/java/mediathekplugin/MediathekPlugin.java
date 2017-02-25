@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.Properties;
 import java.util.logging.Logger;
@@ -35,7 +36,6 @@ import util.io.IOUtilities;
 import util.ui.html.HTMLTextHelper;
 import devplugin.ActionMenu;
 import devplugin.Channel;
-import devplugin.ContextMenuAction;
 import devplugin.ContextMenuSeparatorAction;
 import devplugin.Date;
 import devplugin.Plugin;
@@ -115,6 +115,7 @@ public class MediathekPlugin extends Plugin {
     }
     if (mDatabase != null) {
       ArrayList<MediathekProgramItem> programs = mDatabase.getMediathekPrograms(program);
+      Collections.sort(programs);
       return getContextMenu(programs);
     }
     return null;
@@ -127,19 +128,45 @@ public class MediathekPlugin extends Plugin {
   private ActionMenu getContextMenu(ArrayList<MediathekProgramItem> programs) {
     if (programs.isEmpty()) {
       return null;
+    }    
+    if (programs.size()<50){
+      final ArrayList<Action> actionList = new ArrayList<Action>();
+      for (final MediathekProgramItem episode : programs) {
+        actionList.add(new AbstractAction(episode.getInfoDate(), episode.getIcon()) {
+  
+          public void actionPerformed(final ActionEvent e) {
+            episode.show();
+          }
+        });
+      }
+      return new ActionMenu(mLocalizer.msg("context", "Episodes in the Mediathek {0}", programs.size()), contextIcon, actionList.toArray(new Action[actionList.size()]));
     }
-    final Action mainAction = new ContextMenuAction(mLocalizer.msg("context", "Episodes in the Mediathek {0}", programs.size()),
-        getContextMenuIcon());
-    final ArrayList<Action> actionList = new ArrayList<Action>();
-    for (final MediathekProgramItem episode : programs) {
-      actionList.add(new AbstractAction(episode.getTitle(), episode.getIcon()) {
-
+    
+    
+    Date curr = null;
+    final ArrayList<ActionMenu> actionDates = new ArrayList<ActionMenu>();
+    ArrayList<Action> actionListSub = new ArrayList<Action>();
+    for (final MediathekProgramItem episode: programs){
+      if (curr!=null){
+        if (!curr.equals(episode.getDate())){
+          actionDates.add(new ActionMenu(curr.toString(),actionListSub.toArray(new Action[actionListSub.size()])));
+          actionListSub.clear();
+        }
+      }
+      curr = episode.getDate();
+      actionListSub.add(new AbstractAction(episode.getInfo(), episode.getIcon()) {          
         public void actionPerformed(final ActionEvent e) {
           episode.show();
         }
       });
     }
-    return new ActionMenu(mainAction, actionList.toArray(new Action[actionList.size()]));
+    if (curr!=null) {
+      actionDates.add(new ActionMenu(curr.toString(),actionListSub.toArray(new Action[actionListSub.size()])));
+    }
+    
+    //TODO: Intelligentere Gruppierung!
+    return new ActionMenu(mLocalizer.msg("context", "Episodes in the Mediathek {0}", programs.size()), contextIcon, actionDates.toArray(new ActionMenu[actionDates.size()]));
+    
   }
 
   protected Icon getContextMenuIcon() {
@@ -148,7 +175,6 @@ public class MediathekPlugin extends Plugin {
 
   @Override
   public ActionMenu getButtonAction() {
-    final ContextMenuAction menuAction = new ContextMenuAction("Mediathek", pluginIconSmall);
     final ArrayList<Object> subscribedList = new ArrayList<Object>(50);
     final ArrayList<Action> remainingList = new ArrayList<Action>(50);
 
@@ -167,9 +193,9 @@ public class MediathekPlugin extends Plugin {
     }
     if (!remainingList.isEmpty()) {
       subscribedList.add(ContextMenuSeparatorAction.getInstance());
-      subscribedList.add(new ActionMenu(new ContextMenuAction(mLocalizer.msg("notSubscribed", "Not subscribed channels")),remainingList.toArray()));
+      subscribedList.add(new ActionMenu(mLocalizer.msg("notSubscribed", "Not subscribed channels"),remainingList.toArray()));
     }
-    return new ActionMenu(menuAction, subscribedList.toArray());
+    return new ActionMenu("Mediathek", pluginIconSmall, subscribedList.toArray());
   }
 
   private Action setActionDescription(AbstractAction action) {
@@ -381,8 +407,7 @@ public class MediathekPlugin extends Plugin {
     if (actions.size() == 1) {
       return new ActionMenu(actions.get(0));
     }
-    final ContextMenuAction menuAction = new ContextMenuAction("Mediathek", pluginIconSmall);
-    return new ActionMenu(menuAction, actions.toArray());
+    return new ActionMenu("Mediathek", pluginIconSmall, actions.toArray());
   }
 
   public Icon getImageIcon(String fileName) {

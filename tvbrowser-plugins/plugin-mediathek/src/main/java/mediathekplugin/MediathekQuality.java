@@ -3,7 +3,7 @@ package mediathekplugin;
 import util.ui.Localizer;
 
 public enum MediathekQuality {
-  NORM, HD, LOW;
+  LOW, NORM, HD;
   
   private static final Localizer localizer = Localizer
       .getLocalizerFor(MediathekQuality.class);
@@ -22,7 +22,14 @@ public enum MediathekQuality {
       default: return "SD";
     }
   }
-
+  
+  public String toAppendix(){
+    switch(this) {
+      case HD: return " (" + localizer.msg("hd", "HD") + ")";
+      case LOW: return " (" + localizer.msg("low", "Low") + ")";
+      default: return "";
+    }
+  }
   
   public String toString(){
     switch(this) {
