@@ -18,10 +18,8 @@ package mediathekplugin;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
@@ -71,9 +69,21 @@ public class Database {
    */
   private static final String HEAD_TITLE = "Titel";
   /**
+   * headline for Channel
+   */
+  private static final String HEAD_DATE = "Datum";
+  /**
    * headline for URL
    */
   private static final String HEAD_URL = "Url";
+  /**
+   * headline for URL
+   */
+  private static final String HEAD_URL_LOW = "Url Klein";
+  /**
+   * headline for URL
+   */
+  private static final String HEAD_URL_HD = "Url HD";
   
   /**
    * columns
@@ -81,13 +91,16 @@ public class Database {
   private int mColChannel;
   private int mColTheme;
   private int mColTitle;
+  private int mColDate;
   private int mColUrl;
+  private int mColUrlLow;
+  private int mColUrlHD;
   private int mColMax;
   
   /**
    * association of programs and file lines for each channel group
    */
-  private HashMap<String, HashMap<Long, ArrayList<String>>> mChannelItems = new HashMap<String, HashMap<Long, ArrayList<String>>>();
+  private HashMap<String, HashMap<Long, ArrayList<MediathekProgramItem>>> mChannelItems = new HashMap<String, HashMap<Long, ArrayList<MediathekProgramItem>>>();
 
   /**
    * marker for channel map, if a channel does not exist in TV-Browser
@@ -99,9 +112,11 @@ public class Database {
   private HashMap<String, Object> mNameMapping = new HashMap<String, Object>(20);
   private CRC32 mCRC = new CRC32();
   private String mFileName;
+  private MediathekQuality mDefaultQuality;
 
-  public Database(final String fileName) {
+  public Database(final String fileName, MediathekQuality quality) {
     mFileName = fileName;
+    mDefaultQuality = quality;
     readFile();
   }
 
@@ -116,7 +131,7 @@ public class Database {
       return;
     }
     try {
-      mChannelItems = new HashMap<String, HashMap<Long, ArrayList<String>>>(mChannelItems.size());
+      mChannelItems = new HashMap<String, HashMap<Long, ArrayList<MediathekProgramItem>>>(mChannelItems.size());
       
       String channelName = "";
       String topic = "";
@@ -145,6 +160,15 @@ public class Database {
               if (entry[i].equals(HEAD_URL)){
                 mColUrl = i;
               }
+              if (entry[i].equals(HEAD_URL_LOW)){
+                mColUrlLow = i;
+              }
+              if (entry[i].equals(HEAD_URL_HD)){
+                mColUrlHD = i;
+              }
+              if (entry[i].equals(HEAD_DATE)){
+                mColDate = i;
+              }
             }
           } else { //normal entry          
             if (entry.length<mColMax) continue; //invalid line          
@@ -154,9 +178,9 @@ public class Database {
             }
             Channel channel = findChannel(channelName);
             if (channel != null) {
-              HashMap<Long, ArrayList<String>> programs = mChannelItems.get(channelName);
+              HashMap<Long, ArrayList<MediathekProgramItem>> programs = mChannelItems.get(channelName);
               if (programs == null) {
-                programs = new HashMap<Long, ArrayList<String>>(500);
+                programs = new HashMap<Long, ArrayList<MediathekProgramItem>>(500);
                 mChannelItems.put(channelName, programs);
               }
               if (!entry[mColTheme].isEmpty()){
@@ -164,13 +188,13 @@ public class Database {
               }
               long key = getKey(topic);
               // store the URLs byte offset inside the file
-              ArrayList<String> list = programs.get(key);
+              ArrayList<MediathekProgramItem> list = programs.get(key);
               if (list == null) {
-                list = new ArrayList<String>();
+                list = new ArrayList<MediathekProgramItem>();
                 programs.put(key, list);
               }
               programCount++;
-              list.add(itemMatcher.group(2));
+              list.add(parseDatabaseEntry(entry));
             }
           }
         }
@@ -182,6 +206,39 @@ public class Database {
     }
     LOG.info("Found " + programCount + " programs in Mediathek");
   }
+	
+	private MediathekProgramItem parseDatabaseEntry(String[] entry){
+    String itemTitle = entry[mColTitle].trim();
+    String itemUrl = entry[mColUrl].trim();
+    String itemDate = entry[mColDate].trim();
+    
+    MediathekQuality quality = MediathekQuality.NORM;
+    
+    if (mDefaultQuality!=MediathekQuality.NORM){
+      String itemUrlAlt = "";
+      if (mDefaultQuality==MediathekQuality.HD){
+        itemUrlAlt = entry[mColUrlHD].trim();
+      } else {
+        itemUrlAlt = entry[mColUrlLow].trim();
+      }
+      String[] urlParts = itemUrlAlt.split("\\|");
+      if (urlParts.length>1) {
+        int offset = Integer.valueOf(urlParts[0]);
+        quality = mDefaultQuality;
+        itemUrl = itemUrl.substring(0, offset) + urlParts[1];
+      } else if (!urlParts[0].equals("")){
+        quality = mDefaultQuality;
+        if (urlParts[0].startsWith("/")){ //special case BR
+          itemUrl = itemUrl + urlParts[0];
+        } else {
+          itemUrl = urlParts[0];
+        }
+      }
+      
+    }
+    
+    return new MediathekProgramItem(itemTitle, itemUrl, itemDate, quality);
+	}
 
   private String unifyChannelName(String channelName) {
     if (channelName.equalsIgnoreCase("Ard.Podcast")) {
@@ -232,7 +289,7 @@ public class Database {
   public ArrayList<MediathekProgramItem> getMediathekPrograms(final Program program) {
     ArrayList<MediathekProgramItem> result = new ArrayList<MediathekProgramItem>();
     String channelName = unifyChannelName(program.getChannel().getName());
-    HashMap<Long, ArrayList<String>> programsMap = mChannelItems.get(channelName);
+    HashMap<Long, ArrayList<MediathekProgramItem>> programsMap = mChannelItems.get(channelName);
     // search parts in brackets like for ARD
     if (programsMap == null && channelName.contains("(")) {
       String bracketPart = StringUtils.substringBetween(channelName, "(", ")");
@@ -244,7 +301,7 @@ public class Database {
       programsMap = mChannelItems.get(firstPart);
     }
     if (programsMap == null) {
-      for (Entry<String, HashMap<Long, ArrayList<String>>> entry : mChannelItems.entrySet()) {
+      for (Entry<String, HashMap<Long, ArrayList<MediathekProgramItem>>> entry : mChannelItems.entrySet()) {
         if (StringUtils.startsWithIgnoreCase(channelName, entry.getKey())) {
           programsMap = entry.getValue();
           break;
@@ -255,7 +312,7 @@ public class Database {
       return result;
     }
     String title = program.getTitle();
-    ArrayList<String> programs = programsMap.get(getKey(title));
+    ArrayList<MediathekProgramItem> programs = programsMap.get(getKey(title));
     if (programs == null && title.endsWith(")") && title.contains("(")) {
       String newTitle = StringUtils.substringBeforeLast(title, "(").trim();
       programs = programsMap.get(getKey(newTitle));
@@ -267,13 +324,6 @@ public class Database {
     if (programs == null) {
       return result;
     }
-    for (String entry : programs) {       
-        String[] data = SEPARATOR_PATTERN.split(entry);
-        if (data.length<mColMax) continue;
-        String itemTitle = data[mColTitle].trim();
-        String itemUrl = data[mColUrl].trim();
-        result.add(new MediathekProgramItem(itemTitle, itemUrl, null));
-    }
-    return result;
+    return programs;
   }
 }

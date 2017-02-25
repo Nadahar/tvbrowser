@@ -23,9 +23,20 @@ import util.settings.PropertyBasedSettings;
 
 public class MediathekSettings extends PropertyBasedSettings {
   private static final String KEY_MEDIATHEK_PATH = "mediathekpath";
+  private static final String KEY_MEDIATHEK_QUALITY = "mediathekquality";
 
   public MediathekSettings(final Properties properties) {
     super(properties);
+  }
+  
+  public MediathekQuality getMediathekQuality() {
+    String value = get(KEY_MEDIATHEK_QUALITY, "");
+    
+   return MediathekQuality.fromString(value);
+  }
+
+  public void setMediathekQuality(final MediathekQuality quality) {
+    set(KEY_MEDIATHEK_QUALITY, quality.toSaveString());
   }
 
   public String getMediathekPath() {
@@ -51,7 +62,7 @@ public class MediathekSettings extends PropertyBasedSettings {
       File test = new File(System.getProperty("user.home"),".mediathek3");
       
       if(test.isDirectory()) {
-        test = new File(test,".filme");
+        test = new File(test,"filme.json");
         
         if(test.isFile()) {
           value = test.getAbsolutePath();

@@ -22,6 +22,7 @@ import java.io.File;
 
 import javax.swing.Icon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JEditorPane;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
@@ -43,6 +44,7 @@ public final class MediathekSettingsTab implements SettingsTab {
       .getLocalizerFor(MediathekSettingsTab.class);
   private MediathekSettings mSettings;
   private JTextField mPath;
+  private JComboBox<MediathekQuality> mQuality;
 
   public JPanel createSettingsPanel() {
     final CellConstraints cc = new CellConstraints();
@@ -53,8 +55,8 @@ public final class MediathekSettingsTab implements SettingsTab {
     panelBuilder.add(help, cc.xyw(2, panelBuilder.getRowCount(), 6));
 
     panelBuilder.addRow();
-    JLabel label = new JLabel(localizer.msg("path", "Mediathek installation path"));
-    panelBuilder.add(label, cc.xy(2, panelBuilder.getRowCount()));
+    JLabel labelPath = new JLabel(localizer.msg("path", "Mediathek installation path"));
+    panelBuilder.add(labelPath, cc.xy(2, panelBuilder.getRowCount()));
 
     mPath = new JTextField(mSettings.getMediathekPath());
     panelBuilder.add(mPath, cc.xyw(4, panelBuilder.getRowCount(), 2));
@@ -82,6 +84,15 @@ public final class MediathekSettingsTab implements SettingsTab {
     
     panelBuilder.add(select, cc.xy(7,panelBuilder.getRowCount()));
     
+    panelBuilder.addRow();
+    JLabel labelQuality = new JLabel(localizer.msg("quality", "Mediathek installation path"));
+    panelBuilder.add(labelQuality, cc.xy(2, panelBuilder.getRowCount()));
+    
+    mQuality = new JComboBox<MediathekQuality>(MediathekQuality.values());
+    mQuality.setSelectedItem(mSettings.getMediathekQuality());
+    panelBuilder.add(mQuality, cc.xyw(4, panelBuilder.getRowCount(), 2));
+       
+    
     return panelBuilder.getPanel();
   }
 
@@ -95,6 +106,7 @@ public final class MediathekSettingsTab implements SettingsTab {
 
   public void saveSettings() {
     mSettings.setMediathekPath(mPath.getText().trim());
+    mSettings.setMediathekQuality((MediathekQuality) mQuality.getSelectedItem());
     MediathekPlugin.getInstance().readMediathekContents();
   }
 

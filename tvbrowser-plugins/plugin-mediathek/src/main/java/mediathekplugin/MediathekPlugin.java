@@ -54,7 +54,7 @@ public class MediathekPlugin extends Plugin {
 
   private static final boolean IS_STABLE = true;
 
-  private static final Version PLUGIN_VERSION = new Version(3, 0, 3, IS_STABLE);
+  private static final Version PLUGIN_VERSION = new Version(3, 1, 0, IS_STABLE);
 
   /** The localizer used by this class. */
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(MediathekPlugin.class);
@@ -236,44 +236,8 @@ public class MediathekPlugin extends Plugin {
     final Thread contentThread = new Thread("Read Mediathek contents") {
       @Override
       public void run() {
-        mDatabase = new Database(mSettings.guessMediathekPath(true));
+        mDatabase = new Database(mSettings.guessMediathekPath(true), mSettings.getMediathekQuality());
         updatePluginTree();
-        // // update programs of current day to force their icons to show
-        // final ArrayList<Program> validationPrograms = new
-        // ArrayList<Program>(128);
-        // final ProgramFilter currentFilter =
-        // getPluginManager().getFilterManager().getCurrentFilter();
-        // // have outer loop iterate over days so that all programs of today
-        // are
-        // // loaded first
-        // for (int days = 0; days < 30; days++) {
-        // final Date date = getPluginManager().getCurrentDate().addDays(days);
-        // for (Channel channel : getPluginManager().getSubscribedChannels()) {
-        // if (isSupportedChannel(channel)) {
-        // final Iterator<Program> iter =
-        // Plugin.getPluginManager().getChannelDayProgram(date, channel);
-        // if (iter != null) {
-        // while (iter.hasNext()) {
-        // final Program program = iter.next();
-        // // first search mediathek, then filter -> typically better
-        // // performance
-        // final MediathekProgram mediaProgram = findProgram(program);
-        // if (mediaProgram != null && currentFilter.accept(program)) {
-        // mediaProgram.readEpisodes();
-        // validationPrograms.add(program);
-        // }
-        // }
-        // }
-        // }
-        // }
-        // }
-        // SwingUtilities.invokeLater(new Runnable() {
-        // public void run() {
-        // for (Program program : validationPrograms) {
-        // program.validateMarking();
-        // }
-        // }
-        // });
       }
     };
     contentThread.setPriority(Thread.MIN_PRIORITY);
