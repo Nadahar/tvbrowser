@@ -19,6 +19,7 @@ package mediathekplugin;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -26,6 +27,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.Properties;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.logging.Logger;
 
 import javax.swing.AbstractAction;
@@ -54,7 +57,7 @@ public class MediathekPlugin extends Plugin {
 
   private static final boolean IS_STABLE = true;
 
-  private static final Version PLUGIN_VERSION = new Version(3, 1, 0, IS_STABLE);
+  private static final Version PLUGIN_VERSION = new Version(3, 1, 1, IS_STABLE);
 
   /** The localizer used by this class. */
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(MediathekPlugin.class);
@@ -240,7 +243,7 @@ public class MediathekPlugin extends Plugin {
 
   @Override
   public void handleTvBrowserStartFinished() {
-    readMediathekContents();
+    initWatcher();
   }
 
   @Override
@@ -257,13 +260,55 @@ public class MediathekPlugin extends Plugin {
   public void handleTvDataUpdateFinished() {
     updatePluginTree();
   }
+  
+  private void initWatcher(){
+    TimerTask watchThread = new TimerTask(){
+      private long lastMod = 0;
 
-  void readMediathekContents() {
+      @Override
+      public void run(){
+        try {
+          final File file = new File(mSettings.guessMediathekPath(true));
+          if (file.exists()){
+            long time = file.lastModified();
+            if (time>lastMod){
+              logger.info("Mediathek DB changed");
+              lastMod = time;
+              readMediathekContents();
+            } else if (time<lastMod){
+              lastMod = time;
+            }
+          } else {
+            if (lastMod!=0) {
+              logger.warning("Error missing Mediathek DB file");
+              lastMod = 0;
+            }
+          }
+        } catch (NullPointerException npe){
+          logger.warning("Error reading Mediathek DB file attributes");
+        } catch (SecurityException se) {
+          se.printStackTrace();
+        }
+        
+      }
+    };
+    Timer timer = new Timer();
+    timer.schedule( watchThread, 0 , 15000 );
+  }
+
+  void dataPathChanged() {
+    readMediathekContents();
+  }
+
+  private void readMediathekContents() {    
     final Thread contentThread = new Thread("Read Mediathek contents") {
       @Override
       public void run() {
+        logger.info("Started updating Mediathek data");
         mDatabase = new Database(mSettings.guessMediathekPath(true), mSettings.getMediathekQuality());
         updatePluginTree();
+        logger.info("Finished updating Mediathek data");
+        
       }
     };
     contentThread.setPriority(Thread.MIN_PRIORITY);

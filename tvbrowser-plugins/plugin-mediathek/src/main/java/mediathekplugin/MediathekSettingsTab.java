@@ -64,20 +64,12 @@ public final class MediathekSettingsTab implements SettingsTab {
     JButton select = new JButton(Localizer.getLocalization(Localizer.I18N_SELECT));
     select.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        String value = mSettings.guessMediathekPath(false);
+        JFileChooser choose = new JFileChooser(new File(System.getProperty("user.home")));
+        choose.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        choose.showDialog(UiUtilities.getLastModalChildOf(MediathekPlugin.getInstance().getFrame()), Localizer.getLocalization(Localizer.I18N_SELECT));
         
-        if(value.trim().length() == 0) {
-          JFileChooser choose = new JFileChooser(new File(System.getProperty("user.home")));
-          choose.setFileSelectionMode(JFileChooser.FILES_ONLY);
-          choose.showDialog(UiUtilities.getLastModalChildOf(MediathekPlugin.getInstance().getFrame()), Localizer.getLocalization(Localizer.I18N_SELECT));
-          
-          if(choose.getSelectedFile() != null && choose.getSelectedFile().getName().equals("filme.json")) {
-            mPath.setText(choose.getSelectedFile().getAbsolutePath());
-          }
-        }
-        else {
-          mPath.setText(value);
-          JOptionPane.showMessageDialog(UiUtilities.getLastModalChildOf(MediathekPlugin.getInstance().getFrame()), localizer.msg("selectionOk", "File successfully located."));
+        if(choose.getSelectedFile() != null && choose.getSelectedFile().getName().equals("filme.json")) {
+          mPath.setText(choose.getSelectedFile().getAbsolutePath());
         }
       }
     });
@@ -107,7 +99,7 @@ public final class MediathekSettingsTab implements SettingsTab {
   public void saveSettings() {
     mSettings.setMediathekPath(mPath.getText().trim());
     mSettings.setMediathekQuality((MediathekQuality) mQuality.getSelectedItem());
-    MediathekPlugin.getInstance().readMediathekContents();
+    MediathekPlugin.getInstance().dataPathChanged();
   }
 
   public MediathekSettingsTab(final MediathekSettings settings) {
