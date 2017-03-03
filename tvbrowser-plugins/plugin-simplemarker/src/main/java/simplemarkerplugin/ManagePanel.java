@@ -55,6 +55,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
+import javax.xml.ws.handler.MessageContext.Scope;
 
 import util.settings.PluginPictureSettings;
 import util.settings.ProgramPanelSettings;
@@ -288,7 +289,12 @@ public class ManagePanel extends JPanel implements PersonaListener {
 
     mMarkListsList.setSelectedIndex(0);
     
-    selectPrograms(true);
+    SwingUtilities.invokeLater(new Runnable() {
+      @Override
+      public void run() {
+        selectPrograms(true);
+      }
+    });
     
     if(close == null) {
       updatePersona();
@@ -408,11 +414,12 @@ public class ManagePanel extends JPanel implements PersonaListener {
 
         if(prog != null && ((ProgramFilter)mFilterSelection.getSelectedItem()).accept(prog)) {
           mProgramListModel.addElement(prog);
-          added++;
           
           if(!list.get(i).isExpired() && index == -1) {
             index = added;
           }
+          
+          added++;
         }
       }
       
@@ -443,7 +450,7 @@ public class ManagePanel extends JPanel implements PersonaListener {
     mSend.setEnabled(mProgramListModel.size() > 0);
     mDelete.setEnabled(mProgramListModel.size() > 0);
     mUndo.setEnabled(mLastDeletingList != null && mDeletedPrograms != null && mDeletedPrograms.length > 0);
-
+    
     if (isVisible()) {
       mMarkListsList.repaint();
     }
