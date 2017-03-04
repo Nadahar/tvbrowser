@@ -92,7 +92,7 @@ public class ContextMenuManager {
       ContextMenuIf menuIf = setting.getContextMenuIf();
       
       if(menuIf != null) {
-        hashtable.put(setting.getModifiersEx(), new ContextMenuAction(menuIf, setting.getmContextMenuActionId()));
+        hashtable.put(setting.getModifiersEx(), new ContextMenuAction(menuIf, setting.getContextMenuActionId()));
       }
     }
   }
@@ -475,7 +475,7 @@ public class ContextMenuManager {
     private ContextMenuIf mContextMenuIf;
     private int mContextMenuActionId;
     
-    private ContextMenuAction(ContextMenuIf contextMenuIf, int contextMenuActionId) {
+    public ContextMenuAction(ContextMenuIf contextMenuIf, int contextMenuActionId) {
       mContextMenuIf = contextMenuIf;
       mContextMenuActionId = contextMenuActionId;
     }

@@ -274,7 +274,7 @@ public class MouseSettingsTab implements devplugin.SettingsTab {
 	    mMouseButton.setSelectedIndex(mouseButton-1);
 	    mModifiersEx = new JComboBox(mouseButton == 1 ? mLeftModifiersName : mMiddleModifiersName);
 	    mModifiersEx.setSelectedIndex(indexOfModifier(mouseButton == 1 ? mLeftModifiersEx : mMiddleModifiersEx, setting.getModifiersEx()));
-	    mMouseClickSetting = new MouseClickSetting(setting.getContextMenuIf(), setting.getmContextMenuActionId());
+	    mMouseClickSetting = new MouseClickSetting(setting.getContextMenuIf(), setting.getContextMenuActionId());
 	    mClickCount = new JComboBox(CLICK_COUNT_TEXT);
 	    mClickCount.setSelectedIndex(clickCount-1);
 	    

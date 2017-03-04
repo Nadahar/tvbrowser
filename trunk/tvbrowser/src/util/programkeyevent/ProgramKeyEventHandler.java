@@ -63,7 +63,7 @@ public class ProgramKeyEventHandler extends KeyAdapter {
     for(ContextMenuMouseActionSetting setting : mouseActionSettings) {
       if(setting.getModifiersEx() == e.getModifiersEx()) {
         if(setting.getContextMenuIf() != mOwner) {
-          ProgramMouseEventHandler.handleAction(program, setting.getContextMenuIf().getContextMenuActions(program), setting.getmContextMenuActionId());
+          ProgramMouseEventHandler.handleAction(program, setting.getContextMenuIf().getContextMenuActions(program), setting.getContextMenuActionId());
         }
         break;
       }
