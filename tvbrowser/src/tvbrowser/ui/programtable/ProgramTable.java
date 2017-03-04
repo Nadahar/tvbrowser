@@ -75,6 +75,7 @@ import util.programmouseevent.ProgramMouseEventHandler;
 import util.settings.ProgramPanelSettings;
 import util.ui.ProgramPanel;
 import util.ui.TransferProgram;
+import devplugin.ActionMenu;
 import devplugin.Channel;
 import devplugin.ContextMenuIf;
 import devplugin.Date;
@@ -917,7 +918,7 @@ public class ProgramTable extends JPanel
 
     Program program = mModel.getProgramPanel(mCurrentCol, mCurrentRow).getProgram();
     
-    ProgramMouseEventHandler.handleAction(program, action.getContextMenuActions(program));
+    ProgramMouseEventHandler.handleAction(program, action.getContextMenuActions(program), ActionMenu.ID_ACTION_NONE);
   }
 
   /**

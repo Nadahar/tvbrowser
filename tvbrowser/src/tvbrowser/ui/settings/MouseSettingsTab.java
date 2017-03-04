@@ -157,7 +157,7 @@ public class MouseSettingsTab implements devplugin.SettingsTab {
     add.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        ContextMenuMouseActionSetting setting = new ContextMenuMouseActionSetting(ContextMenuManager.NO_MOUSE_MODIFIER_EX,DoNothingContextMenuItem.getInstance().getId());
+        ContextMenuMouseActionSetting setting = new ContextMenuMouseActionSetting(ContextMenuManager.NO_MOUSE_MODIFIER_EX, DoNothingContextMenuItem.getInstance().getId(), ActionMenu.ID_ACTION_NONE);
         
         ContextMenuPanel contextMenuPanel = new ContextMenuPanel(setting, 1, 1);
         mMouseActions.add(contextMenuPanel);
@@ -191,6 +191,7 @@ public class MouseSettingsTab implements devplugin.SettingsTab {
 	}
 
 	public void saveSettings() {
+	  try {
 	  ArrayList<ContextMenuMouseActionSetting> singleLeft = new ArrayList<ContextMenuMouseActionSetting>();
 	  ArrayList<ContextMenuMouseActionSetting> doubleLeft = new ArrayList<ContextMenuMouseActionSetting>();
 	  ArrayList<ContextMenuMouseActionSetting> singleMiddle = new ArrayList<ContextMenuMouseActionSetting>();
@@ -228,6 +229,9 @@ public class MouseSettingsTab implements devplugin.SettingsTab {
 		
 		ContextMenuManager.getInstance().init();
 		MainFrame.getInstance().addKeyboardAction();
+	  }catch(Throwable t) {
+	    t.printStackTrace();
+	  }
 	}
 	
 	private boolean containsModifier(ArrayList<ContextMenuMouseActionSetting> list, int modifier) {
@@ -270,7 +274,7 @@ public class MouseSettingsTab implements devplugin.SettingsTab {
 	    mMouseButton.setSelectedIndex(mouseButton-1);
 	    mModifiersEx = new JComboBox(mouseButton == 1 ? mLeftModifiersName : mMiddleModifiersName);
 	    mModifiersEx.setSelectedIndex(indexOfModifier(mouseButton == 1 ? mLeftModifiersEx : mMiddleModifiersEx, setting.getModifiersEx()));
-	    mMouseClickSetting = new MouseClickSetting(setting.getContextMenuIf());
+	    mMouseClickSetting = new MouseClickSetting(setting.getContextMenuIf(), setting.getmContextMenuActionId());
 	    mClickCount = new JComboBox(CLICK_COUNT_TEXT);
 	    mClickCount.setSelectedIndex(clickCount-1);
 	    
@@ -324,11 +328,11 @@ public class MouseSettingsTab implements devplugin.SettingsTab {
 	  
 	  public ContextMenuMouseActionSetting getSetting() {
 	    int mouseButton = mMouseButton.getSelectedIndex() + 1;
-	    ContextMenuIf selected = mMouseClickSetting.getSelectedIf();
+	    ContextMenuActionEntry selected = mMouseClickSetting.getSelectedContextMenuActionEntry();
 	    
 	    int modifierEx = mouseButton == 1 ? mLeftModifiersEx[mModifiersEx.getSelectedIndex()] : mMiddleModifiersEx[mModifiersEx.getSelectedIndex()];
 	    
-	    ContextMenuMouseActionSetting setting = new ContextMenuMouseActionSetting(modifierEx,selected.getId());
+	    ContextMenuMouseActionSetting setting = new ContextMenuMouseActionSetting(modifierEx,selected.mContextMenuIf.getId(),selected.mActionMenu.getActionId());
 	    
 	    return setting;
 	  }
@@ -355,16 +359,16 @@ public class MouseSettingsTab implements devplugin.SettingsTab {
 			JLabel label = (JLabel) getBackendRenderer().getListCellRendererComponent(list, value,
 					index, isSelected, cellHasFocus);
 
-			if (value instanceof ContextMenuIf) {
-				ContextMenuIf menuIf = (ContextMenuIf) value;
-				Program exampleProgram = Plugin.getPluginManager().getExampleProgram();
+			if (value instanceof ContextMenuActionEntry) {
+				ContextMenuIf menuIf = ((ContextMenuActionEntry) value).mContextMenuIf;
+				//Program exampleProgram = Plugin.getPluginManager().getExampleProgram();
 
 				// Get the context menu item text
 				StringBuilder text = new StringBuilder();
 				Icon icon = null;
-				ActionMenu actionMenu = menuIf.getContextMenuActions(exampleProgram);
+				ActionMenu actionMenu = ((ContextMenuActionEntry) value).mActionMenu;
 				if (actionMenu != null) {
-					Action action = actionMenu.getAction();
+				  Action action = actionMenu.getAction();
 					if (action != null) {
 						text.append((String) action.getValue(Action.NAME));
 						icon = (Icon) action.getValue(Action.SMALL_ICON);
@@ -387,31 +391,41 @@ public class MouseSettingsTab implements devplugin.SettingsTab {
 
 	private static class MouseClickSetting {
 		private ContextMenuIf mClickInterface;
+		private ActionMenu mActionMenu;
 		private JComboBox mComboBox;
 
-		public MouseClickSetting(ContextMenuIf clickIf) {
+		public MouseClickSetting(ContextMenuIf clickIf, int actionMenuId) {
 			mClickInterface = clickIf;
+			
+			if(clickIf != null) {
+  			mActionMenu = clickIf.getContextMenuActions(Plugin.getPluginManager().getExampleProgram());
+  			
+  			if(actionMenuId != ActionMenu.ID_ACTION_NONE) {
+  			  mActionMenu = ContextMenuManager.loadActionMenu(mActionMenu, actionMenuId);
+  			}
+			}
+			else {
+			  mActionMenu = new ActionMenu((Action)null);
+			}
 		}
 
-		public ContextMenuIf getSelectedIf() {
-			ContextMenuIf selectedIf = (ContextMenuIf) mComboBox.getSelectedItem();
-			
-			return selectedIf;
+		public ContextMenuActionEntry getSelectedContextMenuActionEntry() {
+		  return (ContextMenuActionEntry) mComboBox.getSelectedItem();
 		}
 
 		public JComboBox createComboxBox() {
 			mComboBox = new JComboBox();
-			mComboBox.setSelectedItem(mClickInterface);
+			mComboBox.setSelectedItem(new ContextMenuActionEntry(mClickInterface,mActionMenu));
 			mComboBox.setMaximumRowCount(15);
 			mComboBox.setRenderer(new ContextMenuCellRenderer(mComboBox.getRenderer()));
 			mComboBox.removeAllItems();
 			DoNothingContextMenuItem doNothing = DoNothingContextMenuItem
 					.getInstance();
-			mComboBox.addItem(doNothing);
-			mComboBox.addItem(SelectProgramContextMenuItem.getInstance());
+			mComboBox.addItem(new ContextMenuActionEntry(doNothing, doNothing.getContextMenuActions(null)));
+			mComboBox.addItem(new ContextMenuActionEntry(SelectProgramContextMenuItem.getInstance(), SelectProgramContextMenuItem.getInstance().getContextMenuActions(null)));
 			fillListBox();
 			if (mClickInterface != null) {
-				mComboBox.setSelectedItem(mClickInterface);
+				mComboBox.setSelectedItem(new ContextMenuActionEntry(mClickInterface,mActionMenu));
 			} else {
 				mComboBox.setSelectedItem(doNothing);
 			}
@@ -421,18 +435,68 @@ public class MouseSettingsTab implements devplugin.SettingsTab {
 		private void fillListBox() {
 			ContextMenuIf[] menuIfList = ContextMenuManager.getInstance()
 					.getAvailableContextMenuIfs(true, false);
-			Program exampleProgram = Plugin.getPluginManager().getExampleProgram();
+			final Program exampleProgram = Plugin.getPluginManager().getExampleProgram();
+			
 			for (ContextMenuIf element : menuIfList) {
 				if (element instanceof SeparatorMenuItem) {
 				} else if (element instanceof ConfigMenuItem
 						|| element instanceof LeaveFullScreenMenuItem) {
 				} else {
 					ActionMenu actionMenu = element.getContextMenuActions(exampleProgram);
-					if (actionMenu != null) {
-						mComboBox.addItem(element);
+					
+					final ArrayList<ActionMenu> listActionMenus = new ArrayList<ActionMenu>();
+					
+					loadActionMenus(actionMenu,listActionMenus);
+					
+					if (actionMenu != null && listActionMenus.isEmpty()) {
+						mComboBox.addItem(new ContextMenuActionEntry(element,actionMenu));
+					}
+					else if(!listActionMenus.isEmpty()) {
+					  for(ActionMenu menu : listActionMenus) {
+					    mComboBox.addItem(new ContextMenuActionEntry(element,menu));
+					  }
 					}
 				}
 			}
 		}
+	}
+	
+	private static void loadActionMenus(final ActionMenu actionMenu, final ArrayList<ActionMenu> result) {
+	  if(actionMenu != null) {
+  	  final ActionMenu[] subItems = actionMenu.getSubItems();
+  	  
+  	  if(subItems != null) {
+  	    for(ActionMenu item : subItems) {
+  	      
+  	      if(item.hasSubItems()) {
+  	        loadActionMenus(item, result);
+  	      }
+  	      else if(item.getActionId() != ActionMenu.ID_ACTION_NONE) {
+  	        result.add(item);
+  	      }
+  	    }
+  	  }
+	  }
+	}
+	
+	
+	
+	private final static class ContextMenuActionEntry {
+	  private ContextMenuIf mContextMenuIf;
+	  private ActionMenu mActionMenu;
+	  
+	  public ContextMenuActionEntry(ContextMenuIf contextMenuIf, ActionMenu actionMenu) {
+      mContextMenuIf = contextMenuIf;
+      mActionMenu = actionMenu;
+    }
+	  
+	  @Override
+	  public boolean equals(Object obj) {
+	    if(obj instanceof ContextMenuActionEntry) {
+	      return mContextMenuIf.equals(((ContextMenuActionEntry) obj).mContextMenuIf) && (mActionMenu == null && ((ContextMenuActionEntry) obj).mActionMenu == null || (mActionMenu != null && ((ContextMenuActionEntry) obj).mActionMenu != null && mActionMenu.getActionId() == ((ContextMenuActionEntry) obj).mActionMenu.getActionId()));
+	    }
+	    
+	    return super.equals(obj);
+	  }
 	}
 }

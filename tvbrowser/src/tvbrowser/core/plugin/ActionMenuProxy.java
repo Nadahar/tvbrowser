@@ -67,6 +67,10 @@ public class ActionMenuProxy extends ActionMenu {
   public ActionMenu[] getSubItems() {
     ActionMenu[] items =super.getSubItems();
     
+    if(items == null) {
+      items = new ActionMenu[0];
+    }
+    
     ActionMenu[] result = new ActionMenuProxy[items.length];
     
     for (int i=0;i<items.length;i++) {

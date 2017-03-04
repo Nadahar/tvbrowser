@@ -73,26 +73,26 @@ public class ContextMenuManager {
   
   private static ContextMenuManager mInstance;
   
-  private Hashtable<Integer, ContextMenuIf> mContextMenuLeftSingleClickTable;
-  private Hashtable<Integer, ContextMenuIf> mContextMenuLeftDoubleClickTable;
-  private Hashtable<Integer, ContextMenuIf> mContextMenuMiddleSingleClickTable;
-  private Hashtable<Integer, ContextMenuIf> mContextMenuMiddleDoubleClickTable;
+  private Hashtable<Integer, ContextMenuAction> mContextMenuLeftSingleClickTable;
+  private Hashtable<Integer, ContextMenuAction> mContextMenuLeftDoubleClickTable;
+  private Hashtable<Integer, ContextMenuAction> mContextMenuMiddleSingleClickTable;
+  private Hashtable<Integer, ContextMenuAction> mContextMenuMiddleDoubleClickTable;
   
   private ContextMenuManager() {
     mInstance = this;
-    mContextMenuLeftSingleClickTable = new Hashtable<Integer, ContextMenuIf>();
-    mContextMenuLeftDoubleClickTable = new Hashtable<Integer, ContextMenuIf>();
-    mContextMenuMiddleSingleClickTable = new Hashtable<Integer, ContextMenuIf>();
-    mContextMenuMiddleDoubleClickTable = new Hashtable<Integer, ContextMenuIf>();
+    mContextMenuLeftSingleClickTable = new Hashtable<Integer, ContextMenuAction>();
+    mContextMenuLeftDoubleClickTable = new Hashtable<Integer, ContextMenuAction>();
+    mContextMenuMiddleSingleClickTable = new Hashtable<Integer, ContextMenuAction>();
+    mContextMenuMiddleDoubleClickTable = new Hashtable<Integer, ContextMenuAction>();
     init();
   }
   
-  private void setContextMenuValues(Hashtable<Integer, ContextMenuIf> hashtable, ContextMenuMouseActionSetting[] clickArray) {
+  private void setContextMenuValues(Hashtable<Integer, ContextMenuAction> hashtable, ContextMenuMouseActionSetting[] clickArray) {
     for(ContextMenuMouseActionSetting setting : clickArray) {
       ContextMenuIf menuIf = setting.getContextMenuIf();
       
       if(menuIf != null) {
-        hashtable.put(setting.getModifiersEx(), menuIf);
+        hashtable.put(setting.getModifiersEx(), new ContextMenuAction(menuIf, setting.getmContextMenuActionId()));
       }
     }
   }
@@ -125,13 +125,13 @@ public class ContextMenuManager {
   }
   
   /**
-   * Gets the ContextMenuIf for a single mouse click.
+   * Gets the ContextMenuAction for a single mouse click.
    * @param e The MouseEvent to get the ContextMenuIf for.
-   * @return The ContextMenuIf for a single mouse click that matches the mouse event
+   * @return The ContextMenuAction for a single mouse click that matches the mouse event
    * or <code>null</code> if there is no single mouse click ContextMenuIf for the mouse event.
    * @since 3.3.1
    */
-  public ContextMenuIf getContextMenuForSingleClick(MouseEvent e) {
+  public ContextMenuAction getContextMenuForSingleClick(MouseEvent e) {
     int cleanModifierEx = e.getModifiersEx() & ~(MouseEvent.BUTTON1_DOWN_MASK | MouseEvent.BUTTON2_DOWN_MASK | MouseEvent.BUTTON3_DOWN_MASK);
     
     if(SwingUtilities.isLeftMouseButton(e)) {
@@ -145,15 +145,15 @@ public class ContextMenuManager {
   }
   
   /**
-   * Gets the ContextMenuIf for a mouse click and modifier.
+   * Gets the ContextMenuAction for a mouse click and modifier.
    * @param modifierEx The modifier for the mouse event.
-   * @param leftMouseButton If the ContextMenuIf for the left mouse button should be gotten.
-   * @param singleClick If the ContextMenuIf for a single mouse click should be gotten.
+   * @param leftMouseButton If the ContextMenuAction for the left mouse button should be gotten.
+   * @param singleClick If the ContextMenuAction for a single mouse click should be gotten.
    * @return The ContextMenuIf for a mouse click that matches given values
    * or <code>null</code> if there is no single mouse click ContextMenuIf.
    * @since 3.3.1
    */
-  public ContextMenuIf getContextMenuArrayForModifierEx(int modifierEx, boolean leftMouseButton, boolean singleClick) {
+  public ContextMenuAction getContextMenuArrayForModifierEx(int modifierEx, boolean leftMouseButton, boolean singleClick) {
     if(leftMouseButton) {
       if(singleClick) {
         return mContextMenuLeftSingleClickTable.get(modifierEx);
@@ -173,12 +173,12 @@ public class ContextMenuManager {
   }
   
   /**
-   * Gets the ContextMenuIf for a double mouse click.
+   * Gets the ContextMenuAction for a double mouse click.
    * @param e The MouseEvent to get the ContextMenuIf for.
-   * @return The ContextMenuIf for a double mouse click that matches the mouse event
-   * or <code>null</code> if there is no double mouse click ContextMenuIf for the mouse event.
+   * @return The ContextMenuAction for a double mouse click that matches the mouse event
+   * or <code>null</code> if there is no double mouse click ContextMenuAction for the mouse event.
    */
-  public ContextMenuIf getContextMenuForDoubleClick(MouseEvent e) {
+  public ContextMenuAction getContextMenuForDoubleClick(MouseEvent e) {
     int cleanModifierEx = e.getModifiersEx() & ~(MouseEvent.BUTTON1_DOWN_MASK | MouseEvent.BUTTON2_DOWN_MASK | MouseEvent.BUTTON3_DOWN_MASK);
     
     if(SwingUtilities.isLeftMouseButton(e)) {
@@ -467,6 +467,46 @@ public class ContextMenuManager {
     });
     
     menu.add(item);
+    
+    return menu;
+  }
+  
+  public static final class ContextMenuAction {
+    private ContextMenuIf mContextMenuIf;
+    private int mContextMenuActionId;
+    
+    private ContextMenuAction(ContextMenuIf contextMenuIf, int contextMenuActionId) {
+      mContextMenuIf = contextMenuIf;
+      mContextMenuActionId = contextMenuActionId;
+    }
+    
+    public ContextMenuIf getContextMenuIf() {
+      return mContextMenuIf;
+    }
+    
+    public int getContextMenuActionId() {
+      return mContextMenuActionId;
+    }
+  }
+  
+  public static ActionMenu loadActionMenu(final ActionMenu actionMenu, final int actionMenuId) {
+    final ActionMenu[] subItems = actionMenu.getSubItems();
+    ActionMenu menu = actionMenu.getActionId() == actionMenuId ? actionMenu : null;
+    
+    if(subItems != null && menu == null) {
+      for(ActionMenu item : subItems) {
+        if(menu != null) {
+          break;
+        }
+        else if(item.hasSubItems()) {
+          menu = loadActionMenu(item, actionMenuId);
+        }
+        else if(item.getActionId() == actionMenuId) {
+          menu = item;
+          break;
+        }
+      }
+    }
     
     return menu;
   }

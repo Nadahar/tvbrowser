@@ -30,6 +30,7 @@ import java.awt.event.MouseEvent;
 import javax.swing.Action;
 
 import tvbrowser.core.contextmenu.ContextMenuManager;
+import tvbrowser.core.contextmenu.ContextMenuManager.ContextMenuAction;
 import devplugin.ActionMenu;
 import devplugin.ContextMenuIf;
 import devplugin.Plugin;
@@ -132,35 +133,50 @@ public class ProgramMouseEventHandler extends MouseAdapter {
       return;
     }
     
-    ContextMenuIf contextMenuIf = singleClick ? ContextMenuManager.getInstance().getContextMenuForSingleClick(e) : ContextMenuManager.getInstance().getContextMenuForDoubleClick(e);
+    ContextMenuAction contextMenuAction = singleClick ? ContextMenuManager.getInstance().getContextMenuForSingleClick(e) : ContextMenuManager.getInstance().getContextMenuForDoubleClick(e);
 
-    if (contextMenuIf == null) {
+    if (contextMenuAction == null) {
       return;
     }
 
-    if ((caller != null)  && (contextMenuIf.getId().equals(caller.getId()))) {
+    if ((caller != null)  && (contextMenuAction.getContextMenuIf().getId().equals(caller.getId()))) {
       return;
     }
 
-    handleAction(program, contextMenuIf.getContextMenuActions(program));
+    handleAction(program, contextMenuAction.getContextMenuIf().getContextMenuActions(program), contextMenuAction.getContextMenuActionId());
   }
   
   public static void handleAction(Program program, ActionMenu menu) {
-    while (menu != null && menu.hasSubItems()) {
-      ActionMenu[] subItems = menu.getSubItems();
-      if (subItems.length>0) {
-        menu = subItems[0];
+    handleAction(program, menu, ActionMenu.ID_ACTION_NONE);
+  }
+  
+  public static void handleAction(Program program, ActionMenu menu, int actionId) {
+    Action action = null;
+    
+    if(actionId != ActionMenu.ID_ACTION_NONE) {
+     ActionMenu actionMenu = ContextMenuManager.loadActionMenu(menu, actionId);
+     
+     if(actionMenu != null) {
+       action = actionMenu.getAction();
+     }
+    
+    }else {
+      while (menu != null && menu.hasSubItems()) {
+        ActionMenu[] subItems = menu.getSubItems();
+        if (subItems.length>0) {
+          menu = subItems[0];
+        }
+        else {
+          menu = null;
+        }
       }
-      else {
-        menu = null;
+      if (menu == null) {
+        return;
       }
+  
+      action = menu.getAction();
     }
-    if (menu == null) {
-      return;
-    }
-
-    Action action = menu.getAction();
-
+    
     if (action != null) {
       ActionEvent evt = new ActionEvent(program, 0, (String)action.
           getValue(Action.ACTION_COMMAND_KEY));

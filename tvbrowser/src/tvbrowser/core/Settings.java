@@ -109,6 +109,7 @@ import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.ui.persona.Persona;
 import util.ui.view.SplitViewProperty;
+import devplugin.ActionMenu;
 import devplugin.Channel;
 import devplugin.Date;
 import devplugin.ProgramFieldType;
@@ -847,31 +848,31 @@ public class Settings {
     if(mProp.getProperty("leftSingleClickIf") != null) {
       StringProperty propLeftSingleClickIf = new StringProperty(
           mProp, "leftSingleClickIf", ProgramInfo.getProgramInfoPluginId());      
-      leftSingleList.add(new ContextMenuMouseActionSetting(ContextMenuManager.NO_MOUSE_MODIFIER_EX, propLeftSingleClickIf.getString()));
+      leftSingleList.add(new ContextMenuMouseActionSetting(ContextMenuManager.NO_MOUSE_MODIFIER_EX, propLeftSingleClickIf.getString(), ActionMenu.ID_ACTION_NONE));
       propLeftSingleClickIf.setString(propLeftSingleClickIf.getDefault());
     }
     if(mProp.getProperty("contextmenudefaultplugin") != null) {
       StringProperty propDoubleClickIf = new StringProperty(
           mProp, "contextmenudefaultplugin", ProgramInfo.getProgramInfoPluginId());
-      propLeftDoubleClickIfArray.setContextMenuMouseActionArray(new ContextMenuMouseActionSetting[] {new ContextMenuMouseActionSetting(ContextMenuManager.NO_MOUSE_MODIFIER_EX, propDoubleClickIf.getString())});
+      propLeftDoubleClickIfArray.setContextMenuMouseActionArray(new ContextMenuMouseActionSetting[] {new ContextMenuMouseActionSetting(ContextMenuManager.NO_MOUSE_MODIFIER_EX, propDoubleClickIf.getString(), ActionMenu.ID_ACTION_NONE)});
       propDoubleClickIf.setString(propDoubleClickIf.getDefault());
     }
     if(mProp.getProperty("middleclickplugin") != null) {
       StringProperty propMiddleClickIf = new StringProperty(
           mProp, "middleclickplugin", ReminderPlugin.getReminderPluginId());
-      propMiddleSingleClickIfArray.setContextMenuMouseActionArray(new ContextMenuMouseActionSetting[] {new ContextMenuMouseActionSetting(ContextMenuManager.NO_MOUSE_MODIFIER_EX, propMiddleClickIf.getString())});
+      propMiddleSingleClickIfArray.setContextMenuMouseActionArray(new ContextMenuMouseActionSetting[] {new ContextMenuMouseActionSetting(ContextMenuManager.NO_MOUSE_MODIFIER_EX, propMiddleClickIf.getString(), ActionMenu.ID_ACTION_NONE)});
       propMiddleClickIf.setString(propMiddleClickIf.getDefault());
     }
     if(mProp.getProperty("middledoubleclickplugin") != null) {
       StringProperty propMiddleDoubleClickIf = new StringProperty(
           mProp, "middledoubleclickplugin", FavoritesPlugin.getFavoritesPluginId());
-      propMiddleDoubleClickIfArray.setContextMenuMouseActionArray(new ContextMenuMouseActionSetting[] {new ContextMenuMouseActionSetting(ContextMenuManager.NO_MOUSE_MODIFIER_EX, propMiddleDoubleClickIf.getString())});
+      propMiddleDoubleClickIfArray.setContextMenuMouseActionArray(new ContextMenuMouseActionSetting[] {new ContextMenuMouseActionSetting(ContextMenuManager.NO_MOUSE_MODIFIER_EX, propMiddleDoubleClickIf.getString(), ActionMenu.ID_ACTION_NONE)});
       propMiddleDoubleClickIf.setString(propMiddleDoubleClickIf.getDefault());
     }
     if(mProp.getProperty("leftSingleCtrlClickIf") != null) {
       StringProperty propLeftSingleCtrlClickIf = new StringProperty(
           mProp, "leftSingleCtrlClickIf", null);
-      leftSingleList.add(new ContextMenuMouseActionSetting(MouseEvent.CTRL_DOWN_MASK, propLeftSingleCtrlClickIf.getString()));
+      leftSingleList.add(new ContextMenuMouseActionSetting(MouseEvent.CTRL_DOWN_MASK, propLeftSingleCtrlClickIf.getString(), ActionMenu.ID_ACTION_NONE));
       propLeftSingleCtrlClickIf.setString(propLeftSingleCtrlClickIf.getDefault());
     }
     
@@ -1501,16 +1502,16 @@ public class Settings {
       mProp, "toolbarLocation", "north");  
   
   public static final ContextMenuMouseActionArrayProperty propLeftSingleClickIfArray = new ContextMenuMouseActionArrayProperty(
-      mProp, "leftSingleClickIfArray", new ContextMenuMouseActionSetting[] {new ContextMenuMouseActionSetting(ContextMenuManager.NO_MOUSE_MODIFIER_EX,ProgramInfo.getProgramInfoPluginId())});
+      mProp, "leftSingleClickIfArray", new ContextMenuMouseActionSetting[] {new ContextMenuMouseActionSetting(ContextMenuManager.NO_MOUSE_MODIFIER_EX,ProgramInfo.getProgramInfoPluginId(),ActionMenu.ID_ACTION_NONE)});
   
   public static final ContextMenuMouseActionArrayProperty propLeftDoubleClickIfArray = new ContextMenuMouseActionArrayProperty(
-      mProp, "leftDoubleClickIfArray", new ContextMenuMouseActionSetting[] {new ContextMenuMouseActionSetting(ContextMenuManager.NO_MOUSE_MODIFIER_EX,ProgramInfo.getProgramInfoPluginId())});
+      mProp, "leftDoubleClickIfArray", new ContextMenuMouseActionSetting[] {new ContextMenuMouseActionSetting(ContextMenuManager.NO_MOUSE_MODIFIER_EX,ProgramInfo.getProgramInfoPluginId(),ActionMenu.ID_ACTION_NONE)});
 
   public static final ContextMenuMouseActionArrayProperty propMiddleSingleClickIfArray = new ContextMenuMouseActionArrayProperty(
-      mProp, "middleSingleClickIfArray", new ContextMenuMouseActionSetting[] {new ContextMenuMouseActionSetting(ContextMenuManager.NO_MOUSE_MODIFIER_EX,ReminderPlugin.getReminderPluginId())});
+      mProp, "middleSingleClickIfArray", new ContextMenuMouseActionSetting[] {new ContextMenuMouseActionSetting(ContextMenuManager.NO_MOUSE_MODIFIER_EX,ReminderPlugin.getReminderPluginId(),ActionMenu.ID_ACTION_NONE)});
   
   public static final ContextMenuMouseActionArrayProperty propMiddleDoubleClickIfArray = new ContextMenuMouseActionArrayProperty(
-      mProp, "middleDoubleClickIfArray", new ContextMenuMouseActionSetting[] {new ContextMenuMouseActionSetting(ContextMenuManager.NO_MOUSE_MODIFIER_EX,FavoritesPlugin.getFavoritesPluginId())});
+      mProp, "middleDoubleClickIfArray", new ContextMenuMouseActionSetting[] {new ContextMenuMouseActionSetting(ContextMenuManager.NO_MOUSE_MODIFIER_EX,FavoritesPlugin.getFavoritesPluginId(),1)});
   
   /**
    * the last active program filter
