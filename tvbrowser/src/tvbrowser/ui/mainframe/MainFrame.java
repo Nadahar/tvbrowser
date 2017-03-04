@@ -125,6 +125,7 @@ import tvbrowser.core.Settings;
 import tvbrowser.core.TvDataBase;
 import tvbrowser.core.TvDataUpdater;
 import tvbrowser.core.contextmenu.ContextMenuManager;
+import tvbrowser.core.contextmenu.ContextMenuManager.ContextMenuAction;
 import tvbrowser.core.filters.FilterList;
 import tvbrowser.core.filters.FilterManagerImpl;
 import tvbrowser.core.filters.ShowAllFilter;
@@ -1006,7 +1007,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
       addKeyAction(keyCode, actionSetting.getModifiersEx(), new AbstractAction() {
         @Override
         public void actionPerformed(ActionEvent e) {
-          mProgramTableScrollPane.handleKeyboardAction(actionSetting.getContextMenuIf());
+          mProgramTableScrollPane.handleKeyboardAction(new ContextMenuAction(actionSetting.getContextMenuIf(), actionSetting.getContextMenuActionId()));
         }
       });
     }

@@ -58,6 +58,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
 import tvbrowser.core.Settings;
+import tvbrowser.core.contextmenu.ContextMenuManager.ContextMenuAction;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.core.plugin.PluginStateListener;
@@ -77,7 +78,6 @@ import util.ui.ProgramPanel;
 import util.ui.TransferProgram;
 import devplugin.ActionMenu;
 import devplugin.Channel;
-import devplugin.ContextMenuIf;
 import devplugin.Date;
 import devplugin.Plugin;
 import devplugin.Program;
@@ -911,14 +911,14 @@ public class ProgramTable extends JPanel
     }
   }
   
-  public void handleKeyboardAction(ContextMenuIf action) {
+  public void handleKeyboardAction(ContextMenuAction action) {
     if(mCurrentCol == -1 || mCurrentRow == -1) {
       return;
     }
 
     Program program = mModel.getProgramPanel(mCurrentCol, mCurrentRow).getProgram();
     
-    ProgramMouseEventHandler.handleAction(program, action.getContextMenuActions(program), ActionMenu.ID_ACTION_NONE);
+    ProgramMouseEventHandler.handleAction(program, action.getContextMenuIf().getContextMenuActions(program), action.getContextMenuActionId());
   }
 
   /**

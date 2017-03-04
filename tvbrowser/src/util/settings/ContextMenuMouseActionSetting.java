@@ -92,7 +92,7 @@ public class ContextMenuMouseActionSetting {
   /**
    * @return The id of the context menu action to use.
    */
-  public int getmContextMenuActionId() {
+  public int getContextMenuActionId() {
     return mContextMenuActionId;
   }
   

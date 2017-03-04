@@ -50,6 +50,7 @@ import javax.swing.event.ChangeListener;
 
 import tvbrowser.core.ChannelList;
 import tvbrowser.core.Settings;
+import tvbrowser.core.contextmenu.ContextMenuManager.ContextMenuAction;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.programtable.background.BackgroundPainter;
 import util.ui.persona.Persona;
@@ -456,7 +457,7 @@ public class ProgramTableScrollPane extends JScrollPane implements ProgramTableM
    * @param action The action to perform for the selected program.
    * @since 3.3.1
    */
-  public void handleKeyboardAction(ContextMenuIf action) {
+  public void handleKeyboardAction(ContextMenuAction action) {
     mProgramTable.handleKeyboardAction(action);
   }
   
