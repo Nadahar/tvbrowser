@@ -47,7 +47,7 @@ public class FontsSettingsTab implements devplugin.SettingsTab {
   /** The localizer for this class. */
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(FontsSettingsTab.class);
 
-  private JCheckBox mUseDefaultFontsCB;
+  private JCheckBox mUseUserDefindedFontsCB;
 
   private JCheckBox mEnableAntialiasingCB;
 
@@ -62,8 +62,8 @@ public class FontsSettingsTab implements devplugin.SettingsTab {
   private JLabel mTitleFontLabel;
 
   public JPanel createSettingsPanel() {
-    PanelBuilder mainPanel = new PanelBuilder(new FormLayout("5dlu, 10dlu, pref, 3dlu, pref, fill:3dlu:grow",
-        "pref, 5dlu, pref, 10dlu, pref, 5dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref"));
+    PanelBuilder mainPanel = new PanelBuilder(new FormLayout("5dlu, 10dlu, default, 3dlu, default, fill:3dlu:grow",
+        "default, 5dlu, default, default, 3dlu, default, 3dlu, default, 3dlu, default, 3dlu, default"));
     mainPanel.border(Borders.DIALOG);
     
     CellConstraints cc = new CellConstraints();
@@ -73,42 +73,40 @@ public class FontsSettingsTab implements devplugin.SettingsTab {
     mEnableAntialiasingCB = new JCheckBox(mLocalizer.msg("EnableAntialiasing", "Enable antialiasing"));
     mEnableAntialiasingCB.setSelected(Settings.propEnableAntialiasing.getBoolean());
 
-    mainPanel.add(mEnableAntialiasingCB, cc.xyw(2,3, 4));
+    mainPanel.add(mEnableAntialiasingCB, cc.xyw(2,3,4));
 
-    mainPanel.addSeparator(mLocalizer.msg("UserDefinedFonts", "Userdefined Fonts"), cc.xyw(1,5,6));
-
-    mUseDefaultFontsCB = new JCheckBox(mLocalizer.msg("UseDefaultFonts", "Use default fonts"));
-    mUseDefaultFontsCB.setSelected(Settings.propUseDefaultFonts.getBoolean());
+    mUseUserDefindedFontsCB = new JCheckBox(mLocalizer.msg("UserDefinedFonts", "Use userdefined fonts"));
+    mUseUserDefindedFontsCB.setSelected(!Settings.propUseDefaultFonts.getBoolean());
     
-    mainPanel.add(mUseDefaultFontsCB, cc.xyw(2,7, 4));
+    mainPanel.add(mUseUserDefindedFontsCB, cc.xyw(2,4,4));
         
     mTitleFontLabel = new JLabel(mLocalizer.msg("ProgramTitle", "Program title"));
-    mainPanel.add(mTitleFontLabel, cc.xy(3,9));
+    mainPanel.add(mTitleFontLabel, cc.xy(3,6));
     mTitleFontPanel = new FontChooserPanel(Settings.propProgramTitleFont.getFont());
-    mainPanel.add(mTitleFontPanel, cc.xy(5,9));
+    mainPanel.add(mTitleFontPanel, cc.xy(5,6));
 
     mInfoFontLabel = new JLabel(mLocalizer.msg("ProgramInfo", "Program information"));
-    mainPanel.add(mInfoFontLabel, cc.xy(3,11));
+    mainPanel.add(mInfoFontLabel, cc.xy(3,8));
     mInfoFontPanel = new FontChooserPanel(Settings.propProgramInfoFont.getFont());
-    mainPanel.add(mInfoFontPanel, cc.xy(5,11));
+    mainPanel.add(mInfoFontPanel, cc.xy(5,8));
 
     mChannelNameFontLabel = new JLabel(mLocalizer.msg("ChannelNames", "Channel name"));
-    mainPanel.add(mChannelNameFontLabel, cc.xy(3,13));
+    mainPanel.add(mChannelNameFontLabel, cc.xy(3,10));
     mChannelNameFontPanel = new FontChooserPanel(Settings.propChannelNameFont.getFont());
-    mainPanel.add(mChannelNameFontPanel, cc.xy(5,13));
+    mainPanel.add(mChannelNameFontPanel, cc.xy(5,10));
 
     mTimeFontLabel = new JLabel(mLocalizer.msg("Time", "Time"));
-    mainPanel.add(mTimeFontLabel, cc.xy(3,15));
+    mainPanel.add(mTimeFontLabel, cc.xy(3,12));
     mTimeFontPanel = new FontChooserPanel(Settings.propProgramTimeFont.getFont());
-    mainPanel.add(mTimeFontPanel, cc.xy(5,15));
+    mainPanel.add(mTimeFontPanel, cc.xy(5,12));
 
-    mUseDefaultFontsCB.addActionListener(new ActionListener() {
+    mUseUserDefindedFontsCB.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
-        enableFontFields(!mUseDefaultFontsCB.isSelected());
+        enableFontFields(mUseUserDefindedFontsCB.isSelected());
       }
     });
     
-    enableFontFields(!mUseDefaultFontsCB.isSelected());
+    enableFontFields(mUseUserDefindedFontsCB.isSelected());
     return mainPanel.getPanel();
   }
 
@@ -131,7 +129,7 @@ public class FontsSettingsTab implements devplugin.SettingsTab {
     Settings.propProgramInfoFont.setFont(mInfoFontPanel.getChosenFont());
     Settings.propChannelNameFont.setFont(mChannelNameFontPanel.getChosenFont());
     Settings.propProgramTimeFont.setFont(mTimeFontPanel.getChosenFont());
-    Settings.propUseDefaultFonts.setBoolean(mUseDefaultFontsCB.isSelected());
+    Settings.propUseDefaultFonts.setBoolean(!mUseUserDefindedFontsCB.isSelected());
     Settings.propEnableAntialiasing.setBoolean(mEnableAntialiasingCB.isSelected());
   }
 
