@@ -30,8 +30,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
+import javax.swing.Action;
+import javax.swing.ButtonGroup;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
+import javax.swing.JRadioButton;
 
 import tvbrowser.extras.favoritesplugin.core.Favorite;
 import tvbrowser.extras.favoritesplugin.dlgs.FavoriteTreeModel;
@@ -39,9 +43,11 @@ import tvbrowser.extras.favoritesplugin.dlgs.ManageFavoritesDialog;
 import tvbrowser.extras.programinfo.ProgramInfo;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.ui.TVBrowserIcons;
+import util.ui.UiUtilities;
 import devplugin.ActionMenu;
 import devplugin.ContextMenuAction;
 import devplugin.ContextMenuSeparatorAction;
+import devplugin.Plugin;
 import devplugin.Program;
 
 public class ContextMenuProvider {
@@ -89,7 +95,13 @@ public class ContextMenuProvider {
         }
       }
       else {
-        if (favorites.isEmpty()) {
+        if(Plugin.getPluginManager().getExampleProgram().equals(program)) {
+          return new ActionMenu(mLocalizer.msg("favorites", "Favorites"), FavoritesPlugin.getFavoritesIcon(16), new ActionMenu[] {
+            createAddToFavoritesActionMenu(program),
+            new ActionMenu(5, mLocalizer.msg("excludeFrom","Exclude from"), TVBrowserIcons.filter(TVBrowserIcons.SIZE_SMALL), null)
+          });
+        }
+        else if (favorites.isEmpty()) {
           return new ActionMenu(mLocalizer.msg("favorites", "Favorites"), FavoritesPlugin.getFavoritesIcon(16), new ActionMenu[] {
             createAddToFavoritesActionMenu(program),
               createGlobalExclusionMenu(program)
@@ -143,7 +155,7 @@ public class ContextMenuProvider {
           FavoritesPlugin.getInstance().showCreateFavoriteWizard(program);
         }
       });
-      return new ActionMenu(menu);
+      return new ActionMenu(1, menu);
   }
 
 
@@ -158,22 +170,52 @@ public class ContextMenuProvider {
           FavoritesPlugin.getInstance().showExcludeProgramsDialog(favArr[0], program);
         }
       });
-      return new ActionMenu(action);
+      return new ActionMenu(5, action);
     }
     else {
-      ContextMenuAction[] subItems = new ContextMenuAction[favArr.length];
+      ActionMenu[] subItems = new ActionMenu[favArr.length];
+      
       for (int i=0; i<subItems.length; i++) {
         final Favorite fav = favArr[i];
-        subItems[i] = new ContextMenuAction(favArr[i].getName());
-        subItems[i].setSmallIcon(FavoritesPlugin.getFavoritesIcon(16));
-        subItems[i].setActionListener(new ActionListener(){
+        ContextMenuAction action = new ContextMenuAction(favArr[i].getName(), FavoritesPlugin.getFavoritesIcon(16));
+        
+        subItems[i] = new ActionMenu(action);
+        
+        action.setActionListener(new ActionListener(){
           public void actionPerformed(ActionEvent e) {
             FavoritesPlugin.getInstance().showExcludeProgramsDialog(fav, program);
           }
         });
       }
 
-      return new ActionMenu(mLocalizer.msg("excludeFrom","Exclude from"), TVBrowserIcons.filter(TVBrowserIcons.SIZE_SMALL), subItems);
+      ActionMenu menu = new ActionMenu(5, mLocalizer.msg("excludeFrom","Exclude from"), TVBrowserIcons.filter(TVBrowserIcons.SIZE_SMALL), subItems);
+      Action action = menu.getAction();
+      
+      if(action instanceof ContextMenuAction) {
+        ((ContextMenuAction) action).setActionListener(new ActionListener() {
+          @Override
+          public void actionPerformed(ActionEvent e) {
+            final JRadioButton[] buttons = new JRadioButton[favArr.length];
+            final ButtonGroup bg = new ButtonGroup();
+            
+            for(int i = 0; i < favArr.length; i++) {
+              buttons[i] = new JRadioButton(favArr[i].getName());
+              bg.add(buttons[i]);
+            }
+            
+            if(JOptionPane.showConfirmDialog(UiUtilities.getLastModalChildOf(MainFrame.getInstance()), buttons, mLocalizer.msg("excludeFrom","Exclude from"), JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
+              for(int i = 0; i < buttons.length; i++) {
+                if(buttons[i].isSelected()) {
+                  FavoritesPlugin.getInstance().showExcludeProgramsDialog(favArr[i], program);
+                  break;
+                }
+              }
+            }
+          }
+        });
+      }
+      
+      return menu;
     }
   }
 
@@ -326,7 +368,7 @@ public class ContextMenuProvider {
   private ActionMenu createBlackListFavoriteMenuAction(final Favorite[] favArr, final Program program) {
     if (favArr.length == 1) {
       ContextMenuAction action = new ContextMenuAction();
-
+      
       if(favArr[0].isOnBlackList(program)) {
         action.setSmallIcon(TVBrowserIcons.refresh(TVBrowserIcons.SIZE_SMALL));
         action.setText(mLocalizer.msg("removeFavoriteFromBlackList","Put this program back into '{0}'", favArr[0].getName()));

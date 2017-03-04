@@ -48,6 +48,7 @@ import javax.swing.event.PopupMenuListener;
 
 import tvbrowser.core.Settings;
 import tvbrowser.core.contextmenu.ContextMenuManager;
+import tvbrowser.core.contextmenu.ContextMenuManager.ContextMenuAction;
 import tvbrowser.core.contextmenu.DoNothingContextMenuItem;
 import tvbrowser.core.plugin.PluginProxyManager;
 import util.program.CompoundedProgramFieldType;
@@ -208,14 +209,14 @@ public class ProgramMenuItem extends JMenuItem {
           e.consume();
         }
         else {
-          ContextMenuIf menu = ContextMenuManager.getInstance().getContextMenuForSingleClick(e);
-          
-          if(menu == null || menu.equals(DoNothingContextMenuItem.getInstance())) {
-            menu = ContextMenuManager.getInstance().getContextMenuForDoubleClick(e);
+          ContextMenuAction contextMenuAction = ContextMenuManager.getInstance().getContextMenuForSingleClick(e);
+                    
+          if(contextMenuAction == null || contextMenuAction.getContextMenuIf().equals(DoNothingContextMenuItem.getInstance())) {
+            contextMenuAction = ContextMenuManager.getInstance().getContextMenuForDoubleClick(e);
           }
           
-          if(menu != null) {
-            ProgramMouseEventHandler.handleAction(mProgram, menu.getContextMenuActions(mProgram));
+          if(contextMenuAction != null) {
+            ProgramMouseEventHandler.handleAction(mProgram, contextMenuAction.getContextMenuIf().getContextMenuActions(mProgram), contextMenuAction.getContextMenuActionId());
           }
         }
       }

@@ -24,6 +24,7 @@
 package util.settings;
 
 import tvbrowser.core.contextmenu.ContextMenuManager;
+import devplugin.ActionMenu;
 import devplugin.ContextMenuIf;
 
 /**
@@ -37,14 +38,16 @@ public class ContextMenuMouseActionSetting {
   
   private int mModifiersEx;
   private String mContextMenuId;
+  private int mContextMenuActionId = ActionMenu.ID_ACTION_NONE;
   
   /**
    * @param modifiersEx The keyboard modifiers for this action setting.
    * @param contextMenuId The id of the ContextMenuIf to use with the given modifiers.
    */
-  public ContextMenuMouseActionSetting(int modifiersEx, String contextMenuId) {
+  public ContextMenuMouseActionSetting(int modifiersEx, String contextMenuId, int contextMenuActionId) {
     mModifiersEx = modifiersEx;
     mContextMenuId = contextMenuId;
+    mContextMenuActionId = contextMenuActionId;
   }
   
   /**
@@ -62,6 +65,10 @@ public class ContextMenuMouseActionSetting {
     }
     
     mContextMenuId = parts[1];
+    
+    if(parts.length > 2) {
+      mContextMenuActionId = Integer.parseInt(parts[2]);
+    }
   }
   
   public String toString() {
@@ -69,6 +76,8 @@ public class ContextMenuMouseActionSetting {
     
     builder.append(SEPARATOR);
     builder.append(mContextMenuId);
+    builder.append(SEPARATOR);
+    builder.append(String.valueOf(mContextMenuActionId));
     
     return builder.toString();
   }
@@ -78,6 +87,13 @@ public class ContextMenuMouseActionSetting {
    */
   public int getModifiersEx() {
     return mModifiersEx;
+  }
+  
+  /**
+   * @return The id of the context menu action to use.
+   */
+  public int getmContextMenuActionId() {
+    return mContextMenuActionId;
   }
   
   /**

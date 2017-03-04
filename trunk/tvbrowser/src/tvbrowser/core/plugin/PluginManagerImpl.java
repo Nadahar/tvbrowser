@@ -49,6 +49,7 @@ import tvbrowser.core.ChannelList;
 import tvbrowser.core.Settings;
 import tvbrowser.core.TvDataBase;
 import tvbrowser.core.contextmenu.ContextMenuManager;
+import tvbrowser.core.contextmenu.ContextMenuManager.ContextMenuAction;
 import tvbrowser.core.filters.FilterManagerImpl;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.plugin.programformating.GlobalPluginProgramFormatingManager;
@@ -669,7 +670,14 @@ public class PluginManagerImpl implements PluginManager {
       return;
     }
     
-    ContextMenuIf leftSingleClickIf = ContextMenuManager.getInstance().getContextMenuArrayForModifierEx(leftSingleSetting[0].getModifiersEx(), true, true);
+    ContextMenuAction action = ContextMenuManager.getInstance().getContextMenuArrayForModifierEx(leftSingleSetting[0].getModifiersEx(), true, true);
+    
+    if(action == null) {
+      return;
+    }
+    
+    ContextMenuIf leftSingleClickIf = action.getContextMenuIf();
+    
     if (leftSingleClickIf == null) {
       return;
     }
@@ -688,9 +696,15 @@ public class PluginManagerImpl implements PluginManager {
     if (program == null || leftSingleSetting == null || leftSingleSetting.length < 2) {
       // Nothing to do
       return;
+    }    
+
+    ContextMenuAction action = ContextMenuManager.getInstance().getContextMenuArrayForModifierEx(leftSingleSetting[1].getModifiersEx(), true, true);
+    
+    if(action == null) {
+      return;
     }
     
-    ContextMenuIf clickInterface = ContextMenuManager.getInstance().getContextMenuArrayForModifierEx(leftSingleSetting[1].getModifiersEx(), true, true);
+    ContextMenuIf clickInterface = action.getContextMenuIf();
     
     if (clickInterface == null) {
       return;
@@ -738,7 +752,13 @@ public class PluginManagerImpl implements PluginManager {
       return;
     }
     
-    ContextMenuIf defaultContextMenuIf = ContextMenuManager.getInstance().getContextMenuArrayForModifierEx(leftDoubleSetting[0].getModifiersEx(), true, false);
+    ContextMenuAction action = ContextMenuManager.getInstance().getContextMenuArrayForModifierEx(leftDoubleSetting[0].getModifiersEx(), true, false);
+    
+    if(action == null) {
+      return;
+    }
+    
+    ContextMenuIf defaultContextMenuIf = action.getContextMenuIf();
 
     if (defaultContextMenuIf == null) {
       return;
@@ -788,7 +808,13 @@ public class PluginManagerImpl implements PluginManager {
       return;
     }
     
-    ContextMenuIf middleClickIf = ContextMenuManager.getInstance().getContextMenuArrayForModifierEx(middleLeftSetting[0].getModifiersEx(), false, true);
+    ContextMenuAction action = ContextMenuManager.getInstance().getContextMenuArrayForModifierEx(middleLeftSetting[0].getModifiersEx(), false, true);
+    
+    if(action == null) {
+      return;
+    }
+    
+    ContextMenuIf middleClickIf = action.getContextMenuIf();
 
     if (middleClickIf == null) {
       return;
@@ -836,7 +862,13 @@ public class PluginManagerImpl implements PluginManager {
       return;
     }
     
-    ContextMenuIf middleDoubleClickIf = ContextMenuManager.getInstance().getContextMenuArrayForModifierEx(middleDoubleSetting[0].getModifiersEx(), false, false);
+    ContextMenuAction action = ContextMenuManager.getInstance().getContextMenuArrayForModifierEx(middleDoubleSetting[0].getModifiersEx(), false, false);
+    
+    if(action == null) {
+      return;
+    }
+    
+    ContextMenuIf middleDoubleClickIf = action.getContextMenuIf();
 
     if (middleDoubleClickIf == null) {
       return;
@@ -970,8 +1002,6 @@ public class PluginManagerImpl implements PluginManager {
 
       @Override
       public boolean isChannelUpdateActivated() {
-        System.out.println(Settings.propAutoChannelUpdatePeriod.getInt() + " " + StartupSettingsTab.VALUE_AUTO_CHANNEL_UPDATE_DISABLED);
-        
         return Settings.propAutoChannelUpdatePeriod.getInt() > StartupSettingsTab.VALUE_AUTO_CHANNEL_UPDATE_DISABLED;
       }
       

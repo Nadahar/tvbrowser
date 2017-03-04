@@ -36,10 +36,12 @@ import javax.swing.Icon;
  * This class represents a structure for context menus.
  */
 public class ActionMenu {
+  public static final int ID_ACTION_NONE = -1;
 
   private Action mAction;
   private ActionMenu[] mSubItems;
   private boolean mIsSelected;
+  private int mId = ID_ACTION_NONE;
 
   /**
    * Creates a menu item having sub menu items. These items can have
@@ -65,11 +67,28 @@ public class ActionMenu {
    * @param menuTitle title of the sub menu
    * @param menuIcon icon of the sub menu
    * @param subItems sub menu items
+   * 
    */
   public ActionMenu(final String menuTitle, final Icon menuIcon, final ActionMenu[] subItems) {
     this(new ContextMenuAction(menuTitle, menuIcon), subItems);
   }
 
+  /**
+   * Creates a menu item having sub menu items. These items can have
+   * further sub menu items.
+   *
+   * @see ContextMenuAction
+   *
+   * @param actionId an id to identify this action menu
+   * @param menuTitle title of the sub menu
+   * @param menuIcon icon of the sub menu
+   * @param subItems sub menu items
+   */
+  public ActionMenu(final int actionId, final String menuTitle, final Icon menuIcon, final ActionMenu[] subItems) {
+    this(new ContextMenuAction(menuTitle, menuIcon), subItems);
+    mId = actionId;
+  }
+  
   /**
    * Creates a menu item having sub menu items. These items can have
    * further sub menu items.
@@ -173,6 +192,17 @@ public class ActionMenu {
   public ActionMenu(Action action) {
     this(action, false);
   }
+  
+  /**
+   * Creates a new single menu entry
+   * 
+   * @param actionId an id to identify this action menu
+   * @param action
+   */
+  public ActionMenu(int actionId, Action action) {
+    this(action, false);
+    mId = actionId;
+  }
 
   /**
    * Clone an existing ActionMenu
@@ -204,4 +234,7 @@ public class ActionMenu {
     return mAction;
   }
 
+  public int getActionId() {
+    return mId;
+  }
 }
