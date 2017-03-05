@@ -463,6 +463,7 @@ public class MouseSettingsTab implements devplugin.SettingsTab {
 	
 	private static void loadActionMenus(final ActionMenu actionMenu, final ArrayList<ActionMenu> result) {
 	  if(actionMenu != null) {
+	    
   	  final ActionMenu[] subItems = actionMenu.getSubItems();
   	  
   	  if(subItems != null) {

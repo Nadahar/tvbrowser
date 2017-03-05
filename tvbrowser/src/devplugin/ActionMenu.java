@@ -211,6 +211,7 @@ public class ActionMenu {
   public ActionMenu(ActionMenu actionMenu) {
     this(actionMenu.getAction(), actionMenu.getSubItems());
     mIsSelected = actionMenu.isSelected();
+    mId = actionMenu.getActionId();
   }
 
   public String getTitle() {
