@@ -61,6 +61,11 @@ public class ActionMenuProxy extends ActionMenu {
     return new ActionProxy(mPluginProxy, super.getAction());
   }
   
+  @Override
+  public int getActionId() {
+    return super.getActionId();
+  }
+  
   /**
    * Returns SubItems that are encapsulated by ActionMenuProxies
    */
