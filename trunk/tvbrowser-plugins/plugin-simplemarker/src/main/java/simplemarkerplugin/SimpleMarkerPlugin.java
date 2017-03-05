@@ -82,7 +82,7 @@ import devplugin.Version;
  * @author René Mach
  */
 public class SimpleMarkerPlugin extends Plugin {
-  private static final Version mVersion = new Version(3,23,9,true);
+  private static final Version mVersion = new Version(3,24,0,true);
 
   /** The localizer for this class. */
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(SimpleMarkerPlugin.class);
@@ -114,12 +114,15 @@ public class SimpleMarkerPlugin extends Plugin {
   private SimpleMarkerUpdateInfoPanel mInfoPanel;
   
   private Thread mInfoShowingThread;
+  
+  private static int mActionIdCount;
 
   /**
    * Standard constructor for this class.
    */
   public SimpleMarkerPlugin() {
     mInstance = this;
+    mActionIdCount = 1;
   }
 
   /**
@@ -239,22 +242,36 @@ public class SimpleMarkerPlugin extends Plugin {
    * @return The ActionMenu for this Plugin.
    */
   public ActionMenu getContextMenuActions(final Program program) {
-    if(program == null || program.equals(getPluginManager().getExampleProgram()) || getPluginManager().getFilterManager() == null) {
+    if(program == null || getPluginManager().getFilterManager() == null) {
       return new ActionMenu(new ContextMenuAction(mLocalizer.msg("mark", "Mark"),createImageIcon("status", "mail-attachment", 16)));
     }
+    
+    boolean isExampleProgram = getPluginManager().getExampleProgram().equals(program);
 
+    ActionMenu result = null;
+    
     if (mMarkListVector.size() == 1) {
       // Create context menu entry
-      return new ActionMenu(mMarkListVector.getListAt(0).getContextMenuAction(program, true));
+      result = new ActionMenu(mMarkListVector.getListAt(0).getContextMenuAction(program, true));
+      
+      if(isExampleProgram) {
+        result.getAction().putValue(Action.NAME, mLocalizer.msg("mark", "Mark") + " - " + result.getAction().getValue(Action.NAME)); 
+      }
     } else {
-      Object[] submenu = new Object[mMarkListVector.size()];
+      ActionMenu[] submenu = new ActionMenu[mMarkListVector.size()];
 
       for (int i = 0; i < mMarkListVector.size(); i++) {
         submenu[i] = mMarkListVector.getListAt(i).getContextMenuAction(program, false);
+        
+        if(isExampleProgram) {
+          submenu[i].getAction().putValue(Action.NAME, mLocalizer.msg("mark", "Mark") + " - " + submenu[i].getAction().getValue(Action.NAME));
+        }
       }
-      return new ActionMenu(mLocalizer.msg("mark", "Mark"), createImageIcon("status", "mail-attachment", 16), submenu);
+      
+      result = new ActionMenu(mLocalizer.msg("mark", "Mark"), createImageIcon("status", "mail-attachment", 16), submenu);
     }
 
+    return result;
   }
 
   public boolean canReceiveProgramsWithTarget() {
@@ -383,7 +400,7 @@ public class SimpleMarkerPlugin extends Plugin {
     
     mStartFinished  = true;
     if(mMarkListVector.isEmpty()) {
-      mMarkListVector.addElement(new MarkList(mLocalizer.msg("default","default")));
+      mMarkListVector.addElement(new MarkList(mLocalizer.msg("default","default"),1));
     }
 
     // now really load the programs which we currently only know as by date and id
@@ -412,21 +429,34 @@ public class SimpleMarkerPlugin extends Plugin {
       ClassNotFoundException {
     int version = in.readInt();
 
-    if (version == 1) {
+    if (version >= 1) {
       int size = in.readInt();
       for (int i = 0; i < size; i++) {
-        new MarkList(in);
+        MarkList list = new MarkList(in);
+        
+        if(version == 1) {
+          list.setActionId(mActionIdCount++);
+        }
         //mMarkListVector.addElement();
       }
+    }
+    
+    if(version >= 2) {
+      mActionIdCount = in.readInt();
+    }
+    
+    if(version == 1) {
+      saveMe();
     }
   }
 
   public void writeData(ObjectOutputStream out) throws IOException {
-    out.writeInt(1); // version
+    out.writeInt(2); // version
     out.writeInt(mMarkListVector.size());
     for (int i = 0; i < mMarkListVector.size(); i++) {
       mMarkListVector.getListAt(i).writeData(out);
     }
+    out.writeInt(mActionIdCount);
   }
 
   public boolean canUseProgramTree() {
@@ -733,5 +763,9 @@ public class SimpleMarkerPlugin extends Plugin {
         }
       };
     }
+  }
+  
+  public static int getAndIncrementActionIdCount() {
+    return mActionIdCount++;
   }
 }

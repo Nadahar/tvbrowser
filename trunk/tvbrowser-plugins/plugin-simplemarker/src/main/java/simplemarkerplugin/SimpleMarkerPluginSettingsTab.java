@@ -288,7 +288,7 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
         }
       }
 
-      MarkList list = new MarkList(name);
+      MarkList list = new MarkList(name, SimpleMarkerPlugin.getAndIncrementActionIdCount());
       mModel.addRow(list);
       mListTable.setRowSelectionInterval(mListTable.getRowCount()-1,mListTable.getRowCount()-1);
     }
