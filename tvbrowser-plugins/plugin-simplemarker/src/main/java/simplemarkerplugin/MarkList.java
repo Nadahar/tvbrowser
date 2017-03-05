@@ -26,6 +26,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -43,6 +44,7 @@ import util.io.IOUtilities;
 import util.program.ProgramUtilities;
 import util.ui.Localizer;
 import util.ui.UIThreadRunner;
+import devplugin.ActionMenu;
 import devplugin.Date;
 import devplugin.NodeFormatter;
 import devplugin.Plugin;
@@ -74,6 +76,7 @@ public class MarkList extends Vector<Program> {
   private byte mProgramImportance;
   private ArrayList<ProgramReceiveTarget> mReceiveTargets = new ArrayList<ProgramReceiveTarget>();
   private boolean mShowDeletedPrograms;
+  private int mActionId;
 
   private static class MarkListProgramItem {
     private final String mProgramId;
@@ -197,11 +200,18 @@ public class MarkList extends Vector<Program> {
     else {
       mShowDeletedPrograms = true;
     }
+    
+    if(version >= 8) {
+      mActionId = in.readInt();
+    }
+    else {
+      mActionId = -1;
+    }
   }
 
-
-
-
+  public void setActionId(int actionId) {
+    mActionId = actionId;
+  }
 
   /**
    * The constructor for a new list.
@@ -209,13 +219,14 @@ public class MarkList extends Vector<Program> {
    * @param name
    *          The name of the list.
    */
-  protected MarkList(String name) {
+  protected MarkList(String name, int actionId) {
     mName = name;
     mMarkIcon = SimpleMarkerPlugin.getInstance().getIconForFileName(null);
     mId = name + System.currentTimeMillis();
     mMarkPriority = Program.MIN_MARK_PRIORITY;
     mProgramImportance = Program.DEFAULT_PROGRAM_IMPORTANCE;
     mShowDeletedPrograms = true;
+    mActionId = actionId;
   }
 
   /**
@@ -244,7 +255,7 @@ public class MarkList extends Vector<Program> {
    * @throws IOException if something went wrong with writing the data
    */
   protected void writeData(final ObjectOutputStream out) throws IOException {
-    out.writeInt(7); // Version
+    out.writeInt(8); // Version
     out.writeInt(mMarkPriority);
     out.writeObject(mName);
     out.writeUTF(mId);
@@ -264,6 +275,7 @@ public class MarkList extends Vector<Program> {
 
     out.writeByte(mProgramImportance);
     out.writeBoolean(mShowDeletedPrograms);
+    out.writeInt(mActionId);
   }
 
   /**
@@ -274,7 +286,7 @@ public class MarkList extends Vector<Program> {
    *          Use the default text instead of own created text
    * @return The action for the Program for this List;
    */
-  protected Action getContextMenuAction(final Program p, final boolean defaultText) {
+  protected ActionMenu getContextMenuAction(final Program p, final boolean defaultText) {
     AbstractAction action = new AbstractAction() {
       private static final long serialVersionUID = 1L;
       
@@ -322,7 +334,16 @@ public class MarkList extends Vector<Program> {
       action.putValue(Program.MARK_PRIORITY, getMarkPriority());
     }
 
-    return action;
+    ActionMenu result = new ActionMenu(action);
+    
+    try {
+      Constructor<ActionMenu> c = ActionMenu.class.getConstructor(int.class, Action.class);
+      result = c.newInstance(mActionId, action);
+    } catch (Exception e1) {
+      // Ignore
+    }
+    
+    return result;
   }
 
   /**
