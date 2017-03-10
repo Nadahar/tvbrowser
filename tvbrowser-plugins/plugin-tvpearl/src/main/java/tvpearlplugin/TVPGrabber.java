@@ -240,9 +240,9 @@ public class TVPGrabber
 
 		while (matcher.find())
 		{
-		  for(int i=1;i<=matcher.groupCount();i++){
+		  /*for(int i=1;i<=matcher.groupCount();i++){
 		    System.out.println("Group " + i + " = " + matcher.group(i));
-		  }
+		  }*/
 		  final String author = matcher.group(4).trim();
 		  final String contentUrl = extentUrl(matcher.group(1).trim(), originalUrl);
 			final Date createDate = parseDate(matcher.group(5).trim());
