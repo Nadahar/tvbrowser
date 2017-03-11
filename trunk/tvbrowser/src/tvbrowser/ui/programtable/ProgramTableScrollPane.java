@@ -383,8 +383,9 @@ public class ProgramTableScrollPane extends JScrollPane implements ProgramTableM
     JScrollBar scrollBar = null;
     int amount = 0;
     
-    if (((e.getModifiersEx() & InputEvent.SHIFT_DOWN_MASK) != 0) || getComponentAt(e.getPoint()).equals(getColumnHeader()) ||
-        getComponentAt(e.getPoint()).equals(getHorizontalScrollBar())) {
+    if (((e.getModifiersEx() & InputEvent.SHIFT_DOWN_MASK) != 0 && !Settings.propProgramTableScrollHorizontal.getBoolean()) || getComponentAt(e.getPoint()).equals(getColumnHeader()) ||
+        getComponentAt(e.getPoint()).equals(getHorizontalScrollBar()) || (Settings.propProgramTableScrollHorizontal.getBoolean() && !getComponentAt(e.getPoint()).equals(getVerticalScrollBar()) 
+            && ((e.getModifiersEx() & InputEvent.SHIFT_DOWN_MASK) == 0))) {
       scrollBar = getHorizontalScrollBar();
     } else {
       scrollBar = getVerticalScrollBar();
