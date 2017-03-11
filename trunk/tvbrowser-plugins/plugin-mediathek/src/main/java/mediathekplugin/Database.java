@@ -30,6 +30,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.CRC32;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import devplugin.Channel;
@@ -279,8 +280,8 @@ public class Database {
     LOG.info("Found " + programCount + " programs in Mediathek");
   }
 	
-	private MediathekProgramItem parseDatabaseEntry(String[] entry, MediathekQuality defaultQuality){
-    String itemTitle = entry[mColTitle].trim();
+	private MediathekProgramItem parseDatabaseEntry(String[] entry, MediathekQuality defaultQuality){	  
+    String itemTitle = StringEscapeUtils.unescapeJava(entry[mColTitle].trim());
     String itemUrl = entry[mColUrl].trim();
     String itemDate = entry[mColDate].trim();
     

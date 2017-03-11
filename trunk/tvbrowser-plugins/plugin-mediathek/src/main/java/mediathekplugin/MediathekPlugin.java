@@ -24,11 +24,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.TreeMap;
 import java.util.logging.Logger;
 
 import javax.swing.AbstractAction;
@@ -137,52 +141,114 @@ public class MediathekPlugin extends Plugin {
   private ActionMenu getContextMenu(ArrayList<MediathekProgramItem> programs) {
     if (programs.isEmpty()) {
       return null;
-    }    
-    if (programs.size()<50){
-      final ArrayList<Action> actionList = new ArrayList<Action>();
-      for (final MediathekProgramItem episode : programs) {
-        actionList.add(new AbstractAction(episode.getInfoDate(), episode.getIcon()) {
-  
-          public void actionPerformed(final ActionEvent e) {
-            episode.show();
-          }
-        });
-      }
-      return new ActionMenu(mLocalizer.msg("context", "Episodes in the Mediathek {0}", programs.size()), contextIcon, actionList.toArray(new Action[actionList.size()]));
     }
     
+    final int entryLimit = 50;
+    
+    int days = 0;
+    int maxPerMonth = 0;
+    
+    int perMonthCurr = 0;
     
     Date curr = null;
-    final ArrayList<ActionMenu> actionDates = new ArrayList<ActionMenu>();
-    ArrayList<Action> actionListSub = new ArrayList<Action>();
-    for (final MediathekProgramItem episode: programs){
-      if (curr!=null){
-        if (!curr.equals(episode.getDate())){
-          actionDates.add(new ActionMenu(curr.toString(),actionListSub.toArray(new Action[actionListSub.size()])));
-          actionListSub.clear();
+    Date currM = null;
+    
+    final TreeMap<Date, TreeMap<Date, ArrayList<Action>>> actionmap = new TreeMap<Date,TreeMap<Date,ArrayList<Action>>>();
+    TreeMap<Date,ArrayList<Action>> monthactions = new TreeMap<Date,ArrayList<Action>>();
+    ArrayList<Action> dayactions = new ArrayList<Action>();
+    for (final MediathekProgramItem episode : programs) {
+      Date date = episode.getDate();
+      Date dateM = getFirstOfMonth(date);
+      if ((curr!=null) && (!curr.equals(date))){
+        monthactions.put(curr, dayactions);
+        if ((currM!=null) && (!currM.equals(dateM))){
+          actionmap.put(currM, monthactions);
+          monthactions = new TreeMap<Date,ArrayList<Action>>();
+          
+          maxPerMonth = Math.max(maxPerMonth, perMonthCurr);
+          perMonthCurr = 0;
+        } else {
+          perMonthCurr += dayactions.size();
         }
+        dayactions = new ArrayList<Action>();        
+        days++;
       }
-      curr = episode.getDate();
-      actionListSub.add(new AbstractAction(episode.getInfo(), episode.getIcon()) {          
+      curr = date;
+      currM = dateM;
+      
+      dayactions.add(new AbstractAction(episode.getInfoDate(), episode.getIcon()) {
         public void actionPerformed(final ActionEvent e) {
           episode.show();
         }
       });
     }
-    if (curr!=null) {
-      actionDates.add(new ActionMenu(curr.toString(),actionListSub.toArray(new Action[actionListSub.size()])));
+    monthactions.put(curr, dayactions);
+    actionmap.put(currM, monthactions);
+    
+    boolean useMonths = days>entryLimit;
+    boolean useDays = (useMonths?(maxPerMonth):(programs.size()))>entryLimit;
+    
+    if (useMonths){
+      final ArrayList<ActionMenu> actionMonths = new ArrayList<ActionMenu>();
+      if (useDays){
+        for(final Entry<Date,TreeMap<Date,ArrayList<Action>>> eMonth: actionmap.entrySet()){
+          ArrayList<ActionMenu> actionListSubMenu = new ArrayList<ActionMenu>();
+          for(final Entry<Date,ArrayList<Action>> eDate: eMonth.getValue().entrySet()){
+            actionListSubMenu.add(new ActionMenu(eDate.getKey().toString(),eDate.getValue().toArray(new Action[eDate.getValue().size()])));
+          }
+          actionMonths.add(new ActionMenu(getMonthOnly(eMonth.getKey()),actionListSubMenu.toArray(new ActionMenu[actionListSubMenu.size()])));
+        }
+      } else {
+        for(final Entry<Date,TreeMap<Date,ArrayList<Action>>> eMonth: actionmap.entrySet()){
+          ArrayList<Action> actionListSub = new ArrayList<Action>();
+          for(final Entry<Date,ArrayList<Action>> eDate: eMonth.getValue().entrySet()){
+            actionListSub.addAll(eDate.getValue());
+          }
+          actionMonths.add(new ActionMenu(getMonthOnly(eMonth.getKey()),actionListSub.toArray(new Action[actionListSub.size()])));        
+        }
+      } 
+      return new ActionMenu(mLocalizer.msg("context", "Episodes in the Mediathek {0}", programs.size()), contextIcon, actionMonths.toArray(new ActionMenu[actionMonths.size()]));
+    } else {
+      if (useDays){
+        final ArrayList<ActionMenu> actionDays = new ArrayList<ActionMenu>();
+        for(final Entry<Date,TreeMap<Date,ArrayList<Action>>> eMonth: actionmap.entrySet()){
+          for(final Entry<Date,ArrayList<Action>> eDate: eMonth.getValue().entrySet()){
+            actionDays.add(new ActionMenu(eDate.getKey().toString(),eDate.getValue().toArray(new Action[eDate.getValue().size()])));
+          }
+          
+        }
+        return new ActionMenu(mLocalizer.msg("context", "Episodes in the Mediathek {0}", programs.size()), contextIcon, actionDays.toArray(new ActionMenu[actionDays.size()]));
+      } else {
+        final ArrayList<Action> actions = new ArrayList<Action>();
+        for(final Entry<Date,TreeMap<Date,ArrayList<Action>>> eMonth: actionmap.entrySet()){
+          for(final Entry<Date,ArrayList<Action>> eDate: eMonth.getValue().entrySet()){
+            actions.addAll(eDate.getValue());
+          }
+        }
+        return new ActionMenu(mLocalizer.msg("context", "Episodes in the Mediathek {0}", programs.size()), contextIcon, actions.toArray(new Action[actions.size()]));        
+      }    
     }
     
-    //TODO: Intelligentere Gruppierung!
-    return new ActionMenu(mLocalizer.msg("context", "Episodes in the Mediathek {0}", programs.size()), contextIcon, actionDates.toArray(new ActionMenu[actionDates.size()]));
     
+    
+   
   }
   
+  private Date getFirstOfMonth(Date date){
+    Calendar cal = date.getCalendar();
+    cal.set(Calendar.DAY_OF_MONTH, 1);
+    return new Date(cal);
+  }
+  
+  private String getMonthOnly(Date date) {
+    return date.getFormattedString("MMMMM yy");
+  }
+
   private void setMediathekUpdateInterval(int minutes){
     mMediathekUpdaterTimer.cancel();
     mMediathekUpdaterTimer = new Timer();
     if (minutes>0){
-      mMediathekUpdaterTimer.schedule(mMediathekUpdater, 0, minutes*60000); // 60s -> 60000ms
+      mMediathekUpdaterTimer.schedule(mMediathekUpdater, minutes*60000, minutes*60000); // 60s -> 60000ms
     }
   }
 
@@ -282,7 +348,7 @@ public class MediathekPlugin extends Plugin {
   @Override
   public void handleTvBrowserStartFinished() {
     mDatabase = Database.getInstance();
-    settingsChanged();
+    setMediathekUpdateInterval(mSettings.getMediathekUpdateInterval());
   }
 
   @Override
