@@ -458,10 +458,7 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     mAutoScrollCb.setSelected(Settings.propProgramTableMouseAutoScroll
         .getBoolean());
     mSettingsPn.add(mAutoScrollCb, cc.xyw(2, (currentRow += 2), 6));
-    System.out.println(currentRow);
-   /* layout.insertRow(currentRow, RowSpec.decode("3dlu"));
-    layout.insertRow(currentRow, RowSpec.decode("default"));*/
-    
+        
     mScrollHorizontalCb = new JCheckBox(mLocalizer.msg("mouseScrollHorizontal", "Scroll horizontal with mouse wheel"));
     mScrollHorizontalCb.setSelected(Settings.propProgramTableScrollHorizontal.getBoolean());
     mSettingsPn.add(mScrollHorizontalCb, cc.xyw(2, (currentRow += 2), 6));
