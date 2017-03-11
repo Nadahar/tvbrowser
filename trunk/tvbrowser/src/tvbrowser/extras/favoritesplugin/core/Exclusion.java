@@ -60,6 +60,8 @@ public class Exclusion implements Comparable<Exclusion> {
   private int mDayOfWeek;
   private String mFilterName;
   private int mCategory;
+  
+  private ProgramFieldExclusion mProgramFieldExclusion;
 
   /**
    * Creates a new exclusion criteria.
@@ -72,8 +74,9 @@ public class Exclusion implements Comparable<Exclusion> {
    * @param filterName The name of the filter to use;
    * @param episodeTitle null, if any episode title is allowed
    * @param category the category of the program or 0 if no category should be filtered
+   * @param programFieldExclusion a program field to exclude from
    */
-  public Exclusion(String title, String topic, Channel channel, int timeFrom, int timeTo, int dayOfWeek, String filterName, String episodeTitle, int category) {
+  public Exclusion(String title, String topic, Channel channel, int timeFrom, int timeTo, int dayOfWeek, String filterName, String episodeTitle, int category, ProgramFieldExclusion programFieldExclusion) {
     mTitle = title;
     mTopic = topic;
     mChannel = new ChannelItem(channel);
@@ -83,6 +86,7 @@ public class Exclusion implements Comparable<Exclusion> {
     mFilterName = filterName;
     mEpisodeTitle = episodeTitle;
     mCategory = category;
+    mProgramFieldExclusion = programFieldExclusion;
   }
 
   public Exclusion(ObjectInputStream in) throws ClassNotFoundException, IOException {
@@ -147,11 +151,23 @@ public class Exclusion implements Comparable<Exclusion> {
     if(version > 6) {
       mCategory = in.readInt();
     }
+    
+    if(version > 7) {
+      if(in.readBoolean()) {
+        mProgramFieldExclusion = new ProgramFieldExclusion(in, version);
+      }
+      else {
+        mProgramFieldExclusion = null;
+      }
+    }
+    else {
+      mProgramFieldExclusion = null;
+    }
   }
 
 
   public void writeData(ObjectOutputStream out) throws IOException {
-    out.writeInt(7);  // version
+    out.writeInt(8);  // version
     out.writeBoolean(mChannel != null);
     if (mChannel != null) {
       mChannel.saveItem(out);
@@ -177,11 +193,18 @@ public class Exclusion implements Comparable<Exclusion> {
     out.writeInt(mDayOfWeek);
     
     out.writeBoolean(mEpisodeTitle != null);
+    
     if(mEpisodeTitle != null) {
       out.writeUTF(mEpisodeTitle);
     }
     
     out.writeInt(mCategory);
+    
+    out.writeBoolean(mProgramFieldExclusion != null);
+    
+    if(mProgramFieldExclusion != null) {
+      mProgramFieldExclusion.writeData(out);
+    }
   }
 
 
@@ -228,7 +251,10 @@ public class Exclusion implements Comparable<Exclusion> {
   public int getCategory() {
     return mCategory;
   }
-
+  
+  public ProgramFieldExclusion getProgramFieldExclusion() {
+    return mProgramFieldExclusion;
+  }
 
   public boolean isProgramExcluded(Program prog) {
     boolean channelExcl = false;
@@ -239,6 +265,7 @@ public class Exclusion implements Comparable<Exclusion> {
     boolean filterExclusion = false;
     boolean episodeTitleExcl = false;
     boolean categoryExcl = false;
+    boolean programFieldExcl = false;
     
     if(isInvalid()) {
       return false;
@@ -358,7 +385,22 @@ public class Exclusion implements Comparable<Exclusion> {
       categoryExcl = true;
     }
     
-    return channelExcl && titleExcl && topicExcl && timeExcl && dayExcl && filterExclusion && episodeTitleExcl && categoryExcl;
+    if(mProgramFieldExclusion != null) {
+      ProgramFieldType type = mProgramFieldExclusion.getProgramFieldType();
+      
+      switch(type.getFormat()) {
+        case ProgramFieldType.INT_FORMAT: programFieldExcl = prog.getIntFieldAsString(type) != null && prog.getIntFieldAsString(type).equalsIgnoreCase(mProgramFieldExclusion.getProgramFieldText()); break;
+        case ProgramFieldType.TIME_FORMAT: programFieldExcl = prog.getTimeFieldAsString(type) != null && prog.getTimeFieldAsString(type).equalsIgnoreCase(mProgramFieldExclusion.getProgramFieldText()); break;
+        case ProgramFieldType.TEXT_FORMAT: programFieldExcl = prog.getTextField(type) != null && prog.getTextField(type).equalsIgnoreCase(mProgramFieldExclusion.getProgramFieldText()); break;
+        
+        default: programFieldExcl = true;break;
+      }
+    }
+    else {
+      programFieldExcl = true;
+    }
+    
+    return channelExcl && titleExcl && topicExcl && timeExcl && dayExcl && filterExclusion && episodeTitleExcl && categoryExcl && programFieldExcl;
   }
   
   /**
@@ -367,7 +409,7 @@ public class Exclusion implements Comparable<Exclusion> {
    * @return <code>True</code> if this Exclusion is invalid, <code>false</code> otherwise.
    */
   public boolean isInvalid() {
-    return (mTitle == null && mTopic == null && mEpisodeTitle == null && !mChannel.isAvailableOrNullChannel() && mFilterName == null && mTimeFrom == -1 &&mTimeTo == -1 && mDayOfWeek == Exclusion.DAYLIMIT_DAILY) || !mChannel.isAvailableOrNullChannel();
+    return (mTitle == null && mTopic == null && mEpisodeTitle == null && !mChannel.isAvailableOrNullChannel() && mFilterName == null && mTimeFrom == -1 &&mTimeTo == -1 && mDayOfWeek == Exclusion.DAYLIMIT_DAILY && mProgramFieldExclusion == null) || !mChannel.isAvailableOrNullChannel();
   }
 
   @Override
@@ -424,6 +466,19 @@ public class Exclusion implements Comparable<Exclusion> {
       }
     }
     
+    if(mProgramFieldExclusion != null) {
+      ProgramFieldType exclusion = mProgramFieldExclusion.getProgramFieldType();
+      
+      if(timeMsg != null || mTitle != null || mTopic != null || mEpisodeTitle != null || filter != null || mChannel.getChannel() != null || mCategory != 0) {
+        textValue.append(" ").append(mLocalizer.msg("exclude.append","with '"));
+      }
+      else {
+        textValue.append(mLocalizer.msg("exclude.single","Exclude all programs with '"));
+      }
+      
+      textValue.append(exclusion.getLocalizedName()).append("'='").append(mProgramFieldExclusion.getProgramFieldText()).append("'");
+    }
+    
     if(textValue.length() < 1) {
       textValue.append(mLocalizer.msg("exclude.invalid","<invalid>"));
     }
@@ -470,6 +525,46 @@ public class Exclusion implements Comparable<Exclusion> {
       } else {
         return null;
       }
+    }
+  }
+  
+  public static final class ProgramFieldExclusion {
+    private int mProgramField;
+    private String mProgramFieldText;
+    
+    public ProgramFieldExclusion(int programField, String programFieldText) {
+      mProgramField = programField;
+      mProgramFieldText = programFieldText;
+    }
+    
+    private ProgramFieldExclusion(ObjectInputStream in, int version) throws IOException {
+      mProgramField = in.readInt();
+      mProgramFieldText = in.readUTF();
+    }
+    
+    public int getProgramFieldTypeId() {
+      return mProgramField;
+    }
+    
+    public ProgramFieldType getProgramFieldType() {
+      return ProgramFieldType.getTypeForId(mProgramField);
+    }
+    
+    public String getProgramFieldText() {
+      return mProgramFieldText;
+    }
+    
+    public void setmProgramField(int programField) {
+      mProgramField = programField;
+    }
+    
+    public void setmProgramFieldText(String programFieldText) {
+      mProgramFieldText = programFieldText;
+    }
+    
+    private void writeData(ObjectOutputStream out) throws IOException {
+      out.writeInt(mProgramField);
+      out.writeUTF(mProgramFieldText);
     }
   }
 }

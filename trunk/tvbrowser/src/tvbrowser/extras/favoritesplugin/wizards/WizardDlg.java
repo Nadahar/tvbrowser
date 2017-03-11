@@ -85,7 +85,7 @@ public class WizardDlg extends JDialog implements WindowClosingIf {
   }
 
   private void init(WizardStep step, WizardHandler handler) {
-    setSize(Sizes.dialogUnitXAsPixel(390, this), Sizes.dialogUnitYAsPixel(240, this));
+    setSize(Sizes.dialogUnitXAsPixel(450, this), Sizes.dialogUnitYAsPixel(280, this));
     UiUtilities.registerForClosing(this);
     mResult = CANCEL;
     mHandler = handler;

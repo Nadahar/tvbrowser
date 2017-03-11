@@ -128,16 +128,28 @@ public class TextLineBreakerStringWidth {
       @Override
       public void warning(String arg0) {
         mLog.warning(arg0);
-      }});
+      }
+    });
+    
     try {
       File dictionary = new File(HYPHEN_DICT_FILENAME);
+      
       if (dictionary.exists()) {
         StreamUtilities.inputStream(HYPHEN_DICT_FILENAME, new InputStreamProcessor() {
 
           @Override
           public void process(InputStream input) throws IOException {
-            hyphenator.loadTable(input);
-            useHyphenator = true;
+            if(input != null) {
+              try {
+                hyphenator.loadTable(input);
+                useHyphenator = true;
+              }catch(NullPointerException npe) {
+                npe.printStackTrace();
+              }
+            }
+            else {
+              mLog.warning("Hyphenation stream could not be opened for file " + HYPHEN_DICT_FILENAME);
+            }
           }
         });
       }
