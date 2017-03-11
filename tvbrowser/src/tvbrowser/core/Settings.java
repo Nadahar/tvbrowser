@@ -1691,6 +1691,9 @@ public class Settings {
 
   public static final BooleanProperty propProgramTableMouseOver = new BooleanProperty(
       mProp, "programpanel.MouseOver", true);
+  
+  public static final BooleanProperty propProgramTableScrollHorizontal = new BooleanProperty(
+      mProp, "programpanel.scrollHorizontal", false);
 
   /** Color for Mouse-Over */
   public static final ColorProperty propProgramTableMouseOverColor = new ColorProperty(

@@ -109,6 +109,7 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
   private JSpinner mCutLongTitlesSelection;
 
   private JCheckBox mAutoScrollCb;
+  private JCheckBox mScrollHorizontalCb;
 
   private JSpinner mDescriptionLines;
 
@@ -407,6 +408,8 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     layout.appendRow(RowSpec.decode("pref"));
     layout.appendRow(RowSpec.decode("3dlu"));
     layout.appendRow(RowSpec.decode("pref"));
+    layout.appendRow(RowSpec.decode("3dlu"));
+    layout.appendRow(RowSpec.decode("pref"));
     
     // scroll markings
     layout.appendRow(RowSpec.decode("10dlu"));
@@ -455,6 +458,13 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     mAutoScrollCb.setSelected(Settings.propProgramTableMouseAutoScroll
         .getBoolean());
     mSettingsPn.add(mAutoScrollCb, cc.xyw(2, (currentRow += 2), 6));
+    System.out.println(currentRow);
+   /* layout.insertRow(currentRow, RowSpec.decode("3dlu"));
+    layout.insertRow(currentRow, RowSpec.decode("default"));*/
+    
+    mScrollHorizontalCb = new JCheckBox(mLocalizer.msg("mouseScrollHorizontal", "Scroll horizontal with mouse wheel"));
+    mScrollHorizontalCb.setSelected(Settings.propProgramTableScrollHorizontal.getBoolean());
+    mSettingsPn.add(mScrollHorizontalCb, cc.xyw(2, (currentRow += 2), 6));
     
     mAutoChangeDate = new JCheckBox(mLocalizer.msg("mouseAutoChangeDate",
         "Automatically change date when scrolling with mouse wheel against top and bottom"));
@@ -613,6 +623,7 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     Settings.propProgramTableEndOfDay.setInt(minutes);
 
     Settings.propProgramTableMouseOver.setBoolean(mMouseOverCb.isSelected());
+    Settings.propProgramTableScrollHorizontal.setBoolean(mScrollHorizontalCb.isSelected());
     Settings.propProgramTableAutoChangeDate.setBoolean(mAutoChangeDate.isSelected());
     
     Settings.propProgramTableMouseOverColor.setColor(mMouseOverColorLb.getColor());
