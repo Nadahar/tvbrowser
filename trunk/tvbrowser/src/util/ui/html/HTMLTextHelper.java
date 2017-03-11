@@ -5,6 +5,13 @@ import java.awt.Color;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.swing.JEditorPane;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.Document;
+import javax.swing.text.Element;
+import javax.swing.text.html.HTML;
+import javax.swing.text.html.HTMLDocument;
+
 import org.htmlparser.util.Translate;
 
 import util.io.IOUtilities;
@@ -144,5 +151,18 @@ public class HTMLTextHelper {
     return builder.toString();
   }
   
+  public static String getLink(int pos, JEditorPane html) {
+    Document doc = html.getDocument();
+    if (doc instanceof HTMLDocument) {
+      HTMLDocument hdoc = (HTMLDocument) doc;
+      Element e = hdoc.getCharacterElement(pos);
+      AttributeSet a = e.getAttributes();
+      AttributeSet anchor = (AttributeSet) a.getAttribute(HTML.Tag.A);
 
+      if (anchor != null) {
+        return (String) anchor.getAttribute(HTML.Attribute.HREF);
+      }
+    }
+    return null;
+  }
 }

@@ -5,7 +5,9 @@ import java.awt.Component;
 import java.awt.EventQueue;
 import java.awt.Point;
 import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
@@ -86,23 +88,53 @@ public class TextComponentPopupEventQueue extends EventQueue {
     // create popup menu and show
     JTextComponent tc = (JTextComponent) comp;
     JPopupMenu menu = new JPopupMenu();
-    addStandardContextMenu(tc, menu);
-
+    
     Point pt = SwingUtilities
         .convertPoint(me.getComponent(), me.getPoint(), tc);
+    
+//    int pos = tc.viewToModel(pt);
+    
+    addStandardContextMenu(tc, menu);
+    
     menu.show(tc, pt.x, pt.y);
   }
 
   public static void addStandardContextMenu(JTextComponent tc, JPopupMenu menu) {
+    addStandardContextMenu(tc, menu, null);
+  }
+  
+  public static void addStandardContextMenu(JTextComponent tc, JPopupMenu menu, String link) {
     if (menu.getSubElements().length > 0) {
       menu.addSeparator();
     }
+    
+    if(link != null) {
+      menu.add(new CopyLinkAction(link));
+      menu.addSeparator();
+    }
+    
     menu.add(new CutAction(tc));
     menu.add(new CopyAction(tc));
     menu.add(new PasteAction(tc));
     menu.add(new DeleteAction(tc));
     menu.addSeparator();
     menu.add(new SelectAllAction(tc));
+  }
+  
+  private static class CopyLinkAction extends AbstractAction {
+    private String mLink;
+    
+    public CopyLinkAction(String link) {
+      super(mLocalizer.msg("copyLink", "Copy link address"), TVBrowserIcons.copy(TVBrowserIcons.SIZE_SMALL));
+      mLink = link;
+    }
+    
+    @Override
+    public void actionPerformed(ActionEvent e) {
+      Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+
+      clipboard.setContents(new StringSelection(mLink), null);
+    }
   }
 
   private static class CutAction extends AbstractAction {
@@ -112,7 +144,7 @@ public class TextComponentPopupEventQueue extends EventQueue {
       super(mLocalizer.msg("cut", "Cut"));
       this.comp = comp;
     }
-
+    
     public void actionPerformed(ActionEvent e) {
       comp.cut();
     }
