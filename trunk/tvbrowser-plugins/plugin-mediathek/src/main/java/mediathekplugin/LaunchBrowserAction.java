@@ -25,6 +25,10 @@ import devplugin.Plugin;
 
 public class LaunchBrowserAction extends AbstractAction {
 
+  /**
+   * 
+   */
+  private static final long serialVersionUID = 7560362205133682148L;
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer
       .getLocalizerFor(LaunchBrowserAction.class);
   private final String url;

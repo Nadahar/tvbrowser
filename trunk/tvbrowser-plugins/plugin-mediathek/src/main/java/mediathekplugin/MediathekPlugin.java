@@ -57,12 +57,12 @@ public class MediathekPlugin extends Plugin {
 
   private static final boolean IS_STABLE = true;
 
-  private static final Version PLUGIN_VERSION = new Version(3, 1, 1, IS_STABLE);
+  private static final Version PLUGIN_VERSION = new Version(3, 2, 0, IS_STABLE);
 
   /** The localizer used by this class. */
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(MediathekPlugin.class);
 
-  private Icon markIcon, contextIcon, pluginIconSmall, pluginIconLarge, mIconWeb;
+  private Icon contextIcon, pluginIconSmall, mIconWeb;
 
   private MediathekSettings mSettings;
 
@@ -77,11 +77,18 @@ public class MediathekPlugin extends Plugin {
     return PLUGIN_VERSION;
   }
 
-  private static final Icon[] EMPTY_ICON_LIST = {};
-
   private ArrayList<WebMediathek> mMediatheks;
 
   private Database mDatabase;
+  
+  private TimerTask mMediathekUpdater = new TimerTask(){    
+    @Override
+    public void run(){
+      startMediathekUpdate();
+    }
+  };
+  
+  private Timer mMediathekUpdaterTimer = new Timer();
   
   private Thread mMarkThread;
 
@@ -89,15 +96,14 @@ public class MediathekPlugin extends Plugin {
   public PluginInfo getInfo() {
     final String name = mLocalizer.msg("name", "Mediathek");
     final String description = mLocalizer.msg("description", "Shows video information for several mediatheks.");
-    return new PluginInfo(MediathekPlugin.class, name, description, "Michael Keppler", "GPL 3");
+    return new PluginInfo(MediathekPlugin.class, name, description, "Michael Keppler, Peter Heinzig", "GPL 3");
   }
 
   public MediathekPlugin() {
     rememberInstance(this);
     pluginIconSmall = createImageIcon("actions", "web-search", 16);
-    pluginIconLarge = createImageIcon("actions", "web-search", 22);
+    createImageIcon("actions", "web-search", 22);
     contextIcon = createImageIcon("actions", "web-search", 16);
-    markIcon = contextIcon;
     mIconWeb = createImageIcon("apps", "internet-web-browser", 16);
     rootNode.setGroupingByDateEnabled(false);
   }
@@ -171,7 +177,39 @@ public class MediathekPlugin extends Plugin {
     return new ActionMenu(mLocalizer.msg("context", "Episodes in the Mediathek {0}", programs.size()), contextIcon, actionDates.toArray(new ActionMenu[actionDates.size()]));
     
   }
+  
+  private void setMediathekUpdateInterval(int minutes){
+    mMediathekUpdaterTimer.cancel();
+    mMediathekUpdaterTimer = new Timer();
+    if (minutes>0){
+      mMediathekUpdaterTimer.schedule(mMediathekUpdater, 0, minutes*60000); // 60s -> 60000ms
+    }
+  }
 
+  public void startMediathekUpdate(){
+    String path =  mSettings.getMediathekProgramPath();
+    File mediathekProgram = new File(path);
+    if (!mediathekProgram.exists()) {
+      logger.warning("missing mediathek program at " + path);
+      return;
+    }
+    try {
+      ProcessBuilder pb = new ProcessBuilder("java", "-Djava.awt.headless=true", "-jar", mSettings.getMediathekProgramPath(), "-auto");
+      Process p = pb.start();
+      BufferedReader in = new BufferedReader(new InputStreamReader(p.getInputStream()));
+      String s = "";
+      try {
+        while((s = in.readLine()) != null){
+            logger.info(s);
+        }
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+    } catch (IOException e) {
+      e.printStackTrace();
+    } 
+  }
+  
   protected Icon getContextMenuIcon() {
     return contextIcon;
   }
@@ -243,7 +281,8 @@ public class MediathekPlugin extends Plugin {
 
   @Override
   public void handleTvBrowserStartFinished() {
-    initWatcher();
+    mDatabase = Database.getInstance();
+    settingsChanged();
   }
 
   @Override
@@ -260,59 +299,12 @@ public class MediathekPlugin extends Plugin {
   public void handleTvDataUpdateFinished() {
     updatePluginTree();
   }
-  
-  private void initWatcher(){
-    TimerTask watchThread = new TimerTask(){
-      private long lastMod = 0;
 
-      @Override
-      public void run(){
-        try {
-          final File file = new File(mSettings.guessMediathekPath(true));
-          if (file.exists()){
-            long time = file.lastModified();
-            if (time>lastMod){
-              logger.info("Mediathek DB changed");
-              lastMod = time;
-              readMediathekContents();
-            } else if (time<lastMod){
-              lastMod = time;
-            }
-          } else {
-            if (lastMod!=0) {
-              logger.warning("Error missing Mediathek DB file");
-              lastMod = 0;
-            }
-          }
-        } catch (NullPointerException npe){
-          logger.warning("Error reading Mediathek DB file attributes");
-        } catch (SecurityException se) {
-          se.printStackTrace();
-        }
-        
-      }
-    };
-    Timer timer = new Timer();
-    timer.schedule( watchThread, 0 , 15000 );
-  }
-
-  void dataPathChanged() {
-    readMediathekContents();
-  }
-
-  private void readMediathekContents() {    
-    final Thread contentThread = new Thread("Read Mediathek contents") {
-      @Override
-      public void run() {
-        logger.info("Started updating Mediathek data");
-        mDatabase = new Database(mSettings.guessMediathekPath(true), mSettings.getMediathekQuality());
-        updatePluginTree();
-        logger.info("Finished updating Mediathek data");
-        
-      }
-    };
-    contentThread.setPriority(Thread.MIN_PRIORITY);
-    contentThread.start();
+  void settingsChanged() {
+    if (mDatabase!=null) {
+      mDatabase.settingsChanged();
+      setMediathekUpdateInterval(mSettings.getMediathekUpdateInterval());
+    }
   }
 
   public String convertHTML(final String html) {
@@ -334,10 +326,11 @@ public class MediathekPlugin extends Plugin {
   /**
    * Updates the plugin tree.
    */
-  private void updatePluginTree() {
+  void updatePluginTree() {
     if(mMarkThread == null || !mMarkThread.isAlive()) {
       mMarkThread = new Thread("Mark mediathek programs") {
         public void run() {
+          logger.info("Started Mediathek Tree-Update");
           final PluginTreeNode node = getRootNode();
           node.removeAllActions();
           node.removeAllChildren();
@@ -400,7 +393,10 @@ public class MediathekPlugin extends Plugin {
           }while(found);
           
           node.update();
+
+          logger.info("Finished Mediathek Tree-Update");
         }
+
       };
       mMarkThread.start();
       
@@ -415,11 +411,11 @@ public class MediathekPlugin extends Plugin {
         }
       }
     }
-    
-    // for (MediathekProgram program : getSortedPrograms()) {
-    // program.updatePluginTree(false);
-    // }
 
+  }
+
+  public MediathekSettings getSettings() {
+    return mSettings;
   }
 
   public Logger getLogger() {

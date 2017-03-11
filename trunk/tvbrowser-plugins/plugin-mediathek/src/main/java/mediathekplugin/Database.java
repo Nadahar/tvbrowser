@@ -22,6 +22,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.Map.Entry;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -84,6 +86,8 @@ public class Database {
    * headline for URL
    */
   private static final String HEAD_URL_HD = "Url HD";
+
+  private static Database mInstance;
   
   /**
    * columns
@@ -111,41 +115,105 @@ public class Database {
    */
   private HashMap<String, Object> mNameMapping = new HashMap<String, Object>(20);
   private CRC32 mCRC = new CRC32();
-  private String mFileName;
-  private MediathekQuality mDefaultQuality;
+  private TimerTask watchThread = null;
+  private long mLastFileMod = 0;
+  
+  private boolean dataUpdateNeeded = true;
 
-  public Database(final String fileName, MediathekQuality quality) {
-    mFileName = fileName;
-    mDefaultQuality = quality;
-    readFile();
+  private Database() {
+    initWatcher();
+  }
+  
+  public static Database getInstance(){
+    if (mInstance==null) {
+      mInstance = new Database();
+    }
+    return mInstance;
+  }
+  
+  private void initWatcher(){
+    if (watchThread==null){
+      watchThread = new TimerTask(){
+  
+        @Override
+        public void run(){
+          try {
+            final File file = new File(MediathekPlugin.getInstance().getSettings().guessMediathekPath(true));
+            if (file.exists()){
+              long time = file.lastModified();
+              if (time>mLastFileMod){
+                LOG.info("Mediathek DB changed");
+                mLastFileMod = time;
+                startReadFile();
+              } else {
+                if (time<mLastFileMod){
+                  mLastFileMod = time;
+                }
+              }
+            } else {
+              if (mLastFileMod!=0) {
+                LOG.warning("Error missing Mediathek DB file");
+                mLastFileMod = 0;
+              }
+            }
+          } catch (NullPointerException npe){
+            LOG.warning("Error reading Mediathek DB file attributes");
+          } catch (SecurityException se) {
+            se.printStackTrace();
+          }
+          
+        }
+      };
+      Timer timer = new Timer();
+      timer.schedule( watchThread, 0 , 1000 );
+    }
+  }
+  
+  private void startReadFile() {    
+    final Thread contentThread = new Thread("Read Mediathek contents") {
+      @Override
+      public void run() {
+        if (dataUpdateNeeded) {
+          LOG.info("Started updating Mediathek data");
+          readFile();
+          LOG.info("Finished updating Mediathek data");
+        } else {
+          LOG.info("Schedule updating Mediathek data");
+          dataUpdateNeeded = true;
+        }
+        
+      }
+    };
+    contentThread.setPriority(Thread.MIN_PRIORITY);
+    contentThread.start();
   }
 
-	private void readFile() {
+	private void readFile() {    
+    dataUpdateNeeded = false;
+    
     int programCount = 0;
-    if (StringUtils.isEmpty(mFileName)) {
-      String separator = System.getProperty("file.separator");
-      mFileName = System.getProperty("user.home") + separator + ".mediathek3" + separator + "filme.json";
-    }
-    File file = new File(mFileName);
+    String fileName = MediathekPlugin.getInstance().getSettings().guessMediathekPath(false);
+    MediathekQuality quality = MediathekPlugin.getInstance().getSettings().getMediathekQuality();
+    File file = new File(fileName);
     if (!file.canRead()) {
       return;
     }
     try {
-      mChannelItems = new HashMap<String, HashMap<Long, ArrayList<MediathekProgramItem>>>(mChannelItems.size());
+      HashMap<String, HashMap<Long, ArrayList<MediathekProgramItem>>> channelItems = new HashMap<String, HashMap<Long, ArrayList<MediathekProgramItem>>>();
       
       String channelName = "";
       String topic = "";
       
-      BufferedReader in = new BufferedReader(new FileReader(mFileName));
+      BufferedReader in = new BufferedReader(new FileReader(fileName));
       String lineEncoded;
       while ((lineEncoded = in.readLine()) != null){
         String line = new String(lineEncoded.getBytes(), "UTF-8");
 
         Matcher itemMatcher = ITEM_PATTERN.matcher(line);
-        if (itemMatcher.find()) {          
+        while (itemMatcher.find()) {          
           String[] entry = SEPARATOR_PATTERN.split(itemMatcher.group(2));
           
-          if (itemMatcher.group(1).equals("Filmliste") && (entry.length > 5)) { //heading
+          if (itemMatcher.group(1).equals("Filmliste") && (entry.length >5)) { //heading
             mColMax = entry.length;
             for(int i=0;i<entry.length;i++){
               if (entry[i].equals(HEAD_CHANNEL)){
@@ -169,7 +237,7 @@ public class Database {
               if (entry[i].equals(HEAD_DATE)){
                 mColDate = i;
               }
-            }
+            }          
           } else { //normal entry          
             if (entry.length<mColMax) continue; //invalid line          
           
@@ -178,10 +246,10 @@ public class Database {
             }
             Channel channel = findChannel(channelName);
             if (channel != null) {
-              HashMap<Long, ArrayList<MediathekProgramItem>> programs = mChannelItems.get(channelName);
+              HashMap<Long, ArrayList<MediathekProgramItem>> programs = channelItems.get(channelName);
               if (programs == null) {
                 programs = new HashMap<Long, ArrayList<MediathekProgramItem>>(500);
-                mChannelItems.put(channelName, programs);
+                channelItems.put(channelName, programs);
               }
               if (!entry[mColTheme].isEmpty()){
                 topic =  entry[mColTheme].trim();
@@ -194,29 +262,33 @@ public class Database {
                 programs.put(key, list);
               }
               programCount++;
-              list.add(parseDatabaseEntry(entry));
+              list.add(parseDatabaseEntry(entry, quality));
             }
           }
         }
       }
       in.close();
+      mChannelItems = channelItems;
+      if (dataUpdateNeeded){
+        startReadFile();
+      }
+      MediathekPlugin.getInstance().updatePluginTree();
     } catch (IOException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
     LOG.info("Found " + programCount + " programs in Mediathek");
   }
 	
-	private MediathekProgramItem parseDatabaseEntry(String[] entry){
+	private MediathekProgramItem parseDatabaseEntry(String[] entry, MediathekQuality defaultQuality){
     String itemTitle = entry[mColTitle].trim();
     String itemUrl = entry[mColUrl].trim();
     String itemDate = entry[mColDate].trim();
     
     MediathekQuality quality = MediathekQuality.NORM;
     
-    if (mDefaultQuality!=MediathekQuality.NORM){
+    if (defaultQuality!=MediathekQuality.NORM){
       String itemUrlAlt = "";
-      if (mDefaultQuality==MediathekQuality.HD){
+      if (defaultQuality==MediathekQuality.HD){
         itemUrlAlt = entry[mColUrlHD].trim();
       } else {
         itemUrlAlt = entry[mColUrlLow].trim();
@@ -224,10 +296,10 @@ public class Database {
       String[] urlParts = itemUrlAlt.split("\\|");
       if (urlParts.length>1) {
         int offset = Integer.valueOf(urlParts[0]);
-        quality = mDefaultQuality;
+        quality = defaultQuality;
         itemUrl = itemUrl.substring(0, offset) + urlParts[1];
       } else if (!urlParts[0].equals("")){
-        quality = mDefaultQuality;
+        quality = defaultQuality;
         if (urlParts[0].startsWith("/")){ //special case BR
           itemUrl = itemUrl + urlParts[0];
         } else {
@@ -325,5 +397,10 @@ public class Database {
       return result;
     }
     return programs;
+  }
+
+  public void settingsChanged() {
+    dataUpdateNeeded = true;
+    startReadFile();
   }
 }

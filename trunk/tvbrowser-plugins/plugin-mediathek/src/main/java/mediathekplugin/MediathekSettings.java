@@ -24,6 +24,8 @@ import util.settings.PropertyBasedSettings;
 public class MediathekSettings extends PropertyBasedSettings {
   private static final String KEY_MEDIATHEK_PATH = "mediathekpath";
   private static final String KEY_MEDIATHEK_QUALITY = "mediathekquality";
+  private static final String KEY_MEDIATHEK_PROGRAM_PATH = "mediathekprogram";
+  private static final String KEY_MEDIATHEK_UPDATEINTERVAL = "mediathekupdateinterval";
 
   public MediathekSettings(final Properties properties) {
     super(properties);
@@ -46,13 +48,27 @@ public class MediathekSettings extends PropertyBasedSettings {
       if(!new File(value).isFile()) {
         value = "";
       }
-    }
+    }    
+    return value;
+  }
+
+  public String getMediathekProgramPath() {
+    String value = get(KEY_MEDIATHEK_PROGRAM_PATH, "");
     
+    if(value.trim().length() > 0) {
+      if(!new File(value).isFile()) {
+        value = "";
+      }
+    }    
     return value;
   }
 
   public void setMediathekPath(final String path) {
     set(KEY_MEDIATHEK_PATH, path);
+  }
+
+  public void setMediathekProgramPath(final String path) {
+    set(KEY_MEDIATHEK_PROGRAM_PATH, path);
   }
   
   public String guessMediathekPath(boolean save) {
@@ -75,5 +91,13 @@ public class MediathekSettings extends PropertyBasedSettings {
     }
     
     return value;
+  }
+  
+  public void setMediathekUpdateInterval(int minutes){
+    set(KEY_MEDIATHEK_UPDATEINTERVAL,minutes);
+  }
+
+  public int getMediathekUpdateInterval() {
+    return get(KEY_MEDIATHEK_UPDATEINTERVAL, -30);
   }
 }
