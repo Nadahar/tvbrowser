@@ -26,6 +26,7 @@
 package devplugin;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Iterator;
 
 import util.ui.Localizer;
@@ -46,6 +47,16 @@ public class ProgramFieldType {
 
   private static final ArrayList<ProgramFieldType> mKnownTypeList = new ArrayList<ProgramFieldType>();
   private static ProgramFieldType[] mKnownTypeArray;
+  private static final Comparator<ProgramFieldType> COMPARATOR_LOCAL_NAMES = new Comparator<ProgramFieldType>() {
+    @Override
+    public int compare(ProgramFieldType o1, ProgramFieldType o2) {
+      return o1.getLocalizedName().compareToIgnoreCase(o2.getLocalizedName());
+    }
+  };
+  
+  public static final Comparator<ProgramFieldType> getComparatorLocalizedNames() {
+    return COMPARATOR_LOCAL_NAMES;
+  }
 
   /**
    * unknown field format, should not occur
