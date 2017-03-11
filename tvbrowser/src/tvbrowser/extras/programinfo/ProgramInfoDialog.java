@@ -109,6 +109,7 @@ import util.ui.WindowClosingIf;
 import util.ui.findasyoutype.TextComponentFindAction;
 import util.ui.html.ExtendedHTMLDocument;
 import util.ui.html.ExtendedHTMLEditorKit;
+import util.ui.html.HTMLTextHelper;
 import util.ui.textcomponentpopup.TextComponentPopupEventQueue;
 
 import com.jgoodies.forms.builder.ButtonBarBuilder;
@@ -356,7 +357,7 @@ class ProgramInfoDialog {
         }
       }
 
-      private JPopupMenu getPopupMenu(String search, final boolean actorFavorite) {
+      private JPopupMenu getPopupMenu(String search, String link, final boolean actorFavorite) {
         if (search != null) {
           search = search.trim();
         }
@@ -426,7 +427,7 @@ class ProgramInfoDialog {
                 true);
         subMenu.setText(Localizer.getLocalization(Localizer.I18N_PROGRAM));
         popupMenu.add(subMenu);
-        TextComponentPopupEventQueue.addStandardContextMenu(mInfoEP, popupMenu);
+        TextComponentPopupEventQueue.addStandardContextMenu(mInfoEP, popupMenu, link);
         return popupMenu;
       }
 
@@ -435,16 +436,17 @@ class ProgramInfoDialog {
 
         Point pt = new Point(e.getX(), e.getY());
         int pos = editor.viewToModel(pt);
+        
         if (pos >= 0) {
-          String link = getLink(pos, editor);
-
+          String link = HTMLTextHelper.getLink(pos, editor);
+          
           if (link != null
               && link.startsWith(ProgramTextCreator.TVBROWSER_URL_PROTOCOL)) {
             final String searchText = link
                 .substring(ProgramTextCreator.TVBROWSER_URL_PROTOCOL.length());
 
             if (popupEvent) {
-              JPopupMenu popupMenu = getPopupMenu(searchText, true);
+              JPopupMenu popupMenu = getPopupMenu(searchText, null, true);
               popupMenu.show(e.getComponent(), e.getX(), e.getY());
             } else {
               String value = ProgramInfo.getInstance().getSettings()
@@ -485,7 +487,7 @@ class ProgramInfoDialog {
             }
           } else if (popupEvent){
             String selection = getSelection(pos, editor);
-            JPopupMenu popupMenu = getPopupMenu(selection, false);
+            JPopupMenu popupMenu = getPopupMenu(selection, link, false);
             popupMenu.show(e.getComponent(), e.getX(), e.getY());
           }
         }
@@ -559,7 +561,7 @@ class ProgramInfoDialog {
         SearchHelper.search(mInfoEP, settings, null, true);
       }
 
-      private String getLink(int pos, JEditorPane html) {
+    /*  private String getLink(int pos, JEditorPane html) {
         Document doc = html.getDocument();
         if (doc instanceof HTMLDocument) {
           HTMLDocument hdoc = (HTMLDocument) doc;
@@ -572,7 +574,7 @@ class ProgramInfoDialog {
           }
         }
         return null;
-      }
+      }*/
 
       private String getSelection(int pos, JEditorPane html) {
         Caret caret = html.getCaret();
