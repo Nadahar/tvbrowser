@@ -117,13 +117,18 @@ public final class MediathekSettingsTab implements SettingsTab {
     mAutoUpdateInterval.setEnabled(mAutoUpdate.isSelected());
     panelBuilder.add(mAutoUpdateInterval, cc.xyw(4, panelBuilder.getRowCount(), 2));
     
+    mAutoUpdate.addItemListener(new ItemListener() {
+      public void itemStateChanged(ItemEvent e) {
+        mLabelUpdateInterval.setEnabled(e.getStateChange() == ItemEvent.SELECTED);
+        mAutoUpdateInterval.setEnabled(e.getStateChange() == ItemEvent.SELECTED);
+      }
+    });
+    
     
     panelBuilder.addRow();
     mLabelProgramPath = new JLabel(localizer.msg("programpath", "Mediathek installation path"));
-    mLabelProgramPath.setEnabled(mAutoUpdate.isSelected());
     panelBuilder.add(mLabelProgramPath, cc.xy(2, panelBuilder.getRowCount()));
     mProgramPath = new JTextField(mSettings.getMediathekProgramPath());
-    mProgramPath.setEnabled(mAutoUpdate.isSelected());
     panelBuilder.add(mProgramPath, cc.xyw(4, panelBuilder.getRowCount(), 2));    
     mSelectProgram = new JButton(Localizer.getLocalization(Localizer.I18N_SELECT));
     mSelectProgram.addActionListener(new ActionListener() {
@@ -143,18 +148,16 @@ public final class MediathekSettingsTab implements SettingsTab {
         }
       }
     }); 
-    mSelectProgram.setEnabled(mAutoUpdate.isSelected());
     panelBuilder.add(mSelectProgram, cc.xy(7,panelBuilder.getRowCount()));
     
-    mAutoUpdate.addItemListener(new ItemListener() {
-      public void itemStateChanged(ItemEvent e) {
-        mLabelUpdateInterval.setEnabled(e.getStateChange() == ItemEvent.SELECTED);
-        mAutoUpdateInterval.setEnabled(e.getStateChange() == ItemEvent.SELECTED);
-        mLabelProgramPath.setEnabled(e.getStateChange() == ItemEvent.SELECTED);
-        mProgramPath.setEnabled(e.getStateChange() == ItemEvent.SELECTED);
-        mSelectProgram.setEnabled(e.getStateChange() == ItemEvent.SELECTED);
+    panelBuilder.addRow();
+    JButton update = new JButton(localizer.msg("updatemediathek", "Update Mediathek"));
+    update.addActionListener(new ActionListener(){
+      public void actionPerformed(final ActionEvent e) {
+        MediathekPlugin.getInstance().startMediathekUpdate();
       }
     });
+    panelBuilder.add(update, cc.xyw(2,panelBuilder.getRow(), 3));
     
     return panelBuilder.getPanel();
   }
