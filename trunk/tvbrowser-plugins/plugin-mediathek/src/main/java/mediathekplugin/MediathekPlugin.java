@@ -61,7 +61,7 @@ public class MediathekPlugin extends Plugin {
 
   private static final boolean IS_STABLE = true;
 
-  private static final Version PLUGIN_VERSION = new Version(3, 2, 0, IS_STABLE);
+  private static final Version PLUGIN_VERSION = new Version(3, 2, 1, IS_STABLE);
 
   /** The localizer used by this class. */
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(MediathekPlugin.class);
