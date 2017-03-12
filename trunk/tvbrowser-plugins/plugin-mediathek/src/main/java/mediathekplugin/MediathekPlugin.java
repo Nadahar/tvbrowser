@@ -85,13 +85,6 @@ public class MediathekPlugin extends Plugin {
 
   private Database mDatabase;
   
-  private TimerTask mMediathekUpdater = new TimerTask(){    
-    @Override
-    public void run(){
-      startMediathekUpdate();
-    }
-  };
-  
   private Timer mMediathekUpdaterTimer = new Timer();
   
   private Thread mMarkThread;
@@ -246,9 +239,14 @@ public class MediathekPlugin extends Plugin {
 
   private void setMediathekUpdateInterval(int minutes){
     mMediathekUpdaterTimer.cancel();
-    mMediathekUpdaterTimer = new Timer();
     if (minutes>0){
-      mMediathekUpdaterTimer.schedule(mMediathekUpdater, minutes*60000, minutes*60000); // 60s -> 60000ms
+      mMediathekUpdaterTimer = new Timer();
+      mMediathekUpdaterTimer.schedule(new TimerTask(){    
+        @Override
+        public void run(){
+          startMediathekUpdate();
+        }
+      }, minutes*60000, minutes*60000); // 60s -> 60000ms
     }
   }
 
