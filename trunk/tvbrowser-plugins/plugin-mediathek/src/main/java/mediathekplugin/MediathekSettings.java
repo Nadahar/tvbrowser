@@ -22,6 +22,10 @@ import java.util.Properties;
 import util.settings.PropertyBasedSettings;
 
 public class MediathekSettings extends PropertyBasedSettings {
+  
+  public static final String MEDIATHEK_PROG_FILE = "MediathekView.jar";
+  public static final String MEDIATHEK_DATA_FILE = "filme.json";
+  
   private static final String KEY_MEDIATHEK_PATH = "mediathekpath";
   private static final String KEY_MEDIATHEK_QUALITY = "mediathekquality";
   private static final String KEY_MEDIATHEK_PROGRAM_PATH = "mediathekprogram";
@@ -78,7 +82,7 @@ public class MediathekSettings extends PropertyBasedSettings {
       File test = new File(System.getProperty("user.home"),".mediathek3");
       
       if(test.isDirectory()) {
-        test = new File(test,"filme.json");
+        test = new File(test,MEDIATHEK_DATA_FILE);
         
         if(test.isFile()) {
           value = test.getAbsolutePath();

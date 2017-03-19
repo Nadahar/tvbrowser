@@ -33,6 +33,7 @@ import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.filechooser.FileFilter;
 
 import util.ui.EnhancedPanelBuilder;
 import util.ui.Localizer;
@@ -84,9 +85,21 @@ public final class MediathekSettingsTab implements SettingsTab {
         }
         JFileChooser choose = new JFileChooser(path);
         choose.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        choose.setFileFilter(new FileFilter(){
+          @Override
+          public boolean accept(File f) {
+            return f.exists() && f.isFile() && f.getName().equalsIgnoreCase(MediathekSettings.MEDIATHEK_DATA_FILE);
+          }
+
+          @Override
+          public String getDescription() {
+            return MediathekSettings.MEDIATHEK_DATA_FILE;
+          }
+          
+        });
         choose.showDialog(UiUtilities.getLastModalChildOf(MediathekPlugin.getInstance().getFrame()), Localizer.getLocalization(Localizer.I18N_SELECT));
         
-        if(choose.getSelectedFile() != null && choose.getSelectedFile().getName().equals("filme.json")) {
+        if(choose.getSelectedFile() != null && choose.getSelectedFile().getName().equalsIgnoreCase(MediathekSettings.MEDIATHEK_DATA_FILE)) {
           mPath.setText(choose.getSelectedFile().getAbsolutePath());
         }
       }
@@ -141,9 +154,21 @@ public final class MediathekSettingsTab implements SettingsTab {
         }
         JFileChooser choose = new JFileChooser(path);
         choose.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        choose.setFileFilter(new FileFilter(){
+          @Override
+          public boolean accept(File f) {
+            return f.exists() && f.isFile() && f.getName().equalsIgnoreCase(MediathekSettings.MEDIATHEK_PROG_FILE);
+          }
+
+          @Override
+          public String getDescription() {
+            return MediathekSettings.MEDIATHEK_PROG_FILE;
+          }
+          
+        });
         choose.showDialog(UiUtilities.getLastModalChildOf(MediathekPlugin.getInstance().getFrame()), Localizer.getLocalization(Localizer.I18N_SELECT));
         
-        if(choose.getSelectedFile() != null && choose.getSelectedFile().getName().equals("MediathekView.jar")) {
+        if(choose.getSelectedFile() != null && choose.getSelectedFile().getName().equalsIgnoreCase(MediathekSettings.MEDIATHEK_PROG_FILE)) {
           mProgramPath.setText(choose.getSelectedFile().getAbsolutePath());
         }
       }
