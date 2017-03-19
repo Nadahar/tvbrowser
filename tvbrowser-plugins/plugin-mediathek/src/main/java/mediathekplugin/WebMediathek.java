@@ -56,6 +56,8 @@ public class WebMediathek {
       }
     }
     return new AbstractAction(mTitle, showChannelIcon ? mIcon : MediathekPlugin.getInstance().getContextMenuIcon()) {
+      private static final long serialVersionUID = 4145690863517563252L;
+
       public void actionPerformed(final ActionEvent e) {
         openURL();
       }

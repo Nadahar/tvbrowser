@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Timer;
@@ -61,7 +60,7 @@ public class MediathekPlugin extends Plugin {
 
   private static final boolean IS_STABLE = true;
 
-  private static final Version PLUGIN_VERSION = new Version(3, 2, 1, IS_STABLE);
+  private static final Version PLUGIN_VERSION = new Version(3, 2, 2, IS_STABLE);
 
   /** The localizer used by this class. */
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(MediathekPlugin.class);
@@ -114,6 +113,8 @@ public class MediathekPlugin extends Plugin {
     // pseudo action for example program
     if (program.equals(getPluginManager().getExampleProgram())) {
       return new ActionMenu(new AbstractAction(mLocalizer.msg("name", "Mediathek"), getContextMenuIcon()) {
+        private static final long serialVersionUID = 3759118498893676458L;
+
         public void actionPerformed(final ActionEvent e) {
           // empty
         }
@@ -170,6 +171,8 @@ public class MediathekPlugin extends Plugin {
       currM = dateM;
       
       dayactions.add(new AbstractAction(episode.getInfoDate(), episode.getIcon()) {
+        private static final long serialVersionUID = 3896711485832090278L;
+
         public void actionPerformed(final ActionEvent e) {
           episode.show();
         }
@@ -266,7 +269,9 @@ public class MediathekPlugin extends Plugin {
         while((s = in.readLine()) != null){
             logger.info(s);
         }
+        logger.info("Finished MediathekView Update");
       } catch (IOException e) {
+        logger.warning("MediathekView Update error");
         e.printStackTrace();
       }
     } catch (IOException e) {
