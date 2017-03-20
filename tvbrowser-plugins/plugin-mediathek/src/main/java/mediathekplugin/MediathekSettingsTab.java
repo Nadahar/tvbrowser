@@ -88,7 +88,7 @@ public final class MediathekSettingsTab implements SettingsTab {
         choose.setFileFilter(new FileFilter(){
           @Override
           public boolean accept(File f) {
-            return f.exists() && f.isFile() && f.getName().equalsIgnoreCase(MediathekSettings.MEDIATHEK_DATA_FILE);
+            return f.exists() && (f.isDirectory() || (f.isFile() && f.getName().equalsIgnoreCase(MediathekSettings.MEDIATHEK_DATA_FILE)));
           }
 
           @Override
@@ -157,7 +157,7 @@ public final class MediathekSettingsTab implements SettingsTab {
         choose.setFileFilter(new FileFilter(){
           @Override
           public boolean accept(File f) {
-            return f.exists() && f.isFile() && f.getName().equalsIgnoreCase(MediathekSettings.MEDIATHEK_PROG_FILE);
+            return f.exists() && (f.isDirectory() || (f.isFile() && f.getName().equalsIgnoreCase(MediathekSettings.MEDIATHEK_PROG_FILE)));
           }
 
           @Override
