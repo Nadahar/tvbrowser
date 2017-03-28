@@ -407,7 +407,7 @@ public class StartupSettingsTab implements devplugin.SettingsTab {
 
     mAutoDownloadWaitingTime = new JCheckBox(mLocalizer.msg("autoDownload.waiting","Delay auto update for"),Settings.propAutoDownloadWaitingEnabled.getBoolean());
     mAutoDownloadWaitingTimeSp = new JSpinner(new SpinnerNumberModel(
-        Settings.propAutoDownloadWaitingTime.getShort(), 1, 60, 1));
+        Settings.propAutoDownloadWaitingTime.getShort(), 1, 300, 1));
     mSecondsLabel = new JLabel(mLocalizer.msg("autoDownload.seconds","seconds"));
 
     mAutoDownload.addItemListener(new ItemListener() {
