@@ -52,10 +52,12 @@ public class ChannelList {
   public static final String WELLKNOWNID = "B2C2";
 
   /** the expected high version byte of the list header. */
-  public static final byte WELLKNOWNHIGHVERSION = 1;
+  public static final byte WELLKNOWNHIGHVERSION_MIN = 1;
+  public static final byte WELLKNOWNHIGHVERSION_MAX = 1;
 
   /** the expected low version byte of the list header. */
-  public static final byte WELLKNOWNLOWVERSION = 8;
+  public static final byte WELLKNOWNLOWVERSION_MIN = 8;
+  public static final byte WELLKNOWNLOWVERSION_MAX = 9;
 
   /** a list of channels in the list. */
   private List<Channel> channels;
@@ -157,11 +159,15 @@ public class ChannelList {
     // get Header Version
     byte high = bb.get();
     byte low = bb.get();
-    if (WELLKNOWNHIGHVERSION != high || WELLKNOWNLOWVERSION != low) {
-      logger.log(Level.WARNING, "Expected version is {0}.{1} but it was {2}.{3}",
-                 new Object[] { String.valueOf(WELLKNOWNHIGHVERSION),
-                                String.valueOf(WELLKNOWNLOWVERSION),
-                                String.valueOf(high), String.valueOf(low) });
+    if ((WELLKNOWNHIGHVERSION_MIN > high) || (WELLKNOWNHIGHVERSION_MAX > high)
+        || ((WELLKNOWNHIGHVERSION_MIN == high) && (WELLKNOWNLOWVERSION_MIN > low))
+        || ((WELLKNOWNHIGHVERSION_MAX == high) && (WELLKNOWNLOWVERSION_MAX < low))) {
+      logger.log(Level.WARNING, "Version {0}.{1} not supported: Expected {2}.{3} to {4}.{5}",
+                 new Object[] { String.valueOf(high), String.valueOf(low),  
+                     String.valueOf(WELLKNOWNHIGHVERSION_MIN),
+                     String.valueOf(WELLKNOWNLOWVERSION_MIN),  
+                     String.valueOf(WELLKNOWNHIGHVERSION_MAX),
+                     String.valueOf(WELLKNOWNLOWVERSION_MAX),});
       throw new IllegalArgumentException("Version of DVB Viewer channel list is wrong");
     }
   }
