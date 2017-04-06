@@ -37,6 +37,7 @@ import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
@@ -48,6 +49,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Properties;
 import java.util.TimeZone;
+import java.util.zip.CRC32;
 import java.util.zip.GZIPOutputStream;
 
 import javax.swing.ButtonGroup;
@@ -129,7 +131,7 @@ public class AndroidSync extends Plugin {
   private static final String PLUGIN_TYPE = "PLUGIN_TYPE";
   private static final String FILTER_TYPE = "FILTER_TYPE";
   
-  private static final Version mVersion = new Version(0, 24, 1, true);
+  private static final Version mVersion = new Version(0, 25, 0, true);
   private final String CrLf = "\r\n";
   private Properties mProperties;
   
@@ -677,6 +679,7 @@ public class AndroidSync extends Plugin {
   
   private byte[] getXmlBytes(String address) {
     mNotSynchronizedChannels = null;
+    final CRC32 crc = new CRC32();
     
     if(address.equals(FAVORITE_SYNC_ADDRESS)) {
       StringBuilder dat = new StringBuilder();
@@ -750,6 +753,16 @@ public class AndroidSync extends Plugin {
         
         dat.append(id);
         dat.append(prog.getChannel().getId());
+        
+        try {
+          crc.reset();
+          crc.update(prog.getTitle().getBytes("UTF-8"));
+          dat.append(";").append(crc.getValue());
+        } catch (UnsupportedEncodingException e) {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        }
+        
         dat.append("\n");
       }
             
@@ -860,6 +873,16 @@ public class AndroidSync extends Plugin {
         }
         
         dat.append(prog.getChannel().getId());
+        
+        try {
+          crc.reset();
+          crc.update(prog.getTitle().getBytes("UTF-8"));
+          dat.append(";").append(crc.getValue());
+        } catch (UnsupportedEncodingException e) {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        }
+        
         dat.append("\n");
       }
             
@@ -1032,7 +1055,8 @@ public class AndroidSync extends Plugin {
       URLConnection conn = null;
       BufferedReader read = null;
       checkDisableCertificateValidation();
-
+      final CRC32 crc = new CRC32();
+      
       try {
           URL url = new URL(address);
           System.out.println("url:" + url);
@@ -1135,6 +1159,18 @@ public class AndroidSync extends Plugin {
                     id += "_" + cal.get(Calendar.HOUR_OF_DAY) + ":" + cal.get(Calendar.MINUTE) + ":" + cal.getTimeZone().getRawOffset()/60000;
                     
                     Program prog = getPluginManager().getProgram(date,id);
+                    
+                    if(prog != null && parts.length > 2) {
+                      try {
+                        long hash = Long.parseLong(parts[2]);
+                        crc.reset();
+                        crc.update(prog.getTitle().getBytes("UTF-8"));
+                        
+                        if(hash != crc.getValue()) {
+                          prog = null;
+                        }
+                      }catch(NumberFormatException nfe) {}
+                    }
                     
                     if(prog != null) {
                       if(backSync && !mBackSyncedPrograms.contains(prog)) {
