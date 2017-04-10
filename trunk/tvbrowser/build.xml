@@ -250,7 +250,7 @@
   <target name="make-default" depends="copy-resources">
     <echo message="Compiling the source code ... "/>
     <mkdir dir="${classes.dir}"/>
-    <javac destdir="${classes.dir}" debug="${debug}" deprecation="true" encoding="UTF-8" target="1.6" source="1.6">
+    <javac destdir="${classes.dir}" debug="${debug}" deprecation="true" encoding="UTF-8" target="1.8" source="1.8">
       <src>
         <path refid="sourcepath"/>
       </src>
@@ -299,7 +299,7 @@
 	  <target name="make-macjava" depends="copy-resources">
 	    <echo message="Compiling the source code ..."/>
 	    <mkdir dir="${classes.dir}"/>
-	    <javac destdir="${classes.dir}" debug="${debug}" deprecation="true" encoding="UTF-8" target="1.6" source="1.6">
+	    <javac destdir="${classes.dir}" debug="${debug}" deprecation="true" encoding="UTF-8" target="1.8" source="1.8">
 	      <src>
 	        <path refid="sourcepath"/>
 	      </src>
@@ -921,7 +921,7 @@
   <target name="test" depends="make-default">
 	<echo>${ant.version}. JUnit4 tests will only work with Ant>=1.7</echo>
   	<mkdir dir="${test.classes.dir}"/>
-    <javac destdir="${test.classes.dir}" debug="${debug}" deprecation="true" encoding="UTF-8" target="1.5" source="1.5">
+    <javac destdir="${test.classes.dir}" debug="${debug}" deprecation="true" encoding="UTF-8" target="1.8" source="1.8">
       <src>
         <path path="${test.src.dir}"/>
       </src>
