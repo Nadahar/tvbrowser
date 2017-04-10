@@ -27,11 +27,15 @@ package tvbrowser.extras.searchplugin;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
+import javax.swing.DefaultListModel;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 import util.ui.SearchFormSettings;
 import util.ui.TVBrowserIcons;
@@ -55,27 +59,48 @@ class SearchSettingsTab implements SettingsTab {
     = util.ui.Localizer.getLocalizerFor(SearchSettingsTab.class);
 
   private JCheckBox mAlwaysExpertMode;
+  private JList<SearchFormSettings> mSearchHistory;
+  
   /**
    * Create the Settings-Panel
    * @return Settings-Panel
    */
   public JPanel createSettingsPanel() {
-    PanelBuilder pb = new PanelBuilder(new FormLayout("5dlu,default,0dlu:grow","default,5dlu,default,2dlu,default"));
+    PanelBuilder pb = new PanelBuilder(new FormLayout("5dlu,5dlu,default,default,0dlu:grow","default,5dlu,default,10dlu,default,5dlu,fill:20dlu:grow,2dlu,default"));
     pb.border(Borders.DIALOG);
     
     mAlwaysExpertMode = new JCheckBox(mLocalizer.msg("alwaysExpert", "Use expert mode for repetition search also"), SearchPlugin.getAlwaysSearchExpert());
     
-    JButton clearHistory = new JButton(mLocalizer.msg("clearHistory", "Clear Search History"));
-
-    clearHistory.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        SearchPlugin.setSearchHistory(new SearchFormSettings[0]);
+    SearchFormSettings[] history = SearchPlugin.getSearchHistory();
+    
+    final DefaultListModel<SearchFormSettings> mListModel = new DefaultListModel<SearchFormSettings>();
+    
+    if(history != null) {
+      for(SearchFormSettings hist : history) {
+        mListModel.addElement(hist);
+      }
+    }
+    
+    mSearchHistory = new JList<SearchFormSettings>(mListModel);
+    
+    final JButton delete = new JButton(TVBrowserIcons.delete(TVBrowserIcons.SIZE_SMALL));
+    delete.setToolTipText(util.ui.Localizer.getLocalization(util.ui.Localizer.I18N_DELETE));
+    delete.setEnabled(false);
+    delete.addActionListener(e -> {
+      final int[] indicies = mSearchHistory.getSelectedIndices();
+      
+      for(int i = indicies.length-1; i >= 0; i--) {
+        mListModel.removeElementAt(indicies[i]);
       }
     });
-
-    pb.addSeparator(mLocalizer.msg("title", "Search"), CC.xyw(1,1,3));
-    pb.add(mAlwaysExpertMode, CC.xyw(2,3,2));
-    pb.add(clearHistory, CC.xy(2,5));
+    
+    pb.addSeparator(mLocalizer.msg("title", "Search"), CC.xyw(1,1,5));
+    pb.add(mAlwaysExpertMode, CC.xyw(2,3,4));
+    pb.addSeparator(mLocalizer.msg("history", "Search history entries"), CC.xyw(1,5,5));
+    pb.add(new JScrollPane(mSearchHistory), CC.xyw(3,7,3));
+    pb.add(delete, CC.xy(3, 9));
+    
+    mSearchHistory.addListSelectionListener(e -> delete.setEnabled(mSearchHistory.getSelectedIndices().length != 0));
 
     return pb.getPanel();
   }
@@ -85,6 +110,14 @@ class SearchSettingsTab implements SettingsTab {
    */
   public void saveSettings() {
     SearchPlugin.setAlwaysSearchExpert(mAlwaysExpertMode.isSelected());
+    
+    final ArrayList<SearchFormSettings> listHistory = new ArrayList<SearchFormSettings>();
+    
+    for(int i = 0; i < mSearchHistory.getModel().getSize(); i++) {
+      listHistory.add(mSearchHistory.getModel().getElementAt(i));
+    }
+    
+    SearchPlugin.setSearchHistory(listHistory.toArray(new SearchFormSettings[listHistory.size()]));
   }
 
   /**
