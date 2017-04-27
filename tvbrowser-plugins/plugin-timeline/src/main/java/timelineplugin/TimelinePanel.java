@@ -42,6 +42,8 @@ import javax.swing.JScrollBar;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+import javax.swing.event.AncestorEvent;
+import javax.swing.event.AncestorListener;
 
 import util.ui.TimeFormatter;
 import util.ui.persona.Persona;
@@ -71,6 +73,8 @@ public class TimelinePanel extends JPanel implements PersonaListener {
   private boolean mStartWithNow = false;
   private boolean mIgnoreReset = false;
   private double mRelation;
+  
+  private boolean mUpdate;
 
   private JLabel mDateLabel;
   private JLabel mFilterLabel;
@@ -127,6 +131,23 @@ public class TimelinePanel extends JPanel implements PersonaListener {
         getHorizontalScrollBarListener());
 
     add(mMainPane, BorderLayout.CENTER);
+    
+    mUpdate = false;
+    
+    addAncestorListener(new AncestorListener() {
+      @Override
+      public void ancestorRemoved(AncestorEvent event) {
+        mUpdate = false;
+      }
+      
+      @Override
+      public void ancestorMoved(AncestorEvent event) {}
+      
+      @Override
+      public void ancestorAdded(AncestorEvent event) {
+        mUpdate = true;
+      }
+    });
   }
 
   private AdjustmentListener getHorizontalScrollBarListener() {
@@ -410,52 +431,60 @@ public class TimelinePanel extends JPanel implements PersonaListener {
   }
   
   void gotoNowLock() {
-    mTimeList.setSelectedIndex(1);
+    if(mUpdate || TimelinePlugin.getSettings().autoUpdate()) {
+      mTimeList.setSelectedIndex(1);
+    }
   }
   
   void scrollToTime(int minute) {
-    if(TimelinePlugin.getNowMinute() == minute) {
-      mTimeList.setSelectedIndex(1);
-    }
-    else {
-      final TimeFormatter formatter = new TimeFormatter();
-      
-      final int h = minute / 60;
-      final int m = minute % 60;
-      
-      String test = formatter.formatTime(h, m);
-      
-      for(int i = 0; i < mTimeList.getItemCount(); i++) {
-        if(mTimeList.getItemAt(i).equals(test)) {
-          mTimeList.setSelectedIndex(i);
-          return;
-        }
+    if(mUpdate || TimelinePlugin.getSettings().autoUpdate()) {
+      if(TimelinePlugin.getNowMinute() == minute) {
+        mTimeList.setSelectedIndex(1);
       }
-      
-      gotoTime(minute);
+      else {
+        final TimeFormatter formatter = new TimeFormatter();
+        
+        final int h = minute / 60;
+        final int m = minute % 60;
+        
+        String test = formatter.formatTime(h, m);
+        
+        for(int i = 0; i < mTimeList.getItemCount(); i++) {
+          if(mTimeList.getItemAt(i).equals(test)) {
+            mTimeList.setSelectedIndex(i);
+            return;
+          }
+        }
+        
+        gotoTime(minute);
+      }
     }
   }
   
   void gotoTime(final int minute) {
-    mMainPane.gotoTime(minute);
+    if(mUpdate || TimelinePlugin.getSettings().autoUpdate()) {
+      mMainPane.gotoTime(minute);
+    }
   }
   
   void gotoDate(Date date) {
-    if(mDateList != null) {
-      if(mDateList.getSelectedItem().equals(date)) {
-        return;
-      }
-      
-      for(int i = 0; i < mDateList.getItemCount(); i++) {
-        if(mDateList.getItemAt(i).equals(date)) {
-          mDateList.setSelectedIndex(i);
-          break;
+    if(mUpdate || TimelinePlugin.getSettings().autoUpdate()) {
+      if(mDateList != null) {
+        if(mDateList.getSelectedItem().equals(date)) {
+          return;
+        }
+        
+        for(int i = 0; i < mDateList.getItemCount(); i++) {
+          if(mDateList.getItemAt(i).equals(date)) {
+            mDateList.setSelectedIndex(i);
+            break;
+          }
         }
       }
+      
+      resetGoto();
+      mMainPane.updateProgram();
     }
-    
-    resetGoto();
-    mMainPane.updateProgram();
   }
 
   private void gotoTimeMiddle(int minute) {
@@ -537,16 +566,20 @@ public class TimelinePanel extends JPanel implements PersonaListener {
   }
   
   void scrollToChannel(Channel channel) {
-    mMainPane.scrollToChannel(channel);
+    if(mUpdate || TimelinePlugin.getSettings().autoUpdate()) {
+      mMainPane.scrollToChannel(channel);
+    }
   }
   
   void scrollToProgram(final Program prog) {
-    if(prog != null) {
-      if(!mDateList.getSelectedItem().equals(prog.getDate())) {
-        gotoDate(prog.getDate());
+    if(mUpdate || TimelinePlugin.getSettings().autoUpdate()) {
+      if(prog != null) {
+        if(!mDateList.getSelectedItem().equals(prog.getDate())) {
+          gotoDate(prog.getDate());
+        }
       }
+      
+      mMainPane.selectProgram(prog);
     }
-    
-    mMainPane.selectProgram(prog);
   }
 }

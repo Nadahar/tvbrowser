@@ -66,7 +66,7 @@ public final class TimelinePlugin extends devplugin.Plugin {
 	static final util.ui.Localizer mLocalizer = util.ui.Localizer
 			.getLocalizerFor(TimelinePlugin.class);
 
-	private static final Version VERSION = new Version(1, 13, 2, false);
+	private static final Version VERSION = new Version(1, 14, 0, false);
 	
 	private static TimelinePlugin mInstance;
 
