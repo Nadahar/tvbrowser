@@ -38,6 +38,7 @@ import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListCellRenderer;
@@ -115,6 +116,8 @@ public class ProgramListPanel extends JPanel implements PersonaListener, FilterC
   
   private boolean mUpdateList;
   
+  private AtomicBoolean mKeepListing;
+  
   private long mLastAncestorRemoved;
   
   private static Class<?> mWrapperFilter;
@@ -128,6 +131,7 @@ public class ProgramListPanel extends JPanel implements PersonaListener, FilterC
   }
   
   public ProgramListPanel(final Channel selectedChannel, boolean showClose, int maxListSize) {
+    mKeepListing = new AtomicBoolean(false);
     mMaxListSize = maxListSize;
     createGui(selectedChannel,showClose);
   }
@@ -309,7 +313,7 @@ public class ProgramListPanel extends JPanel implements PersonaListener, FilterC
 
     mChannelBox.addItemListener(new ItemListener() {
       public void itemStateChanged(ItemEvent e) {
-        if(e == null || e.getStateChange() == ItemEvent.SELECTED) {
+        if(e == null || e.getStateChange() == ItemEvent.SELECTED) {          
           fillProgramList();
         }
         
@@ -600,8 +604,34 @@ public class ProgramListPanel extends JPanel implements PersonaListener, FilterC
       mDateBox.setSelectedItem(currentDate);
     }
   }
-
-  void fillProgramList() {
+  
+  synchronized void fillProgramList() {
+    mKeepListing.set(false);
+    
+    if(mListThread != null && mListThread.isAlive()) {
+      try {
+        mListThread.join();
+      } catch (InterruptedException e1) {
+        // Ignore
+      }
+    }
+    
+    if(mUpdateListThread != null && mUpdateListThread.isAlive()) {
+      try {
+        mUpdateListThread.join();
+      } catch(InterruptedException e1) {
+        //Ignore
+      }
+    }
+    
+    mKeepListing.set(true);
+    fillProgramListDo();
+    
+  }
+  
+  private Thread mUpdateListThread;
+  
+  private void fillProgramListDo() {
     if(mUpdateList && (mListThread == null || !mListThread.isAlive())) {
       mListThread = new Thread() {
         public void run() {
@@ -611,14 +641,14 @@ public class ProgramListPanel extends JPanel implements PersonaListener, FilterC
             } catch (InterruptedException e) {}
           }
           
-          SwingUtilities.invokeLater(new Runnable() {
+          mUpdateListThread = new Thread() {
             @Override
             public void run() {
               DefaultListModel model = new DefaultListModel();
-              mFilterBox.setEnabled(false);
+              /*mFilterBox.setEnabled(false);
               mChannelBox.setEnabled(false);
               mRefreshBtn.setEnabled(false);
-              mSendBtn.setEnabled(false);
+              mSendBtn.setEnabled(false);*/
               
               try {
                 setPriority(MIN_PRIORITY);
@@ -641,9 +671,22 @@ public class ProgramListPanel extends JPanel implements PersonaListener, FilterC
                 //boolean showExpired = date.compareTo(Date.getCurrentDate()) != 0;
                 
                 for (int d = 0; d < maxDays; d++) {
+                  System.out.println("d " + d);
+                  if(!mKeepListing.get()) {
+                    break;
+                  }
+                  
                   if (Plugin.getPluginManager().isDataAvailable(date)) {
                     for (Channel channel : channels) {
+                      if(!mKeepListing.get()) {
+                        break;
+                      }
+                      
                       for (Iterator<Program> it = Plugin.getPluginManager().getChannelDayProgram(date, channel); it.hasNext();) {
+                        if(!mKeepListing.get()) {
+                          break;
+                        }
+                        
                         Program program = it.next();
                         if ((dateSelected || !program.isExpired()) && mFilter.accept(program)) {
                           if (dateSelected) {
@@ -672,6 +715,10 @@ public class ProgramListPanel extends JPanel implements PersonaListener, FilterC
                 int currentSelectionNewIndex = -1;
                 
                 for (Program program : mPrograms) {
+                  if(!mKeepListing.get()) {
+                    break;
+                  }
+                  
                   if (model.size() < mMaxListSize) {
                     if(ProgramListPlugin.getInstance().getSettings().getBooleanValue(ProgramListSettings.KEY_SHOW_DATE_SEPARATOR) && 
                         (lastProgram == null || program.getDate().compareTo(lastProgram.getDate()) > 0)) {
@@ -706,16 +753,28 @@ public class ProgramListPanel extends JPanel implements PersonaListener, FilterC
                   index = 0;
                 }
                 
-                updateList(model, forceScrollingIndex, index, currentSelectionNewIndex != -1);
+                if(mKeepListing.get()) {
+                  updateList(model, forceScrollingIndex, index, currentSelectionNewIndex != -1);
+                }
                 //mList.updateUI();
               } catch (Exception e) {
                 e.printStackTrace();
               }
-              
+              /*
               mFilterBox.setEnabled(true);
               mChannelBox.setEnabled(true);
               mRefreshBtn.setEnabled(true);
-              mSendBtn.setEnabled(true);
+              mSendBtn.setEnabled(true);*/
+            }
+          };
+          
+          SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+              // TODO Auto-generated method stub
+              if(mUpdateListThread != null && !mUpdateListThread.isAlive()) {
+                mUpdateListThread.start();
+              }
             }
           });
         }
