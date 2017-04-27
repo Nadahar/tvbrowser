@@ -26,6 +26,7 @@ final class TimelineSettings {
 	private static final String KEY_FOCUS_DELTA = "FocusDelta";
 	private static final String KEY_PROGRESS_VIEW = "ProgressView";
 	private static final String KEY_SHOW_AT_STARTUP = "ShowAtStartup";
+	private static final String KEY_AUTO_UPDATE = "AutoUpdate";
 	private static final String KEY_START_WITH_NOW = "StartWithNow";
 	private static final String KEY_RESIZE_WITH_MOUSE = "ResizeWithMouse";
 	private static final String KEY_CHANNEL_HEIGHT = "ChannelHeight";
@@ -68,6 +69,10 @@ final class TimelineSettings {
 
 	boolean showAtStartUp() {
 		return getProperty(KEY_SHOW_AT_STARTUP, false);
+	}
+	
+	boolean autoUpdate() {
+	  return getProperty(KEY_AUTO_UPDATE, true);
 	}
 
 	boolean startWithNow() {
@@ -155,6 +160,10 @@ final class TimelineSettings {
 
 	public void setShowAtStartup(final boolean show) {
 		setProperty(KEY_SHOW_AT_STARTUP, show);
+	}
+	
+	public void setAutoUpdate(final boolean autoUpdate) {
+	  setProperty(KEY_AUTO_UPDATE, autoUpdate);
 	}
 
 	public void setFocusDelta(final int delta) {

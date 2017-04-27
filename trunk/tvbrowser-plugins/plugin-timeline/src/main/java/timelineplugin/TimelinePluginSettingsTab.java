@@ -65,6 +65,7 @@ public final class TimelinePluginSettingsTab implements SettingsTab {
 	private JLabel mFocusDeltaLabel;
 	private JSlider mFocusDelta;
 	private JCheckBox mAutoStart;
+	private JCheckBox mAutoUpdate;
 	private JCheckBox mStartWithNow;
 	private JCheckBox mResizeWithMouse;
 	private JCheckBox mShowHeaderPanel;
@@ -114,7 +115,7 @@ public final class TimelinePluginSettingsTab implements SettingsTab {
 	private JPanel getCommonSettings() {
 		final FormLayout layout = new FormLayout(
 				"5dlu, 5dlu, pref, 3dlu, fill:default:grow, 3dlu, pref, 5dlu",
-				"5dlu, pref, 2dlu, pref, 10dlu, pref, 5dlu, pref, 2dlu, pref, 2dlu, pref, 10dlu, pref, 5dlu, pref, 2dlu, pref, 2dlu, pref, 10dlu, pref, 5dlu, pref, 2dlu, pref, 2dlu, pref");
+				"5dlu, pref, 2dlu, pref, 2dlu, pref, 10dlu, pref, 5dlu, pref, 2dlu, pref, 2dlu, pref, 10dlu, pref, 5dlu, pref, 2dlu, pref, 2dlu, pref, 10dlu, pref, 5dlu, pref, 2dlu, pref, 2dlu, pref");
 
 		final PanelBuilder builder = new PanelBuilder(layout);
 		builder.setBorder(null);
@@ -138,6 +139,8 @@ public final class TimelinePluginSettingsTab implements SettingsTab {
 
 		mAutoStart = new JCheckBox(mLocalizer.msg("showAtStart", "Show at startup"));
 		mAutoStart.setSelected(TimelinePlugin.getSettings().showAtStartUp());
+		mAutoUpdate = new JCheckBox(mLocalizer.msg("autoUpdate", "Always react of change of date, time and filter in main window of TV-Browser."));
+		mAutoUpdate.setSelected(TimelinePlugin.getSettings().autoUpdate());
 		mStartWithNow = new JCheckBox(mLocalizer.msg("startWithNow",
 				"Select Now at startup"));
 		mStartWithNow.setSelected(TimelinePlugin.getSettings().startWithNow());
@@ -198,6 +201,8 @@ public final class TimelinePluginSettingsTab implements SettingsTab {
 				cc.xy(3, row));
 		builder.add(mProgressBar, cc.xyw(5, row, 3));
 		row += 2;
+    builder.add(mAutoUpdate, cc.xyw(3, row, 5));
+    row += 2;
 		// builder.addLabel("Focus", cc.xy(3, row));
 		// builder.add(mFocusDelta, cc.xy(5, row));
 		// builder.add(mFocusDeltaLabel, cc.xy(7, row));
@@ -209,7 +214,7 @@ public final class TimelinePluginSettingsTab implements SettingsTab {
 		builder.add(mStartWithNow, cc.xyw(3, row, 5));
 		row += 2;
 		builder.add(mShowHeaderPanel, cc.xyw(3, row, 5));
-		row += 2;
+    row += 2;
 		builder.addSeparator(mLocalizer.msg("format", "Format"), cc.xyw(2, row, 6));
 		row += 2;
 		builder.add(mResizeWithMouse, cc.xyw(3, row, 5));
@@ -454,6 +459,7 @@ public final class TimelinePluginSettingsTab implements SettingsTab {
 		TimelinePlugin.getSettings().setShowAtStartup(mAutoStart.isSelected());
 		TimelinePlugin.getSettings().setStartWithNow(mStartWithNow.isSelected());
 		TimelinePlugin.getSettings().setShowHeaderPanel(mShowHeaderPanel.isSelected());
+		TimelinePlugin.getSettings().setAutoUpdate(mAutoUpdate.isSelected());
 		TimelinePlugin.getSettings().setResizeWithMouse(
 				mResizeWithMouse.isSelected());
 		TimelinePlugin.getSettings().setHourWidth(
