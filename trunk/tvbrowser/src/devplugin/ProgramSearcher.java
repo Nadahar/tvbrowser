@@ -124,5 +124,9 @@ public interface ProgramSearcher {
   public Program[] search(ProgramFieldType[] fieldArr, Date startDate,
       int nrDays, Channel[] channels, boolean sortByStartTime, ProgressMonitor progress, DefaultListModel listModel);
 
+  /**
+   * Stops the seach if the searcher supports it.
+   */
+  public void stopSearch();
 }
 

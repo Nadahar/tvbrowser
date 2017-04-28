@@ -28,6 +28,9 @@ package tvbrowser.core.search;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.RejectedExecutionException;
 
 import javax.swing.DefaultListModel;
 import javax.swing.SwingUtilities;
@@ -35,10 +38,6 @@ import javax.swing.SwingUtilities;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.StrBuilder;
 
-import tvbrowser.core.Settings;
-import tvbrowser.core.TvDataBase;
-import util.io.IOUtilities;
-import util.program.ProgramUtilities;
 import devplugin.Channel;
 import devplugin.ChannelDayProgram;
 import devplugin.Date;
@@ -46,6 +45,10 @@ import devplugin.Program;
 import devplugin.ProgramFieldType;
 import devplugin.ProgramSearcher;
 import devplugin.ProgressMonitor;
+import tvbrowser.core.Settings;
+import tvbrowser.core.TvDataBase;
+import util.io.IOUtilities;
+import util.program.ProgramUtilities;
 
 /**
  * An abstract searcher implementation that reduces the checks on String checks.
@@ -61,6 +64,9 @@ public abstract class AbstractSearcher implements ProgramSearcher {
   /** Indicates if the special characters should be replaced.*/
   protected boolean mReplaceSpCh = false;
 
+  private boolean mKeepSearching;
+  
+  private ExecutorService mThreadPool;
 
   /**
    * Gets or creates the start time comparator.
@@ -205,7 +211,8 @@ public abstract class AbstractSearcher implements ProgramSearcher {
   public synchronized Program[] search(ProgramFieldType[] fieldArr, Date startDate,
                           int nrDays, Channel[] channels, boolean sortByStartTime, ProgressMonitor progress, final DefaultListModel listModel)
   {
-
+    mKeepSearching = true;
+    
     // Should we search in all channels?
     if (channels == null) {
       channels = Settings.propSubscribedChannels.getChannelArray();
@@ -224,7 +231,15 @@ public abstract class AbstractSearcher implements ProgramSearcher {
       progress.setMaximum(channels.length*(nrDays+1));
     }
     for (int day = 0; day <= nrDays; day++) {
+      if(!mKeepSearching) {
+        break;
+      }
+      
       for (int channelIdx = 0; channelIdx < channels.length; channelIdx++) {
+        if(!mKeepSearching) {
+          break;
+        }
+        
         if (progress != null) {
           progress.setValue(day * channels.length + channelIdx);
         }
@@ -237,24 +252,29 @@ public abstract class AbstractSearcher implements ProgramSearcher {
 
               // Search this day program
               for (int i = 0; i < dayProg.getProgramCount(); i++) {
+                if(!mKeepSearching) {
+                  break;
+                }
+                
                 final Program prog = dayProg.getProgramAt(i);
+                
                 if (matches(prog, fieldArr)) {
                   if(listModel != null) {
-                    SwingUtilities.invokeLater(new Runnable() {
-                      public void run() {
-                        int insertIndex = 0;
-
-                        for(int index = 0; index < listModel.getSize(); index++) {
-                          Program p = (Program)listModel.get(index);
-
-                          if(ProgramUtilities.getProgramComparator().compare(p,prog) < 0) {
-                            insertIndex = index+1;
+                      SwingUtilities.invokeLater(() -> {
+                        if(mKeepSearching) {
+                          int insertIndex = 0;
+    
+                          for(int index = 0; index < listModel.getSize(); index++) {
+                            Program p = (Program)listModel.get(index);
+    
+                            if(ProgramUtilities.getProgramComparator().compare(p,prog) < 0) {
+                              insertIndex = index+1;
+                            }
                           }
+    
+                          listModel.add(insertIndex,prog);
                         }
-
-                        listModel.add(insertIndex,prog);
-                      }
-                    });
+                      });
                   }
 
                   hitList.add(prog);
@@ -272,7 +292,7 @@ public abstract class AbstractSearcher implements ProgramSearcher {
       // The next day
       startDate = startDate.addDays(1);
     }
-
+        
     // Convert the list into an array
     Program[] hitArr = new Program[hitList.size()];
     hitList.toArray(hitArr);
@@ -304,5 +324,14 @@ public abstract class AbstractSearcher implements ProgramSearcher {
    * @return Whether the value matches.
    */
   protected abstract boolean matches(String value);
+  
+  @Override
+  public void stopSearch() {
+    mKeepSearching = false;
+    
+    if(mThreadPool != null && !mThreadPool.isTerminated()) {
+      mThreadPool.shutdownNow();
+    }
+  }
 
 }
