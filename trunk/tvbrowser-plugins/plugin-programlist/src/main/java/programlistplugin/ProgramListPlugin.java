@@ -348,7 +348,7 @@ public class ProgramListPlugin extends Plugin {
 
         mDialog.setVisible(!mDialog.isVisible());
 
-        if (mDialog.isVisible()) {System.out.println("dialog");
+        if (mDialog.isVisible()) {
           mDialogPanel.fillProgramList();
         } else {
           saveMe();
