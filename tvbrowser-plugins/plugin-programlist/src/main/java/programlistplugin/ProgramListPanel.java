@@ -671,7 +671,6 @@ public class ProgramListPanel extends JPanel implements PersonaListener, FilterC
                 //boolean showExpired = date.compareTo(Date.getCurrentDate()) != 0;
                 
                 for (int d = 0; d < maxDays; d++) {
-                  System.out.println("d " + d);
                   if(!mKeepListing.get()) {
                     break;
                   }
