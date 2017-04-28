@@ -141,7 +141,7 @@ public class SearchDialog extends JDialog implements WindowClosingIf {
     mCloseBt = new JButton(Localizer.getLocalization(Localizer.I18N_CLOSE));
     mCloseBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
-        dispose();
+        close();
       }
     });
 
@@ -196,6 +196,7 @@ public class SearchDialog extends JDialog implements WindowClosingIf {
   }
 
   public void close() {
+    SearchHelper.stopSearch();
     dispose();
   }
 

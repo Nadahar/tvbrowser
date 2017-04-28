@@ -100,6 +100,8 @@ public class SearchHelper {
   private JScrollPane mProgramListScrollPane;
   
   private JComboBox mFilterSelection;
+  
+  private ProgramSearcher mSearcher;
 
   /** Private Constructor */
   private SearchHelper() {
@@ -193,14 +195,14 @@ public class SearchHelper {
 
         try {
           comp.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-          ProgramSearcher searcher = searcherSettings.createSearcher();
+          mSearcher = searcherSettings.createSearcher();
           ProgressMonitor progressMonitor = null;
           if (mProgressMonitor == null && !TvDataUpdater.getInstance().isDownloading()) {
             progressMonitor = MainFrame.getInstance().getStatusBar().createProgressMonitor();
             progressMonitor.setMessage(mLocalizer.msg("searching","Searching"));
           }
 
-          Program[] programArr = searcher.search(searcherSettings.getFieldTypes(), startDate, searcherSettings
+          Program[] programArr = mSearcher.search(searcherSettings.getFieldTypes(), startDate, searcherSettings
               .getNrDays(), searcherSettings.getChannels(), true, mProgressMonitor != null ? mProgressMonitor : progressMonitor, mListModel);
 
           comp.setCursor(cursor);
@@ -476,6 +478,7 @@ public class SearchHelper {
     JButton closeBt = new JButton(Localizer.getLocalization(Localizer.I18N_CLOSE));
     closeBt.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent evt) {
+        stopSearch();
         dlg.dispose();
       }
     });
@@ -493,4 +496,9 @@ public class SearchHelper {
     return dlg;
   }
 
+  public static void stopSearch() {
+    if(mInstance != null && mInstance.mSearcher != null) {
+      mInstance.mSearcher.stopSearch();
+    }
+  }
 }
