@@ -96,17 +96,17 @@ public final class ReminderConstants {
     int autoCloseReminderTime = 0;
     try {
       if(ReminderPlugin.getInstance().getSettings().getProperty(ReminderPropertyDefaults.KEY_AUTO_CLOSE_BEHAVIOUR,ReminderPropertyDefaults.VALUE_AUTO_CLOSE_BEHAVIOUR_ON_END).equals(ReminderPropertyDefaults.VALUE_AUTO_CLOSE_BEHAVIOUR_ON_END)) {
-        int endTime = p.getStartTime() + p.getLength();
+        int endTime = (p.getStartTime() + p.getLength()) * 60;
 
-        int currentTime = IOUtilities.getMinutesAfterMidnight();
+        int currentTime = IOUtilities.getSecondsAfterMidnight();
         int dateDiff = p.getDate().compareTo(Date.getCurrentDate());
         if (dateDiff == -1) { // program started yesterday
-          currentTime += 1440;
+          currentTime += 1440 * 60;
         }
         else if (dateDiff == 1) { // program starts the next day
-          endTime += 1440;
+          endTime += 1440 * 60;
         }
-        autoCloseReminderTime = (endTime - currentTime) * 60;
+        autoCloseReminderTime = (endTime - currentTime);
       }
       else if(ReminderPlugin.getInstance().getSettings().getProperty(ReminderPropertyDefaults.KEY_AUTO_CLOSE_BEHAVIOUR,ReminderPropertyDefaults.VALUE_AUTO_CLOSE_BEHAVIOUR_ON_TIME).equals(ReminderPropertyDefaults.VALUE_AUTO_CLOSE_BEHAVIOUR_ON_TIME)){
         String asString = ReminderPlugin.getInstance().getSettings().getProperty(ReminderPropertyDefaults.KEY_AUTO_CLOSE_REMINDER_TIME, "10");
