@@ -936,7 +936,7 @@ public class MutableProgram implements Program {
    * @return A String representation for debugging.
    */
   public String toString() {
-    return "On " + mChannel.getName() + " at " + getHours() + ":" + getMinutes()
+    return "On " + mChannel.getName() + " at " + getHours() + ":" + String.format("%02d", getMinutes())
       + ", " + getDateString() + ": '" + getTitle() + "'";
   }
 
