@@ -32,18 +32,17 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 
+import devplugin.AfterDataUpdateInfoPanel;
+import devplugin.Program;
 import tvbrowser.core.plugin.PluginManagerImpl;
 import util.settings.ProgramPanelSettings;
 import util.ui.ProgramList;
-import devplugin.AfterDataUpdateInfoPanel;
-import devplugin.Program;
 
 public class RemovedProgramsPanel extends AfterDataUpdateInfoPanel {
 

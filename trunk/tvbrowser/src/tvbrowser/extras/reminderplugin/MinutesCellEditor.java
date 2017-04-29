@@ -4,7 +4,6 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
 import java.util.EventObject;
 
 import javax.swing.AbstractCellEditor;
@@ -13,18 +12,16 @@ import javax.swing.JComboBox;
 import javax.swing.JTable;
 import javax.swing.table.TableCellEditor;
 
-import devplugin.Program;
-
 public class MinutesCellEditor extends AbstractCellEditor implements TableCellEditor, ActionListener {
-  private JComboBox mComboBox;
+  private JComboBox<RemindValue> mComboBox;
   
   public MinutesCellEditor() {
-    mComboBox = new JComboBox(new RemindValue[0]);
+    mComboBox = new JComboBox<>(new RemindValue[0]);
     mComboBox.putClientProperty("JComboBox.isTableCellEditor", Boolean.TRUE);
   }
 
   private void setValue(ReminderListItem item) {
-    DefaultComboBoxModel model = (DefaultComboBoxModel)mComboBox.getModel();
+    DefaultComboBoxModel<RemindValue> model = (DefaultComboBoxModel<RemindValue>)mComboBox.getModel();
     model.removeAllElements();
     
     for(RemindValue value : ReminderPlugin.calculatePossibleReminders(item.getProgram())) {
@@ -60,7 +57,7 @@ public class MinutesCellEditor extends AbstractCellEditor implements TableCellEd
     return true;
   }
   
-  JComboBox getComboBox() {
+  JComboBox<RemindValue> getComboBox() {
     return mComboBox;
   }
   

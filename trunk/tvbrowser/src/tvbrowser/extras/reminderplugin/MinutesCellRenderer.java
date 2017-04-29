@@ -80,7 +80,7 @@ public class MinutesCellRenderer extends DefaultTableCellRenderer {
       else {
         Integer minutes = listItem.getMinutes();
         
-        mTextLabel.setText(ReminderFrame.getStringForMinutes(minutes.intValue()));
+        mTextLabel.setText(ReminderConstants.getStringForMinutes(minutes.intValue()));
         
         mTextLabel.setOpaque(def.isOpaque());
         mTextLabel.setForeground(def.getForeground());

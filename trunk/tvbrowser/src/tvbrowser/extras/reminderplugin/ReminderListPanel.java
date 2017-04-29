@@ -63,7 +63,7 @@ public class ReminderListPanel extends JPanel implements PersonaListener, Progra
   private ReminderTableModel mModel;
   private RevertCache<ReminderListItem[]> mRevertCache;
   
-  private JComboBox mTitleSelection;
+  private JComboBox<String> mTitleSelection;
   private JLabel mFilterLabel;
   private long mLastEditorClosing;
   
@@ -85,7 +85,7 @@ public class ReminderListPanel extends JPanel implements PersonaListener, Progra
     CellConstraints cc = new CellConstraints();
     
     mRevertCache = new RevertCache<ReminderListItem[]>(3);
-    mModel = new ReminderTableModel(mReminderList, mTitleSelection = new JComboBox());
+    mModel = new ReminderTableModel(mReminderList, mTitleSelection = new JComboBox<>());
 
     mTable = new JTable();
     mTable.getTableHeader().setResizingAllowed(false);
@@ -112,7 +112,6 @@ public class ReminderListPanel extends JPanel implements PersonaListener, Progra
             
             @Override
             public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
-              // TODO Auto-generated method stub
               mLastEditorClosing = System.currentTimeMillis();
             }
             
@@ -304,7 +303,7 @@ public class ReminderListPanel extends JPanel implements PersonaListener, Progra
         TableColumn column = super.getColumn(n);
         
         if(n == 1) {
-          column.setMaxWidth(mTable.getFontMetrics(mTable.getFont()).stringWidth(ReminderFrame.REMIND_AFTER_VALUE_ARR[ReminderFrame.REMIND_AFTER_VALUE_ARR.length-1].toString())+20);
+          column.setMaxWidth(mTable.getFontMetrics(mTable.getFont()).stringWidth(ReminderConstants.REMIND_AFTER_VALUE_ARR[ReminderConstants.REMIND_AFTER_VALUE_ARR.length-1].toString())+20);
           column.setPreferredWidth(column.getMaxWidth());
         }
         

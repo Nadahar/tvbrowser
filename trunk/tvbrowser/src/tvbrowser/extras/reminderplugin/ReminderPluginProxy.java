@@ -153,7 +153,7 @@ public class ReminderPluginProxy extends AbstractInternalPluginProxy implements 
   }
   
   public String getPluginCategory() {
-    return Plugin.OTHER_CATEGORY;
+    return Plugin.CATEGORY_OTHER;
   }
 
   @Override

@@ -82,42 +82,8 @@ import devplugin.Program;
  * @author Martin Oberhauser
  */
 public class ReminderFrame implements WindowClosingIf, ChangeListener {
-
-  private static final util.ui.Localizer mLocalizer
+  public static final util.ui.Localizer LOCALIZER
     = util.ui.Localizer.getLocalizerFor(ReminderFrame.class);
-
-  public static final int DONT_REMIND_AGAIN = -31;
-  
-  public static final int NO_REMINDER = -42;
-  
-  static final RemindValue DONT_REMIND_AGAIN_VALUE = new RemindValue(DONT_REMIND_AGAIN);
-
-  static final RemindValue[] REMIND_AFTER_VALUE_ARR = {
-    new RemindValue(-30),
-    new RemindValue(-20),
-    new RemindValue(-10),
-    new RemindValue(-5),
-    new RemindValue(-1),
-  };
-
-  static final RemindValue[] REMIND_BEFORE_VALUE_ARR = {
-    new RemindValue(0),
-    new RemindValue(1),
-    new RemindValue(2),
-    new RemindValue(3),
-    new RemindValue(5),
-    new RemindValue(10),
-    new RemindValue(15),
-    new RemindValue(30),
-    new RemindValue(60),
-    new RemindValue(90),
-    new RemindValue(120),
-    new RemindValue(240),
-    new RemindValue(480),
-    new RemindValue(720),
-    new RemindValue(1440),
-    new RemindValue(7 * 1440),
-  };
 
   /**
    * The frame that shows this reminder. The reminder is shown in a frame if
@@ -129,7 +95,7 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
 
   private ReminderList mGlobalReminderList;
 
-  private JComboBox mReminderCB;
+  private JComboBox<RemindValue> mReminderCB;
   private JButton mCloseBt;
   private String mCloseBtText;
 
@@ -186,7 +152,7 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
     //                dialog, otherwise as frame.
     final Window parent = UiUtilities.getLastModalChildOf(MainFrame
         .getInstance());
-    String title = mLocalizer.msg("title", "Reminder");
+    String title = LOCALIZER.msg("title", "Reminder");
 
     // if this is a favorite, change the title to the name of the favorite
     if (reminders.size() == 1) {
@@ -249,7 +215,7 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
           && minutesAfterMidnight > progMinutesAfterMidnight) {
         msg = updateRunningTime();
       } else {
-        msg = mLocalizer.msg("soonStarts", "Soon starts");
+        msg = LOCALIZER.msg("soonStarts", "Soon starts");
         remainingMinutes = ReminderPlugin.getTimeToProgramStart(program);
       }
       
@@ -276,7 +242,7 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
       final JPanel channelPanel = new JPanel(new BorderLayout());
       componentList.add(channelPanel);
       if (program.getLength() > 0) {
-        final JLabel endTime = new JLabel(mLocalizer.msg("endTime",
+        final JLabel endTime = new JLabel(LOCALIZER.msg("endTime",
             "until {0}", program.getEndTimeString()));
         channelPanel.add(endTime, BorderLayout.PAGE_START);
       }
@@ -335,26 +301,26 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
       }
     }
     
-    mReminderCB = new JComboBox();
+    mReminderCB = new JComboBox<>();
     
     int i=0;
     
-    while (i < REMIND_AFTER_VALUE_ARR.length && runningMinutes-Math.abs(REMIND_AFTER_VALUE_ARR[i].getMinutes()) < 0) {
-      if(runningMinutes >= 0 && Math.abs(REMIND_AFTER_VALUE_ARR[i].getMinutes()) < maxLength) {
-        mReminderCB.addItem(REMIND_AFTER_VALUE_ARR[i]);
+    while (i < ReminderConstants.REMIND_AFTER_VALUE_ARR.length && runningMinutes-Math.abs(ReminderConstants.REMIND_AFTER_VALUE_ARR[i].getMinutes()) < 0) {
+      if(runningMinutes >= 0 && Math.abs(ReminderConstants.REMIND_AFTER_VALUE_ARR[i].getMinutes()) < maxLength) {
+        mReminderCB.addItem(ReminderConstants.REMIND_AFTER_VALUE_ARR[i]);
       }
       
       i++;
     }
     
-    mReminderCB.addItem(DONT_REMIND_AGAIN_VALUE);
-    mReminderCB.setSelectedItem(DONT_REMIND_AGAIN_VALUE);
+    mReminderCB.addItem(ReminderConstants.DONT_REMIND_AGAIN_VALUE);
+    mReminderCB.setSelectedItem(ReminderConstants.DONT_REMIND_AGAIN_VALUE);
     
     i = 0;
     
-    while (i < REMIND_BEFORE_VALUE_ARR.length
-        && REMIND_BEFORE_VALUE_ARR[i].getMinutes() < remainingMinutesMax) {
-      mReminderCB.addItem(REMIND_BEFORE_VALUE_ARR[i++]);
+    while (i < ReminderConstants.REMIND_BEFORE_VALUE_ARR.length
+        && ReminderConstants.REMIND_BEFORE_VALUE_ARR[i].getMinutes() < remainingMinutesMax) {
+      mReminderCB.addItem(ReminderConstants.REMIND_BEFORE_VALUE_ARR[i++]);
     }
     // don't show reminder selection if it contains only the
     // entry "don't remind me"
@@ -396,7 +362,7 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
     mCloseBt.setText(mCloseBtText);
     mDialog.setAlwaysOnTop(ReminderPlugin.getInstance().getSettings().getProperty("alwaysOnTop","true").equalsIgnoreCase("true"));
     
-    int windowLocation = Integer.parseInt(ReminderPropertyDefaults.getPropertyDefaults().getValueFromProperties(ReminderPropertyDefaults.REMINDER_WINDOW_POSITION, ReminderPlugin.getInstance().getSettings()));
+    int windowLocation = Integer.parseInt(ReminderPropertyDefaults.getPropertyDefaults().getValueFromProperties(ReminderPropertyDefaults.KEY_REMINDER_WINDOW_POSITION, ReminderPlugin.getInstance().getSettings()));
     
     Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
     
@@ -481,19 +447,19 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
         minutesRunning += 24 * 60;
       }
       if (minutesRunning == 0) {
-        msg = mLocalizer.msg("alreadyRunning", "Just started");
+        msg = LOCALIZER.msg("alreadyRunning", "Just started");
       }
       else if (minutesRunning == 1) {
-        msg = mLocalizer.msg("alreadyRunningMinute", "Already running {0} minute", minutesRunning);
+        msg = LOCALIZER.msg("alreadyRunningMinute", "Already running {0} minute", minutesRunning);
       }
       else {
-        msg = mLocalizer.msg("alreadyRunningMinutes", "Already running {0} minutes", minutesRunning);
+        msg = LOCALIZER.msg("alreadyRunningMinutes", "Already running {0} minutes", minutesRunning);
       }
     } else if (program.isExpired()) {
-      msg = mLocalizer.msg("ended", "Program elapsed");
+      msg = LOCALIZER.msg("ended", "Program elapsed");
     }
     else {
-      msg = mLocalizer.msg("soonStarts", "Soon starts");
+      msg = LOCALIZER.msg("soonStarts", "Soon starts");
     }
 
     if (mHeader != null) {
@@ -558,7 +524,7 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
     
     for (ReminderListItem reminder : mReminderItems) {
       mGlobalReminderList.removeWithoutChecking(reminder.getProgramItem());
-      if (minutes != DONT_REMIND_AGAIN) {
+      if (minutes != ReminderConstants.DONT_REMIND_AGAIN) {
         Program program = reminder.getProgram();
         mGlobalReminderList.add(program, new ReminderContent(minutes, reminder
             .getComment()));
@@ -584,79 +550,7 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
   public JRootPane getRootPane() {
     return mDialog.getRootPane();
   }
-
-  public static String getStringForMinutes(final int minutes) {
-    if(minutes == DONT_REMIND_AGAIN) {
-      return DONT_REMIND_AGAIN_VALUE.toString();
-    }
-    
-    for (int i = 0; i < REMIND_BEFORE_VALUE_ARR.length; i++) {
-      if(REMIND_BEFORE_VALUE_ARR[i].getMinutes() == minutes) {
-        return REMIND_BEFORE_VALUE_ARR[i].toString();
-      }
-    }
-
-    for (int i = 0; i < REMIND_AFTER_VALUE_ARR.length; i++) {
-      if(REMIND_AFTER_VALUE_ARR[i].getMinutes() == minutes) {
-        return REMIND_AFTER_VALUE_ARR[i].toString();
-      }
-    }
-    
-    return null;
-  }
-
- /* public static int getValueForMinutes(final int minutes) {
-    for(int i = 0; i < REMIND_VALUE_ARR.length; i++) {
-      if(REMIND_VALUE_ARR[i] == minutes) {
-        return i - 1;
-      }
-    }
-
-    return -1;
-  }*/
-
- /* public static int getMinutesForValue(final String value) {
-    int minutes = 0;
-    
-    for(int i = 0; i < REMIND_MSG_ARR.length; i++) {
-      if(value.equals(REMIND_MSG_ARR[i])) {
-        minutes = REMIND_VALUE_ARR[i];
-        break;
-      }
-    }
-    
-    return minutes;
-  }*/
   
-  public static JComboBox getPreReminderMinutesSelection(int selectedMinutes) {
-    final JComboBox selection = new JComboBox();
-    
-    if(selectedMinutes < 0) {
-      selectedMinutes = ReminderPlugin.getInstance().getDefaultReminderTime();
-    }
-    
-    for(RemindValue value : REMIND_BEFORE_VALUE_ARR) {
-      selection.addItem(value);
-      
-      if(value.getMinutes() == selectedMinutes) {
-        selection.setSelectedIndex(selection.getItemCount()-1);
-      }
-    }
-    
-    return selection;
-  }
-
-  public static int getReminderMinutesSelected(JComboBox selection) {
-    int result = DONT_REMIND_AGAIN;
-    
-    Object item = selection.getSelectedItem();
-    
-    if(item != null && item instanceof RemindValue) {
-      result = ((RemindValue)item).getMinutes();
-    }
-    
-    return result;
-  }
   public void stateChanged(final ChangeEvent e) {
     updateRunningTime();
   }

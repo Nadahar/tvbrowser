@@ -36,19 +36,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 
-import tvbrowser.core.plugin.PluginManagerImpl;
-import tvbrowser.extras.common.LimitationConfiguration;
-import tvbrowser.extras.common.ReminderConfiguration;
-import tvbrowser.extras.favoritesplugin.FavoriteConfigurator;
-import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
-import tvbrowser.extras.favoritesplugin.FavoritesPluginProxy;
-import tvbrowser.extras.favoritesplugin.dlgs.FavoriteTreeModel;
-import tvbrowser.extras.reminderplugin.ReminderFrame;
-import tvbrowser.extras.reminderplugin.ReminderPlugin;
-import util.exc.ErrorHandler;
-import util.exc.TvBrowserException;
-import util.program.ProgramUtilities;
-import util.ui.SearchFormSettings;
 import devplugin.Channel;
 import devplugin.Date;
 import devplugin.Plugin;
@@ -56,6 +43,19 @@ import devplugin.Program;
 import devplugin.ProgramFieldType;
 import devplugin.ProgramReceiveTarget;
 import devplugin.ProgramSearcher;
+import tvbrowser.core.plugin.PluginManagerImpl;
+import tvbrowser.extras.common.LimitationConfiguration;
+import tvbrowser.extras.common.ReminderConfiguration;
+import tvbrowser.extras.favoritesplugin.FavoriteConfigurator;
+import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
+import tvbrowser.extras.favoritesplugin.FavoritesPluginProxy;
+import tvbrowser.extras.favoritesplugin.dlgs.FavoriteTreeModel;
+import tvbrowser.extras.reminderplugin.ReminderConstants;
+import tvbrowser.extras.reminderplugin.ReminderPlugin;
+import util.exc.ErrorHandler;
+import util.exc.TvBrowserException;
+import util.program.ProgramUtilities;
+import util.ui.SearchFormSettings;
 
 public abstract class Favorite {
   private ArrayList<Program> mPrograms;
@@ -91,7 +91,7 @@ public abstract class Favorite {
     mBlackList = null; // defer initialization until needed
     mNewProgramsWasRequested = false;
     mFilterKey = 0;
-    mDefaultReminderMinutes = ReminderFrame.DONT_REMIND_AGAIN;
+    mDefaultReminderMinutes = ReminderConstants.DONT_REMIND_AGAIN;
 
     mForwardPluginArr = new ProgramReceiveTarget[0];
     handleNewGlobalReceiveTargets(new ProgramReceiveTarget[0]);
@@ -227,10 +227,10 @@ public abstract class Favorite {
   public ProgramReceiveTarget[] getForwardPlugins() {
     return mForwardPluginArr;
   }
-
+/*
   private String getReceiveTargetId(ProgramReceiveTarget target) {
     return new StringBuilder(target.getReceiveIfId()).append("_").append(target.getTargetId()).toString();
-  }
+  }*/
 
   public void handleNewGlobalReceiveTargets(ProgramReceiveTarget[] oldDefaultTargets) {
     ProgramReceiveTarget[] defaultTargets = FavoritesPlugin.getInstance().getDefaultClientPluginsTargets();
@@ -666,7 +666,7 @@ public abstract class Favorite {
       p.unmark(FavoritesPluginProxy.getInstance());
     }
 
-    int reminderMinutes = ReminderFrame.NO_REMINDER;
+    int reminderMinutes = ReminderConstants.NO_REMINDER;
 
     String[] reminderServices = getReminderConfiguration().getReminderServices();
     for (String reminderService : reminderServices) {
@@ -905,7 +905,7 @@ public abstract class Favorite {
               
               int reminderMinutes = info.getReminderMinutes();
               
-              if(reminderMinutes == ReminderFrame.NO_REMINDER && !info.equals(p)) {
+              if(reminderMinutes == ReminderConstants.NO_REMINDER && !info.equals(p)) {
                 reminderMinutes = mDefaultReminderMinutes;
               }
               
