@@ -43,14 +43,12 @@ import javax.swing.SwingUtilities;
 
 import org.apache.commons.lang3.StringUtils;
 
-import util.exc.ErrorHandler;
-import util.io.ExecutionHandler;
-import util.io.IOUtilities;
-import util.paramhandler.ParamParser;
-import devplugin.Date;
 import devplugin.Program;
 import devplugin.ProgramReceiveIf;
 import devplugin.ProgramReceiveTarget;
+import util.exc.ErrorHandler;
+import util.io.ExecutionHandler;
+import util.paramhandler.ParamParser;
 
 public class ReminderTimerListener {
 
@@ -88,7 +86,8 @@ public class ReminderTimerListener {
       Toolkit.getDefaultToolkit().beep();
     }
 
-    if ("true" .equals(mSettings.getProperty( "usemsgbox" ))) {
+    if (ReminderPropertyDefaults.getPropertyDefaults().getValueFromProperties(ReminderPropertyDefaults.KEY_FRAME_REMINDERS_SHOW,ReminderPlugin.getInstance().getSettings()).equalsIgnoreCase("true") 
+        || ReminderPropertyDefaults.getPropertyDefaults().getValueFromProperties(ReminderPropertyDefaults.KEY_REMINDER_WINDOW_SHOW,ReminderPlugin.getInstance().getSettings()).equalsIgnoreCase("true")) {
       // sort reminders by time
       HashMap<Integer, ArrayList<ReminderListItem>> sortedReminders = new HashMap<Integer, ArrayList<ReminderListItem>>(reminders.size());
       for (ReminderListItem reminder : reminders) {
@@ -104,9 +103,15 @@ public class ReminderTimerListener {
         }
         list.add(reminder);
       }
+      
       // show reminders at same time in one window
       for (ArrayList<ReminderListItem> singleTimeReminders : sortedReminders.values()) {
-        new ReminderFrame(mReminderList, singleTimeReminders, getAutoCloseReminderTime(singleTimeReminders));
+        if(ReminderPropertyDefaults.getPropertyDefaults().getValueFromProperties(ReminderPropertyDefaults.KEY_FRAME_REMINDERS_SHOW,ReminderPlugin.getInstance().getSettings()).equalsIgnoreCase("true")) {
+          FrameReminders.getInstance().addReminders(mReminderList, singleTimeReminders);
+        }
+        else if(ReminderPropertyDefaults.getPropertyDefaults().getValueFromProperties(ReminderPropertyDefaults.KEY_REMINDER_WINDOW_SHOW,ReminderPlugin.getInstance().getSettings()).equalsIgnoreCase("true")) {
+          new ReminderFrame(mReminderList, singleTimeReminders, getAutoCloseReminderTime(singleTimeReminders));
+        }
       }
     } else {
       for (ReminderListItem reminder : reminders) {
@@ -166,47 +171,14 @@ public class ReminderTimerListener {
     });
   }
 
-
+  
   private int getAutoCloseReminderTime(ArrayList<ReminderListItem> reminders) {
     int result = 0;
     for (ReminderListItem reminder : reminders) {
       result = Math
-          .max(result, getAutoCloseReminderTime(reminder.getProgram()));
+          .max(result, ReminderConstants.getAutoCloseReminderTime(reminder.getProgram()));
     }
     return result;
   }
-
-  /**
-     * Gets the time (in seconds) after which the reminder frame closes
-     * automatically.
-     */
-    private int getAutoCloseReminderTime(Program p) {
-      int autoCloseReminderTime = 0;
-      try {
-        if(mSettings.getProperty("autoCloseBehaviour","onEnd").equals("onEnd")) {
-          int endTime = p.getStartTime() + p.getLength();
-
-          int currentTime = IOUtilities.getMinutesAfterMidnight();
-          int dateDiff = p.getDate().compareTo(Date.getCurrentDate());
-          if (dateDiff == -1) { // program started yesterday
-            currentTime += 1440;
-          }
-          else if (dateDiff == 1) { // program starts the next day
-            endTime += 1440;
-          }
-          autoCloseReminderTime = (endTime - currentTime) * 60;
-        }
-        else if(mSettings.getProperty("autoCloseBehaviour","onTime").equals("onTime")){
-          String asString = mSettings.getProperty("autoCloseReminderTime", "10");
-          autoCloseReminderTime = Integer.parseInt(asString);
-        } else {
-          autoCloseReminderTime = 0;
-        }
-      } catch (Exception exc) {
-        // ignore
-      }
-      return autoCloseReminderTime;
-    }
-
 
 }

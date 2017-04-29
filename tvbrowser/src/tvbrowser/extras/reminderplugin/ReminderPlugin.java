@@ -33,7 +33,6 @@ import java.awt.Frame;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -66,6 +65,20 @@ import javax.swing.SwingUtilities;
 
 import org.apache.commons.lang3.StringUtils;
 
+import devplugin.ActionMenu;
+import devplugin.AfterDataUpdateInfoPanel;
+import devplugin.ContextMenuAction;
+import devplugin.ContextMenuSeparatorAction;
+import devplugin.Date;
+import devplugin.Plugin;
+import devplugin.PluginCenterPanel;
+import devplugin.PluginCenterPanelWrapper;
+import devplugin.PluginTreeNode;
+import devplugin.Program;
+import devplugin.ProgramItem;
+import devplugin.ProgramReceiveIf;
+import devplugin.ProgramReceiveTarget;
+import devplugin.SettingsItem;
 import tvbrowser.core.Settings;
 import tvbrowser.core.TvDataUpdateListener;
 import tvbrowser.core.TvDataUpdater;
@@ -83,20 +96,6 @@ import util.ui.TVBrowserIcons;
 import util.ui.UIThreadRunner;
 import util.ui.UiUtilities;
 import util.ui.persona.Persona;
-import devplugin.ActionMenu;
-import devplugin.AfterDataUpdateInfoPanel;
-import devplugin.ContextMenuAction;
-import devplugin.ContextMenuSeparatorAction;
-import devplugin.Date;
-import devplugin.Plugin;
-import devplugin.PluginCenterPanel;
-import devplugin.PluginCenterPanelWrapper;
-import devplugin.PluginTreeNode;
-import devplugin.Program;
-import devplugin.ProgramItem;
-import devplugin.ProgramReceiveIf;
-import devplugin.ProgramReceiveTarget;
-import devplugin.SettingsItem;
 
 /**
  * TV-Browser
@@ -202,7 +201,7 @@ public class ReminderPlugin {
         if(mReminderListPanel != null) {
           int type = ReminderListPanel.SCROLL_TO_NEXT_TIME_TYPE;
           
-          if(!Boolean.parseBoolean(ReminderPropertyDefaults.getPropertyDefaults().getValueFromProperties(ReminderPropertyDefaults.SCROLL_TIME_TYPE_NEXT, mSettings))) {
+          if(!Boolean.parseBoolean(ReminderPropertyDefaults.getPropertyDefaults().getValueFromProperties(ReminderPropertyDefaults.KEY_SCROLL_TIME_TYPE_NEXT, mSettings))) {
             type = ReminderListPanel.SCROLL_TO_TIME_TYPE;
           }
           
@@ -321,7 +320,7 @@ public class ReminderPlugin {
         }
         else {
           if(mReminderListPanel != null) {
-            Persona.getInstance().removePersonaListerner(mReminderListPanel);
+            Persona.getInstance().removePersonaListener(mReminderListPanel);
           }
           
           mReminderListPanel = null;
@@ -352,11 +351,11 @@ public class ReminderPlugin {
 
   }
 
-
+/*
   private ObjectInputStream getObjectInputStream(File f) throws IOException {
     return new ObjectInputStream(new BufferedInputStream(new FileInputStream(f), 0x4000));
   }
-
+*/
   private void loadReminderData() {
     try {
 
@@ -561,8 +560,13 @@ public class ReminderPlugin {
     if (settings == null) {
       settings = new Properties();
     }
-    if (settings.getProperty("usemsgbox") == null) {
-      settings.setProperty("usemsgbox", "true");
+    if (settings.getProperty(ReminderPropertyDefaults.KEY_REMINDER_WINDOW_SHOW) == null) {
+      settings.setProperty(ReminderPropertyDefaults.KEY_FRAME_REMINDERS_SHOW, "true");
+    }
+    else if(settings.getProperty(ReminderPropertyDefaults.KEY_REMINDER_WINDOW_SHOW).equals("true") 
+        && settings.getProperty(ReminderPropertyDefaults.KEY_FRAME_REMINDERS_SHOW) == null) {
+      settings.setProperty(ReminderPropertyDefaults.KEY_FRAME_REMINDERS_SHOW, "true");
+      settings.setProperty(ReminderPropertyDefaults.KEY_REMINDER_WINDOW_SHOW, "false");
     }
     if (settings.getProperty("numberofremindoptions") != null && settings.getProperty("defaultReminderEntry") != null) {      
       int defaultRemind = Integer.parseInt(settings.getProperty("defaultReminderEntry")) - 5;
@@ -617,7 +621,7 @@ public class ReminderPlugin {
       
       ArrayList<ActionMenu> actions = new ArrayList<ActionMenu>(values.length + 3);
 
-      actions.add(new ActionMenu(new AbstractAction(ReminderFrame.DONT_REMIND_AGAIN_VALUE.toString()) {
+      actions.add(new ActionMenu(new AbstractAction(ReminderConstants.DONT_REMIND_AGAIN_VALUE.toString()) {
         public void actionPerformed(ActionEvent e) {
           mReminderList.removeWithoutChecking(program);
           updateRootNode(true);
@@ -647,7 +651,7 @@ public class ReminderPlugin {
       return new ActionMenu(getName(), IconLoader.getInstance().getIconFromTheme("apps",
           "appointment", 16), actions.toArray(new ActionMenu[actions
           .size()]));
-    } else if ((program.isExpired() || program.isOnAir())
+    } else if ((program.isExpired() /*|| program.isOnAir()*/)
         && (!program.equals(Plugin.getPluginManager().getExampleProgram()))) {
       return null;
     } else {
@@ -684,10 +688,8 @@ public class ReminderPlugin {
               }
             });
           } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
           } catch (InvocationTargetException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
           }
         }
@@ -708,8 +710,8 @@ public class ReminderPlugin {
     if (defaultReminderEntryStr != null) {
       try {
         int inx = Integer.parseInt(defaultReminderEntryStr);
-        if (inx < ReminderFrame.REMIND_BEFORE_VALUE_ARR.length) {
-          minutes = ReminderFrame.REMIND_BEFORE_VALUE_ARR[inx].getMinutes();
+        if (inx < ReminderConstants.REMIND_BEFORE_VALUE_ARR.length) {
+          minutes = ReminderConstants.REMIND_BEFORE_VALUE_ARR[inx].getMinutes();
         }
       } catch (NumberFormatException e) {
         // ignore
@@ -767,7 +769,7 @@ public class ReminderPlugin {
       return item.getMinutes();
     }
 
-    return ReminderFrame.NO_REMINDER;
+    return ReminderConstants.NO_REMINDER;
   }
 
   /**
@@ -810,7 +812,7 @@ public class ReminderPlugin {
       return item.getMinutes();
     }
 
-    return ReminderFrame.DONT_REMIND_AGAIN;
+    return ReminderConstants.DONT_REMIND_AGAIN;
   }
 
   /**
@@ -892,7 +894,7 @@ public class ReminderPlugin {
       }
     };
 
-    action.putValue(Action.NAME, mLocalizer.msg("showReminderList", "Show Reminder list"));
+    action.putValue(Action.NAME, mLocalizer.msg("showReminderList", "Show Edit Reminder list"));
     action.putValue(Action.SMALL_ICON, IconLoader.getInstance()
         .getIconFromTheme("apps", "appointment", 16));
     action.putValue(Plugin.BIG_ICON, IconLoader.getInstance().getIconFromTheme("apps", "appointment", 22));
@@ -900,7 +902,34 @@ public class ReminderPlugin {
         "Reminds you of programs to not miss them."));
     action.putValue(Plugin.ACTION_ID_KEY, REMINDER_LIST_ACTION_ID);
     
-    return new ActionMenu(getName(),IconLoader.getInstance().getIconFromTheme("apps", "appointment", 16),new Action[] {action,toggleTimer});
+    AbstractAction actionShowCurrentReminders = new AbstractAction() {
+      public void actionPerformed(ActionEvent evt) {
+        FrameReminders.getInstance().setVisible(true);
+      }
+    };
+
+    actionShowCurrentReminders.putValue(Action.NAME, mLocalizer.msg("showCurrentReminderList", "Show current Reminder list"));
+    actionShowCurrentReminders.putValue(Action.SMALL_ICON, IconLoader.getInstance()
+        .getIconFromTheme("apps", "appointment", 16));
+    actionShowCurrentReminders.putValue(Plugin.BIG_ICON, IconLoader.getInstance().getIconFromTheme("apps", "appointment", 22));
+    actionShowCurrentReminders.putValue(Action.SHORT_DESCRIPTION, mLocalizer.msg("description",
+        "Reminds you of programs to not miss them."));
+    actionShowCurrentReminders.putValue(Plugin.ACTION_ID_KEY, REMINDER_LIST_ACTION_ID);
+    
+    Action[] actions = new Action[] {
+        actionShowCurrentReminders,
+        action,
+        toggleTimer
+    };
+    
+    if(!ReminderPropertyDefaults.getPropertyDefaults().getValueFromProperties(ReminderPropertyDefaults.KEY_FRAME_REMINDERS_SHOW,getSettings()).equalsIgnoreCase("true")) {
+      actions = new Action[] {
+          action,
+          toggleTimer
+      };
+    }
+    
+    return new ActionMenu(getName(),IconLoader.getInstance().getIconFromTheme("apps", "appointment", 16), actions);
   }catch(Throwable t) {t.printStackTrace();}
   return null;
   }
@@ -1182,7 +1211,7 @@ public class ReminderPlugin {
     int remainingMinutes = ReminderPlugin.getTimeToProgramStart(program);
     
     if(program.isExpired()) {
-      remainingMinutes = ReminderFrame.DONT_REMIND_AGAIN;
+      remainingMinutes = ReminderConstants.DONT_REMIND_AGAIN;
     }
     else if(program.isOnAir()) {
       if(program.getStartTime() > IOUtilities.getMinutesAfterMidnight()) {
@@ -1195,7 +1224,7 @@ public class ReminderPlugin {
     
     int index = 0;
     
-    for(RemindValue value : ReminderFrame.REMIND_AFTER_VALUE_ARR)  {
+    for(RemindValue value : ReminderConstants.REMIND_AFTER_VALUE_ARR)  {
       if(value.getMinutes() < remainingMinutes && Math.abs(value.getMinutes()) < program.getLength()) {
           index++;
         }
@@ -1208,7 +1237,7 @@ public class ReminderPlugin {
     int remainingMinutes = ReminderPlugin.getTimeToProgramStart(program);
     
     if(program.isExpired()) {
-      remainingMinutes = ReminderFrame.DONT_REMIND_AGAIN;
+      remainingMinutes = ReminderConstants.DONT_REMIND_AGAIN;
     }
     else if(program.isOnAir()) {
       if(program.getStartTime() > IOUtilities.getMinutesAfterMidnight()) {
@@ -1221,13 +1250,13 @@ public class ReminderPlugin {
     
     ArrayList<RemindValue> valueList = new ArrayList<RemindValue>();
     
-    for(RemindValue value : ReminderFrame.REMIND_AFTER_VALUE_ARR)  {
+    for(RemindValue value : ReminderConstants.REMIND_AFTER_VALUE_ARR)  {
       if(value.getMinutes() < remainingMinutes && Math.abs(value.getMinutes()) < program.getLength()) {
         valueList.add(value);
       }
     }
     
-    for(RemindValue value : ReminderFrame.REMIND_BEFORE_VALUE_ARR)  {
+    for(RemindValue value : ReminderConstants.REMIND_BEFORE_VALUE_ARR)  {
       if(value.getMinutes() < remainingMinutes) {
         valueList.add(value);
       }

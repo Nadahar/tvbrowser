@@ -29,7 +29,6 @@ package tvbrowser.extras.favoritesplugin.dlgs;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
@@ -48,6 +47,18 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
 
+import com.jgoodies.forms.builder.ButtonBarBuilder;
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.factories.CC;
+import com.jgoodies.forms.factories.DefaultComponentFactory;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+
+import devplugin.Channel;
+import devplugin.ProgramFilter;
+import devplugin.ProgramReceiveIf;
+import devplugin.ProgramReceiveTarget;
 import tvbrowser.core.filters.FilterList;
 import tvbrowser.extras.common.DayListCellRenderer;
 import tvbrowser.extras.common.LimitationConfiguration;
@@ -56,7 +67,8 @@ import tvbrowser.extras.favoritesplugin.FavoriteConfigurator;
 import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
 import tvbrowser.extras.favoritesplugin.core.Favorite;
 import tvbrowser.extras.favoritesplugin.core.FavoriteFilter;
-import tvbrowser.extras.reminderplugin.ReminderFrame;
+import tvbrowser.extras.reminderplugin.RemindValue;
+import tvbrowser.extras.reminderplugin.ReminderConstants;
 import tvbrowser.extras.reminderplugin.ReminderPlugin;
 import tvbrowser.extras.reminderplugin.ReminderPluginProxy;
 import tvbrowser.ui.mainframe.MainFrame;
@@ -70,19 +82,6 @@ import util.ui.TabLayout;
 import util.ui.TimePeriodChooser;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
-
-import com.jgoodies.forms.builder.ButtonBarBuilder;
-import com.jgoodies.forms.builder.PanelBuilder;
-import com.jgoodies.forms.factories.Borders;
-import com.jgoodies.forms.factories.CC;
-import com.jgoodies.forms.factories.DefaultComponentFactory;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
-
-import devplugin.Channel;
-import devplugin.ProgramFilter;
-import devplugin.ProgramReceiveIf;
-import devplugin.ProgramReceiveTarget;
 
 /**
  * A class for editing favorites.
@@ -98,7 +97,7 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
   private JCheckBox mProvideFilter;
 
   private JCheckBox mUseReminderCb;
-  private JComboBox mReminderMinutesSelection;
+  private JComboBox<RemindValue> mReminderMinutesSelection;
 
   private JCheckBox mLimitChannelCb;
 
@@ -110,7 +109,7 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
 
   private Channel[] mChannelArr;
 
-  private JComboBox mLimitDaysCB;
+  private JComboBox<Object> mLimitDaysCB;
 
   private TimePeriodChooser mTimePeriodChooser;
 
@@ -319,7 +318,7 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
 
     mChannelLabel = new JLabel(getChannelString(mChannelArr));
 
-    mLimitDaysCB = new JComboBox(new Object[] {
+    mLimitDaysCB = new JComboBox<Object>(new Object[] {
         LimitationConfiguration.DAYLIMIT_DAILY,
         LimitationConfiguration.DAYLIMIT_WEEKDAY,
         LimitationConfiguration.DAYLIMIT_WEEKEND,
@@ -396,7 +395,7 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
   private JPanel createReminderPanel() {
     JPanel panel = new JPanel(new FormLayout("default,5dlu:grow,default","default"));
     panel.add(mUseReminderCb = new JCheckBox(mLocalizer.msg("reminderWindow", "Reminder window")), CC.xy(1, 1));
-    panel.add(mReminderMinutesSelection = ReminderFrame.getPreReminderMinutesSelection(mFavorite.getReminderMinutesDefault()), CC.xy(3, 1));
+    panel.add(mReminderMinutesSelection = ReminderConstants.getPreReminderMinutesSelection(mFavorite.getReminderMinutesDefault()), CC.xy(3, 1));
 
     mReminderMinutesSelection.setEnabled(false);
     mUseReminderCb.addItemListener(new ItemListener() {
@@ -561,7 +560,7 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
     int reminderMinutesOld = mFavorite.getReminderMinutesDefault();
 
     if (mUseReminderCb.isSelected()) {
-      mFavorite.setReminderMinutesDefault(ReminderFrame.getReminderMinutesSelected(mReminderMinutesSelection));
+      mFavorite.setReminderMinutesDefault(ReminderConstants.getReminderMinutesSelected(mReminderMinutesSelection));
       mFavorite.getReminderConfiguration().setReminderServices(new String[] { ReminderConfiguration.REMINDER_DEFAULT });
     } else {
       if (wasReminderEnabled) {

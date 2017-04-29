@@ -43,7 +43,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -60,7 +59,6 @@ import javax.swing.SwingConstants;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
-import devplugin.Program;
 
 public class ReminderDialog extends JDialog implements WindowClosingIf {
 
@@ -69,7 +67,7 @@ public class ReminderDialog extends JDialog implements WindowClosingIf {
 
   private boolean mOkPressed=false;
 
-  private JComboBox mList;
+  private JComboBox<RemindValue> mList;
 
   private JCheckBox mRememberSettingsCb, mDontShowDialog;
 
@@ -121,7 +119,7 @@ public class ReminderDialog extends JDialog implements WindowClosingIf {
 
     northPn.add(headerPanel);
 
-    mList=new JComboBox(mRemindValueArr);
+    mList=new JComboBox<>(mRemindValueArr);
 
     String s=settings.getProperty("defaultReminderEntry");
     int reminderTime = 5;

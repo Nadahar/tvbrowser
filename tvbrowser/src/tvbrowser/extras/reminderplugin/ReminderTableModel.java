@@ -21,7 +21,7 @@ public class ReminderTableModel extends AbstractTableModel {
   
   private ReminderList mList;
   private ReminderListItem[] mProgramItems;
-  private JComboBox mTitleFilterBox;
+  private JComboBox<String> mTitleFilterBox;
 
   private boolean mHandleBoxSelection;
   
@@ -31,7 +31,7 @@ public class ReminderTableModel extends AbstractTableModel {
    * @param list The list with the reminders.
    * @param titleFilterBox The title filter selection combo box.
    */
-  public ReminderTableModel(ReminderList list, JComboBox titleFilterBox) {
+  public ReminderTableModel(ReminderList list, JComboBox<String> titleFilterBox) {
     mList = list;
     mTitleFilterBox = titleFilterBox;
     mHandleBoxSelection = true;

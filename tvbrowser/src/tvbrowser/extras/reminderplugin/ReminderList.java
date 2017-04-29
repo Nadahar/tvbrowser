@@ -134,7 +134,7 @@ public class ReminderList implements ActionListener {
   }
 
   private void add(final Program program, final int minutes, final int referenceCount) {
-    if (!program.isExpired() && minutes != ReminderFrame.NO_REMINDER) {
+    if (!program.isExpired() && minutes != ReminderConstants.NO_REMINDER) {
       ReminderListItem item = getReminderItem(program);
 
       if (item != null) {
@@ -154,7 +154,7 @@ public class ReminderList implements ActionListener {
   }
 
   private void add(Program program, ReminderContent reminderContent, int referenceCount) {
-    if (!program.isExpired() && reminderContent.getReminderMinutes() != ReminderFrame.NO_REMINDER) {
+    if (!program.isExpired() && reminderContent.getReminderMinutes() != ReminderConstants.NO_REMINDER) {
       ReminderListItem item = getReminderItem(program);
 
       if (item != null) {
@@ -230,6 +230,7 @@ public class ReminderList implements ActionListener {
     }
   }
 
+  @SuppressWarnings("unchecked")
   public void removeExpiredItems() {
     ArrayList<ReminderListItem> localItems = (ArrayList<ReminderListItem>) mList
             .clone();
@@ -272,15 +273,13 @@ public class ReminderList implements ActionListener {
     remove(new Program[]{program});
   }
 
+  @SuppressWarnings("unchecked")
   public void remove(Program[] programs) {
     ArrayList<ReminderListItem> localItems = (ArrayList<ReminderListItem>) mList
         .clone();
     for (Program program : programs) {
-      System.out.println(program);
       for (ReminderListItem item : localItems) {
-        System.out.println(item + " " + item.getProgram() + " " + item.getProgram().equals(program));
         if (program != null && item != null && (item.getProgram() == null || item.getProgram().equals(program))) {
-          System.out.println(" REMOVE");
           remove(item);
           break;
         }
