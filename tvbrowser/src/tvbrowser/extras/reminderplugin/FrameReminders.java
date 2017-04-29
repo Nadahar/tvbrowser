@@ -69,7 +69,7 @@ public class FrameReminders extends JFrame implements InterfaceClose<PanelRemind
     setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
     UiUtilities.registerForClosing(this);
     
-    Settings.layoutWindow("reminderFrameReminders", this, new Dimension(Sizes.dialogUnitXAsPixel(300, this), Sizes.dialogUnitXAsPixel(300, this)));
+    Settings.layoutWindow("reminderFrameReminders", this, new Dimension(Sizes.dialogUnitXAsPixel(300, this), Sizes.dialogUnitYAsPixel(300, this)));
   }
   
   public static synchronized FrameReminders getInstance() {
@@ -99,7 +99,9 @@ public class FrameReminders extends JFrame implements InterfaceClose<PanelRemind
       }
       
       if(ReminderPlugin.getInstance().getSettings().getProperty(ReminderPropertyDefaults.KEY_FRAME_REMINDERS_TO_FRONT_WHEN_REMINDER_ADDED,"false").equals("true")) {
-        toFront();
+        SwingUtilities.invokeLater(() -> {
+          toFront();
+        });
       }
     }catch(Throwable t) {
       t.printStackTrace();

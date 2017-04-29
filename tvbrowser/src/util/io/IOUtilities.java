@@ -865,6 +865,21 @@ public class IOUtilities {
       return CALENDAR.get(Calendar.HOUR_OF_DAY) * 60 + CALENDAR.get(Calendar.MINUTE);
     }
   }
+  
+  /**
+   * Gets the number of seconds since midnight
+   * <p>
+   * This method does not create any objects.
+   *
+   * @return The number of seconds since midnight as integer
+   * @since 3.4.5
+   */
+  public static int getSecondsAfterMidnight() {
+    synchronized(CALENDAR) {
+      CALENDAR.setTimeInMillis(System.currentTimeMillis());
+      return CALENDAR.get(Calendar.HOUR_OF_DAY) * 60 * 60 + CALENDAR.get(Calendar.MINUTE) * 60 + CALENDAR.get(Calendar.SECOND);
+    }
+  }
 
 
   /**

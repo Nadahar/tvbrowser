@@ -2,8 +2,6 @@ package tvbrowser.extras.reminderplugin;
 
 import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -20,6 +18,8 @@ import devplugin.Date;
 import devplugin.Program;
 import tvbrowser.core.Settings;
 import util.io.IOUtilities;
+import util.settings.PluginPictureSettings;
+import util.settings.ProgramPanelSettings;
 import util.ui.Localizer;
 import util.ui.ProgramPanel;
 import util.ui.ScrollableJPanel;
@@ -43,6 +43,7 @@ public class PanelReminder extends ScrollableJPanel {
   
   private int mRemainingMinutes;
   private InterfaceClose<PanelReminder> mCloseInterface;
+  private int mRunningMinutes;
 
   /**
    * automatically close when current time is larger than this point in time
@@ -106,23 +107,28 @@ public class PanelReminder extends ScrollableJPanel {
     }.start();
     
     mHeader = new JLabel();
-    mProgramPanel = new ProgramPanel(program);
+    mProgramPanel = new ProgramPanel(program,
+        new ProgramPanelSettings(new PluginPictureSettings(
+            PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE), false,
+            ProgramPanelSettings.X_AXIS, false, true, false));
+    mProgramPanel.addPluginContextMenuMouseListener(ReminderPluginProxy
+        .getInstance());
     mReminderCB = new JComboBox<>();
     
     final int progMinutesAfterMidnight = program.getStartTime();
     int minutesAfterMidnight = IOUtilities.getMinutesAfterMidnight() + 1440
         * (program.getDate().getNumberOfDaysSince(Date.getCurrentDate()));
     
-    int runningMinutes = 0;
+    mRunningMinutes = 0;
     final Date today = Date.getCurrentDate();
     
     String msg = null;
     
     if(program.isOnAir()) {
-      runningMinutes = Math.max(runningMinutes, (minutesAfterMidnight - progMinutesAfterMidnight));
+      mRunningMinutes = Math.max(mRunningMinutes, (minutesAfterMidnight - progMinutesAfterMidnight));
     }
     else if(program.isExpired()) {
-      runningMinutes = -1;
+      mRunningMinutes = -1;
     }
     
     mRemainingSecs = ReminderConstants.getAutoCloseReminderTime(program);
@@ -152,11 +158,10 @@ public class PanelReminder extends ScrollableJPanel {
     
     if (mRemainingSecs > 0) {
       updateCloseBtText();
-      mAutoCloseTimer = new Timer(1000, new ActionListener() {
-        public void actionPerformed(final ActionEvent evt) {
+      mAutoCloseTimer = new Timer(1000, e -> {
           handleTimerEvent();
         }
-      });
+      );
       mAutoCloseTimer.start();
     }
     
@@ -195,8 +200,8 @@ public class PanelReminder extends ScrollableJPanel {
     
     int i=0;
     
-    while (i < ReminderConstants.REMIND_AFTER_VALUE_ARR.length && runningMinutes-Math.abs(ReminderConstants.REMIND_AFTER_VALUE_ARR[i].getMinutes()) < 0) {
-      if(runningMinutes >= 0 && Math.abs(ReminderConstants.REMIND_AFTER_VALUE_ARR[i].getMinutes()) < program.getLength()) {
+    while (i < ReminderConstants.REMIND_AFTER_VALUE_ARR.length && mRunningMinutes-Math.abs(ReminderConstants.REMIND_AFTER_VALUE_ARR[i].getMinutes()) < 0) {
+      if(mRunningMinutes >= 0 && Math.abs(ReminderConstants.REMIND_AFTER_VALUE_ARR[i].getMinutes()) < program.getLength()) {
         mReminderCB.addItem(ReminderConstants.REMIND_AFTER_VALUE_ARR[i]);
       }
       
@@ -219,6 +224,8 @@ public class PanelReminder extends ScrollableJPanel {
     updateRunningTime();
   }
   
+  private int mLastUpdateMinute;
+  
   /**
    * Although this is called once a second, we don't want to count each second
    * individually. If the whole system is under heavy load, or hibernated the
@@ -233,6 +240,44 @@ public class PanelReminder extends ScrollableJPanel {
     } else {
       updateCloseBtText();
       updateRunningTime();
+    }
+    
+    if(mReminderCB.getItemCount() > 1 && mLastUpdateMinute != IOUtilities.getMinutesAfterMidnight()) {
+      mLastUpdateMinute = IOUtilities.getMinutesAfterMidnight();
+      
+      final int diff = mLastUpdateMinute  + 1440
+          * (mItem.getProgram().getDate().getNumberOfDaysSince(Date.getCurrentDate())) - mItem.getProgram().getStartTime();
+      
+      if(!mItem.getProgram().isOnAir() && !mItem.getProgram().isExpired()) {
+        mRemainingMinutes = ReminderPlugin.getTimeToProgramStart(mItem.getProgram());
+      }
+      else {
+        mRemainingMinutes = 0;
+      }
+      
+      final int selectedIndex = mReminderCB.getSelectedIndex();
+      RemindValue selectedValue = (RemindValue)mReminderCB.getSelectedItem();
+      
+      for(int i = mReminderCB.getItemCount()-1; i >= 0; i--) {
+        final RemindValue test = mReminderCB.getItemAt(i);
+        
+        if(test.getMinutes() != ReminderConstants.DONT_REMIND_AGAIN && 
+            ((test.getMinutes() >= 0 && mRemainingMinutes <= test.getMinutes()) ||
+            (diff >= Math.abs(test.getMinutes())))) {
+          if(selectedValue != null && test.equals(selectedValue)) {
+            selectedValue = null;
+          }
+          mReminderCB.removeItemAt(i);
+        }
+      }
+      
+      if(selectedValue == null) {
+        mReminderCB.setSelectedIndex(Math.min(selectedIndex, mReminderCB.getItemCount()-1));
+      }
+      
+      if(mReminderCB.getItemCount() == 1) {
+        mReminderCB.setVisible(false);
+      }
     }
   }
   
