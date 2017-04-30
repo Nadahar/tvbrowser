@@ -96,18 +96,17 @@ public class FrameReminders extends JFrame implements InterfaceClose<PanelRemind
         mListReminders.add(new PanelReminder(item, this), 0);
       }
       
-      mListReminders.updateUI();
-      
       if(!isVisible()) {
         setVisible(true);
       }
       
       SwingUtilities.invokeLater(() -> {
-    	if((getExtendedState() & JFrame.ICONIFIED) == JFrame.ICONIFIED) {
-    	  setExtendedState(JFrame.NORMAL);
-    	}
+    	  if((getExtendedState() & JFrame.ICONIFIED) == JFrame.ICONIFIED) {
+    	    setExtendedState(JFrame.NORMAL);
+    	  }
     	
-    	mScrollPane.getVerticalScrollBar().setValue(0);
+    	  mScrollPane.getVerticalScrollBar().setValue(0);
+    	  mListReminders.updateUI();
       });
        
       if(ReminderPlugin.getInstance().getSettings().getProperty(ReminderPropertyDefaults.KEY_FRAME_REMINDERS_TO_FRONT_WHEN_REMINDER_ADDED,"false").equals("true")) {
