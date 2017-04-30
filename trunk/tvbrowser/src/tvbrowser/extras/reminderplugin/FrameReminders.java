@@ -32,10 +32,12 @@ public class FrameReminders extends JFrame implements InterfaceClose<PanelRemind
   
   private ReminderList mGlobalReminderList;
   private final ScrollableJPanel mListReminders;
+  private final JScrollPane mScrollPane;
   
   private FrameReminders() {
     mListReminders = new ScrollableJPanel();
     mListReminders.setLayout(new BoxLayout(mListReminders, BoxLayout.Y_AXIS));
+    mScrollPane = new JScrollPane(mListReminders);
     
     final JButton close = new JButton(Localizer.getLocalization(Localizer.I18N_CLOSE));
     close.addActionListener(e -> {
@@ -53,7 +55,7 @@ public class FrameReminders extends JFrame implements InterfaceClose<PanelRemind
     final JPanel content = new JPanel(new FormLayout("default,100dlu:grow,default","fill:100dlu:grow,5dlu,default"));
     content.setBorder(Borders.DIALOG);
     content.add(delete, CC.xy(1, 3));
-    content.add(new JScrollPane(mListReminders), CC.xyw(1, 1, 3));
+    content.add(mScrollPane, CC.xyw(1, 1, 3));
     content.add(close, CC.xy(3, 3));
     
     setContentPane(content);
@@ -100,6 +102,14 @@ public class FrameReminders extends JFrame implements InterfaceClose<PanelRemind
         setVisible(true);
       }
       
+      SwingUtilities.invokeLater(() -> {
+    	if((getExtendedState() & JFrame.ICONIFIED) == JFrame.ICONIFIED) {
+    	  setExtendedState(JFrame.NORMAL);
+    	}
+    	
+    	mScrollPane.getVerticalScrollBar().setValue(0);
+      });
+       
       if(ReminderPlugin.getInstance().getSettings().getProperty(ReminderPropertyDefaults.KEY_FRAME_REMINDERS_TO_FRONT_WHEN_REMINDER_ADDED,"false").equals("true")) {
         SwingUtilities.invokeLater(() -> {
           toFront();
@@ -153,5 +163,17 @@ public class FrameReminders extends JFrame implements InterfaceClose<PanelRemind
   @Override
   public void close() {
     setVisible(false);
+  }
+  
+  public void openShow() {
+    if(!isVisible()) {
+	  setVisible(true);
+	}
+	      
+	SwingUtilities.invokeLater(() -> {
+	  if((getExtendedState() & JFrame.ICONIFIED) == JFrame.ICONIFIED) {
+	    setExtendedState(JFrame.NORMAL);
+	  }
+	});
   }
 }

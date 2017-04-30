@@ -904,7 +904,7 @@ public class ReminderPlugin {
     AbstractAction actionShowCurrentReminders = new AbstractAction() {
       public void actionPerformed(ActionEvent evt) {
         if(ReminderPropertyDefaults.getPropertyDefaults().getValueFromProperties(ReminderPropertyDefaults.KEY_FRAME_REMINDERS_SHOW,ReminderPlugin.getInstance().getSettings()).equalsIgnoreCase("true")) {
-          FrameReminders.getInstance().setVisible(true);
+          FrameReminders.getInstance().openShow();
         }
         else {
           JOptionPane.showMessageDialog(UiUtilities.getLastModalChildOf(MainFrame.getInstance()), mLocalizer.msg("info.noCollectedReminders.message", "The window with the collected Reminders is\nnot acitvated, therefor it cannot be shown."), mLocalizer.msg("info.noCollectedReminders.title", "Collected Reminders not activated"), JOptionPane.INFORMATION_MESSAGE);
