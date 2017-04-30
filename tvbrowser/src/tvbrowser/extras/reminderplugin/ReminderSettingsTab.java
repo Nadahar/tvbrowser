@@ -154,6 +154,9 @@ public class ReminderSettingsTab implements SettingsTab {
     mFrameRemindersToFrontOnAdd = new JCheckBox(mLocalizer.msg("frameRemindersToFrontOnAdd", "Show window at front, when reminder is added"), propDefaults.getValueFromProperties(ReminderPropertyDefaults.KEY_FRAME_REMINDERS_TO_FRONT_WHEN_REMINDER_ADDED).equals("true"));
     mFrameRemindersCloseIfEmptry = new JCheckBox(mLocalizer.msg("frameRemindersCloseIfEmpty", "Close window automatically when last reminder is removed of it"), propDefaults.getValueFromProperties(ReminderPropertyDefaults.KEY_AUTO_CLOSE_FRAME_REMINDERS_IF_EMTPY).equals("true"));
     
+    mFrameRemindersToFrontOnAdd.setEnabled(mFrameRemindersChB.isSelected());
+    mFrameRemindersCloseIfEmptry.setEnabled(mFrameRemindersChB.isSelected());
+    
     JPanel frameRemindersCfg = new JPanel(new FormLayout("12dlu,default:grow","default,1dlu,default,1dlu,default"));
     frameRemindersCfg.add(mFrameRemindersChB, CC.xyw(1, 1, 2));
     frameRemindersCfg.add(mFrameRemindersToFrontOnAdd, CC.xy(2, 3));

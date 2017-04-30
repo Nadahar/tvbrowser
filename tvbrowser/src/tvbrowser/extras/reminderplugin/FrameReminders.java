@@ -18,6 +18,7 @@ import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.Sizes;
 
 import devplugin.Program;
+import tvbrowser.TVBrowser;
 import tvbrowser.core.Settings;
 import tvbrowser.extras.reminderplugin.PanelReminder.InterfaceClose;
 import util.ui.Localizer;
@@ -65,7 +66,8 @@ public class FrameReminders extends JFrame implements InterfaceClose<PanelRemind
       }
     });
     
-    setTitle(ReminderFrame.LOCALIZER.msg("title", "Reminder"));
+    setTitle(ReminderFrame.LOCALIZER.msg("title2", "Current Reminders"));
+    setIconImages(TVBrowser.ICONS_WINDOW);
     setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
     UiUtilities.registerForClosing(this);
     

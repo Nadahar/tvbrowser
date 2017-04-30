@@ -148,6 +148,8 @@ public class TVBrowser {
   private static Localizer mLocalizer;
 
   private static String curLookAndFeel;
+  
+  public static final ArrayList<Image> ICONS_WINDOW = new ArrayList<Image>(4);
 
   private static final boolean mIsStable = false;
   private static final int mMajorVersion = 3;
@@ -207,6 +209,11 @@ public class TVBrowser {
   };
 
   static {
+    ICONS_WINDOW.add(ImageUtilities.createImage("imgs/tvbrowser128.png"));
+    ICONS_WINDOW.add(ImageUtilities.createImage("imgs/tvbrowser48.png"));
+    ICONS_WINDOW.add(ImageUtilities.createImage("imgs/tvbrowser32.png"));
+    ICONS_WINDOW.add(ImageUtilities.createImage("imgs/tvbrowser16.png"));
+    
     File nightlyValues = new File("NIGHTLY_VALUES");
 
     if(!mIsStable && nightlyValues.isFile()) {
@@ -1027,12 +1034,8 @@ public class TVBrowser {
     TvDataServiceProxyManager.getInstance().setParamFrame(mainFrame);
 
     // Set the program icon
-    ArrayList<Image> iconImages = new ArrayList<Image>(2);
-    iconImages.add(ImageUtilities.createImage("imgs/tvbrowser128.png"));
-    iconImages.add(ImageUtilities.createImage("imgs/tvbrowser48.png"));
-    iconImages.add(ImageUtilities.createImage("imgs/tvbrowser32.png"));
-    iconImages.add(ImageUtilities.createImage("imgs/tvbrowser16.png"));
-    mainFrame.setIconImages(iconImages);
+    
+    mainFrame.setIconImages(ICONS_WINDOW);
 
     mTray = new SystemTray();
 
