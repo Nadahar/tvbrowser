@@ -903,7 +903,12 @@ public class ReminderPlugin {
     
     AbstractAction actionShowCurrentReminders = new AbstractAction() {
       public void actionPerformed(ActionEvent evt) {
-        FrameReminders.getInstance().setVisible(true);
+        if(ReminderPropertyDefaults.getPropertyDefaults().getValueFromProperties(ReminderPropertyDefaults.KEY_FRAME_REMINDERS_SHOW,ReminderPlugin.getInstance().getSettings()).equalsIgnoreCase("true")) {
+          FrameReminders.getInstance().setVisible(true);
+        }
+        else {
+          JOptionPane.showMessageDialog(UiUtilities.getLastModalChildOf(MainFrame.getInstance()), mLocalizer.msg("info.noCollectedReminders.message", "The window with the collected Reminders is\nnot acitvated, therefor it cannot be shown."), mLocalizer.msg("info.noCollectedReminders.title", "Collected Reminders not activated"), JOptionPane.INFORMATION_MESSAGE);
+        }
       }
     };
 
@@ -914,21 +919,12 @@ public class ReminderPlugin {
     actionShowCurrentReminders.putValue(Action.SHORT_DESCRIPTION, mLocalizer.msg("description",
         "Reminds you of programs to not miss them."));
     actionShowCurrentReminders.putValue(Plugin.ACTION_ID_KEY, REMINDER_LIST_ACTION_ID);
-    
-    Action[] actions = new Action[] {
+        
+    return new ActionMenu(getName(),IconLoader.getInstance().getIconFromTheme("apps", "appointment", 16), new Action[] {
         actionShowCurrentReminders,
         action,
         toggleTimer
-    };
-    
-    if(!ReminderPropertyDefaults.getPropertyDefaults().getValueFromProperties(ReminderPropertyDefaults.KEY_FRAME_REMINDERS_SHOW,getSettings()).equalsIgnoreCase("true")) {
-      actions = new Action[] {
-          action,
-          toggleTimer
-      };
-    }
-    
-    return new ActionMenu(getName(),IconLoader.getInstance().getIconFromTheme("apps", "appointment", 16), actions);
+    });
   }catch(Throwable t) {t.printStackTrace();}
   return null;
   }
