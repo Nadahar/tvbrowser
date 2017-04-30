@@ -560,14 +560,13 @@ public class ReminderPlugin {
     if (settings == null) {
       settings = new Properties();
     }
-    if (settings.getProperty(ReminderPropertyDefaults.KEY_REMINDER_WINDOW_SHOW) == null) {
-      settings.setProperty(ReminderPropertyDefaults.KEY_FRAME_REMINDERS_SHOW, "true");
-    }
-    else if(settings.getProperty(ReminderPropertyDefaults.KEY_REMINDER_WINDOW_SHOW).equals("true") 
-        && settings.getProperty(ReminderPropertyDefaults.KEY_FRAME_REMINDERS_SHOW) == null) {
-      settings.setProperty(ReminderPropertyDefaults.KEY_FRAME_REMINDERS_SHOW, "true");
+    if (settings.getProperty(ReminderPropertyDefaults.KEY_REMINDER_WINDOW_SHOW) == null ||
+        (settings.getProperty(ReminderPropertyDefaults.KEY_REMINDER_WINDOW_SHOW).equals("true") 
+            && settings.getProperty(ReminderPropertyDefaults.KEY_FRAME_REMINDERS_SHOW) == null)) {
       settings.setProperty(ReminderPropertyDefaults.KEY_REMINDER_WINDOW_SHOW, "false");
+      settings.setProperty(ReminderPropertyDefaults.KEY_FRAME_REMINDERS_SHOW, "true");
     }
+    
     if (settings.getProperty("numberofremindoptions") != null && settings.getProperty("defaultReminderEntry") != null) {      
       int defaultRemind = Integer.parseInt(settings.getProperty("defaultReminderEntry")) - 5;
       

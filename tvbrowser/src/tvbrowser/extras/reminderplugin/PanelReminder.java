@@ -88,15 +88,15 @@ public class PanelReminder extends ScrollableJPanel {
         while(opacity >= 0) {
           content.setBackground(new Color(238, 118, 0, Math.max(0, opacity)));
           
-          if(count > 25) {
-            opacity -= 2;
+          if(count > 166) {
+            opacity--;
           }
           else {
             count++;
           }
           
           try {
-            sleep(80);
+            sleep(30);
           } catch (InterruptedException e) {
             e.printStackTrace();
           }
