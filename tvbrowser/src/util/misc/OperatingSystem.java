@@ -87,10 +87,27 @@ public class OperatingSystem {
         return kdeSession.compareToIgnoreCase("true") == 0;
       }
     } catch (Exception e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
     return false;
   }
-
+  
+  /**
+   * @return true, if a GNOME session is running
+   * @since 3.4.5
+   */
+  public static boolean isGNOME() {
+    if (!isLinux()) {
+      return false;
+    }
+    try {
+      final String desktop = System.getenv("XDG_CURRENT_DESKTOP");
+      if (desktop != null) {
+        return desktop.compareToIgnoreCase("gnome") == 0;
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return false;
+  }
 }
