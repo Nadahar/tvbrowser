@@ -251,12 +251,52 @@ public class Java6Tray {
       	  }
       	}
       }, MouseEvent.MOUSE_EVENT_MASK ); 
+    } else if(OperatingSystem.isGNOME()) {
+      Toolkit.getDefaultToolkit().addAWTEventListener(event -> {
+        if(event.getSource().getClass().getName().contains("TrayIcon") && event instanceof MouseEvent) {
+          final MouseEvent e = (MouseEvent)event;
+          
+          if(event.getID() == MouseEvent.MOUSE_CLICKED) {
+            if(mTrayParent.isVisible()) {
+              mPopupMenu.setVisible(false);
+            }
+            else if(SwingUtilities.isLeftMouseButton(e)) {
+              if(e.getClickCount() == 1 && mLeftClickListener != null) {
+                mLeftClickListener.actionPerformed(null);
+              } else if(e.getClickCount() == 2 && mLeftDoubleClickListener != null) {
+                mLeftDoubleClickListener.actionPerformed(null);
+              }
+            }
+          }
+          else if(event.getID() == MouseEvent.MOUSE_PRESSED) {
+            if (e.isPopupTrigger()) {
+              if(SwingUtilities.isRightMouseButton(e) && mRightClickListener != null) {
+                mRightClickListener.actionPerformed(null);
+              }
+
+              showPopup(MouseInfo.getPointerInfo().getLocation());
+            }
+          }
+          else if(event.getID() == MouseEvent.MOUSE_RELEASED) {
+            if (e.isPopupTrigger()) {
+              if(SwingUtilities.isRightMouseButton(e) && mRightClickListener != null) {
+                mRightClickListener.actionPerformed(null);
+              }
+
+              showPopup(MouseInfo.getPointerInfo().getLocation());
+            }
+          }
+        }
+      }, MouseEvent.MOUSE_EVENT_MASK );
     }
     
     mTrayIcon.addMouseListener(new MouseAdapter() {
 
       public void mouseClicked(MouseEvent e) {
-        if(SwingUtilities.isLeftMouseButton(e)) {
+        if(mTrayParent.isVisible()) {
+          mPopupMenu.setVisible(false);
+        }
+        else if(SwingUtilities.isLeftMouseButton(e)) {
           if(e.getClickCount() == 1 && mLeftClickListener != null) {
             mLeftClickListener.actionPerformed(null);
           } else if(e.getClickCount() == 2 && mLeftDoubleClickListener != null) {
