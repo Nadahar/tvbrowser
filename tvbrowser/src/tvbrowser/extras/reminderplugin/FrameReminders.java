@@ -108,10 +108,14 @@ public class FrameReminders extends JFrame implements InterfaceClose<PanelRemind
     	  mScrollPane.getVerticalScrollBar().setValue(0);
     	  mListReminders.updateUI();
       });
-       
+      
       if(ReminderPlugin.getInstance().getSettings().getProperty(ReminderPropertyDefaults.KEY_FRAME_REMINDERS_TO_FRONT_WHEN_REMINDER_ADDED,"false").equals("true")) {
         SwingUtilities.invokeLater(() -> {
+          setExtendedState(getExtendedState());
+          setAlwaysOnTop(true);
           toFront();
+          requestFocus();
+          setAlwaysOnTop(false);
         });
       }
     }catch(Throwable t) {
