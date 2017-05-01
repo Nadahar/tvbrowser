@@ -25,13 +25,16 @@ package tvbrowser.ui.tray;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.MouseInfo;
 import java.awt.Point;
+import java.awt.Toolkit;
 import java.awt.TrayIcon;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -157,7 +160,7 @@ public class Java6Tray {
           }catch(Throwable sizeFault) {
             mTrayIcon = new TrayIcon(ImageIO.read(new File("imgs/tvbrowser16.png")), tooltip);
           }
-
+          
           mTrayParent = new JDialog();
           mTrayParent.setTitle("Tray-Menu");
 
@@ -184,13 +187,17 @@ public class Java6Tray {
       return false;
     }
   }
+  
+  private Thread mKDESingleClickWaitingThread;
+  private AtomicBoolean mSingleClick;
+  
   /**
    * Add Popup to Tray-Icon
    * @param trayMenu Popup
    */
   public void setTrayPopUp(JPopupMenu trayMenu) {
     mPopupMenu = trayMenu;
-
+    
     mPopupMenu.addPopupMenuListener(new PopupMenuListener() {
       public void popupMenuWillBecomeVisible(PopupMenuEvent e) {}
 
@@ -201,6 +208,51 @@ public class Java6Tray {
       public void popupMenuCanceled(PopupMenuEvent e) {}
     });
 
+    if(OperatingSystem.isKDE()) {
+      mSingleClick = new AtomicBoolean(false);
+      
+    	Toolkit.getDefaultToolkit().addAWTEventListener(event -> {
+        if(event.getID() == MouseEvent.MOUSE_ENTERED && event.getSource().equals(mTrayIcon)) {
+      	  if(mKDESingleClickWaitingThread == null || !mKDESingleClickWaitingThread.isAlive()) {
+      	    mSingleClick.set(true);
+      	    mKDESingleClickWaitingThread = new Thread("KDE SINGLE CLICK THREAD"){
+      	      @Override
+      	      public void run() {
+      	        try {
+                  sleep(250);
+                } catch (InterruptedException e) {
+                  // Ignore
+                }
+      	        
+      	        if(mSingleClick.get()) {
+      	          if(mRightClickListener != null) {
+                    mRightClickListener.actionPerformed(null);
+                  }
+                  
+      	          if(mTrayParent.isVisible()) {
+      	            mPopupMenu.setVisible(false);
+      	          }
+      	          else {
+      	            showPopup(MouseInfo.getPointerInfo().getLocation());
+      	          }
+      	        }
+      	        
+      	        mSingleClick.set(false);
+      	      }
+      	    };
+      	    mKDESingleClickWaitingThread.start();
+      	  }
+      	  else if(mSingleClick.get()) {
+      	    mSingleClick.set(false);
+      	    
+      	    if(mLeftClickListener != null) {
+      	      mLeftClickListener.actionPerformed(null);
+      	    }
+      	  }
+      	}
+      }, MouseEvent.MOUSE_EVENT_MASK ); 
+    }
+    
     mTrayIcon.addMouseListener(new MouseAdapter() {
 
       public void mouseClicked(MouseEvent e) {
