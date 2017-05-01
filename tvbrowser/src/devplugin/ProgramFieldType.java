@@ -61,7 +61,29 @@ public class ProgramFieldType {
   /**
    * unknown field format, should not occur
    */
-  public static final int UNKNOWN_FORMAT = 1;
+  public static final int FORMAT_UNKNOWN = 1;
+  /**
+   * program field format for binary fields (like pictures)
+   */
+  public static final int FORMAT_BINARY = 2;
+  /**
+   * program field format for strings
+   */
+  public static final int FORMAT_TEXT = 3;
+  /**
+   * program field format for numbers
+   */
+  public static final int FORMAT_INT = 4;
+  /**
+   * program field format for times (in numbers after midnight)
+   */
+  public static final int FORMAT_TIME = 5;
+  
+  /**
+   * unknown field format, should not occur
+   * @deprecated since 3.4.5, use {@link #FORMAT_UNKNOWN}
+   */
+  public static final int UNKNOWN_FORMAT = FORMAT_UNKNOWN;
   /**
    * @deprecated since 3.0, use {@link #UNKNOWN_FORMAT} instead
    */
@@ -69,25 +91,29 @@ public class ProgramFieldType {
   public static final int UNKOWN_FORMAT = UNKNOWN_FORMAT;
   /**
    * program field format for binary fields (like pictures)
+   * @deprecated since 3.4.5, use {@link #FORMAT_BINARY}
    */
-  public static final int BINARY_FORMAT = 2;
+  public static final int BINARY_FORMAT = FORMAT_BINARY;
   /**
    * program field format for strings
+   * @deprecated since 3.4.5, use {@link #FORMAT_TEXT}
    */
-  public static final int TEXT_FORMAT = 3;
+  public static final int TEXT_FORMAT = FORMAT_TEXT;
   /**
    * program field format for numbers
+   * @deprecated since 3.4.5, use {@link #FORMAT_INT}
    */
-  public static final int INT_FORMAT = 4;
+  public static final int INT_FORMAT = FORMAT_INT;
   /**
    * program field format for times (in numbers after midnight)
+   * @deprecated since 3.4.5, use {@link #FORMAT_TIME}
    */
-  public static final int TIME_FORMAT = 5;
-
+  public static final int TIME_FORMAT = FORMAT_TIME;
+  
   /**
    * number of Object fields (TEXT and BINARY format)
    */
-  private static final int OBJECT_FIELDS_COUNT = 28;
+  private static final int OBJECT_FIELDS_COUNT = 33;
 
   /**
    * number of int fields (INT and TIME format)
@@ -148,7 +174,7 @@ public class ProgramFieldType {
   public static final ProgramFieldType DESCRIPTION_TYPE
     = new ProgramFieldType(8, TEXT_FORMAT, true, "description",
                            "description", "Description", 5);
-
+  
   /**
    * Actor-List. Should be in this Format:
    *
@@ -378,6 +404,53 @@ public class ProgramFieldType {
   public static final ProgramFieldType PART_NUMBER_TOTAL_TYPE
   = new ProgramFieldType(43, INT_FORMAT, true, "total number of parts",
                          "totalPartNumber", "Total number of parts", 13);
+  
+  /**
+   * An entry with the original duration and
+   * the type of the original of the program
+   * 
+   * @since 3.4.5
+   */
+  public static final ProgramFieldType ORIGINAL_DURATION 
+  = new ProgramFieldType(9, FORMAT_TEXT, true, "original duration",
+                       "originalDuration", "Original duration", 28);
+  
+  /**
+   * List with keywords for program
+   * 
+   * @since 3.4.5
+   */
+  public static final ProgramFieldType KEYWORD_LIST 
+  = new ProgramFieldType(44, FORMAT_TEXT, true, "keyword list",
+                       "keywords", "Keywords", 29);
+
+  /**
+   * Info about mediathek availability
+   * 
+   * @since 3.4.5
+   */
+  public static final ProgramFieldType MEDIATHEK_INFO 
+  = new ProgramFieldType(45, FORMAT_TEXT, true, "mediathekinfo",
+                        "mediathekinfo", "Mediathek availability", 30);
+  
+  /**
+   * Link to mediathek entry
+   * 
+   * @since 3.4.5
+   */
+  public static final ProgramFieldType MEDIATHEK_LINK 
+  = new ProgramFieldType(46, FORMAT_TEXT, true, "mediatheklink",
+                       "mediatheklink", "Link to mediathek", 31);
+  
+  /**
+   * List with sub genres.
+   * 
+   * @since 3.4.5
+   */
+  public static final ProgramFieldType GENRE_SUB_LIST
+  = new ProgramFieldType(47, FORMAT_TEXT, true, "subgenre",
+                       "subgenre", "Subgenres", 32);
+  
   private int mTypeId;
 
   private String mName;
@@ -452,17 +525,17 @@ public class ProgramFieldType {
       return mKnownTypeArray[typeId];
     }
 
-    return new ProgramFieldType(typeId, UNKNOWN_FORMAT, false,
+    return new ProgramFieldType(typeId, FORMAT_UNKNOWN, false,
                                 "unknown (" + typeId + ")","unknown", "Unknown", -1);
   }
 
 
   public static String getFormatName(int format) {
     switch (format) {
-      case BINARY_FORMAT: return "binary format";
-      case TEXT_FORMAT: return "text format";
-      case INT_FORMAT: return "int format";
-      case TIME_FORMAT: return "time format";
+      case FORMAT_BINARY: return "binary format";
+      case FORMAT_TEXT: return "text format";
+      case FORMAT_INT: return "int format";
+      case FORMAT_TIME: return "time format";
       default: return "unknown format";
     }
   }
