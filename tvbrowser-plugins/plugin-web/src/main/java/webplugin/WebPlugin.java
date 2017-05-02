@@ -65,14 +65,14 @@ import util.ui.UiUtilities;
  * A User can configure his favorite Search-Engines and search for the given Movie
  */
 public class WebPlugin extends Plugin {
-  private static final Version VERSION = new Version(3,12);
+  private static final Version VERSION = new Version(3,13);
 
   private static final Logger LOGGER = java.util.logging.Logger
   .getLogger(WebPlugin.class.getName());
 
   private static final String CHANNEL_SITE = "channelSite";
   private static final String PROGRAM_SITE = "programSite";
-  private static final String SITE_MEDIATHEK = "mediathekSite";
+  private static final String SITE_VOD = "vodSite";
 
 /** Localizer */
   private static final Localizer LOCALIZER = Localizer
@@ -109,7 +109,7 @@ public class WebPlugin extends Plugin {
           "http://www.omdb.org/search/movies?search%5Btext%5D={urlencode(" + WEBSEARCH_ALL + ", \"UTF-8\")}", 
           "http://www.omdb.org/search/people?search%5Btext%5D={urlencode(" + WEBSEARCH_ALL + ", \"UTF-8\")}", null, false, true),
       new WebAddress(LOCALIZER.msg("programPage", "Open website of program"),PROGRAM_SITE,null,false,true),
-      new WebAddress(LOCALIZER.msg("mediathekPage", "Open link to mediathek"),SITE_MEDIATHEK,null,false,true),
+      new WebAddress(LOCALIZER.msg("vodPage", "Open VOD link"),SITE_VOD,null,false,true),
       new WebAddress(LOCALIZER.msg("channelPageGeneral", "Open website of channel"),CHANNEL_SITE,null,false,true),
   };
 
@@ -299,14 +299,14 @@ public class WebPlugin extends Plugin {
 */
         }
         
-        if (address != null && address.getUrl().equals(SITE_MEDIATHEK)) {
+        if (address != null && address.getUrl().equals(SITE_VOD)) {
           try {
-            Field mediathekLink = ProgramFieldType.class.getDeclaredField("MEDIATHEK_LINK");
+            Field mediathekLink = ProgramFieldType.class.getDeclaredField("VOD_LINK");
             String link = program.getTextField((ProgramFieldType)mediathekLink.get(null));
             
             if(link != null) {
-              address = new WebAddress(LOCALIZER.msg("mediathekPage",
-                  "Open link to mediathek"), link,
+              address = new WebAddress(LOCALIZER.msg("vodPage",
+                  "Open VOD link"), link,
                   null, false, address.isActive());
               actionName = address.getName();
             }
