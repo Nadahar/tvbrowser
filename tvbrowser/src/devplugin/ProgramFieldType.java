@@ -425,22 +425,22 @@ public class ProgramFieldType {
                        "keywords", "Keywords", 29);
 
   /**
-   * Info about mediathek availability
+   * Info about VOD availability
    * 
    * @since 3.4.5
    */
-  public static final ProgramFieldType MEDIATHEK_INFO 
-  = new ProgramFieldType(45, FORMAT_TEXT, true, "mediathekinfo",
-                        "mediathekinfo", "Mediathek availability", 30);
+  public static final ProgramFieldType VOD_INFO 
+  = new ProgramFieldType(45, FORMAT_TEXT, true, "vodinfo",
+                        "vodinfo", "VOD availability", 30);
   
   /**
-   * Link to mediathek entry
+   * Link to VOD entry
    * 
    * @since 3.4.5
    */
-  public static final ProgramFieldType MEDIATHEK_LINK 
-  = new ProgramFieldType(46, FORMAT_TEXT, true, "mediatheklink",
-                       "mediatheklink", "Link to mediathek", 31);
+  public static final ProgramFieldType VOD_LINK 
+  = new ProgramFieldType(46, FORMAT_TEXT, true, "vodlink",
+                       "vodlink", "Link to VOD", 31);
   
   /**
    * List with sub genres.
