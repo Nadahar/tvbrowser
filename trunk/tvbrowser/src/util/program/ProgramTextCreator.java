@@ -711,7 +711,7 @@ public class ProgramTextCreator {
         } else if (type == ProgramFieldType.ADDITIONAL_INFORMATION_TYPE) {
           addEntry(doc, buffer, prog, ProgramFieldType.ADDITIONAL_INFORMATION_TYPE, true,
               showHelpLinks, showPersonLinks, infoColor, foreground);
-        } else if (type == ProgramFieldType.URL_TYPE || type == ProgramFieldType.MEDIATHEK_LINK) {
+        } else if (type == ProgramFieldType.URL_TYPE || type == ProgramFieldType.VOD_LINK) {
           addEntry(doc, buffer, prog, type, true,
               showHelpLinks, showPersonLinks, infoColor, foreground);
         }
@@ -1198,8 +1198,8 @@ public class ProgramTextCreator {
     ArrayList<Object> list = new ArrayList<Object>(Arrays.asList(new Object[] {
         ProgramFieldType.GENRE_TYPE,
         ProgramFieldType.GENRE_SUB_LIST,
-        ProgramFieldType.MEDIATHEK_INFO,
-        ProgramFieldType.MEDIATHEK_LINK,
+        ProgramFieldType.VOD_INFO,
+        ProgramFieldType.VOD_LINK,
         ProgramFieldType.DESCRIPTION_TYPE,
         ProgramFieldType.ADDITIONAL_INFORMATION_TYPE,
         ProgramFieldType.RATING_TYPE,
