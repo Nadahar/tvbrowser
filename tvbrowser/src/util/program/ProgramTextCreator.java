@@ -711,8 +711,8 @@ public class ProgramTextCreator {
         } else if (type == ProgramFieldType.ADDITIONAL_INFORMATION_TYPE) {
           addEntry(doc, buffer, prog, ProgramFieldType.ADDITIONAL_INFORMATION_TYPE, true,
               showHelpLinks, showPersonLinks, infoColor, foreground);
-        } else if (type == ProgramFieldType.URL_TYPE) {
-          addEntry(doc, buffer, prog, ProgramFieldType.URL_TYPE, true,
+        } else if (type == ProgramFieldType.URL_TYPE || type == ProgramFieldType.MEDIATHEK_LINK) {
+          addEntry(doc, buffer, prog, type, true,
               showHelpLinks, showPersonLinks, infoColor, foreground);
         }
         else if (type == ProgramFieldType.ACTOR_LIST_TYPE) {
@@ -1197,6 +1197,9 @@ public class ProgramTextCreator {
   public static Object[] getDefaultOrder() {
     ArrayList<Object> list = new ArrayList<Object>(Arrays.asList(new Object[] {
         ProgramFieldType.GENRE_TYPE,
+        ProgramFieldType.GENRE_SUB_LIST,
+        ProgramFieldType.MEDIATHEK_INFO,
+        ProgramFieldType.MEDIATHEK_LINK,
         ProgramFieldType.DESCRIPTION_TYPE,
         ProgramFieldType.ADDITIONAL_INFORMATION_TYPE,
         ProgramFieldType.RATING_TYPE,
@@ -1210,6 +1213,7 @@ public class ProgramTextCreator {
         ProgramFieldType.CAMERA_TYPE,
         ProgramFieldType.CUTTER_TYPE,
         ProgramFieldType.ADDITIONAL_PERSONS_TYPE,
+        ProgramFieldType.KEYWORD_LIST,
         ProgramFieldType.URL_TYPE,
         ProgramFieldType.ORIGINAL_TITLE_TYPE,
         ProgramFieldType.ORIGINAL_EPISODE_TYPE,
