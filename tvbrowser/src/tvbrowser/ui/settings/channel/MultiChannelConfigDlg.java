@@ -26,24 +26,29 @@
 
 package tvbrowser.ui.settings.channel;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
+import util.ui.ColorButton;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 
 import com.jgoodies.forms.builder.ButtonBarBuilder;
 import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.factories.CC;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
@@ -63,7 +68,15 @@ public class MultiChannelConfigDlg extends JDialog implements ActionListener, Wi
   /** Close/OK Buttons */
   private JButton mCloseBt, mOKBt;
   /** The Correction-Time*/
-  private JComboBox mCorrectionCB;
+  private JComboBox<String> mCorrectionCB;
+  
+  /** Enabe user background color */
+  private JCheckBox mUseUserBackground;
+  
+  /** User background color selection */
+  private ColorButton mSelectBackgroundColor;
+  
+  private boolean mBackgroundWasSelected;
 
   /**
    * Create the Dialog
@@ -85,21 +98,35 @@ public class MultiChannelConfigDlg extends JDialog implements ActionListener, Wi
     JPanel panel = (JPanel) getContentPane();
 
     panel.setLayout(new FormLayout("default, 3dlu, fill:default:grow",
-        "default, 3dlu, fill:0dlu:grow, 3dlu, default, 3dlu"));
+        "default, 3dlu, default, 3dlu, default, 3dlu, fill:0dlu:grow, 3dlu, default, 3dlu"));
 
     CellConstraints cc = new CellConstraints();
 
     panel.setBorder(Borders.DLU4);
+    
+    // background color
+    
+    mUseUserBackground = new JCheckBox(ChannelConfigDlg.mLocalizer.msg("backgroundColorUse", "User defined background color"), false);
+    mSelectBackgroundColor = new ColorButton(Color.white);
+    mSelectBackgroundColor.setEnabled(mUseUserBackground.isSelected());
+    
+    mUseUserBackground.addItemListener(e -> {
+      mBackgroundWasSelected = true;
+      mSelectBackgroundColor.setEnabled(e.getStateChange() == ItemEvent.SELECTED);
+    });
+    
+    panel.add(mUseUserBackground, CC.xyw(1, 1, 3));
+    panel.add(mSelectBackgroundColor, CC.xyw(1, 3, 3));
 
-    panel.add(new JLabel(mLocalizer.msg("time", "Time zone correction")), cc.xy(1, 1));
+    panel.add(new JLabel(mLocalizer.msg("time", "Time zone correction")), cc.xy(1, 5));
 
-    mCorrectionCB = new JComboBox(new String[] { "-1:00", "-0:45", "-0:30", "-0:15", "0:00", "+0:15", "+0:30", "+0:45", "+1:00" });
+    mCorrectionCB = new JComboBox<String>(new String[] { "-1:00", "-0:45", "-0:30", "-0:15", "0:00", "+0:15", "+0:30", "+0:45", "+1:00" });
     mCorrectionCB.setSelectedIndex(mChannel[0].getTimeZoneCorrectionMinutes() / 15 + 4);
 
-    panel.add(mCorrectionCB, cc.xy(3, 1));
+    panel.add(mCorrectionCB, cc.xy(3, 5));
 
     JTextArea txt = UiUtilities.createHelpTextArea(mLocalizer.msg("DLSTNote", ""));
-    panel.add(txt, cc.xyw(1, 3, 3));
+    panel.add(txt, cc.xyw(1, 7, 3));
 
     ButtonBarBuilder builder = new ButtonBarBuilder();
     
@@ -125,7 +152,7 @@ public class MultiChannelConfigDlg extends JDialog implements ActionListener, Wi
 
     builder.addButton(new JButton[] { mOKBt, mCloseBt });
 
-    panel.add(builder.getPanel(), cc.xyw(1, 5, 3));
+    panel.add(builder.getPanel(), cc.xyw(1, 9, 3));
   }
 
   /**
@@ -141,6 +168,10 @@ public class MultiChannelConfigDlg extends JDialog implements ActionListener, Wi
       int minutes = (mCorrectionCB.getSelectedIndex() - 4) * 15;
       for (Channel element : mChannel) {
         element.setTimeZoneCorrectionMinutes(minutes);
+        
+        if(mBackgroundWasSelected) {
+          element.setUserBackgroundColor(mUseUserBackground.isSelected() ? mSelectBackgroundColor.getColor() : null);
+        }
       }
       
       setVisible(false);

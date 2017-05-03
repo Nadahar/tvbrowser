@@ -44,8 +44,8 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import org.apache.commons.net.ftp.parser.MLSxEntryParser;
-
+import devplugin.Channel;
+import devplugin.ChannelFilter;
 import tvbrowser.core.ChannelList;
 import tvbrowser.core.Settings;
 import tvbrowser.ui.programtable.DefaultProgramTableModel;
@@ -55,16 +55,14 @@ import util.ui.DragAndDropMouseListener;
 import util.ui.ListDragAndDropHandler;
 import util.ui.ListDropAction;
 import util.ui.UiUtilities;
-import devplugin.Channel;
-import devplugin.ChannelFilter;
 
 /**
  * @author bodum
  */
-public class ChannelChooserPanel extends JPanel implements ListDropAction {
+public class ChannelChooserPanel extends JPanel implements ListDropAction<Object> {
 
-  private DefaultListModel mChannelChooserModel;
-  private JList mList;
+  private DefaultListModel<Object> mChannelChooserModel;
+  private JList<Object> mList;
   private MainFrame mParent;
   private boolean disableSync = false;
   private ChannelFilter mChannelFilter;
@@ -75,9 +73,9 @@ public class ChannelChooserPanel extends JPanel implements ListDropAction {
    */
   public ChannelChooserPanel(MainFrame frame,KeyListener keyListener) {
     mParent = frame;
-    mChannelChooserModel = new DefaultListModel();
+    mChannelChooserModel = new DefaultListModel<>();
 
-    mList = new JList(mChannelChooserModel) {
+    mList = new JList<Object>(mChannelChooserModel) {
       @Override
       public void setSelectedIndex(int index) {
         if(index >= 0 && getModel().getElementAt(index) instanceof String) {
@@ -178,7 +176,7 @@ public class ChannelChooserPanel extends JPanel implements ListDropAction {
 
   public void updateChannelChooser() {
     mList.setCellRenderer(new ChannelListCellRenderer(Settings.propShowChannelIconsInChannellist.getBoolean(),
-        Settings.propShowChannelNamesInChannellist.getBoolean(),false,false,true));
+        Settings.propShowChannelNamesInChannellist.getBoolean(),false,false,true,true));
     mChannelChooserModel.removeAllElements();
     Channel[] channelList = tvbrowser.core.ChannelList.getSubscribedChannels();
     
@@ -211,14 +209,14 @@ public class ChannelChooserPanel extends JPanel implements ListDropAction {
     }
   }
 
-  public void drop(JList source, JList target, int rows, boolean move) {
+  public void drop(JList<Object> source, JList<Object> target, int rows, boolean move) {
     Channel selected = (Channel)source.getSelectedValue();
     int pos = source.getSelectedIndex();
     UiUtilities.moveSelectedItems(target, rows, true);
 
     Channel additional = selected.getJointChannel();
     
-    Object[] list = ((DefaultListModel) mList.getModel()).toArray();
+    Object[] list = ((DefaultListModel<Object>) mList.getModel()).toArray();
 
     // Convert the list into a Channel[] and fill channels
     ArrayList<Channel> tempList = new ArrayList<Channel>();

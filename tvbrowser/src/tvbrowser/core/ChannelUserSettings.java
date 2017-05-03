@@ -27,6 +27,7 @@
 
 package tvbrowser.core;
 
+import java.awt.Color;
 import java.util.HashMap;
 
 import devplugin.Channel;
@@ -45,6 +46,7 @@ public class ChannelUserSettings {
   private int mStartTimeLimit;
   private int mEndTimeLimit;
   private int mTimeZoneOffsetMinutes;
+  private Color mBackground;
 
   private static HashMap<String, ChannelUserSettings> mChannelUserSettings = new HashMap<String, ChannelUserSettings>();
 
@@ -73,6 +75,7 @@ public class ChannelUserSettings {
 
   public ChannelUserSettings() {
     mTimeZoneOffsetMinutes = 0;
+    mBackground = null;
   }
 
   public void setTimeZoneCorrectionMinutes(int offset) {
@@ -94,7 +97,7 @@ public class ChannelUserSettings {
   public int getTimeZoneCorrectionMinutes() {
     return mTimeZoneOffsetMinutes;
   }
-
+  
   public String getChannelName() {
     return mChannelName;
   }
@@ -160,7 +163,26 @@ public class ChannelUserSettings {
   public void setEndTimeLimit(int endTimeLimit) {
     mEndTimeLimit = endTimeLimit;
   }
-
+  
+  /**
+   * Sets the background color to background.
+   * 
+   * @param background The color to set.
+   * @since 3.4.5
+   */
+  public void setBackgroundColor(Color background) {
+    mBackground = background;
+  }
+  
+  /**
+   * @return The background color for this channel 
+   *         or <code>null</code> if no background
+   *         color was set.
+   */
+  public Color getBackground() {
+    return mBackground;
+  }
+  
   /**
    * Gets if the start and end time limit should be used.
    *

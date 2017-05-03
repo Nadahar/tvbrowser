@@ -27,6 +27,7 @@
 
 package tvbrowser.core;
 
+import java.awt.Color;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -160,6 +161,8 @@ public class ChannelList {
   private static final String FILENAME_CHANNEL_TIME_LIMIT = "channelTimeLimit.dat";
   
   private static final String FILENAME_CHANNEL_SORT_NUMBERS = "channel_sort_numbers.txt";
+  
+  private static final String FILENAME_CHANNEL_BACKGROUND_COLORS = "channel_background_colors.txt";
 
   private static final Logger mLog = Logger
       .getLogger(ChannelList.class.getName());
@@ -187,7 +190,8 @@ public class ChannelList {
   private static Thread mCompleteChannelThread;
 
   private static HashMap<String, String> mChannelIconMap, mChannelNameMap,
-      mChannelWebpagesMap, mChannelDayLightCorrectionMap, mChannelSortNumberMap;
+      mChannelWebpagesMap, mChannelDayLightCorrectionMap, mChannelSortNumberMap,
+      mChannelBackgroundColorMap;
 
   private static Channel mCurrentChangeChannel = null;
   
@@ -293,12 +297,64 @@ public class ChannelList {
    * Stores all settings used for the Channels
    */
   public static void storeAllSettings() {try {
-    storeDayLightSavingTimeCorrections();
-    storeChannelIcons();
-    storeSortNumbers();
-    storeChannelNames();
-    storeChannelWebPages();
-    storeChannelTimeLimits();}catch(Throwable t) {t.printStackTrace();}
+    //storeDayLightSavingTimeCorrections
+    store(FILENAME_DAYLIGHT_CORRECTION, mChannelDayLightCorrectionMap, false, false, channel -> {
+      String result = null;
+      
+      int corr = channel.getTimeZoneCorrectionMinutes();
+      if (corr != 0) {
+        result = String.valueOf(corr / 60.0);
+      }
+      
+      return result;
+    });
+    
+    //storeChannelIcons
+    store(FILENAME_CHANNEL_ICONS, mChannelIconMap, true, false, channel -> {
+      String filename = IOUtilities.checkForRelativePath(channel.getUserIconFileName());
+      if ((filename != null) && (filename.trim().length() > 0)) {
+        filename = channel.isUsingUserIcon() + ";" + filename.trim();
+      }
+      
+      return filename;
+    });
+    
+    //storeSortNumbers
+    store(FILENAME_CHANNEL_SORT_NUMBERS, mChannelSortNumberMap, true, false, channel -> {
+      return channel.getSortNumber();
+    });
+    
+    //storeChannelNames
+    store(FILENAME_CHANNEL_NAMES, mChannelNameMap, true, true, channel -> {
+      return channel.getUserChannelName();
+    });
+    
+    //storeChannelNames
+    store(FILENAME_CHANNEL_BACKGROUND_COLORS, mChannelBackgroundColorMap, true, true, channel -> {
+      String result = null;
+      Color c = channel.getUserBackgroundColor();
+      
+      if(c != null) {
+        result = String.valueOf(c.getRed())+","+String.valueOf(c.getGreen())+","+String.valueOf(c.getBlue())+","+String.valueOf(c.getAlpha());
+      }
+      
+      return result;
+    });
+    
+    //storeChannelWebPages
+    store(FILENAME_CHANNEL_WEBPAGES, mChannelWebpagesMap, true, false, channel -> {
+      String userWebPage = channel.getUserWebPage();
+      
+      if ((userWebPage != null) && (channel.getDefaultWebPage() != null) && channel.getDefaultWebPage().equalsIgnoreCase(userWebPage)) {
+        userWebPage = null;
+      }
+      
+      return userWebPage;
+    });
+        
+    storeChannelTimeLimits();
+    
+  }catch(Throwable t) {t.printStackTrace();}
   }
 
   private static boolean addDataServiceChannels(TvDataServiceProxy dataService,
@@ -373,13 +429,17 @@ public class ChannelList {
       if (!mChannelWebpagesMap.isEmpty()) {
         setWebPageForChannel(channel);
       }
+      
+      if(!mChannelBackgroundColorMap.isEmpty()) {
+        setChannelBackgroundForChannel(channel);
+      }
     }
     else {
       mCurrentChangeChannel.setChannelName(channel.getDefaultName());
       mCurrentChangeChannel.setDefaultIcon(channel.getDefaultIcon());
       mCurrentChangeChannel.setChannelCopyrightNotice(channel.getCopyrightNotice());
       mCurrentChangeChannel.setChannelWebpage(channel.getDefaultWebPage());
-
+      
       availableChannels.put(mCurrentChangeChannel, mCurrentChangeChannel);
     }
 
@@ -398,6 +458,8 @@ public class ChannelList {
         FILENAME_CHANNEL_WEBPAGES));
     mChannelDayLightCorrectionMap = createMap(new File(Settings
         .getUserSettingsDirName(), FILENAME_DAYLIGHT_CORRECTION));
+    mChannelBackgroundColorMap = createMap(new File(Settings
+        .getUserSettingsDirName(), FILENAME_CHANNEL_BACKGROUND_COLORS));
   }
 
   /**
@@ -753,6 +815,19 @@ public class ChannelList {
     channel.setSortNumber(value);
   }
 
+  private static void setChannelBackgroundForChannel(Channel channel) {
+    String value = getMapValueForChannel(channel, mChannelBackgroundColorMap);
+    
+    if(value != null) {
+      try {
+        String[] parts = value.split(",");
+        
+        if(parts.length == 4) {
+          channel.setUserBackgroundColor(new Color(Integer.parseInt(parts[0]),Integer.parseInt(parts[1]),Integer.parseInt(parts[2]),Integer.parseInt(parts[3])));
+        }
+      }catch(NumberFormatException nfe) {}
+    }
+  }
   /**
    * Sets the name for the given channel.
    *
@@ -781,7 +856,7 @@ public class ChannelList {
     }
   }
 
-  private static void storeDayLightSavingTimeCorrections() {
+/*  private static void storeDayLightSavingTimeCorrections() {
     File f = new File(Settings.getUserSettingsDirName(),
         FILENAME_DAYLIGHT_CORRECTION);
 
@@ -803,20 +878,12 @@ public class ChannelList {
     if (out != null) {
       out.close();
     }
-  }
+  }*/
 
   /**
    * Stores all Icons
    */
-  private static void storeChannelIcons() {
-    File f = new File(Settings.getUserSettingsDirName(), FILENAME_CHANNEL_ICONS);
-
-    FileWriter fw;
-    PrintWriter out = null;
-
-    try {
-      fw = new FileWriter(f);
-      out = new PrintWriter(fw);
+ /*w PrintWriter(fw);
       Channel[] channels = getSubscribedChannels();
       for (Channel channel : channels) {
         String filename = IOUtilities.checkForRelativePath(channel.getUserIconFileName());
@@ -844,9 +911,9 @@ public class ChannelList {
     if (out != null) {
       out.close();
     }
-  }
+  }*/
   
-  private static void storeSortNumbers() {
+ /* private static void storeSortNumbers() {
     File f = new File(Settings.getUserSettingsDirName(), FILENAME_CHANNEL_SORT_NUMBERS);
 
     FileWriter fw;
@@ -880,12 +947,60 @@ public class ChannelList {
     if (out != null) {
       out.close();
     }
-  }
+  }*/
 
+  private static void store(String fileName, HashMap<String,String> map, boolean writeUnsubscribed, boolean storeCurrentSubscription, InterfaceStore interfaceStore) {
+    File f = new File(Settings.getUserSettingsDirName(), fileName);
+
+    FileWriter fw;
+    PrintWriter out = null;
+
+    try {
+      fw = new FileWriter(f);
+      out = new PrintWriter(fw);
+      
+      ArrayList<String> subscribedServices = storeCurrentSubscription ? new ArrayList<>() : null;
+      
+      for (Channel channel : getSubscribedChannels()) {
+        String value = interfaceStore.handleChannel(channel);
+        
+        if ((value != null) && (value.trim().length() > 0)) {
+          out.println(createPropertyForChannel(channel, value.trim()));
+        }
+        
+        if(subscribedServices != null) {
+          subscribedServices.add(channel.getDataServiceId());
+        }
+      }
+      
+      if(subscribedServices != null) {
+        // remember the currently active services for faster startup
+        Settings.propCurrentlyUsedDataServiceIds.setStringArray(subscribedServices.toArray(new String[subscribedServices.size()]));
+      }
+      
+      if(map != null && writeUnsubscribed) {
+        Set<String> keys = map.keySet();
+
+        for(String key : keys) {
+          if(!isSubscribedChannel(getChannelForKey(key))) {
+            out.print(key);
+            out.print("=");
+            out.println(map.get(key));
+          }
+        }
+      }
+    } catch (IOException e) {
+      // ignore
+    }
+    if (out != null) {
+      out.close();
+    }
+  }
+  
   /**
    * Saves the channel names for all channels.
    */
-  private static void storeChannelNames() {
+/*  private static void storeChannelNames() {
     HashSet<String> subscribedServices = new HashSet<String>();
     File f = new File(Settings.getUserSettingsDirName(), FILENAME_CHANNEL_NAMES);
 
@@ -923,13 +1038,13 @@ public class ChannelList {
     if (out != null) {
       out.close();
     }
-  }
+  }*/
 
   /**
    * Saves the web pages of all channels.
    *
    */
-  private static void storeChannelWebPages() {
+/*  private static void storeChannelWebPages() {
     File f = new File(Settings.getUserSettingsDirName(), FILENAME_CHANNEL_WEBPAGES);
 
     FileWriter fw;
@@ -964,7 +1079,7 @@ public class ChannelList {
       out.close();
     }
   }
-
+*/
   private static String createPropertyForChannel(Channel channel, String value) {
     return new StringBuilder(channel.getDataServiceId()).append(":")
         .append(channel.getGroup().getId()).append(":").append(
@@ -1274,5 +1389,10 @@ public class ChannelList {
     
     jointChannels.clear();
     jointChannels = null;
+  }
+  
+  @FunctionalInterface
+  private interface InterfaceStore {
+    public String handleChannel(Channel channel);
   }
 }

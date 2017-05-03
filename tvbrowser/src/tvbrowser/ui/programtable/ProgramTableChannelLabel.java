@@ -192,53 +192,59 @@ public class ProgramTableChannelLabel extends ChannelLabel {
   }
   
   protected void paintComponent(Graphics g) {
-    if(Persona.getInstance().getHeaderImage() != null && Persona.getInstance().getTextColor() != null && Persona.getInstance().getShadowColor() != null) {
-      Color c = Persona.getInstance().getAccentColor();
+    if(mChannel.isUsingUserBackgroundColor() || ( Persona.getInstance().getHeaderImage() != null && Persona.getInstance().getTextColor() != null && Persona.getInstance().getShadowColor() != null)) {
+      try {
+      Color c = mChannel.isUsingUserBackgroundColor() ? mChannel.getUserBackgroundColor() : Persona.getInstance().getAccentColor();
+      Color foreground = mChannel.isUsingUserBackgroundColor() ? getForeground() : Persona.getInstance().getTextColor();
       
-      double test = (0.2126 * Persona.getInstance().getTextColor().getRed()) + (0.7152 * Persona.getInstance().getTextColor().getGreen()) + (0.0722 * Persona.getInstance().getTextColor().getBlue());
-      int alpha = 100;
+      int alpha = c.getAlpha();
       
-      if(test <= 30) {
-        c = Color.white;
-        alpha = 200;
-      }
-      else if(test <= 40) {
-        c = c.brighter().brighter().brighter().brighter().brighter().brighter();
-        alpha = 200;
-      }
-      else if(test <= 60) {
-        c = c.brighter().brighter().brighter();
-        alpha = 160;
-      }
-      else if(test <= 100) {
-        c = c.brighter().brighter();
-        alpha = 140;
-      }
-      else if(test <= 145) {
-        alpha = 120;
-      }
-      else if(test <= 170) {
-        c = c.darker();
-        alpha = 120;
-      }
-      else if(test <= 205) {
-        c = c.darker().darker();
-        alpha = 120;
-      }
-      else if(test <= 220){
-        c = c.darker().darker().darker();
+      if(!mChannel.isUsingUserBackgroundColor()) {
+        double test = (0.2126 * foreground.getRed()) + (0.7152 * foreground.getGreen()) + (0.0722 * foreground.getBlue());
         alpha = 100;
-      }
-      else if(test <= 235){
-        c = c.darker().darker().darker().darker();
-        alpha = 100;
-      }
-      else {
-        c = Color.black;
-        alpha = 100;
+        
+        if(test <= 30) {
+          c = Color.white;
+          alpha = 200;
+        }
+        else if(test <= 40) {
+          c = c.brighter().brighter().brighter().brighter().brighter().brighter();
+          alpha = 200;
+        }
+        else if(test <= 60) {
+          c = c.brighter().brighter().brighter();
+          alpha = 160;
+        }
+        else if(test <= 100) {
+          c = c.brighter().brighter();
+          alpha = 140;
+        }
+        else if(test <= 145) {
+          alpha = 120;
+        }
+        else if(test <= 170) {
+          c = c.darker();
+          alpha = 120;
+        }
+        else if(test <= 205) {
+          c = c.darker().darker();
+          alpha = 120;
+        }
+        else if(test <= 220){
+          c = c.darker().darker().darker();
+          alpha = 100;
+        }
+        else if(test <= 235){
+          c = c.darker().darker().darker().darker();
+          alpha = 100;
+        }
+        else {
+          c = Color.black;
+          alpha = 100;
+        }
       }
       
-      Color textColor = Persona.getInstance().getTextColor();
+      Color textColor = mChannel.isUsingUserBackgroundColor() ? getForeground() : Persona.getInstance().getTextColor();
       
       if(mIsRollover) {
         c = UIManager.getColor("List.selectionBackground");
@@ -250,7 +256,7 @@ public class ProgramTableChannelLabel extends ChannelLabel {
           textColor = UIManager.getColor("List.selectionForeground");
         }
       }
-      
+            
       g.setColor(new Color(c.getRed(),c.getGreen(),c.getBlue(),alpha));
       g.fillRect(0,0,getWidth(),getHeight());
       
@@ -291,17 +297,18 @@ public class ProgramTableChannelLabel extends ChannelLabel {
         iconX -= textWidth/2;
       }
       
-
-      
-      if(!Persona.getInstance().getShadowColor().equals(textColor) && Persona.getInstance().getTextColor().equals(textColor)) {
+      if(!mChannel.isUsingUserBackgroundColor() && !Persona.getInstance().getShadowColor().equals(textColor) && Persona.getInstance().getTextColor().equals(textColor)) {
         g.setColor(Persona.getInstance().getShadowColor());
         
         g.drawString(text,iconX+iconWidth+iconTextGap+1,baseLine+1);
       }
       
-      
       g.setColor(textColor);
       g.drawString(text,iconX+iconWidth+iconTextGap,baseLine);
+      }catch(Throwable t) {
+        t.printStackTrace();
+        super.paintComponent(g);
+      }
     }
     else {
       super.paintComponent(g);

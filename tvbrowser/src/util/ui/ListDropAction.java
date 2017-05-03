@@ -8,7 +8,7 @@ import javax.swing.JList;
  * @author René Mach
  *
  */
-public interface ListDropAction {
+public interface ListDropAction<T> {
   /**
    * The method that is called by the drop event.
    * 
@@ -17,5 +17,5 @@ public interface ListDropAction {
    * @param row The number of the row to move the entries to.
    * @param move Only move one entry from the source to the target list.
    */
-  public void drop(JList source, JList target, int row, boolean move);
+  public void drop(JList<T> source, JList<T> target, int row, boolean move);
 }

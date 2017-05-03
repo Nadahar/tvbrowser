@@ -23,6 +23,7 @@
 */
 package util.ui;
 
+import java.awt.Color;
 import java.awt.Dimension;
 
 import javax.swing.Icon;
@@ -56,6 +57,7 @@ public class ChannelLabel extends JLabel {
   private boolean mShowTimeLimitation;
   
   private boolean mShowSortNumber;
+  private boolean mPaintBackground;
 
   private Channel mChannel;
   private static TimeFormatter mTimeFormatter;
@@ -173,6 +175,10 @@ public class ChannelLabel extends JLabel {
    * @since 3.3.4
    */
   public ChannelLabel(boolean channelIconsVisible, boolean textIsVisible, boolean showDefaultValues, boolean showCountry, boolean showJoinedChannelInfo, boolean showTimeLimitation, boolean showSortNumber) {
+    this(channelIconsVisible,textIsVisible,showDefaultValues,showCountry,showJoinedChannelInfo,showTimeLimitation,showSortNumber,false);
+  }
+  
+  public ChannelLabel(boolean channelIconsVisible, boolean textIsVisible, boolean showDefaultValues, boolean showCountry, boolean showJoinedChannelInfo, boolean showTimeLimitation, boolean showSortNumber, boolean paintBackground) {
     mChannelIconsVisible = channelIconsVisible;
     mTextIsVisible = textIsVisible;
     mShowDefaultValues = showDefaultValues;
@@ -180,6 +186,7 @@ public class ChannelLabel extends JLabel {
     mShowJointChannelInfo = showJoinedChannelInfo;
     mShowTimeLimitation = showTimeLimitation;
     mShowSortNumber = showSortNumber;
+    mPaintBackground = paintBackground;
   }
 
 
@@ -386,5 +393,12 @@ public class ChannelLabel extends JLabel {
     else {
       setEnabled(true);
     }
+  }
+  
+  /**
+   * @return If the background should be painted
+   */
+  public boolean isBackgroundToPaint() {
+    return mPaintBackground && mChannel.isUsingUserBackgroundColor();
   }
 }
