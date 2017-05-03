@@ -55,6 +55,8 @@ public class SingleColorBackPainter extends AbstractBackPainter {
   {
     grp.setColor(Settings.propProgramTableBackgroundSingleColor.getColor());
     grp.fillRect(clipBounds.x, clipBounds.y, clipBounds.width, clipBounds.height);
+    
+    super.paintBackground(grp, columnWidth, tableHeight, minCol, maxCol, clipBounds, layout, model);
   }
 
 }

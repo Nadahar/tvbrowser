@@ -68,4 +68,5 @@ public interface BackgroundPainter {
    */
   public JComponent getTableWest();
 
+  public void setSelectedColumn(int column);
 }

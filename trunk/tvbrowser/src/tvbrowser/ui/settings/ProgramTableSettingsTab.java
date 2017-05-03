@@ -135,6 +135,10 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
   private ColorButton mLight, mDark;
   private JCheckBox mShowScrollHighlight;
   
+  private JCheckBox mShowScrollChannelHighlight;
+  private ColorLabel mScrollChannelLb;
+  private ColorButton mScrollChannelColor;
+  
   public void actionPerformed(ActionEvent event) {
     Object source = event.getSource();
     if (source == mDefaultBtn) {
@@ -421,6 +425,12 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     layout.appendRow(RowSpec.decode("3dlu"));
     layout.appendRow(RowSpec.decode("pref"));
     
+    // channel scroll markings
+    layout.appendRow(RowSpec.decode("10dlu"));
+    layout.appendRow(RowSpec.decode("pref"));
+    layout.appendRow(RowSpec.decode("5dlu"));
+    layout.appendRow(RowSpec.decode("pref"));
+    
     // Miscellaneous *********************************************
     layout.appendRow(RowSpec.decode("10dlu"));
     layout.appendRow(RowSpec.decode("pref"));
@@ -486,16 +496,13 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     final JLabel mLightDesc = new JLabel(TrayBaseSettingsTab.mLocalizer.msg("progressLight", "Background color"));
     final JLabel mDarkDesc = new JLabel(TrayBaseSettingsTab.mLocalizer.msg("progressDark", "Progress color"));
     
-    mShowScrollHighlight.addItemListener(new ItemListener() {
-      @Override
-      public void itemStateChanged(ItemEvent e) {
-        mLightColorLb.setEnabled(e.getStateChange() == ItemEvent.SELECTED);
-        mDarkColorLb.setEnabled(mLightColorLb.isEnabled());
-        mLight.setEnabled(mLightColorLb.isEnabled());
-        mDark.setEnabled(mLightColorLb.isEnabled());
-        mLightDesc.setEnabled(mLightColorLb.isEnabled());
-        mDarkDesc.setEnabled(mLightColorLb.isEnabled());
-      }
+    mShowScrollHighlight.addItemListener(e -> {
+      mLightColorLb.setEnabled(e.getStateChange() == ItemEvent.SELECTED);
+      mDarkColorLb.setEnabled(mLightColorLb.isEnabled());
+      mLight.setEnabled(mLightColorLb.isEnabled());
+      mDark.setEnabled(mLightColorLb.isEnabled());
+      mLightDesc.setEnabled(mLightColorLb.isEnabled());
+      mDarkDesc.setEnabled(mLightColorLb.isEnabled());
     });
     
     mSettingsPn.add(DefaultComponentFactory.getInstance().createSeparator(
@@ -509,6 +516,29 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     mSettingsPn.add(mDarkDesc, cc.xy(2, (currentRow += 2)));
     mSettingsPn.add(mDarkColorLb, cc.xy(4, currentRow));    
     mSettingsPn.add(mDark, cc.xy(6, currentRow));
+        
+    mShowScrollChannelHighlight = new JCheckBox(mLocalizer.msg("activated","Activated"), Settings.propScrollToChannnelMarkingActivated.getBoolean());
+    
+    mScrollChannelLb = new ColorLabel(Settings.propScrollToChannelProgramsBackground.getColor());
+    mScrollChannelLb.setStandardColor(Settings.propScrollToChannelProgramsBackground.getDefaultColor());
+    mScrollChannelLb.setEnabled(mShowScrollChannelHighlight.isSelected());
+    
+    mScrollChannelColor = new ColorButton(mScrollChannelLb);
+    mScrollChannelColor.setEnabled(mShowScrollChannelHighlight.isSelected());
+    
+    mShowScrollChannelHighlight.addItemListener(e -> {
+      mScrollChannelLb.setEnabled(e.getStateChange() == ItemEvent.SELECTED);
+      mScrollChannelColor.setEnabled(mScrollChannelLb.isEnabled());
+    });
+    
+    mSettingsPn.add(DefaultComponentFactory.getInstance().createSeparator(
+        mLocalizer.msg("scrollToChannelTitle", "Highlight channel selected")), cc.xyw(1,
+        (currentRow += 2), 8));
+    mSettingsPn.add(mShowScrollChannelHighlight, cc.xy(2, (currentRow += 2)));
+    mSettingsPn.add(mScrollChannelLb, cc.xy(4, currentRow));
+    mSettingsPn.add(mScrollChannelColor, cc.xy(6, currentRow));
+    
+    System.out.println(currentRow);
     
     mSettingsPn.add(DefaultComponentFactory.getInstance().createSeparator(
         mLocalizer.msg("misc", "Misc")), cc.xyw(1,
@@ -638,6 +668,10 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     Settings.propScrollToTimeMarkingActivated.setBoolean(mShowScrollHighlight.isSelected());
     Settings.propScrollToTimeProgramsLightBackground.setColor(mLightColorLb.getColor());
     Settings.propScrollToTimeProgramsDarkBackground.setColor(mDarkColorLb.getColor());
+    
+    Settings.propScrollToChannnelMarkingActivated.setBoolean(mShowScrollChannelHighlight.isSelected());
+    Settings.propScrollToChannelProgramsBackground.setColor(mScrollChannelLb.getColor());
+    
     Settings.propTypeAsYouFindEnabled.setBoolean(mTypeAsYouFind.isSelected());
     
     MainFrame.getInstance().getProgramTableScrollPane().getProgramTable().clearTimeMarkings();

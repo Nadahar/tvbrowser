@@ -163,4 +163,36 @@ public interface TvBrowserSettings {
    * @since 3.4.4
    */
   public boolean isChannelUpdateActivated();
+
+  /**
+   * @return If the highlighting of the programs at time
+   * for scrolling to it is activated
+   * @since 3.4.5
+   */
+  public boolean isScrollToTimeHighlightActivated();
+
+  /**
+   * @return The color for time selection background
+   * @since 3.4.5
+   */
+  public Color getScrollColorTimeLight();
+  
+  /**
+   * @return The color for time selection progress.
+   * @since 3.4.5
+   */
+  public Color getScrollColorTimeDark();
+  
+  /**
+   * @return If the highlighting of the channel for scrolling
+   * to it is activated
+   * @since 3.4.5
+   */
+  public boolean isScrollToChannelHighlightActivated();
+  
+  /**
+   * @return The color for channel selection.
+   * @since 3.4.5
+   */
+  public Color getScrollColorChannel();
 }

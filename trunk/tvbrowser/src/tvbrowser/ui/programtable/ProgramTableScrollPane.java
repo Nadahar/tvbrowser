@@ -41,6 +41,7 @@ import java.awt.event.MouseWheelListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Calendar;
+import java.util.concurrent.atomic.AtomicReference;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollBar;
@@ -288,13 +289,21 @@ public class ProgramTableScrollPane extends JScrollPane implements ProgramTableM
     getHorizontalScrollBar().setUnitIncrement(columnWidth);
     updateScrollBars();
   }
-
-  public void scrollToChannel(Channel channel) {
+  
+  private Thread mCleanScrollBackground;
+  private AtomicReference<Channel> mScrollChannel = new AtomicReference<Channel>(null);
+  
+  public synchronized void scrollToChannel(Channel channel) {
+    final Channel wait = channel;
+    mScrollChannel.set(wait);
+    int column = -1;
+    
     if(getHorizontalScrollBar().isVisible()) {
       channel = Channel.getChannelForChannel(channel);
       Channel[] shownChannelArr = mProgramTable.getModel().getShownChannels();
       for (int col = 0; col < shownChannelArr.length; col++) {
         if (channel.equals(shownChannelArr[col])) {
+          column = col;
           Point scrollPos = getViewport().getViewPosition();
           if (scrollPos != null) {
             int visibleColumns = getViewport().getWidth() / mProgramTable.getColumnWidth();
@@ -308,8 +317,46 @@ public class ProgramTableScrollPane extends JScrollPane implements ProgramTableM
             }
             getViewport().setViewPosition(scrollPos);
           }
+          
+          break;
         }
       }
+    }
+    else if(Settings.propScrollToChannnelMarkingActivated.getBoolean()) {
+      final Channel[] shownChannelArr = mProgramTable.getModel().getShownChannels();
+      
+      for (int col = 0; col < shownChannelArr.length; col++) {
+        if (channel.equals(shownChannelArr[col])) {
+          column = col;
+        }
+      }
+    }
+    
+    if(Settings.propScrollToChannnelMarkingActivated.getBoolean()) {
+      mProgramTable.getBackgroundPainter().setSelectedColumn(column);
+      mProgramTable.repaint();
+      
+      mCleanScrollBackground = new Thread("CLEAN SCROLL BACKGROUND THREAD") {
+        @Override
+        public void run() {
+          int count = 0;
+          
+          while(count++ < 50 && mScrollChannel.get() != null && wait.equals(mScrollChannel.get())) {
+            try {
+              sleep(100);
+            } catch (InterruptedException e) {
+              // TODO Auto-generated catch block
+              e.printStackTrace();
+            }
+          }
+          
+          if(mScrollChannel.get() != null && wait.equals(mScrollChannel.get())) {
+            mProgramTable.getBackgroundPainter().setSelectedColumn(-1);
+            mProgramTable.repaint();
+          }
+        }
+      };
+      mCleanScrollBackground.start();
     }
   }
 
