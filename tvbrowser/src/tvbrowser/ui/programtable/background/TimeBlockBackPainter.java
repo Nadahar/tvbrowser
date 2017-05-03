@@ -165,6 +165,8 @@ public class TimeBlockBackPainter extends AbstractBackPainter {
         x += columnWidth;
       }
     }
+    
+    super.paintBackground(grp, columnWidth, tableHeight, minCol, maxCol, clipBounds, layout, model);
   }
 
   private TimeBlock[] createBlockArray(ProgramTableLayout layout,

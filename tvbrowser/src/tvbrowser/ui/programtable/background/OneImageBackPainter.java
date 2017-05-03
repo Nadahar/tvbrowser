@@ -68,6 +68,8 @@ public class OneImageBackPainter extends AbstractBackPainter {
       
       x += columnWidth;
     }
+    
+    super.paintBackground(grp, columnWidth, tableHeight, minCol, maxCol, clipBounds, layout, model);
   }
 
 }

@@ -90,6 +90,8 @@ public abstract class AbstractCellBasedBackPainter extends AbstractBackPainter {
       // Move to the next column
       x += columnWidth;
     }
+    
+    super.paintBackground(grp, columnWidth, tableHeight, minCol, maxCol, clipBounds, layout, model);
   }
   
   

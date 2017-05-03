@@ -32,8 +32,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
 import java.util.ArrayList;
 
 import javax.swing.DefaultListModel;
@@ -41,8 +39,6 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 
 import devplugin.Channel;
 import devplugin.ChannelFilter;
@@ -111,13 +107,11 @@ public class ChannelChooserPanel extends JPanel implements ListDropAction<Object
         mList, this);
     new DragAndDropMouseListener(mList, mList, this, dnDHandler);
 
-    mList.addListSelectionListener(new ListSelectionListener() {
-      public void valueChanged(ListSelectionEvent e) {
-        if (!disableSync) {
-          showChannel();
-        }
-        disableSync  = false;
+    mList.addListSelectionListener(e ->  {
+      if (!disableSync) {
+        showChannel();
       }
+      disableSync  = false;
     });
 
     mList.addKeyListener(new KeyAdapter() {
@@ -146,18 +140,17 @@ public class ChannelChooserPanel extends JPanel implements ListDropAction<Object
         showPopupMenu(e);      }
     });
 
-    mList.addMouseWheelListener(new MouseWheelListener() {
-      public void mouseWheelMoved(MouseWheelEvent e) {
-        int selected = mList.getSelectedIndex() + e.getWheelRotation();
-        if (selected < 0) {
-          selected = 0;
-        } else if (selected > mList.getModel().getSize()) {
-          selected = mList.getModel().getSize();
-        }
-
-        mList.setSelectedIndex(selected);
-        mList.ensureIndexIsVisible(selected);
+    mList.addMouseWheelListener(e -> {
+      int selected = mList.getSelectedIndex() + e.getWheelRotation();
+      
+      if (selected < 0) {
+        selected = 0;
+      } else if (selected > mList.getModel().getSize()) {
+        selected = mList.getModel().getSize();
       }
+      
+      mList.setSelectedIndex(selected);
+      mList.ensureIndexIsVisible(selected);
     });
   }
 
@@ -285,6 +278,7 @@ public class ChannelChooserPanel extends JPanel implements ListDropAction<Object
     disableSync = true;
     mList.setSelectedValue(channel,true);
     mList.ensureIndexIsVisible(mList.getSelectedIndex());
+    disableSync = false;
   }
 
   public void setChannelFilter(ChannelFilter channelFilter) {

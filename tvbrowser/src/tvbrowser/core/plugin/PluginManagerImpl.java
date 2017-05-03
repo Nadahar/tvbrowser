@@ -989,7 +989,7 @@ public class PluginManagerImpl implements PluginManager {
       public Color getProgramTableForegroundColor() {
         return Settings.propTableBackgroundStyle.getString().contains("ui") ? UIManager.getColor("List.foreground") : Settings.propProgramPanelForegroundColor.getColor();
       }
-
+      
       @Override
       public Color getProgramPanelSelectionColor() {
         return Settings.propKeyboardSelectedColor.getColor();
@@ -1004,8 +1004,31 @@ public class PluginManagerImpl implements PluginManager {
       public boolean isChannelUpdateActivated() {
         return Settings.propAutoChannelUpdatePeriod.getInt() > StartupSettingsTab.VALUE_AUTO_CHANNEL_UPDATE_DISABLED;
       }
-      
-      
+
+      @Override
+      public Color getScrollColorTimeLight() {
+        return Settings.propScrollToTimeProgramsLightBackground.getColor();
+      }
+
+      @Override
+      public Color getScrollColorTimeDark() {
+        return Settings.propScrollToTimeProgramsDarkBackground.getColor();
+      }
+
+      @Override
+      public Color getScrollColorChannel() {
+        return Settings.propScrollToChannelProgramsBackground.getColor();
+      }
+
+      @Override
+      public boolean isScrollToTimeHighlightActivated() {
+        return Settings.propScrollToTimeMarkingActivated.getBoolean();
+      }
+
+      @Override
+      public boolean isScrollToChannelHighlightActivated() {
+        return Settings.propScrollToChannnelMarkingActivated.getBoolean();
+      }
     };
   }
 

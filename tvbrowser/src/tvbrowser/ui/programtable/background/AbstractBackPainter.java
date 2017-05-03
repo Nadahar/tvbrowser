@@ -32,6 +32,7 @@ import java.awt.Rectangle;
 
 import javax.swing.JComponent;
 
+import tvbrowser.core.Settings;
 import tvbrowser.ui.programtable.ProgramTableLayout;
 import tvbrowser.ui.programtable.ProgramTableModel;
 
@@ -88,4 +89,20 @@ public abstract class AbstractBackPainter implements BackgroundPainter {
     return null;
   }
 
+  private int mSelectedColumn = -1;
+  
+  @Override
+  public synchronized void setSelectedColumn(int column) {
+    mSelectedColumn = column;
+  }
+  
+  @Override
+  public void paintBackground(Graphics grp, int columnWidth, int tableHeight,
+      int minCol, int maxCol, Rectangle clipBounds, ProgramTableLayout layout,
+      ProgramTableModel model) {
+    if(mSelectedColumn != -1 && Settings.propScrollToChannnelMarkingActivated.getBoolean()) {
+      grp.setColor(Settings.propScrollToChannelProgramsBackground.getColor());
+      grp.fillRect(mSelectedColumn * columnWidth, 0, columnWidth, tableHeight);
+    }
+  }
 }
