@@ -65,7 +65,7 @@ public class FilteredChannelListCellRenderer extends DefaultListCellRenderer {
 
     if(value instanceof Channel) {
       if (mChannel == null) {
-        mChannel = new ChannelLabel(true, true, false, false, false, true, true);
+        mChannel = new ChannelLabel(true, true, false, false, false, true, true, true);
       }
   
       if (mChannelCounter == null) {
@@ -78,9 +78,14 @@ public class FilteredChannelListCellRenderer extends DefaultListCellRenderer {
   
       if (value instanceof Channel) {
         mChannel.setChannel((Channel) value);
-        mChannel.setOpaque(isSelected);
+        mChannel.setOpaque(isSelected || mChannel.isBackgroundToPaint());
         mChannel.setBackground(label.getBackground());
         mChannel.setForeground(label.getForeground());
+        
+        if(mChannel.isBackgroundToPaint() && !isSelected) {
+          mChannel.setBackground(mChannel.getChannel().getUserBackgroundColor());
+        }
+        
         mChannel.setEnabled(mFilter.accept((Channel)value),isSelected);
         /*
         if() {

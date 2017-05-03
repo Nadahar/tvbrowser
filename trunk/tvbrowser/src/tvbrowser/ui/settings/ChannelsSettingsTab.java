@@ -145,7 +145,7 @@ import devplugin.SettingsTab;
  *
  * @author Bodo Tasche
  */
-public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
+public class ChannelsSettingsTab implements SettingsTab, ListDropAction<Object> {
 
   /**
    * Translation
@@ -156,12 +156,12 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
   /**
    * The List with all Channels
    */
-  private JList mAllChannels;
+  private JList<Object> mAllChannels;
 
   /**
    * The List with the current subscribed Channels
    */
-  private JList mSubscribedChannels;
+  private JList<Object> mSubscribedChannels;
 
   /**
    * Model of the list boxes
@@ -181,7 +181,7 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
   /**
    * Comboboxes for filtering
    */
-  private JComboBox mCategoryCB, mCountryCB, mPluginCB;
+  private JComboBox<FilterItem> mCategoryCB, mCountryCB, mPluginCB;
 
   /**
    * Filter for channel name
@@ -270,8 +270,8 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
 
     // left list box
     JPanel listBoxPnLeft = new JPanel(new BorderLayout());
-    mAllChannels = new ChannelJList(new DefaultListModel());
-    mAllChannels.setCellRenderer(new ChannelListCellRenderer(true, true, true, true));
+    mAllChannels = new ChannelJList(new DefaultListModel<Object>());
+    mAllChannels.setCellRenderer(new ChannelListCellRenderer(true, true, true, true, false, true));
 
     listBoxPnLeft.add(new JScrollPane(mAllChannels), BorderLayout.CENTER);
 /*
@@ -315,7 +315,7 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
           index++;
         }
         
-        ((DefaultListModel)mSubscribedChannels.getModel()).insertElementAt(Channel.SEPARATOR,index);
+        ((DefaultListModel<Object>)mSubscribedChannels.getModel()).insertElementAt(Channel.SEPARATOR,index);
       }
     });
     
@@ -337,7 +337,7 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
       public void actionPerformed(ActionEvent e) {
         int index = mSubscribedChannels.getSelectedIndex();
         
-        ((DefaultListModel)mSubscribedChannels.getModel()).remove(index);
+        ((DefaultListModel<Object>)mSubscribedChannels.getModel()).remove(index);
         mButtonDeleteSeparator.setEnabled(false);
         
         if(index < mSubscribedChannels.getModel().getSize()) {
@@ -411,7 +411,7 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
     
     mSubscribedChannels.addListSelectionListener(new ListSelectionListener() {
       public void valueChanged(ListSelectionEvent e) {
-        if (mSubscribedChannels.getSelectedValues().length > 0 && !(mSubscribedChannels.getSelectedValue() instanceof DummyChannel) && !(mSubscribedChannels.getSelectedValue() instanceof String)) {
+        if (mSubscribedChannels.getSelectedValuesList().size() > 0 && !(mSubscribedChannels.getSelectedValue() instanceof DummyChannel) && !(mSubscribedChannels.getSelectedValue() instanceof String)) {
           configureChannels.setEnabled(true);
           setSortNumbers.setEnabled(true);
           mButtonDeleteSeparator.setEnabled(false);
@@ -584,11 +584,9 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
             }
           } catch (MalformedURLException e) {
             error = true;
-            // TODO Auto-generated catch block
             e.printStackTrace();
           } catch (IOException e) {
             error = true;
-            // TODO Auto-generated catch block
             e.printStackTrace();
           }
           
@@ -695,7 +693,6 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
             channelList.add(line);
           }
         } catch (IOException e) {
-          // TODO Auto-generated catch block
           e.printStackTrace();
         }finally {
           if(in != null) {
@@ -801,7 +798,7 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
           if(ch.getDataServicePackageName().equals(parts[0])) {
             if(parts[0].equals("epgdonatedata")) {
               if(ch.getId().equals(parts[1])) {
-                index = ((DefaultListModel)mAllChannels.getModel()).indexOf(ch);
+                index = ((DefaultListModel<Object>)mAllChannels.getModel()).indexOf(ch);
                 
                 if(parts.length > 2) {
                   ch.setSortNumber(parts[2]);
@@ -810,7 +807,7 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
             }
             else {
               if(ch.getGroup().getId().equals(parts[1]) && ch.getId().equals(parts[2])) {
-                index = ((DefaultListModel)mAllChannels.getModel()).indexOf(ch);
+                index = ((DefaultListModel<Object>)mAllChannels.getModel()).indexOf(ch);
                 if(parts.length > 3) {
                   ch.setSortNumber(parts[3]);
                 }
@@ -858,19 +855,14 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
             }
           }
         } catch (SecurityException e1) {
-          // TODO Auto-generated catch block
           e1.printStackTrace();
         } catch (NoSuchMethodException e1) {
-          // TODO Auto-generated catch block
           e1.printStackTrace();
         } catch (IllegalArgumentException e1) {
-          // TODO Auto-generated catch block
           e1.printStackTrace();
         } catch (IllegalAccessException e1) {
-          // TODO Auto-generated catch block
           e1.printStackTrace();
         } catch (InvocationTargetException e1) {
-          // TODO Auto-generated catch block
           e1.printStackTrace();
         }
       }
@@ -901,12 +893,12 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
         "pref, 3dlu, pref:grow, fill:60dlu, 3dlu, pref, 3dlu, pref:grow, pref",
         "pref, 3dlu, pref, pref"));
 
-    mCountryCB = new JComboBox();
+    mCountryCB = new JComboBox<>();
     filterPanel.add(new JLabel(mLocalizer.msg("country", "Country") + ":"), cc
         .xy(1, 1));
     filterPanel.add(mCountryCB, cc.xyw(3, 1, 2));
 
-    mCategoryCB = new JComboBox();
+    mCategoryCB = new JComboBox<>();
     mCategoryCB.setMaximumRowCount(20);
 
     filterPanel.add(new JLabel(mLocalizer.msg("category", "Category") + ":"),
@@ -924,7 +916,7 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
 
     filterPanel.add(namePanel, cc.xyw(1, 3, 4));
     
-    mPluginCB = new JComboBox();
+    mPluginCB = new JComboBox<>();
     mPluginCB.setMaximumRowCount(20);
 
     if (mShowPlugins) {
@@ -1205,7 +1197,7 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
           this);
     }
   }
-
+/*
   /**
    * Create the ButtonPanel for up/down Buttons
    *
@@ -1215,7 +1207,7 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
    *          Button 2
    * @return ButtonPanel
    */
-  private JPanel createButtonPn(JButton btn1, JButton btn2) {
+/*  private JPanel createButtonPn(JButton btn1, JButton btn2) {
     JPanel result = new JPanel(new FormLayout("pref",
         "fill:pref:grow, pref, 3dlu, pref, fill:pref:grow"));
 
@@ -1225,7 +1217,7 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
     result.add(btn2, cc.xy(1, 4));
 
     return result;
-  }
+  }*/
 
   /**
    * Create the ButtonPanel for up/down Buttons
@@ -1253,7 +1245,7 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
   }
 
   private void saveSettingsInternal(boolean autoUpdate) {
-    saveChannels(((DefaultListModel) mSubscribedChannels.getModel())
+    saveChannels(((DefaultListModel<Object>) mSubscribedChannels.getModel())
         .toArray(),autoUpdate);
     MainFrame.getInstance().updateChannelChooser();
   }
@@ -1348,7 +1340,7 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
     Channel[] subscribedChannelArr;
 
     subscribedChannelArr = new Channel[mChannelListModel.getSubscribedChannels().size()];
-    ((DefaultListModel) mSubscribedChannels.getModel()).clear();
+    ((DefaultListModel<Object>) mSubscribedChannels.getModel()).clear();
 
     Channel[] channels = mChannelListModel.getAvailableChannels();
     for (Channel channel : channels) {
@@ -1371,13 +1363,13 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
           
           if(separator.endsWith(aSubscribedChannelArr.getUniqueId()) && 
               previousChannel != null && separator.startsWith(previousChannel.getUniqueId()) ) {
-            ((DefaultListModel) mSubscribedChannels.getModel()).addElement(Channel.SEPARATOR);
+            ((DefaultListModel<Object>) mSubscribedChannels.getModel()).addElement(Channel.SEPARATOR);
             lastSeparatorIndex = i+1;
           }
         }
         
         previousChannel = aSubscribedChannelArr;
-        ((DefaultListModel) mSubscribedChannels.getModel())
+        ((DefaultListModel<Object>) mSubscribedChannels.getModel())
             .addElement(aSubscribedChannelArr);
       }
     }
@@ -1438,7 +1430,7 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
     ArrayList<Channel> availableChannelList = new ArrayList<Channel>();
 
     for (Channel channel : channels) {
-      if (!((DefaultListModel) mSubscribedChannels.getModel())
+      if (!((DefaultListModel<Object>) mSubscribedChannels.getModel())
           .contains(channel)
           && mFilter.accept(channel)) {
         availableChannelList.add(channel);
@@ -1450,7 +1442,7 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
     availableChannelList.toArray(availableChannelArr);
     Arrays.sort(availableChannelArr, createChannelComparator());
 
-    DefaultListModel newModel = new DefaultListModel();
+    DefaultListModel<Object> newModel = new DefaultListModel<>();
     // Add the available channels
     for (Channel anAvailableChannelArr : availableChannelArr) {
       newModel.addElement(anAvailableChannelArr);
@@ -1460,7 +1452,7 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
     mRightButton.setEnabled(!newModel.isEmpty());
     mAllChannels.setEnabled(!newModel.isEmpty());
     if (mAllChannels.getModel().getSize() == 0) {
-      ((DefaultListModel) mAllChannels.getModel()).addElement(mLocalizer.msg(
+      ((DefaultListModel<Object>) mAllChannels.getModel()).addElement(mLocalizer.msg(
           "noChannelFound", "No Channel Found"));
     }
     else {
@@ -1558,13 +1550,13 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
     Object[] message = new Object[] {mLocalizer.msg("numberChannels", "Create channel numbers (up), start with:"),start};
     
     if(JOptionPane.showConfirmDialog(UiUtilities.getLastModalChildOf(MainFrame.getInstance()), message, mLocalizer.msg("setSortNumbers", "Set sort numbers"), JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE) == JOptionPane.OK_OPTION) {
-      Object[] channels = mSubscribedChannels.getSelectedValues();
+      List<Object> list = mSubscribedChannels.getSelectedValuesList();
       
       int value = (Integer)start.getValue();
       
       Channel previous = null;
       
-      for(Object channel : channels) {
+      for(Object channel : list) {
         if(!(channel instanceof DummyChannel) && !(channel instanceof String)) {
           if(previous != null && (previous.getJointChannel() != null && previous.getJointChannel().equals(channel))) {
             value--;
@@ -1586,13 +1578,13 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
    * Display the Config-Channel
    */
   public void configChannels() {
-    Object[] o = mSubscribedChannels.getSelectedValues();
+    List<Object> list = mSubscribedChannels.getSelectedValuesList();
 
     ArrayList<Channel> channelList = new ArrayList<Channel>();
     
-    for (int i = 0; i < o.length; i++) {
-      if(!(o[i] instanceof DummyChannel)) {
-        channelList.add((Channel) o[i]);
+    for (Object o : list) {
+      if(!(o instanceof DummyChannel)) {
+        channelList.add((Channel) o);
       }
     }
 
@@ -1676,7 +1668,7 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
     }
   }
 
-  public void drop(JList source, JList target, int n, boolean move) {
+  public void drop(JList<Object> source, JList<Object> target, int n, boolean move) {
     if (source.equals(mAllChannels) && !source.equals(target) && move) {
       moveChannelsToRight();
     } else if (source.equals(mSubscribedChannels) && !source.equals(target)
@@ -1694,7 +1686,7 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction {
           if(targetObject instanceof Channel && ((Channel)targetObject).getJointChannel() != null 
               && targetObject2 instanceof Channel && ((Channel)targetObject2).getBaseChannel() != null
               && ((Channel)targetObject2).getBaseChannel().equals(targetObject)) {
-            Object[] values = mSubscribedChannels.getSelectedValues();
+            List<Object> values = mSubscribedChannels.getSelectedValuesList();
             
             boolean containsChannel = false;
             

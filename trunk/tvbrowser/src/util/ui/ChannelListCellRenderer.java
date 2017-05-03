@@ -36,9 +36,9 @@ import javax.swing.JSeparator;
 import com.jgoodies.forms.factories.CC;
 import com.jgoodies.forms.layout.FormLayout;
 
+import devplugin.Channel;
 import tvbrowser.core.ChannelList;
 import tvbrowser.core.DuplicateChannelNameCounter;
-import devplugin.Channel;
 
 /**
  * A ListCellRenderer for Channel-Lists
@@ -54,6 +54,7 @@ public class ChannelListCellRenderer extends DefaultListCellRenderer {
   private boolean mDefaultValues;
   private boolean mShowCountry;
   private boolean mShowJointChannelInfo;
+  private boolean mPaintChannelBackgroundColor;
   private Channel[] mChannels;
 
   private JPanel mSeparator;
@@ -80,6 +81,10 @@ public class ChannelListCellRenderer extends DefaultListCellRenderer {
   
   public ChannelListCellRenderer(boolean channelIconsVisible, boolean textVisible, boolean defaultValues, boolean showCountry, boolean showJointChannelName) {
     this(channelIconsVisible,textVisible,defaultValues, showCountry, null, showJointChannelName);
+  }
+  
+  public ChannelListCellRenderer(boolean channelIconsVisible, boolean textVisible, boolean defaultValues, boolean showCountry, boolean showJointChannelName, boolean paintChannelBackgroundColor) {
+    this(channelIconsVisible,textVisible,defaultValues, showCountry, null, showJointChannelName, paintChannelBackgroundColor);
   }
 
   
@@ -118,6 +123,27 @@ public class ChannelListCellRenderer extends DefaultListCellRenderer {
    * @since 3.2.1
    */
   public ChannelListCellRenderer(boolean channelIconsVisible, boolean textVisible, boolean defaultValues, boolean showCountry, Channel[] channels, boolean showJointChannelInfo) {
+    this(channelIconsVisible,textVisible,defaultValues,showCountry,channels,showJointChannelInfo,false);
+  }
+  
+  /**
+   * Create Renderer
+   * 
+   * @param channelIconsVisible
+   *          show Channel Icon?
+   * @param textVisible
+   *          show Channel Name?
+   * @param defaultValues
+   *          show Default Channel Name?
+   * @param showCountry
+   *          show Country Information if channel name is a duplicate?
+   * @param channels 
+   * @param showJointChannelInfo Show the joint channel name and icon if there is joint channel.
+   * @param showChannelBackgroundColor If the background color of a channel should be painted. 
+   *          
+   * @since 3.4.5
+   */
+  public ChannelListCellRenderer(boolean channelIconsVisible, boolean textVisible, boolean defaultValues, boolean showCountry, Channel[] channels, boolean showJointChannelInfo, boolean paintChannelBackgroundColor) {
     mChannelIconsVisible = channelIconsVisible;
     mTextVisible = textVisible;
     mDefaultValues = defaultValues;
@@ -127,6 +153,7 @@ public class ChannelListCellRenderer extends DefaultListCellRenderer {
     mSeparator = new JPanel(new FormLayout("0dlu:grow","3dlu,default,3dlu"));
     mSeparator.add(new JSeparator(JSeparator.HORIZONTAL), CC.xy(1, 2));
     mSeparator.setOpaque(false);
+    mPaintChannelBackgroundColor = paintChannelBackgroundColor;
   }
 
   public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
@@ -151,9 +178,13 @@ public class ChannelListCellRenderer extends DefaultListCellRenderer {
   
       if (value instanceof Channel) {
         mChannel.setChannel((Channel) value);
-        mChannel.setOpaque(isSelected);
+        mChannel.setOpaque(isSelected || (mPaintChannelBackgroundColor && ((Channel)value).isUsingUserBackgroundColor()));
         mChannel.setBackground(label.getBackground());
         mChannel.setForeground(label.getForeground());
+        
+        if(mPaintChannelBackgroundColor && ((Channel)value).isUsingUserBackgroundColor() && !isSelected) {
+          mChannel.setBackground(((Channel)value).getUserBackgroundColor());
+        }
   
         boolean found = (mChannels == null);
         if (mChannels != null) {

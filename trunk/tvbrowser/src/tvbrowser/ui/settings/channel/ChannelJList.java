@@ -38,13 +38,13 @@ import devplugin.Channel;
 /**
  * A special List that shows details for a Channel as a Tooltip
  */
-public class ChannelJList extends JList {
+public class ChannelJList extends JList<Object> {
   /** Localizer */
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(ChannelJList.class);
 
   public ChannelJList() { }
 
-  public ChannelJList(DefaultListModel model) {
+  public ChannelJList(DefaultListModel<Object> model) {
     super(model);
   }
 

@@ -1300,5 +1300,33 @@ public class Channel implements Comparable<Channel> {
    */
   public int hashCode() {
         return getUniqueId().hashCode();
-  }  
+  }
+  
+  /**
+   * Sets the background color of the channel.
+   * 
+   * @param background The color to set or <code>null</code>
+   * to remove color.
+   * @since 3.4.5
+   */
+  public void setUserBackgroundColor(Color background) {
+    ChannelUserSettings.getSettings(this).setBackgroundColor(background);
+  }
+  
+  /**
+   * @return The background color for this channel 
+   *         or <code>null</code> if no background
+   *         color was set.
+   * @since 3.4.5
+   */
+  public Color getUserBackgroundColor() {
+    return ChannelUserSettings.getSettings(this).getBackground();
+  }
+  
+  /**
+   * @return If this channel has a user background color.
+   */
+  public boolean isUsingUserBackgroundColor() {
+    return ChannelUserSettings.getSettings(this).getBackground() != null;
+  }
 }
