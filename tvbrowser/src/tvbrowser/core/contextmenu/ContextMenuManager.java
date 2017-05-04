@@ -35,12 +35,19 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 
+import javax.swing.Action;
+import javax.swing.Icon;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 //import javax.swing.MenuElement;
 import javax.swing.SwingUtilities;
 
+import devplugin.ActionMenu;
+import devplugin.ContextMenuIf;
+import devplugin.ContextMenuSeparatorAction;
+import devplugin.Program;
+import devplugin.SettingsItem;
 import tvbrowser.core.Settings;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
@@ -55,10 +62,6 @@ import util.settings.ContextMenuMouseActionSetting;
 import util.ui.Localizer;
 import util.ui.TVBrowserIcons;
 import util.ui.menu.MenuUtil;
-import devplugin.ActionMenu;
-import devplugin.ContextMenuIf;
-import devplugin.Program;
-import devplugin.SettingsItem;
 
 /**
  * A class that handles the program context menu.
@@ -354,7 +357,7 @@ public class ContextMenuManager {
    * @return The menu items of the context menu.
    */
   public JMenu createContextMenuItems(ContextMenuIf callerIf, Program program, boolean markDefaultIf) {
-    ArrayList<JMenuItem> items = new ArrayList<JMenuItem>();
+    try {
     ContextMenuIf[] menuIfArr = getInstance().getAvailableContextMenuIfs(false, true);
 
     JMenu rootMenu = new JMenu();
@@ -398,13 +401,46 @@ public class ContextMenuManager {
         }
       } else if (!equalsPlugin) {
         ActionMenu actionMenu = menuIf.getContextMenuActions(program);
+        
         if (actionMenu != null) {
-          JMenuItem menuItem = MenuUtil.createMenuItem(actionMenu);
-          items.add(menuItem);
-
-          rootMenu.add(menuItem);
+          if(actionMenu.showOnlySubMenus()) {
+            final ActionMenu[] subItems = actionMenu.getSubItems();
+            
+            if(subItems != null) {
+              Icon ic = (Icon)actionMenu.getAction().getValue(Action.SMALL_ICON);
+              
+              rootMenu.addSeparator();
+              
+              for(ActionMenu item : subItems) {
+                if(item != null) {
+                  if(item.getAction().getValue(Action.SMALL_ICON) == null && ic != null) {
+                    item.getAction().putValue(Action.SMALL_ICON, ic);
+                  }
+                  
+                  if(item.getAction() instanceof ContextMenuSeparatorAction) {
+                    rootMenu.addSeparator();
+                  }
+                  else {
+                    JMenuItem menuItem = MenuUtil.createMenuItem(item);
+                    
+                    if(menuItem != null) {
+                      rootMenu.add(menuItem);
+                    }
+                  }
+                }
+              }
+              
+              rootMenu.addSeparator();
+            }
+          }
+          else {
+            JMenuItem menuItem = MenuUtil.createMenuItem(actionMenu);
+            
+            rootMenu.add(menuItem);
+          }
         }
       }
+    
     }
 
     // Remove last Item if it's a Separator
@@ -421,6 +457,8 @@ public class ContextMenuManager {
     }
     
     return rootMenu;
+    }catch(Throwable t) {t.printStackTrace();}
+    return null;
   }
 
   /**

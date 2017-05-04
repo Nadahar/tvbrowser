@@ -37,6 +37,14 @@ import javax.swing.Icon;
  */
 public class ActionMenu {
   public static final int ID_ACTION_NONE = -1;
+  
+  /**
+   * To show the submenus directly in the context menu of a program
+   * add this key to the action and set the value to <code>true</code> 
+   * 
+   * @since 3.4.5
+   */
+  public static final String KEY_SHOW_ONLY_SUB_MENUS = "showOnlySubMenus";
 
   private Action mAction;
   private ActionMenu[] mSubItems;
@@ -85,8 +93,13 @@ public class ActionMenu {
    * @param subItems sub menu items
    */
   public ActionMenu(final int actionId, final String menuTitle, final Icon menuIcon, final ActionMenu[] subItems) {
+    this(actionId, menuTitle, menuIcon, subItems, false);
+  }
+  
+  public ActionMenu(final int actionId, final String menuTitle, final Icon menuIcon, final ActionMenu[] subItems, final boolean showOnlySubMenus) {
     this(new ContextMenuAction(menuTitle, menuIcon), subItems);
     mId = actionId;
+    mAction.putValue(KEY_SHOW_ONLY_SUB_MENUS, showOnlySubMenus);
   }
   
   /**
@@ -180,9 +193,19 @@ public class ActionMenu {
    * @param action
    * @param isSelected state of the check box (checked/unchecked)
    */
-  public ActionMenu(Action action, boolean isSelected) {
+  public ActionMenu(int actionId, Action action, boolean isSelected) {
     this(action,(ActionMenu[])null);
     mIsSelected = isSelected;
+    mId = actionId;
+  }
+  
+  /**
+   * Creates a new single checkbox menu entry.
+   * @param action
+   * @param isSelected state of the check box (checked/unchecked)
+   */
+  public ActionMenu(Action action, boolean isSelected) {
+    this(ActionMenu.ID_ACTION_NONE,action,isSelected);
   }
 
   /**
@@ -237,5 +260,9 @@ public class ActionMenu {
 
   public int getActionId() {
     return mId;
+  }
+  
+  public boolean showOnlySubMenus() {
+    return mAction.getValue(KEY_SHOW_ONLY_SUB_MENUS) != null && ((Boolean)mAction.getValue(KEY_SHOW_ONLY_SUB_MENUS)).booleanValue();
   }
 }
