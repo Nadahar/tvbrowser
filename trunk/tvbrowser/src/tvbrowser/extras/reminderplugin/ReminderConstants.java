@@ -35,6 +35,8 @@ public final class ReminderConstants {
     new RemindValue(480),
     new RemindValue(720),
     new RemindValue(1440),
+    new RemindValue(2 * 1440),
+    new RemindValue(3 * 1440),
     new RemindValue(7 * 1440),
   };
   

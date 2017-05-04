@@ -32,7 +32,7 @@ public class RemindValue {
   
   public RemindValue(int minutes) {
     mMinutes = minutes;
-    mTranslation = mLocalizer.msg("remind."+(minutes > 1440 ? "week" : minutes),minutes < 0 ? "Remind me when the program runs "+minutes+" minutes" : "Remind me "+minutes+" minutes before");
+    mTranslation = mLocalizer.msg("remind."+(minutes >= 1440*7 ? "week" : (minutes >= 1440 ? "days."+(minutes/1440) : minutes)),minutes < 0 ? "Remind me when the program runs "+minutes+" minutes" : "Remind me "+minutes+" minutes before");
   }
   
   public int getMinutes() {
