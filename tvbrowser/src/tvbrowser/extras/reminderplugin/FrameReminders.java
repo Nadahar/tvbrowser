@@ -123,7 +123,8 @@ public class FrameReminders extends JFrame implements InterfaceClose<PanelRemind
     	  }
     	
     	  mScrollPane.getVerticalScrollBar().setValue(0);
-    	  mListReminders.updateUI();
+    	  mListReminders.repaint();
+    	  mListReminders.revalidate();
       });
       
       if(ReminderPlugin.getInstance().getSettings().getProperty(ReminderPropertyDefaults.KEY_FRAME_REMINDERS_TO_FRONT_WHEN_REMINDER_ADDED,"false").equals("true")) {
@@ -154,7 +155,8 @@ public class FrameReminders extends JFrame implements InterfaceClose<PanelRemind
       mListReminders.remove(item);
       
       if(isVisible()) {
-        mListReminders.updateUI();
+        mListReminders.repaint();
+        mListReminders.revalidate();
       }
       
       mGlobalReminderList.removeWithoutChecking(reminder.getProgramItem());
