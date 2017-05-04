@@ -32,7 +32,6 @@ import java.awt.BorderLayout;
 import java.awt.Frame;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -83,6 +82,7 @@ import tvbrowser.core.Settings;
 import tvbrowser.core.TvDataUpdateListener;
 import tvbrowser.core.TvDataUpdater;
 import tvbrowser.core.icontheme.IconLoader;
+import tvbrowser.core.plugin.PluginManagerImpl;
 import tvbrowser.extras.common.ConfigurationHandler;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.mainframe.toolbar.ToolBar;
@@ -612,89 +612,118 @@ public class ReminderPlugin {
     }
   }
 
-  protected ActionMenu getContextMenuActions(final Frame parentFrame,
-                                          final Program program) {try {
-    if (mReminderList.contains(program)) {
-      final ReminderListItem item = mReminderList.getReminderItem(program);
-      RemindValue[] values = calculatePossibleReminders(program);
-      
-      ArrayList<ActionMenu> actions = new ArrayList<ActionMenu>(values.length + 3);
+  protected ActionMenu getContextMenuActions(final Frame parentFrame, final Program program) {
+    final ReminderListItem item = mReminderList.getReminderItem(program);
+    RemindValue[] values = calculatePossibleReminders(program);
+    
+    ArrayList<ActionMenu> actions = new ArrayList<ActionMenu>(values.length + 3);
 
-      actions.add(new ActionMenu(new AbstractAction(ReminderConstants.DONT_REMIND_AGAIN_VALUE.toString()) {
+    if(item != null || program.equals(PluginManagerImpl.getInstance().getExampleProgram())) {
+      actions.add(new ActionMenu(ReminderConstants.DONT_REMIND_AGAIN_VALUE.getMinutes(),new AbstractAction(ReminderConstants.DONT_REMIND_AGAIN_VALUE.toString()) {
         public void actionPerformed(ActionEvent e) {
           mReminderList.removeWithoutChecking(program);
           updateRootNode(true);
         }
       }));
       actions.add(new ActionMenu(ContextMenuSeparatorAction.getInstance()));
+    }
 
-      for(final RemindValue value : values) {
-        actions.add(new ActionMenu(new AbstractAction(value.toString()) {
-          @Override
-          public void actionPerformed(ActionEvent e) {
-            item.setMinutes(value.getMinutes());
-            saveReminders();
+    for(final RemindValue value : values) {
+      actions.add(new ActionMenu(value.getMinutes(),new AbstractAction(value.toString()) {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+          if(item != null) {
+            if(item.getMinutes() == value.getMinutes()) {
+              mReminderList.removeWithoutChecking(program);
+              updateRootNode(true);
+            }
+            else {
+              item.setMinutes(value.getMinutes());
+              saveReminders();
+            }
           }
-        }, item.getMinutes() == value.getMinutes()));
-      }
-      
+          else {
+            mReminderList.add(program, new ReminderContent(value.getMinutes()));
+            mReminderList.unblockProgram(program);
+            updateRootNode(true);
+          }
+        }
+      }, item != null && (item.getMinutes() == value.getMinutes())));
+    }
+    
+    if(item != null || program.equals(PluginManagerImpl.getInstance().getExampleProgram())) {
       actions.add(new ActionMenu(ContextMenuSeparatorAction.getInstance()));
-      actions.add(new ActionMenu(new AbstractAction(mLocalizer.msg("comment",
+      actions.add(new ActionMenu(Integer.MAX_VALUE, new AbstractAction(mLocalizer.msg("comment",
           "Change comment"), TVBrowserIcons.edit(TVBrowserIcons.SIZE_SMALL)) {
         @Override
         public void actionPerformed(ActionEvent e) {
           item.changeComment(parentFrame);
         }
       }));
+    }
+ 
+    ContextMenuAction action = new ContextMenuAction();
+    action.setText(mLocalizer.msg("contextMenuText", "Remind me"));
+    action.setSmallIcon(IconLoader.getInstance().getIconFromTheme("actions",
+        "appointment-new", 16));
+    action.setActionListener(event -> {
+      final Window w = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
+      try {
+        UIThreadRunner.invokeAndWait(new Runnable() {
 
-      return new ActionMenu(getName(), IconLoader.getInstance().getIconFromTheme("apps",
-          "appointment", 16), actions.toArray(new ActionMenu[actions
-          .size()]));
-    } else if ((program.isExpired() /*|| program.isOnAir()*/)
-        && (!program.equals(Plugin.getPluginManager().getExampleProgram()))) {
-      return null;
-    } else {
-      ContextMenuAction action = new ContextMenuAction();
-      action.setText(mLocalizer.msg("contextMenuText", "Remind me"));
-      action.setSmallIcon(IconLoader.getInstance().getIconFromTheme("actions",
-          "appointment-new", 16));
-      action.setActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent event) {
-          final Window w = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
-          try {
-            UIThreadRunner.invokeAndWait(new Runnable() {
+          @Override
+          public void run() {
+            ReminderDialog dlg = new ReminderDialog(w, program, mSettings);
+            Settings.layoutWindow("extras.remiderContext", dlg);
 
-              @Override
-              public void run() {
-                ReminderDialog dlg = new ReminderDialog(w, program, mSettings);
-                Settings.layoutWindow("extras.remiderContext", dlg);
+            if(mSettings.getProperty("showTimeSelectionDialog","true").compareTo("true") == 0) {
+              UiUtilities.centerAndShow(dlg);
 
-                if(mSettings.getProperty("showTimeSelectionDialog","true").compareTo("true") == 0) {
-                  UiUtilities.centerAndShow(dlg);
-
-                  if (dlg.getOkPressed()) {
-                    mReminderList.add(program, dlg.getReminderContent());
-                    mReminderList.unblockProgram(program);
-                    updateRootNode(true);
-                  }
-                  dlg.dispose();
-                }
-                else {
-                  mReminderList.add(program, dlg.getReminderContent());
-                  mReminderList.unblockProgram(program);
-                  updateRootNode(true);
-                }
+              if (dlg.getOkPressed()) {
+                mReminderList.add(program, dlg.getReminderContent());
+                mReminderList.unblockProgram(program);
+                updateRootNode(true);
               }
-            });
-          } catch (InterruptedException e) {
-            e.printStackTrace();
-          } catch (InvocationTargetException e) {
-            e.printStackTrace();
+              dlg.dispose();
+            }
+            else {
+              mReminderList.add(program, dlg.getReminderContent());
+              mReminderList.unblockProgram(program);
+              updateRootNode(true);
+            }
           }
-        }
-      });
-      return new ActionMenu(action);
-    }}catch(Throwable t) {t.printStackTrace();}return null;
+        });
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+      } catch (InvocationTargetException e) {
+        e.printStackTrace();
+      }
+    });
+    
+    ActionMenu result = null;
+    
+    if(!program.isExpired()) {
+      if(mReminderList.contains(program)) {
+        result = new ActionMenu(getName(), IconLoader.getInstance().getIconFromTheme("apps",
+            "appointment", 16), actions.toArray(new ActionMenu[actions
+                                                               .size()]));
+      }
+      else {
+        result = new ActionMenu(ActionMenu.ID_ACTION_NONE, getName(), IconLoader.getInstance().getIconFromTheme("apps",
+            "appointment", 16), new ActionMenu[] {
+                new ActionMenu(Integer.MIN_VALUE, action),
+                new ActionMenu(getName(), IconLoader.getInstance().getIconFromTheme("apps",
+                    "appointment", 16), actions.toArray(new ActionMenu[actions
+                                                                       .size()]))
+            }, true);
+        
+        new ActionMenu(getName(), IconLoader.getInstance().getIconFromTheme("apps",
+            "appointment", 16), actions.toArray(new ActionMenu[actions
+            .size()]));
+      }
+    }
+    
+    return result;
   }
 
   /**
