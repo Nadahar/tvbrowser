@@ -30,8 +30,10 @@ import java.applet.Applet;
 import java.applet.AudioClip;
 import java.awt.BorderLayout;
 import java.awt.Frame;
+import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -60,6 +62,7 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 
 import org.apache.commons.lang3.StringUtils;
@@ -84,6 +87,7 @@ import tvbrowser.core.TvDataUpdater;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.plugin.PluginManagerImpl;
 import tvbrowser.extras.common.ConfigurationHandler;
+import tvbrowser.extras.common.InternalPluginProxyIf;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.mainframe.toolbar.ToolBar;
 import util.exc.ErrorHandler;
@@ -108,6 +112,9 @@ public class ReminderPlugin {
   static Localizer mLocalizer = util.ui.Localizer
       .getLocalizerFor(ReminderPlugin.class);
 
+  static KeyStroke STROKE_FRAME_REMINDERS_SHOW = KeyStroke
+      .getKeyStroke(KeyEvent.VK_R, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
+  
   private static final java.util.logging.Logger mLog
       = Logger.getLogger(ReminderPlugin.class.getName());
 
@@ -173,7 +180,8 @@ public class ReminderPlugin {
     toggleTimer.putValue(Plugin.BIG_ICON, IconLoader.getInstance().getIconFromTheme("actions", "reminder-stop", 22));
     toggleTimer.putValue(ToolBar.ACTION_TYPE_KEY, ToolBar.TOOGLE_BUTTON_ACTION);
     toggleTimer.putValue(ToolBar.ACTION_IS_SELECTED, false);
-
+    toggleTimer.putValue(InternalPluginProxyIf.KEYBOARD_ACCELERATOR, KeyStroke
+        .getKeyStroke(KeyEvent.VK_O, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
     
     mWrapper = new PluginCenterPanelWrapper() {  
       ReminderCenterPanel centerPanel = new ReminderCenterPanel();
@@ -948,6 +956,7 @@ public class ReminderPlugin {
     actionShowCurrentReminders.putValue(Action.SHORT_DESCRIPTION, mLocalizer.msg("description",
         "Reminds you of programs to not miss them."));
     actionShowCurrentReminders.putValue(Plugin.ACTION_ID_KEY, REMINDER_LIST_ACTION_ID);
+    actionShowCurrentReminders.putValue(InternalPluginProxyIf.KEYBOARD_ACCELERATOR, STROKE_FRAME_REMINDERS_SHOW);
         
     return new ActionMenu(getName(),IconLoader.getInstance().getIconFromTheme("apps", "appointment", 16), new Action[] {
         actionShowCurrentReminders,

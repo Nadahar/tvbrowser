@@ -1,12 +1,16 @@
 package tvbrowser.extras.reminderplugin;
 
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 
+import javax.swing.AbstractAction;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -67,11 +71,24 @@ public class FrameReminders extends JFrame implements InterfaceClose<PanelRemind
         close();
       }
     });
-    
+        
     setTitle(ReminderFrame.LOCALIZER.msg("title2", "Current Reminders"));
     setIconImages(TVBrowser.ICONS_WINDOW);
     setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
     UiUtilities.registerForClosing(this);
+    
+    StringBuilder key = new StringBuilder(); 
+    key.append(String.valueOf(ReminderPlugin.STROKE_FRAME_REMINDERS_SHOW.getKeyCode()));
+    key.append("_");
+    key.append(String.valueOf(ReminderPlugin.STROKE_FRAME_REMINDERS_SHOW.getModifiers()));
+    
+    rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(ReminderPlugin.STROKE_FRAME_REMINDERS_SHOW, key.toString());
+    rootPane.getActionMap().put(key.toString(), new AbstractAction() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        close();
+      }
+    });
     
     Settings.layoutWindow("reminderFrameReminders", this, new Dimension(Sizes.dialogUnitXAsPixel(300, this), Sizes.dialogUnitYAsPixel(300, this)));
   }
@@ -170,13 +187,19 @@ public class FrameReminders extends JFrame implements InterfaceClose<PanelRemind
   
   public void openShow() {
     if(!isVisible()) {
-	  setVisible(true);
-	}
-	      
-	SwingUtilities.invokeLater(() -> {
-	  if((getExtendedState() & JFrame.ICONIFIED) == JFrame.ICONIFIED) {
-	    setExtendedState(JFrame.NORMAL);
-	  }
-	});
+  	  setVisible(true);
+  	}
+  	      
+  	SwingUtilities.invokeLater(() -> {
+  	  if((getExtendedState() & JFrame.ICONIFIED) == JFrame.ICONIFIED) {
+  	    setExtendedState(JFrame.NORMAL);
+  	  }
+  	  
+      setExtendedState(getExtendedState());
+      setAlwaysOnTop(true);
+      toFront();
+      requestFocus();
+      setAlwaysOnTop(false);
+  	});
   }
 }
