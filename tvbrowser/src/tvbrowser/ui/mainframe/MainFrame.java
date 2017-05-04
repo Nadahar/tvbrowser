@@ -54,6 +54,8 @@ import java.awt.dnd.DropTargetEvent;
 import java.awt.dnd.DropTargetListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ContainerEvent;
+import java.awt.event.ContainerListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -92,6 +94,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.ActionMap;
 import javax.swing.BorderFactory;
 import javax.swing.InputMap;
@@ -113,9 +116,32 @@ import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import javax.swing.UIManager;
 import javax.swing.WindowConstants;
+import javax.swing.event.AncestorEvent;
+import javax.swing.event.AncestorListener;
+import javax.swing.event.MenuEvent;
+import javax.swing.event.MenuListener;
+import javax.swing.event.PopupMenuEvent;
+import javax.swing.event.PopupMenuListener;
 import javax.swing.plaf.TabbedPaneUI;
 import javax.swing.plaf.basic.BasicTabbedPaneUI;
 
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.Sizes;
+
+import devplugin.Channel;
+import devplugin.ChannelDayProgram;
+import devplugin.ChannelFilter;
+import devplugin.Date;
+import devplugin.FilterChangeListenerV2;
+import devplugin.Plugin;
+import devplugin.PluginCenterPanel;
+import devplugin.PluginCenterPanelWrapper;
+import devplugin.Program;
+import devplugin.ProgramFilter;
+import devplugin.ProgressMonitor;
+import devplugin.SettingsItem;
+import devplugin.Version;
 import tvbrowser.TVBrowser;
 import tvbrowser.core.ChannelList;
 import tvbrowser.core.DateListener;
@@ -182,24 +208,6 @@ import util.ui.persona.PersonaListener;
 import util.ui.progress.Progress;
 import util.ui.progress.ProgressWindow;
 import util.ui.view.Node;
-
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.Sizes;
-
-import devplugin.Channel;
-import devplugin.ChannelDayProgram;
-import devplugin.ChannelFilter;
-import devplugin.Date;
-import devplugin.FilterChangeListenerV2;
-import devplugin.Plugin;
-import devplugin.PluginCenterPanel;
-import devplugin.PluginCenterPanelWrapper;
-import devplugin.Program;
-import devplugin.ProgramFilter;
-import devplugin.ProgressMonitor;
-import devplugin.SettingsItem;
-import devplugin.Version;
 
 /**
  * TV-Browser
@@ -667,7 +675,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
 
           if(mMenuBar != null) {
             mMenuBar.setFullscreenItemChecked(false);
-            mMenuBar.setVisible(true);
+            mMenuBar.setVisible(Settings.propIsMenubarVisible.getBoolean());
           }
 
           if(mToolBarPanel != null) {
@@ -980,7 +988,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     }
   }
   
-  private void addKeyAction(int keyCode, int modifiers, AbstractAction action) {
+  private void addKeyAction(int keyCode, int modifiers, Action action) {
     KeyStroke stroke = KeyStroke.getKeyStroke(keyCode, modifiers);
     
     StringBuilder key = new StringBuilder(); 
@@ -992,7 +1000,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     rootPane.getActionMap().put(key.toString(), action);
   }
   
-  private void addKeyAction(KeyStroke keyStroke, AbstractAction action) {
+  private void addKeyAction(KeyStroke keyStroke, Action action) {
     StringBuilder key = new StringBuilder(); 
     key.append(String.valueOf(keyStroke.getKeyCode()));
     key.append("_");
@@ -1071,7 +1079,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
       addKeyAction(KeyEvent.VK_F7, ContextMenuManager.NO_MOUSE_MODIFIER_EX, new AbstractAction() {
         @Override
         public void actionPerformed(ActionEvent e) {
-          setShowMenubar(!mMenuBar.isVisible());
+          toggleShowMenuBar();
         }
       });
     }
@@ -1229,9 +1237,30 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     addProgramMouseActionKeys(ProgramKeyEventHandler.MIDDLE_SINGLE_KEY, Settings.propMiddleSingleClickIfArray.getContextMenuMouseActionArray());
     addProgramMouseActionKeys(ProgramKeyEventHandler.MIDDLE_DOUBLE_KEY, Settings.propMiddleDoubleClickIfArray.getContextMenuMouseActionArray());
 
+    addKeyboardActionForMenu(mMenuBar.mPluginsMenu);
+    
     this.setRootPane(rootPane);
   }
-
+  
+  private void addKeyboardActionForMenu(JMenu menu) {
+    for(int i = 0; i < menu.getItemCount(); i++) {
+      final JMenuItem item = menu.getItem(i);
+      
+      if(item != null) {
+        if(item instanceof JMenu) {
+          addKeyboardActionForMenu((JMenu)item);
+        }
+        else {
+          final KeyStroke s = item.getAccelerator();
+          
+          if(s != null) {
+            addKeyAction(s, menu.getItem(i).getAction());
+          }
+        }
+      }
+    }
+  }
+  
   protected void goToRightSide() {
     Channel[] channels = MainFrame.getInstance().getProgramTableModel().getShownChannels();
     if (channels != null && channels.length > 0) {
@@ -2823,6 +2852,10 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     if(mToolBarPanel != null) {
       mToolBarPanel.updateUI();
     }
+  }
+  
+  public void toggleShowMenuBar() {
+    setShowMenubar(!mMenuBar.isVisible());
   }
   
   public void setShowMenubar(boolean visible) {

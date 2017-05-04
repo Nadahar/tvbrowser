@@ -50,6 +50,7 @@ import javax.swing.SwingConstants;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 
+import tvbrowser.TVBrowser;
 import tvbrowser.core.DateListener;
 import tvbrowser.core.Settings;
 import tvbrowser.core.TvDataBase;
@@ -67,6 +68,7 @@ import tvbrowser.ui.filter.dlgs.SelectFilterPopup;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.mainframe.actions.TVBrowserAction;
 import tvbrowser.ui.mainframe.actions.TVBrowserActions;
+import util.misc.OperatingSystem;
 import util.ui.Localizer;
 import util.ui.ScrollableMenu;
 import util.ui.UIThreadRunner;
@@ -92,7 +94,8 @@ public class DefaultToolBarModel implements ToolBarModel, DateListener {
       mGoToTodayAction, mGoToPreviousDayAction, mGoToNextDayAction,
       mGoToPreviousWeekAction, mGoToNextWeekAction,
       mGoToDateAction, mScrollToChannelAction, mScrollToTimeAction,
-      mGlueAction, mSpaceAction, mFontSizeSmallerAction, mFontSizeLargerAction;
+      mGlueAction, mSpaceAction, mFontSizeSmallerAction, mFontSizeLargerAction,
+      mShowMenu;
 
   private static DefaultToolBarModel sInstance;
 
@@ -155,6 +158,11 @@ public class DefaultToolBarModel implements ToolBarModel, DateListener {
     mScrollToTimeAction = createAction(TVBrowserActions.scrollToTime);
     mFontSizeSmallerAction = createAction(TVBrowserActions.fontSizeSmaller);
     mFontSizeLargerAction = createAction(TVBrowserActions.fontSizeLarger);
+    
+    if(!OperatingSystem.isMacOs() || TVBrowser.isTransportable()) {
+      mShowMenu = createAction(TVBrowserActions.showMenu);
+    }
+    
     updateTimeButtons();
 
     InternalPluginProxyIf[] internalPlugins = InternalPluginProxyList.getInstance().getAvailableProxys();
@@ -380,6 +388,10 @@ public class DefaultToolBarModel implements ToolBarModel, DateListener {
     mVisibleActions.add(mFontSizeSmallerAction);
     mVisibleActions.add(mFontSizeLargerAction);
     mVisibleActions.add(getSeparatorAction());
+    
+    if(!OperatingSystem.isMacOs() || TVBrowser.isTransportable()) {
+      mVisibleActions.add(mShowMenu);
+    }
 
     // date navigation
     mVisibleActions.add(mGoToPreviousDayAction);

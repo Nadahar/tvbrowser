@@ -44,6 +44,18 @@ public final class TVBrowserActions {
   /**
    * increase program table font size
    */
+  public final static TVBrowserAction showMenu = new TVBrowserAction("showMenu", TVBrowserIcons
+      .showMenu(TVBrowserIcons.SIZE_SMALL), TVBrowserIcons.showMenu(TVBrowserIcons.SIZE_LARGE), KeyEvent.VK_F7, 0, ToolBar.BUTTON_ACTION) {
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+      MainFrame.getInstance().toggleShowMenuBar();
+    }
+  };
+  
+  /**
+   * increase program table font size
+   */
   public final static TVBrowserAction fontSizeLarger = new TVBrowserAction("fontSizeLarger", TVBrowserIcons
       .zoomIn(TVBrowserIcons.SIZE_SMALL), TVBrowserIcons.zoomIn(TVBrowserIcons.SIZE_LARGE), KeyEvent.VK_PLUS, Toolkit
       .getDefaultToolkit().getMenuShortcutKeyMask(), ToolBar.BUTTON_ACTION) {

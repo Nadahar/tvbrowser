@@ -29,10 +29,12 @@ import javax.swing.Action;
 import javax.swing.ActionMap;
 import javax.swing.Icon;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
+import javax.swing.KeyStroke;
 import javax.swing.MenuElement;
 import javax.swing.MenuSelectionManager;
 import javax.swing.SwingConstants;
@@ -41,6 +43,8 @@ import javax.swing.UIManager;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 import javax.swing.plaf.basic.BasicPopupMenuUI;
+
+import tvbrowser.core.Settings;
 
 // This class implements a scrollable JMenu
 // This class was hacked out in a couple of hours,
@@ -237,7 +241,7 @@ public class ScrollableMenu extends JMenu {
       public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
         // reset the preferred size, because otherwise the height will not change after items have been added
         getPopupMenu().setPreferredSize(null);
-        getPopupMenu().setPreferredSize(new Dimension(maxWidth, getPopupMenu().getPreferredSize().height));
+        getPopupMenu().setPreferredSize(new Dimension(Math.max(maxWidth,getPopupMenu().getPreferredSize().width), getPopupMenu().getPreferredSize().height));
       }
     });
   }
@@ -603,6 +607,18 @@ public class ScrollableMenu extends JMenu {
       int width = jcomp.getPreferredSize().width;
       int height = jcomp.getPreferredSize().height;
 
+      if(component instanceof JMenuItem && ((JMenuItem) component).getAccelerator() != null
+          && Settings.propLookAndFeel.getString().startsWith("com.jgoodies.looks")) {
+        KeyStroke s = ((JMenuItem) component).getAccelerator();
+        
+        if(s != null) {
+          try {
+            final JLabel test = new JLabel(s.toString().replaceAll("\\s+pressed\\s+", "-").trim());
+            width += test.getPreferredSize().width+20;
+          }catch(Throwable t) {t.printStackTrace();}
+        }
+      }
+      
       if (jcomp.getBorder() != null) {
         Insets insets = jcomp.getBorder().getBorderInsets(component);
         width += insets.left + insets.right;

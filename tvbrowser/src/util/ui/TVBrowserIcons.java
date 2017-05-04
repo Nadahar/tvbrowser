@@ -303,4 +303,13 @@ public class TVBrowserIcons {
   public static ImageIcon scrollToTime(int size) {
     return icon("actions", "scroll-to-time-list", size);
   }
+  
+  /**
+   * scroll to show menu
+   * @param size
+   * @return show menu icon
+   */
+  public static ImageIcon showMenu(int size) {
+    return icon("actions", "show-menu", size);
+  }
 }
