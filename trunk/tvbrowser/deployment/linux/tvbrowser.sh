@@ -102,7 +102,7 @@ fi
 if [ -z "$PROGRAM_DIR" ]; then
     if [ -L $0 ] 
     then
-        SL= `file $0 | sed -e 's/.*to..\(.*\)./\1/'`
+        SL=$(readlink $0)
         PROGRAM_DIR=`dirname $SL`
     else
         PROGRAM_DIR=`dirname $0`
