@@ -1002,7 +1002,8 @@ public class Settings {
         propProgramPanelMarkedLowerMediumPriorityColor, propProgramPanelMarkedMinPriorityColor,
         propProgramPanelMarkedMediumPriorityColor, propProgramPanelMarkedMaxPriorityColor,
         propProgramTableColorOnAirLight, propProgramTableColorOnAirDark, propProgramPanelForegroundColor,
-        propProgramTableBackgroundSingleColor, propProgramPanelAllowTransparency, propAlwaysShowTabBarForCenterPanel};
+        propProgramTableBackgroundSingleColor, propProgramPanelAllowTransparency, propAlwaysShowTabBarForCenterPanel,
+        propProgramPanelShowOriginialTitles};
 
     mainFrame.updateCenterPanels();
     
@@ -1693,6 +1694,13 @@ public class Settings {
    */
   public static final IntProperty propProgramPanelShortDurationMinutes = new IntProperty(
       mProp, "programpanel.ShortMinutes", 10);
+  
+  /**
+   * if the original title show be shown instead of title if original is available
+   * @since 3.4.5 
+   */
+  public static final BooleanProperty propProgramPanelShowOriginialTitles = new BooleanProperty(
+      mProp, "programpanel.ShowOriginalTitles", false);
 
   public static final BooleanProperty propProgramTableMouseOver = new BooleanProperty(
       mProp, "programpanel.MouseOver", true);

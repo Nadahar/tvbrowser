@@ -193,6 +193,8 @@ public class ProgramPanel extends JComponent implements ChangeListener, PluginSt
   private byte mProgramImportance;
   
   private int mLogoWidth = 0;
+  
+  private String mTitleString = "[NO TITLE]";
 
   /**
    * Creates a new instance of ProgramPanel.
@@ -517,8 +519,22 @@ private static Font getDynamicFontSize(Font font, int offset) {
       // Get the start time, filter duplicate strings
       mProgramTimeAsString = StringPool.getString(program.getTimeString());
       
+      if(Settings.propProgramPanelShowOriginialTitles.getBoolean()) {
+        String test = program.getTextField(ProgramFieldType.ORIGINAL_TITLE_TYPE);
+        
+        if(test != null) {
+          mTitleString = test;
+        }
+        else {
+          mTitleString = program.getTitle();
+        }
+      }
+      else {
+        mTitleString = program.getTitle();
+      }
+      
       // Set the new title
-      mTitleIcon.setText(program.getTitle());
+      mTitleIcon.setText(mTitleString);
 
       if(mProgram.getProgramState() == Program.IS_VALID_STATE) {
         programHasChanged();
@@ -1251,7 +1267,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
 
     // show full title if the title has been shortened
     if (mTitleIcon.isTextCut()) {
-      return mProgram.getTitle();
+      return mTitleString;
     }
 
     return null;

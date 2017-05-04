@@ -87,11 +87,11 @@ public class ProgramPanelSettingsTab implements SettingsTab {
 
   private JCheckBox mAllowProgramImportance;
   private JCheckBox mBorderForOnAirPrograms;
-
+  
   private ArrayList<IconPlugin> mFormatIcons;
 
   private JCheckBox mHyphenator;
-  
+  private JCheckBox mShowOriginalTitles;
 
   /**
    * Creates the settings panel for this tab.
@@ -176,14 +176,18 @@ public class ProgramPanelSettingsTab implements SettingsTab {
       }
     }
     
+    mShowOriginalTitles = new JCheckBox(mLocalizer.msg("showOriginalTitles", "Show original title, if available, instead of title"), Settings.propProgramPanelShowOriginialTitles.getBoolean());
+    
     panel.addGrowingRow();
     panel.add(mIconPluginOCh, cc.xy(2, panel.getRowCount()));
     panel.add(mInfoTextOCh, cc.xy(4, panel.getRowCount()));
-
-    panel.addRow("top:pref");
-    panel.add(UiUtilities.createHelpTextArea(mLocalizer.msg("pluginIcons.description", "")), cc.xy(2, panel.getRowCount()));
+    
+    panel.addRow("top:default");
+    panel.addRow("default");
+    panel.add(UiUtilities.createHelpTextArea(mLocalizer.msg("pluginIcons.description", "")), cc.xywh(2, panel.getRowCount()-2, 1, 3));
+    panel.add(mShowOriginalTitles, cc.xy(4, panel.getRowCount()-2));
     panel.add(UiUtilities.createHelpTextArea(mLocalizer.msg("infoText.description", "")), cc.xy(4, panel.getRowCount()));
-
+    
     panel.addParagraph(mLocalizer.msg("Colors", "Colors"));
 
     panel.addRow();
@@ -361,6 +365,7 @@ public class ProgramPanelSettingsTab implements SettingsTab {
     
     Settings.propProgramInfoFields.setProgramFieldTypeArray(fieldTypeList.toArray(new ProgramFieldType[fieldTypeList.size()]));
     Settings.propProgramInfoFieldsSeparators.setStringArray(separatorList.toArray(new String[separatorList.size()]));
+    Settings.propProgramPanelShowOriginialTitles.setBoolean(mShowOriginalTitles.isSelected());
     
     Settings.propProgramTableOnAirProgramsShowingBorder.setBoolean(mBorderForOnAirPrograms.isSelected());
 
