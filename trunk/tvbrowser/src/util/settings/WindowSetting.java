@@ -24,6 +24,7 @@
 package util.settings;
 
 import java.awt.Dimension;
+import java.awt.GraphicsEnvironment;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.Window;
@@ -35,7 +36,11 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
+import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
+
+import com.sun.swing.internal.plaf.metal.resources.metal;
 
 /**
  * A class with the position and size settings for a window.
@@ -53,6 +58,7 @@ public final class WindowSetting {
 
   private Dimension mMinSize;
 
+  private int mExtendedState;
 
   /**
    * Creates an instance of this class with the values read from the stream.
@@ -61,12 +67,16 @@ public final class WindowSetting {
    * @throws IOException Thrown if something went wrong.
    */
   public WindowSetting(ObjectInputStream in) throws IOException {
-    in.readInt(); // read version;
+    final int version = in.readInt(); // read version;
 
     mXPos = in.readInt();
     mYPos = in.readInt();
     mWidth = in.readInt();
     mHeight = in.readInt();
+    
+    if(version > 1) {
+      mExtendedState = in.readInt();
+    }
   }
 
   /**
@@ -85,6 +95,8 @@ public final class WindowSetting {
       mWidth = size.width;
       mHeight = size.height;
     }
+    
+    mExtendedState = JFrame.NORMAL;
   }
 
   /**
@@ -94,12 +106,14 @@ public final class WindowSetting {
    * @throws IOException
    */
   public void saveSettings(ObjectOutputStream out) throws IOException {
-    out.writeInt(1); // write version
+    out.writeInt(2); // write version
 
     out.writeInt(mXPos);
     out.writeInt(mYPos);
     out.writeInt(mWidth);
     out.writeInt(mHeight);
+    
+    out.writeInt(mExtendedState);
   }
   
   /**
@@ -153,6 +167,12 @@ public final class WindowSetting {
     }
     else {
       window.setLocation(mXPos, mYPos);
+    }
+    
+    if(mExtendedState == JFrame.MAXIMIZED_BOTH) {
+      if(window instanceof JFrame) {
+        ((JFrame) window).setExtendedState(mExtendedState);
+      }
     }
     
     if(mWindowCache == null || !window.equals(mWindowCache)) {
@@ -211,13 +231,30 @@ public final class WindowSetting {
                 }
 
                 private void savePos(ComponentEvent e) {
-                  mXPos = e.getComponent().getX();
-                  mYPos = e.getComponent().getY();
+                  if((getExtendedState() & JFrame.MAXIMIZED_BOTH) != JFrame.MAXIMIZED_BOTH) {
+                    mXPos = e.getComponent().getX();
+                    mYPos = e.getComponent().getY();
+                  }
                 }
 
                 private void saveSize(ComponentEvent e) {
-                  mWidth = e.getComponent().getWidth();
-                  mHeight = e.getComponent().getHeight();
+                  if((getExtendedState() & JFrame.MAXIMIZED_BOTH) != JFrame.MAXIMIZED_BOTH) {
+                    mWidth = e.getComponent().getWidth();
+                    mHeight = e.getComponent().getHeight();
+                  }
+                }
+                
+                private int getExtendedState() {
+                  mExtendedState = JFrame.NORMAL;
+                  
+                  if(window instanceof JFrame) {
+                    mExtendedState = ((JFrame) window).getExtendedState();
+                  }
+                  else if(window instanceof JDialog && e.getComponent().getSize().equals(GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds().getSize())) {
+                    mExtendedState = JFrame.MAXIMIZED_BOTH;
+                  }
+                  
+                  return mExtendedState;
                 }
               });
             }
