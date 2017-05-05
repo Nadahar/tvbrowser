@@ -42,6 +42,14 @@ import javax.swing.UIManager;
 
 import org.apache.commons.lang3.StringUtils;
 
+import devplugin.Date;
+import devplugin.Marker;
+import devplugin.Plugin;
+import devplugin.PluginAccess;
+import devplugin.Program;
+import devplugin.ProgramFieldType;
+import devplugin.ProgramInfoHelper;
+import devplugin.ToolTipIcon;
 import tvbrowser.core.plugin.PluginManagerImpl;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
@@ -57,15 +65,6 @@ import util.ui.UiUtilities;
 import util.ui.html.ExtendedHTMLDocument;
 import util.ui.html.HTMLTextHelper;
 import util.ui.html.HorizontalLine;
-import devplugin.Date;
-import devplugin.Marker;
-import devplugin.Plugin;
-import devplugin.PluginAccess;
-import devplugin.Program;
-import devplugin.ProgramFieldType;
-import devplugin.ProgramInfoHelper;
-import devplugin.ToolTipIcon;
-import devplugin.UniqueIdNameGenericValue;
 
 /**
  * Creates the String for the ProgramInfoDialog
@@ -96,6 +95,7 @@ public class ProgramTextCreator {
    * @param showImage If the image should be shown if it is available.
    * @param showHelpLinks Show the Help-Links (Quality of Data, ShowView)
    * @return The HTML String.
+   * @deprecated since 3.4.5 use {@link #createInfoText(Program, ExtendedHTMLDocument, Configuration)} instead.
    */
   public static String createInfoText(Program prog, ExtendedHTMLDocument doc,
       Object[] fieldArr, Font tFont, Font bFont, boolean showImage, boolean showHelpLinks) {
@@ -121,6 +121,7 @@ public class ProgramTextCreator {
    * @param zoom The zoom value for the picture.
    * @return The HTML String.
    * @since 2.2.2
+   * @deprecated since 3.4.5 use {@link #createInfoText(Program, ExtendedHTMLDocument, Configuration)} instead.
    */
   public static String createInfoText(Program prog, ExtendedHTMLDocument doc,
       Object[] fieldArr, Font tFont, Font bFont, ProgramPanelSettings settings,
@@ -147,6 +148,7 @@ public class ProgramTextCreator {
    * @param zoom The zoom value for the picture.
    * @return The HTML String.
    * @since 2.6
+   * @deprecated since 3.4.5 use {@link #createInfoText(Program, ExtendedHTMLDocument, Configuration)} instead.
    */
   public static String createInfoText(Program prog, ExtendedHTMLDocument doc,
       Object[] fieldArr, Font tFont, Font bFont, PluginPictureSettings settings,
@@ -174,6 +176,7 @@ public class ProgramTextCreator {
    * @param showPluginIcons If the plugin icons should be shown.
    * @return The HTML String.
    * @since 2.5.3
+   * @deprecated since 3.4.5 use {@link #createInfoText(Program, ExtendedHTMLDocument, Configuration)} instead.
    */
   public static String createInfoText(Program prog, ExtendedHTMLDocument doc,
       Object[] fieldArr, Font tFont, Font bFont, ProgramPanelSettings settings,
@@ -204,6 +207,7 @@ public class ProgramTextCreator {
   *          If the plugin icons should be shown.
   * @return The HTML String.
   * @since 3.0
+   * @deprecated since 3.4.5 use {@link #createInfoText(Program, ExtendedHTMLDocument, Configuration)} instead.
   */
  public static String createInfoText(Program prog, ExtendedHTMLDocument doc,
      Object[] fieldArr, Font tFont, Font bFont, ProgramPanelSettings settings,
@@ -234,17 +238,40 @@ public class ProgramTextCreator {
    *          If the plugin icons should be shown.
    * @return The HTML String.
    * @since 3.1
+   * @deprecated since 3.4.5 use {@link #createInfoText(Program, ExtendedHTMLDocument, Configuration)} instead.
    */
   public static String createInfoText(Program prog, ExtendedHTMLDocument doc,
       Object[] fieldArr, Font tFont, Font bFont, ProgramPanelSettings settings,
       boolean showHelpLinks, int zoom, boolean showPluginIcons,
       boolean showPersonLinks, boolean useThemeColors) {
+    final Configuration config = new Configuration(fieldArr, tFont, bFont, settings, showHelpLinks);
+    config.setZoom(zoom);
+    config.setShowPluginIcons(showPluginIcons);
+    config.setShowPersonLinks(showPersonLinks);
+    config.setShowPersonLinks(showPersonLinks);
+    config.setUseThemeColors(useThemeColors);
+    
+    return createInfoText(prog, doc, config);
+  }
+  
+  /**
+  *
+  * @param prog
+  *          The Program to show
+  * @param doc
+  *          The HTMLDocument.
+  * @param config
+  *          The configuration for creating of the info text.
+  * @return The HTML String.
+  * @since 3.4.5
+  */
+  public static String createInfoText(final Program prog, final ExtendedHTMLDocument doc, final Configuration config) {
     Color foreground = Color.black;
     Color background = Color.white;
     Color infoColor = Color.gray;
     Color episodeColor = new Color(0x0,0x33,0x66);
     
-    if(useThemeColors) {
+    if(config.mUseThemeColors) {
       foreground = UIManager.getColor("List.foreground");
       background = UIManager.getColor("List.background");
       
@@ -276,22 +303,22 @@ public class ProgramTextCreator {
 
     int bodyStyle;
     int titleStyle;
-    if (tFont == null && bFont != null) {
-      titleFont = bodyFont = bFont.getFamily();
-      titleSize = mBodyFontSize = String.valueOf(bFont.getSize());
-      titleStyle = bodyStyle = bFont.getStyle();
-    } else if (tFont != null && bFont != null) {
-      titleFont = tFont.getFamily();
-      bodyFont = bFont.getFamily();
-      titleSize = String.valueOf(tFont.getSize());
-      mBodyFontSize = String.valueOf(bFont.getSize());
-      titleStyle = tFont.getStyle();
-      bodyStyle = bFont.getStyle();
+    if (config.mTitleFont == null && config.mBodyFont != null) {
+      titleFont = bodyFont = config.mBodyFont.getFamily();
+      titleSize = mBodyFontSize = String.valueOf(config.mBodyFont.getSize());
+      titleStyle = bodyStyle = config.mBodyFont.getStyle();
+    } else if (config.mTitleFont != null && config.mBodyFont != null) {
+      titleFont = config.mTitleFont.getFamily();
+      bodyFont = config.mBodyFont.getFamily();
+      titleSize = String.valueOf(config.mTitleFont.getSize());
+      mBodyFontSize = String.valueOf(config.mBodyFont.getSize());
+      titleStyle = config.mTitleFont.getStyle();
+      bodyStyle = config.mBodyFont.getStyle();
     } else {
       return null;
     }
 
-    if (fieldArr == null) {
+    if (config.mFieldArr == null) {
       return null;
     }
 
@@ -382,8 +409,8 @@ public class ProgramTextCreator {
 
     boolean show = false;
 
-    if(settings.isShowingPictureForPlugins()) {
-      String[] pluginIds = settings.getPluginIds();
+    if(config.mSettings.isShowingPictureForPlugins()) {
+      String[] pluginIds = config.mSettings.getPluginIds();
       Marker[] markers = prog.getMarkerArr();
 
       if(markers != null && pluginIds != null) {
@@ -398,9 +425,9 @@ public class ProgramTextCreator {
       }
     }
 
-    if(settings.isShowingPictureEver() ||
-      (settings.isShowingPictureInTimeRange() && !ProgramUtilities.isNotInTimeRange(settings.getPictureTimeRangeStart(),settings.getPictureTimeRangeEnd(), prog)) ||
-      show || (settings.isShowingPictureForDuration() && settings.getDuration() <= prog.getLength())) {
+    if(config.mSettings.isShowingPictureEver() ||
+      (config.mSettings.isShowingPictureInTimeRange() && !ProgramUtilities.isNotInTimeRange(config.mSettings.getPictureTimeRangeStart(),config.mSettings.getPictureTimeRangeEnd(), prog)) ||
+      show || (config.mSettings.isShowingPictureForDuration() && config.mSettings.getDuration() <= prog.getLength())) {
       byte[] image = prog.getBinaryField(ProgramFieldType.PICTURE_TYPE);
       if (image != null) {
         String line = "<tr><td></td><td valign=\"top\" style=\"color:"+HTMLTextHelper.getCssRgbColorEntry(foreground)+"; font-size:0\">";
@@ -408,8 +435,8 @@ public class ProgramTextCreator {
         try {
           ImageIcon imageIcon = new ImageIcon(image);
 
-          if(zoom != 100) {
-            imageIcon = (ImageIcon)UiUtilities.scaleIcon(imageIcon, imageIcon.getIconWidth() * zoom/100);
+          if(config.mZoom != 100) {
+            imageIcon = (ImageIcon)UiUtilities.scaleIcon(imageIcon, imageIcon.getIconWidth() * config.mZoom/100);
           }
 
           StringBuilder value = new StringBuilder();
@@ -424,7 +451,7 @@ public class ProgramTextCreator {
             value.append(textField);
           }
 
-          if (settings.isShowingPictureDescription()) {
+          if (config.mSettings.isShowingPictureDescription()) {
               textField = prog
                   .getTextField(ProgramFieldType.PICTURE_DESCRIPTION_TYPE);
               if (textField != null) {
@@ -449,7 +476,7 @@ public class ProgramTextCreator {
     }
 
     Marker[] pluginArr = prog.getMarkerArr();
-    if (showPluginIcons && (pluginArr != null) && (pluginArr.length != 0)) {
+    if (config.mShowPluginIcons && (pluginArr != null) && (pluginArr.length != 0)) {
       addSeparator(doc, buffer);
 
       buffer.append("<tr><td valign=\"top\" style=\"color:").append(HTMLTextHelper.getCssRgbColorEntry(infoColor)).append("; font-size:");
@@ -532,7 +559,7 @@ public class ProgramTextCreator {
       }
     }
 
-    if (showPluginIcons && iconLabels.size() > 0) {
+    if (config.mShowPluginIcons && iconLabels.size() > 0) {
       addSeparator(doc, buffer);
 
       buffer
@@ -559,7 +586,7 @@ public class ProgramTextCreator {
 
     addSeparator(doc, buffer);
 
-    for (Object id : fieldArr) {
+    for (Object id : config.mFieldArr) {
       ProgramFieldType type = null;
 
       if (id instanceof String) {
@@ -656,11 +683,11 @@ public class ProgramTextCreator {
           if (description != null
               && description.length() > 0) {
             addEntry(doc, buffer, prog, ProgramFieldType.DESCRIPTION_TYPE, true,
-                showHelpLinks, showPersonLinks, infoColor, foreground);
+                config.mShowHelpLinks, config.mShowPersonLinks, infoColor, foreground, config.mShowShortDescriptionOnlyIfNoDescription);
           } else {
             addEntry(doc, buffer, prog, ProgramFieldType.SHORT_DESCRIPTION_TYPE,
-                true, showHelpLinks,
-                  showPersonLinks, infoColor, foreground);
+                true, config.mShowHelpLinks,
+                config.mShowPersonLinks, infoColor, foreground);
           }
         } else if (type == ProgramFieldType.INFO_TYPE) {
           int info = prog.getInfo();
@@ -710,10 +737,10 @@ public class ProgramTextCreator {
           }
         } else if (type == ProgramFieldType.ADDITIONAL_INFORMATION_TYPE) {
           addEntry(doc, buffer, prog, ProgramFieldType.ADDITIONAL_INFORMATION_TYPE, true,
-              showHelpLinks, showPersonLinks, infoColor, foreground);
+              config.mShowHelpLinks, config.mShowPersonLinks, infoColor, foreground);
         } else if (type == ProgramFieldType.URL_TYPE || type == ProgramFieldType.VOD_LINK) {
           addEntry(doc, buffer, prog, type, true,
-              showHelpLinks, showPersonLinks, infoColor, foreground);
+              config.mShowHelpLinks, config.mShowPersonLinks, infoColor, foreground);
         }
         else if (type == ProgramFieldType.ACTOR_LIST_TYPE) {
           ArrayList<String> knownNames = new ArrayList<String>();
@@ -740,7 +767,7 @@ public class ProgramTextCreator {
                   parts[1] = lists[1].get(i);
                 }
                 int actorIndex = 0;
-                if (showPersonLinks) {
+                if (config.mShowPersonLinks) {
                     if (knownNames.contains(parts[0])) {
                       parts[0] = addPersonLink(parts[0],foreground);
                     } else if (knownNames.contains(parts[1])) {
@@ -761,7 +788,7 @@ public class ProgramTextCreator {
                    if (i+1 < lists[0].size() && lists[1].size() == 0) {
                     i++;
                     buffer.append("<td valign=\"top\">&#8226;&nbsp;</td><td valign=\"top\">");
-                    if (showPersonLinks) {
+                    if (config.mShowPersonLinks) {
                         buffer.append(addSearchLink(lists[0].get(i),foreground));
                       } else {
                         buffer.append(lists[0].get(i));
@@ -776,20 +803,19 @@ public class ProgramTextCreator {
               addSeparator(doc, buffer);
             }
             else {
-              addEntry(doc, buffer, prog, type, showHelpLinks,
-                    showPersonLinks, infoColor, foreground);
+              addEntry(doc, buffer, prog, type, config.mShowHelpLinks,
+                  config.mShowPersonLinks, infoColor, foreground);
             }
           }
         }
         else {
-          addEntry(doc, buffer, prog, type, showHelpLinks, showPersonLinks, infoColor, foreground);
+          addEntry(doc, buffer, prog, type, config.mShowHelpLinks, config.mShowPersonLinks, infoColor, foreground);
         }
       }
     }
 
-    if (showHelpLinks) {
-      buffer
-          .append("<tr><td colspan=\"2\" valign=\"top\" align=\"center\" style=\"color:").append(HTMLTextHelper.getCssRgbColorEntry(infoColor)).append("; font-size:");
+    if (config.mShowHelpLinks) {
+      buffer.append("<tr><td colspan=\"2\" valign=\"top\" align=\"center\" style=\"color:").append(HTMLTextHelper.getCssRgbColorEntry(infoColor)).append("; font-size:");
       buffer.append(mBodyFontSize).append("\">");
       buffer.append("<a href=\"");
       buffer.append(
@@ -834,10 +860,9 @@ public class ProgramTextCreator {
   }
 
   private static ArrayList<String>[] splitActorsSimple(Program prog) {
-    @SuppressWarnings("unchecked")
-    ArrayList<String> list1 = new ArrayList();
-    @SuppressWarnings("unchecked")
-    ArrayList<String> list2 = new ArrayList();
+    final ArrayList<String> list1 = new ArrayList<>();
+    final ArrayList<String> list2 = new ArrayList<>();
+    
     String actorField = prog.getTextField(ProgramFieldType.ACTOR_LIST_TYPE).trim();
     String[] actors;
     // don't try any parsing if newlines and commas are available
@@ -915,7 +940,14 @@ public class ProgramTextCreator {
   private static void addEntry(ExtendedHTMLDocument doc, StringBuilder buffer,
       Program prog, ProgramFieldType fieldType, boolean createLinks,
       boolean showHelpLinks, boolean showPersonLinks, Color infoColor, Color foreground) {
+    addEntry(doc, buffer, prog, fieldType, createLinks, showHelpLinks,
+        showPersonLinks,infoColor,foreground,false);
+  }
 
+  private static void addEntry(ExtendedHTMLDocument doc, StringBuilder buffer,
+      Program prog, ProgramFieldType fieldType, boolean createLinks,
+      boolean showHelpLinks, boolean showPersonLinks, Color infoColor, Color foreground,
+      boolean showShortDescriptionOnlyIfNoDescription) {
     try {
       String text = null;
       String name = fieldType.getLocalizedName();
@@ -923,7 +955,7 @@ public class ProgramTextCreator {
       if (blank > 0) {
         name = name.substring(0, blank) + "<br>" + name.substring(blank +1);
       }
-      if (fieldType.getFormat() == ProgramFieldType.TEXT_FORMAT) {
+      if (fieldType.getFormat() == ProgramFieldType.FORMAT_TEXT) {
         text = prog.getTextField(fieldType);
         if (fieldType == ProgramFieldType.SHORT_DESCRIPTION_TYPE) {
           text = removeMultipleLineBreaksFromDescription(text);
@@ -947,7 +979,7 @@ public class ProgramTextCreator {
               shortInfo.deleteCharAt(shortInfo.length() - 1);
             }
 
-            if (!description.trim().startsWith(shortInfo.toString())) {
+            if (!description.trim().startsWith(shortInfo.toString()) && (!showShortDescriptionOnlyIfNoDescription || description.trim().isEmpty())) {
               addEntry(doc, buffer, prog,
                   ProgramFieldType.SHORT_DESCRIPTION_TYPE, true, showHelpLinks, infoColor, foreground);
             }
@@ -1003,9 +1035,9 @@ public class ProgramTextCreator {
           }
         }
 
-      } else if (fieldType.getFormat() == ProgramFieldType.TIME_FORMAT) {
+      } else if (fieldType.getFormat() == ProgramFieldType.FORMAT_TIME) {
         text = prog.getTimeFieldAsString(fieldType);
-      } else if (fieldType.getFormat() == ProgramFieldType.INT_FORMAT) {
+      } else if (fieldType.getFormat() == ProgramFieldType.FORMAT_INT) {
         if (fieldType == ProgramFieldType.RATING_TYPE) {
           int value = prog.getIntField(fieldType);
           if (value > -1) {
@@ -1137,7 +1169,6 @@ public class ProgramTextCreator {
       
       addSeparator(doc, buffer);
     } catch (Exception e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
   }
@@ -1229,7 +1260,7 @@ public class ProgramTextCreator {
     for (Iterator<ProgramFieldType> iterator = ProgramFieldType.getTypeIterator(); iterator.hasNext();) {
       ProgramFieldType type = iterator.next();
       // exclude binary information which need special handling anyway
-      if (type.getFormat() == ProgramFieldType.BINARY_FORMAT) {
+      if (type.getFormat() == ProgramFieldType.FORMAT_BINARY) {
         continue;
       }
       if (!list.contains(type) && !type.equals(ProgramFieldType.SHORT_DESCRIPTION_TYPE)
@@ -1283,5 +1314,95 @@ public class ProgramTextCreator {
   public static String getDurationTypeString() {
     return mLocalizer.msg("duration", "Program duration/<br>-end").replaceAll(
         "<br>", "");
+  }
+  
+  /**
+   * Class with configuration for creation of program text.
+   * 
+   * @author René Mach
+   */
+  public static final class Configuration {
+    private Object[] mFieldArr;
+    private Font mTitleFont;
+    private Font mBodyFont;
+    private ProgramPanelSettings mSettings;
+    private boolean mShowHelpLinks;
+    private int mZoom;
+    private boolean mShowPluginIcons;
+    private boolean mShowPersonLinks;
+    private boolean mUseThemeColors;
+    private boolean mShowShortDescriptionOnlyIfNoDescription;
+    
+    /**
+     * 
+     * @param fieldArr
+     *          The object array with the field types.
+     * @param titleFont
+     *          The title Font.
+     * @param bodyFont
+     *          The body Font.
+     * @param settings
+     *          Settings of the ProgramPanel
+     * @param showHelpLinks
+     *          Show the Help-Links (Quality of Data, ShowView)
+     */
+    public Configuration(final Object[] fieldArr, final Font titleFont, final Font bodyFont, final ProgramPanelSettings settings, boolean showHelpLinks) {
+      mFieldArr = fieldArr;
+      mTitleFont = titleFont;
+      mBodyFont = bodyFont;
+      mSettings = settings;
+      mShowHelpLinks = showHelpLinks;
+      mShowPluginIcons = true;
+      mShowPersonLinks = true;
+      mUseThemeColors = false;
+      mShowShortDescriptionOnlyIfNoDescription = false;
+      mZoom = 100;
+    }
+    
+    /**
+     * @param zoom The zoom value for the picture in percent
+     *        HINT: 100 = original size
+     */
+    public void setZoom(int zoom) {
+      mZoom = zoom;
+    }
+    
+    /**
+     * @param useThemeColors If the theme colors should be used
+     *        in the HTML layout.
+     */
+    public void setUseThemeColors(boolean useThemeColors) {
+      mUseThemeColors = useThemeColors;
+    }
+    
+    /**
+     * @param showHelpLinks If the help links should be shown.
+     */
+    public void setShowHelpLinks(boolean showHelpLinks) {
+      mShowHelpLinks = showHelpLinks;
+    }
+    
+    /**
+     * @param showPersonLinks If persons should be linked.
+     */
+    public void setShowPersonLinks(boolean showPersonLinks) {
+      mShowPersonLinks = showPersonLinks;
+    }
+    
+    /**
+     * @param showPluginIcons If the plugin icons should be shown.
+     */
+    public void setShowPluginIcons(boolean showPluginIcons) {
+      mShowPluginIcons = showPluginIcons;
+    }
+    
+    /**
+     * @param showShortDescriptionOnlyIfNoDescription If the short
+     *        description should only be shown, if no long description
+     *        is available.
+     */
+    public void setShowShortDescriptionOnlyIfNoDescription(boolean showShortDescriptionOnlyIfNoDescription) {
+      mShowShortDescriptionOnlyIfNoDescription = showShortDescriptionOnlyIfNoDescription;
+    }
   }
 }

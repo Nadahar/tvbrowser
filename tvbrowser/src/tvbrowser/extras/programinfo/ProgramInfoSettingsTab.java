@@ -29,6 +29,18 @@ import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.factories.CC;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+import com.l2fprod.common.swing.plaf.LookAndFeelAddons;
+
+import devplugin.Plugin;
+import devplugin.PluginAccess;
+import devplugin.ProgramFieldType;
+import devplugin.ProgramReceiveTarget;
+import devplugin.SettingsTab;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.plugin.PluginManagerImpl;
 import tvbrowser.ui.settings.util.ColorButton;
@@ -41,17 +53,6 @@ import util.ui.OrderChooser;
 import util.ui.PluginsPictureSettingsPanel;
 import util.ui.ScrollableJPanel;
 
-import com.jgoodies.forms.builder.PanelBuilder;
-import com.jgoodies.forms.factories.Borders;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
-import com.l2fprod.common.swing.plaf.LookAndFeelAddons;
-
-import devplugin.Plugin;
-import devplugin.PluginAccess;
-import devplugin.ProgramReceiveTarget;
-import devplugin.SettingsTab;
-
 /**
  * The order settings for the ProgramInfo.
  *
@@ -62,6 +63,8 @@ public class ProgramInfoSettingsTab implements SettingsTab {
 
   private OrderChooser mList;
   private Object[] mOldOrder;
+  private JCheckBox mShowShortDescriptionOnlyWhenNoDescription;
+  
   private boolean mOldSetupState;
   private PluginsPictureSettingsPanel mPictureSettings;
 
@@ -79,7 +82,7 @@ public class ProgramInfoSettingsTab implements SettingsTab {
 
   private String mOldLook;
 
-  private JComboBox mLook;
+  private JComboBox<String> mLook;
   
   private static int mCurrentTab = 0;
   private JTabbedPane mTabbedPane;
@@ -136,9 +139,9 @@ public class ProgramInfoSettingsTab implements SettingsTab {
 
     mOldLook = settings.getLook();
 
-    String[] lf = { "Aqua", "Metal", "Motif", "Windows XP", "Windows Classic" };
+    final String[] lf = { "Aqua", "Metal", "Motif", "Windows XP", "Windows Classic" };
 
-    mLook = new JComboBox(lf);
+    mLook = new JComboBox<>(lf);
 
     String look = mOldLook.length() > 0 ? mOldLook : LookAndFeelAddons.getBestMatchAddonClassName();
 
@@ -231,9 +234,9 @@ public class ProgramInfoSettingsTab implements SettingsTab {
     mOldOrder = settings.getFieldOrder();
     mOldSetupState = ProgramInfo.getInstance().getSettings().getSetupwasdone();
 
-    mList = new OrderChooser(mOldOrder, ProgramTextCreator.getDefaultOrderWithActivatedPluginInfo(),
-        true);
-
+    mList = new OrderChooser(mOldOrder, ProgramTextCreator.getDefaultOrderWithActivatedPluginInfo(),true);
+    mShowShortDescriptionOnlyWhenNoDescription = new JCheckBox(ProgramInfo.mLocalizer.msg("showShortDescriptionOnlyWhenNoDescription", "Show short description only, if no long description exists"), settings.getShowShortDescriptionOnlyWithoutDescription());
+    
     JButton previewBtn = new JButton(ProgramInfo.mLocalizer.msg("preview", "Preview"));
     previewBtn.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
@@ -254,6 +257,9 @@ public class ProgramInfoSettingsTab implements SettingsTab {
     EnhancedPanelBuilder orderPanel = new EnhancedPanelBuilder("default:grow");
     orderPanel.border(Borders.DIALOG);
 
+    orderPanel.addRow("default");
+    orderPanel.add(mShowShortDescriptionOnlyWhenNoDescription, CC.xy(1, orderPanel.getRowCount()));
+    
     orderPanel.addRow("fill:default:grow");
     orderPanel.add(mList, cc.xy(1, orderPanel.getRowCount()));
 
@@ -415,6 +421,7 @@ public class ProgramInfoSettingsTab implements SettingsTab {
       settings.setZoomEnabled(mZoomEnabled.isSelected());
       settings.setZoomValue((Integer) mZoomValue.getValue());
       
+      settings.setShowShortDescriptionOnlyWithoutDescription(mShowShortDescriptionOnlyWhenNoDescription.isSelected());
       settings.setFieldOrder(mList.getOrder());
       settings.setSetupwasdone(true);
       settings.setPictureSettings(mPictureSettings.getSettings().getType());

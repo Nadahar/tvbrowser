@@ -1161,15 +1161,20 @@ public class TVBrowser {
 
       int state = mainFrame.getExtendedState();
 
-      boolean maximized = (state & JFrame.MAXIMIZED_BOTH) == JFrame.MAXIMIZED_BOTH;
-      Settings.propIsWindowMaximized.setBoolean(maximized);
-
-      if (! maximized) {
-        // Save the window size and location only when not maximized
-        Settings.propWindowWidth.setInt(mainFrame.getWidth());
-        Settings.propWindowHeight.setInt(mainFrame.getHeight());
-        Settings.propWindowX.setInt(mainFrame.getX());
-        Settings.propWindowY.setInt(mainFrame.getY());
+      if(!mainFrame.isFullScreenMode()) {
+        boolean maximized = (state & JFrame.MAXIMIZED_BOTH) == JFrame.MAXIMIZED_BOTH;
+        Settings.propIsWindowMaximized.setBoolean(maximized);
+  
+        if (! maximized) {
+          // Save the window size and location only when not maximized
+          Settings.propWindowWidth.setInt(mainFrame.getWidth());
+          Settings.propWindowHeight.setInt(mainFrame.getHeight());
+          Settings.propWindowX.setInt(mainFrame.getX());
+          Settings.propWindowY.setInt(mainFrame.getY());
+        }
+      }
+      else { 
+        
       }
     }
 
