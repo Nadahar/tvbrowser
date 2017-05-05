@@ -4,7 +4,6 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 
 import javax.swing.AbstractAction;
@@ -14,6 +13,7 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 
 import com.jgoodies.forms.factories.Borders;
@@ -77,12 +77,14 @@ public class FrameReminders extends JFrame implements InterfaceClose<PanelRemind
     setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
     UiUtilities.registerForClosing(this);
     
-    StringBuilder key = new StringBuilder(); 
-    key.append(String.valueOf(ReminderPlugin.STROKE_FRAME_REMINDERS_SHOW.getKeyCode()));
-    key.append("_");
-    key.append(String.valueOf(ReminderPlugin.STROKE_FRAME_REMINDERS_SHOW.getModifiers()));
+    final KeyStroke stroke = ReminderPlugin.getKeyStrokeFrameReminders();
     
-    rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(ReminderPlugin.STROKE_FRAME_REMINDERS_SHOW, key.toString());
+    StringBuilder key = new StringBuilder(); 
+    key.append(String.valueOf(stroke.getKeyCode()));
+    key.append("_");
+    key.append(String.valueOf(stroke.getModifiers()));
+    
+    rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(stroke, key.toString());
     rootPane.getActionMap().put(key.toString(), new AbstractAction() {
       @Override
       public void actionPerformed(ActionEvent e) {

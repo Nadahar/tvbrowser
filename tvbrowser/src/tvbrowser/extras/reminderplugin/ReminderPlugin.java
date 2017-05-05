@@ -112,8 +112,7 @@ public class ReminderPlugin {
   static Localizer mLocalizer = util.ui.Localizer
       .getLocalizerFor(ReminderPlugin.class);
 
-  static KeyStroke STROKE_FRAME_REMINDERS_SHOW = KeyStroke
-      .getKeyStroke(KeyEvent.VK_R, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
+  private static KeyStroke STROKE_FRAME_REMINDERS_SHOW = null;
   
   private static final java.util.logging.Logger mLog
       = Logger.getLogger(ReminderPlugin.class.getName());
@@ -148,6 +147,14 @@ public class ReminderPlugin {
   private Thread mInfoCreationThread;
   private AfterDataUpdateInfoPanel mInfoPanel;
 
+  static KeyStroke getKeyStrokeFrameReminders() {
+    if(STROKE_FRAME_REMINDERS_SHOW == null) {
+      STROKE_FRAME_REMINDERS_SHOW = KeyStroke.getKeyStroke(KeyEvent.VK_R, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
+    }
+    
+    return STROKE_FRAME_REMINDERS_SHOW;
+  }
+  
   private ReminderPlugin() {
     mInstance = this;
     
@@ -956,7 +963,7 @@ public class ReminderPlugin {
     actionShowCurrentReminders.putValue(Action.SHORT_DESCRIPTION, mLocalizer.msg("description",
         "Reminds you of programs to not miss them."));
     actionShowCurrentReminders.putValue(Plugin.ACTION_ID_KEY, REMINDER_LIST_ACTION_ID);
-    actionShowCurrentReminders.putValue(InternalPluginProxyIf.KEYBOARD_ACCELERATOR, STROKE_FRAME_REMINDERS_SHOW);
+    actionShowCurrentReminders.putValue(InternalPluginProxyIf.KEYBOARD_ACCELERATOR, getKeyStrokeFrameReminders());
         
     return new ActionMenu(getName(),IconLoader.getInstance().getIconFromTheme("apps", "appointment", 16), new Action[] {
         actionShowCurrentReminders,
