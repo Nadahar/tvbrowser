@@ -80,6 +80,7 @@ public class SearchPlugin {
   private int mRepetitionTimeSelect = 3;
   
   private static boolean mAlwaysSearchExpert;
+  private static KeyStroke STROKE_SEARCH_DIALOG;
 
   /**
    * Creates a new instance of SearchPlugin.
@@ -88,6 +89,14 @@ public class SearchPlugin {
     mAlwaysSearchExpert = false;
     mConfigurationHandler = new ConfigurationHandler(DATAFILE_PREFIX);
     load();
+  }
+  
+  static KeyStroke getKeyStroke() {
+    if(STROKE_SEARCH_DIALOG == null) {
+      STROKE_SEARCH_DIALOG = KeyStroke.getKeyStroke(KeyEvent.VK_F, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask());
+    }
+    
+    return STROKE_SEARCH_DIALOG;
   }
 
   private void load() {
@@ -213,8 +222,7 @@ public class SearchPlugin {
     action.setShortDescription(mLocalizer.msg("description",
         "Allows searching programs containing a certain text."));
     action.setText(mLocalizer.ellipsisMsg("searchPrograms", "Search programs"));
-    action.putValue(InternalPluginProxyIf.KEYBOARD_ACCELERATOR, KeyStroke
-        .getKeyStroke(KeyEvent.VK_F, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+    action.putValue(InternalPluginProxyIf.KEYBOARD_ACCELERATOR, getKeyStroke());
 
     return new ActionMenu(action);
   }
@@ -294,7 +302,7 @@ public class SearchPlugin {
     if (settings != null) {
       dlg.setSearchSettings(settings);
     }
-    UiUtilities.centerAndShow(dlg);
+    dlg.setVisible(true);
   }
 
   protected void openSearchDialog(String text) {
