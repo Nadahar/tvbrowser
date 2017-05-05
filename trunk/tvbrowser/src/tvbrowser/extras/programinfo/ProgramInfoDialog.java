@@ -294,18 +294,20 @@ class ProgramInfoDialog {
       mDialog.setTitle(mProgram.getTitle());
     }
     
+    final ProgramTextCreator.Configuration config = new ProgramTextCreator.Configuration(ProgramInfo.getInstance().getOrder(),
+             ProgramInfo.getInstance().getSettings().getUsedTitleFont(),
+             ProgramInfo.getInstance().getSettings().getUsedBodyFont(), 
+             new ProgramPanelSettings(ProgramInfo.getInstance().getPictureSettings(), false),
+             true);
+    config.setZoom(ProgramInfo.getInstance().getSettings().getZoomEnabled() ? ProgramInfo
+            .getInstance().getSettings().getZoomValue() : 100);
+    config.setShowPluginIcons(true);
+    config.setShowPersonLinks(ProgramInfo.getInstance().getSettings().getEnableSearch());
+    config.setUseThemeColors(Settings.propTableBackgroundStyle.getString().equals("uiTimeBlock") || 
+        Settings.propTableBackgroundStyle.getString().equals("uiColor"));
+    config.setShowShortDescriptionOnlyIfNoDescription(ProgramInfo.getInstance().getSettings().getShowShortDescriptionOnlyWithoutDescription());
     
-    
-    mInfoEP.setText(ProgramTextCreator.createInfoText(mProgram, mDoc,
-        ProgramInfo.getInstance().getOrder(), ProgramInfo.getInstance()
-            .getSettings().getUsedTitleFont(), ProgramInfo.getInstance()
-            .getSettings().getUsedBodyFont(), new ProgramPanelSettings(
-            ProgramInfo.getInstance().getPictureSettings(), false), true,
-        ProgramInfo.getInstance().getSettings().getZoomEnabled() ? ProgramInfo
-            .getInstance().getSettings().getZoomValue() : 100, true,
-        ProgramInfo.getInstance().getSettings().getEnableSearch(),
-        (Settings.propTableBackgroundStyle.getString().equals("uiTimeBlock") || 
-        Settings.propTableBackgroundStyle.getString().equals("uiColor"))));
+    mInfoEP.setText(ProgramTextCreator.createInfoText(mProgram, mDoc, config));
     mHighlight.setSelected(ProgramInfo.getInstance().getSettings()
         .getHighlightFavorite());
     highlightFavorites();

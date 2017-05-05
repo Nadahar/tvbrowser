@@ -61,6 +61,7 @@ class ProgramInfoSettings {
   private static final String KEY_ACTOR_SEARCH_DEFAULT = "actorSearchDefault";
   private static final String KEY_HIGHLIGHT_COLOR = "highlightColor";
   private static final String KEY_HIGHLIGHT_ACTIVE = "highlightActive";
+  private static final String KEY_SHOW_SHORT_DESCRIPTION_IF_NO_DESCRIPTION = "shortDescriptionOnlyWithoutLongDescription";
   private static final String TITLE_FONT_STYLE = "titleFontStyle";
   private static final String BODY_FONT_STYLE = "bodyFontStyle";
   static final int DURATION_END_TYPE_VALUE = 1000;
@@ -257,6 +258,14 @@ class ProgramInfoSettings {
       return new Font(getBodyFontName(), getBodyFontStyle(), getBodyFontSize());
     }
     return new Font(DEFAULT_BODY_FONT_NAME, DEFAULT_BODY_STYLE, UIManager.getFont("MenuItem.font").getSize());
+  }
+  
+  boolean getShowShortDescriptionOnlyWithoutDescription() {
+    return getProperty(KEY_SHOW_SHORT_DESCRIPTION_IF_NO_DESCRIPTION, false);
+  }
+  
+  void setShowShortDescriptionOnlyWithoutDescription(final boolean value) {
+    setProperty(KEY_SHOW_SHORT_DESCRIPTION_IF_NO_DESCRIPTION, value);
   }
 
   protected String getLook() {
