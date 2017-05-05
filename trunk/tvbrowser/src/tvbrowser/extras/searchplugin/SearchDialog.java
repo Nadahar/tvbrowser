@@ -32,14 +32,18 @@ import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.AbstractAction;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.KeyStroke;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import tvbrowser.core.Settings;
+import tvbrowser.extras.reminderplugin.ReminderPlugin;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.settings.PluginPictureSettings;
 import util.ui.Localizer;
@@ -87,6 +91,21 @@ public class SearchDialog extends JDialog implements WindowClosingIf {
   private void init() {
     UiUtilities.registerForClosing(this);
 
+    final KeyStroke stroke = SearchPlugin.getKeyStroke();
+    
+    StringBuilder key = new StringBuilder(); 
+    key.append(String.valueOf(stroke.getKeyCode()));
+    key.append("_");
+    key.append(String.valueOf(stroke.getModifiers()));
+    
+    rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(stroke, key.toString());
+    rootPane.getActionMap().put(key.toString(), new AbstractAction() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        close();
+      }
+    });
+    
     String msg;
 
     msg = mLocalizer.msg("dlgTitle", "Search programs");
