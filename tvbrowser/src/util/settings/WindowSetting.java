@@ -35,12 +35,12 @@ import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.lang.reflect.Method;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
-
-import com.sun.swing.internal.plaf.metal.resources.metal;
 
 /**
  * A class with the position and size settings for a window.
@@ -197,7 +197,12 @@ public final class WindowSetting {
               }
 
               window.addComponentListener(new ComponentListener() {
-
+                private Thread mSavePosWait;
+                private AtomicBoolean mWaitSavePos = new AtomicBoolean(false);
+                
+                private Thread mSaveSizeWait;
+                private AtomicBoolean mWaitSaveSize = new AtomicBoolean(false);
+                
                 public void componentHidden(ComponentEvent e) {
                   savePos(e);
                 }
@@ -229,18 +234,54 @@ public final class WindowSetting {
                 public void componentShown(ComponentEvent e) {
                   savePos(e);
                 }
-
+                
                 private void savePos(ComponentEvent e) {
-                  if((getExtendedState() & JFrame.MAXIMIZED_BOTH) != JFrame.MAXIMIZED_BOTH) {
-                    mXPos = e.getComponent().getX();
-                    mYPos = e.getComponent().getY();
-                  }
+                  mWaitSavePos.set(true);
+                  
+                  if(mSavePosWait == null || !mSavePosWait.isAlive()) {
+                    mSavePosWait = new Thread("SAVE WINDOW POSITION WAITING THREAD") {
+                      @Override
+                      public void run() {
+                        while(mWaitSavePos.getAndSet(false)) {
+                          try {
+                            sleep(100);
+                          } catch (InterruptedException e) {
+                            // ignore
+                          }
+                        }
+                        
+                        if((getExtendedState() & JFrame.MAXIMIZED_BOTH) != JFrame.MAXIMIZED_BOTH) {
+                          mXPos = e.getComponent().getX();
+                          mYPos = e.getComponent().getY();
+                        }
+                      }
+                    };
+                    mSavePosWait.start();
+                  }                  
                 }
-
+                
                 private void saveSize(ComponentEvent e) {
-                  if((getExtendedState() & JFrame.MAXIMIZED_BOTH) != JFrame.MAXIMIZED_BOTH) {
-                    mWidth = e.getComponent().getWidth();
-                    mHeight = e.getComponent().getHeight();
+                  mWaitSaveSize.set(true);
+                  
+                  if(mSaveSizeWait == null || !mSaveSizeWait.isAlive()) {
+                    mSaveSizeWait = new Thread("SAVE WINDOW SIZE WAITING THREAD") {
+                      @Override
+                      public void run() {
+                        while(mWaitSaveSize.getAndSet(false)) {
+                          try {
+                            sleep(100);
+                          } catch (InterruptedException e) {
+                            // ignore
+                          }
+                        }
+                                                
+                        if((getExtendedState() & JFrame.MAXIMIZED_BOTH) != JFrame.MAXIMIZED_BOTH) {
+                          mWidth = e.getComponent().getWidth();
+                          mHeight = e.getComponent().getHeight();
+                        }
+                      }
+                    };
+                    mSaveSizeWait.start();
                   }
                 }
                 
