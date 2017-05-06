@@ -45,7 +45,7 @@ public class FontChooserPanel extends JPanel {
   /** The localizer for this class. */
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(FontChooserPanel.class);
 
-  private JComboBox mFontCB, mStyleCB;
+  private JComboBox<String> mFontCB, mStyleCB;
 
   private JSpinner mSizeSpinner;
 
@@ -55,8 +55,12 @@ public class FontChooserPanel extends JPanel {
 
   private static final String[] FONTNAMES = ge.getAvailableFontFamilyNames();
 
-  private static final String[] FONTSTYLES = { mLocalizer.msg("plain", "plain"), mLocalizer.msg("bold", "bold"),
-      mLocalizer.msg("italic", "italic") };
+  private static final String[] FONTSTYLES = { 
+      mLocalizer.msg("plain", "plain"), 
+      mLocalizer.msg("bold", "bold"),
+      mLocalizer.msg("italic", "italic"),
+      mLocalizer.msg("bolditalic", "bold italic"),
+      };
 
   private static final int FONTSIZE_MIN = 8;
 
@@ -82,8 +86,8 @@ public class FontChooserPanel extends JPanel {
 
     CellConstraints cc = new CellConstraints();
     
-    mFontCB = new JComboBox(FONTNAMES);
-    mStyleCB = new JComboBox(FONTSTYLES);
+    mFontCB = new JComboBox<>(FONTNAMES);
+    mStyleCB = new JComboBox<>(FONTSTYLES);
     mSizeSpinner = new JSpinner(new SpinnerNumberModel(FONTSIZE_MIN, FONTSIZE_MIN, FONTSIZE_MAX, 1));
 
     int column = 1;
@@ -158,6 +162,8 @@ public class FontChooserPanel extends JPanel {
       mStyleCB.setSelectedIndex(1);
     } else if (font.getStyle() == Font.ITALIC) {
       mStyleCB.setSelectedIndex(2);
+    } else if (font.getStyle() == (Font.BOLD | Font.ITALIC)) {
+      mStyleCB.setSelectedIndex(3);
     }
 
   }
@@ -180,9 +186,12 @@ public class FontChooserPanel extends JPanel {
       style = Font.PLAIN;
     } else if (inx == 1) {
       style = Font.BOLD;
-    } else {
+    } else if (inx == 2) {
       style = Font.ITALIC;
+    } else {
+      style = Font.BOLD | Font.ITALIC;
     }
+     
     result = new Font((String) mFontCB.getSelectedItem(), style, ((Integer) mSizeSpinner.getValue()).intValue());
 
     return result;
