@@ -38,6 +38,9 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.logging.Logger;
 
+import devplugin.Channel;
+import devplugin.PluginAccess;
+import devplugin.PluginsFilterComponent;
 import tvbrowser.core.ChannelList;
 import tvbrowser.core.Settings;
 import tvbrowser.core.filters.filtercomponents.AcceptNoneFilterComponent;
@@ -61,12 +64,10 @@ import tvbrowser.core.filters.filtercomponents.SingleChannelFilterComponent;
 import tvbrowser.core.filters.filtercomponents.SingleTitleFilterComponent;
 import tvbrowser.core.filters.filtercomponents.TimeFilterComponent;
 import tvbrowser.core.plugin.PluginManagerImpl;
+import tvbrowser.extras.favoritesplugin.core.FilterComponentNewFavoritePrograms;
 import util.io.stream.ObjectInputStreamProcessor;
 import util.io.stream.ObjectOutputStreamProcessor;
 import util.io.stream.StreamUtilities;
-import devplugin.Channel;
-import devplugin.PluginAccess;
-import devplugin.PluginsFilterComponent;
 
 public class FilterComponentList {
 
@@ -308,6 +309,8 @@ public class FilterComponentList {
       filterComponent = new SingleChannelFilterComponent(null);
     } else if (className.endsWith(".AcceptNoneFilterComponent")) {
       filterComponent = new AcceptNoneFilterComponent(name);
+    } else if (className.endsWith(".FilterComponentNewFavoritePrograms")) {
+      filterComponent = new FilterComponentNewFavoritePrograms(name, description);
     }
     else {
       try {

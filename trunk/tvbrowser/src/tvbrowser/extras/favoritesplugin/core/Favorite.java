@@ -136,13 +136,13 @@ public abstract class Favorite {
     // Don't save the programs but only their date and id
     int size = in.readInt();
     ArrayList<Program> programList = new ArrayList<Program>(size);
-    readProgramsToList(programList, size, in);
+    readProgramsToList(programList, size, in, version);
 
     if(version >= 2) {
       size = in.readInt();
       if (size > 0) {
         mBlackList = new ArrayList<Program>(size);
-        readProgramsToList(mBlackList, size, in);
+        readProgramsToList(mBlackList, size, in, version);
       }
     }
     else {
@@ -154,7 +154,6 @@ public abstract class Favorite {
 
     mPrograms = programList;
 
-    mNewPrograms = new ArrayList<Program>(0);
     mRemovedPrograms = new HashMap<String, ReminderInfo>(0);
     
     if(version > 4) {
@@ -169,6 +168,14 @@ public abstract class Favorite {
     if(version > 5) {
       mDefaultReminderMinutes = in.readInt();
     }
+    
+    if(version > 6) {
+      size = in.readInt();
+      if (size > 0) {
+        mNewPrograms = new ArrayList<Program>(size);
+        readProgramsToList(mNewPrograms, size, in, version);
+      }
+    }
   }
 
   /**
@@ -178,16 +185,29 @@ public abstract class Favorite {
    * @param list out-param. the list of the programs from the input stream.
    * @param size how many programs to read from the input stream
    * @param in the input stream to read from
+   * @param version the vesion of the data file
    * @throws IOException if something went wrong reading from the stream
    * @throws ClassNotFoundException if the program could not be deserialized
    */
-  private void readProgramsToList(final ArrayList<Program> list, final int size, final ObjectInputStream in) throws IOException, ClassNotFoundException {
+  private void readProgramsToList(final ArrayList<Program> list, final int size, final ObjectInputStream in, int version) throws IOException, ClassNotFoundException {
     for (int i = 0; i < size; i++) {
-      Date date = Date.readData(in);
-      String progID = (String) in.readObject();
-      Program program = Plugin.getPluginManager().getProgram(date, progID);
+      Program[] program = null;
+      
+      if(version < 7) {
+        Date date = Date.readData(in);
+        String progID = (String) in.readObject();
+        program = Plugin.getPluginManager().getPrograms(date, progID);
+      }
+      else {
+        program = Plugin.getPluginManager().getPrograms(in.readUTF());
+      }
+      
       if (program != null) {
-        list.add(program);
+        for(Program p : program) {
+          if(p != null && !list.contains(p)) {
+            list.add(p);
+          }
+        }
       }
     }
   }
@@ -324,7 +344,7 @@ public abstract class Favorite {
    * @throws IOException if something went wrong writing to the stream
    */
   public synchronized void writeData(final ObjectOutputStream out) throws IOException {
-    out.writeInt(6);  // version
+    out.writeInt(7);  // version
     out.writeObject(mName);
     mReminderConfiguration.store(out);
     mLimitationConfiguration.store(out);
@@ -349,8 +369,7 @@ public abstract class Favorite {
     synchronized (mPrograms) {
       out.writeInt(mPrograms.size());
       for (Program p : mPrograms) {
-        p.getDate().writeData((java.io.DataOutput) out);
-        out.writeObject(p.getID());
+        out.writeUTF(p.getUniqueID());
       }      
     };
 
@@ -361,14 +380,19 @@ public abstract class Favorite {
     else {
       out.writeInt(mBlackList.size());
       for (Program p : mBlackList) {
-        p.getDate().writeData((java.io.DataOutput) out);
-        out.writeObject(p.getID());
+        out.writeUTF(p.getUniqueID());
       }
     }
     
     out.writeBoolean(mProvideFilter);
     out.writeLong(mFilterKey);
     out.writeInt(mDefaultReminderMinutes);
+    
+    out.writeInt(mNewPrograms.size());
+    
+    for(Program p : mNewPrograms) {
+      out.writeUTF(p.getUniqueID());
+    }
     
     internalWriteData(out);
   }
@@ -978,6 +1002,8 @@ public abstract class Favorite {
           mRemovedPrograms.put(getProgramKeyFor(p),new ReminderInfo(p.getTitle(), p.getTextField(ProgramFieldType.EPISODE_TYPE), reminderMinutes));
         }
       }
+      
+      mNewPrograms.remove(p);
     }
 
     if(!wasInList && mBlackList != null) {
@@ -1031,14 +1057,25 @@ public abstract class Favorite {
           for(int i = mPrograms.size()-1; i >= 0; i--) {
             try {
               if(mPrograms.get(i).getDate().compareTo(todayMinus2) <= 0) {
-                mPrograms.remove(i);
+                Program p = mPrograms.remove(i);
+                mNewPrograms.remove(p);
               }
               else if(mPrograms.get(i).getProgramState() == Program.WAS_UPDATED_STATE) {
                 Program prog = mPrograms.remove(i);
-                mPrograms.add(i,Plugin.getPluginManager().getProgram(prog.getDate(),prog.getID()));
+                
+                int j = mNewPrograms.indexOf(prog);
+                
+                if(j >= 0) {
+                  mNewPrograms.remove(j);
+                }
+                
+                prog = Plugin.getPluginManager().getProgram(prog.getDate(),prog.getID());
+                mPrograms.add(i,prog);
+                mNewPrograms.add(j,prog);
               }
             }catch(Exception e) {
-              mPrograms.remove(i);
+              final Program p = mPrograms.remove(i);
+              mNewPrograms.remove(p);
             }
           }
         }

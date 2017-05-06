@@ -28,9 +28,10 @@ package tvbrowser.extras.favoritesplugin;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -54,12 +55,30 @@ import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
+import devplugin.ActionMenu;
+import devplugin.AfterDataUpdateInfoPanel;
+import devplugin.ButtonAction;
+import devplugin.ChannelDayProgram;
+import devplugin.Date;
+import devplugin.FilterChangeListenerV2;
+import devplugin.Plugin;
+import devplugin.PluginCenterPanel;
+import devplugin.PluginCenterPanelWrapper;
+import devplugin.PluginTreeNode;
+import devplugin.Program;
+import devplugin.ProgramFieldType;
+import devplugin.ProgramFilter;
+import devplugin.ProgramReceiveIf;
+import devplugin.ProgramReceiveTarget;
+import devplugin.ProgressMonitor;
+import devplugin.SettingsItem;
 import tvbrowser.core.Settings;
 import tvbrowser.core.TvDataBase;
 import tvbrowser.core.TvDataBaseListener;
@@ -70,6 +89,7 @@ import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.extras.common.ConfigurationHandler;
 import tvbrowser.extras.common.DataDeserializer;
 import tvbrowser.extras.common.DataSerializer;
+import tvbrowser.extras.common.InternalPluginProxyIf;
 import tvbrowser.extras.common.ReminderConfiguration;
 import tvbrowser.extras.favoritesplugin.core.ActorsFavorite;
 import tvbrowser.extras.favoritesplugin.core.AdvancedFavorite;
@@ -99,22 +119,6 @@ import util.ui.ScrollableJPanel;
 import util.ui.TVBrowserIcons;
 import util.ui.UiUtilities;
 import util.ui.persona.Persona;
-import devplugin.ActionMenu;
-import devplugin.AfterDataUpdateInfoPanel;
-import devplugin.ButtonAction;
-import devplugin.ChannelDayProgram;
-import devplugin.Date;
-import devplugin.FilterChangeListenerV2;
-import devplugin.PluginCenterPanel;
-import devplugin.PluginCenterPanelWrapper;
-import devplugin.PluginTreeNode;
-import devplugin.Program;
-import devplugin.ProgramFieldType;
-import devplugin.ProgramFilter;
-import devplugin.ProgramReceiveIf;
-import devplugin.ProgramReceiveTarget;
-import devplugin.ProgressMonitor;
-import devplugin.SettingsItem;
 
 /**
  * Plugin for managing the favorite programs.
@@ -334,6 +338,20 @@ public class FavoritesPlugin {
 
       mThreadPool = null;
     }
+  }
+  
+  protected void showNewFavorites() {
+    final ArrayList<Favorite> infoFavoriteList = new ArrayList<Favorite>(0);
+
+    final Favorite[] favoriteArr = FavoriteTreeModel.getInstance().getFavoriteArr();
+
+    for (Favorite favorite : favoriteArr) {
+      if (favorite.getNewPrograms().length > 0) {
+        infoFavoriteList.add(favorite);
+      }
+    }
+    
+    showManageFavoritesDialog(true, infoFavoriteList.toArray(new Favorite[infoFavoriteList.size()]), null);
   }
 
   protected void handleTvDataUpdateFinished() {
@@ -905,10 +923,8 @@ public class FavoritesPlugin {
 
   protected ActionMenu getButtonAction() {
     ButtonAction action = new ButtonAction();
-    action.setActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        getInstance().showManageFavoritesDialog();
-      }
+    action.setActionListener(e -> {
+      getInstance().showManageFavoritesDialog();
     });
 
     action.setBigIcon(getIconFromTheme(ICON_CATEGORY, ICON_NAME, 22));
@@ -917,7 +933,22 @@ public class FavoritesPlugin {
             "Manage favorite programs"));
     action.setText(getName());
 
-    return new ActionMenu(action);
+    ButtonAction showNew = new ButtonAction();
+    showNew.setActionListener(e -> {
+      getInstance().showNewFavorites();
+    });
+    showNew.setBigIcon(getIconFromTheme(ICON_CATEGORY, ICON_NAME, 22));
+    showNew.setSmallIcon(getIconFromTheme(ICON_CATEGORY, ICON_NAME, 16));
+    showNew.setShortDescription(mLocalizer.msg("showNewDesc",
+            "Show new programs found at last data update again"));
+    showNew.setText(mLocalizer.msg("showNewTitle",
+        "Show new programs"));
+    showNew.putValue(InternalPluginProxyIf.KEYBOARD_ACCELERATOR, KeyStroke.getKeyStroke(KeyEvent.VK_E, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+    
+    final ActionMenu m = new ActionMenu(getName(), getIconFromTheme(ICON_CATEGORY, ICON_NAME, 16), new Action[] {action,showNew});
+    m.getAction().putValue(Plugin.BIG_ICON, getIconFromTheme(ICON_CATEGORY, ICON_NAME, 22));
+    
+    return m;
   }
 
 
@@ -932,9 +963,7 @@ public class FavoritesPlugin {
   protected ActionMenu getContextMenuActions(Program program) {
     return new ContextMenuProvider(FavoriteTreeModel.getInstance().getFavoriteArr()).getContextMenuActions(program);
   }
-
-
-
+  
   public void editFavorite(Favorite favorite) {
 
     Window parent = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
