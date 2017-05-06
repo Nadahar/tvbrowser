@@ -71,8 +71,6 @@ import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
 import tvbrowser.extras.favoritesplugin.core.Favorite;
 import tvbrowser.extras.reminderplugin.ReminderPlugin;
 import tvbrowser.ui.mainframe.MainFrame;
-import util.exc.ErrorHandler;
-import util.exc.TvBrowserException;
 import util.ui.Localizer;
 import util.ui.OverlayListener;
 import util.ui.SingleAndDoubleClickTreeUI;
@@ -175,12 +173,16 @@ public class FavoriteTree extends JTree implements DragGestureListener, DropTarg
       public void treeCollapsed(TreeExpansionEvent e) {
         if(e.getPath() != null && mExpandListenerIsEnabled) {
           ((FavoriteNode)e.getPath().getLastPathComponent()).setWasExpanded(false);
+          
+          FavoritesPlugin.getInstance().saveFavorites();
         }
       }
 
       public void treeExpanded(TreeExpansionEvent e) {
         if(e.getPath() != null && mExpandListenerIsEnabled) {
           ((FavoriteNode)e.getPath().getLastPathComponent()).setWasExpanded(true);
+          
+          FavoritesPlugin.getInstance().saveFavorites();
         }
       }
     });
@@ -983,6 +985,7 @@ System.out.println(last + " " + last.getParent());
 
   private FavoriteNode findFavorite(final Favorite favorite, final FavoriteNode root) {
     if (root.isDirectoryNode()) {
+      @SuppressWarnings("unchecked")
       Enumeration<FavoriteNode> e = root.children();
 
       while(e.hasMoreElements()) {
