@@ -49,7 +49,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
-import javax.swing.JWindow;
 import javax.swing.UIManager;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -57,6 +56,14 @@ import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.PlainDocument;
 
+import com.jgoodies.forms.builder.ButtonBarBuilder;
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.factories.CC;
+import com.jgoodies.forms.layout.FormLayout;
+
+import devplugin.PluginAccess;
+import devplugin.PluginsFilterComponent;
 import tvbrowser.core.Settings;
 import tvbrowser.core.filters.FilterComponent;
 import tvbrowser.core.filters.FilterComponentList;
@@ -79,18 +86,10 @@ import tvbrowser.core.filters.filtercomponents.ReminderFilterComponent;
 import tvbrowser.core.filters.filtercomponents.SingleTitleFilterComponent;
 import tvbrowser.core.filters.filtercomponents.TimeFilterComponent;
 import tvbrowser.core.plugin.PluginManagerImpl;
+import tvbrowser.extras.favoritesplugin.core.FilterComponentNewFavoritePrograms;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
-
-import com.jgoodies.forms.builder.ButtonBarBuilder;
-import com.jgoodies.forms.builder.PanelBuilder;
-import com.jgoodies.forms.factories.Borders;
-import com.jgoodies.forms.factories.CC;
-import com.jgoodies.forms.layout.FormLayout;
-
-import devplugin.PluginAccess;
-import devplugin.PluginsFilterComponent;
 
 public class EditFilterComponentDlg extends JDialog implements ActionListener, DocumentListener, WindowClosingIf {
 
@@ -197,6 +196,7 @@ public class EditFilterComponentDlg extends JDialog implements ActionListener, D
       set.add(new DateFilterComponent());
       set.add(new DayFilterComponent());
       set.add(new FavoritesFilterComponent());
+      set.add(new FilterComponentNewFavoritePrograms());
       set.add(new KeywordFilterComponent());
       set.add(new MassFilterComponent());
       set.add(new PluginFilterComponent());
