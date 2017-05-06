@@ -71,6 +71,15 @@ public class TVBrowserIcons {
   }
 
   /**
+   * refresh icon
+   * @param size
+   * @return refresh icon
+   */
+  public static ImageIcon reset(int size) {
+    return icon("actions", "edit-undo", size);
+  }
+
+  /**
    * go up icon
    * @param size
    * @return go up icon
