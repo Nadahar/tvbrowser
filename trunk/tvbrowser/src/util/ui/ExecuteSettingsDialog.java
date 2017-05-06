@@ -28,6 +28,7 @@ package util.ui;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.Window;
+import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -106,7 +107,7 @@ public class ExecuteSettingsDialog extends JDialog implements WindowClosingIf{
   public ExecuteSettingsDialog(Window parent, String execFile,
       String execParam, ParamLibrary library) {
     super(parent);
-    setModal(true);
+    setModalityType(ModalityType.DOCUMENT_MODAL);
     mExecFile = execFile;
     mExecParam =execParam;
     mParamLibrary = library;

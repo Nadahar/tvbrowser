@@ -24,6 +24,7 @@
 package util.ui;
 
 import java.awt.Window;
+import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.nio.charset.Charset;
@@ -91,7 +92,7 @@ public class LocalPluginProgramFormatingSettingsDialog extends JDialog implement
       AbstractPluginProgramFormating defaultConfig, boolean showTitleSetting,
       boolean showEncodingSetting) {
     super(parent);
-    setModal(true);
+    setModalityType(ModalityType.DOCUMENT_MODAL);
     createGui(parent, config, defaultConfig, showTitleSetting, showEncodingSetting);
   }
 

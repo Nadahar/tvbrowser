@@ -64,7 +64,7 @@ public class MassFilterSettingsDialog extends JDialog {
   public MassFilterSettingsDialog(Window parent,
       SearchFormSettings searchFormSettings) {
     super(parent);
-    setModal(true);
+    setModalityType(ModalityType.DOCUMENT_MODAL);
     mSearchFormSettings = searchFormSettings;
     createGui();
     setLocationRelativeTo(parent);

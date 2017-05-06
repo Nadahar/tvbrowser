@@ -28,6 +28,7 @@ package util.ui;
 import java.awt.Dialog;
 import java.awt.Frame;
 import java.awt.Window;
+import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -80,7 +81,7 @@ public class MarkerChooserDlg extends JDialog implements WindowClosingIf {
    */
   public MarkerChooserDlg(Window parent, Marker[] pluginArr, String description) {
     super(parent);
-    setModal(true);
+    setModalityType(ModalityType.DOCUMENT_MODAL);
     init(pluginArr, description);
   }
 

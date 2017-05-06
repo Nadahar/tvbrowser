@@ -1003,7 +1003,6 @@ public class FavoritesPlugin {
     int splitPanePosition = getIntegerSetting(mSettings, "splitpanePosition",
             200);
     ManageFavoritesDialog dlg = new ManageFavoritesDialog(MainFrame.getInstance(), favoriteArr, splitPanePosition, showNew, initialSelection);
-    //dlg.setModal(true);
 
     Settings.layoutWindow("extras.manageFavoritesDlg",dlg,new Dimension(650,450));
     dlg.setVisible(true);

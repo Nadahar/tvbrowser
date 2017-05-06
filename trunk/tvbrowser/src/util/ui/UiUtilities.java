@@ -31,6 +31,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dialog;
+import java.awt.Dialog.ModalityType;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
@@ -176,7 +177,11 @@ public class UiUtilities {
         @Override
         public void run() {
           JDialog dialog = new JDialog(parentWin);
-          dialog.setModal(modal);
+          
+          if(modal) {
+            dialog.setModalityType(ModalityType.DOCUMENT_MODAL);
+          }
+          
           result.set(dialog);
         }
       });

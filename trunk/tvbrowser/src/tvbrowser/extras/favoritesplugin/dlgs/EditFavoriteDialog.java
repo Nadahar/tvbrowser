@@ -31,6 +31,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.Window;
+import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -137,7 +138,7 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
    */
   public EditFavoriteDialog(Window parent, Favorite fav) {
     super(parent);
-    setModal(true);
+    setModalityType(ModalityType.DOCUMENT_MODAL);
     init(fav);
   }
 

@@ -31,6 +31,7 @@ import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.Window;
+import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -94,7 +95,7 @@ public class PluginChooserDlg extends JDialog implements WindowClosingIf {
   public PluginChooserDlg(Window parent, ProgramReceiveIf[] pluginArr,
       String description, ProgramReceiveIf caller) {
     super(parent);
-    setModal(true);
+    setModalityType(ModalityType.DOCUMENT_MODAL);
     init(pluginArr, description, caller, null, null, parent);
   }
 
@@ -166,7 +167,7 @@ public class PluginChooserDlg extends JDialog implements WindowClosingIf {
       String description, ProgramReceiveIf caller,
       ProgramReceiveTarget[] disabledTargets) {
     super(parent);
-    setModal(true);
+    setModalityType(ModalityType.DOCUMENT_MODAL);
 
     Hashtable<ProgramReceiveIf, ArrayList<ProgramReceiveTarget>> table = createReceiveTable(pluginArr);
 

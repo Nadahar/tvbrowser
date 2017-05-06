@@ -28,6 +28,7 @@ package tvbrowser.extras.favoritesplugin.dlgs;
 
 import java.awt.BorderLayout;
 import java.awt.Window;
+import java.awt.Dialog.ModalityType;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.logging.Level;
@@ -61,7 +62,7 @@ public class ManageFavoritesDialog extends JDialog implements WindowClosingIf{
   public ManageFavoritesDialog(Window parent, Favorite[] favoriteArr,
       int splitPanePosition, boolean showNew, Favorite initialSelection) {
     super(parent);
-    setModal(true);
+    setModalityType(ModalityType.DOCUMENT_MODAL);
     
     init(favoriteArr, splitPanePosition, showNew, initialSelection);
   }

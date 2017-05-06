@@ -5,6 +5,7 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Window;
+import java.awt.Dialog.ModalityType;
 
 import javax.swing.BorderFactory;
 import javax.swing.JDialog;
@@ -44,7 +45,7 @@ public class CopyWaitingDlg extends JDialog {
    */
   public CopyWaitingDlg(Window parent, byte messageType) {
     super(parent);
-    setModal(true);
+    setModalityType(ModalityType.DOCUMENT_MODAL);
     createGUI(parent, messageType);
   }
 

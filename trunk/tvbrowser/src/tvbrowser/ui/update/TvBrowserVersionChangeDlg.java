@@ -27,6 +27,7 @@ package tvbrowser.ui.update;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
@@ -75,7 +76,7 @@ public class TvBrowserVersionChangeDlg extends JDialog implements WindowClosingI
    */
   public TvBrowserVersionChangeDlg(Version oldTvBrowserVersion, Version obligatoryUpdate) {
     setLocationRelativeTo(null);
-    setModal(true);
+    setModalityType(ModalityType.DOCUMENT_MODAL);
     mCloseTvBrowser = true;
     init(oldTvBrowserVersion,obligatoryUpdate);
   }

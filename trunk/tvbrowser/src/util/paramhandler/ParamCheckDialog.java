@@ -25,6 +25,7 @@
 package util.paramhandler;
 
 import java.awt.Window;
+import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -71,7 +72,7 @@ public class ParamCheckDialog extends JDialog implements WindowClosingIf {
    */
   public ParamCheckDialog(Window parent, String check) {
     super(parent);
-    setModal(true);
+    setModalityType(ModalityType.DOCUMENT_MODAL);
     mCheckString = check;
     mParamLib = new ParamLibrary();
     createGui();
@@ -105,7 +106,7 @@ public class ParamCheckDialog extends JDialog implements WindowClosingIf {
    */
   public ParamCheckDialog(Window parent, ParamLibrary lib, String check) {
     super(parent);
-    setModal(true);
+    setModalityType(ModalityType.DOCUMENT_MODAL);
     mParamLib = lib;
     mCheckString = check;
     createGui();

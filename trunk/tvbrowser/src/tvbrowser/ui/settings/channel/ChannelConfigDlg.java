@@ -30,6 +30,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.Window;
+import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -124,7 +125,7 @@ public class ChannelConfigDlg extends JDialog implements ActionListener, WindowC
    */
   public ChannelConfigDlg(Window parent, Channel channel) {
     super(parent, mLocalizer.msg("configChannel", "Configure Channel"));
-    setModal(true);
+    setModalityType(ModalityType.DOCUMENT_MODAL);
     mChannel = channel;
     createDialog();
   }

@@ -467,7 +467,6 @@ public class TvDataUpdater {
           UiUtilities.registerForClosing(closing);
 
           Settings.layoutWindow("AfterTvDataUpdateInfoDialog", infoDialog, new Dimension(900,500));
-          //infoDialog.setModal(true);
           infoDialog.setVisible(true);          
         }
       }
