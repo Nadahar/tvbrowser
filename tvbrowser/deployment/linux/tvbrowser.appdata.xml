@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop">
+  <id>tvbrowser.desktop</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-3.0</project_license>
+  <name>TV-Browser</name>
+  <summary>A free EPG</summary>
+  <description>
+    <p>
+      TV-Browser is a java-based TV guide which can be easily extended with lots of plugins. It is designed to look like your paper TV guide.
+    </p>
+  </description>
+  <screenshots>
+    <screenshot type="default">
+      <image>http://www.tvbrowser.org/images/stories/screenshots/linux_1.png</image>
+    </screenshot>
+    <screenshot>
+      <image>http://www.tvbrowser.org/images/stories/screenshots/linux_2.png</image>
+    </screenshot>
+    <screenshot>
+      <image>http://www.tvbrowser.org/images/stories/screenshots/linux_3.png</image>
+    </screenshot>
+    <screenshot>
+      <image>http://www.tvbrowser.org/images/stories/screenshots/linux_4.png</image>
+    </screenshot>
+  </screenshots>
+  <url type="homepage">http://tvbrowser.org/</url>
+</component>
