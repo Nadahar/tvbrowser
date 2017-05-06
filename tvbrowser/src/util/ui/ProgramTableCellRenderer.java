@@ -95,6 +95,10 @@ public class ProgramTableCellRenderer extends DefaultTableCellRenderer {
 
         mProgramPanel = new ProgramPanel(settings);
         mMainPanel.add(mProgramPanel, BorderLayout.CENTER);
+        
+        Settings.addFontChangeListener(e -> {
+          mProgramPanel.forceRepaint();
+        });
     }
 
     public Component getTableCellRendererComponent(final JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {

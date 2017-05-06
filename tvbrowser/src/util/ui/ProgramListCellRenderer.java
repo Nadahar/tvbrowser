@@ -107,6 +107,8 @@ public class ProgramListCellRenderer extends DefaultListCellRenderer {
   private JLabel mHeaderLb;
   private ProgramPanel mProgramPanel;
   private HashSet<Program> mProgramSet = new HashSet<Program>();
+  private JPanel mDateSeparator;
+  private JLabel mDateLabel;
 
   /**
    * Creates a new instance of ProgramListCellRenderer
@@ -152,6 +154,14 @@ public class ProgramListCellRenderer extends DefaultListCellRenderer {
     Settings.addFontChangeListener(e -> {
       mProgramPanel.forceRepaint();
     });
+    
+    mDateSeparator = new JPanel(new FormLayout("0dlu:grow,default,0dlu:grow","5dlu,default,5dlu"));
+    mDateSeparator.setBorder(BorderFactory.createMatteBorder(2, 0, 2, 0, UIManager.getColor("Label.foreground")));
+    
+    mDateLabel = new JLabel();
+    mDateLabel.setFont(mDateLabel.getFont().deriveFont(mDateLabel.getFont().getSize2D() + 4).deriveFont(Font.BOLD));
+    
+    mDateSeparator.add(mDateLabel, new CellConstraints().xy(2, 2));
   }
 
   /**
@@ -253,18 +263,10 @@ public class ProgramListCellRenderer extends DefaultListCellRenderer {
     else if(value instanceof String && list.getModel().getSize() > index +1) {
       Object nextValue = list.getModel().getElementAt(index + 1);
       
-      if(nextValue instanceof Program) {
-        JPanel separator = new JPanel(new FormLayout("0dlu:grow,default,0dlu:grow","5dlu,default,5dlu"));
-        separator.setBorder(BorderFactory.createMatteBorder(2, 0, 2, 0, UIManager.getColor("Label.foreground")));
+      if(nextValue instanceof Program && list.getModel().getSize() > index + 1) {
+        mDateLabel.setText(((Program)nextValue).getDateString());
         
-        if(list.getModel().getSize() > index + 1) {
-          JLabel date = new JLabel(((Program)nextValue).getDateString());
-          date.setFont(date.getFont().deriveFont(date.getFont().getSize2D() + 4).deriveFont(Font.BOLD));
-          
-          separator.add(date, new CellConstraints().xy(2, 2));
-          
-          return separator;
-        }
+        return mDateSeparator;
       }
     }
     

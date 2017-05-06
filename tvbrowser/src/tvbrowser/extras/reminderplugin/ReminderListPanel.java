@@ -9,6 +9,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -28,6 +29,17 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.TableColumn;
 
+import com.jgoodies.forms.builder.ButtonBarBuilder;
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.ColumnSpec;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.RowSpec;
+
+import devplugin.Date;
+import devplugin.Plugin;
+import devplugin.Program;
+import devplugin.SettingsItem;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.plugin.PluginManagerImpl;
 import tvbrowser.ui.mainframe.MainFrame;
@@ -40,18 +52,6 @@ import util.ui.SendToPluginDialog;
 import util.ui.TVBrowserIcons;
 import util.ui.persona.Persona;
 import util.ui.persona.PersonaListener;
-
-import com.jgoodies.forms.builder.ButtonBarBuilder;
-import com.jgoodies.forms.factories.Borders;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.RowSpec;
-
-import devplugin.Date;
-import devplugin.Plugin;
-import devplugin.Program;
-import devplugin.SettingsItem;
 
 public class ReminderListPanel extends JPanel implements PersonaListener, ProgramMouseAndContextMenuListener {
   private static final util.ui.Localizer mLocalizer = ReminderListDialog.mLocalizer; 
@@ -317,30 +317,47 @@ public class ReminderListPanel extends JPanel implements PersonaListener, Progra
     final ProgramTableCellRenderer backend = new ProgramTableCellRenderer(new PluginPictureSettings(PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE));
     
     DefaultTableCellRenderer renderer = new DefaultTableCellRenderer() {
+      private JPanel mDateSeparator;
+      private JLabel mDateLabel;
+      
+      @SuppressWarnings("unused")
+      public void initialize() {
+        mDateSeparator = new JPanel(new FormLayout("0dlu:grow,default,0dlu:grow","5dlu,min,5dlu"));
+        mDateSeparator.setBorder(BorderFactory.createMatteBorder(2, 0, 2, 0, UIManager.getColor("Label.foreground")));
+        
+        mDateLabel = new JLabel();
+        mDateLabel.setFont(mDateLabel.getFont().deriveFont(mDateLabel.getFont().getSize2D() + 4).deriveFont(Font.BOLD));
+        
+        mDateSeparator.add(mDateLabel, new CellConstraints().xy(2, 2));
+      }
+      
       public Component getTableCellRendererComponent(final JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         Component c = backend.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
         
         try {
           if(value instanceof Program && value.equals(PluginManagerImpl.getInstance().getExampleProgram())) {
-            JPanel separator = new JPanel(new FormLayout("0dlu:grow,default,0dlu:grow","5dlu,min,5dlu"));
-            separator.setBorder(BorderFactory.createMatteBorder(2, 0, 2, 0, UIManager.getColor("Label.foreground")));
+            mDateLabel.setText(((Program)table.getModel().getValueAt(row+1, 0)).getDateString());
             
             if(table.getModel().getRowCount() > row + 1) {
-              JLabel date = new JLabel(((Program)table.getModel().getValueAt(row+1, 0)).getDateString());
-              date.setFont(date.getFont().deriveFont(date.getFont().getSize2D() + 4).deriveFont(Font.BOLD));
-              
-              separator.add(date, new CellConstraints().xy(2, 2));
-              
-              table.setRowHeight(row, separator.getPreferredSize().height);
-              
-              return separator;
+              table.setRowHeight(row, mDateSeparator.getPreferredSize().height);
             }
+            
+            c = mDateSeparator;
           }
         }catch(Exception e) {e.printStackTrace();}
         
         return c;
       }
     };
+    
+    try {
+      final Method initialize = renderer.getClass().getDeclaredMethod("initialize");
+      initialize.invoke(renderer);
+    } catch (Exception e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    } 
+    
     
     mTable.getColumnModel().getColumn(0).setCellRenderer(renderer);
     mTable.getColumnModel().getColumn(1).setCellEditor(new MinutesCellEditor());

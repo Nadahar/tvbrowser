@@ -48,7 +48,7 @@ public class MinutesCellRenderer extends DefaultTableCellRenderer {
   private JPanel mPanel;
   private JLabel mTextLabel, mIconLabel;
   private JLabel mNoteLabel;
-  
+  private JPanel mDateSeparator;
   /**
    * Creates an instance of this class.
    */
@@ -63,6 +63,9 @@ public class MinutesCellRenderer extends DefaultTableCellRenderer {
     mPanel.add(mTextLabel, cc.xy(1, 2));
     mPanel.add(mIconLabel, cc.xy(3, 2));
     mPanel.add(mNoteLabel, cc.xy(1, 4));
+    
+    mDateSeparator = new JPanel(new FormLayout("0dlu:grow,default,0dlu:grow","5dlu,default,5dlu"));
+    mDateSeparator.setBorder(BorderFactory.createMatteBorder(2, 0, 2, 0, UIManager.getColor("Label.foreground")));
   }
   
   public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
@@ -72,10 +75,7 @@ public class MinutesCellRenderer extends DefaultTableCellRenderer {
       final ReminderListItem listItem = (ReminderListItem) value;
       
       if(listItem.getProgram().equals(PluginManagerImpl.getInstance().getExampleProgram())) {
-        JPanel separator = new JPanel(new FormLayout("0dlu:grow,default,0dlu:grow","5dlu,default,5dlu"));
-        separator.setBorder(BorderFactory.createMatteBorder(2, 0, 2, 0, UIManager.getColor("Label.foreground")));
-        
-        return separator;
+        def = mDateSeparator;
       }
       else {
         Integer minutes = listItem.getMinutes();
@@ -100,7 +100,7 @@ public class MinutesCellRenderer extends DefaultTableCellRenderer {
           mNoteLabel.setVisible(false);
         }
         
-        return mPanel;
+        def = mPanel;
       }
     }
     
