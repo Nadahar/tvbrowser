@@ -723,7 +723,7 @@ public class ReminderPlugin {
             "appointment", 16), actions.toArray(new ActionMenu[actions
                                                                .size()]));
       }
-      else {
+      else if(!actions.isEmpty()) {
         result = new ActionMenu(ActionMenu.ID_ACTION_NONE, getName(), IconLoader.getInstance().getIconFromTheme("apps",
             "appointment", 16), new ActionMenu[] {
                 new ActionMenu(Integer.MIN_VALUE, action),
