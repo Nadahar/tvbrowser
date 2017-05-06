@@ -25,8 +25,6 @@ package util.ui;
 
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.ArrayList;
@@ -102,6 +100,9 @@ public class FilterableProgramListPanel extends JPanel implements FilterChangeLi
   private boolean mShowDateSeparators;
   
   private int mType;
+  private int mTypeStart;
+  
+  private WrapperFilter mDefaultFilter;
 
   /**
    * Create an new FilterableProgramListPanel.
@@ -214,7 +215,7 @@ public class FilterableProgramListPanel extends JPanel implements FilterChangeLi
       JButton reset = new JButton(TVBrowserIcons.reset(TVBrowserIcons.SIZE_SMALL));
       reset.setToolTipText(LOCALIZER.msg("reset", "Reset filter"));
       reset.addActionListener(e -> {
-        mProgramFilterBox.setSelectedItem(new WrapperFilter(FilterManagerImpl.getInstance().getAllFilter()));
+        mProgramFilterBox.setSelectedItem(mDefaultFilter);
       });
       
       mProgramFilterLabel = new JLabel(LOCALIZER.msg("filterPrograms", "Program filter:"));
@@ -233,13 +234,10 @@ public class FilterableProgramListPanel extends JPanel implements FilterChangeLi
     
     if(type == TYPE_NAME_AND_PROGRAM_FILTER || type == TYPE_NAME_ONLY_FILTER) {
       mTitleFilterBox = new WideComboBox<>();
-      mTitleFilterBox.addItemListener(new ItemListener() {
-        @Override
-        public void itemStateChanged(ItemEvent e) {
-          if(e.getStateChange() == ItemEvent.SELECTED) {
-            filterPrograms((ProgramFilter)mTitleFilterBox.getSelectedItem(), true);
-            scrollToFirstNotExpiredIndex(false);
-          }
+      mTitleFilterBox.addItemListener(e -> {
+        if(e.getStateChange() == ItemEvent.SELECTED) {
+          filterPrograms((ProgramFilter)mTitleFilterBox.getSelectedItem(), true);
+          scrollToFirstNotExpiredIndex(false);
         }
       });
       
@@ -280,6 +278,8 @@ public class FilterableProgramListPanel extends JPanel implements FilterChangeLi
       startType = FILTER_START_ALL_TYPE;
     }
     
+    mTypeStart = startType;
+    
     final ProgramFilter[] filters = FilterManagerImpl.getInstance().getAvailableFilters();
     
     for(ProgramFilter filter : filters) {
@@ -297,11 +297,11 @@ public class FilterableProgramListPanel extends JPanel implements FilterChangeLi
     }
     
     switch (startType) {
-      case FILTER_START_DEFAULT_TYPE: mProgramFilterBox.setSelectedItem(new WrapperFilter(FilterManagerImpl.getInstance().getDefaultFilter()));break;
-      case FILTER_START_CURRENT_TYPE: mProgramFilterBox.setSelectedItem(new WrapperFilter(FilterManagerImpl.getInstance().getCurrentFilter()));break;
-      case FILTER_START_FILTER_TYPE: mProgramFilterBox.setSelectedItem(new WrapperFilter(startFilter));break;
+      case FILTER_START_DEFAULT_TYPE: mProgramFilterBox.setSelectedItem(mDefaultFilter = new WrapperFilter(FilterManagerImpl.getInstance().getDefaultFilter()));break;
+      case FILTER_START_CURRENT_TYPE: mProgramFilterBox.setSelectedItem(mDefaultFilter = new WrapperFilter(FilterManagerImpl.getInstance().getCurrentFilter()));break;
+      case FILTER_START_FILTER_TYPE: mProgramFilterBox.setSelectedItem(mDefaultFilter = new WrapperFilter(startFilter));break;
       
-      default: mProgramFilterBox.setSelectedItem(new WrapperFilter(FilterManagerImpl.getInstance().getAllFilter()));break;
+      default: mProgramFilterBox.setSelectedItem(mDefaultFilter = new WrapperFilter(FilterManagerImpl.getInstance().getAllFilter()));break;
     }
   }
 
@@ -349,7 +349,11 @@ public class FilterableProgramListPanel extends JPanel implements FilterChangeLi
   }
   
   @Override
-  public void filterDefaultChanged(ProgramFilter filter) {}
+  public void filterDefaultChanged(ProgramFilter filter) {
+    if(mTypeStart == FILTER_START_DEFAULT_TYPE) {
+      mDefaultFilter = new WrapperFilter(filter);
+    }
+  }
   
   private void filterPrograms(ProgramFilter filter) {
     filterPrograms(filter,false);
