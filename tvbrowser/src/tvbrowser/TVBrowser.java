@@ -32,6 +32,7 @@ import java.awt.Frame;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Toolkit;
+import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -630,7 +631,7 @@ public class TVBrowser {
                     JDialog d = pane.createDialog(UiUtilities
                         .getLastModalChildOf(mainFrame), UIManager
                         .getString("OptionPane.messageDialogTitle"));
-                    d.setModal(true);
+                    d.setModalityType(ModalityType.DOCUMENT_MODAL);
                     UiUtilities.centerAndShow(d);
 
                     if (pane.getValue() == null

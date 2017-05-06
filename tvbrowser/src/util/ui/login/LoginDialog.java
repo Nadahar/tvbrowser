@@ -25,6 +25,7 @@ package util.ui.login;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Window;
+import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -76,7 +77,7 @@ public class LoginDialog extends JDialog implements WindowClosingIf {
   public LoginDialog(Window owner, String username, String password,
       boolean storePassword) {
     super(owner);
-    setModal(true);
+    setModalityType(ModalityType.DOCUMENT_MODAL);
     mUsername = username;
     mPassword = password;
     mStore = storePassword;

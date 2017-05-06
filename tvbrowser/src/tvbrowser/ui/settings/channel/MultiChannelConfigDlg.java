@@ -29,6 +29,7 @@ package tvbrowser.ui.settings.channel;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Window;
+import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -85,7 +86,7 @@ public class MultiChannelConfigDlg extends JDialog implements ActionListener, Wi
    */
   public MultiChannelConfigDlg(Window parent, Channel[] channel) {
     super(parent, mLocalizer.msg("configChannel", "Configure Channel"));
-    setModal(true);
+    setModalityType(ModalityType.DOCUMENT_MODAL);
     mChannel = channel;
     createDialog();
   }

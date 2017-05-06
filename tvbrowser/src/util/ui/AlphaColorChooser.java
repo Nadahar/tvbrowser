@@ -35,6 +35,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Window;
+import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -115,7 +116,7 @@ public class AlphaColorChooser extends JDialog implements ChangeListener {
   public AlphaColorChooser(Window parent, String title, Color color,
       Color stdColor) {
     super(parent, title);
-    setModal(true);
+    setModalityType(ModalityType.DOCUMENT_MODAL);
     mStandardColor = stdColor;
     createGui();
     mDefaultColor = color;

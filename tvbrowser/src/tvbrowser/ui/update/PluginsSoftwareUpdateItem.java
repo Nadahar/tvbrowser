@@ -28,6 +28,7 @@
 package tvbrowser.ui.update;
 
 import java.awt.Window;
+import java.awt.Dialog.ModalityType;
 import java.io.File;
 import java.net.URL;
 
@@ -65,7 +66,7 @@ public class PluginsSoftwareUpdateItem extends SoftwareUpdateItem {
       Window w = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
       
       JDialog dialog = pane.createDialog(w, mLocalizer.msg("betawarning.title","Beta version"));
-      dialog.setModal(true);
+      dialog.setModalityType(ModalityType.DOCUMENT_MODAL);
       dialog.setLocationRelativeTo(w);
       dialog.setVisible(true);
       

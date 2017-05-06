@@ -33,6 +33,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Insets;
 import java.awt.Window;
+import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
@@ -140,7 +141,7 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
   public SoftwareUpdateDlg(Window parent, String downloadUrl,
       int dialogType, SoftwareUpdateItem[] itemArr, boolean isVersionChange, Version oldTvbVersion) {
     super(parent);
-    setModal(true);
+    setModalityType(ModalityType.DOCUMENT_MODAL);
     mDialogType = dialogType;
     mIsVersionChange = isVersionChange;
     mOldTvbVersion = oldTvbVersion;

@@ -44,6 +44,7 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.Window;
+import java.awt.Dialog.ModalityType;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
@@ -1557,7 +1558,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     mTimer.stop(); // disable the update timer to avoid new update events
     if (log && downloadingThread != null && downloadingThread.isAlive()) {
       final JDialog info = new JDialog(UiUtilities.getLastModalChildOf(this));
-      info.setModal(true);
+      info.setModalityType(ModalityType.DOCUMENT_MODAL);
       info.setUndecorated(true);
       info.toFront();
 

@@ -71,6 +71,7 @@ import devplugin.Program;
  */
 public class ObjectSelectionButton<E> extends JButton implements ActionListener {
   private E[] mObjectArr;
+  @SuppressWarnings("rawtypes")
   private ListCellRenderer mListCellRenderer;
   private ArrayList<ObjectSelectionListener<E>> mListenerList;
   private long mLastClosedDialogTime;
@@ -79,7 +80,7 @@ public class ObjectSelectionButton<E> extends JButton implements ActionListener 
     mListenerList = new ArrayList<ObjectSelectionListener<E>>();
     mLastClosedDialogTime = 0;
     mListCellRenderer = new DefaultListCellRenderer() {
-      public Component getListCellRendererComponent(JList list,final Object value, int index, boolean isSelected, boolean cellHasFocus) {
+      public Component getListCellRendererComponent(JList<?> list,final Object value, int index, boolean isSelected, boolean cellHasFocus) {
         JLabel c = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
         
         if(value instanceof Program) {
@@ -150,9 +151,10 @@ public class ObjectSelectionButton<E> extends JButton implements ActionListener 
     showDialog();
   }
   
+  @SuppressWarnings("unchecked")
   private void showDialog() {
     if(mObjectArr != null && mLastClosedDialogTime + 800 < System.currentTimeMillis()) {
-      final JList list = new JList(mObjectArr);
+      final JList<E> list = new JList<>(mObjectArr);
       final JDialog dialog = new JDialog(UiUtilities.getLastModalChildOf(MainFrame.getInstance()));
       
       list.addMouseListener(new MouseAdapter() {
@@ -249,12 +251,11 @@ public class ObjectSelectionButton<E> extends JButton implements ActionListener 
     }    
   }
   
-  private void objectSelected(JList list, JDialog dialog) {
+  private void objectSelected(JList<E> list, JDialog dialog) {
     if(list.getSelectedIndex() >= 0) {
       dialog.dispose();
       
-      @SuppressWarnings("unchecked")
-      E object = (E)list.getSelectedValue();
+      E object = list.getSelectedValue();
       
       for(ObjectSelectionListener<E> listener : mListenerList) {
         listener.objectSeleted(object);
@@ -266,6 +267,7 @@ public class ObjectSelectionButton<E> extends JButton implements ActionListener 
     mObjectArr = objectArr;
   }
   
+  @SuppressWarnings("rawtypes")
   public void setListCellRenderer(ListCellRenderer renderer) {
     mListCellRenderer = renderer;
   }

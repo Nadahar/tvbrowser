@@ -42,8 +42,11 @@ import javax.swing.KeyStroke;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+import com.jgoodies.forms.builder.ButtonBarBuilder;
+import com.jgoodies.forms.factories.Borders;
+
+import devplugin.PluginManager;
 import tvbrowser.core.Settings;
-import tvbrowser.extras.reminderplugin.ReminderPlugin;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.settings.PluginPictureSettings;
 import util.ui.Localizer;
@@ -53,11 +56,6 @@ import util.ui.SearchHelper;
 import util.ui.TabLayout;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
-
-import com.jgoodies.forms.builder.ButtonBarBuilder;
-import com.jgoodies.forms.factories.Borders;
-
-import devplugin.PluginManager;
 
 /**
  * A dialog for searching programs.
@@ -84,7 +82,7 @@ public class SearchDialog extends JDialog implements WindowClosingIf {
    */
   public SearchDialog(Window parent) {
     super(parent);
-    setModal(true);
+    setModalityType(ModalityType.DOCUMENT_MODAL);
     init();
   }
 
@@ -185,7 +183,7 @@ public class SearchDialog extends JDialog implements WindowClosingIf {
   public void setPatternText(String text) {
     SearchFormSettings settings = new SearchFormSettings(text);
     settings.setSearchIn(SearchFormSettings.SEARCH_IN_TITLE);
-    settings.setSearcherType(PluginManager.SEARCHER_TYPE_EXACTLY);
+    settings.setSearcherType(PluginManager.TYPE_SEARCHER_EXACTLY);
     settings.setCaseSensitive(true);
 
     setSearchSettings(settings);

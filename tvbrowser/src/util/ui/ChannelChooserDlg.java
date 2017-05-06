@@ -29,6 +29,7 @@ package util.ui;
 import java.awt.Dialog;
 import java.awt.Frame;
 import java.awt.Window;
+import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -84,7 +85,7 @@ public class ChannelChooserDlg extends JDialog implements WindowClosingIf {
   public ChannelChooserDlg(Window parent, Channel[] channelArr,
       String description) {
     super(parent);
-    setModal(true);
+    setModalityType(ModalityType.DOCUMENT_MODAL);
     init(channelArr, description, ORDER_CHOOSER);
   }
 
@@ -130,7 +131,7 @@ public class ChannelChooserDlg extends JDialog implements WindowClosingIf {
   public ChannelChooserDlg(Window parent, Channel[] channelArr,
       String description, int type) {
     super(parent);
-    setModal(true);
+    setModalityType(ModalityType.DOCUMENT_MODAL);
     init(channelArr, description, type);
   }
 

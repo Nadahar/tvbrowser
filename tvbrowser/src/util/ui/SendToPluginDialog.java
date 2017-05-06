@@ -8,6 +8,7 @@ import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.Window;
+import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -141,7 +142,7 @@ public class SendToPluginDialog extends JDialog implements WindowClosingIf {
   public SendToPluginDialog(ProgramReceiveIf caller,
       ProgramReceiveTarget callerTarget, Window owner, Program[] prg) {
     super(owner);
-    setModal(true);
+    setModalityType(ModalityType.DOCUMENT_MODAL);
     mPrograms = prg;
     mCaller = caller;
     mCallerTarget = callerTarget;
