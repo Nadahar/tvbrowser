@@ -29,9 +29,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import devplugin.Date;
 import tvbrowser.core.Settings;
 import util.ui.ProgramPanel;
-import devplugin.Date;
 
 /**
  * Define blocks of <i>n</i> hours. Each of these blocks starts at the same height in all columns
@@ -48,6 +48,7 @@ public class TimeBlockLayout extends AbstractProgramTableLayout {
   private LastLayoutComponent[] mLastLayoutComponentList;
   private ArrayList<ProgramPanel>[] mBlockProgramList;
   
+  @SuppressWarnings("unchecked")
   public void updateLayout(final ProgramTableModel model) {
     int columnCount = model.getColumnCount();
     

@@ -223,8 +223,8 @@ public class ProgramPanel extends JComponent implements ChangeListener, PluginSt
     
     int minWidth = Math.max(WIDTH_RIGHT - 5 - mLogoWidth, 55-WIDTH_LEFT);
     
-    mTitleIcon = new TextAreaIcon(null, mTitleFont, minWidth);
-    mDescriptionIcon = new TextAreaIcon(null, mNormalFont, minWidth);
+    mTitleIcon = new TextAreaIcon(null, mTitleFont, minWidth, getLineGap(mTitleFont));
+    mDescriptionIcon = new TextAreaIcon(null, mNormalFont, minWidth, getLineGap(mNormalFont));
     mDescriptionIcon.setMaximumLineCount(3);
 
     setBackground(UIManager.getColor("programPanel.background"));
@@ -368,8 +368,8 @@ private static Font getDynamicFontSize(Font font, int offset) {
    */
   public void forceRepaint() {
     calculateWidth();
-    mTitleIcon = new TextAreaIcon(null, mTitleFont, WIDTH_RIGHT - 5);
-    mDescriptionIcon = new TextAreaIcon(null, mNormalFont, WIDTH_RIGHT - 5);
+    mTitleIcon = new TextAreaIcon(null, mTitleFont, WIDTH_RIGHT - 5, getLineGap(mTitleFont));
+    mDescriptionIcon = new TextAreaIcon(null, mNormalFont, WIDTH_RIGHT - 5, getLineGap(mNormalFont));
     mDescriptionIcon.setMaximumLineCount(Settings.propProgramPanelMaxLines
         .getInt());
     mProgram.validateMarking();
@@ -601,7 +601,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
       setPreferredSize(new Dimension(WIDTH_TOTAL, mHeight));
 
       // Calculate the preferred height
-      mPreferredHeight = titleHeight + (maxDescLines * mNormalFont.getSize()) + mPictureAreaIcon.getIconHeight() + additionalHeight + V_GAP;
+      mPreferredHeight = titleHeight + (maxDescLines * mNormalFont.getSize() * getLineGap(mNormalFont)) + mPictureAreaIcon.getIconHeight() + additionalHeight + V_GAP;
 
       if (mHeight < mPreferredHeight) {
         mPreferredHeight = mHeight;
@@ -1412,8 +1412,8 @@ private static Font getDynamicFontSize(Font font, int offset) {
    */
   private void recreateTextIcons(int newWidth) {
     textIconWidth = getTextIconWidth(newWidth);
-    mTitleIcon = new TextAreaIcon(null, mTitleFont, textIconWidth);
-    mDescriptionIcon = new TextAreaIcon(null, mNormalFont, textIconWidth);
+    mTitleIcon = new TextAreaIcon(null, mTitleFont, textIconWidth, getLineGap(mTitleFont));
+    mDescriptionIcon = new TextAreaIcon(null, mNormalFont, textIconWidth, getLineGap(mNormalFont));
     mDescriptionIcon.setMaximumLineCount(3);
     
     if (mProgram != null) {
@@ -1427,5 +1427,19 @@ private static Font getDynamicFontSize(Font font, int offset) {
   public void setMarkTime(int time) {
     mMarkTime = time;
   }
-
+  
+  private int getLineGap(Font f) {
+    int result = 0;
+    
+    if(!Settings.propUseDefaultFonts.getBoolean()) {
+      switch(Settings.propProgramTextLineGap.getInt()) {
+        case 1: result = f.getSize()/4;break;
+        case 2: result = f.getSize()/2;break;
+        case 3: result = (int)(f.getSize()*3/4.);break;
+        case 4: result = f.getSize();break;
+      }
+    }
+    
+    return result;
+  }
 }
