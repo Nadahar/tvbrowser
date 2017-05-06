@@ -184,7 +184,7 @@ public class MoreButton extends JToggleButton implements ActionListener {
                 for(; i<comp.length; i++){
                     if(comp[i] instanceof AbstractButton) {
                       if(actions[i] != null) {                        
-                        new MenuHelpTextAdapter(mPopupMenu.add(actions[i]),
+                        MenuHelpTextAdapter.create(mPopupMenu.add(actions[i]),
                             actions[i].getValue(Action.SHORT_DESCRIPTION).toString(), mLabel);
                       }
                     } else if(comp[i] instanceof JSeparator) {
