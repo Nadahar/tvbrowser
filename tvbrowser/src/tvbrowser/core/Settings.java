@@ -1003,7 +1003,7 @@ public class Settings {
         propProgramPanelMarkedMediumPriorityColor, propProgramPanelMarkedMaxPriorityColor,
         propProgramTableColorOnAirLight, propProgramTableColorOnAirDark, propProgramPanelForegroundColor,
         propProgramTableBackgroundSingleColor, propProgramPanelAllowTransparency, propAlwaysShowTabBarForCenterPanel,
-        propProgramPanelShowOriginialTitles};
+        propProgramPanelShowOriginialTitles, propProgramTextLineGap};
 
     mainFrame.updateCenterPanels();
     
@@ -1609,6 +1609,9 @@ public class Settings {
 
   public static final FontProperty propProgramTimeFont = new DeferredFontProperty(
       mProp, "font.programtime", DEFAULT_PROGRAMTIMEFONT);
+  
+  public static final IntProperty propProgramTextLineGap = new IntProperty(
+      mProp, "font.lineGap", 0);
 
   public static final ProgramFieldTypeArrayProperty propProgramInfoFields = new ProgramFieldTypeArrayProperty(
       mProp, "programpanel.infoFields", new ProgramFieldType[] {

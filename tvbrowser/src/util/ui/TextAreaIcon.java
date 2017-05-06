@@ -82,7 +82,7 @@ public class TextAreaIcon implements Icon {
    */
   public void setMaximumLineCount(int maxLineCount) {
     if (mMaxLineCount != maxLineCount) {
-      mMaxLineCount = maxLineCount;
+      mMaxLineCount = (maxLineCount );
       if ((mTextLineArr != null) && (mTextLineArr.length >= mMaxLineCount)) {
         setText(mText);
       }
@@ -148,7 +148,7 @@ public class TextAreaIcon implements Icon {
     if (mTextLineArr == null) {
       return 0;
     } else {
-      return (mFont.getSize() + mLineSpace) * mTextLineArr.length + 2 * mLineSpace;
+      return (mFont.getSize() + mLineSpace) * mTextLineArr.length;
     }
   }
   
@@ -186,8 +186,9 @@ public class TextAreaIcon implements Icon {
       
       int fontSize = mFont.getSize();
       for (String textLine : mTextLineArr) {
-        y += fontSize + mLineSpace;
+        y += fontSize;
         grp.drawString(textLine, x, y);
+        y += mLineSpace;
       }
     }
   }

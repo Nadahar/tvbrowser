@@ -30,17 +30,18 @@ import java.awt.event.ActionListener;
 
 import javax.swing.Icon;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.factories.CC;
+import com.jgoodies.forms.layout.FormLayout;
 
 import tvbrowser.core.Settings;
 import tvbrowser.core.icontheme.IconLoader;
 import util.ui.FontChooserPanel;
-
-import com.jgoodies.forms.builder.PanelBuilder;
-import com.jgoodies.forms.factories.Borders;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
 
 public class FontsSettingsTab implements devplugin.SettingsTab {
 
@@ -60,46 +61,72 @@ public class FontsSettingsTab implements devplugin.SettingsTab {
   private JLabel mInfoFontLabel;
 
   private JLabel mTitleFontLabel;
+  
+  private JLabel mTextLineGapLabel;
+  private JComboBox<String> mTextLineGap;
 
   public JPanel createSettingsPanel() {
     PanelBuilder mainPanel = new PanelBuilder(new FormLayout("5dlu, 10dlu, default, 3dlu, default, fill:3dlu:grow",
-        "default, 5dlu, default, default, 3dlu, default, 3dlu, default, 3dlu, default, 3dlu, default"));
+        "default, 5dlu, default, default, 3dlu, default, 13dlu, default, 3dlu, default," +
+        " 3dlu, default, 3dlu, default"));
     mainPanel.border(Borders.DIALOG);
     
-    CellConstraints cc = new CellConstraints();
+    int y = 1;
     
-    mainPanel.addSeparator(mLocalizer.msg("Fonts", "Fonts"), cc.xyw(1,1,6));
+    mainPanel.addSeparator(mLocalizer.msg("Fonts", "Fonts"), CC.xyw(1,y++,6));
     
     mEnableAntialiasingCB = new JCheckBox(mLocalizer.msg("EnableAntialiasing", "Enable antialiasing"));
     mEnableAntialiasingCB.setSelected(Settings.propEnableAntialiasing.getBoolean());
 
-    mainPanel.add(mEnableAntialiasingCB, cc.xyw(2,3,4));
+    mainPanel.add(mEnableAntialiasingCB, CC.xyw(2,++y,4));
 
     mUseUserDefindedFontsCB = new JCheckBox(mLocalizer.msg("UserDefinedFonts", "Use userdefined fonts"));
     mUseUserDefindedFontsCB.setSelected(!Settings.propUseDefaultFonts.getBoolean());
     
-    mainPanel.add(mUseUserDefindedFontsCB, cc.xyw(2,4,4));
-        
-    mTitleFontLabel = new JLabel(mLocalizer.msg("ProgramTitle", "Program title"));
-    mainPanel.add(mTitleFontLabel, cc.xy(3,6));
-    mTitleFontPanel = new FontChooserPanel(Settings.propProgramTitleFont.getFont());
-    mainPanel.add(mTitleFontPanel, cc.xy(5,6));
+    mainPanel.add(mUseUserDefindedFontsCB, CC.xyw(2,++y,4));
 
-    mInfoFontLabel = new JLabel(mLocalizer.msg("ProgramInfo", "Program information"));
-    mainPanel.add(mInfoFontLabel, cc.xy(3,8));
-    mInfoFontPanel = new FontChooserPanel(Settings.propProgramInfoFont.getFont());
-    mainPanel.add(mInfoFontPanel, cc.xy(5,8));
-
+    y += 2;
+    
     mChannelNameFontLabel = new JLabel(mLocalizer.msg("ChannelNames", "Channel name"));
-    mainPanel.add(mChannelNameFontLabel, cc.xy(3,10));
+    mainPanel.add(mChannelNameFontLabel, CC.xy(3,y));
     mChannelNameFontPanel = new FontChooserPanel(Settings.propChannelNameFont.getFont());
-    mainPanel.add(mChannelNameFontPanel, cc.xy(5,10));
+    mainPanel.add(mChannelNameFontPanel, CC.xy(5,y));
+    
+    y += 2;
+    
+    mTitleFontLabel = new JLabel(mLocalizer.msg("ProgramTitle", "Program title"));
+    mainPanel.add(mTitleFontLabel, CC.xy(3,y));
+    mTitleFontPanel = new FontChooserPanel(Settings.propProgramTitleFont.getFont());
+    mainPanel.add(mTitleFontPanel, CC.xy(5,y));
 
+    y += 2;
+    
+    mInfoFontLabel = new JLabel(mLocalizer.msg("ProgramInfo", "Program information"));
+    mainPanel.add(mInfoFontLabel, CC.xy(3,y));
+    mInfoFontPanel = new FontChooserPanel(Settings.propProgramInfoFont.getFont());
+    mainPanel.add(mInfoFontPanel, CC.xy(5,y));
+    
+    y += 2;
+    
     mTimeFontLabel = new JLabel(mLocalizer.msg("Time", "Time"));
-    mainPanel.add(mTimeFontLabel, cc.xy(3,12));
+    mainPanel.add(mTimeFontLabel, CC.xy(3,y));
     mTimeFontPanel = new FontChooserPanel(Settings.propProgramTimeFont.getFont());
-    mainPanel.add(mTimeFontPanel, cc.xy(5,12));
-
+    mainPanel.add(mTimeFontPanel, CC.xy(5,y));
+    
+    y += 2;
+        
+    mTextLineGapLabel = new JLabel(mLocalizer.msg("lineSpacing", "Line spacing:"));
+    mainPanel.add(mTextLineGapLabel, CC.xy(3,y));
+    mTextLineGap = new JComboBox<>(new String[] {
+        mLocalizer.msg("lineSpacing.singleLine", "Single line"),
+        mLocalizer.msg("lineSpacing.oneAndAQuaterLine", "1.25 line"),
+        mLocalizer.msg("lineSpacing.oneAndAHalfLine", "1.5 line"),
+        mLocalizer.msg("lineSpacing.oneAndThreeQuaterLine", "1.75 line"),
+        mLocalizer.msg("lineSpacing.doubleLine", "Double line")
+        });
+    mTextLineGap.setSelectedIndex(Settings.propProgramTextLineGap.getInt());
+    mainPanel.add(mTextLineGap, CC.xy(5,y));
+    
     mUseUserDefindedFontsCB.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         enableFontFields(mUseUserDefindedFontsCB.isSelected());
@@ -119,6 +146,8 @@ public class FontsSettingsTab implements devplugin.SettingsTab {
     mChannelNameFontPanel.setEnabled(enable);
     mTimeFontLabel.setEnabled(enable);
     mTimeFontPanel.setEnabled(enable);
+    mTextLineGapLabel.setEnabled(enable);
+    mTextLineGap.setEnabled(enable);
   }
   
   /**
@@ -131,6 +160,7 @@ public class FontsSettingsTab implements devplugin.SettingsTab {
     Settings.propProgramTimeFont.setFont(mTimeFontPanel.getChosenFont());
     Settings.propUseDefaultFonts.setBoolean(!mUseUserDefindedFontsCB.isSelected());
     Settings.propEnableAntialiasing.setBoolean(mEnableAntialiasingCB.isSelected());
+    Settings.propProgramTextLineGap.setInt(mTextLineGap.getSelectedIndex());
   }
 
   public Icon getIcon() {
