@@ -43,19 +43,20 @@ import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
+import com.jgoodies.forms.factories.CC;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.RowSpec;
+
+import devplugin.ChannelFilter;
+import devplugin.ChannelFilterChangeListener;
+import devplugin.FilterChangeListenerV2;
+import devplugin.Program;
+import devplugin.ProgramFilter;
 import tvbrowser.core.filters.FilterManagerImpl;
 import util.exc.TvBrowserException;
 import util.settings.ProgramPanelSettings;
 import util.ui.persona.Persona;
 import util.ui.persona.PersonaListener;
-
-import com.jgoodies.forms.factories.CC;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.RowSpec;
-
-import devplugin.FilterChangeListenerV2;
-import devplugin.Program;
-import devplugin.ProgramFilter;
 
 /**
  * A JPanel with a program list with filter selection.
@@ -63,7 +64,7 @@ import devplugin.ProgramFilter;
  * @author René Mach
  * @since 3.3.4
  */
-public class FilterableProgramListPanel extends JPanel implements FilterChangeListenerV2, PersonaListener {
+public class FilterableProgramListPanel extends JPanel implements FilterChangeListenerV2, PersonaListener, ChannelFilterChangeListener {
   /** Program filter combo box starts with Show all filter */
   public static final int FILTER_START_ALL_TYPE = 0;
   /** Program filter combo box starts with default filter */
@@ -84,12 +85,12 @@ public class FilterableProgramListPanel extends JPanel implements FilterChangeLi
   
   private ProgramList mProgramList;
   private JScrollPane mProgramListScrollPane;
-  private DefaultListModel mProgramListModel;
+  private DefaultListModel<Object> mProgramListModel;
   
   private JLabel mProgramFilterLabel;
-  private JComboBox mProgramFilterBox;
+  private WideComboBox<WrapperFilter> mProgramFilterBox;
   
-  private JComboBox mTitleFilterBox;
+  private JComboBox<ProgramFilter> mTitleFilterBox;
   private JLabel mTitleFilterLabel;
   
   private JLabel mNumberLabel;
@@ -113,15 +114,7 @@ public class FilterableProgramListPanel extends JPanel implements FilterChangeLi
    * @param startFilter The start filter this panels program filter combo box.
    */
   public FilterableProgramListPanel(boolean showNameFilter, Program[] programs, boolean showNumberOfPrograms, boolean showDateSeparators, ProgramPanelSettings progPanelSettings, ProgramFilter startFilter) {
-    mType = showNameFilter ? TYPE_NAME_AND_PROGRAM_FILTER : TYPE_PROGRAM_ONLY_FILTER;
-    
-    mProgramListModel = new DefaultListModel();
-    mProgramList = new ProgramList(mProgramListModel, progPanelSettings);
-    mShowDateSeparators = showDateSeparators;
-    
-    FilterManagerImpl.getInstance().registerFilterChangeListener(this);
-    createGUI(mType, showNumberOfPrograms, startFilter == null ? FILTER_START_ALL_TYPE : FILTER_START_FILTER_TYPE, startFilter);
-    setPrograms(programs);
+    this(showNameFilter ? TYPE_NAME_AND_PROGRAM_FILTER : TYPE_PROGRAM_ONLY_FILTER, programs, showNumberOfPrograms, showDateSeparators, progPanelSettings, startFilter == null ? FILTER_START_ALL_TYPE : FILTER_START_FILTER_TYPE);
   }
   
   /**
@@ -136,11 +129,14 @@ public class FilterableProgramListPanel extends JPanel implements FilterChangeLi
    */
   public FilterableProgramListPanel(int type, Program[] programs, boolean showNumberOfPrograms, boolean showDateSeparators, ProgramPanelSettings progPanelSettings, int startType) {
     mType = type;
-    mProgramListModel = new DefaultListModel();
+    
+    mProgramListModel = new DefaultListModel<>();
     mProgramList = new ProgramList(mProgramListModel, progPanelSettings);
     mShowDateSeparators = showDateSeparators;
     
     FilterManagerImpl.getInstance().registerFilterChangeListener(this);
+    FilterManagerImpl.getInstance().registerChannelFilterChangeListener(this);
+    
     createGUI(type, showNumberOfPrograms, startType, null);
     setPrograms(programs);
   }
@@ -181,7 +177,7 @@ public class FilterableProgramListPanel extends JPanel implements FilterChangeLi
   }
   
   private void createGUI(int type, boolean showNumberOfPrograms, int startType, ProgramFilter startFilter) {
-    FormLayout layout = new FormLayout("default,3dlu,100dlu:grow,3dlu,default","default,3dlu,fill:default:grow");
+    FormLayout layout = new FormLayout("default,3dlu,100dlu:grow,3dlu,default,3dlu,default","default,3dlu,fill:default:grow");
     
     setLayout(layout);
     
@@ -194,7 +190,7 @@ public class FilterableProgramListPanel extends JPanel implements FilterChangeLi
     
     int y = 1;
     
-    mProgramFilterBox = new WideComboBox();
+    mProgramFilterBox = new WideComboBox<>();
     
     if(type == TYPE_NAME_AND_PROGRAM_FILTER || type == TYPE_PROGRAM_ONLY_FILTER) {
       mProgramFilterBox.addItemListener(new ItemListener() {
@@ -211,11 +207,14 @@ public class FilterableProgramListPanel extends JPanel implements FilterChangeLi
       
       JButton refresh = new JButton(TVBrowserIcons.refresh(TVBrowserIcons.SIZE_SMALL));
       refresh.setToolTipText(LOCALIZER.msg("refresh", "Refresh list with current filter"));
-      refresh.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-          filterPrograms(((WrapperFilter)mProgramFilterBox.getSelectedItem()).getFilter());
-        }
+      refresh.addActionListener(e -> {
+        filterPrograms(((WrapperFilter)mProgramFilterBox.getSelectedItem()).getFilter());
+      });
+      
+      JButton reset = new JButton(TVBrowserIcons.reset(TVBrowserIcons.SIZE_SMALL));
+      reset.setToolTipText(LOCALIZER.msg("reset", "Reset filter"));
+      reset.addActionListener(e -> {
+        mProgramFilterBox.setSelectedItem(new WrapperFilter(FilterManagerImpl.getInstance().getAllFilter()));
       });
       
       mProgramFilterLabel = new JLabel(LOCALIZER.msg("filterPrograms", "Program filter:"));
@@ -223,7 +222,8 @@ public class FilterableProgramListPanel extends JPanel implements FilterChangeLi
       add(mProgramFilterLabel, CC.xy(1, y));
       add(mProgramFilterBox, CC.xy(3, y));
       
-      add(refresh, CC.xy(5, y++));
+      add(refresh, CC.xy(5, y));
+      add(reset, CC.xy(7, y++));
       
       y++;
     }
@@ -232,7 +232,7 @@ public class FilterableProgramListPanel extends JPanel implements FilterChangeLi
     }
     
     if(type == TYPE_NAME_AND_PROGRAM_FILTER || type == TYPE_NAME_ONLY_FILTER) {
-      mTitleFilterBox = new WideComboBox();
+      mTitleFilterBox = new WideComboBox<>();
       mTitleFilterBox.addItemListener(new ItemListener() {
         @Override
         public void itemStateChanged(ItemEvent e) {
@@ -243,10 +243,17 @@ public class FilterableProgramListPanel extends JPanel implements FilterChangeLi
         }
       });
       
+      JButton reset = new JButton(TVBrowserIcons.reset(TVBrowserIcons.SIZE_SMALL));
+      reset.setToolTipText(LOCALIZER.msg("reset", "Reset filter"));
+      reset.addActionListener(e -> {
+        mTitleFilterBox.setSelectedIndex(0);
+      });
+      
       mTitleFilterLabel = new JLabel(LOCALIZER.msg("filterTitles","Title filter:"));
       
       add(mTitleFilterLabel, CC.xy(1, y));
-      add(mTitleFilterBox, CC.xyw(3, y++, 3));
+      add(mTitleFilterBox, CC.xyw(3, y, 3));
+      add(reset, CC.xy(7, y++));
       
       y++;
     }
@@ -265,7 +272,7 @@ public class FilterableProgramListPanel extends JPanel implements FilterChangeLi
     mProgramListScrollPane = new JScrollPane(mProgramList);
     mProgramListScrollPane.setBorder(null);
     
-    add(mProgramListScrollPane, CC.xyw(1, y, 5));
+    add(mProgramListScrollPane, CC.xyw(1, y, 7));
   }
   
   private void fillProgramFilterBox(int startType, ProgramFilter startFilter) {
@@ -273,10 +280,20 @@ public class FilterableProgramListPanel extends JPanel implements FilterChangeLi
       startType = FILTER_START_ALL_TYPE;
     }
     
-    ProgramFilter[] filters = FilterManagerImpl.getInstance().getAvailableFilters();
+    final ProgramFilter[] filters = FilterManagerImpl.getInstance().getAvailableFilters();
     
     for(ProgramFilter filter : filters) {
       mProgramFilterBox.addItem(new WrapperFilter(filter));
+    }
+    
+    final ChannelFilter[] channelFilters = FilterManagerImpl.getInstance().getAvailableChannelFilters();
+    
+    for(ChannelFilter filter : channelFilters) {
+      final WrapperFilter test = new WrapperFilter(filter);
+      
+      if(!mProgramFilterBox.contains(test)) {
+        mProgramFilterBox.addItem(test);
+      }
     }
     
     switch (startType) {
@@ -291,7 +308,11 @@ public class FilterableProgramListPanel extends JPanel implements FilterChangeLi
   @Override
   public void filterAdded(ProgramFilter filter) {
     if(mType == TYPE_NAME_AND_PROGRAM_FILTER || mType == TYPE_PROGRAM_ONLY_FILTER) {
-      mProgramFilterBox.addItem(new WrapperFilter(filter));
+      final WrapperFilter test = new WrapperFilter(filter);
+      
+      if(!mProgramFilterBox.contains(test)) {
+        mProgramFilterBox.addItem(test);
+      }
     }
   }
 
@@ -304,6 +325,16 @@ public class FilterableProgramListPanel extends JPanel implements FilterChangeLi
       
       mProgramFilterBox.removeItem(filter);
     }
+  }
+  
+  @Override
+  public void channelFilterAdded(ChannelFilter filter) {
+    filterAdded(filter);
+  }
+
+  @Override
+  public void channelFilterRemoved(ChannelFilter filter) {
+    filterRemoved(filter);
   }
 
   @Override
@@ -328,7 +359,7 @@ public class FilterableProgramListPanel extends JPanel implements FilterChangeLi
     if(mAllPrograms != null) {
       mProgramListModel.clear();
 
-      DefaultListModel model = new DefaultListModel();
+      DefaultListModel<Object> model = new DefaultListModel<>();
       
       ArrayList<ProgramFilter> titleFilterValues = new ArrayList<ProgramFilter>();
       HashMap<String, String> titleMap = new HashMap<String, String>();
