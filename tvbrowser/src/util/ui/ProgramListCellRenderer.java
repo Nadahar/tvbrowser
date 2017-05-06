@@ -50,10 +50,10 @@ import javax.swing.event.ListDataListener;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
-import tvbrowser.core.Settings;
-import util.settings.ProgramPanelSettings;
 import devplugin.Date;
 import devplugin.Program;
+import tvbrowser.core.Settings;
+import util.settings.ProgramPanelSettings;
 
 /**
  * A list cell renderer that renders Programs.
@@ -67,9 +67,9 @@ import devplugin.Program;
 public class ProgramListCellRenderer extends DefaultListCellRenderer {
 
   private static final class ProgramListChangeListener implements ChangeListener {
-    private final JList mList;
+    private final JList<?> mList;
 
-    private ProgramListChangeListener(JList list) {
+    private ProgramListChangeListener(JList<?> list) {
       mList = list;
     }
 
@@ -78,7 +78,7 @@ public class ProgramListCellRenderer extends DefaultListCellRenderer {
         Object source = e.getSource();
         if (source instanceof Program) {
           Program program = (Program) source;
-          AbstractListModel model = (AbstractListModel) mList.getModel();
+          AbstractListModel<?> model = (AbstractListModel<?>) mList.getModel();
           ListDataListener[] listeners = model.getListDataListeners();
           int itemIndex = -1;
           for (int i = 0; i < model.getSize(); i++) {
@@ -145,9 +145,13 @@ public class ProgramListCellRenderer extends DefaultListCellRenderer {
 
     mHeaderLb = new JLabel();
     mMainPanel.add(mHeaderLb, BorderLayout.NORTH);
-
+    
     mProgramPanel = new ProgramPanel(settings);
     mMainPanel.add(mProgramPanel, BorderLayout.CENTER);
+    
+    Settings.addFontChangeListener(e -> {
+      mProgramPanel.forceRepaint();
+    });
   }
 
   /**
@@ -173,7 +177,7 @@ public class ProgramListCellRenderer extends DefaultListCellRenderer {
    * @see ListSelectionModel
    * @see ListModel
    */
-  public Component getListCellRendererComponent(final JList list, Object value, final int index, boolean isSelected,
+  public Component getListCellRendererComponent(final JList<?> list, Object value, final int index, boolean isSelected,
       boolean cellHasFocus) {
     JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 
@@ -181,12 +185,13 @@ public class ProgramListCellRenderer extends DefaultListCellRenderer {
       Program program = (Program) value;
       
       Insets borderInsets = label.getBorder().getBorderInsets(label);
+      
       mProgramPanel.setWidth(list.getWidth() - borderInsets.left - borderInsets.right);
       mProgramPanel.setProgram(program);
       mProgramPanel.setPaintExpiredProgramsPale(!isSelected);
       mProgramPanel.setTextColor(label.getForeground());
       mProgramPanel.setBackground(label.getBackground());
-
+      
       if (!mProgramSet.contains(program)) {
         mProgramSet.add(program);
         program.addChangeListener(new ProgramListChangeListener(list));
@@ -265,5 +270,4 @@ public class ProgramListCellRenderer extends DefaultListCellRenderer {
     
     return label;
   }
-
 }
