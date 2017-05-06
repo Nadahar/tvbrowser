@@ -201,28 +201,28 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 	}
 
 	private void createMenuItems() {
-		new MenuHelpTextAdapter(mQuitMI, mLocalizer.msg("menuinfo.quit", ""),
+		MenuHelpTextAdapter.create(mQuitMI, mLocalizer.msg("menuinfo.quit", ""),
 				mLabel);
-		new MenuHelpTextAdapter(mRestartMI, mLocalizer.msg("menuinfo.restart", ""),
+		MenuHelpTextAdapter.create(mRestartMI, mLocalizer.msg("menuinfo.restart", ""),
 				mLabel);
 
 		mToolbarMI = new JCheckBoxMenuItem(ToolBarDragAndDropSettings.mLocalizer
 				.msg("showToolbar", "Show toolbar"));
 		mToolbarMI.setSelected(Settings.propIsToolbarVisible.getBoolean());
 		mToolbarMI.addActionListener(this);
-		new MenuHelpTextAdapter(mToolbarMI, mLocalizer.msg("menuinfo.toolbar", ""),
+		MenuHelpTextAdapter.create(mToolbarMI, mLocalizer.msg("menuinfo.toolbar", ""),
 				mLabel);
 
     mMenubarMI = new JCheckBoxMenuItem(ContextMenu.mLocalizer.msg("showMenubar", "Show menubar"));
     mMenubarMI.setSelected(Settings.propIsMenubarVisible.getBoolean());
     mMenubarMI.addActionListener(this);
-    new MenuHelpTextAdapter(mMenubarMI, mLocalizer.msg("menuinfo.menuBar", ""),
+    MenuHelpTextAdapter.create(mMenubarMI, mLocalizer.msg("menuinfo.menuBar", ""),
         mLabel);
 
 		mToolbarCustomizeMI = new JMenuItem(ContextMenu.mLocalizer.ellipsisMsg(
 				"configure", "Configure"));
 		mToolbarCustomizeMI.addActionListener(this);
-		new MenuHelpTextAdapter(mToolbarCustomizeMI, mLocalizer.msg(
+		MenuHelpTextAdapter.create(mToolbarCustomizeMI, mLocalizer.msg(
 				"menuinfo.customizeToolbar", ""), mLabel);
 
 		if(!OperatingSystem.isMacOs() || TVBrowser.isTransportable()) {
@@ -237,25 +237,25 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 		mStatusbarMI = createCheckBoxItem("menuitem.viewStatusbar", "Statusbar");
 		mStatusbarMI.setSelected(Settings.propIsStatusbarVisible.getBoolean());
 		mStatusbarMI.addActionListener(this);
-		new MenuHelpTextAdapter(mStatusbarMI, mLocalizer.msg("menuinfo.statusbar",
+		MenuHelpTextAdapter.create(mStatusbarMI, mLocalizer.msg("menuinfo.statusbar",
 				""), mLabel);
 
 		mTimeBtnsMI = createCheckBoxItem("menuitem.timebuttons", "Time buttons");
 		mTimeBtnsMI.setSelected(Settings.propShowTimeButtons.getBoolean());
 		mTimeBtnsMI.addActionListener(this);
-		new MenuHelpTextAdapter(mTimeBtnsMI, mLocalizer.msg("menuinfo.timebuttons",
+		MenuHelpTextAdapter.create(mTimeBtnsMI, mLocalizer.msg("menuinfo.timebuttons",
 				""), mLabel);
 
 		mDatelistMI = createCheckBoxItem("menuitem.datelist", "Date list");
 		mDatelistMI.setSelected(Settings.propShowDatelist.getBoolean());
 		mDatelistMI.addActionListener(this);
-		new MenuHelpTextAdapter(mDatelistMI, mLocalizer
+		MenuHelpTextAdapter.create(mDatelistMI, mLocalizer
 				.msg("menuinfo.datelist", ""), mLabel);
 
 		mChannellistMI = createCheckBoxItem("menuitem.channellist", "channel list");
 		mChannellistMI.setSelected(Settings.propShowChannels.getBoolean());
 		mChannellistMI.addActionListener(this);
-		new MenuHelpTextAdapter(mChannellistMI, mLocalizer.msg(
+		MenuHelpTextAdapter.create(mChannellistMI, mLocalizer.msg(
 				"menuinfo.channellist", ""), mLabel);
 
 		mPluginOverviewMI = createCheckBoxItem("menuitem.pluginOverview",
@@ -264,14 +264,14 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 		mPluginOverviewMI.addActionListener(this);
 		mPluginOverviewMI.setIcon(IconLoader.getInstance().getIconFromTheme(
 				"actions", "view-tree", 16));
-		new MenuHelpTextAdapter(mPluginOverviewMI, mLocalizer.msg(
+		MenuHelpTextAdapter.create(mPluginOverviewMI, mLocalizer.msg(
 				"menuinfo.pluginOverview", ""), mLabel);
 
 		mViewFilterBarMI = createCheckBoxItem("menuitem.viewFilterBar",
 				"Filter bar");
 		mViewFilterBarMI.setSelected(Settings.propShowFilterBar.getBoolean());
 		mViewFilterBarMI.addActionListener(this);
-		new MenuHelpTextAdapter(mViewFilterBarMI, mLocalizer.msg(
+		MenuHelpTextAdapter.create(mViewFilterBarMI, mLocalizer.msg(
 				"menuinfo.filterbar", ""), mLabel);
 		
 		mFiltersMenu.setIcon(TVBrowserIcons.filter(TVBrowserIcons.SIZE_SMALL));
@@ -304,7 +304,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 		mFullscreenMI = createCheckBoxItem("menuitem.fullscreen", "Fullscreen");
 		mFullscreenMI.setIcon(TVBrowserIcons.fullScreen(TVBrowserIcons.SIZE_SMALL));
 		mFullscreenMI.addActionListener(this);
-		new MenuHelpTextAdapter(mFullscreenMI, mLocalizer.msg(
+		MenuHelpTextAdapter.create(mFullscreenMI, mLocalizer.msg(
 				"menuinfo.fullscreen", ""), mLabel);
 
 		updateDateItems();
@@ -319,7 +319,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 		mInstallPluginsMI = createMenuItem("menuitem.installPlugins",
 				"Install/Update Plugins", urlBrowserImg, true);
 		mInstallPluginsMI.addActionListener(this);
-		new MenuHelpTextAdapter(
+		MenuHelpTextAdapter.create(
 				mInstallPluginsMI,
 				mLocalizer
 						.msg(
@@ -331,86 +331,86 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 				"Manage Plugins", null, true);
 		mPluginManagerMI.addActionListener(this);
 		mPluginManagerMI.setIcon(TVBrowserIcons.plugin(TVBrowserIcons.SIZE_SMALL));
-		new MenuHelpTextAdapter(mPluginManagerMI, mLocalizer.msg(
+		MenuHelpTextAdapter.create(mPluginManagerMI, mLocalizer.msg(
 				"menuinfo.findplugins", ""), mLabel);
 
 		mHandbookMI = createMenuItem("menuitem.handbook", "Handbook", urlHelpImg);
 		mHandbookMI.addActionListener(this);
-		new MenuHelpTextAdapter(mHandbookMI,
+		MenuHelpTextAdapter.create(mHandbookMI,
 				mLocalizer.msg("website.handbook", ""), mLabel);
 
 		mKeyboardShortcutsMI = createMenuItem("menuitem.keyboardshortcuts",
 				"Keyboard shortcuts", urlHelpImg);
 		mKeyboardShortcutsMI.addActionListener(this);
-		new MenuHelpTextAdapter(mKeyboardShortcutsMI, mLocalizer.msg(
+		MenuHelpTextAdapter.create(mKeyboardShortcutsMI, mLocalizer.msg(
 				"website.keyboardshortcuts", ""), mLabel);
 
 		mFaqMI = createMenuItem("menuitem.faq", "FAQ", urlHelpImg);
 		mFaqMI.addActionListener(this);
-		new MenuHelpTextAdapter(mFaqMI, mLocalizer.msg("website.faq", ""), mLabel);
+		MenuHelpTextAdapter.create(mFaqMI, mLocalizer.msg("website.faq", ""), mLabel);
 
 		mBackupMI = createMenuItem("menuitem.backup", "Backup", urlHelpImg);
 		mBackupMI.addActionListener(this);
-		new MenuHelpTextAdapter(mBackupMI, mLocalizer.msg("website.backup", ""),
+		MenuHelpTextAdapter.create(mBackupMI, mLocalizer.msg("website.backup", ""),
 				mLabel);
 
 		mWebsiteMI = createMenuItem("menuitem.website", "Website", urlBrowserImg);
 		mWebsiteMI.addActionListener(this);
-		new MenuHelpTextAdapter(mWebsiteMI,
+		MenuHelpTextAdapter.create(mWebsiteMI,
 				mLocalizer.msg("website.tvbrowser", ""), mLabel);
 
 		mForumMI = createMenuItem("menuitem.forum", "Bulletin board", urlBrowserImg);
 		mForumMI.addActionListener(this);
-		new MenuHelpTextAdapter(mForumMI, mLocalizer.msg("website.forum", ""),
+		MenuHelpTextAdapter.create(mForumMI, mLocalizer.msg("website.forum", ""),
 				mLabel);
 
 		mDownloadMI = createMenuItem("menuitem.download", "Download", urlBrowserImg);
 		mDownloadMI.addActionListener(this);
-		new MenuHelpTextAdapter(mForumMI, mLocalizer.msg("website.download", "http://tvbrowser.org/download_tvbrowser.php"),
+		MenuHelpTextAdapter.create(mForumMI, mLocalizer.msg("website.download", "http://tvbrowser.org/download_tvbrowser.php"),
 				mLabel);
 
 		mDonorMI = createMenuItem("menuitem.donors", "Donors", urlBrowserImg);
 		mDonorMI.addActionListener(this);
-		new MenuHelpTextAdapter(mDonorMI, mLocalizer.msg("website.donors", "http://tvbrowser.org/donors.html"),
+		MenuHelpTextAdapter.create(mDonorMI, mLocalizer.msg("website.donors", "http://tvbrowser.org/donors.html"),
 				mLabel);
 
 		mConfigAssistantMI = createMenuItem("menuitem.configAssistant",
 				"Setup assistant", TVBrowserIcons
 						.preferences(TVBrowserIcons.SIZE_SMALL));
 		mConfigAssistantMI.addActionListener(this);
-		new MenuHelpTextAdapter(mConfigAssistantMI, mLocalizer.msg(
+		MenuHelpTextAdapter.create(mConfigAssistantMI, mLocalizer.msg(
 				"menuinfo.configAssistant", ""), mLabel);
 
 		if(TVBrowser.isTransportable()) {
   		mCopySettingsToSystem = createMenuItem("menuitem.copySettings","Copy settings to system",
   		    IconLoader.getInstance().getIconFromTheme("actions","edit-copy", 16));
   		mCopySettingsToSystem.addActionListener(this);
-      new MenuHelpTextAdapter(mCopySettingsToSystem, mLocalizer.msg(
+      MenuHelpTextAdapter.create(mCopySettingsToSystem, mLocalizer.msg(
           "menuinfo.copySettings", "Copy settings of transportable version to the system"), mLabel);
 		}
 
 		mPluginInfoDlgMI = createMenuItem("menuitem.pluginInfoDlg",
 				"What are Plugins?", urlHelpImg);
 		mPluginInfoDlgMI.addActionListener(this);
-		new MenuHelpTextAdapter(mPluginInfoDlgMI, mLocalizer.msg(
+		MenuHelpTextAdapter.create(mPluginInfoDlgMI, mLocalizer.msg(
 				"menuinfo.pluginInfoDlg",
 				"Describes the Plugin functionality of TV-Browser."), mLabel);
 
 		mDebugMI = createMenuItem("menuitem.debug", "Create debug info", new ImageIcon(
         "imgs/tvbrowser16.png"), false);
 		mDebugMI.addActionListener(this);
-		new MenuHelpTextAdapter(mDebugMI, mLocalizer.msg("menuinfo.debug", ""),
+		MenuHelpTextAdapter.create(mDebugMI, mLocalizer.msg("menuinfo.debug", ""),
         mLabel);
 		
     mDonateMI = createMenuItem("menuitem.donate", "How to donate?", TVBrowserIcons.webBrowser(TVBrowserIcons.SIZE_SMALL), false);
     mDonateMI.addActionListener(this);
-    new MenuHelpTextAdapter(mDonateMI, mLocalizer.msg("menuinfo.donate", ""),
+    MenuHelpTextAdapter.create(mDonateMI, mLocalizer.msg("menuinfo.donate", ""),
         mLabel);
 		
 		mAboutMI = createMenuItem("menuitem.about", "About", new ImageIcon(
 				"imgs/tvbrowser16.png"), false);
 		mAboutMI.addActionListener(this);
-		new MenuHelpTextAdapter(mAboutMI, mLocalizer.msg("menuinfo.about", ""),
+		MenuHelpTextAdapter.create(mAboutMI, mLocalizer.msg("menuinfo.about", ""),
 				mLabel);
 		
 		mPluginHelpMenu.setIcon(urlHelpImg);
@@ -457,7 +457,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
     JMenuItem item = new JMenuItem(action);
     setLabelAndAccessKeys("", action.getMenuText(), item, action.useEllipsis());
     item.setIcon(action.getIcon());
-    new MenuHelpTextAdapter(item, action.getMenuHelpText(), mLabel);
+    MenuHelpTextAdapter.create(item, action.getMenuHelpText(), mLabel);
     KeyStroke accelerator = action.getAccelerator();
     if (accelerator != null) {
       item.setAccelerator(accelerator);
@@ -881,7 +881,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
     mPluginsMenu.add(mPluginManagerMI);
   }
 
-	private JMenuItem createMenuItem(ActionMenu menu) {
+	private JMenuItem createMenuItem(ActionMenu menu, ButtonActionIf buttonActionIf) {
 		JMenuItem result;
 		Icon icon = (Icon) menu.getAction().getValue(Action.SMALL_ICON);
 		if (icon != null) {
@@ -899,7 +899,7 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 
 			ActionMenu[] subItems = menu.getSubItems();
 			for (ActionMenu subItem : subItems) {
-				final JMenuItem menuItem = createMenuItem(subItem);
+				final JMenuItem menuItem = createMenuItem(subItem, null);
 				if (menuItem != null) {
 					result.add(menuItem);
 				} else {
@@ -922,9 +922,14 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 				result.setAccelerator((KeyStroke) accelerator);
 			}
 		}
+		
+		final String desc = buttonActionIf != null ? buttonActionIf.getButtonActionDescription() : (String)menu.getAction().getValue(Action.SHORT_DESCRIPTION);
+		
+		if(desc != null) {
+		  MenuHelpTextAdapter.create(result, desc, mLabel);
+		}
 
 		return result;
-
 	}
 
 	protected JMenuItem[] createInternalPluginMenuItems() {
@@ -964,11 +969,11 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 			ButtonActionIf buttonActionIf) {
 		ActionMenu actionMenu = buttonActionIf.getButtonAction();
 		if (actionMenu != null) {
-			JMenuItem item = createMenuItem(actionMenu);
+			JMenuItem item = createMenuItem(actionMenu, buttonActionIf);
 			setMnemonic(item);
 			list.add(item);
-			new MenuHelpTextAdapter(item,
-					buttonActionIf.getButtonActionDescription(), mLabel);
+			/*MenuHelpTextAdapter.create(item,
+					buttonActionIf.getButtonActionDescription(), mLabel);*/
 		}
 	}
 

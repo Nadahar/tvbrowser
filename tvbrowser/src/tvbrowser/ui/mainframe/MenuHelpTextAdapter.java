@@ -37,7 +37,11 @@ public class MenuHelpTextAdapter implements ChangeListener {
   private String mHelpText;
   private JLabel mStatusBar;
 
-  public MenuHelpTextAdapter(JMenuItem menuItem, String helpText, JLabel statusBar) {
+  public static void create(JMenuItem menuItem, String helpText, JLabel statusBar) {
+    new MenuHelpTextAdapter(menuItem, helpText, statusBar);
+  }
+  
+  private MenuHelpTextAdapter(JMenuItem menuItem, String helpText, JLabel statusBar) {
     mMenuItem = menuItem;
     mHelpText = helpText;
     mStatusBar = statusBar;
