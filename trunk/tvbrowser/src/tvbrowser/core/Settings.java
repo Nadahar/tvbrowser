@@ -49,6 +49,8 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -163,6 +165,18 @@ public class Settings {
   private static HashMap<String,WindowSetting> mWindowSettings;
 
   private static boolean mCopyToSystem = false;
+  
+  private static ArrayList<ChangeListener> mListListenerFontChange = new ArrayList<>();
+  
+  public static void addFontChangeListener(ChangeListener listener) {
+    if(!mListListenerFontChange.contains(listener)) {
+      mListListenerFontChange.add(listener);
+    }
+  }
+  
+  public static void removeFontChangeListener(ChangeListener listener) {
+    mListListenerFontChange.remove(listener);
+  }
 
  /**
    * Returns the Default-Settings. These Settings are stored in the mac, windows
@@ -994,20 +1008,30 @@ public class Settings {
     
     MainFrame mainFrame = MainFrame.getInstance();
 
-    propArr = new Property[] { propProgramTitleFont, propProgramInfoFont,
-        propProgramTimeFont, propChannelNameFont, propUseDefaultFonts,
-        propEnableAntialiasing, propProgramTableOnAirProgramsShowingBorder,
+    propArr = new Property[] { propProgramTableOnAirProgramsShowingBorder,
         propProgramPanelUsesExtraSpaceForMarkIcons,
         propProgramPanelWithMarkingsShowingBoder, propProgramPanelUsedDefaultMarkPriority,
         propProgramPanelMarkedLowerMediumPriorityColor, propProgramPanelMarkedMinPriorityColor,
         propProgramPanelMarkedMediumPriorityColor, propProgramPanelMarkedMaxPriorityColor,
         propProgramTableColorOnAirLight, propProgramTableColorOnAirDark, propProgramPanelForegroundColor,
         propProgramTableBackgroundSingleColor, propProgramPanelAllowTransparency, propAlwaysShowTabBarForCenterPanel,
-        propProgramPanelShowOriginialTitles, propProgramTextLineGap};
+        propProgramPanelShowOriginialTitles};
 
     mainFrame.updateCenterPanels();
     
-    if (mProp.hasChanged(propArr)) {
+    Property[] propArrFont = new Property[] { propProgramTitleFont, propProgramInfoFont,
+        propProgramTimeFont, propChannelNameFont, propUseDefaultFonts,
+        propEnableAntialiasing, propProgramTextLineGap};
+    
+    boolean fontChanged = mProp.hasChanged(propArrFont);
+    
+    if(fontChanged) {
+      for(ChangeListener listener : mListListenerFontChange) {
+        listener.stateChanged(new ChangeEvent(Settings.class));
+      }
+    }
+    
+    if (fontChanged || mProp.hasChanged(propArr)) {
       util.ui.ProgramPanel.updateFonts();
       tvbrowser.ui.programtable.ChannelPanel.fontChanged();
       ProgramTableScrollPane scrollPane = mainFrame.getProgramTableScrollPane();

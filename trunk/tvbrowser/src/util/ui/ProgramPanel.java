@@ -372,10 +372,13 @@ private static Font getDynamicFontSize(Font font, int offset) {
     mDescriptionIcon = new TextAreaIcon(null, mNormalFont, WIDTH_RIGHT - 5, getLineGap(mNormalFont));
     mDescriptionIcon.setMaximumLineCount(Settings.propProgramPanelMaxLines
         .getInt());
-    mProgram.validateMarking();
-    Program p = mProgram;
-    mProgram = null;
-    setProgram(p);
+    
+    if(mProgram != null) {
+      mProgram.validateMarking();
+      Program p = mProgram;
+      mProgram = null;
+      setProgram(p);
+    }
   }
 
   /**
@@ -1441,5 +1444,9 @@ private static Font getDynamicFontSize(Font font, int offset) {
     }
     
     return result;
+  }
+  
+  public ProgramPanelSettings getSettings() {
+    return mSettings;
   }
 }
