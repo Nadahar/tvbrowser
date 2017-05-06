@@ -8,7 +8,7 @@ import javax.swing.JPanel;
 
 import devplugin.Program;
 import tvbrowser.core.filters.filtercomponents.AbstractFilterComponent;
-import tvbrowser.extras.favoritesplugin.dlgs.FavoriteTreeModel;
+import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
 import util.ui.Localizer;
 
 public class FilterComponentNewFavoritePrograms extends AbstractFilterComponent {
@@ -29,24 +29,7 @@ public class FilterComponentNewFavoritePrograms extends AbstractFilterComponent 
 
   @Override
   public boolean accept(Program program) {
-    boolean result = false;
-    
-    final Favorite[] favoriteArr = FavoriteTreeModel.getInstance().getFavoriteArr();
-
-    for (Favorite favorite : favoriteArr) {
-      favorite.clearRemovedPrograms();
-
-      final Program[] newPrograms = favorite.getNewPrograms();
-      
-      for(Program test : newPrograms) {
-        if(test.equals(program)) {
-          result = true;
-          break;
-        }
-      }
-    }
-          
-    return result;
+    return FavoritesPlugin.getInstance().isNewProgram(program);
   }
 
   @Override

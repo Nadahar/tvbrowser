@@ -44,6 +44,7 @@ import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -186,12 +187,14 @@ public class FavoritesPlugin {
   private ProgramFieldType[] mDefaultProgramFieldTypeSelection;
   
   private AncestorListener mAncestorListener;
+  private AtomicReference<Program[]> mLastFoundPrograms;
   
   /**
    * Creates a new instance of FavoritesPlugin.
    */
   private FavoritesPlugin() {
     mInstance = this;
+    mLastFoundPrograms = new AtomicReference<Program[]>(new Program[0]);
     mDefaultProgramFieldTypeSelection = null;
     mRootNode = new PluginTreeNode(getName());
     mWrapper = new PluginCenterPanelWrapper() {  
@@ -409,6 +412,8 @@ public class FavoritesPlugin {
           if(mMangePanel != null) {
             mMangePanel.handleFavoriteEvent();
           }
+          
+          loadLastFoundPrograms();
         }catch(Throwable t) {t.printStackTrace();}
         }
       };
@@ -741,9 +746,29 @@ public class FavoritesPlugin {
         mDefaultProgramFieldTypeSelection = null;
       }
     }
+    
+    loadLastFoundPrograms();
   }
+  
+  private void loadLastFoundPrograms() {
+    final Favorite[] favoriteArr = FavoriteTreeModel.getInstance().getFavoriteArr();
+    final ArrayList<Program> foundPrograms = new ArrayList<>();
+    
+    for (Favorite favorite : favoriteArr) {
+      favorite.clearRemovedPrograms();
 
-
+      final Program[] newPrograms = favorite.getNewPrograms();
+      
+      for(Program test : newPrograms) {
+        if(!foundPrograms.contains(test)) {
+          foundPrograms.add(test);
+        }
+      }
+    }
+    
+    mLastFoundPrograms.set(foundPrograms.toArray(new Program[foundPrograms.size()]));
+  }
+  
   private void updateAllFavorites() {
     mSendPluginsTable.clear();
 
@@ -1732,5 +1757,19 @@ public class FavoritesPlugin {
     }
     
     return test;
+  }
+  
+  public boolean isNewProgram(final Program prog) {
+    boolean result = false;
+    final Program[] progs = mLastFoundPrograms.get();
+    
+    for(Program p : progs) {
+      if(p.equals(prog)) {
+        result = true;
+        break;
+      }
+    }
+    
+    return result;
   }
 }
