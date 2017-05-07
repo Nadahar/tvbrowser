@@ -243,7 +243,7 @@ public final class SoftwareUpdater {
             }
           }
           else if(dialogType == ONLY_DATA_SERVICE_TYPE) {
-            if(!item.getCategory().equals(Plugin.ADDITONAL_DATA_SERVICE_SOFTWARE_CATEGORY) && !item.getCategory().equals(Plugin.ADDITONAL_DATA_SERVICE_HARDWARE_CATEGORY)) {
+            if(!item.getCategory().equals(Plugin.CATEGORY_ADDITONAL_DATA_SERVICE_SOFTWARE) && !item.getCategory().equals(Plugin.CATEGORY_ADDITONAL_DATA_SERVICE_HARDWARE)) {
               it.remove();
               continue;
             }
@@ -276,7 +276,7 @@ public final class SoftwareUpdater {
         else {
           PluginBaseInfo baseInfo = getBaseInfoFor(pluginId,baseInfos);
           
-          if(baseInfo == null && !item.getCategory().equals(Plugin.ADDITONAL_DATA_SERVICE_SOFTWARE_CATEGORY) && !item.getCategory().equals(Plugin.ADDITONAL_DATA_SERVICE_HARDWARE_CATEGORY)) {
+          if(baseInfo == null && !item.getCategory().equals(Plugin.CATEGORY_ADDITONAL_DATA_SERVICE_SOFTWARE) && !item.getCategory().equals(Plugin.CATEGORY_ADDITONAL_DATA_SERVICE_HARDWARE)) {
             it.remove();
             continue;
           }

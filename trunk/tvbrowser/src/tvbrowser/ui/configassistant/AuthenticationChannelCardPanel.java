@@ -26,12 +26,10 @@
 
 package tvbrowser.ui.configassistant;
 
-import java.awt.Color;
 import java.awt.Font;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 
-import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;

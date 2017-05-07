@@ -5,7 +5,6 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Window;
-import java.awt.Dialog.ModalityType;
 
 import javax.swing.BorderFactory;
 import javax.swing.JDialog;
@@ -13,10 +12,10 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
-import util.ui.Localizer;
-
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
+
+import util.ui.Localizer;
 
 /**
  * This dialog is shown when something is copied or imported.

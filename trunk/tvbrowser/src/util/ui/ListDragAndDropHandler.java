@@ -27,8 +27,10 @@ import devplugin.Channel;
  * @author René Mach
  *
  */
+@SuppressWarnings("rawtypes")
 public class ListDragAndDropHandler implements DropTargetListener,
     DragGestureListener {
+  
   
   private JList mList1, mList2;
   private JList mSource, mTarget;
@@ -199,7 +201,6 @@ public class ListDragAndDropHandler implements DropTargetListener,
                 try {
                   sleep(5);
                 } catch (InterruptedException e1) {
-                  // TODO Auto-generated catch block
                   e1.printStackTrace();
                 }
                 Point p = e.getLocation();
@@ -222,7 +223,6 @@ public class ListDragAndDropHandler implements DropTargetListener,
                 try {
                   sleep(5);
                 } catch (InterruptedException e1) {
-                  // TODO Auto-generated catch block
                   e1.printStackTrace();
                 }
                 Point p = e.getLocation();
@@ -254,6 +254,7 @@ public class ListDragAndDropHandler implements DropTargetListener,
     }
   }
 
+  @SuppressWarnings("unchecked")
   public void drop(DropTargetDropEvent e) {
     e.acceptDrop(e.getDropAction());
     Transferable tr = e.getTransferable();
@@ -269,7 +270,7 @@ public class ListDragAndDropHandler implements DropTargetListener,
             && (mAcceptStringFlavourList1 && ((DropTarget)e.getSource()).getComponent().equals(mList1)) ||
                 (mAcceptStringFlavourList2 && ((DropTarget)e.getSource()).getComponent().equals(mList2))))) {
       try {
-        JList target = (JList)((DropTarget)e.getSource()).getComponent();
+        JList<Object> target = (JList<Object>)((DropTarget)e.getSource()).getComponent();
         int x = target.locationToIndex(e.getLocation());
         
         Rectangle rect = target.getCellBounds(x,x);
@@ -301,7 +302,7 @@ public class ListDragAndDropHandler implements DropTargetListener,
               }
             }
             
-            ((DefaultListModel)target.getModel()).insertElementAt(tr.getTransferData(DataFlavor.stringFlavor), x);
+            ((DefaultListModel<Object>)target.getModel()).insertElementAt(tr.getTransferData(DataFlavor.stringFlavor), x);
           }
         }
         else if(target.equals(mTarget)) {

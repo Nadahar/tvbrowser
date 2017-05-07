@@ -20,7 +20,6 @@ package tvbrowser.ui.configassistant;
 
 import java.awt.BorderLayout;
 import java.awt.Window;
-import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -33,14 +32,14 @@ import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.WindowConstants;
 
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+
 import tvbrowser.core.Settings;
 import util.settings.ProgramPanelSettings;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
-
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
 
 /**
  * A class for the picture settings of the TvBrowserDataService.

@@ -57,6 +57,10 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
+import devplugin.Channel;
+import devplugin.Date;
+import devplugin.Plugin;
+import devplugin.Program;
 import tvbrowser.core.Settings;
 import tvbrowser.core.contextmenu.ContextMenuManager.ContextMenuAction;
 import tvbrowser.core.plugin.PluginProxy;
@@ -76,11 +80,6 @@ import util.programmouseevent.ProgramMouseEventHandler;
 import util.settings.ProgramPanelSettings;
 import util.ui.ProgramPanel;
 import util.ui.TransferProgram;
-import devplugin.ActionMenu;
-import devplugin.Channel;
-import devplugin.Date;
-import devplugin.Plugin;
-import devplugin.Program;
 
 /**
  *
@@ -1483,27 +1482,20 @@ public class ProgramTable extends JPanel
       deSelectItem();
     }
     
-    // TODO Auto-generated method stub
     return program;
   }
 
   @Override
   public void mouseEventActionFinished() {
-    // TODO Auto-generated method stub
     setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
   }
-
-
-
+  
   @Override
   public void showContextMenu(MouseEvent e) {
-    // TODO Auto-generated method stub
     stopAutoScroll();
     mMouse = e.getPoint();
     repaint();
-    
-    //mModel.getProgramPanel(mCurrentCol, mCurrentRow)
-    
+        
     Program program = getProgramAt(e.getX(), e.getY());
     if (program != null) {
       deSelectItem();

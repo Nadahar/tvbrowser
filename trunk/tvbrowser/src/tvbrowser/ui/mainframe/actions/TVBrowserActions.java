@@ -23,13 +23,12 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-import tvbrowser.core.Settings;
+import devplugin.SettingsItem;
 import tvbrowser.core.TvDataUpdater;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.mainframe.toolbar.ToolBar;
 import util.misc.OperatingSystem;
 import util.ui.TVBrowserIcons;
-import devplugin.SettingsItem;
 
 /**
  * common TV-Browser actions
@@ -437,6 +436,7 @@ public final class TVBrowserActions {
     mAllActions.add(tvBrowserAction);
   }
 
+  @SuppressWarnings("unchecked")
   public static List<TVBrowserAction> getActions() {
     return (List<TVBrowserAction>) mAllActions.clone();
   }

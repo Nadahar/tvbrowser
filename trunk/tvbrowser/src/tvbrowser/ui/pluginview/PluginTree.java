@@ -74,6 +74,11 @@ import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
+import devplugin.ActionMenu;
+import devplugin.Plugin;
+import devplugin.Program;
+import devplugin.ProgramItem;
+import devplugin.ProgramReceiveTarget;
 import tvbrowser.core.Settings;
 import tvbrowser.core.filters.FilterManagerImpl;
 import tvbrowser.core.plugin.PluginProxy;
@@ -87,11 +92,6 @@ import util.ui.Localizer;
 import util.ui.OverlayListener;
 import util.ui.SingleAndDoubleClickTreeUI;
 import util.ui.UiUtilities;
-import devplugin.ActionMenu;
-import devplugin.Plugin;
-import devplugin.Program;
-import devplugin.ProgramItem;
-import devplugin.ProgramReceiveTarget;
 
 /**
  * Created by: Martin Oberhauser (martin@tvbrowser.org) Date: 01.01.2005 Time:
@@ -178,7 +178,7 @@ public class PluginTree extends JTree implements DragGestureListener,
    */
   private int getLeafCount(TreeNode node) {
     int count = 0;
-    for (Enumeration children = node.children(); children.hasMoreElements();) {
+    for (Enumeration<?> children = node.children(); children.hasMoreElements();) {
       TreeNode child = (TreeNode) children.nextElement();
       if (child.isLeaf()) {
         count++;

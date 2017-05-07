@@ -41,14 +41,13 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.ScrollPaneConstants;
-import javax.swing.SwingUtilities;
 import javax.swing.text.BadLocationException;
-
-import util.ui.Localizer;
-import util.ui.UiUtilities;
 
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
+
+import util.ui.Localizer;
+import util.ui.UiUtilities;
 
 
 /**
@@ -154,7 +153,7 @@ public class ParamInputField extends JPanel {
     for (String key : keys) {
       items.add(key);
     }
-    final JComboBox insert = new JComboBox(items.toArray(new String[items.size()]));
+    final JComboBox<String> insert = new JComboBox<>(items.toArray(new String[items.size()]));
     add(insert, cc.xy(layout.getColumnCount() - 4, 3));
     insert.addActionListener(new ActionListener() {
       

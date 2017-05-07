@@ -35,7 +35,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -65,6 +64,13 @@ import javax.swing.text.PlainDocument;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.jgoodies.forms.builder.ButtonBarBuilder;
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.factories.CC;
+import com.jgoodies.forms.layout.ColumnSpec;
+import com.jgoodies.forms.layout.FormLayout;
+
 import tvbrowser.core.Settings;
 import tvbrowser.core.filters.FilterComponent;
 import tvbrowser.core.filters.FilterComponentList;
@@ -72,7 +78,6 @@ import tvbrowser.core.filters.FilterList;
 import tvbrowser.core.filters.ParserException;
 import tvbrowser.core.filters.UserFilter;
 import tvbrowser.core.filters.filtercomponents.AcceptNoneFilterComponent;
-import tvbrowser.core.filters.filtercomponents.ChannelFilterComponent;
 import tvbrowser.core.filters.filtercomponents.SingleChannelFilterComponent;
 import util.ui.DragAndDropMouseListener;
 import util.ui.ListDragAndDropHandler;
@@ -82,14 +87,7 @@ import util.ui.TVBrowserIcons;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 
-import com.jgoodies.forms.builder.ButtonBarBuilder;
-import com.jgoodies.forms.builder.PanelBuilder;
-import com.jgoodies.forms.factories.Borders;
-import com.jgoodies.forms.factories.CC;
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.FormLayout;
-
-public class EditFilterDlg extends JDialog implements ActionListener, DocumentListener, CaretListener, WindowClosingIf, ListDropAction {
+public class EditFilterDlg extends JDialog implements ActionListener, DocumentListener, CaretListener, WindowClosingIf, ListDropAction<FilterItem> {
 
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(EditFilterDlg.class);
 
@@ -109,17 +107,11 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
 
   private FilterList mFilterList;
   
-  private JList mFilterConstruction;
-  private JList mFilterComponentList;
+  private JList<FilterItem> mFilterConstruction;
+  private JList<FilterItem> mFilterComponentList;
   
-  private static String AND_KEY = "and";
-  private static String OR_KEY = "or";
-  private static String NOT_KEY = "not";
-  private static String OPEN_BRACKET_KEY = "open_bracket";
-  private static String CLOSE_BRACKET_KEY = "close_bracket";
-  
-  private DefaultListModel mFilterComponentListModel;
-  private DefaultListModel mFilterConstructionListModel;
+  private DefaultListModel<FilterItem> mFilterComponentListModel;
+  private DefaultListModel<FilterItem> mFilterConstructionListModel;
   
   private boolean mFromFilterList;
   private boolean mOkWasPressed;
@@ -200,11 +192,11 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
 
     Arrays.sort(fc, new FilterComponent.NameComparator());
 
-    mFilterComponentListModel = new DefaultListModel();
+    mFilterComponentListModel = new DefaultListModel<>();
     
-    mFilterComponentList = new JList(mFilterComponentListModel);
+    mFilterComponentList = new JList<>(mFilterComponentListModel);
     mFilterComponentList.setCellRenderer(new DefaultListCellRenderer() {      
-      public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+      public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
         JLabel label = (JLabel) super.getListCellRendererComponent(list,value,index,isSelected,cellHasFocus);
         
         if(value instanceof FilterItem) {
@@ -230,17 +222,17 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
     });
     mFilterComponentList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     
-    mFilterComponentListModel.addElement(new FilterItem(AND_KEY,0));
-    mFilterComponentListModel.addElement(new FilterItem(OR_KEY,0));
-    mFilterComponentListModel.addElement(new FilterItem(NOT_KEY,0));
-    mFilterComponentListModel.addElement(new FilterItem(OPEN_BRACKET_KEY,0));
-    mFilterComponentListModel.addElement(new FilterItem(CLOSE_BRACKET_KEY,0));
+    mFilterComponentListModel.addElement(new FilterItem(FilterItem.AND_KEY,0));
+    mFilterComponentListModel.addElement(new FilterItem(FilterItem.OR_KEY,0));
+    mFilterComponentListModel.addElement(new FilterItem(FilterItem.NOT_KEY,0));
+    mFilterComponentListModel.addElement(new FilterItem(FilterItem.OPEN_BRACKET_KEY,0));
+    mFilterComponentListModel.addElement(new FilterItem(FilterItem.CLOSE_BRACKET_KEY,0));
     
-    mFilterConstructionListModel = new DefaultListModel();
-    mFilterConstruction = new JList(mFilterConstructionListModel);
+    mFilterConstructionListModel = new DefaultListModel<>();
+    mFilterConstruction = new JList<>(mFilterConstructionListModel);
     mFilterConstruction.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     mFilterConstruction.setCellRenderer(new DefaultListCellRenderer() {
-      public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+      public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
         JLabel label = (JLabel) super.getListCellRendererComponent(list,value,index,isSelected,cellHasFocus);
         try {
         if(value instanceof FilterItem) {
@@ -319,8 +311,8 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
     
     //Register DnD on the List.
     ListDragAndDropHandler dnDHandler = new ListDragAndDropHandler(mFilterComponentList, mFilterConstruction, this);
-    new DragAndDropMouseListener(mFilterComponentList,mFilterConstruction,this,dnDHandler,false);
-    new DragAndDropMouseListener(mFilterConstruction,mFilterComponentList,this,dnDHandler);
+    new DragAndDropMouseListener<FilterItem>(mFilterComponentList,mFilterConstruction,this,dnDHandler,false);
+    new DragAndDropMouseListener<FilterItem>(mFilterConstruction,mFilterComponentList,this,dnDHandler);
     
     mFilterComponentList.addMouseListener(new MouseAdapter() {
       public void mousePressed(MouseEvent e) {
@@ -538,7 +530,7 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
   public void close() {
     setVisible(false);
   }
-  
+  /*
   private class FilterItem {    
     private String mRuleType;
     private FilterComponent mComponent;
@@ -631,23 +623,23 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
     public boolean isNotItem() {
       return mRuleType != null && mRuleType.equals(NOT_KEY);
     }
-  }
+  }*/
   
   public boolean checkValueForRuleType(String value, String ruleType) {
     if(ruleType != null) {
-      if(ruleType.equals(AND_KEY) && (value.toLowerCase().equals("and") || value.toLowerCase().equals("und"))) {
+      if(ruleType.equals(FilterItem.AND_KEY) && (value.toLowerCase().equals("and") || value.toLowerCase().equals("und"))) {
         return true;
       }
-      else if(ruleType.equals(OR_KEY) && (value.toLowerCase().equals("or") || value.toLowerCase().equals("oder"))) {
+      else if(ruleType.equals(FilterItem.OR_KEY) && (value.toLowerCase().equals("or") || value.toLowerCase().equals("oder"))) {
         return true;
       }
-      else if(ruleType.equals(NOT_KEY) && (value.toLowerCase().equals("not") || value.toLowerCase().equals("nicht"))) {
+      else if(ruleType.equals(FilterItem.NOT_KEY) && (value.toLowerCase().equals("not") || value.toLowerCase().equals("nicht"))) {
         return true;
       }
-      else if(ruleType.equals(OPEN_BRACKET_KEY) && value.toLowerCase().equals("(")) {
+      else if(ruleType.equals(FilterItem.OPEN_BRACKET_KEY) && value.toLowerCase().equals("(")) {
         return true;
       }
-      else if(ruleType.equals(CLOSE_BRACKET_KEY) && value.toLowerCase().equals(")")) {
+      else if(ruleType.equals(FilterItem.CLOSE_BRACKET_KEY) && value.toLowerCase().equals(")")) {
         return true;
       }
     }
@@ -656,13 +648,13 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
   }
 
   @Override
-  public void drop(JList source, JList target, int row, boolean move) {try {
+  public void drop(JList<FilterItem> source, JList<FilterItem> target, int row, boolean move) {try {
     mFilterNameTF.requestFocus();
     
     if(target.equals(mFilterConstruction)) {
       if(source.equals(mFilterComponentList)) {
         FilterItem value = (FilterItem)source.getSelectedValue();
-        ((DefaultListModel)target.getModel()).add(row,value.clone(0));
+        ((DefaultListModel<FilterItem>)target.getModel()).add(row,value.clone(0));
         
         int level = 0;
         
@@ -707,7 +699,7 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
       }
     }
     else if(source.equals(mFilterConstruction)){
-      ((DefaultListModel)source.getModel()).remove(source.getSelectedIndex());
+      ((DefaultListModel<FilterItem>)source.getModel()).remove(source.getSelectedIndex());
       
       
       int level = 0;
@@ -784,26 +776,26 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
     int level = 0;
     
     for(String value : values) {
-      if(checkValueForRuleType(value,AND_KEY)) {
-        mFilterConstructionListModel.addElement(new FilterItem(AND_KEY,level));
+      if(checkValueForRuleType(value,FilterItem.AND_KEY)) {
+        mFilterConstructionListModel.addElement(new FilterItem(FilterItem.AND_KEY,level));
         
       }
-      else if(checkValueForRuleType(value,OR_KEY)) {
-        mFilterConstructionListModel.addElement(new FilterItem(OR_KEY,level));
+      else if(checkValueForRuleType(value,FilterItem.OR_KEY)) {
+        mFilterConstructionListModel.addElement(new FilterItem(FilterItem.OR_KEY,level));
         
       }
-      else if(checkValueForRuleType(value,NOT_KEY)) {
-        mFilterConstructionListModel.addElement(new FilterItem(NOT_KEY,level));
+      else if(checkValueForRuleType(value,FilterItem.NOT_KEY)) {
+        mFilterConstructionListModel.addElement(new FilterItem(FilterItem.NOT_KEY,level));
         
       }
-      else if(checkValueForRuleType(value,OPEN_BRACKET_KEY)) {
-        mFilterConstructionListModel.addElement(new FilterItem(OPEN_BRACKET_KEY,level));
+      else if(checkValueForRuleType(value,FilterItem.OPEN_BRACKET_KEY)) {
+        mFilterConstructionListModel.addElement(new FilterItem(FilterItem.OPEN_BRACKET_KEY,level));
         level++;
         
       }
-      else if(checkValueForRuleType(value,CLOSE_BRACKET_KEY)) {
+      else if(checkValueForRuleType(value,FilterItem.CLOSE_BRACKET_KEY)) {
         level--;
-        mFilterConstructionListModel.addElement(new FilterItem(CLOSE_BRACKET_KEY,level));
+        mFilterConstructionListModel.addElement(new FilterItem(FilterItem.CLOSE_BRACKET_KEY,level));
         
       }
       else {

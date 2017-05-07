@@ -33,7 +33,6 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Insets;
 import java.awt.Window;
-import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
@@ -71,6 +70,14 @@ import javax.swing.WindowConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import com.jgoodies.forms.builder.ButtonBarBuilder;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.RowSpec;
+import com.jgoodies.forms.layout.Sizes;
+
+import devplugin.InfoIf;
+import devplugin.Version;
 import tvbrowser.TVBrowser;
 import tvbrowser.core.Settings;
 import tvbrowser.core.icontheme.IconLoader;
@@ -92,15 +99,6 @@ import util.ui.customizableitems.SelectableItemList;
 import util.ui.customizableitems.SelectableItemRendererCenterComponentIf;
 import util.ui.html.HTMLTextHelper;
 
-import com.jgoodies.forms.builder.ButtonBarBuilder;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.RowSpec;
-import com.jgoodies.forms.layout.Sizes;
-
-import devplugin.InfoIf;
-import devplugin.Version;
-
 /**
  * A dialog class that shows the plugin updates/new plugins.
  *
@@ -116,7 +114,7 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
 
   private JCheckBox mAutoUpdates;
 
-  private SelectableItemList mSoftwareUpdateItemList;
+  private SelectableItemList<SoftwareUpdateItem> mSoftwareUpdateItemList;
 
   private int mLastIndex;
 
@@ -149,7 +147,7 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
     
     if(dialogType == SoftwareUpdater.DRAG_AND_DROP_TYPE || dialogType == SoftwareUpdater.ONLY_UPDATE_TYPE) {
       mSoftwareUpdateItemList.selectAll();
-      mDownloadBtn.setEnabled(mSoftwareUpdateItemList.getSelection().length > 0);
+      mDownloadBtn.setEnabled(!mSoftwareUpdateItemList.getSelectionList().isEmpty());
     }
   }
   
@@ -325,16 +323,16 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
     
     mDownloadBtn.setEnabled(!selectedItems.isEmpty());
     
-    mSoftwareUpdateItemList = new SelectableItemList(selectedItems.toArray(new SoftwareUpdateItem[selectedItems.size()]),mIsVersionChange ? mItemList.toArray(new SoftwareUpdateItem[mItemList.size()]) : itemArr,notSelectableItems.toArray(new SoftwareUpdateItem[notSelectableItems.size()]));
+    mSoftwareUpdateItemList = new SelectableItemList<>(selectedItems.toArray(new SoftwareUpdateItem[selectedItems.size()]),mIsVersionChange ? mItemList.toArray(new SoftwareUpdateItem[mItemList.size()]) : itemArr,notSelectableItems.toArray(new SoftwareUpdateItem[notSelectableItems.size()]));
     mSoftwareUpdateItemList.addListSelectionListener(this);
     mSoftwareUpdateItemList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     mSoftwareUpdateItemList.setListUI(new MyListUI());
     mSoftwareUpdateItemList.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
-    mSoftwareUpdateItemList.addCenterRendererComponent(PluginsSoftwareUpdateItem.class,new SelectableItemRendererCenterComponentIf() {
+    mSoftwareUpdateItemList.addCenterRendererComponent(PluginsSoftwareUpdateItem.class,new SelectableItemRendererCenterComponentIf<SoftwareUpdateItem>() {
       private final ImageIcon NEW_VERSION_ICON = IconLoader.getInstance().getIconFromTheme("status", "software-update-available", 16);
 
-      public JPanel createCenterPanel(JList list, Object value, int index, boolean isSelected, boolean isEnabled, JScrollPane parentScrollPane, int leftColumnWidth) {
+      public JPanel createCenterPanel( JList<? extends SelectableItem<SoftwareUpdateItem>> list, SoftwareUpdateItem value, int index, boolean isSelected, boolean isEnabled, JScrollPane parentScrollPane, int leftColumnWidth) {
         FormLayout lay = new FormLayout("5dlu,default,5dlu,default:grow","2dlu,default,2dlu,fill:pref:grow,2dlu");
         EnhancedPanelBuilder pb = new EnhancedPanelBuilder(lay);
         pb.getPanel().setOpaque(false);
@@ -446,7 +444,7 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
         return pb.getPanel();
       }
 
-      public void calculateSize(JList list, int index, JPanel contPane) {
+      public void calculateSize(JList<? extends SelectableItem<SoftwareUpdateItem>> list, int index, JPanel contPane) {
         if(list.getUI() instanceof MyListUI) {
           ((MyListUI)list.getUI()).setCellHeight(index, contPane.getPreferredSize().height);
         }
@@ -501,7 +499,7 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
 
       filterList.add(0, new FilterItem("all"));
 
-      JComboBox filterBox = new JComboBox(filterList.toArray());
+      JComboBox<FilterItem> filterBox = new JComboBox<>(filterList.toArray(new FilterItem[filterList.size()]));
 
       mSoftwareUpdateItemList.setFilterComboBox(filterBox);
 
@@ -552,9 +550,7 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
       this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
       int successfullyDownloadedItems = 0;
       try {
-        Object[] objects = mSoftwareUpdateItemList.getSelection();
-        for (Object object : objects) {
-          SoftwareUpdateItem item = (SoftwareUpdateItem) object;
+        for (SoftwareUpdateItem item : mSoftwareUpdateItemList.getSelectionList()) {
           try {
             item.download(mDownloadUrl);
             successfullyDownloadedItems++;
@@ -586,24 +582,26 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
       }
     }
     else if (event.getSource() == mHelpBtn) {
-      final SoftwareUpdateItem item = (SoftwareUpdateItem) ((SelectableItem)mSoftwareUpdateItemList.getSelectedValue()).getItem();
+      final SoftwareUpdateItem item = mSoftwareUpdateItemList.getSelectedValue().getItem();
       if (item != null) {
         Launch.openURL(item.getWebsite());
       }
     }
   }
 
+  @SuppressWarnings("unchecked")
   public void valueChanged(ListSelectionEvent event) {
-    mDownloadBtn.setEnabled(mSoftwareUpdateItemList.getSelection().length > 0);
+    mDownloadBtn.setEnabled(!mSoftwareUpdateItemList.getSelectionList().isEmpty());
     
     if(mIsVersionChange) {
-      mCloseBtn.setEnabled(mSoftwareUpdateItemList.getSelection().length == 0);
+      mCloseBtn.setEnabled(mSoftwareUpdateItemList.getSelectionList().isEmpty());
     }
 
     if(event.getSource() instanceof JList) {
       if(!event.getValueIsAdjusting()) {
+        @SuppressWarnings("rawtypes")
         JList list = ((JList)event.getSource());
-
+        
         if(mLastIndex != -1 && list.getSelectedIndex() != mLastIndex && list.getModel().getSize()-1 >= mLastIndex) {
           ((MyListUI)list.getUI()).setCellHeight(mLastIndex,list.getCellRenderer().getListCellRendererComponent(list, list.getModel().getElementAt(mLastIndex),
               mLastIndex, false, false).getPreferredSize().height);
@@ -614,7 +612,7 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
           mHelpBtn.setEnabled(false);
         }
         else {
-          SoftwareUpdateItem item = (SoftwareUpdateItem) ((SelectableItem)mSoftwareUpdateItemList.getSelectedValue()).getItem();
+          SoftwareUpdateItem item = ((SelectableItem<SoftwareUpdateItem>)mSoftwareUpdateItemList.getSelectedValue()).getItem();
           String website = item.getWebsite();
           mHelpBtn.setEnabled(website != null && website.length() > 0);
         }
@@ -625,7 +623,7 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
   }
 
   public void close() {
-    if(!mIsVersionChange || mSoftwareUpdateItemList.getSelection().length == 0) {
+    if(!mIsVersionChange || mSoftwareUpdateItemList.getSelectionList().isEmpty()) {
       setVisible(false);
     }
   }
@@ -654,11 +652,13 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
 
   private void showPopupMenu(MouseEvent e) {
     if(e.getSource() instanceof JList) {
+      @SuppressWarnings("rawtypes")
       JList list = (JList)e.getSource();
 
       Object listItem = list.getModel().getElementAt(list.locationToIndex(e.getPoint()));
 
       if(listItem instanceof SelectableItem) {
+        @SuppressWarnings("rawtypes")
         final Object item = ((SelectableItem)listItem).getItem();
 
         if(item instanceof SoftwareUpdateItem) {

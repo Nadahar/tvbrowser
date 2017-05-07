@@ -297,7 +297,7 @@ public class Exclusion implements Comparable<Exclusion> {
       while(types.hasNext()) {
         ProgramFieldType type = types.next();
         
-        if(type.getFormat() == ProgramFieldType.TEXT_FORMAT) {
+        if(type.getFormat() == ProgramFieldType.FORMAT_TEXT) {
           value.append(prog.getTextField(type)).append(' ');
         }
       }
@@ -389,9 +389,9 @@ public class Exclusion implements Comparable<Exclusion> {
       ProgramFieldType type = mProgramFieldExclusion.getProgramFieldType();
       
       switch(type.getFormat()) {
-        case ProgramFieldType.INT_FORMAT: programFieldExcl = prog.getIntFieldAsString(type) != null && prog.getIntFieldAsString(type).equalsIgnoreCase(mProgramFieldExclusion.getProgramFieldText()); break;
-        case ProgramFieldType.TIME_FORMAT: programFieldExcl = prog.getTimeFieldAsString(type) != null && prog.getTimeFieldAsString(type).equalsIgnoreCase(mProgramFieldExclusion.getProgramFieldText()); break;
-        case ProgramFieldType.TEXT_FORMAT: programFieldExcl = prog.getTextField(type) != null && prog.getTextField(type).equalsIgnoreCase(mProgramFieldExclusion.getProgramFieldText()); break;
+        case ProgramFieldType.FORMAT_INT: programFieldExcl = prog.getIntFieldAsString(type) != null && prog.getIntFieldAsString(type).equalsIgnoreCase(mProgramFieldExclusion.getProgramFieldText()); break;
+        case ProgramFieldType.FORMAT_TIME: programFieldExcl = prog.getTimeFieldAsString(type) != null && prog.getTimeFieldAsString(type).equalsIgnoreCase(mProgramFieldExclusion.getProgramFieldText()); break;
+        case ProgramFieldType.FORMAT_TEXT: programFieldExcl = prog.getTextField(type) != null && prog.getTextField(type).equalsIgnoreCase(mProgramFieldExclusion.getProgramFieldText()); break;
         
         default: programFieldExcl = true;break;
       }

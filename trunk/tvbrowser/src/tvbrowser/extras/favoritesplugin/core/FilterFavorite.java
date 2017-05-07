@@ -110,7 +110,7 @@ public class FilterFavorite extends Favorite implements PendingFilterLoader {
   private SearchFormSettings createSearchFormSettings() {
     SearchFormSettings formSettings = new SearchFormSettings(".*"); // We match all programs to check them later
     formSettings.setSearchIn(SearchFormSettings.SEARCH_IN_TITLE);
-    formSettings.setSearcherType(PluginManager.SEARCHER_TYPE_REGULAR_EXPRESSION);
+    formSettings.setSearcherType(PluginManager.TYPE_SEARCHER_REGULAR_EXPRESSION);
     return formSettings;
   }
   
@@ -191,7 +191,7 @@ public class FilterFavorite extends Favorite implements PendingFilterLoader {
   }
   
   class Configurator implements FavoriteConfigurator {
-    private JComboBox mFilterSelection;
+    private JComboBox<ProgramFilter> mFilterSelection;
     
     @Override
     public JPanel createConfigurationPanel() {
@@ -208,7 +208,7 @@ public class FilterFavorite extends Favorite implements PendingFilterLoader {
         }
       }
       
-      mFilterSelection = new JComboBox(selectableFilter.toArray(new ProgramFilter[selectableFilter.size()]));
+      mFilterSelection = new JComboBox<>(selectableFilter.toArray(new ProgramFilter[selectableFilter.size()]));
       
       if(mFilterInstance != null) {
         mFilterSelection.setSelectedItem(mFilterInstance);
@@ -223,13 +223,13 @@ public class FilterFavorite extends Favorite implements PendingFilterLoader {
           
           Object selected = mFilterSelection.getSelectedItem();
           
-          ((DefaultComboBoxModel)mFilterSelection.getModel()).removeAllElements();
+          ((DefaultComboBoxModel<ProgramFilter>)mFilterSelection.getModel()).removeAllElements();
           
           ProgramFilter[] availableFilter = Plugin.getPluginManager().getFilterManager().getAvailableFilters();
           
           for(ProgramFilter filter : availableFilter) {
             if(!(filter instanceof FavoriteFilter)) {
-              ((DefaultComboBoxModel)mFilterSelection.getModel()).addElement(filter);
+              ((DefaultComboBoxModel<ProgramFilter>)mFilterSelection.getModel()).addElement(filter);
             }
           }
           

@@ -40,6 +40,9 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+
 import tvbrowser.extras.favoritesplugin.core.Exclusion;
 import tvbrowser.extras.favoritesplugin.core.Favorite;
 import tvbrowser.extras.favoritesplugin.wizards.ExcludeWizardStep;
@@ -48,16 +51,13 @@ import util.ui.Localizer;
 import util.ui.TVBrowserIcons;
 import util.ui.UiUtilities;
 
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
-
 /**
  * A class with exclusion settings.
  */
 public class ExclusionPanel extends JPanel{
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(ExclusionPanel.class);
   
-  private JList mExclusionsList;
+  private JList<Exclusion> mExclusionsList;
   
   private JButton mNewExclusionBtn;
   private JButton mEditExclusionBtn;
@@ -86,8 +86,8 @@ public class ExclusionPanel extends JPanel{
 
     CellConstraints cc = new CellConstraints();
 
-    DefaultListModel listModel = new DefaultListModel();
-    mExclusionsList = new JList(listModel);
+    DefaultListModel<Exclusion> listModel = new DefaultListModel<>();
+    mExclusionsList = new JList<>(listModel);
     
     Arrays.sort(exclusions);
     
@@ -141,7 +141,7 @@ public class ExclusionPanel extends JPanel{
         WizardHandler handler = new WizardHandler(parent, new ExcludeWizardStep(favorite));
         Exclusion exclusion = (Exclusion) handler.show();
         if (exclusion != null) {
-          ((DefaultListModel) mExclusionsList.getModel()).addElement(exclusion);
+          ((DefaultListModel<Exclusion>) mExclusionsList.getModel()).addElement(exclusion);
           mWasAdded = true;
         }
 
@@ -155,7 +155,7 @@ public class ExclusionPanel extends JPanel{
         Exclusion newExclusion = (Exclusion) handler.show();
         if (newExclusion != null) {
           int inx = mExclusionsList.getSelectedIndex();
-          ((DefaultListModel) mExclusionsList.getModel()).setElementAt(newExclusion, inx);
+          ((DefaultListModel<Exclusion>) mExclusionsList.getModel()).setElementAt(newExclusion, inx);
           mWasEditedOrDeleted = true;
         }
       }
@@ -165,7 +165,7 @@ public class ExclusionPanel extends JPanel{
       public void actionPerformed(ActionEvent e) {
         Exclusion exclusion = (Exclusion) mExclusionsList.getSelectedValue();
         if (exclusion != null) {
-          ((DefaultListModel) mExclusionsList.getModel()).removeElement(exclusion);
+          ((DefaultListModel<Exclusion>) mExclusionsList.getModel()).removeElement(exclusion);
           mWasEditedOrDeleted = true;
         }
       }
@@ -186,9 +186,9 @@ public class ExclusionPanel extends JPanel{
    * @return The exclusions of this panel.
    */
   public Exclusion[] getExclusions() {
-    int exclCnt = ((DefaultListModel) mExclusionsList.getModel()).size();
+    int exclCnt = ((DefaultListModel<Exclusion>) mExclusionsList.getModel()).size();
     Exclusion[] exclArr = new Exclusion[exclCnt];
-    ((DefaultListModel) mExclusionsList.getModel()).copyInto(exclArr);
+    ((DefaultListModel<Exclusion>) mExclusionsList.getModel()).copyInto(exclArr);
     
     return exclArr;
   }

@@ -28,7 +28,6 @@ package tvbrowser.extras.favoritesplugin.dlgs;
 
 import java.awt.BorderLayout;
 import java.awt.Window;
-import java.awt.Dialog.ModalityType;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.logging.Level;

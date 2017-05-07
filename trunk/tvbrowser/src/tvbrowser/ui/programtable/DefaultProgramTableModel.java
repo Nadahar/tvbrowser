@@ -42,11 +42,6 @@ import javax.swing.Timer;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import tvbrowser.core.TvDataBase;
-import tvbrowser.ui.mainframe.MainFrame;
-import util.io.IOUtilities;
-import util.program.ProgramUtilities;
-import util.ui.ProgramPanel;
 import devplugin.Channel;
 import devplugin.ChannelDayProgram;
 import devplugin.ChannelFilter;
@@ -54,6 +49,11 @@ import devplugin.Date;
 import devplugin.Program;
 import devplugin.ProgramFilter;
 import devplugin.ProgressMonitor;
+import tvbrowser.core.TvDataBase;
+import tvbrowser.ui.mainframe.MainFrame;
+import util.io.IOUtilities;
+import util.program.ProgramUtilities;
+import util.ui.ProgramPanel;
 
 /**
  *
@@ -174,6 +174,7 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
 
 
 
+  @SuppressWarnings("unchecked")
   public void setChannels(Channel[] channelArr) {
     if (channelArr == null) {
       throw new NullPointerException("shownChannelArr is null!");
@@ -191,6 +192,7 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
     }
     
     mProgramColumn=new ArrayList[mChannelArr.length-joinedChannelCount];
+    //mProgramColumn[i].toArray(a)
     for (int i=0;i<mProgramColumn.length;i++) {
       mProgramColumn[i]=new ArrayList<ProgramPanel>();
     }
@@ -345,6 +347,7 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
     updateTableContent(null, null);
   }
 
+  @SuppressWarnings("unchecked")
   private synchronized void updateTableContent(final ProgressMonitor monitor, final Runnable callback)
   {
     // if this is the initial update, skip every UI related operation, just set

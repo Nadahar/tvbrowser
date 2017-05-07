@@ -37,17 +37,10 @@ import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.Icon;
-import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JMenuItem;
 import javax.swing.JSeparator;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
-
-import tvbrowser.core.Settings;
-import util.ui.UIThreadRunner;
-import util.ui.findasyoutype.TextComponentFindAction;
 
 import com.l2fprod.common.swing.JLinkButton;
 import com.l2fprod.common.swing.JTaskPaneGroup;
@@ -56,6 +49,9 @@ import devplugin.ActionMenu;
 import devplugin.ContextMenuSeparatorAction;
 import devplugin.Plugin;
 import devplugin.Program;
+import tvbrowser.core.Settings;
+import util.ui.UIThreadRunner;
+import util.ui.findasyoutype.TextComponentFindAction;
 
 /**
  * A class that holds a ContextMenuAction of a Plugin.

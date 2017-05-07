@@ -95,10 +95,10 @@ public class CompoundedProgramFieldType {
       for(int i = 0; i < mFieldTypes.length; i++) {
         String formattedValue = "";
         
-        if(mFieldTypes[i].getFormat() == ProgramFieldType.TEXT_FORMAT) {
+        if(mFieldTypes[i].getFormat() == ProgramFieldType.FORMAT_TEXT) {
           formattedValue = prog.getTextField(mFieldTypes[i]);
         }
-        else if(mFieldTypes[i].getFormat() == ProgramFieldType.INT_FORMAT) {
+        else if(mFieldTypes[i].getFormat() == ProgramFieldType.FORMAT_INT) {
           if(mFieldTypes[i].equals(ProgramFieldType.EPISODE_NUMBER_TYPE) && prog.hasFieldValue(ProgramFieldType.EPISODE_NUMBER_TYPE)) {
             formattedValue = IOUtilities.decodeSingleFieldValueToMultipleEpisodeString(prog.getIntField(mFieldTypes[i]));
           }
@@ -106,7 +106,7 @@ public class CompoundedProgramFieldType {
             formattedValue = prog.getIntFieldAsString(mFieldTypes[i]);
           }
         }
-        else if(mFieldTypes[i].getFormat() == ProgramFieldType.TIME_FORMAT) {
+        else if(mFieldTypes[i].getFormat() == ProgramFieldType.FORMAT_TIME) {
           formattedValue = prog.getTimeFieldAsString(mFieldTypes[i]);
         }
         
@@ -129,10 +129,10 @@ public class CompoundedProgramFieldType {
       String currentValue = "";
       
       for(int i = 0; i < mFieldTypes.length; i++) {
-        if(mFieldTypes[i].getFormat() == ProgramFieldType.TEXT_FORMAT) {
+        if(mFieldTypes[i].getFormat() == ProgramFieldType.FORMAT_TEXT) {
           currentValue = prog.getTextField(mFieldTypes[i]);
         }
-        else if(mFieldTypes[i].getFormat() == ProgramFieldType.INT_FORMAT) {
+        else if(mFieldTypes[i].getFormat() == ProgramFieldType.FORMAT_INT) {
           if(mFieldTypes[i].equals(ProgramFieldType.EPISODE_NUMBER_TYPE) && prog.hasFieldValue(ProgramFieldType.EPISODE_NUMBER_TYPE)) {
             currentValue = IOUtilities.decodeSingleFieldValueToMultipleEpisodeString(prog.getIntField(mFieldTypes[i]));
           }
@@ -140,7 +140,7 @@ public class CompoundedProgramFieldType {
             currentValue = prog.getIntFieldAsString(mFieldTypes[i]);
           }
         }
-        else if(mFieldTypes[i].getFormat() == ProgramFieldType.TIME_FORMAT) {
+        else if(mFieldTypes[i].getFormat() == ProgramFieldType.FORMAT_TIME) {
           currentValue = prog.getTimeFieldAsString(mFieldTypes[i]);
         }
 

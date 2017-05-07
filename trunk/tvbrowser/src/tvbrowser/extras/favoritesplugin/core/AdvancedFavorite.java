@@ -40,6 +40,16 @@ import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+
+import devplugin.Channel;
+import devplugin.Date;
+import devplugin.Plugin;
+import devplugin.PluginManager;
+import devplugin.Program;
+import devplugin.ProgramFilter;
 import tvbrowser.core.filters.ShowAllFilter;
 import tvbrowser.extras.favoritesplugin.FavoriteConfigurator;
 import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
@@ -51,17 +61,6 @@ import util.ui.SearchForm;
 import util.ui.SearchFormSettings;
 import util.ui.UiUtilities;
 import util.ui.WrapperFilter;
-
-import com.jgoodies.forms.builder.PanelBuilder;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
-
-import devplugin.Channel;
-import devplugin.Date;
-import devplugin.Plugin;
-import devplugin.PluginManager;
-import devplugin.Program;
-import devplugin.ProgramFilter;
 
 public class AdvancedFavorite extends Favorite implements PendingFilterLoader {
 
@@ -98,7 +97,7 @@ public class AdvancedFavorite extends Favorite implements PendingFilterLoader {
     mSearchFormSettings.setUserDefaultFieldTypes(FavoritesPlugin.getInstance().getDefaultProgramFieldTypeSelection());
     if (searchText.contains(" OR ") || searchText.contains(" AND ")
         || searchText.contains(" NOT ")) {
-      mSearchFormSettings.setSearcherType(PluginManager.SEARCHER_TYPE_BOOLEAN);
+      mSearchFormSettings.setSearcherType(PluginManager.TYPE_SEARCHER_BOOLEAN);
       mSearchFormSettings.setSearchIn(SearchFormSettings.SEARCH_IN_ALL);
     }
   }
@@ -167,10 +166,10 @@ public class AdvancedFavorite extends Favorite implements PendingFilterLoader {
       }
 
       switch (searchMode) {
-        case 1: mSearchFormSettings.setSearcherType(PluginManager.SEARCHER_TYPE_EXACTLY); break;
-        case 2: mSearchFormSettings.setSearcherType(PluginManager.SEARCHER_TYPE_KEYWORD); break;
-        case 3: mSearchFormSettings.setSearcherType(PluginManager.SEARCHER_TYPE_REGULAR_EXPRESSION); break;
-        default: mSearchFormSettings.setSearcherType(PluginManager.SEARCHER_TYPE_EXACTLY); break;
+        case 1: mSearchFormSettings.setSearcherType(PluginManager.TYPE_SEARCHER_EXACTLY); break;
+        case 2: mSearchFormSettings.setSearcherType(PluginManager.TYPE_SEARCHER_KEYWORD); break;
+        case 3: mSearchFormSettings.setSearcherType(PluginManager.TYPE_SEARCHER_REGULAR_EXPRESSION); break;
+        default: mSearchFormSettings.setSearcherType(PluginManager.TYPE_SEARCHER_EXACTLY); break;
       }
     } else {
       mSearchFormSettings = new SearchFormSettings(in);
@@ -329,7 +328,7 @@ public class AdvancedFavorite extends Favorite implements PendingFilterLoader {
 
     private SearchForm mSearchForm;
     private JCheckBox mFilterCheckbox;
-    private JComboBox mFilterCombo;
+    private JComboBox<WrapperFilter> mFilterCombo;
     private JButton mEditFilter;
 
     public JPanel createConfigurationPanel() {
@@ -341,13 +340,13 @@ public class AdvancedFavorite extends Favorite implements PendingFilterLoader {
 
       panelBuilder.add(mSearchForm, cc.xyw(1, 1, 5));
       panelBuilder.add(mFilterCheckbox = new JCheckBox(mLocalizer.msg("useFilter","Use filter:")), cc.xy(1, 3));
-      panelBuilder.add(mFilterCombo = new JComboBox(), cc.xy(3, 3));
+      panelBuilder.add(mFilterCombo = new JComboBox<>(), cc.xy(3, 3));
       
       ProgramFilter[] availableFilter = Plugin.getPluginManager().getFilterManager().getAvailableFilters();
       
       for(ProgramFilter filter : availableFilter) {
         if(!(filter instanceof FavoriteFilter)) {
-          ((DefaultComboBoxModel)mFilterCombo.getModel()).addElement(new WrapperFilter(filter));
+          ((DefaultComboBoxModel<WrapperFilter>)mFilterCombo.getModel()).addElement(new WrapperFilter(filter));
         }
       }
       
@@ -360,13 +359,13 @@ public class AdvancedFavorite extends Favorite implements PendingFilterLoader {
           
           Object selected = mFilterCombo.getSelectedItem();
           
-          ((DefaultComboBoxModel)mFilterCombo.getModel()).removeAllElements();
+          ((DefaultComboBoxModel<WrapperFilter>)mFilterCombo.getModel()).removeAllElements();
           
           ProgramFilter[] availableFilter = Plugin.getPluginManager().getFilterManager().getAvailableFilters();
           
           for(ProgramFilter filter : availableFilter) {
             if(!(filter instanceof FavoriteFilter)) {
-              ((DefaultComboBoxModel)mFilterCombo.getModel()).addElement(new WrapperFilter(filter));
+              ((DefaultComboBoxModel<WrapperFilter>)mFilterCombo.getModel()).addElement(new WrapperFilter(filter));
             }
           }
           

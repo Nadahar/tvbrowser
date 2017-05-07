@@ -615,8 +615,6 @@ public class ToolBar extends JToolBar {
     button.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent e) {
         action.actionPerformed(new ActionEvent(action,ActionEvent.ACTION_PERFORMED,""));
-        final AbstractButton btn = (AbstractButton) action.getValue(ToolBar.ACTION_VALUE);
-
         MainFrame.getInstance().getProgramTableScrollPane().requestFocusInWindow();
       }
     });

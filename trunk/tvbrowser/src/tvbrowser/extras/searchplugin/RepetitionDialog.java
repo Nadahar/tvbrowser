@@ -25,7 +25,6 @@ package tvbrowser.extras.searchplugin;
 
 import java.awt.Dimension;
 import java.awt.Window;
-import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -40,6 +39,15 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import com.jgoodies.forms.builder.ButtonBarBuilder;
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.factories.DefaultComponentFactory;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.Sizes;
+
+import devplugin.Channel;
+import devplugin.PluginManager;
 import tvbrowser.core.ChannelList;
 import tvbrowser.core.Settings;
 import tvbrowser.ui.mainframe.MainFrame;
@@ -50,16 +58,6 @@ import util.ui.SearchFormSettings;
 import util.ui.SearchHelper;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
-
-import com.jgoodies.forms.builder.ButtonBarBuilder;
-import com.jgoodies.forms.factories.Borders;
-import com.jgoodies.forms.factories.DefaultComponentFactory;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.Sizes;
-
-import devplugin.Channel;
-import devplugin.PluginManager;
 
 /**
  * A dialog specifically for repetitions. It only shows a simple Input-Form and
@@ -79,11 +77,11 @@ class RepetitionDialog extends JDialog implements WindowClosingIf {
   /**
    * Search in this channel
    */
-  private JComboBox mChannelChooser;
+  private JComboBox<Object> mChannelChooser;
   /**
    * Search in this timespan
    */
-  private JComboBox mTimeChooser;
+  private JComboBox<String> mTimeChooser;
 
   /**
    * Create the dialog
@@ -145,7 +143,7 @@ class RepetitionDialog extends JDialog implements WindowClosingIf {
     }
     list.addAll(channelList);
 
-    mChannelChooser = new JComboBox(list);
+    mChannelChooser = new JComboBox<>(list);
     mChannelChooser.setRenderer(new ChannelListCellRenderer(true, true));
 
     panel.add(mChannelChooser, cc.xy(3, 5));
@@ -159,7 +157,7 @@ class RepetitionDialog extends JDialog implements WindowClosingIf {
         mLocalizer.msg("threeWeeks", "three weeks"),
         mLocalizer.msg("allData", "all data") };
 
-    mTimeChooser = new JComboBox(dates);
+    mTimeChooser = new JComboBox<>(dates);
     mTimeChooser.setSelectedIndex(SearchPlugin.getInstance()
         .getRepetitionTimeSelection());
 
@@ -233,7 +231,7 @@ class RepetitionDialog extends JDialog implements WindowClosingIf {
     
     SearchFormSettings settings = new SearchFormSettings(mText.getText());
     settings.setSearchIn(SearchFormSettings.SEARCH_IN_TITLE);
-    settings.setSearcherType(PluginManager.SEARCHER_TYPE_EXACTLY);
+    settings.setSearcherType(PluginManager.TYPE_SEARCHER_EXACTLY);
     settings.setCaseSensitive(false);
 
     settings.setNrDays(days);

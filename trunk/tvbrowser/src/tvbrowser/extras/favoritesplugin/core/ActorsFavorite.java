@@ -69,7 +69,7 @@ public class ActorsFavorite extends Favorite {
     mActors = actors;
     SearchFormSettings formSettings = new SearchFormSettings(""); // No search string, the Searcher is created directly
     formSettings.setSearchIn(SearchFormSettings.SEARCH_IN_USER_DEFINED);
-    formSettings.setSearcherType(PluginManager.SEARCHER_TYPE_BOOLEAN);
+    formSettings.setSearcherType(PluginManager.TYPE_SEARCHER_BOOLEAN);
     formSettings.setUserDefinedFieldTypes(new ProgramFieldType[] { ProgramFieldType.ACTOR_LIST_TYPE,
         ProgramFieldType.DESCRIPTION_TYPE, ProgramFieldType.SHORT_DESCRIPTION_TYPE });
     return formSettings;

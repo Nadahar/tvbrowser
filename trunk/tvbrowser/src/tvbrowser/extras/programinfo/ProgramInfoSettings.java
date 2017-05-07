@@ -306,7 +306,7 @@ class ProgramInfoSettings {
           if (parsedId >= 0) {
             ProgramFieldType type = ProgramFieldType.getTypeForId(parsedId);
             
-            if(type.getFormat() != ProgramFieldType.UNKNOWN_FORMAT) {
+            if(type.getFormat() != ProgramFieldType.FORMAT_UNKNOWN) {
               result.add(type);
             }
             else if (!result.contains(ProgramTextCreator.getDurationTypeString()) && parsedId == ProgramInfoSettings.DURATION_END_TYPE_VALUE) {

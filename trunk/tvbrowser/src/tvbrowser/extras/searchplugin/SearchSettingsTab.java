@@ -25,8 +25,6 @@
  */
 package tvbrowser.extras.searchplugin;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 import javax.swing.DefaultListModel;
@@ -37,15 +35,14 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-import util.ui.SearchFormSettings;
-import util.ui.TVBrowserIcons;
-
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.factories.CC;
 import com.jgoodies.forms.layout.FormLayout;
 
 import devplugin.SettingsTab;
+import util.ui.SearchFormSettings;
+import util.ui.TVBrowserIcons;
 
 /**
  * This Class represents the SettingsTab for the Search-Plugin

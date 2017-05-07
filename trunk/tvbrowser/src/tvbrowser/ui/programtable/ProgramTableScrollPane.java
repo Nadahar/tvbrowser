@@ -49,15 +49,14 @@ import javax.swing.JScrollPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import devplugin.Channel;
+import devplugin.Program;
 import tvbrowser.core.ChannelList;
 import tvbrowser.core.Settings;
 import tvbrowser.core.contextmenu.ContextMenuManager.ContextMenuAction;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.programtable.background.BackgroundPainter;
 import util.ui.persona.Persona;
-import devplugin.Channel;
-import devplugin.ContextMenuIf;
-import devplugin.Program;
 
 /**
  *
@@ -345,7 +344,6 @@ public class ProgramTableScrollPane extends JScrollPane implements ProgramTableM
             try {
               sleep(100);
             } catch (InterruptedException e) {
-              // TODO Auto-generated catch block
               e.printStackTrace();
             }
           }

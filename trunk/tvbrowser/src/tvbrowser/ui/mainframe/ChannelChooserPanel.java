@@ -105,7 +105,7 @@ public class ChannelChooserPanel extends JPanel implements ListDropAction<Object
 
     ListDragAndDropHandler dnDHandler = new ListDragAndDropHandler(mList,
         mList, this);
-    new DragAndDropMouseListener(mList, mList, this, dnDHandler);
+    new DragAndDropMouseListener<>(mList, mList, this, dnDHandler);
 
     mList.addListSelectionListener(e ->  {
       if (!disableSync) {

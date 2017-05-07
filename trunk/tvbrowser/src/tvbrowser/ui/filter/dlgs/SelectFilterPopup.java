@@ -26,8 +26,6 @@
 
 package tvbrowser.ui.filter.dlgs;
 
-import javax.swing.JMenuItem;
-
 import tvbrowser.ui.mainframe.MainFrame;
 import util.ui.ScrollableMenu;
 

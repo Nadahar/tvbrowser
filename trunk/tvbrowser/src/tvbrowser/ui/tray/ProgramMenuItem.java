@@ -46,6 +46,9 @@ import javax.swing.ToolTipManager;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 
+import devplugin.Date;
+import devplugin.Plugin;
+import devplugin.Program;
 import tvbrowser.core.Settings;
 import tvbrowser.core.contextmenu.ContextMenuManager;
 import tvbrowser.core.contextmenu.ContextMenuManager.ContextMenuAction;
@@ -56,10 +59,6 @@ import util.programmouseevent.ProgramMouseEventHandler;
 import util.ui.Localizer;
 import util.ui.TextAreaIcon;
 import util.ui.UiUtilities;
-import devplugin.ContextMenuIf;
-import devplugin.Date;
-import devplugin.Plugin;
-import devplugin.Program;
 
 /**
  * A class that contains a program in a JMenuItem.

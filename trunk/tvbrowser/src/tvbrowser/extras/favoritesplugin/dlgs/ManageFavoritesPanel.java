@@ -112,13 +112,13 @@ import util.ui.persona.PersonaListener;
  * 
  * @author René Mach
  */
-public class ManageFavoritesPanel extends JPanel implements ListDropAction, TreeSelectionListener, PersonaListener {
+public class ManageFavoritesPanel extends JPanel implements ListDropAction<Favorite>, TreeSelectionListener, PersonaListener {
   public static final int FILTER_START_LAST_TYPE = -1;
   
   private static final int MAX_SHOWN_PROGRAMS = 6000;
   private static final Localizer mLocalizer = ManageFavoritesDialog.mLocalizer;
-  private DefaultListModel mFavoritesListModel;
-  private JList mFavoritesList;
+  private DefaultListModel<Favorite> mFavoritesListModel;
+  private JList<Favorite> mFavoritesList;
   private FavoriteTree mFavoriteTree;
   private ProgramList mProgramList;
   private JSplitPane mSplitPane;
@@ -413,7 +413,7 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction, Tree
     JScrollPane scrollPane;
 
     if(favoriteArr != null) {
-      mFavoritesListModel = new DefaultListModel();
+      mFavoritesListModel = new DefaultListModel<>();
       mFavoritesListModel.ensureCapacity(favoriteArr.length);
       for (Favorite element : favoriteArr) {
         if(element.getNewPrograms().length >= 0) {
@@ -421,7 +421,7 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction, Tree
         }
       }
 
-      mFavoritesList = new JList(mFavoritesListModel);
+      mFavoritesList = new JList<>(mFavoritesListModel);
       mFavoritesList.setCellRenderer(new FavoriteListCellRenderer());
       ListSelectionModel selModel = mFavoritesList.getSelectionModel();
       selModel.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -435,7 +435,7 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction, Tree
 
       if(!mShowNew) {
         ListDragAndDropHandler dnDHandler = new ListDragAndDropHandler(mFavoritesList,mFavoritesList,this);
-        new DragAndDropMouseListener(mFavoritesList,mFavoritesList,this,dnDHandler);
+        new DragAndDropMouseListener<Favorite>(mFavoritesList,mFavoritesList,this,dnDHandler);
       }
 
       mFavoritesList.addMouseListener(new MouseAdapter() {
@@ -1057,9 +1057,10 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction, Tree
       if (file != null) {
         FileReader reader = null;
         int importedFavoritesCount = 0;
+        BufferedReader lineReader = null;
         try {
           reader = new FileReader(file);
-          BufferedReader lineReader = new BufferedReader(reader);
+          lineReader = new BufferedReader(reader);
           String line;
           while ((line = lineReader.readLine()) != null) {
             line = line.trim();
@@ -1149,7 +1150,7 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction, Tree
 
   class FavoriteListCellRenderer extends DefaultListCellRenderer {
 
-    public Component getListCellRendererComponent(JList list, Object value,
+    public Component getListCellRendererComponent(JList<?> list, Object value,
                                                   int index, boolean isSelected, boolean cellHasFocus)
     {
       Component c = super.getListCellRendererComponent(list, value, index, isSelected,
@@ -1172,7 +1173,7 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction, Tree
   }
   
   @Override
-  public void drop(JList source, JList target, int rows, boolean move) {
+  public void drop(JList<Favorite> source, JList<Favorite> target, int rows, boolean move) {
     UiUtilities.moveSelectedItems(target,rows,true);
     FavoritesPlugin.getInstance().updateRootNode(true);
   }
