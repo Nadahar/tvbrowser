@@ -30,7 +30,6 @@ package tvbrowser.extras.searchplugin;
 import java.awt.BorderLayout;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
@@ -137,29 +136,23 @@ public class SearchDialog extends JDialog implements WindowClosingIf {
         updateButton(e);
       }
     });
-    mSearchForm.addPatternActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent evt) {
-        search();
-      }
+    mSearchForm.addPatternActionListener(e -> {
+      search();
     });
     main.add(mSearchForm);
 
     msg = mLocalizer.msg("search", "Search");
     mSearchBt = new JButton(msg);
-    mSearchBt.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent evt) {
-    	if(!mSearchForm.hasFocus()) {
+    mSearchBt.addActionListener(evt -> {
+      if(!mSearchForm.hasFocus()) {
         search();
-      }
       }
     });
     getRootPane().setDefaultButton(mSearchBt);
     
     mCloseBt = new JButton(Localizer.getLocalization(Localizer.I18N_CLOSE));
-    mCloseBt.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent evt) {
-        close();
-      }
+    mCloseBt.addActionListener(e -> {
+      close();
     });
 
     ButtonBarBuilder buttons = new ButtonBarBuilder();

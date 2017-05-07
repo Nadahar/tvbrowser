@@ -28,8 +28,6 @@ package util.ui;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 
 import javax.swing.BorderFactory;
@@ -182,10 +180,8 @@ public class ExecuteSettingsDialog extends JDialog implements WindowClosingIf{
     
     JButton chooseFile = new JButton("...");
     
-    chooseFile.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        changeFile();
-      }
+    chooseFile.addActionListener(e -> {
+      changeFile();
     });
     
     filePanel.add(chooseFile, BorderLayout.EAST);
@@ -204,22 +200,14 @@ public class ExecuteSettingsDialog extends JDialog implements WindowClosingIf{
     panel.add(mParam, BorderLayout.CENTER);
     
     JButton ok = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
-    ok.addActionListener(new ActionListener() {
-
-      public void actionPerformed(ActionEvent e) {
-        okPressed();
-        setVisible(false);
-      }
-      
+    ok.addActionListener(e -> {
+      okPressed();
+      setVisible(false);
     });
     
     JButton cancel = new JButton(Localizer.getLocalization(Localizer.I18N_CANCEL));
-    cancel.addActionListener(new ActionListener() {
-
-      public void actionPerformed(ActionEvent e) {
-        setVisible(false);
-      }
-      
+    cancel.addActionListener(e -> {
+      setVisible(false);
     });
     
     JPanel buttons = new JPanel(new FlowLayout(FlowLayout.RIGHT));

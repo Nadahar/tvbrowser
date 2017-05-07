@@ -28,8 +28,6 @@ package tvbrowser.extras.reminderplugin;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -71,11 +69,9 @@ public class ReminderListDialog extends JDialog implements WindowClosingIf {
     
     JButton ok = new JButton(Localizer.getLocalization(Localizer.I18N_CLOSE));
 
-    ok.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        mReminderListPanel.stopCellEditing();
-        dispose();
-      }
+    ok.addActionListener(e -> {
+      mReminderListPanel.stopCellEditing();
+      dispose();
     });
     
     mReminderListPanel = new ReminderListPanel(list,ok);

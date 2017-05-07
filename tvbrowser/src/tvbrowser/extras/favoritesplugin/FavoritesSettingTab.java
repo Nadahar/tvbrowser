@@ -27,10 +27,7 @@
 package tvbrowser.extras.favoritesplugin;
 
 import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -42,6 +39,14 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.factories.CC;
+import com.jgoodies.forms.layout.FormLayout;
+
+import devplugin.ProgramReceiveIf;
+import devplugin.ProgramReceiveTarget;
+import devplugin.SettingsTab;
 import tvbrowser.extras.favoritesplugin.core.Favorite;
 import tvbrowser.extras.favoritesplugin.dlgs.ExclusionPanel;
 import tvbrowser.extras.favoritesplugin.dlgs.FavoriteTreeModel;
@@ -52,15 +57,6 @@ import util.ui.DefaultMarkingPrioritySelectionPanel;
 import util.ui.FilterableProgramListPanel;
 import util.ui.PluginChooserDlg;
 import util.ui.UiUtilities;
-
-import com.jgoodies.forms.builder.PanelBuilder;
-import com.jgoodies.forms.factories.Borders;
-import com.jgoodies.forms.factories.CC;
-import com.jgoodies.forms.layout.FormLayout;
-
-import devplugin.ProgramReceiveIf;
-import devplugin.ProgramReceiveTarget;
-import devplugin.SettingsTab;
 
 /**
  * The settings tab for the favorites plugin.
@@ -118,31 +114,26 @@ public class FavoritesSettingTab implements SettingsTab {
 
     mCurrentClientPluginTargets = mClientPluginTargets = clientPlugins.toArray(new ProgramReceiveTarget[clientPlugins.size()]);
 
-    mExpertMode.addItemListener(new ItemListener() {
-      @Override
-      public void itemStateChanged(ItemEvent e) {
-        mShowTypeSelection.setEnabled(e.getStateChange() == ItemEvent.SELECTED);
-      }
+    mExpertMode.addItemListener(e -> {
+      mShowTypeSelection.setEnabled(e.getStateChange() == ItemEvent.SELECTED);
     });
     
     handlePluginSelection();
 
-    choose.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        Window parent = UiUtilities
-            .getLastModalChildOf(MainFrame.getInstance());
-        PluginChooserDlg chooser = null;
-        chooser = new PluginChooserDlg(parent, mClientPluginTargets, null,
-            ReminderPluginProxy.getInstance());
-        
-        chooser.setVisible(true);
+    choose.addActionListener(e -> {
+      Window parent = UiUtilities
+          .getLastModalChildOf(MainFrame.getInstance());
+      PluginChooserDlg chooser = null;
+      chooser = new PluginChooserDlg(parent, mClientPluginTargets, null,
+          ReminderPluginProxy.getInstance());
+      
+      chooser.setVisible(true);
 
-        if(chooser.getReceiveTargets() != null) {
-          mClientPluginTargets = chooser.getReceiveTargets();
-        }
-
-        handlePluginSelection();
+      if(chooser.getReceiveTargets() != null) {
+        mClientPluginTargets = chooser.getReceiveTargets();
       }
+
+      handlePluginSelection();
     });
     
     int y = 1;
@@ -203,14 +194,11 @@ public class FavoritesSettingTab implements SettingsTab {
     mScrollTimeDay.setEnabled(mProvideTab.isSelected());
     mScrollTimeNext.setEnabled(mProvideTab.isSelected());
     
-    mProvideTab.addItemListener(new ItemListener() {
-      @Override
-      public void itemStateChanged(ItemEvent e) {
-        timeButtonBehaviour.setEnabled(e.getStateChange() == ItemEvent.SELECTED);
-        mScrollTimeDay.setEnabled(timeButtonBehaviour.isEnabled());
-        mScrollTimeNext.setEnabled(timeButtonBehaviour.isEnabled());
-      }
-    });
+    mProvideTab.addItemListener(e -> {
+      timeButtonBehaviour.setEnabled(e.getStateChange() == ItemEvent.SELECTED);
+      mScrollTimeDay.setEnabled(timeButtonBehaviour.isEnabled());
+      mScrollTimeNext.setEnabled(timeButtonBehaviour.isEnabled());
+  });
     
     timeButtonSettings.add(timeButtonBehaviour, CC.xy(2, 2));
     timeButtonSettings.add(mScrollTimeNext, CC.xy(2, 4));

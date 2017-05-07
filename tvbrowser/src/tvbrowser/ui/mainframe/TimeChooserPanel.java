@@ -28,8 +28,6 @@
 package tvbrowser.ui.mainframe;
 
 import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -44,11 +42,11 @@ import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import devplugin.SettingsItem;
 import tvbrowser.core.Settings;
 import util.ui.GridFlowLayout;
 import util.ui.TimeFormatter;
 import util.ui.persona.Persona;
-import devplugin.SettingsItem;
 
 
 public class TimeChooserPanel extends JPanel implements ChangeListener, MouseListener {
@@ -93,10 +91,9 @@ public class TimeChooserPanel extends JPanel implements ChangeListener, MouseLis
       mNowBt=Persona.createPersonaButton(msg);
       
       mNowBt.addKeyListener(keyListener);
-      mNowBt.addActionListener(new ActionListener(){
-        public void actionPerformed(ActionEvent arg0) {
-            mParent.scrollToNow();
-        }});
+      mNowBt.addActionListener(e -> {
+        mParent.scrollToNow();
+      });
       add(mNowBt, BorderLayout.SOUTH);
       mNowBt.addMouseListener(this);
       
@@ -128,10 +125,8 @@ public class TimeChooserPanel extends JPanel implements ChangeListener, MouseLis
         btn.addKeyListener(mKeyListener);
         
         mGridPn.add(btn);
-        btn.addActionListener(new ActionListener(){
-          public void actionPerformed(ActionEvent arg0) {
-            mParent.scrollToTime(time,true);
-          }
+        btn.addActionListener(e -> {
+          mParent.scrollToTime(time,true);
         });
         btn.addMouseListener(this);
       }}catch(Throwable t  ){t.printStackTrace();}
@@ -157,10 +152,8 @@ public class TimeChooserPanel extends JPanel implements ChangeListener, MouseLis
       JPopupMenu menu = new JPopupMenu();
       
       JMenuItem configure = new JMenuItem(mLocalizer.msg("configure","Configure"));
-      configure.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          MainFrame.getInstance().showSettingsDialog(SettingsItem.TIMEBUTTONS);
-        }
+      configure.addActionListener(evt -> {
+        MainFrame.getInstance().showSettingsDialog(SettingsItem.TIMEBUTTONS);
       });
       
       menu.add(configure);

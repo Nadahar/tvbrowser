@@ -25,9 +25,6 @@
  */
 package tvbrowser.ui.settings;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
 import javax.swing.Icon;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -127,10 +124,8 @@ public class FontsSettingsTab implements devplugin.SettingsTab {
     mTextLineGap.setSelectedIndex(Settings.propProgramTextLineGap.getInt());
     mainPanel.add(mTextLineGap, CC.xy(5,y));
     
-    mUseUserDefindedFontsCB.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        enableFontFields(mUseUserDefindedFontsCB.isSelected());
-      }
+    mUseUserDefindedFontsCB.addActionListener(e -> {
+      enableFontFields(mUseUserDefindedFontsCB.isSelected());
     });
     
     enableFontFields(mUseUserDefindedFontsCB.isSelected());

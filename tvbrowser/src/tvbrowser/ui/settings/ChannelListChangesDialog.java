@@ -27,8 +27,6 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -114,31 +112,21 @@ public class ChannelListChangesDialog extends JDialog {
     
     if(showSettingsLink) {
       JButton openSettings = new JButton(mLocalizer.msg("openSettings", "Open channel settings"));
-      openSettings.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-          setVisible(false);
-          SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-              PluginManagerImpl.getInstance().showSettings(SettingsItem.CHANNELS);
-            }
-          });
-          
-          dispose();
-        }
+      openSettings.addActionListener(e -> {
+        setVisible(false);
+        SwingUtilities.invokeLater(() -> {
+          PluginManagerImpl.getInstance().showSettings(SettingsItem.CHANNELS);
+        });
+        
+        dispose();
       });
       
       btnPanel.add(openSettings);
     }
     
     JButton ok = new JButton(Localizer.getLocalization(Localizer.I18N_CLOSE));
-    ok.addActionListener(new ActionListener() {
-
-      public void actionPerformed(ActionEvent e) {
-        dispose();
-      }
-
+    ok.addActionListener(e -> {
+      dispose();
     });
     btnPanel.add(ok);
 

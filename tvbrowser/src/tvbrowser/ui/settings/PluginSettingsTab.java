@@ -28,10 +28,7 @@ package tvbrowser.ui.settings;
 
 import java.awt.Cursor;
 import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -60,13 +57,21 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 
+import com.jgoodies.forms.builder.ButtonBarBuilder;
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+
+import devplugin.ActionMenu;
+import devplugin.Channel;
+import devplugin.InfoIf;
+import devplugin.PluginInfo;
 import tvbrowser.core.ChannelList;
 import tvbrowser.core.DummyChannel;
 import tvbrowser.core.PluginAndDataServiceComparator;
 import tvbrowser.core.PluginLoader;
 import tvbrowser.core.Settings;
 import tvbrowser.core.icontheme.IconLoader;
-
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
@@ -76,24 +81,12 @@ import tvbrowser.extras.common.InternalPluginProxyList;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.update.SoftwareUpdateDlg;
 import tvbrowser.ui.update.SoftwareUpdateDlg.FilterItem;
-
 import util.browserlauncher.Launch;
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
 import util.ui.Localizer;
 import util.ui.TVBrowserIcons;
 import util.ui.UiUtilities;
-
-import com.jgoodies.forms.builder.ButtonBarBuilder;
-import com.jgoodies.forms.factories.Borders;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
-
-import devplugin.ActionMenu;
-import devplugin.Channel;
-import devplugin.InfoIf;
-
-import devplugin.PluginInfo;
 
 /**
  * This Tab shows the Plugin-Manager.
@@ -137,19 +130,15 @@ public class PluginSettingsTab implements devplugin.SettingsTab, TableModelListe
     
     JButton update = new JButton(mLocalizer.msg("updateInstallPlugin", "Update/Install Plugins"), IconLoader.getInstance().getIconFromTheme("actions", "web-search", 16));
     
-    update.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        MainFrame.getInstance().showUpdatePluginsDlg(false);
-      }
+    update.addActionListener(e -> {
+      MainFrame.getInstance().showUpdatePluginsDlg(false);
     });
 
     contentPanel.add(update, cc.xy(2,1));
     
     mAutoUpdates = new JCheckBox(mLocalizer.msg("autoUpdates","Find plugin updates automatically"), Settings.propAutoUpdatePlugins.getBoolean());
-    mAutoUpdates.addItemListener(new ItemListener() {
-      public void itemStateChanged(ItemEvent e) {
-        Settings.propAutoUpdatePlugins.setBoolean(e.getStateChange() == ItemEvent.SELECTED);
-      }
+    mAutoUpdates.addItemListener(e -> {
+      Settings.propAutoUpdatePlugins.setBoolean(e.getStateChange() == ItemEvent.SELECTED);
     });
 
     contentPanel.add(mAutoUpdates, cc.xy(1,1));
@@ -158,10 +147,8 @@ public class PluginSettingsTab implements devplugin.SettingsTab, TableModelListe
     
     JLabel filterLabel = new JLabel(SoftwareUpdateDlg.mLocalizer.msg("filterLabel","Show only Plugins with the following category:"));
     mFilterBox = new JComboBox<FilterItem>();
-    mFilterBox.addItemListener(new ItemListener() {
-      public void itemStateChanged(ItemEvent e) {
-        populatePluginList();
-      }
+    mFilterBox.addItemListener(e -> {
+      populatePluginList();
     });
 
     categorySelection.add(filterLabel, cc.xy(1,1));
@@ -280,38 +267,33 @@ public class PluginSettingsTab implements devplugin.SettingsTab, TableModelListe
     ButtonBarBuilder builder = new ButtonBarBuilder();
 
     mInfo = new JButton(mLocalizer.msg("info","Info"), IconLoader.getInstance().getIconFromTheme("status", "dialog-information", 16));
-    mInfo.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        Object selection = getSelection();
-        
-        if(selection instanceof PluginProxy) {
-          showInfoDialog((PluginProxy)selection);
-        }
-        else if (selection instanceof InternalPluginProxyIf) {
-          showInfoDialog((InternalPluginProxyIf)selection);
-        }
-        else if (selection instanceof TvDataServiceProxy) {
-          showInformation((TvDataServiceProxy)selection);
-        }
+    mInfo.addActionListener(e -> {
+      Object selection = getSelection();
+      
+      if(selection instanceof PluginProxy) {
+        showInfoDialog((PluginProxy)selection);
+      }
+      else if (selection instanceof InternalPluginProxyIf) {
+        showInfoDialog((InternalPluginProxyIf)selection);
+      }
+      else if (selection instanceof TvDataServiceProxy) {
+        showInformation((TvDataServiceProxy)selection);
       }
     });
     
     mConfigure = new JButton(mLocalizer.msg("configure", "Configure"), TVBrowserIcons.preferences(TVBrowserIcons.SIZE_SMALL));
-    mConfigure.addActionListener(new ActionListener() {
-
-      public void actionPerformed(ActionEvent e) {
-        Object selection = getSelection();
-        
-        if(selection instanceof PluginProxy) {
-          configurePlugin((PluginProxy)selection);
-        }
-        else if (selection instanceof InternalPluginProxyIf) {
-          mSettingsDialog.showSettingsTab(((InternalPluginProxyIf) selection)
-              .getSettingsId());
-        }
-        else if (selection instanceof TvDataServiceProxy) {
-          configureService((TvDataServiceProxy)selection);
-        }
+    mConfigure.addActionListener(e -> {
+      Object selection = getSelection();
+      
+      if(selection instanceof PluginProxy) {
+        configurePlugin((PluginProxy)selection);
+      }
+      else if (selection instanceof InternalPluginProxyIf) {
+        mSettingsDialog.showSettingsTab(((InternalPluginProxyIf) selection)
+            .getSettingsId());
+      }
+      else if (selection instanceof TvDataServiceProxy) {
+        configureService((TvDataServiceProxy)selection);
       }
     });
     
@@ -323,14 +305,12 @@ public class PluginSettingsTab implements devplugin.SettingsTab, TableModelListe
     builder.addRelatedGap();
     
     mRemove = new JButton(Localizer.getLocalization(Localizer.I18N_DELETE),TVBrowserIcons.delete(TVBrowserIcons.SIZE_SMALL));
-    mRemove.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        if(getSelection() instanceof PluginProxy) {
-          removePlugin((PluginProxy)getSelection());
-        }
-        else {
-          removeService((TvDataServiceProxy)getSelection());
-        }
+    mRemove.addActionListener(e -> {
+      if(getSelection() instanceof PluginProxy) {
+        removePlugin((PluginProxy)getSelection());
+      }
+      else {
+        removeService((TvDataServiceProxy)getSelection());
       }
     });
     
@@ -365,20 +345,16 @@ public class PluginSettingsTab implements devplugin.SettingsTab, TableModelListe
     //configure
     JMenuItem configureMI;
     configureMI = new JMenuItem(mLocalizer.msg("configure", ""),TVBrowserIcons.preferences(TVBrowserIcons.SIZE_SMALL));
-    configureMI.addActionListener(new ActionListener(){
-        public void actionPerformed(ActionEvent e) {
-          mSettingsDialog.showSettingsTab(plugin.getSettingsId());
-        }
-      });
+    configureMI.addActionListener(e -> {
+      mSettingsDialog.showSettingsTab(plugin.getSettingsId());
+    });
     menu.add(configureMI);
     
     //help
     JMenuItem helpMI = new JMenuItem(mLocalizer.msg("pluginHelp","Online help"), IconLoader.getInstance().getIconFromTheme("apps", "help-browser", 16));
-    helpMI.addActionListener(new ActionListener(){
-      public void actionPerformed(ActionEvent e) {
-        String url = PluginInfo.getHelpUrl(plugin.getId());
-        Launch.openURL(url);
-      }
+    helpMI.addActionListener(e -> {
+      String url = PluginInfo.getHelpUrl(plugin.getId());
+      Launch.openURL(url);
     });
     menu.add(helpMI);
 
@@ -391,14 +367,12 @@ public class PluginSettingsTab implements devplugin.SettingsTab, TableModelListe
     //info
     JMenuItem infoMI = new JMenuItem(mLocalizer.msg("info","Info"), IconLoader.getInstance().getIconFromTheme("status", "dialog-information", 16));
     infoMI.setFont(infoMI.getFont().deriveFont(Font.BOLD));
-    infoMI.addActionListener(new ActionListener(){
-      public void actionPerformed(ActionEvent e) {
-        if(plugin instanceof PluginProxy) {
-          showInfoDialog((PluginProxy)plugin);
-        }
-        else if(plugin instanceof TvDataServiceProxy) {
-          showInformation((TvDataServiceProxy)plugin);
-        }
+    infoMI.addActionListener(e -> {
+      if(plugin instanceof PluginProxy) {
+        showInfoDialog((PluginProxy)plugin);
+      }
+      else if(plugin instanceof TvDataServiceProxy) {
+        showInformation((TvDataServiceProxy)plugin);
       }
     });
     menu.add(infoMI);
@@ -406,16 +380,14 @@ public class PluginSettingsTab implements devplugin.SettingsTab, TableModelListe
     //configure
     JMenuItem configureMI;
    	configureMI = new JMenuItem(mLocalizer.msg("configure", ""),TVBrowserIcons.preferences(TVBrowserIcons.SIZE_SMALL));
-   	configureMI.addActionListener(new ActionListener(){
-        public void actionPerformed(ActionEvent e) {
-          if(plugin instanceof PluginProxy) {
-            configurePlugin((PluginProxy)plugin);
-          }
-          else if(plugin instanceof TvDataServiceProxy) {
-            configureService((TvDataServiceProxy)plugin);
-          }
-        }
-      });
+   	configureMI.addActionListener(e -> {
+      if(plugin instanceof PluginProxy) {
+        configurePlugin((PluginProxy)plugin);
+      }
+      else if(plugin instanceof TvDataServiceProxy) {
+        configureService((TvDataServiceProxy)plugin);
+      }
+    });
     menu.add(configureMI);
 
     if(plugin instanceof PluginProxy) {
@@ -428,28 +400,24 @@ public class PluginSettingsTab implements devplugin.SettingsTab, TableModelListe
         enableMI = new JMenuItem(mLocalizer.msg("activate", ""), TVBrowserIcons.refresh(TVBrowserIcons.SIZE_SMALL));
         enableMI.setEnabled(!Settings.propBlockedPluginArray.isBlocked((PluginProxy)plugin));
       }
-      enableMI.addActionListener(new ActionListener(){
-          public void actionPerformed(ActionEvent e) {
-            int row = mTable.getSelectedRow();
-            if (row >= 0) {
-              mTableModel.setValueAt(!(Boolean)mTableModel.getValueAt(row, 0), row, 0);
-            }
-          }
-        });
+      enableMI.addActionListener(e -> {
+        int row = mTable.getSelectedRow();
+        if (row >= 0) {
+          mTableModel.setValueAt(!(Boolean)mTableModel.getValueAt(row, 0), row, 0);
+        }
+      });
       menu.add(enableMI);
     }
     
     if(plugin instanceof PluginProxy || plugin instanceof TvDataServiceProxy) {
       //delete
       JMenuItem deleteMI = new JMenuItem(mLocalizer.msg("remove","Remove"),  TVBrowserIcons.delete(TVBrowserIcons.SIZE_SMALL));
-      deleteMI.addActionListener(new ActionListener(){
-        public void actionPerformed(ActionEvent e) {
-          if(plugin instanceof PluginProxy) {
-            removePlugin((PluginProxy)plugin);
-          }
-          else {
-            removeService((TvDataServiceProxy)plugin);
-          }
+      deleteMI.addActionListener(e -> {
+        if(plugin instanceof PluginProxy) {
+          removePlugin((PluginProxy)plugin);
+        }
+        else {
+          removeService((TvDataServiceProxy)plugin);
         }
       });
       
@@ -465,21 +433,17 @@ public class PluginSettingsTab implements devplugin.SettingsTab, TableModelListe
     
     //help
     JMenuItem helpMI = new JMenuItem(mLocalizer.msg("pluginHelp","Online help"), IconLoader.getInstance().getIconFromTheme("apps", "help-browser", 16));
-    helpMI.addActionListener(new ActionListener(){
-      public void actionPerformed(ActionEvent e) {
-        String url = PluginInfo.getHelpUrl(plugin.getId());
-        Launch.openURL(url);
-      }
+    helpMI.addActionListener(e -> {
+      String url = PluginInfo.getHelpUrl(plugin.getId());
+      Launch.openURL(url);
     });
     menu.add(helpMI);
     
     menu.addSeparator();
 
     JMenuItem refreshMI = new JMenuItem(mLocalizer.msg("updateInstallPlugin", "Update/Install Plugins"), IconLoader.getInstance().getIconFromTheme("actions", "web-search", 16));
-    refreshMI.addActionListener(new ActionListener(){
-      public void actionPerformed(ActionEvent e) {
-        MainFrame.getInstance().showUpdatePluginsDlg(false);
-      }
+    refreshMI.addActionListener(e -> {
+      MainFrame.getInstance().showUpdatePluginsDlg(false);
     });
     menu.add(refreshMI);
 

@@ -7,7 +7,6 @@ import java.awt.FontMetrics;
 import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyListener;
 
 import javax.swing.BorderFactory;
@@ -17,11 +16,11 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 
+import devplugin.ProgramFilter;
 import tvbrowser.core.filters.FilterManagerImpl;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.ui.WrapperFilter;
 import util.ui.persona.Persona;
-import devplugin.ProgramFilter;
 
 /**
  * This Class represents the Panel above the ProgramPanel. If a
@@ -126,10 +125,8 @@ public class FilterPanel extends JPanel {
     add(mFilterLabel, BorderLayout.CENTER);
     mDeactivate = Persona.createPersonaButton(mLocalizer.msg("deactivate", "Deactivate"));
     mDeactivate.addKeyListener(keyListener);
-    mDeactivate.addActionListener(new ActionListener() {
-      public void actionPerformed(java.awt.event.ActionEvent e) {
-        MainFrame.getInstance().setProgramFilter(FilterManagerImpl.getInstance().getDefaultFilter());
-      };
+    mDeactivate.addActionListener(e -> {
+      MainFrame.getInstance().setProgramFilter(FilterManagerImpl.getInstance().getDefaultFilter());
     });
     
     if(Persona.getInstance().getHeaderImage() != null) {

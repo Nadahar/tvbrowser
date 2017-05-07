@@ -25,8 +25,6 @@ package tvbrowser.extras.searchplugin;
 
 import java.awt.Dimension;
 import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -167,17 +165,15 @@ class RepetitionDialog extends JDialog implements WindowClosingIf {
     stdSearch.setToolTipText(mLocalizer.msg("standardSearch",
         "Open standard search"));
 
-    stdSearch.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        close();
-        SearchFormSettings[] history = SearchPlugin.getSearchHistory();
-        
-        if(history != null && history.length > 0) {
-          SearchPlugin.getInstance().openSearchDialog(mText.getText());
-        }
-        else {
-          SearchPlugin.getInstance().openSearchDialog(mText.getText(),getSearchSettings());
-        }
+    stdSearch.addActionListener(e -> {
+      close();
+      SearchFormSettings[] history = SearchPlugin.getSearchHistory();
+      
+      if(history != null && history.length > 0) {
+        SearchPlugin.getInstance().openSearchDialog(mText.getText());
+      }
+      else {
+        SearchPlugin.getInstance().openSearchDialog(mText.getText(),getSearchSettings());
       }
     });
 
@@ -187,18 +183,14 @@ class RepetitionDialog extends JDialog implements WindowClosingIf {
     builder.addGlue();
 
     JButton go = new JButton(mLocalizer.msg("go", "go"));
-    go.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent actionEvent) {
-        search();
-      }
+    go.addActionListener(e -> {
+      search();
     });
 
     JButton cancel = new JButton(Localizer
         .getLocalization(Localizer.I18N_CANCEL));
-    cancel.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent actionEvent) {
-        close();
-      }
+    cancel.addActionListener(e -> {
+      close();
     });
 
     builder.addButton(new JButton[] { go, cancel });

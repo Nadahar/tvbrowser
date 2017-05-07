@@ -27,8 +27,6 @@ package tvbrowser.extras.searchplugin;
 
 import java.awt.Toolkit;
 import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -36,6 +34,14 @@ import java.io.ObjectOutputStream;
 
 import javax.swing.KeyStroke;
 
+import devplugin.ActionMenu;
+import devplugin.ButtonAction;
+import devplugin.Channel;
+import devplugin.ContextMenuAction;
+import devplugin.PluginManager;
+import devplugin.Program;
+import devplugin.SettingsTab;
+import devplugin.ThemeIcon;
 import tvbrowser.extras.common.ConfigurationHandler;
 import tvbrowser.extras.common.DataDeserializer;
 import tvbrowser.extras.common.DataSerializer;
@@ -45,14 +51,6 @@ import util.exc.ErrorHandler;
 import util.ui.SearchFormSettings;
 import util.ui.TVBrowserIcons;
 import util.ui.UiUtilities;
-import devplugin.ActionMenu;
-import devplugin.ButtonAction;
-import devplugin.Channel;
-import devplugin.ContextMenuAction;
-import devplugin.PluginManager;
-import devplugin.Program;
-import devplugin.SettingsTab;
-import devplugin.ThemeIcon;
 
 /**
  * Provides a dialog for searching programs.
@@ -211,10 +209,8 @@ public class SearchPlugin {
 
   protected static ActionMenu getButtonAction() {
     ButtonAction action = new ButtonAction();
-    action.setActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        getInstance().openSearchDialog("");
-      }
+    action.setActionListener(e -> {
+      getInstance().openSearchDialog("");
     });
 
     action.setBigIcon(TVBrowserIcons.search(TVBrowserIcons.SIZE_LARGE));
@@ -231,10 +227,8 @@ public class SearchPlugin {
     ContextMenuAction action = new ContextMenuAction();
     action.setText(mLocalizer.msg("searchRepetion", "Search repetition"));
     action.setSmallIcon(TVBrowserIcons.search(TVBrowserIcons.SIZE_SMALL));
-    action.setActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent event) {
-        searchRepetitions(program);
-      }
+    action.setActionListener(e -> {
+      searchRepetitions(program);
     });
     return new ActionMenu(action);
   }

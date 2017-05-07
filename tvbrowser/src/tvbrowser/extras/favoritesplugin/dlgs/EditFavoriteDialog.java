@@ -31,10 +31,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.util.ArrayList;
 
 import javax.swing.JButton;
@@ -177,16 +174,12 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
     JButton cancelBtn = new JButton(Localizer.getLocalization(Localizer.I18N_CANCEL));
     JButton okBtn = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
 
-    cancelBtn.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        setVisible(false);
-      }
+    cancelBtn.addActionListener(e -> {
+      setVisible(false);
     });
 
-    okBtn.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        saveAndClose();
-      }
+    okBtn.addActionListener(e -> {
+      saveAndClose();
     });
 
     ButtonBarBuilder buttons = new ButtonBarBuilder();
@@ -228,10 +221,8 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
     JButton changeTitle = new JButton(mLocalizer.msg("changeName","Change name"));
     changeTitle.setFocusable(false);
 
-    changeTitle.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        setFavoriteName();
-      }
+    changeTitle.addActionListener(e -> {
+      setFavoriteName();
     });
 
     panel.add(changeTitle, cc.xy(5,1));
@@ -343,33 +334,27 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
     mTimePeriodChooser.setEnabled(isLimitedByTime);
     mLimitDaysCB.setEnabled(mLimitTimeCb.isSelected());
 
-    mLimitChannelCb.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        setLimitChannelEnabled(mLimitChannelCb.isSelected());
-      }
+    mLimitChannelCb.addActionListener(e -> {
+      setLimitChannelEnabled(mLimitChannelCb.isSelected());
     });
 
-    mLimitTimeCb.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        mTimePeriodChooser.setEnabled(mLimitTimeCb.isSelected());
-        mLimitDaysCB.setEnabled(mLimitTimeCb.isSelected());
-      }
+    mLimitTimeCb.addActionListener(e -> {
+      mTimePeriodChooser.setEnabled(mLimitTimeCb.isSelected());
+      mLimitDaysCB.setEnabled(mLimitTimeCb.isSelected());
     });
 
-    mChangeChannelsBtn.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        ChannelChooserDlg dlg = new ChannelChooserDlg((Window)EditFavoriteDialog.this, mChannelArr, null,
-            ChannelChooserDlg.SELECTABLE_ITEM_LIST);
-        UiUtilities.centerAndShow(dlg);
-        Channel[] chArr = dlg.getChannels();
-        if (chArr != null) {
-          mChannelArr = dlg.getChannels();
-          if (mChannelArr.length == 0) {
-            mLimitChannelCb.setSelected(false);
-            setLimitChannelEnabled(false);
-          }
-          mChannelLabel.setText(getChannelString(mChannelArr));
+    mChangeChannelsBtn.addActionListener(e -> {
+      ChannelChooserDlg dlg = new ChannelChooserDlg((Window)EditFavoriteDialog.this, mChannelArr, null,
+          ChannelChooserDlg.SELECTABLE_ITEM_LIST);
+      UiUtilities.centerAndShow(dlg);
+      Channel[] chArr = dlg.getChannels();
+      if (chArr != null) {
+        mChannelArr = dlg.getChannels();
+        if (mChannelArr.length == 0) {
+          mLimitChannelCb.setSelected(false);
+          setLimitChannelEnabled(false);
         }
+        mChannelLabel.setText(getChannelString(mChannelArr));
       }
     });
 
@@ -398,11 +383,8 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
     panel.add(mReminderMinutesSelection = ReminderConstants.getPreReminderMinutesSelection(mFavorite.getReminderMinutesDefault()), CC.xy(3, 1));
 
     mReminderMinutesSelection.setEnabled(false);
-    mUseReminderCb.addItemListener(new ItemListener() {
-      @Override
-      public void itemStateChanged(ItemEvent e) {
-        mReminderMinutesSelection.setEnabled(e.getStateChange() == ItemEvent.SELECTED);
-      }
+    mUseReminderCb.addItemListener(e -> {
+      mReminderMinutesSelection.setEnabled(e.getStateChange() == ItemEvent.SELECTED);
     });
     
     String[] s = mFavorite.getReminderConfiguration().getReminderServices();
@@ -461,18 +443,16 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
     mPassProgramPlugins = mFavorite.getForwardPlugins();
     mPassProgramsLb = new JLabel(getForwardPluginsLabelString(mPassProgramPlugins));
     mChangePassProgramsBtn = new JButton(mLocalizer.msg("change", "Change"));
-    mChangePassProgramsBtn.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        PluginChooserDlg dlg = new PluginChooserDlg((Window)EditFavoriteDialog.this, mPassProgramPlugins, null, ReminderPluginProxy.getInstance(), FavoritesPlugin.getInstance().getClientPluginTargetIds());
-        UiUtilities.centerAndShow(dlg);
-        ProgramReceiveTarget[] pluginArr = dlg.getReceiveTargets();
-        if (pluginArr != null) {
-          mPassProgramPlugins = pluginArr;
-          mPassProgramsLb.setText(getForwardPluginsLabelString(mPassProgramPlugins));
-          if (pluginArr.length == 0) {
-            mPassProgramsCheckBox.setSelected(false);
-            updatePassProgramsPanel();
-          }
+    mChangePassProgramsBtn.addActionListener(e -> {
+      PluginChooserDlg dlg = new PluginChooserDlg((Window)EditFavoriteDialog.this, mPassProgramPlugins, null, ReminderPluginProxy.getInstance(), FavoritesPlugin.getInstance().getClientPluginTargetIds());
+      UiUtilities.centerAndShow(dlg);
+      ProgramReceiveTarget[] pluginArr = dlg.getReceiveTargets();
+      if (pluginArr != null) {
+        mPassProgramPlugins = pluginArr;
+        mPassProgramsLb.setText(getForwardPluginsLabelString(mPassProgramPlugins));
+        if (pluginArr.length == 0) {
+          mPassProgramsCheckBox.setSelected(false);
+          updatePassProgramsPanel();
         }
       }
     });
@@ -500,10 +480,8 @@ public class EditFavoriteDialog extends JDialog implements WindowClosingIf {
     
     mPassProgramsCheckBox.setSelected(mPassProgramPlugins != null && mPassProgramPlugins.length > 0 && !mPassProgramsLb.getText().equals(mLocalizer.msg("dontpass", "don't pass programs")));
     mPassProgramsCheckBox.setEnabled(FavoritesPlugin.getInstance().getClientPluginTargetIds().length == 0);
-    mPassProgramsCheckBox.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        updatePassProgramsPanel();
-      }
+    mPassProgramsCheckBox.addActionListener(e -> {
+      updatePassProgramsPanel();
     });
 
     updatePassProgramsPanel();

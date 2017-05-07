@@ -247,35 +247,33 @@ public class FavoritesPlugin {
           mThreadPool = Executors.newFixedThreadPool(Math.max(Runtime.getRuntime().availableProcessors(),3));
         }
 
-        Runnable update = new Runnable() {
-          public void run() {
-            if(removedDayProgram != null) {
-              Iterator<Program> it = removedDayProgram.getPrograms();
+        Runnable update = () -> {
+          if(removedDayProgram != null) {
+            Iterator<Program> it1 = removedDayProgram.getPrograms();
 
-              while (it.hasNext()) {
-                try {
-                  Program p = it.next();
+            while (it1.hasNext()) {
+              try {
+                Program p1 = it1.next();
 
-                  for (Favorite fav : FavoriteTreeModel.getInstance().getFavoriteArr()) {
-                    fav.removeProgram(p);
-                  }
-                }catch(Throwable t) {
-                  ErrorHandler.handle("Error in removing program from Favorites",t);
+                for (Favorite fav1 : FavoriteTreeModel.getInstance().getFavoriteArr()) {
+                  fav1.removeProgram(p1);
                 }
+              }catch(Throwable t) {
+                ErrorHandler.handle("Error in removing program from Favorites",t);
               }
             }
+          }
 
-            if(addedDayProgram != null) {
-              Iterator<Program> it = addedDayProgram.getPrograms();
-              while (it.hasNext()) {
-                final Program p = it.next();
+          if(addedDayProgram != null) {
+            Iterator<Program> it2 = addedDayProgram.getPrograms();
+            while (it2.hasNext()) {
+              final Program p2 = it2.next();
 
-                for (Favorite fav : FavoriteTreeModel.getInstance().getFavoriteArr()) {
-                  try {
-                    fav.tryToMatch(p);
-                  } catch (TvBrowserException e) {
-                    ErrorHandler.handle(e);
-                  }
+              for (Favorite fav2 : FavoriteTreeModel.getInstance().getFavoriteArr()) {
+                try {
+                  fav2.tryToMatch(p2);
+                } catch (TvBrowserException e) {
+                  ErrorHandler.handle(e);
                 }
               }
             }
@@ -497,82 +495,76 @@ public class FavoritesPlugin {
   }
   
   private void addPanel() {
-    SwingUtilities.invokeLater(new Runnable() {
-      @Override
-      public void run() {
-        if(mSettings.getProperty("provideTab", "true").equals("true")) {
-          if(mMangePanel == null) {
-            int splitPanePosition = getIntegerSetting(mSettings, "splitpanePosition",200);
+    SwingUtilities.invokeLater(() -> {
+      if(mSettings.getProperty("provideTab", "true").equals("true")) {
+        if(mMangePanel == null) {
+          int splitPanePosition = getIntegerSetting(mSettings, "splitpanePosition",200);
+          
+          mMangePanel = new ManageFavoritesPanel(null, splitPanePosition, false, null, true);
+          
+          
+       /*   mMangePanel.addAncestorListener(new AncestorListener() {
+            private boolean mCheck = false;
+            @Override
+            public void ancestorRemoved(AncestorEvent event) {}
             
-            mMangePanel = new ManageFavoritesPanel(null, splitPanePosition, false, null, true);
+            @Override
+            public void ancestorMoved(AncestorEvent event) {}
             
-            
-         /*   mMangePanel.addAncestorListener(new AncestorListener() {
-              private boolean mCheck = false;
-              @Override
-              public void ancestorRemoved(AncestorEvent event) {}
-              
-              @Override
-              public void ancestorMoved(AncestorEvent event) {}
-              
-              @Override
-              public void ancestorAdded(AncestorEvent event) {
-                if(mMangePanel != null) {
-                  mMangePanel.scrollToFirstNotExpiredIndex(mCheck);
-                  
-                  mCheck = true;
-                }
-              }
-            });*/
-            
-            
-            mAncestorListener = new AncestorListener() {
-              private boolean mCheck = false;
-              @Override
-              public void ancestorRemoved(AncestorEvent event) {
-                Persona.getInstance().removePersonaListener(mMangePanel);
-                mMangePanel.removePersonaListener();
-                mCenterPanel.remove(mMangePanel);
-              }
-              
-              @Override
-              public void ancestorMoved(AncestorEvent event) {}
-              
-              @Override
-              public void ancestorAdded(AncestorEvent event) {
-                Persona.getInstance().registerPersonaListener(mMangePanel);
-                mMangePanel.registerPersonaListener();
-                mCenterPanel.add(mMangePanel, BorderLayout.CENTER);
-                mCenterPanel.repaint();
-                mMangePanel.updatePersona();
+            @Override
+            public void ancestorAdded(AncestorEvent event) {
+              if(mMangePanel != null) {
+                mMangePanel.scrollToFirstNotExpiredIndex(mCheck);
                 
-                SwingUtilities.invokeLater(new Runnable() {
-                  @Override
-                  public void run() {
-                    mMangePanel.scrollToFirstNotExpiredIndex(mCheck);
-                    mCheck = true;
-                  }
-                });
-                            
+                mCheck = true;
               }
-            };
-            mCenterPanel.addAncestorListener(mAncestorListener);
-            
-            if(mCenterPanel.isVisible()) {
-              mAncestorListener.ancestorAdded(null);
             }
+          });*/
+          
+          
+          mAncestorListener = new AncestorListener() {
+            private boolean mCheck = false;
+            @Override
+            public void ancestorRemoved(AncestorEvent event) {
+              Persona.getInstance().removePersonaListener(mMangePanel);
+              mMangePanel.removePersonaListener();
+              mCenterPanel.remove(mMangePanel);
+            }
+            
+            @Override
+            public void ancestorMoved(AncestorEvent event) {}
+            
+            @Override
+            public void ancestorAdded(AncestorEvent event) {
+              Persona.getInstance().registerPersonaListener(mMangePanel);
+              mMangePanel.registerPersonaListener();
+              mCenterPanel.add(mMangePanel, BorderLayout.CENTER);
+              mCenterPanel.repaint();
+              mMangePanel.updatePersona();
+              
+              SwingUtilities.invokeLater(() -> {
+                mMangePanel.scrollToFirstNotExpiredIndex(mCheck);
+                mCheck = true;
+              });
+                          
+            }
+          };
+          mCenterPanel.addAncestorListener(mAncestorListener);
+          
+          if(mCenterPanel.isVisible()) {
+            mAncestorListener.ancestorAdded(null);
           }
         }
-        else {
-          if(mMangePanel != null) {
-            Persona.getInstance().removePersonaListener(mMangePanel);
-            mMangePanel.removePersonaListener();
-          }
-          
-          mCenterPanel.removeAncestorListener(mAncestorListener);
-          
-          mMangePanel = null;
+      }
+      else {
+        if(mMangePanel != null) {
+          Persona.getInstance().removePersonaListener(mMangePanel);
+          mMangePanel.removePersonaListener();
         }
+        
+        mCenterPanel.removeAncestorListener(mAncestorListener);
+        
+        mMangePanel = null;
       }
     });
   }
@@ -1144,12 +1136,9 @@ public class FavoritesPlugin {
     
     Thread thread = new Thread("Save favorites") {
       public void run() {
-        SwingUtilities.invokeLater(new Runnable() {
-          @Override
-          public void run() {
-            if(mMangePanel != null) {
-              mMangePanel.handleFavoriteEvent();
-            }
+        SwingUtilities.invokeLater(() -> {
+          if(mMangePanel != null) {
+            mMangePanel.handleFavoriteEvent();
           }
         });
       }

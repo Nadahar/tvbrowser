@@ -25,8 +25,6 @@
 package util.paramhandler;
 
 import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -155,74 +153,62 @@ public class ParamInputField extends JPanel {
     }
     final JComboBox<String> insert = new JComboBox<>(items.toArray(new String[items.size()]));
     add(insert, cc.xy(layout.getColumnCount() - 4, 3));
-    insert.addActionListener(new ActionListener() {
-      
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        if (insert.getSelectedIndex() > 0) {
-          // find out whether to insert with braces or not
-          boolean inFunction = false;
-          String newText = insert.getSelectedItem().toString();
-          int selStart = mParamText.getSelectionStart();
-          if (selStart > 0) {
-            try {
-              if (mParamText.getText(selStart - 1, 1).equals("(")) {
-                inFunction = true;
-              }
-            } catch (BadLocationException e1) {
-              e1.printStackTrace();
+    insert.addActionListener(e -> {
+      if (insert.getSelectedIndex() > 0) {
+        // find out whether to insert with braces or not
+        boolean inFunction = false;
+        String newText = insert.getSelectedItem().toString();
+        int selStart = mParamText.getSelectionStart();
+        if (selStart > 0) {
+          try {
+            if (mParamText.getText(selStart - 1, 1).equals("(")) {
+              inFunction = true;
             }
+          } catch (BadLocationException e11) {
+            e11.printStackTrace();
           }
-          int selEnd = mParamText.getSelectionEnd();
-          if (selEnd < mParamText.getText().length()) {
-            try {
-              if (mParamText.getText(selEnd + 1, 1).equals(")")) {
-                inFunction = true;
-              }
-            } catch (BadLocationException e1) {
-              e1.printStackTrace();
-            }
-          }
-          if (!inFunction) {
-            newText = "{" + newText + "}";
-          }
-          mParamText.insert(newText, selStart);
-          // reposition cursor if this was a function itself
-          int lastBrace = newText.lastIndexOf(')');
-          if (lastBrace > 0) {
-            if (newText.length() - lastBrace <= 2) {
-              mParamText.setCaretPosition(mParamText.getSelectionStart() - (newText.length() - lastBrace));
-            }
-          }
-          
-          mParamText.requestFocus();
         }
+        int selEnd = mParamText.getSelectionEnd();
+        if (selEnd < mParamText.getText().length()) {
+          try {
+            if (mParamText.getText(selEnd + 1, 1).equals(")")) {
+              inFunction = true;
+            }
+          } catch (BadLocationException e12) {
+            e12.printStackTrace();
+          }
+        }
+        if (!inFunction) {
+          newText = "{" + newText + "}";
+        }
+        mParamText.insert(newText, selStart);
+        // reposition cursor if this was a function itself
+        int lastBrace = newText.lastIndexOf(')');
+        if (lastBrace > 0) {
+          if (newText.length() - lastBrace <= 2) {
+            mParamText.setCaretPosition(mParamText.getSelectionStart() - (newText.length() - lastBrace));
+          }
+        }
+        
+        mParamText.requestFocus();
       }
     });
     
     JButton check = new JButton(mLocalizer.msg("check","Check"));
-    check.addActionListener(new ActionListener() {
-
-      public void actionPerformed(ActionEvent arg0) {
-        Window bestparent = UiUtilities.getBestDialogParent(ParamInputField.this);
-        ParamCheckDialog dialog = new ParamCheckDialog(bestparent,
-            mParamLibrary, mParamText.getText());
-        dialog.setVisible(true);
-      }
-      
+    check.addActionListener(arg0 -> {
+      Window bestparent = UiUtilities.getBestDialogParent(ParamInputField.this);
+      ParamCheckDialog dialog = new ParamCheckDialog(bestparent,
+          mParamLibrary, mParamText.getText());
+      dialog.setVisible(true);
     });
     
     add(check, cc.xy(layout.getColumnCount() - 2,3));
     
     JButton help = new JButton(Localizer.getLocalization(Localizer.I18N_HELP));
-    help.addActionListener(new ActionListener() {
-
-      public void actionPerformed(ActionEvent arg0) {
-        Window bestparent = UiUtilities.getBestDialogParent(ParamInputField.this);
-        ParamHelpDialog dialog = new ParamHelpDialog(bestparent, mParamLibrary);
-        dialog.setVisible(true);
-      }
-      
+    help.addActionListener(e -> {
+      Window bestparent = UiUtilities.getBestDialogParent(ParamInputField.this);
+      ParamHelpDialog dialog = new ParamHelpDialog(bestparent, mParamLibrary);
+      dialog.setVisible(true);
     });
     
     add(help, cc.xy(layout.getColumnCount(),3));

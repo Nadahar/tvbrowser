@@ -28,8 +28,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -108,17 +106,13 @@ public class PluginInformationDialog extends JDialog implements WindowClosingIf 
     JButton[] buttons = {new JButton(mLocalizer.msg("showList","Show the list with the Plugins now")),
         new JButton(mLocalizer.msg("closeDialog","Close this dialog"))};
 
-    buttons[0].addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        MainFrame.getInstance().showUpdatePluginsDlg(true);
-        close();
-      }
+    buttons[0].addActionListener(e -> {
+      MainFrame.getInstance().showUpdatePluginsDlg(true);
+      close();
     });
 
-    buttons[1].addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        close();
-      }
+    buttons[1].addActionListener(e -> {
+      close();
     });
 
     buttons[0].setFont(buttons[0].getFont().deriveFont(Font.BOLD,13));

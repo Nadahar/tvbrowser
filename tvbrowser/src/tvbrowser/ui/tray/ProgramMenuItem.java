@@ -31,8 +31,6 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Insets;
 import java.awt.Point;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -224,12 +222,8 @@ public class ProgramMenuItem extends JMenuItem {
     mInsets = getMargin();
     setUI(new ProgramMenuItemUI(p, mChannelName,mIcon,mShowStartTime,mShowDate,showIcon,mShowName || sortNumber.trim().length() > 0,time));
     
-    mTimer = new Timer(10000, new ActionListener() {
-
-      public void actionPerformed(ActionEvent e) {
-        repaint();
-      }
-
+    mTimer = new Timer(10000, e -> {
+      repaint();
     });
     startTimer();
   }
@@ -403,10 +397,8 @@ public class ProgramMenuItem extends JMenuItem {
     popupParent.setVisible(true);
     popupParent.toFront();
     
-    SwingUtilities.invokeLater(new Runnable() {
-      public void run() {
-        menu.show(popupParent,p.x - popupParent.getLocation().x,p.y - popupParent.getLocation().y);
-      };
+    SwingUtilities.invokeLater(() -> {
+      menu.show(popupParent,p.x - popupParent.getLocation().x,p.y - popupParent.getLocation().y);
     });
   }
 

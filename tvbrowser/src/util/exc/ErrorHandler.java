@@ -110,12 +110,9 @@ public class ErrorHandler {
     mLog.log(Level.SEVERE, msg, throwable);
     try {
       if(!MainFrame.isStarting()) {
-        UIThreadRunner.invokeAndWait(new Runnable() {
-          @Override
-          public void run() {
-            ErrorWindow errorWindow = new ErrorWindow(mParent, msg, throwable);
-            errorWindow.centerAndShow();
-          }
+        UIThreadRunner.invokeAndWait(() -> {
+          ErrorWindow errorWindow = new ErrorWindow(mParent, msg, throwable);
+          errorWindow.centerAndShow();
         });
       }
     } catch (InterruptedException e) {

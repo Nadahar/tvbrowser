@@ -1,8 +1,6 @@
 package tvbrowser.ui.settings.tablebackgroundstyles;
 
 import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -69,10 +67,8 @@ public class TimeBlockBackgroundStyle implements TableBackgroundStyle {
     p1.add(ProgramTableSettingsTab.createBrowseButton(mContent, mTimeBlockBackground2TF));
 
     mTimeBlockShowWestChB = new JCheckBox(mLocalizer.msg("timeBlock.showWest", "Show left border"), Settings.propTimeBlockShowWest.getBoolean());
-    mTimeBlockShowWestChB.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        handleTimeBlockShowWest();
-      }
+    mTimeBlockShowWestChB.addActionListener(e -> {
+      handleTimeBlockShowWest();
     });
     mContent.add(mTimeBlockShowWestChB);
 

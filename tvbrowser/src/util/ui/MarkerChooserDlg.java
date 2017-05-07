@@ -28,8 +28,6 @@ package util.ui;
 import java.awt.Dialog;
 import java.awt.Frame;
 import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -169,22 +167,18 @@ public class MarkerChooserDlg extends JDialog implements WindowClosingIf {
     JButton okBt = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
     JButton cancelBt = new JButton(Localizer.getLocalization(Localizer.I18N_CANCEL));
 
-    okBt.addActionListener(new ActionListener(){
-      public void actionPerformed(ActionEvent event) {
-        List<Marker> list = mPluginItemList.getSelectionList();
-        mResultPluginArr = new Marker[list.size()];
-        for (int i = 0; i < list.size(); i++) {
-          mResultPluginArr[i]=list.get(i);
-        }
-        setVisible(false);
+    okBt.addActionListener(event -> {
+      List<Marker> list1 = mPluginItemList.getSelectionList();
+      mResultPluginArr = new Marker[list1.size()];
+      for (int i = 0; i < list1.size(); i++) {
+        mResultPluginArr[i]=list1.get(i);
       }
-      });
+      setVisible(false);
+    });
 
-    cancelBt.addActionListener(new ActionListener(){
-      public void actionPerformed(ActionEvent event) {
-        mResultPluginArr = null;
-        setVisible(false);
-      }
+    cancelBt.addActionListener(event -> {
+      mResultPluginArr = null;
+      setVisible(false);
     });
 
     ButtonBarBuilder builder = new ButtonBarBuilder();

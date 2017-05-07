@@ -159,16 +159,12 @@ public class ReminderTimerListener {
       }
     }
 
-    SwingUtilities.invokeLater(new Runnable() {
+    SwingUtilities.invokeLater(() -> new Thread("Update reminder tree") {
       public void run() {
-        new Thread("Update reminder tree") {
-          public void run() {
-            setPriority(Thread.MIN_PRIORITY);
-            ReminderPlugin.getInstance().updateRootNode(true);
-          }
-        }.start();
+        setPriority(Thread.MIN_PRIORITY);
+        ReminderPlugin.getInstance().updateRootNode(true);
       }
-    });
+    }.start());
   }
 
   

@@ -23,8 +23,6 @@
 package tvbrowser.core.filters.filtercomponents;
 
 import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -35,16 +33,15 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
-import util.exc.TvBrowserException;
-import util.ui.LineNumberHeader;
-import util.ui.SearchFormSettings;
-import util.ui.UiUtilities;
-
 import com.jgoodies.forms.factories.CC;
 import com.jgoodies.forms.layout.FormLayout;
 
 import devplugin.Program;
 import devplugin.ProgramSearcher;
+import util.exc.TvBrowserException;
+import util.ui.LineNumberHeader;
+import util.ui.SearchFormSettings;
+import util.ui.UiUtilities;
 
 /**
  * This FilterComponent allows Filtering of large Search-Array
@@ -152,12 +149,8 @@ public class MassFilterComponent extends AbstractFilterComponent {
     
     JButton config = new JButton(mLocalizer.msg("configure", "Search options"));
 
-    config.addActionListener(new ActionListener() {
-
-      public void actionPerformed(ActionEvent e) {
-        showConfigDialog();
-      }
-
+    config.addActionListener(e -> {
+      showConfigDialog();
     });
     
     mSettingsPanel.add(config, CC.xy(2, 3));

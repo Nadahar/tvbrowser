@@ -693,11 +693,9 @@ public class PluginTree extends JTree implements DragGestureListener,
             }
           } catch (Exception ee) {}
         }
-        SwingUtilities.invokeLater(new Runnable() {
-          public void run() {
-            paintImmediately(mCueLine.getBounds());
-            paintImmediately(mGhostRect.getBounds());
-          };
+        SwingUtilities.invokeLater(() -> {
+          paintImmediately(mCueLine.getBounds());
+          paintImmediately(mGhostRect.getBounds());
         });
 
         mPlugin = null;

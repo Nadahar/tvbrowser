@@ -44,12 +44,10 @@ public class ReminderTableModel extends AbstractTableModel {
     
     insertAvailableTitles();
     
-    mTitleFilterBox.addItemListener(new ItemListener() {
-      public void itemStateChanged(ItemEvent e) {
-        if(e.getStateChange() == ItemEvent.SELECTED && mHandleBoxSelection) {
-          mLastSelectedTitle = e.getItem().toString();
-          updateTableEntries();
-        }
+    mTitleFilterBox.addItemListener(e -> {
+      if(e.getStateChange() == ItemEvent.SELECTED && mHandleBoxSelection) {
+        mLastSelectedTitle = e.getItem().toString();
+        updateTableEntries();
       }
     });
     

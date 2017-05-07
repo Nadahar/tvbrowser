@@ -548,15 +548,13 @@ public class Mirror {
 
     mLog.info("Loading MirrorDate from " + url);
 
-    new Thread(new Runnable() {
-      public void run() {
-        try {
-          mMirrorDownloadData = IOUtilities.loadFileFromHttpServer(new URL(url), 10000);
-        } catch (Exception e) {
-          mDownloadException = true;
-        }
-        mMirrorDownloadRunning = false;
-      };
+    new Thread((Runnable) () -> {
+      try {
+        mMirrorDownloadData = IOUtilities.loadFileFromHttpServer(new URL(url), 10000);
+      } catch (Exception e) {
+        mDownloadException = true;
+      }
+      mMirrorDownloadRunning = false;
     }, "Load mirror date from "+url).start();
 
     int num = 0;

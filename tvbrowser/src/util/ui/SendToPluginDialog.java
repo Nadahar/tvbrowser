@@ -8,8 +8,6 @@ import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -236,21 +234,15 @@ public class SendToPluginDialog extends JDialog implements WindowClosingIf {
     
     JButton sendButton = new JButton(mLocalizer.msg("send", "Send"));
 
-    sendButton.addActionListener(new ActionListener() {
-
-      public void actionPerformed(ActionEvent evt) {
-        send();
-        setVisible(false);
-      }
+    sendButton.addActionListener(evt -> {
+      send();
+      setVisible(false);
     });
     sendButton.setEnabled(mPrograms.length > 0);
 
     JButton cancelButton = new JButton(Localizer.getLocalization(Localizer.I18N_CANCEL));
-    cancelButton.addActionListener(new ActionListener() {
-
-      public void actionPerformed(ActionEvent evt) {
-        setVisible(false);
-      }
+    cancelButton.addActionListener(e -> {
+      setVisible(false);
     });
 
     ButtonBarBuilder buttonBuilder = new ButtonBarBuilder();

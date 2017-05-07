@@ -58,6 +58,14 @@ import javax.swing.KeyStroke;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
 
+import devplugin.ActionMenu;
+import devplugin.Channel;
+import devplugin.ChannelFilter;
+import devplugin.ContextMenuSeparatorAction;
+import devplugin.Date;
+import devplugin.PluginInfo;
+import devplugin.ProgramFilter;
+import devplugin.SettingsItem;
 import tvbrowser.TVBrowser;
 import tvbrowser.core.ChannelList;
 import tvbrowser.core.Settings;
@@ -93,14 +101,6 @@ import util.ui.TVBrowserIcons;
 import util.ui.UIThreadRunner;
 import util.ui.UiUtilities;
 import util.ui.persona.Persona;
-import devplugin.ActionMenu;
-import devplugin.Channel;
-import devplugin.ChannelFilter;
-import devplugin.ContextMenuSeparatorAction;
-import devplugin.Date;
-import devplugin.PluginInfo;
-import devplugin.ProgramFilter;
-import devplugin.SettingsItem;
 
 public abstract class MenuBar extends JMenuBar implements ActionListener {
 
@@ -549,12 +549,8 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 
   void updateChannelGroupMenu() {
     try {
-      UIThreadRunner.invokeAndWait(new Runnable() {
-
-        @Override
-        public void run() {
-          updateChannelGroupMenu(mChannelGroupMenu);
-        }
+      UIThreadRunner.invokeAndWait(() -> {
+        updateChannelGroupMenu(mChannelGroupMenu);
       });
     } catch (InterruptedException e) {
       // TODO Auto-generated catch block
@@ -572,11 +568,8 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 		JRadioButtonMenuItem menuItem = new JRadioButtonMenuItem(mLocalizer.msg(
 				"channelGroupAll", "All channels"));
 		menuItem.setSelected(channelFilterName == null);
-		menuItem.addActionListener(new ActionListener() {
-
-			public void actionPerformed(ActionEvent e) {
-				MainFrame.getInstance().setChannelFilter(null);
-			}
+		menuItem.addActionListener(e -> {
+		  MainFrame.getInstance().setChannelFilter(null);
 		});
 		// selective groups
 		menu.add(menuItem);
@@ -586,11 +579,8 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 			try {
         menuItem = new JRadioButtonMenuItem(ChannelFilter.createChannelFilterForName(filterName).toString());
         
-        menuItem.addActionListener(new ActionListener() {
-
-          public void actionPerformed(ActionEvent e) {
-            MainFrame.getInstance().setChannelFilter(ChannelFilterList.getInstance().getChannelFilterForName(filterName));
-          }
+        menuItem.addActionListener(e -> {
+          MainFrame.getInstance().setChannelFilter(ChannelFilterList.getInstance().getChannelFilterForName(filterName));
         });
         menu.add(menuItem);
         if (channelFilterName != null && filterName.equals(channelFilterName)) {
@@ -608,52 +598,46 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 		// new channel group
 		JMenuItem menuItemAdd = createMenuItem("channelGroupNew",
 				"Add channel group", null, true);
-		menuItemAdd.addActionListener(new ActionListener() {
-
-			public void actionPerformed(ActionEvent e) {
-			  Window w = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
-			  
-				EditFilterComponentDlg dlg = null;
-				
-				if(w instanceof JDialog) {
-				  dlg = new EditFilterComponentDlg((JDialog)w, null, ChannelFilterComponent.class);
-				}
-				else {
-				  dlg = new EditFilterComponentDlg((JFrame)w, null, ChannelFilterComponent.class);
-				}
-				
-				FilterComponent rule = dlg.getFilterComponent();
-				if ((rule != null) && (rule instanceof ChannelFilterComponent)) {
-					FilterComponentList.getInstance().add(rule);
-					FilterComponentList.getInstance().store();
-					MainFrame.getInstance()
-							.setChannelFilter(ChannelFilterList.getInstance().getChannelFilterForName(rule.getName()));
-				}
-			}
-		});
+		menuItemAdd.addActionListener(e -> {
+      Window w = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
+      
+    	EditFilterComponentDlg dlg = null;
+    	
+    	if(w instanceof JDialog) {
+    	  dlg = new EditFilterComponentDlg((JDialog)w, null, ChannelFilterComponent.class);
+    	}
+    	else {
+    	  dlg = new EditFilterComponentDlg((JFrame)w, null, ChannelFilterComponent.class);
+    	}
+    	
+    	FilterComponent rule = dlg.getFilterComponent();
+    	if ((rule != null) && (rule instanceof ChannelFilterComponent)) {
+    		FilterComponentList.getInstance().add(rule);
+    		FilterComponentList.getInstance().store();
+    		MainFrame.getInstance()
+    				.setChannelFilter(ChannelFilterList.getInstance().getChannelFilterForName(rule.getName()));
+    	}
+    });
 		menu.add(menuItemAdd);
 		// edit channel group
     JMenuItem menuItemEdit = createMenuItem("channelGroupEdit",
         "Edit current channel group", null, true);
-    menuItemEdit.addActionListener(new ActionListener() {
-
-      public void actionPerformed(ActionEvent e) {
-        ChannelFilter rule = MainFrame.getInstance().getChannelFilter();
-        if (rule != null) {
-          FilterComponent test = FilterComponentList.getInstance().getFilterComponentByName(rule.getName());
-          
-          if(test instanceof ChannelFilterComponent) {
-            // rule must be removed before editing it, otherwise the dialog doesn't save it
-            FilterComponentList.getInstance().remove(test.getName());
-            EditFilterComponentDlg dlg = new EditFilterComponentDlg(UiUtilities.getLastModalChildOf(MainFrame.getInstance()), test);
-            FilterComponent newRule = dlg.getFilterComponent();
-            if (newRule == null) { // restore original rule
-              newRule = test;
-            }
-            FilterComponentList.getInstance().add(newRule);
-            FilterComponentList.getInstance().store();
-            MainFrame.getInstance().setChannelFilter(ChannelFilterList.getInstance().getChannelFilterForName(newRule.getName()));
+    menuItemEdit.addActionListener(e -> {
+      ChannelFilter rule = MainFrame.getInstance().getChannelFilter();
+      if (rule != null) {
+        FilterComponent test = FilterComponentList.getInstance().getFilterComponentByName(rule.getName());
+        
+        if(test instanceof ChannelFilterComponent) {
+          // rule must be removed before editing it, otherwise the dialog doesn't save it
+          FilterComponentList.getInstance().remove(test.getName());
+          EditFilterComponentDlg dlg = new EditFilterComponentDlg(UiUtilities.getLastModalChildOf(MainFrame.getInstance()), test);
+          FilterComponent newRule = dlg.getFilterComponent();
+          if (newRule == null) { // restore original rule
+            newRule = test;
           }
+          FilterComponentList.getInstance().add(newRule);
+          FilterComponentList.getInstance().store();
+          MainFrame.getInstance().setChannelFilter(ChannelFilterList.getInstance().getChannelFilterForName(newRule.getName()));
         }
       }
     });
@@ -663,10 +647,8 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 
 	private JMenuItem createDateMenuItem(final Date date) {
 		JMenuItem item = new JMenuItem(date.getLongDateString());
-		item.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				mMainFrame.goTo(date);
-			}
+		item.addActionListener(e -> {
+		  mMainFrame.goTo(date);
 		});
 		return item;
 	}
@@ -688,10 +670,8 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 		
 		JMenuItem item = new JMenuItem(text.toString(), icon);
 				
-		item.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				mMainFrame.showChannel(channel);
-			}
+		item.addActionListener(e -> {
+			mMainFrame.showChannel(channel);
 		});
 
 		return item;
@@ -702,10 +682,8 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 		int min = time % 60;
 		JMenuItem item = new JMenuItem((h < 10 ? "0" : "") + h + ":"
 				+ (min < 10 ? "0" : "") + min);
-		item.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				mMainFrame.scrollToTime(time,true);
-			}
+		item.addActionListener(e -> {
+		  mMainFrame.scrollToTime(time,true);
 		});
 		return item;
 	}
@@ -720,12 +698,10 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 			result[i] = new JRadioButtonMenuItem(filter.toString());
 			final JRadioButtonMenuItem item = result[i];
 			group.add(item);
-			result[i].addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent event) {
-					mMainFrame.setProgramFilter(filter);
-					item.setSelected(true);
-				}
-			});
+			result[i].addActionListener(event -> {
+      	mMainFrame.setProgramFilter(filter);
+      	item.setSelected(true);
+      });
 		}
 		result[0].setSelected(true);
 		return result;
@@ -742,12 +718,10 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 				JMenuItem item = new JMenuItem(name, new ImageIcon(
 						"imgs/tvbrowser16.png"));
 				setMnemonic(item);
-				item.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
-						LicenseBox box = new LicenseBox(mMainFrame, license, false);
-						util.ui.UiUtilities.centerAndShow(box);
-					}
-				});
+				item.addActionListener(e -> {
+        	LicenseBox box = new LicenseBox(mMainFrame, license, false);
+        	util.ui.UiUtilities.centerAndShow(box);
+        });
 				licenseMenu.add(item);
 			}
 		}
@@ -1035,11 +1009,8 @@ public abstract class MenuBar extends JMenuBar implements ActionListener {
 	private JMenuItem pluginHelpMenuItem(final String name, final String helpUrl) {
 		JMenuItem item = new JMenuItem(name);
 		setMnemonic(item);
-		item.addActionListener(new ActionListener() {
-
-			public void actionPerformed(ActionEvent e) {
-				Launch.openURL(helpUrl);
-			}
+		item.addActionListener(e -> {
+		  Launch.openURL(helpUrl);
 		});
 		return item;
 	}

@@ -43,9 +43,6 @@ import javax.swing.ToolTipManager;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 
-import tvbrowser.core.icontheme.IconLoader;
-import util.ui.Localizer;
-
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -53,6 +50,8 @@ import com.jgoodies.forms.layout.FormLayout;
 
 import devplugin.Date;
 import devplugin.ProgramFilter;
+import tvbrowser.core.icontheme.IconLoader;
+import util.ui.Localizer;
 
 /**
  * A Panel for FindAsYouType in program table.
@@ -191,13 +190,8 @@ public class FaytPanel extends JPanel {
       FaytFilter.getInstance().setSearchString(mText);
       MainFrame.getInstance().setProgramFilter(FaytFilter.getInstance());
       
-      SwingUtilities.invokeLater(new Runnable() {
-        
-        @Override
-        public void run() {
-          MainFrame.getInstance().getProgramTableScrollPane().requestFocusInWindow();
-          
-        }
+      SwingUtilities.invokeLater(() -> {
+        MainFrame.getInstance().getProgramTableScrollPane().requestFocusInWindow();
       });
     }
   }
@@ -218,18 +212,12 @@ public class FaytPanel extends JPanel {
   public synchronized void closeFayt() {
     setVisible(false);
 
-    SwingUtilities.invokeLater(new Runnable() {
-      @Override
-      public void run() {
-        MainFrame.getInstance().setProgramFilter(mPreviousFilter);
-        if(MainFrame.getInstance().getCurrentSelectedDate().equals(Date.getCurrentDate())) {
-          SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-              MainFrame.getInstance().scrollToNow();    
-            }
-          });
-        }
+    SwingUtilities.invokeLater(() -> {
+      MainFrame.getInstance().setProgramFilter(mPreviousFilter);
+      if(MainFrame.getInstance().getCurrentSelectedDate().equals(Date.getCurrentDate())) {
+        SwingUtilities.invokeLater(() -> {
+          MainFrame.getInstance().scrollToNow();
+        });
       }
     });
   }

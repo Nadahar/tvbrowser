@@ -24,8 +24,6 @@
 package util.ui;
 
 import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 import javax.swing.JButton;
@@ -76,25 +74,23 @@ public class ProgramReceiveTargetSelectionPanel extends JPanel {
     
     final ProgramReceiveTargetSelectionPanel thisPanel = this;
     
-    selectionButton.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {try{
-        Window w = UiUtilities.getLastModalChildOf(parent);
-        PluginChooserDlg chooser = null;
+    selectionButton.addActionListener(e -> {try{
+      Window w = UiUtilities.getLastModalChildOf(parent);
+      PluginChooserDlg chooser = null;
+      
+      chooser = new PluginChooserDlg(w, mReceiveTargets, description, caller);
+      chooser.setVisible(true);
+      
+      if(chooser.getReceiveTargets() != null) {
+        mReceiveTargets = chooser.getReceiveTargets();
         
-        chooser = new PluginChooserDlg(w, mReceiveTargets, description, caller);
-        chooser.setVisible(true);
-        
-        if(chooser.getReceiveTargets() != null) {
-          mReceiveTargets = chooser.getReceiveTargets();
-          
-          for(ChangeListener listener : mChangeListenerArray) {
-            listener.stateChanged(new ChangeEvent(thisPanel));
-          }
+        for(ChangeListener listener : mChangeListenerArray) {
+          listener.stateChanged(new ChangeEvent(thisPanel));
         }
-        
-        handlePluginSelection();
-        ;}catch(Exception ee) {ee.printStackTrace();}
       }
+      
+      handlePluginSelection();
+      ;}catch(Exception ee) {ee.printStackTrace();}
     });
     
     CellConstraints cc = new CellConstraints();

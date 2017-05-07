@@ -33,8 +33,6 @@ import java.awt.Frame;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -97,26 +95,22 @@ public class AboutBox extends JDialog implements WindowClosingIf{
     btnPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 10));
 
     JButton copyClipboard = new JButton(mLocalizer.msg("copyClipboard", "Copy to Clipboard"));
-    copyClipboard.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-            Document infoDoc = infoEP.getDocument();
+    copyClipboard.addActionListener(e -> {
+        Document infoDoc = infoEP.getDocument();
 
-            try {
-                StringSelection sel = new StringSelection(infoDoc.getText(0, infoDoc.getLength()));
-                Toolkit.getDefaultToolkit().getSystemClipboard().setContents(sel, null);
-            } catch (BadLocationException e1) {
-                e1.printStackTrace();
-            }
+        try {
+            StringSelection sel = new StringSelection(infoDoc.getText(0, infoDoc.getLength()));
+            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(sel, null);
+        } catch (BadLocationException e1) {
+            e1.printStackTrace();
         }
-      });
+    });
     btnPanel.add(copyClipboard);
 
     JButton closeBtn = new JButton(Localizer.getLocalization(Localizer.I18N_CLOSE));
 
-    closeBtn.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        close();
-      }
+    closeBtn.addActionListener(e -> {
+      close();
     });
 
     setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);

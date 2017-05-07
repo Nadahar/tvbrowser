@@ -27,8 +27,6 @@
 package tvbrowser.extras.favoritesplugin.wizards;
 
 import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 
@@ -38,13 +36,6 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import tvbrowser.extras.common.DayListCellRenderer;
-import tvbrowser.extras.common.LimitationConfiguration;
-import tvbrowser.extras.favoritesplugin.core.Favorite;
-import util.ui.ChannelChooserDlg;
-import util.ui.TimePeriodChooser;
-import util.ui.UiUtilities;
-
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -52,6 +43,12 @@ import com.jgoodies.forms.layout.FormLayout;
 
 import devplugin.Channel;
 import devplugin.Program;
+import tvbrowser.extras.common.DayListCellRenderer;
+import tvbrowser.extras.common.LimitationConfiguration;
+import tvbrowser.extras.favoritesplugin.core.Favorite;
+import util.ui.ChannelChooserDlg;
+import util.ui.TimePeriodChooser;
+import util.ui.UiUtilities;
 
 public class LimitationsWizardStep extends AbstractWizardStep {
 
@@ -142,38 +139,30 @@ public class LimitationsWizardStep extends AbstractWizardStep {
 
     updateControls();
 
-    mChannelCb.addActionListener(new ActionListener(){
-      public void actionPerformed(ActionEvent e) {
-        updateControls();
-      }
+    mChannelCb.addActionListener(e -> {
+      updateControls();
     });
 
-    mDayOfWeekCb.addActionListener(new ActionListener(){
-      public void actionPerformed(ActionEvent e) {
-        updateControls();
-      }
+    mDayOfWeekCb.addActionListener(e -> {
+      updateControls();
     });
 
-    mTimeCb.addActionListener(new ActionListener(){
-      public void actionPerformed(ActionEvent e) {
-        updateControls();
-      }
+    mTimeCb.addActionListener(e -> {
+      updateControls();
     });
 
-    mChooseChannelsBtn.addActionListener(new ActionListener(){
-      public void actionPerformed(ActionEvent e) {
-        Window parent = UiUtilities.getBestDialogParent(mContent);
-        ChannelChooserDlg dlg = new ChannelChooserDlg(parent, mChannelArr,
-            null,
-            ChannelChooserDlg.SELECTABLE_ITEM_LIST);
-        UiUtilities.centerAndShow(dlg);
-        Channel[] chArr = dlg.getChannels();
-        if (chArr != null) {
-          mChannelArr = dlg.getChannels();
-          if (mChannelArr.length == 0) {
-            mChannelCb.setSelected(false);
-            updateControls();
-          }
+    mChooseChannelsBtn.addActionListener(e -> {
+      Window parent = UiUtilities.getBestDialogParent(mContent);
+      ChannelChooserDlg dlg = new ChannelChooserDlg(parent, mChannelArr,
+          null,
+          ChannelChooserDlg.SELECTABLE_ITEM_LIST);
+      UiUtilities.centerAndShow(dlg);
+      Channel[] chArr = dlg.getChannels();
+      if (chArr != null) {
+        mChannelArr = dlg.getChannels();
+        if (mChannelArr.length == 0) {
+          mChannelCb.setSelected(false);
+          updateControls();
         }
       }
     });

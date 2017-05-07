@@ -34,8 +34,6 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.datatransfer.StringSelection;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
@@ -171,30 +169,24 @@ class ErrorWindow {
     if (messageType == ErrorHandler.SHOW_YES_NO) {
 
       mYesBt = new JButton(ErrorHandler.mLocalizer.msg("yes", "Yes"));
-      mYesBt.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent evt) {
-          mReturn = ErrorHandler.YES_PRESSED;
-          getWindow().dispose();
-        }
+      mYesBt.addActionListener(evt -> {
+        mReturn = ErrorHandler.YES_PRESSED;
+        getWindow().dispose();
       });
       buttonPn.add(mYesBt);
 
       mNoBt = new JButton(ErrorHandler.mLocalizer.msg("no", "No"));
-      mNoBt.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent evt) {
-          mReturn = ErrorHandler.NO_PRESSED;
-          getWindow().dispose();
-        }
+      mNoBt.addActionListener(evt -> {
+        mReturn = ErrorHandler.NO_PRESSED;
+        getWindow().dispose();
       });
       buttonPn.add(mNoBt);
 
     } else {
       mOkBt = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
-      mOkBt.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent evt) {
-          mReturn = ErrorHandler.OK_PRESSED;
-          getWindow().dispose();
-        }
+      mOkBt.addActionListener(evt -> {
+        mReturn = ErrorHandler.OK_PRESSED;
+        getWindow().dispose();
       });
       buttonPn.add(mOkBt);
     }
@@ -207,10 +199,8 @@ class ErrorWindow {
 
     msg = ErrorHandler.mLocalizer.msg("details", "Details");
     mDetailBt = new JButton(msg);
-    mDetailBt.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent evt) {
-        setDetailsVisible(!mDetailsVisible);
-      }
+    mDetailBt.addActionListener(e -> {
+      setDetailsVisible(!mDetailsVisible);
     });
     buttonPn.add(mDetailBt);
 
@@ -285,10 +275,8 @@ class ErrorWindow {
 
     msg = ErrorHandler.mLocalizer.msg("copyToClipboard", "Copy to clipboard");
     JButton copyToClipBoardBt = new JButton(msg);
-    copyToClipBoardBt.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent evt) {
-        copyDetailsToClipBoard();
-      }
+    copyToClipBoardBt.addActionListener(e -> {
+      copyDetailsToClipBoard();
     });
     detailPn.add(copyToClipBoardBt, BorderLayout.SOUTH);
 

@@ -92,27 +92,23 @@ public class LicenseBox extends JDialog implements ActionListener,WindowClosingI
       btnPanel.add(mAgreeBt);
       
       mRemainingSecs=5;
-      mTimer = new Timer(1000, new ActionListener() {
-        public void actionPerformed(ActionEvent evt) {
-          mRemainingSecs--;
-            if (mRemainingSecs==0) {
-              mAgreeBt.setText(mLocalizer.msg("agree","I agree"));
-              mAgreeBt.setEnabled(true);
-              mTimer.stop();
-            }
-            else {
-              mAgreeBt.setText(mLocalizer.msg("agree","I agree")+" ("+mRemainingSecs+") ");
-            }
+      mTimer = new Timer(1000, evt -> {
+        mRemainingSecs--;
+          if (mRemainingSecs==0) {
+            mAgreeBt.setText(mLocalizer.msg("agree","I agree"));
+            mAgreeBt.setEnabled(true);
+            mTimer.stop();
+          }
+          else {
+            mAgreeBt.setText(mLocalizer.msg("agree","I agree")+" ("+mRemainingSecs+") ");
           }
         });
       mTimer.start();
     }
     else {
       btnPanel.add(mCloseBt);
-      mCloseBt.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          setVisible(false);
-        }
+      mCloseBt.addActionListener(e -> {
+        setVisible(false);
       });
     }
     

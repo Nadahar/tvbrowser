@@ -26,8 +26,6 @@
 package util.ui;
 
 import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -162,19 +160,15 @@ public class OrderChooser<E> extends JPanel implements ListDropAction<Selectable
 
     mUpBt = new JButton(TVBrowserIcons.up(TVBrowserIcons.SIZE_LARGE));
     mUpBt.setToolTipText(mLocalizer.msg("tooltip.up", "Move selected rows up"));
-    mUpBt.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent evt) {
-        UiUtilities.moveSelectedItems(mList,-1);
-      }
+    mUpBt.addActionListener(e -> {
+      UiUtilities.moveSelectedItems(mList,-1);
     });
     mButtonPanel.add(mUpBt);
 
     mDownBt = new JButton(TVBrowserIcons.down(TVBrowserIcons.SIZE_LARGE));
     mDownBt.setToolTipText(mLocalizer.msg("tooltip.down", "Move selected rows down"));
-    mDownBt.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent evt) {
-        UiUtilities.moveSelectedItems(mList,1);
-      }
+    mDownBt.addActionListener(e -> {
+      UiUtilities.moveSelectedItems(mList,1);
     });
     mButtonPanel.add(mDownBt);
     
@@ -182,19 +176,15 @@ public class OrderChooser<E> extends JPanel implements ListDropAction<Selectable
     
     mSelectAllBt = new JButton(mLocalizer.msg("addAll", "Select all items"));
     mSelectAllBt.setToolTipText(mLocalizer.msg("tooltip.all", "Select all items in the list."));
-    mSelectAllBt.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        selectAll();
-      }
+    mSelectAllBt.addActionListener(e -> {
+      selectAll();
     });
     p3.add(mSelectAllBt, BorderLayout.WEST);
 
     mDeSelectAllBt = new JButton(mLocalizer.msg("delAll", "Deselect all items"));
     mDeSelectAllBt.setToolTipText(mLocalizer.msg("tooltip.none", "Deselect all items in the list."));
-    mDeSelectAllBt.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        clearSelection();
-      }
+    mDeSelectAllBt.addActionListener(e -> {
+      clearSelection();
     });
     p3.add(mDeSelectAllBt, BorderLayout.EAST);
     

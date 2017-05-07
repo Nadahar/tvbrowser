@@ -1,8 +1,5 @@
 package tvbrowser.ui.settings;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
 import javax.swing.ButtonGroup;
 import javax.swing.Icon;
 import javax.swing.JCheckBox;
@@ -16,11 +13,6 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
-import tvbrowser.core.Settings;
-import util.ui.Localizer;
-import util.ui.MarkPriorityComboBoxRenderer;
-import util.ui.UiUtilities;
-
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.factories.CC;
@@ -28,6 +20,10 @@ import com.jgoodies.forms.layout.FormLayout;
 
 import devplugin.SettingsItem;
 import devplugin.SettingsTab;
+import tvbrowser.core.Settings;
+import util.ui.Localizer;
+import util.ui.MarkPriorityComboBoxRenderer;
+import util.ui.UiUtilities;
 
 /**
  * The settings tab for the IMPORTANT_TYPE of the ProgramMenuItem.
@@ -147,25 +143,19 @@ public class TrayImportantSettingsTab implements SettingsTab {
     
     setEnabled(true);
     
-    mShowInSubMenu.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        mSize.setModel(new SpinnerNumberModel(((Integer)mSize.getValue()).intValue(), 1, mMaxSizeSubmenu, 1));
-        mSizeInfo.setText(mLocalizer.msg("sizeInfo","(maximum: {0})",mMaxSizeSubmenu));
-      }
+    mShowInSubMenu.addActionListener(e -> {
+      mSize.setModel(new SpinnerNumberModel(((Integer)mSize.getValue()).intValue(), 1, mMaxSizeSubmenu, 1));
+      mSizeInfo.setText(mLocalizer.msg("sizeInfo","(maximum: {0})",mMaxSizeSubmenu));
     });
 
-    mShowInTray.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        int value = ((Integer)mSize.getValue()).intValue();
-        mSize.setModel(new SpinnerNumberModel(value > mMaxSizeTray ? mMaxSizeTray : value, 1, mMaxSizeTray, 1));
-        mSizeInfo.setText(mLocalizer.msg("sizeInfo","(maximum: {0})",mMaxSizeTray));
-      }
+    mShowInTray.addActionListener(e -> {
+      int value = ((Integer)mSize.getValue()).intValue();
+      mSize.setModel(new SpinnerNumberModel(value > mMaxSizeTray ? mMaxSizeTray : value, 1, mMaxSizeTray, 1));
+      mSizeInfo.setText(mLocalizer.msg("sizeInfo","(maximum: {0})",mMaxSizeTray));
     });
     
-    mIsEnabled.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        setEnabled(false);
-      }
+    mIsEnabled.addActionListener(e -> {
+      setEnabled(false);
     });
     
     return builder.getPanel();

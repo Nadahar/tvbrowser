@@ -28,8 +28,6 @@ package tvbrowser.extras.reminderplugin;
 
 import java.awt.FlowLayout;
 import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyAdapter;
@@ -57,6 +55,14 @@ import javax.swing.SpinnerNumberModel;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.factories.CC;
+import com.jgoodies.forms.layout.FormLayout;
+
+import devplugin.ProgramReceiveIf;
+import devplugin.ProgramReceiveTarget;
+import devplugin.SettingsTab;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.misc.PropertyDefaults;
@@ -67,15 +73,6 @@ import util.ui.FileCheckBox;
 import util.ui.PluginChooserDlg;
 import util.ui.ScrollableJPanel;
 import util.ui.UiUtilities;
-
-import com.jgoodies.forms.builder.PanelBuilder;
-import com.jgoodies.forms.factories.Borders;
-import com.jgoodies.forms.factories.CC;
-import com.jgoodies.forms.layout.FormLayout;
-
-import devplugin.ProgramReceiveIf;
-import devplugin.ProgramReceiveTarget;
-import devplugin.SettingsTab;
 
 
 /**
@@ -240,22 +237,20 @@ public class ReminderSettingsTab implements SettingsTab {
 
     handlePluginSelection();
 
-    choose.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {try{
-        Window parent = UiUtilities.getLastModalChildOf(MainFrame
-              .getInstance());
-        PluginChooserDlg chooser = null;
-        chooser = new PluginChooserDlg(parent, mClientPluginTargets, null,
-              ReminderPluginProxy.getInstance());
-        
-        chooser.setVisible(true);
+    choose.addActionListener(e -> {try{
+      Window parent = UiUtilities.getLastModalChildOf(MainFrame
+            .getInstance());
+      PluginChooserDlg chooser = null;
+      chooser = new PluginChooserDlg(parent, mClientPluginTargets, null,
+            ReminderPluginProxy.getInstance());
+      
+      chooser.setVisible(true);
 
-        if(chooser.getReceiveTargets() != null) {
-          mClientPluginTargets = chooser.getReceiveTargets();
-        }
-
-        handlePluginSelection();}catch(Exception ee) {ee.printStackTrace();}
+      if(chooser.getReceiveTargets() != null) {
+        mClientPluginTargets = chooser.getReceiveTargets();
       }
+
+      handlePluginSelection();}catch(Exception ee) {ee.printStackTrace();}
     });
 
     int autoCloseReminderTime = 10;
@@ -384,13 +379,10 @@ public class ReminderSettingsTab implements SettingsTab {
     
     pb.add(timeButtonBehaviour, CC.xyw(2, 34, 7));
     
-    mProvideTab.addItemListener(new ItemListener() {
-      @Override
-      public void itemStateChanged(ItemEvent e) {
-        scrollTimeLabel.setEnabled(e.getStateChange() == ItemEvent.SELECTED);
-        mScrollTimeToNext.setEnabled(scrollTimeLabel.isEnabled());
-        mScrollTimeOnDay.setEnabled(scrollTimeLabel.isEnabled());
-      }
+    mProvideTab.addItemListener(e -> {
+      scrollTimeLabel.setEnabled(e.getStateChange() == ItemEvent.SELECTED);
+      mScrollTimeToNext.setEnabled(scrollTimeLabel.isEnabled());
+      mScrollTimeOnDay.setEnabled(scrollTimeLabel.isEnabled());
     });
 
     pb.addSeparator(DefaultMarkingPrioritySelectionPanel.getTitle(), CC.xyw(1,36,10));
@@ -435,53 +427,49 @@ public class ReminderSettingsTab implements SettingsTab {
       mAutoCloseReminderTimeSp.setEnabled((e.getStateChange() == ItemEvent.SELECTED || mFrameRemindersChB.isSelected()) && mCloseOnTime.isSelected());
     });
 
-    soundTestBt.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent evt) {
-        if(evt.getActionCommand().compareTo(mLocalizer.msg("test", "Test")) == 0) {
-          mTestSound = ReminderPlugin.playSound(mSoundFileChB.getTextField().getText());
-          if(mTestSound != null) {
-            soundTestBt.setText(mLocalizer.msg("stop", "Stop"));
-          }
-          if(mTestSound != null) {
-            if(mTestSound instanceof SourceDataLine) {
-              ((SourceDataLine)mTestSound).addLineListener(new LineListener() {
-                public void update(LineEvent event) {
-                  if(event.getType() == Type.CLOSE || event.getType() == Type.STOP) {
-                    soundTestBt.setText(mLocalizer.msg("test", "Test"));
-                  }
-                }
-              });
-            }
-            else if(mTestSound instanceof Sequencer) {
-              new Thread("Test MIDI sound") {
-                public void run() {
-                  setPriority(Thread.MIN_PRIORITY);
-                  while(((Sequencer)mTestSound).isRunning()) {
-                    try {
-                      Thread.sleep(100);
-                    }catch(Exception ee) {}
-                  }
-
+    soundTestBt.addActionListener(evt -> {
+      if(evt.getActionCommand().compareTo(mLocalizer.msg("test", "Test")) == 0) {
+        mTestSound = ReminderPlugin.playSound(mSoundFileChB.getTextField().getText());
+        if(mTestSound != null) {
+          soundTestBt.setText(mLocalizer.msg("stop", "Stop"));
+        }
+        if(mTestSound != null) {
+          if(mTestSound instanceof SourceDataLine) {
+            ((SourceDataLine)mTestSound).addLineListener(new LineListener() {
+              public void update(LineEvent event) {
+                if(event.getType() == Type.CLOSE || event.getType() == Type.STOP) {
                   soundTestBt.setText(mLocalizer.msg("test", "Test"));
                 }
-              }.start();
-            }
+              }
+            });
+          }
+          else if(mTestSound instanceof Sequencer) {
+            new Thread("Test MIDI sound") {
+              public void run() {
+                setPriority(Thread.MIN_PRIORITY);
+                while(((Sequencer)mTestSound).isRunning()) {
+                  try {
+                    Thread.sleep(100);
+                  }catch(Exception ee) {}
+                }
+
+                soundTestBt.setText(mLocalizer.msg("test", "Test"));
+              }
+            }.start();
           }
         }
-        else if(mTestSound != null) {
-          if(mTestSound instanceof SourceDataLine && ((SourceDataLine)mTestSound).isRunning()) {
-            ((SourceDataLine)mTestSound).stop();
-          } else if(mTestSound instanceof Sequencer && ((Sequencer)mTestSound).isRunning()) {
-            ((Sequencer)mTestSound).stop();
-          }
+      }
+      else if(mTestSound != null) {
+        if(mTestSound instanceof SourceDataLine && ((SourceDataLine)mTestSound).isRunning()) {
+          ((SourceDataLine)mTestSound).stop();
+        } else if(mTestSound instanceof Sequencer && ((Sequencer)mTestSound).isRunning()) {
+          ((Sequencer)mTestSound).stop();
         }
       }
     });
 
-    mSoundFileChB.getCheckBox().addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        soundTestBt.setEnabled(mSoundFileChB.isSelected());
-      }
+    mSoundFileChB.getCheckBox().addActionListener(e -> {
+      soundTestBt.setEnabled(mSoundFileChB.isSelected());
     });
 
     mSoundFileChB.getTextField().addKeyListener(new KeyAdapter() {
@@ -508,36 +496,28 @@ public class ReminderSettingsTab implements SettingsTab {
     });
     mSoundFileChB.getTextField().getKeyListeners()[0].keyReleased(null);
 
-    mExecChB.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        mExecFileDialogBtn.setEnabled(mExecChB.isSelected());
-        if (mExecFileDialogBtn.isEnabled()) {
-          showFileSettingsDialog();
-        }
-      }
-    });
-
-    mExecFileDialogBtn.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
+    mExecChB.addActionListener(e -> {
+      mExecFileDialogBtn.setEnabled(mExecChB.isSelected());
+      if (mExecFileDialogBtn.isEnabled()) {
         showFileSettingsDialog();
       }
     });
 
-    ItemListener autoCloseListener = new ItemListener() {
-      public void itemStateChanged(ItemEvent e) {
-        mAutoCloseReminderTimeSp.setEnabled(mCloseOnTime.isSelected());
-        secondsLabel.setEnabled(mCloseOnTime.isSelected());
-        mShowTimeCounter.setEnabled(mCloseOnTime.isSelected() || mCloseOnEnd.isSelected());
-      }
+    mExecFileDialogBtn.addActionListener(e -> {
+      showFileSettingsDialog();
+    });
+
+    ItemListener autoCloseListener = e -> {
+      mAutoCloseReminderTimeSp.setEnabled(mCloseOnTime.isSelected());
+      secondsLabel.setEnabled(mCloseOnTime.isSelected());
+      mShowTimeCounter.setEnabled(mCloseOnTime.isSelected() || mCloseOnEnd.isSelected());
     };
 
     mCloseOnEnd.addItemListener(autoCloseListener);
     mCloseOnTime.addItemListener(autoCloseListener);
 
-    mCloseOnTime.addItemListener(new ItemListener() {
-      public void itemStateChanged(ItemEvent e) {
-        mShowTimeCounter.setEnabled(e.getStateChange() == ItemEvent.SELECTED);
-      }
+    mCloseOnTime.addItemListener(e -> {
+      mShowTimeCounter.setEnabled(e.getStateChange() == ItemEvent.SELECTED);
     });
 
     return pb.getPanel();

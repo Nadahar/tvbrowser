@@ -147,32 +147,30 @@ class CheckNetworkConnection {
 	  mRunningCount.incrementAndGet();
 	
     // Start Check in second Thread
-    new Thread(new Runnable() {
-      public void run() {
-        if(!mResult && url != null) {
-          try {
-            URLConnection test = url.openConnection();
+    new Thread((Runnable) () -> {
+      if(!mResult && url != null) {
+        try {
+          URLConnection test = url.openConnection();
+          
+          if(test instanceof HttpsURLConnection) {
+            HttpsURLConnection connection1 = (HttpsURLConnection)test;
             
-            if(test instanceof HttpsURLConnection) {
-              HttpsURLConnection connection = (HttpsURLConnection)test;
-              
-              mResult = (connection.getResponseCode() == HttpsURLConnection.HTTP_OK)
-                  || (connection.getResponseCode() == HttpsURLConnection.HTTP_SEE_OTHER)
-                  || (connection.getResponseCode() == HttpsURLConnection.HTTP_ACCEPTED)
-                  || (connection.getResponseCode() == HttpsURLConnection.HTTP_CREATED) || mResult;
-            }
-            else {
-              HttpURLConnection connection = (HttpURLConnection) test;
-              mResult = (connection.getResponseCode() == HttpURLConnection.HTTP_OK)
-                  || (connection.getResponseCode() == HttpURLConnection.HTTP_SEE_OTHER)
-                  || (connection.getResponseCode() == HttpURLConnection.HTTP_ACCEPTED)
-                  || (connection.getResponseCode() == HttpURLConnection.HTTP_CREATED) || mResult;  
-            }
-          } catch (IOException e) {}
-        }
-        
-        mRunningCount.decrementAndGet();
-      };
+            mResult = (connection1.getResponseCode() == HttpsURLConnection.HTTP_OK)
+                || (connection1.getResponseCode() == HttpsURLConnection.HTTP_SEE_OTHER)
+                || (connection1.getResponseCode() == HttpsURLConnection.HTTP_ACCEPTED)
+                || (connection1.getResponseCode() == HttpsURLConnection.HTTP_CREATED) || mResult;
+          }
+          else {
+            HttpURLConnection connection2 = (HttpURLConnection) test;
+            mResult = (connection2.getResponseCode() == HttpURLConnection.HTTP_OK)
+                || (connection2.getResponseCode() == HttpURLConnection.HTTP_SEE_OTHER)
+                || (connection2.getResponseCode() == HttpURLConnection.HTTP_ACCEPTED)
+                || (connection2.getResponseCode() == HttpURLConnection.HTTP_CREATED) || mResult;  
+          }
+        } catch (IOException e) {}
+      }
+      
+      mRunningCount.decrementAndGet();
     }, "Check network connection").start();
     
     int num = 0;
@@ -182,12 +180,10 @@ class CheckNetworkConnection {
       num++;
       if (num == 7) {
         // Show the Dialog after 700 MS
-        SwingUtilities.invokeLater(new Runnable() {
-          public void run() {
-            if(!mResult && showWaitingDialog) {
-              showDialog();
-            }
-          };
+        SwingUtilities.invokeLater(() -> {
+          if(!mResult && showWaitingDialog) {
+            showDialog();
+          }
         });
       }
       try {

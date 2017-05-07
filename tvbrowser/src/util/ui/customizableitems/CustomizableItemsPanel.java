@@ -28,8 +28,6 @@ package util.ui.customizableitems;
 
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -173,21 +171,17 @@ public class CustomizableItemsPanel<E> extends JPanel {
     add(rightPanel);
 
 
-    mRightBt.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent event) {
-        Object[] items = UiUtilities.moveSelectedItems(mLeftList, mRightList);
-        if (items != null && items.length>0) {
-          fireItemTransferredToRightList(items);
-        }
+    mRightBt.addActionListener(event -> {
+      Object[] items = UiUtilities.moveSelectedItems(mLeftList, mRightList);
+      if (items != null && items.length>0) {
+        fireItemTransferredToRightList(items);
       }
     });
 
-    mLeftBt.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent event) {
-        Object[] items = UiUtilities.moveSelectedItems(mRightList, mLeftList);
-        if (items != null && items.length > 0) {
-          fireItemTransferredToLeftList(items);
-        }
+    mLeftBt.addActionListener(event -> {
+      Object[] items = UiUtilities.moveSelectedItems(mRightList, mLeftList);
+      if (items != null && items.length > 0) {
+        fireItemTransferredToLeftList(items);
       }
     });
 
@@ -218,16 +212,12 @@ public class CustomizableItemsPanel<E> extends JPanel {
 
 
 
-    mUpBt.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent event) {
-        UiUtilities.moveSelectedItems(mRightList, -1);
-      }
+    mUpBt.addActionListener(e -> {
+      UiUtilities.moveSelectedItems(mRightList, -1);
     });
 
-    mDownBt.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent event) {
-        UiUtilities.moveSelectedItems(mRightList, 1);
-      }
+    mDownBt.addActionListener(e -> {
+      UiUtilities.moveSelectedItems(mRightList, 1);
     });
     
     updateEnabled();

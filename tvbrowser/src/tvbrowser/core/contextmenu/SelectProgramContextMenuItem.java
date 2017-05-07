@@ -30,11 +30,11 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.SwingUtilities;
 
-import tvbrowser.ui.mainframe.MainFrame;
-import util.ui.Localizer;
 import devplugin.ActionMenu;
 import devplugin.ContextMenuIf;
 import devplugin.Program;
+import tvbrowser.ui.mainframe.MainFrame;
+import util.ui.Localizer;
 
 public class SelectProgramContextMenuItem implements ContextMenuIf {
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(SelectProgramContextMenuItem.class);
@@ -60,11 +60,8 @@ public class SelectProgramContextMenuItem implements ContextMenuIf {
     AbstractAction action = new AbstractAction() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        SwingUtilities.invokeLater(new Runnable() {
-          @Override
-          public void run() {
-            MainFrame.getInstance().selectProgram(program,false);          
-          }
+        SwingUtilities.invokeLater(() -> {
+          MainFrame.getInstance().selectProgram(program,false);          
         });
       }
     };

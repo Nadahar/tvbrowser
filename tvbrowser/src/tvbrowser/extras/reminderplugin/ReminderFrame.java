@@ -30,8 +30,6 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
@@ -56,6 +54,13 @@ import javax.swing.WindowConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.RowSpec;
+
+import devplugin.Date;
+import devplugin.Program;
 import tvbrowser.core.Settings;
 import tvbrowser.extras.favoritesplugin.core.Favorite;
 import tvbrowser.extras.favoritesplugin.dlgs.FavoriteTreeModel;
@@ -67,14 +72,6 @@ import util.ui.Localizer;
 import util.ui.ProgramPanel;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
-
-import com.jgoodies.forms.builder.PanelBuilder;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.RowSpec;
-
-import devplugin.Date;
-import devplugin.Program;
 
 /**
  * TV-Browser
@@ -334,18 +331,14 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
     jcontentPane.add(scrollPane, BorderLayout.CENTER);
     jcontentPane.add(btnPanel,BorderLayout.SOUTH);
 
-    mCloseBt.addActionListener(new ActionListener() {
-      public void actionPerformed(final ActionEvent event) {
-        close();
-      }
+    mCloseBt.addActionListener(e -> {
+      close();
     });
 
     if (mRemainingSecs > 0) {
       updateCloseBtText();
-      mAutoCloseTimer = new Timer(1000, new ActionListener() {
-        public void actionPerformed(final ActionEvent evt) {
+      mAutoCloseTimer = new Timer(1000, e -> {
           handleTimerEvent();
-        }
       });
       mAutoCloseTimer.start();
     }
@@ -532,11 +525,8 @@ public class ReminderFrame implements WindowClosingIf, ChangeListener {
       }
     }
 
-    SwingUtilities.invokeLater(new Runnable() {
-      @Override
-      public void run() {
-        ReminderPlugin.getInstance().updateRootNode(true);
-      }
+    SwingUtilities.invokeLater(() -> {
+      ReminderPlugin.getInstance().updateRootNode(true);
     });
 
     if (mAutoCloseTimer != null) {

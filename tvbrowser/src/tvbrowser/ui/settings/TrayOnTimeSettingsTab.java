@@ -1,8 +1,5 @@
 package tvbrowser.ui.settings;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
 import javax.swing.ButtonGroup;
 import javax.swing.Icon;
 import javax.swing.JCheckBox;
@@ -153,22 +150,18 @@ public class TrayOnTimeSettingsTab implements SettingsTab {
     
     setEnabled(true);
     
-    mIsEnabled.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        setEnabled(false);
-      }
+    mIsEnabled.addActionListener(e -> {
+      setEnabled(false);
     });
     
-    mShowProgress.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        mLightColorLb.setEnabled(mIsEnabled.isSelected() && mShowProgress.isSelected());
-        mDarkColorLb.setEnabled(mIsEnabled.isSelected() && mShowProgress.isSelected());
-        mLight.setEnabled(mIsEnabled.isSelected() && mShowProgress.isSelected());
-        mDark.setEnabled(mIsEnabled.isSelected() && mShowProgress.isSelected());
-        mDarkLabel.setEnabled(mIsEnabled.isSelected() && mShowProgress.isSelected());
-        mLightLabel.setEnabled(mIsEnabled.isSelected() && mShowProgress.isSelected());
-        mInfo.setEnabled(mIsEnabled.isSelected() && mShowProgress.isSelected());
-      }
+    mShowProgress.addActionListener(e -> {
+      mLightColorLb.setEnabled(mIsEnabled.isSelected() && mShowProgress.isSelected());
+      mDarkColorLb.setEnabled(mIsEnabled.isSelected() && mShowProgress.isSelected());
+      mLight.setEnabled(mIsEnabled.isSelected() && mShowProgress.isSelected());
+      mDark.setEnabled(mIsEnabled.isSelected() && mShowProgress.isSelected());
+      mDarkLabel.setEnabled(mIsEnabled.isSelected() && mShowProgress.isSelected());
+      mLightLabel.setEnabled(mIsEnabled.isSelected() && mShowProgress.isSelected());
+      mInfo.setEnabled(mIsEnabled.isSelected() && mShowProgress.isSelected());
     });
     
     return builder.getPanel();

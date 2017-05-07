@@ -701,20 +701,19 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
     final PluginProxy proxy = this;
 
     // run the error handler in UI thread as the exception may occur in any thread
-    SwingUtilities.invokeLater(new Runnable() {
-      public void run() {
-        if (ErrorHandler.handle(msg, t, ErrorHandler.SHOW_YES_NO) == ErrorHandler.YES_PRESSED) {
-          try {
-            // deactivate Plugin
-            PluginProxyManager.getInstance().deactivatePlugin(proxy);
-          } catch (Throwable e) {
-          }
-
-          // Update the settings
-          String[] deactivatedPlugins = PluginProxyManager.getInstance().getDeactivatedPluginIds();
-          Settings.propDeactivatedPlugins.setStringArray(deactivatedPlugins);
+    SwingUtilities.invokeLater(() -> {
+      if (ErrorHandler.handle(msg, t, ErrorHandler.SHOW_YES_NO) == ErrorHandler.YES_PRESSED) {
+        try {
+          // deactivate Plugin
+          PluginProxyManager.getInstance().deactivatePlugin(proxy);
+        } catch (Throwable e) {
         }
-      }});
+
+        // Update the settings
+        String[] deactivatedPlugins = PluginProxyManager.getInstance().getDeactivatedPluginIds();
+        Settings.propDeactivatedPlugins.setStringArray(deactivatedPlugins);
+      }
+    });
   }
 
   /**

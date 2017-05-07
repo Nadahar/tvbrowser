@@ -27,8 +27,6 @@
 package tvbrowser.extras.favoritesplugin.wizards;
 
 import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.FocusAdapter;
@@ -44,6 +42,12 @@ import javax.swing.JTextField;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+
+import devplugin.Program;
 import tvbrowser.extras.favoritesplugin.core.ActorsFavorite;
 import tvbrowser.extras.favoritesplugin.core.AdvancedFavorite;
 import tvbrowser.extras.favoritesplugin.core.Favorite;
@@ -57,13 +61,6 @@ import tvbrowser.ui.mainframe.MainFrame;
 import util.program.ProgramUtilities;
 import util.ui.LinkButton;
 import util.ui.UiUtilities;
-
-import com.jgoodies.forms.builder.PanelBuilder;
-import com.jgoodies.forms.factories.Borders;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
-
-import devplugin.Program;
 
 public class TypeWizardStep extends AbstractWizardStep {
 
@@ -160,64 +157,54 @@ public class TypeWizardStep extends AbstractWizardStep {
 
     updateTextfields();
 
-    mTitleRb.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        updateTextfields();
-      }
+    mTitleRb.addActionListener(e -> {
+      updateTextfields();
     });
 
-    mTopicRb.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        updateTextfields();
-      }
+    mTopicRb.addActionListener(e -> {
+      updateTextfields();
     });
 
-    mActorsRb.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        updateTextfields();
-      }
+    mActorsRb.addActionListener(e -> {
+      updateTextfields();
     });
 
-    expertBtn.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        mAdvancedSelected = true;
-        
-        String title;
-        if (mProgram != null) {
-          title = mProgram.getTitle();
-        } else {
-          title = "";
-        }
-        mFavorite = new AdvancedFavorite(title);
-        Window parent = UiUtilities
-            .getLastModalChildOf(MainFrame.getInstance());
-        EditFavoriteDialog dlg = new EditFavoriteDialog(parent, mFavorite);
-        UiUtilities.centerAndShow(dlg);
-        
-        if (!dlg.getOkWasPressed()) {
-          mFavorite = null;
-        }
-        
-        handler.finishWithCurrentStep();
+    expertBtn.addActionListener(e -> {
+      mAdvancedSelected = true;
+      
+      String title;
+      if (mProgram != null) {
+        title = mProgram.getTitle();
+      } else {
+        title = "";
       }
+      mFavorite = new AdvancedFavorite(title);
+      Window parent = UiUtilities
+          .getLastModalChildOf(MainFrame.getInstance());
+      EditFavoriteDialog dlg = new EditFavoriteDialog(parent, mFavorite);
+      UiUtilities.centerAndShow(dlg);
+      
+      if (!dlg.getOkWasPressed()) {
+        mFavorite = null;
+      }
+      
+      handler.finishWithCurrentStep();
     });
     
-    filterBtn.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        mAdvancedSelected = true;
-        
-        mFavorite = new FilterFavorite();
-        Window parent = UiUtilities
-            .getLastModalChildOf(MainFrame.getInstance());
-        EditFavoriteDialog dlg = new EditFavoriteDialog(parent, mFavorite);
-        UiUtilities.centerAndShow(dlg);
-        
-        if (!dlg.getOkWasPressed()) {
-          mFavorite = null;
-        }
-        
-        handler.finishWithCurrentStep();
+    filterBtn.addActionListener(e -> {
+      mAdvancedSelected = true;
+      
+      mFavorite = new FilterFavorite();
+      Window parent = UiUtilities
+          .getLastModalChildOf(MainFrame.getInstance());
+      EditFavoriteDialog dlg = new EditFavoriteDialog(parent, mFavorite);
+      UiUtilities.centerAndShow(dlg);
+      
+      if (!dlg.getOkWasPressed()) {
+        mFavorite = null;
       }
+      
+      handler.finishWithCurrentStep();
     });
 
     if (mProgram != null) {

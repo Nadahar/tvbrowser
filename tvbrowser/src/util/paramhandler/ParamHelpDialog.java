@@ -25,8 +25,6 @@
 package util.paramhandler;
 
 import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -153,12 +151,8 @@ public class ParamHelpDialog extends JDialog implements WindowClosingIf {
 		
 		JButton ok = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
 		
-		ok.addActionListener(new ActionListener() {
-
-			public void actionPerformed(ActionEvent arg0) {
-        setVisible(false);
-			}
-			
+		ok.addActionListener(e -> {
+      setVisible(false);
 		});
 		
 		getRootPane().setDefaultButton(ok);

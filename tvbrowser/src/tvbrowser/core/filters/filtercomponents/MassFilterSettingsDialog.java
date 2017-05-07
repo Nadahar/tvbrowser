@@ -25,18 +25,16 @@ package tvbrowser.core.filters.filtercomponents;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 
+import com.jgoodies.forms.factories.Borders;
+
 import util.ui.Localizer;
 import util.ui.SearchForm;
 import util.ui.SearchFormSettings;
-
-import com.jgoodies.forms.factories.Borders;
 
 /**
  * This class provides a Settings-Dialog for the MassFilter
@@ -87,23 +85,15 @@ public class MassFilterSettingsDialog extends JDialog {
     content.add(mForm, BorderLayout.NORTH);
 
     JButton ok = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
-    ok.addActionListener(new ActionListener() {
-
-      public void actionPerformed(ActionEvent e) {
-        okPressed();
-        setVisible(false);
-      }
-
+    ok.addActionListener(e -> {
+      okPressed();
+      setVisible(false);
     });
 
     JButton cancel = new JButton(Localizer
         .getLocalization(Localizer.I18N_CANCEL));
-    cancel.addActionListener(new ActionListener() {
-
-      public void actionPerformed(ActionEvent e) {
-        setVisible(false);
-      }
-
+    cancel.addActionListener(e -> {
+      setVisible(false);
     });
 
     JPanel buttons = new JPanel(new FlowLayout(FlowLayout.RIGHT));

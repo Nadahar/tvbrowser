@@ -26,8 +26,6 @@
 
 package tvbrowser.ui.settings;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 
 import javax.swing.ButtonGroup;
@@ -84,15 +82,13 @@ public class WebbrowserSettingsTab implements devplugin.SettingsTab {
     mSettingsPn.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("browser", "Web browser")), cc.xyw(1,1,9));
 
     JButton testButton = new LinkButton(mLocalizer.msg("testBrowser", "Test Webbrowser"), "http://www.tvbrowser.org", SwingConstants.LEFT, false);
-    testButton.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        String buffer = IOUtilities.translateRelativePath(Settings.propUserDefinedWebbrowser.getString());
-        String bufferParams = Settings.propUserDefinedWebbrowserParams.getString();
-        saveSettings();
-        Launch.openURL("http://www.tvbrowser.org");
-        Settings.propUserDefinedWebbrowser.setString(IOUtilities.checkForRelativePath(buffer));
-        Settings.propUserDefinedWebbrowserParams.setString(bufferParams);
-      }
+    testButton.addActionListener(e -> {
+      String buffer = IOUtilities.translateRelativePath(Settings.propUserDefinedWebbrowser.getString());
+      String bufferParams = Settings.propUserDefinedWebbrowserParams.getString();
+      saveSettings();
+      Launch.openURL("http://www.tvbrowser.org");
+      Settings.propUserDefinedWebbrowser.setString(IOUtilities.checkForRelativePath(buffer));
+      Settings.propUserDefinedWebbrowserParams.setString(bufferParams);
     });
 
     mSettingsPn.add(UiUtilities.createHelpTextArea(mLocalizer.msg("help", "Help Text")), cc.xyw(2,3,7));
@@ -103,10 +99,8 @@ public class WebbrowserSettingsTab implements devplugin.SettingsTab {
 
     JRadioButton useDefault = new JRadioButton(mLocalizer.msg("defaultWebbrowser", "Default Webbrowser"));
     useDefault.setSelected(Settings.propUserDefinedWebbrowser.getString() == null);
-    useDefault.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        updateInputFields();
-      }
+    useDefault.addActionListener(e -> {
+      updateInputFields();
     });
 
     mSettingsPn.add(useDefault, cc.xyw(2, 9, 4));
@@ -114,10 +108,8 @@ public class WebbrowserSettingsTab implements devplugin.SettingsTab {
     mUseWebbrowser = new JRadioButton(mLocalizer.msg("userDefinedWebbrowser","user defined webbrowser"));
     mUseWebbrowser.setSelected(Settings.propUserDefinedWebbrowser.getString() != null);
 
-    mUseWebbrowser.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        updateInputFields();
-      }
+    mUseWebbrowser.addActionListener(e -> {
+      updateInputFields();
     });
 
     ButtonGroup group = new ButtonGroup();
@@ -134,24 +126,22 @@ public class WebbrowserSettingsTab implements devplugin.SettingsTab {
     mSettingsPn.add(mFileTextField, cc.xy(5, 13));
 
     mChooseButton = new JButton(Localizer.getLocalization(Localizer.I18N_SELECT));
-    mChooseButton.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent event) {
-        if (mFileChooser==null) {
-          mFileChooser=new JFileChooser();
+    mChooseButton.addActionListener(event -> {
+      if (mFileChooser==null) {
+        mFileChooser=new JFileChooser();
 
-          if (OperatingSystem.isMacOs()) {
-            mFileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-          } else {
-            mFileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-          }
+        if (OperatingSystem.isMacOs()) {
+          mFileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+        } else {
+          mFileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         }
+      }
 
-        int retVal = mFileChooser.showOpenDialog(mSettingsPn.getParent());
-        if (retVal == JFileChooser.APPROVE_OPTION) {
-          File f=mFileChooser.getSelectedFile();
-          if (f!=null) {
-            mFileTextField.setText(f.getAbsolutePath());
-          }
+      int retVal = mFileChooser.showOpenDialog(mSettingsPn.getParent());
+      if (retVal == JFileChooser.APPROVE_OPTION) {
+        File f=mFileChooser.getSelectedFile();
+        if (f!=null) {
+          mFileTextField.setText(f.getAbsolutePath());
         }
       }
     });

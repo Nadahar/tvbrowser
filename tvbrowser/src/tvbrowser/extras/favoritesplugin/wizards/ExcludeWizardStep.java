@@ -26,9 +26,6 @@
 
 package tvbrowser.extras.favoritesplugin.wizards;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -321,22 +318,19 @@ public class ExcludeWizardStep extends AbstractWizardStep {
       panelBuilder.add(mFilterCb, CC.xyw(2, filterIndex, 2));
       panelBuilder.add(mFilterChooser, CC.xy(4, filterIndex));
       
-      mEditFilter.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-          SelectFilterDlg filterDlg = SelectFilterDlg.create(UiUtilities.getLastModalChildOf(MainFrame.getInstance()));
-          filterDlg.setVisible(true);
-          
-          Object selected = mFilterChooser.getSelectedItem();
-          
-          ((DefaultComboBoxModel<WrapperFilter>)mFilterChooser.getModel()).removeAllElements();
-          
-          for(ProgramFilter filter :Plugin.getPluginManager().getFilterManager().getAvailableFilters()) {
-            ((DefaultComboBoxModel<WrapperFilter>)mFilterChooser.getModel()).addElement(new WrapperFilter(filter));
-          }
-          
-          mFilterChooser.setSelectedItem(selected);
+      mEditFilter.addActionListener(e -> {
+        SelectFilterDlg filterDlg = SelectFilterDlg.create(UiUtilities.getLastModalChildOf(MainFrame.getInstance()));
+        filterDlg.setVisible(true);
+        
+        Object selected = mFilterChooser.getSelectedItem();
+        
+        ((DefaultComboBoxModel<WrapperFilter>)mFilterChooser.getModel()).removeAllElements();
+        
+        for(ProgramFilter filter :Plugin.getPluginManager().getFilterManager().getAvailableFilters()) {
+          ((DefaultComboBoxModel<WrapperFilter>)mFilterChooser.getModel()).addElement(new WrapperFilter(filter));
         }
+        
+        mFilterChooser.setSelectedItem(selected);
       });
       
       panelBuilder.add(mEditFilter, CC.xy(6, filterIndex));
@@ -423,11 +417,8 @@ public class ExcludeWizardStep extends AbstractWizardStep {
 
     updateButtons(handler);
     
-    ItemListener buttonUpdate = new ItemListener() {
-      @Override
-      public void itemStateChanged(ItemEvent e) {
-        updateButtons(handler);
-      }
+    ItemListener buttonUpdate = e -> {
+      updateButtons(handler);
     };
 
     mChannelCb.addItemListener(buttonUpdate);

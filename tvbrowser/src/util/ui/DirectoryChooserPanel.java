@@ -27,8 +27,6 @@
 package util.ui;
 
 import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 
 import javax.swing.BorderFactory;
@@ -78,17 +76,15 @@ public class DirectoryChooserPanel extends JPanel {
     add(mTextField,BorderLayout.CENTER);
     
     mBtn=new JButton(mLocalizer.msg("change","change"));
-    mBtn.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent event) {
-        JFileChooser fc =new JFileChooser();
-        fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        fc.setApproveButtonText("Ok");
-        fc.setCurrentDirectory(new File(mTextField.getText()));
-        int retVal=fc.showOpenDialog(getParent());
-        if (retVal==JFileChooser.APPROVE_OPTION) {
-          File f=fc.getSelectedFile();
-          mTextField.setText(f.getAbsolutePath());
-        }
+    mBtn.addActionListener(event -> {
+      JFileChooser fc =new JFileChooser();
+      fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+      fc.setApproveButtonText("Ok");
+      fc.setCurrentDirectory(new File(mTextField.getText()));
+      int retVal=fc.showOpenDialog(getParent());
+      if (retVal==JFileChooser.APPROVE_OPTION) {
+        File f=fc.getSelectedFile();
+        mTextField.setText(f.getAbsolutePath());
       }
     });
     

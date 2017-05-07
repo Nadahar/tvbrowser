@@ -24,8 +24,6 @@
 package tvbrowser.extras.favoritesplugin.dlgs;
 
 import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Arrays;
@@ -135,39 +133,31 @@ public class ExclusionPanel extends JPanel{
     add(mEditExclusionBtn, cc.xy(4, 3));
     add(mDeleteExclusionBtn, cc.xy(4, 5));
     
-    mNewExclusionBtn.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent event) {
-
-        WizardHandler handler = new WizardHandler(parent, new ExcludeWizardStep(favorite));
-        Exclusion exclusion = (Exclusion) handler.show();
-        if (exclusion != null) {
-          ((DefaultListModel<Exclusion>) mExclusionsList.getModel()).addElement(exclusion);
-          mWasAdded = true;
-        }
-
+    mNewExclusionBtn.addActionListener(e -> {
+      WizardHandler handler = new WizardHandler(parent, new ExcludeWizardStep(favorite));
+      Exclusion exclusion = (Exclusion) handler.show();
+      if (exclusion != null) {
+        ((DefaultListModel<Exclusion>) mExclusionsList.getModel()).addElement(exclusion);
+        mWasAdded = true;
       }
     });
 
-    mEditExclusionBtn.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        Exclusion oldExclusion = (Exclusion) mExclusionsList.getSelectedValue();
-        WizardHandler handler = new WizardHandler(parent, new ExcludeWizardStep(favorite, oldExclusion));
-        Exclusion newExclusion = (Exclusion) handler.show();
-        if (newExclusion != null) {
-          int inx = mExclusionsList.getSelectedIndex();
-          ((DefaultListModel<Exclusion>) mExclusionsList.getModel()).setElementAt(newExclusion, inx);
-          mWasEditedOrDeleted = true;
-        }
+    mEditExclusionBtn.addActionListener(e -> {
+      Exclusion oldExclusion = (Exclusion) mExclusionsList.getSelectedValue();
+      WizardHandler handler = new WizardHandler(parent, new ExcludeWizardStep(favorite, oldExclusion));
+      Exclusion newExclusion = (Exclusion) handler.show();
+      if (newExclusion != null) {
+        int inx = mExclusionsList.getSelectedIndex();
+        ((DefaultListModel<Exclusion>) mExclusionsList.getModel()).setElementAt(newExclusion, inx);
+        mWasEditedOrDeleted = true;
       }
     });
 
-    mDeleteExclusionBtn.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        Exclusion exclusion = (Exclusion) mExclusionsList.getSelectedValue();
-        if (exclusion != null) {
-          ((DefaultListModel<Exclusion>) mExclusionsList.getModel()).removeElement(exclusion);
-          mWasEditedOrDeleted = true;
-        }
+    mDeleteExclusionBtn.addActionListener(e -> {
+      Exclusion exclusion = (Exclusion) mExclusionsList.getSelectedValue();
+      if (exclusion != null) {
+        ((DefaultListModel<Exclusion>) mExclusionsList.getModel()).removeElement(exclusion);
+        mWasEditedOrDeleted = true;
       }
     });
 

@@ -150,11 +150,8 @@ public class CalendarTablePanel extends AbstractCalendarPanel implements ListSel
 
     thread.start();
 
-    SwingUtilities.invokeLater(new Runnable() {
-      @Override
-      public void run() {
-        repaint();
-      }
+    SwingUtilities.invokeLater(() -> {
+      repaint();
     });
   }
 

@@ -27,8 +27,6 @@
 package tvbrowser.ui.settings;
 
 import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -194,11 +192,9 @@ public class ButtonsSettingsTab implements SettingsTab {
         final Row row = new Row(time);
         row.setBorder(BorderFactory.createEmptyBorder(2, 0, 2, 0));
         mRows.add(row);
-        row.getRemoveButton().addActionListener(new ActionListener() {
-          public void actionPerformed(ActionEvent arg) {
-            mRows.remove(row);
-            updateContent();
-          }
+        row.getRemoveButton().addActionListener(arg -> {
+          mRows.remove(row);
+          updateContent();
         });
       }
       JButton newBtn = new JButton(mLocalizer.msg("new", "New"), TVBrowserIcons.newIcon(TVBrowserIcons.SIZE_SMALL));
@@ -206,21 +202,17 @@ public class ButtonsSettingsTab implements SettingsTab {
       southPn.add(newBtn, BorderLayout.WEST);
 
       add(southPn, cc.xyw(1, 3, 2));
-      newBtn.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent event) {
+      newBtn.addActionListener(event -> {
 
-          final Row row = new Row(0);
-          mRows.add(row);
+        final Row row = new Row(0);
+        mRows.add(row);
 
-          row.getRemoveButton().addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent arg) {
-              mRows.remove(row);
-              updateContent();
-            }
-          });
-
+        row.getRemoveButton().addActionListener(arg -> {
+          mRows.remove(row);
           updateContent();
-        }
+        });
+
+        updateContent();
       });
 
       updateContent();

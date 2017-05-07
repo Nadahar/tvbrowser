@@ -28,8 +28,6 @@ package tvbrowser.core;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -221,16 +219,10 @@ public class TvDataUpdater {
         if (!result && !mMessageShown ) {
           mMessageShown = true;
           try {
-            UIThreadRunner.invokeAndWait(new Runnable() {
-
-              @Override
-              public void run() {
-                JOptionPane.showMessageDialog(null,
-                    mLocalizer.msg("noConnectionMessage", "No connection!"),
-                    mLocalizer.msg("noConnectionTitle", "No connection!"),
-                    JOptionPane.ERROR_MESSAGE);
-              }
-            });
+            UIThreadRunner.invokeAndWait(() -> JOptionPane.showMessageDialog(null,
+                mLocalizer.msg("noConnectionMessage", "No connection!"),
+                mLocalizer.msg("noConnectionTitle", "No connection!"),
+                JOptionPane.ERROR_MESSAGE));
           } catch (InterruptedException e) {
             e.printStackTrace();
           } catch (InvocationTargetException e) {
@@ -420,11 +412,8 @@ public class TvDataUpdater {
           center.add(scrollPane, BorderLayout.CENTER);
           
           JButton close = new JButton(Localizer.getLocalization(Localizer.I18N_CLOSE));
-          close.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-              infoDialog.dispose();
-            }
+          close.addActionListener(e -> {
+            infoDialog.dispose();
           });
           
           JPanel buttons = new JPanel(new FormLayout("min:grow,default,min:grow","5dlu,default,5dlu,default"));

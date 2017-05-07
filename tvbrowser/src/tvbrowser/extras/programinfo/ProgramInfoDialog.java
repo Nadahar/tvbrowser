@@ -34,7 +34,6 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
@@ -188,13 +187,11 @@ class ProgramInfoDialog {
       mToolBar.update();
     }
     
-    SwingUtilities.invokeLater(new Runnable() {
-      public void run() {
-        setProgramText();
-        mInfoEP.setCaretPosition(0);
-        if (mFindAsYouType.getSearchBar().isVisible()) {
-          mFindAsYouType.next();
-        }
+    SwingUtilities.invokeLater(() -> {
+      setProgramText();
+      mInfoEP.setCaretPosition(0);
+      if (mFindAsYouType.getSearchBar().isVisible()) {
+        mFindAsYouType.next();
       }
     });
     mConfigBtn.setVisible(showSettings);
@@ -373,10 +370,8 @@ class ProgramInfoDialog {
 
           item = new JMenuItem(mLocalizer.msg("searchWikipedia",
               "Search in Wikipedia"));
-          item.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-              searchWikipedia(searchText);
-            }
+          item.addActionListener(e -> {
+            searchWikipedia(searchText);
           });
 
           if (value.equals("internalWikipedia")) {
@@ -399,10 +394,8 @@ class ProgramInfoDialog {
 
               for (final ProgramReceiveTarget target : targets) {
                 item = new JMenuItem(target.toString());
-                item.addActionListener(new ActionListener() {
-                  public void actionPerformed(ActionEvent e) {
-                    searchWebPlugin(searchText, target);
-                  }
+                item.addActionListener(e -> {
+                  searchWebPlugin(searchText, target);
                 });
 
                 if (value.endsWith(target.getTargetId())) {
@@ -493,10 +486,8 @@ class ProgramInfoDialog {
         JMenuItem item = new JMenuItem(mLocalizer.msg("searchTvBrowser",
             "Search in TV-Browser"), IconLoader.getInstance().getIconFromTheme(
             "actions", "edit-find"));
-        item.addActionListener(new ActionListener() {
-          public void actionPerformed(ActionEvent e) {
-            internalSearch(desc);
-          }
+        item.addActionListener(e -> {
+          internalSearch(desc);
         });
         return item;
       }
@@ -507,15 +498,13 @@ class ProgramInfoDialog {
         item = new JMenuItem(mLocalizer.ellipsisMsg("addFavorite",
             "Create favorite"), IconLoader.getInstance().getIconFromTheme(
             "emblems", "emblem-favorite"));
-        item.addActionListener(new ActionListener() {
-          public void actionPerformed(ActionEvent e) {
-            if (actor) {
-              FavoritesPlugin.getInstance().showCreateActorFavoriteWizard(
-                  mProgram, desc);
-            } else {
-              FavoritesPlugin.getInstance().showCreateTopicFavoriteWizard(
-                  mProgram, desc);
-            }
+        item.addActionListener(e -> {
+          if (actor) {
+            FavoritesPlugin.getInstance().showCreateActorFavoriteWizard(
+                mProgram, desc);
+          } else {
+            FavoritesPlugin.getInstance().showCreateTopicFavoriteWizard(
+                mProgram, desc);
           }
         });
         return item;
@@ -672,33 +661,25 @@ class ProgramInfoDialog {
 
     mMainPanel.add(buttonPn, BorderLayout.SOUTH);
 
-    mConfigBtn.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        exit();
-        MainFrame.getInstance().showSettingsDialog(SettingsItem.PROGRAMINFO);
-      }
+    mConfigBtn.addActionListener(e -> {
+      exit();
+      MainFrame.getInstance().showSettingsDialog(SettingsItem.PROGRAMINFO);
     });
 
     mHighlight = new JCheckBox(mLocalizer
         .msg("highlight", "Highlight favorite"), ProgramInfo.getInstance()
         .getSettings().getHighlightFavorite());
-    mHighlight.addActionListener(new ActionListener() {
-
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        ProgramInfo.getInstance().getSettings().setHighlightFavorite(
-            mHighlight.isSelected());
-        highlightFavorites();
-      }
+    mHighlight.addActionListener(e -> {
+      ProgramInfo.getInstance().getSettings().setHighlightFavorite(
+          mHighlight.isSelected());
+      highlightFavorites();
     });
     buttonBuilder.addUnrelatedGap();
     buttonBuilder.addFixed(mHighlight);
 
     mCloseBtn = new JButton(Localizer.getLocalization(Localizer.I18N_CLOSE));
-    mCloseBtn.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent evt) {
-        exit();
-      }
+    mCloseBtn.addActionListener(e -> {
+      exit();
     });
 
     buttonBuilder.addGlue();
@@ -772,10 +753,8 @@ class ProgramInfoDialog {
     }
 
     // Scroll to the beginning
-    Runnable runnable = new Runnable() {
-      public void run() {
-        scrollPane.getVerticalScrollBar().setValue(0);
-      }
+    Runnable runnable = () -> {
+      scrollPane.getVerticalScrollBar().setValue(0);
     };
     SwingUtilities.invokeLater(runnable);
 
@@ -853,10 +832,8 @@ class ProgramInfoDialog {
     if (rebuild) {
       setProgramText();
       mInfoEP.scrollRectToVisible(oldVisibleRect);
-      SwingUtilities.invokeLater(new Runnable() {
-        public void run() {
-          mInfoEP.scrollRectToVisible(oldVisibleRect);
-        }
+      SwingUtilities.invokeLater(() -> {
+        mInfoEP.scrollRectToVisible(oldVisibleRect);
       });
     }
 
@@ -928,11 +905,9 @@ class ProgramInfoDialog {
       }
 
       public void windowOpened(WindowEvent e) {
-        SwingUtilities.invokeLater(new Runnable() {
-          public void run() {
-            mMainPanel.repaint();
-            mInfoEP.scrollRectToVisible(new Rectangle(0, 0));
-          }
+        SwingUtilities.invokeLater(() -> {
+          mMainPanel.repaint();
+          mInfoEP.scrollRectToVisible(new Rectangle(0, 0));
         });
       }
     });
@@ -963,11 +938,9 @@ class ProgramInfoDialog {
     addActionsToRootPane();
 
     try {
-      UIThreadRunner.invokeAndWait(new Runnable() {
-        public void run() {
-          Settings.layoutWindow("extras.programInfoDlg", mDialog);
-          mDialog.setVisible(true);
-        }
+      UIThreadRunner.invokeAndWait(() -> {
+        Settings.layoutWindow("extras.programInfoDlg", mDialog);
+        mDialog.setVisible(true);
       });
     } catch (InterruptedException e) {
       e.printStackTrace();

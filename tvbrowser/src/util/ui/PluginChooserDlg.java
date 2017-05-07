@@ -31,8 +31,6 @@ import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
@@ -408,24 +406,20 @@ public class PluginChooserDlg extends JDialog implements WindowClosingIf {
     JButton okBt = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
     JButton cancelBt = new JButton(Localizer.getLocalization(Localizer.I18N_CANCEL));
 
-    okBt.addActionListener(new ActionListener(){
-      public void actionPerformed(ActionEvent event) {
-        mOkWasPressed = true;
-        List<ProgramReceiveIf> list = mPluginItemList.getSelectionList();
-        mResultPluginArr = new ProgramReceiveIf[list.size()];
-        for (int i=0;i<list.size();i++) {
-          mResultPluginArr[i]=list.get(i);
-        }
-        close();
+    okBt.addActionListener(event -> {
+      mOkWasPressed = true;
+      List<ProgramReceiveIf> list = mPluginItemList.getSelectionList();
+      mResultPluginArr = new ProgramReceiveIf[list.size()];
+      for (int i=0;i<list.size();i++) {
+        mResultPluginArr[i]=list.get(i);
       }
-      });
+      close();
+    });
 
-    cancelBt.addActionListener(new ActionListener(){
-      public void actionPerformed(ActionEvent event) {
-        mOkWasPressed = false;
-        mResultPluginArr = null;
-        close();
-      }
+    cancelBt.addActionListener(event -> {
+      mOkWasPressed = false;
+      mResultPluginArr = null;
+      close();
     });
 
     ButtonBarBuilder builder = new ButtonBarBuilder();

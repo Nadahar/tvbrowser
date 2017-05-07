@@ -315,31 +315,25 @@ public class ReminderPlugin {
   }
   
   void addPanel() {
-    SwingUtilities.invokeLater(new Runnable() {
-      @Override
-      public void run() {
-        if(mSettings.getProperty("provideTab", "true").equals("true")) {
-          if(mReminderListPanel == null) {
-            mReminderListPanel = new ReminderListPanel(mReminderList, null);
-            Persona.getInstance().registerPersonaListener(mReminderListPanel);
-            
-            SwingUtilities.invokeLater(new Runnable() {
-              @Override
-              public void run() {        
-                mCenterPanel.add(mReminderListPanel, BorderLayout.CENTER);
-                mReminderListPanel.updatePersona();
-                mCenterPanel.repaint();
-              }
-            });
-          }
-        }
-        else {
-          if(mReminderListPanel != null) {
-            Persona.getInstance().removePersonaListener(mReminderListPanel);
-          }
+    SwingUtilities.invokeLater(() -> {
+      if(mSettings.getProperty("provideTab", "true").equals("true")) {
+        if(mReminderListPanel == null) {
+          mReminderListPanel = new ReminderListPanel(mReminderList, null);
+          Persona.getInstance().registerPersonaListener(mReminderListPanel);
           
-          mReminderListPanel = null;
+          SwingUtilities.invokeLater(() -> {        
+            mCenterPanel.add(mReminderListPanel, BorderLayout.CENTER);
+            mReminderListPanel.updatePersona();
+            mCenterPanel.repaint();
+          });
         }
+      }
+      else {
+        if(mReminderListPanel != null) {
+          Persona.getInstance().removePersonaListener(mReminderListPanel);
+        }
+        
+        mReminderListPanel = null;
       }
     });
   }
@@ -684,28 +678,24 @@ public class ReminderPlugin {
     action.setActionListener(event -> {
       final Window w = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
       try {
-        UIThreadRunner.invokeAndWait(new Runnable() {
+        UIThreadRunner.invokeAndWait(() -> {
+          ReminderDialog dlg = new ReminderDialog(w, program, mSettings);
+          Settings.layoutWindow("extras.remiderContext", dlg);
 
-          @Override
-          public void run() {
-            ReminderDialog dlg = new ReminderDialog(w, program, mSettings);
-            Settings.layoutWindow("extras.remiderContext", dlg);
+          if(mSettings.getProperty("showTimeSelectionDialog","true").compareTo("true") == 0) {
+            UiUtilities.centerAndShow(dlg);
 
-            if(mSettings.getProperty("showTimeSelectionDialog","true").compareTo("true") == 0) {
-              UiUtilities.centerAndShow(dlg);
-
-              if (dlg.getOkPressed()) {
-                mReminderList.add(program, dlg.getReminderContent());
-                mReminderList.unblockProgram(program);
-                updateRootNode(true);
-              }
-              dlg.dispose();
-            }
-            else {
+            if (dlg.getOkPressed()) {
               mReminderList.add(program, dlg.getReminderContent());
               mReminderList.unblockProgram(program);
               updateRootNode(true);
             }
+            dlg.dispose();
+          }
+          else {
+            mReminderList.add(program, dlg.getReminderContent());
+            mReminderList.unblockProgram(program);
+            updateRootNode(true);
           }
         });
       } catch (InterruptedException e) {

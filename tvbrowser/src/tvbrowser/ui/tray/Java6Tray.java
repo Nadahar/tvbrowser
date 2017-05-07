@@ -331,12 +331,10 @@ public class Java6Tray {
     mTrayParent.setVisible(true);
     mTrayParent.toFront();
 
-    SwingUtilities.invokeLater(new Runnable() {
-      public void run() {
-        Point p2 = computeDisplayPoint(p.x,p.y,mPopupMenu.getPreferredSize());
+    SwingUtilities.invokeLater(() -> {
+      Point p2 = computeDisplayPoint(p.x,p.y,mPopupMenu.getPreferredSize());
 
-        mPopupMenu.show(mTrayParent,p2.x - mTrayParent.getLocation().x,p2.y - mTrayParent.getLocation().y);
-      }
+      mPopupMenu.show(mTrayParent,p2.x - mTrayParent.getLocation().x,p2.y - mTrayParent.getLocation().y);
     });
   }
 

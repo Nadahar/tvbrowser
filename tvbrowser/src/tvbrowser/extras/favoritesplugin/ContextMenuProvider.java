@@ -26,8 +26,6 @@
 
 package tvbrowser.extras.favoritesplugin;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 import javax.swing.Action;
@@ -37,6 +35,11 @@ import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.JRadioButton;
 
+import devplugin.ActionMenu;
+import devplugin.ContextMenuAction;
+import devplugin.ContextMenuSeparatorAction;
+import devplugin.Plugin;
+import devplugin.Program;
 import tvbrowser.extras.favoritesplugin.core.Favorite;
 import tvbrowser.extras.favoritesplugin.dlgs.FavoriteTreeModel;
 import tvbrowser.extras.favoritesplugin.dlgs.ManageFavoritesDialog;
@@ -44,11 +47,6 @@ import tvbrowser.extras.programinfo.ProgramInfo;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.ui.TVBrowserIcons;
 import util.ui.UiUtilities;
-import devplugin.ActionMenu;
-import devplugin.ContextMenuAction;
-import devplugin.ContextMenuSeparatorAction;
-import devplugin.Plugin;
-import devplugin.Program;
 
 public class ContextMenuProvider {
 
@@ -138,10 +136,8 @@ public class ContextMenuProvider {
     ContextMenuAction menu = new ContextMenuAction();
     menu.setSmallIcon(TVBrowserIcons.newIcon(TVBrowserIcons.SIZE_SMALL));
     menu.setText(mLocalizer.ellipsisMsg("createGlobalExclusion", "Create global exclusion"));
-    menu.setActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent event) {
-        FavoritesPlugin.getInstance().showExcludeProgramsDialog(null,program);
-      }
+    menu.setActionListener(e -> {
+      FavoritesPlugin.getInstance().showExcludeProgramsDialog(null,program);
     });
     return new ActionMenu(menu);
   }
@@ -150,10 +146,8 @@ public class ContextMenuProvider {
     ContextMenuAction menu = new ContextMenuAction();
       menu.setSmallIcon(FavoritesPlugin.getFavoritesIcon(16));
       menu.setText(mLocalizer.msg("addToFavorites", "Add to favorite programs"));
-      menu.setActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent event) {
-          FavoritesPlugin.getInstance().showCreateFavoriteWizard(program);
-        }
+      menu.setActionListener(e -> {
+        FavoritesPlugin.getInstance().showCreateFavoriteWizard(program);
       });
       return new ActionMenu(1, menu);
   }
@@ -165,10 +159,8 @@ public class ContextMenuProvider {
       ContextMenuAction action = new ContextMenuAction();
       action.setSmallIcon(TVBrowserIcons.filter(TVBrowserIcons.SIZE_SMALL));
       action.setText(mLocalizer.ellipsisMsg("excludeFromFavorite","Exclude from '{0}'", favArr[0].getName()));
-      action.setActionListener(new ActionListener(){
-        public void actionPerformed(ActionEvent e) {
-          FavoritesPlugin.getInstance().showExcludeProgramsDialog(favArr[0], program);
-        }
+      action.setActionListener(e -> {
+        FavoritesPlugin.getInstance().showExcludeProgramsDialog(favArr[0], program);
       });
       return new ActionMenu(5, action);
     }
@@ -181,10 +173,8 @@ public class ContextMenuProvider {
         
         subItems[i] = new ActionMenu(action);
         
-        action.setActionListener(new ActionListener(){
-          public void actionPerformed(ActionEvent e) {
-            FavoritesPlugin.getInstance().showExcludeProgramsDialog(fav, program);
-          }
+        action.setActionListener(e -> {
+          FavoritesPlugin.getInstance().showExcludeProgramsDialog(fav, program);
         });
       }
 
@@ -192,23 +182,20 @@ public class ContextMenuProvider {
       Action action = menu.getAction();
       
       if(action instanceof ContextMenuAction) {
-        ((ContextMenuAction) action).setActionListener(new ActionListener() {
-          @Override
-          public void actionPerformed(ActionEvent e) {
-            final JRadioButton[] buttons = new JRadioButton[favArr.length];
-            final ButtonGroup bg = new ButtonGroup();
-            
-            for(int i = 0; i < favArr.length; i++) {
-              buttons[i] = new JRadioButton(favArr[i].getName());
-              bg.add(buttons[i]);
-            }
-            
-            if(JOptionPane.showConfirmDialog(UiUtilities.getLastModalChildOf(MainFrame.getInstance()), buttons, mLocalizer.msg("excludeFrom","Exclude from"), JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
-              for(int i = 0; i < buttons.length; i++) {
-                if(buttons[i].isSelected()) {
-                  FavoritesPlugin.getInstance().showExcludeProgramsDialog(favArr[i], program);
-                  break;
-                }
+        ((ContextMenuAction) action).setActionListener(e -> {
+          final JRadioButton[] buttons = new JRadioButton[favArr.length];
+          final ButtonGroup bg = new ButtonGroup();
+          
+          for(int i1 = 0; i1 < favArr.length; i1++) {
+            buttons[i1] = new JRadioButton(favArr[i1].getName());
+            bg.add(buttons[i1]);
+          }
+          
+          if(JOptionPane.showConfirmDialog(UiUtilities.getLastModalChildOf(MainFrame.getInstance()), buttons, mLocalizer.msg("excludeFrom","Exclude from"), JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
+            for(int i2 = 0; i2 < buttons.length; i2++) {
+              if(buttons[i2].isSelected()) {
+                FavoritesPlugin.getInstance().showExcludeProgramsDialog(favArr[i2], program);
+                break;
               }
             }
           }
@@ -224,10 +211,8 @@ public class ContextMenuProvider {
       ContextMenuAction action = new ContextMenuAction();
       action.setSmallIcon(FavoritesPlugin.getFavoritesIcon(16));
       action.setText(mLocalizer.ellipsisMsg("manageFavorite","Manage favorite '{0}'", favArr[0].getName()));
-      action.setActionListener(new ActionListener(){
-        public void actionPerformed(ActionEvent e) {
-          FavoritesPlugin.getInstance().showManageFavoritesDialog(favArr[0]);
-        }
+      action.setActionListener(e -> {
+        FavoritesPlugin.getInstance().showManageFavoritesDialog(favArr[0]);
       });
       return new ActionMenu(action);
     }
@@ -237,10 +222,8 @@ public class ContextMenuProvider {
         final Favorite fav = favArr[i];
         subItems[i] = new ContextMenuAction(favArr[i].getName());
         subItems[i].setSmallIcon(FavoritesPlugin.getFavoritesIcon(16));
-        subItems[i].setActionListener(new ActionListener(){
-          public void actionPerformed(ActionEvent e) {
-            FavoritesPlugin.getInstance().showManageFavoritesDialog(fav);
-          }
+        subItems[i].setActionListener(e -> {
+          FavoritesPlugin.getInstance().showManageFavoritesDialog(fav);
         });
       }
 
@@ -253,10 +236,8 @@ public class ContextMenuProvider {
       ContextMenuAction action = new ContextMenuAction();
       action.setSmallIcon(TVBrowserIcons.edit(TVBrowserIcons.SIZE_SMALL));
       action.setText(mLocalizer.ellipsisMsg("editFavorite","Edit favorite '{0}'", favArr[0].getName()));
-      action.setActionListener(new ActionListener(){
-        public void actionPerformed(ActionEvent e) {
-          FavoritesPlugin.getInstance().editFavorite(favArr[0]);
-        }
+      action.setActionListener(e -> {
+        FavoritesPlugin.getInstance().editFavorite(favArr[0]);
       });
       return new ActionMenu(action);
     }
@@ -266,10 +247,8 @@ public class ContextMenuProvider {
         final Favorite fav = favArr[i];
         subItems[i] = new ContextMenuAction(favArr[i].getName());
         subItems[i].setSmallIcon(FavoritesPlugin.getFavoritesIcon(16));
-        subItems[i].setActionListener(new ActionListener(){
-          public void actionPerformed(ActionEvent e) {
-            FavoritesPlugin.getInstance().editFavorite(fav);
-          }
+        subItems[i].setActionListener(e -> {
+          FavoritesPlugin.getInstance().editFavorite(fav);
         });
       }
 
@@ -311,12 +290,10 @@ public class ContextMenuProvider {
     for (final Program program : programs) {
       if(!program.isExpired() && !program.equals(p)) {
         ContextMenuAction subItem = new ContextMenuAction(FavoriteTreeModel.getFavoriteLabel(favorite, program, p.getChannel()));
-        subItem.setActionListener(new ActionListener() {
-          public void actionPerformed(ActionEvent e) {
-            MainFrame.getInstance().scrollToProgram(program);
-            if (ProgramInfo.isShowing()) {
-              ProgramInfo.getInstance().showProgramInformation(program);
-            }
+        subItem.setActionListener(e -> {
+          MainFrame.getInstance().scrollToProgram(program);
+          if (ProgramInfo.isShowing()) {
+            ProgramInfo.getInstance().showProgramInformation(program);
           }
         });
 
@@ -340,10 +317,8 @@ public class ContextMenuProvider {
         ContextMenuAction action = new ContextMenuAction();
         action.setSmallIcon(TVBrowserIcons.delete(TVBrowserIcons.SIZE_SMALL));
         action.setText(mLocalizer.ellipsisMsg("deleteFavorite","Delete Favorite '{0}'", favArr[0].getName()));
-        action.setActionListener(new ActionListener(){
-          public void actionPerformed(ActionEvent e) {
-            FavoritesPlugin.getInstance().askAndDeleteFavorite(favArr[0]);
-          }
+        action.setActionListener(e -> {
+          FavoritesPlugin.getInstance().askAndDeleteFavorite(favArr[0]);
         });
         return new ActionMenu(action);
       }
@@ -353,10 +328,8 @@ public class ContextMenuProvider {
           final Favorite fav = favArr[i];
           subItems[i] = new ContextMenuAction(favArr[i].getName());
           subItems[i].setSmallIcon(FavoritesPlugin.getFavoritesIcon(16));
-          subItems[i].setActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e) {
-              FavoritesPlugin.getInstance().askAndDeleteFavorite(fav);
-            }
+          subItems[i].setActionListener(e -> {
+            FavoritesPlugin.getInstance().askAndDeleteFavorite(fav);
           });
         }
 
@@ -372,10 +345,8 @@ public class ContextMenuProvider {
       if(favArr[0].isOnBlackList(program)) {
         action.setSmallIcon(TVBrowserIcons.refresh(TVBrowserIcons.SIZE_SMALL));
         action.setText(mLocalizer.msg("removeFavoriteFromBlackList","Put this program back into '{0}'", favArr[0].getName()));
-        action.setActionListener(new ActionListener(){
-          public void actionPerformed(ActionEvent e) {
-            favArr[0].removeFromBlackList(program);
-          }
+        action.setActionListener(e -> {
+          favArr[0].removeFromBlackList(program);
         });
 
         return (new ActionMenu(action));
@@ -398,10 +369,8 @@ public class ContextMenuProvider {
         final Favorite fav = fromList.get(i);
         reactivateAction[i] = new ContextMenuAction(fav.getName());
         reactivateAction[i].setSmallIcon(FavoritesPlugin.getFavoritesIcon(16));
-        reactivateAction[i].setActionListener(new ActionListener() {
-          public void actionPerformed(ActionEvent e) {
-            fav.removeFromBlackList(program);
-          }
+        reactivateAction[i].setActionListener(e -> {
+          fav.removeFromBlackList(program);
         });
       }
 

@@ -27,8 +27,6 @@
 package tvbrowser.ui.settings.channel;
 
 import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.net.URL;
 
 import javax.swing.JButton;
@@ -42,6 +40,12 @@ import javax.swing.event.HyperlinkListener;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+
+import devplugin.Channel;
+import devplugin.ChannelGroup;
 import tvbrowser.core.tvdataservice.ChannelGroupManager;
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import util.browserlauncher.Launch;
@@ -51,13 +55,6 @@ import util.ui.WindowClosingIf;
 import util.ui.html.ExtendedHTMLDocument;
 import util.ui.html.ExtendedHTMLEditorKit;
 import util.ui.html.HTMLTextHelper;
-
-import com.jgoodies.forms.factories.Borders;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
-
-import devplugin.Channel;
-import devplugin.ChannelGroup;
 
 /**
  * Shows the ChannelGroup Information Dialog
@@ -116,16 +113,12 @@ public class ChannelGroupInfoDialog extends JDialog implements WindowClosingIf{
 
     JButton ok = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
 
-    ok.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        setVisible(false);
-      }
+    ok.addActionListener(e -> {
+      setVisible(false);
     });
 
-    SwingUtilities.invokeLater(new Runnable(){
-      public void run() {
-        infoPanel.scrollRectToVisible(new Rectangle(0,0));
-      }
+    SwingUtilities.invokeLater(() -> {
+      infoPanel.scrollRectToVisible(new Rectangle(0,0));
     });
 
     panel.add(ok, cc.xy(2,3));

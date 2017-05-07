@@ -1,8 +1,6 @@
 package tvbrowser.ui.settings;
 
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.net.URL;
 
 import javax.swing.Icon;
@@ -19,6 +17,11 @@ import javax.swing.event.HyperlinkListener;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+
+import devplugin.PluginInfo;
 import tvbrowser.core.Settings;
 import util.browserlauncher.Launch;
 import util.ui.Localizer;
@@ -27,12 +30,6 @@ import util.ui.WindowClosingIf;
 import util.ui.html.ExtendedHTMLDocument;
 import util.ui.html.ExtendedHTMLEditorKit;
 import util.ui.html.HTMLTextHelper;
-
-import com.jgoodies.forms.factories.Borders;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
-
-import devplugin.PluginInfo;
 
 /**
  * The Info-Dialog shows Informations about an Plugin
@@ -113,10 +110,8 @@ public class PluginInfoDialog extends JDialog implements WindowClosingIf {
 
     JButton ok = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
 
-    ok.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        close();
-      }
+    ok.addActionListener(e -> {
+      close();
     });
 
     panel.add(ok, cc.xy(2,3));

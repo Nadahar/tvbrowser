@@ -16,27 +16,20 @@
  */
 package tvbrowser.ui.filter.dlgs;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
 import javax.swing.JButton;
+
+import com.jgoodies.forms.builder.ButtonBarBuilder;
 
 import util.browserlauncher.Launch;
 import util.ui.Localizer;
-
-import com.jgoodies.forms.builder.ButtonBarBuilder;
 
 public class Utilities {
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(Utilities.class);
 
   static JButton createHelpButton() {
     JButton helpButton = new JButton(Localizer.getLocalization(Localizer.I18N_HELP));
-    helpButton.addActionListener(new ActionListener() {
-
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        Launch.openURL(mLocalizer.msg("helpUrl", "http://enwiki.tvbrowser.org/index.php/Filters"));
-      }
+    helpButton.addActionListener(e -> {
+      Launch.openURL(mLocalizer.msg("helpUrl", "http://enwiki.tvbrowser.org/index.php/Filters"));
     });
     
     return helpButton;
@@ -46,12 +39,8 @@ public class Utilities {
     ButtonBarBuilder bottomBar = new ButtonBarBuilder();
 
     JButton helpButton = new JButton(Localizer.getLocalization(Localizer.I18N_HELP));
-    helpButton.addActionListener(new ActionListener() {
-
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        Launch.openURL(mLocalizer.msg("helpUrl", "http://enwiki.tvbrowser.org/index.php/Filters"));
-      }
+    helpButton.addActionListener(e -> {
+      Launch.openURL(mLocalizer.msg("helpUrl", "http://enwiki.tvbrowser.org/index.php/Filters"));
     });
     bottomBar.addButton(helpButton);
     bottomBar.addGlue();

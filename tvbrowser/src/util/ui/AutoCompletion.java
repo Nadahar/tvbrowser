@@ -1,7 +1,5 @@
 package util.ui;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
@@ -45,11 +43,9 @@ public class AutoCompletion<E> extends PlainDocument {
     this.comboBox = comboBox;
     this.firstUpper = firstLetterUppercase;
     model = comboBox.getModel();
-    comboBox.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        if (!selecting) {
-          highlightCompletedText(0);
-        }
+    comboBox.addActionListener(e -> {
+      if (!selecting) {
+        highlightCompletedText(0);
       }
     });
     comboBox.addPropertyChangeListener(new PropertyChangeListener() {

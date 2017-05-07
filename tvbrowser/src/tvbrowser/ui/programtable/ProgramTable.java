@@ -699,13 +699,11 @@ public class ProgramTable extends JPanel
    * @since 2.6
    */
   private void repaintCell(final Point cellIndex) {
-    SwingUtilities.invokeLater(new Runnable() {
-      public void run() {
-        if ((cellIndex.x >= 0 || cellIndex.y >= 0) && cellIndex.x < mModel.getColumnCount()) {
-          Rectangle cellRect = getCellRect(cellIndex.x, cellIndex.y);
-          if (cellRect != null) {
-            repaint(cellRect);
-          }
+    SwingUtilities.invokeLater(() -> {
+      if ((cellIndex.x >= 0 || cellIndex.y >= 0) && cellIndex.x < mModel.getColumnCount()) {
+        Rectangle cellRect = getCellRect(cellIndex.x, cellIndex.y);
+        if (cellRect != null) {
+          repaint(cellRect);
         }
       }
     });
@@ -852,13 +850,11 @@ public class ProgramTable extends JPanel
    * in the ProgramTable
    */
   public void runCallback() {
-    SwingUtilities.invokeLater(new Runnable(){
-      public void run() {
-        if(mCallback != null) {
-          mCallback.run();
-        }
-        mCallback = null;
+    SwingUtilities.invokeLater(() -> {
+      if(mCallback != null) {
+        mCallback.run();
       }
+      mCallback = null;
     });
   }
 
@@ -1280,10 +1276,8 @@ public class ProgramTable extends JPanel
   }
 
   public void pluginDeactivated(PluginProxy plugin) {
-    SwingUtilities.invokeLater(new Runnable() {
-      public void run() {
-        updatePrograms();
-      }
+    SwingUtilities.invokeLater(() -> {
+      updatePrograms();
     });
   }
 
@@ -1439,10 +1433,8 @@ public class ProgramTable extends JPanel
         @Override
         public void run() {
           while (mAutoScrollThread != null) {
-            SwingUtilities.invokeLater(new Runnable() {
-              public void run() {
-                scrollBy(mAutoScroll.x, mAutoScroll.y);
-              }
+            SwingUtilities.invokeLater(() -> {
+              scrollBy(mAutoScroll.x, mAutoScroll.y);
             });
             try {
               sleep(30); // speed of scrolling

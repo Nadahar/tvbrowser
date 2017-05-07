@@ -1,8 +1,5 @@
 package tvbrowser.ui.settings;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
 import javax.swing.ButtonGroup;
 import javax.swing.Icon;
 import javax.swing.JCheckBox;
@@ -13,10 +10,6 @@ import javax.swing.JRadioButton;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
-import tvbrowser.core.Settings;
-import util.ui.Localizer;
-import util.ui.UiUtilities;
-
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.factories.CC;
@@ -24,6 +17,9 @@ import com.jgoodies.forms.layout.FormLayout;
 
 import devplugin.SettingsItem;
 import devplugin.SettingsTab;
+import tvbrowser.core.Settings;
+import util.ui.Localizer;
+import util.ui.UiUtilities;
 
 /**
  * The settings tab for the SOON_TYPE of the ProgramMenuItem.
@@ -101,10 +97,8 @@ public class TraySoonSettingsTab implements SettingsTab {
     
     setEnabled(true);
     
-    mIsEnabled.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        setEnabled(false);
-      }
+    mIsEnabled.addActionListener(e -> {
+      setEnabled(false);
     });
     
     return builder.getPanel();

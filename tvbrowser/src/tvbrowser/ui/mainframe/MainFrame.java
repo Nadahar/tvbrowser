@@ -54,7 +54,6 @@ import java.awt.dnd.DropTargetDropEvent;
 import java.awt.dnd.DropTargetEvent;
 import java.awt.dnd.DropTargetListener;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -508,11 +507,8 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
       
       private void showContextMenu(MouseEvent e) {
         JMenuItem settings = new JMenuItem(mLocalizer.msg("configTabs", "Configure tabs..."));
-        settings.addActionListener(new ActionListener() {
-          @Override
-          public void actionPerformed(ActionEvent e) {
-            showSettingsDialog(SettingsItem.CENTERPANELSETUP);
-          }
+        settings.addActionListener(evt -> {
+          showSettingsDialog(SettingsItem.CENTERPANELSETUP);
         });
         
         JPopupMenu popup = new JPopupMenu();
@@ -614,10 +610,8 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
       } catch (TvBrowserException e1) {}
     }
     
-    mTimer = new Timer(10000, new ActionListener() {
-      public void actionPerformed(ActionEvent evt) {
-        handleTimerEvent();
-      }
+    mTimer = new Timer(10000, e -> {
+      handleTimerEvent();
     });
     mTimer.start();
     
@@ -656,292 +650,246 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
   public void switchFullscreenMode() {
     dispose();
 
-    SwingUtilities.invokeLater(new Runnable() {
-      public void run() {
-        GraphicsDevice device = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+    SwingUtilities.invokeLater(() -> {
+      GraphicsDevice device = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
 
-        if(isFullScreenMode()) {
-          // switch back from fullscreen
-          device.setFullScreenWindow(null);
-          setUndecorated(false);
-          setBounds(mXPos, mYPos, mWidth, mHeight);
+      if(isFullScreenMode()) {
+        // switch back from fullscreen
+        device.setFullScreenWindow(null);
+        setUndecorated(false);
+        setBounds(mXPos, mYPos, mWidth, mHeight);
 
-          if(mMenuBar != null) {
-            mMenuBar.setFullscreenItemChecked(false);
-            mMenuBar.setVisible(Settings.propIsMenubarVisible.getBoolean());
-          }
+        if(mMenuBar != null) {
+          mMenuBar.setFullscreenItemChecked(false);
+          mMenuBar.setVisible(Settings.propIsMenubarVisible.getBoolean());
+        }
 
-          if(mToolBarPanel != null) {
-            mToolBarPanel.setVisible(Settings.propIsToolbarVisible.getBoolean());
-          }
+        if(mToolBarPanel != null) {
+          mToolBarPanel.setVisible(Settings.propIsToolbarVisible.getBoolean());
+        }
 
-          if(mStatusBar != null) {
-            mStatusBar.setVisible(Settings.propIsStatusbarVisible.getBoolean());
-          }
+        if(mStatusBar != null) {
+          mStatusBar.setVisible(Settings.propIsStatusbarVisible.getBoolean());
+        }
 
-          if(mChannelChooser != null) {
-            mChannelChooser.setVisible(Settings.propShowChannels.getBoolean());
-          }
+        if(mChannelChooser != null) {
+          mChannelChooser.setVisible(Settings.propShowChannels.getBoolean());
+        }
 
-          if(mFinderPanel != null) {
-            mFinderPanel.getComponent().setVisible(Settings.propShowDatelist.getBoolean());
-          }
+        if(mFinderPanel != null) {
+          mFinderPanel.getComponent().setVisible(Settings.propShowDatelist.getBoolean());
+        }
 
-          setVisible(true);
+        setVisible(true);
 
-          setShowPluginOverview(Settings.propShowPluginView.getBoolean(),false);
-          setShowTimeButtons(Settings.propShowTimeButtons.getBoolean(), false);
-          setShowDatelist(Settings.propShowDatelist.getBoolean(), false);
-          setShowChannellist(Settings.propShowChannels.getBoolean(), false);
+        setShowPluginOverview(Settings.propShowPluginView.getBoolean(),false);
+        setShowTimeButtons(Settings.propShowTimeButtons.getBoolean(), false);
+        setShowDatelist(Settings.propShowDatelist.getBoolean(), false);
+        setShowChannellist(Settings.propShowChannels.getBoolean(), false);
+      }
+      else {
+        // switch into fullscreen
+        mXPos = getX();
+        mYPos = getY();
+        mWidth = getWidth();
+        mHeight = getHeight();
+
+        setShowPluginOverview(false, false);
+        setShowTimeButtons(false, false);
+        setShowDatelist(false, false);
+        setShowChannellist(false, false);
+
+        if(mStatusBar != null) {
+          mMenuBar.setFullscreenItemChecked(true);
+          mStatusBar.setVisible(false);
+        }
+
+        if(mChannelChooser != null) {
+          mChannelChooser.setVisible(false);
+        }
+
+        if(mMenuBar != null) {
+          mMenuBar.setVisible(false);
+        }
+
+        if(mToolBarPanel != null) {
+          mToolBarPanel.setVisible(false);
+        }
+
+        if(mFinderPanel != null) {
+          mFinderPanel.getComponent().setVisible(false);
+        }
+
+        setUndecorated(true);
+        final Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+
+        if(device.isFullScreenSupported() && OperatingSystem.isMacOs()) {
+          device.setFullScreenWindow(MainFrame.getInstance());
         }
         else {
-          // switch into fullscreen
-          mXPos = getX();
-          mYPos = getY();
-          mWidth = getWidth();
-          mHeight = getHeight();
+          setLocation(0,0);
+          setSize(screen);
+        }
 
-          setShowPluginOverview(false, false);
-          setShowTimeButtons(false, false);
-          setShowDatelist(false, false);
-          setShowChannellist(false, false);
+        setVisible(true);
+        mProgramTableScrollPane.requestFocusInWindow();
 
-          if(mStatusBar != null) {
-            mMenuBar.setFullscreenItemChecked(true);
-            mStatusBar.setVisible(false);
-          }
+        new Thread("Fullscreen border detection") {
+          public void run() {
+            setPriority(Thread.MIN_PRIORITY);
 
-          if(mChannelChooser != null) {
-            mChannelChooser.setVisible(false);
-          }
+            while(isFullScreenMode()) {
+              final Point p = MouseInfo.getPointerInfo().getLocation();
+              SwingUtilities.convertPointFromScreen(p, MainFrame.this);
 
-          if(mMenuBar != null) {
-            mMenuBar.setVisible(false);
-          }
+              if(isActive()) {
 
-          if(mToolBarPanel != null) {
-            mToolBarPanel.setVisible(false);
-          }
-
-          if(mFinderPanel != null) {
-            mFinderPanel.getComponent().setVisible(false);
-          }
-
-          setUndecorated(true);
-          final Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
-
-          if(device.isFullScreenSupported() && OperatingSystem.isMacOs()) {
-            device.setFullScreenWindow(MainFrame.getInstance());
-          }
-          else {
-            setLocation(0,0);
-            setSize(screen);
-          }
-
-          setVisible(true);
-          mProgramTableScrollPane.requestFocusInWindow();
-
-          new Thread("Fullscreen border detection") {
-            public void run() {
-              setPriority(Thread.MIN_PRIORITY);
-
-              while(isFullScreenMode()) {
-                final Point p = MouseInfo.getPointerInfo().getLocation();
-                SwingUtilities.convertPointFromScreen(p, MainFrame.this);
-
-                if(isActive()) {
-
-                  // mouse pointer is at top
-                  if(p.y <= 10) {
-                    if(mToolBarPanel != null && mToolBar.getToolbarLocation().compareTo(BorderLayout.NORTH) == 0) {
-                      if(!mToolBarPanel.isVisible()) {
-                        UIThreadRunner.invokeLater(new Runnable() {
-
-                          @Override
-                          public void run() {
-                            mToolBarPanel.setVisible(Settings.propIsToolbarVisible.getBoolean());
-                          }
-                        });
-                      }
-                    }
-
-                    if (p.y <= 0) {
-                      UIThreadRunner.invokeLater(new Runnable() {
-
-                        @Override
-                        public void run() {
-                          mMenuBar.setVisible(true && Settings.propIsMenubarVisible.getBoolean());
-                        }
-                      });
-                    }
-                  }
-                  else if(p.y > (mMenuBar != null && mMenuBar.isVisible() ? mMenuBar.getHeight() : 0) + (Settings.propIsToolbarVisible.getBoolean() ? mToolBarPanel.getHeight() : 0)) {
-                    if(mMenuBar.isVisible()) {
-                      UIThreadRunner.invokeLater(new Runnable() {
-
-                        @Override
-                        public void run() {
-                          mMenuBar.setVisible(!isFullScreenMode()&& Settings.propIsMenubarVisible.getBoolean());
-                        }
-                      });
-                    }
-
-                    if(mToolBarPanel != null && mToolBarPanel.isVisible() && mToolBar.getToolbarLocation().compareTo(BorderLayout.NORTH) == 0) {
-                      UIThreadRunner.invokeLater(new Runnable() {
-
-                        @Override
-                        public void run() {
-                          mToolBarPanel.setVisible(!isFullScreenMode());
-                        }
+                // mouse pointer is at top
+                if(p.y <= 10) {
+                  if(mToolBarPanel != null && mToolBar.getToolbarLocation().compareTo(BorderLayout.NORTH) == 0) {
+                    if(!mToolBarPanel.isVisible()) {
+                      UIThreadRunner.invokeLater(() -> {
+                        mToolBarPanel.setVisible(Settings.propIsToolbarVisible.getBoolean());
                       });
                     }
                   }
 
-                  // mouse pointer is at the bottom
-                  if(p.y >= screen.height - 1 ) {
-                    if(mStatusBar != null && !mStatusBar.isVisible()) {
-                      UIThreadRunner.invokeLater(new Runnable() {
-
-                        @Override
-                        public void run() {
-                          mStatusBar.setVisible(Settings.propIsStatusbarVisible.getBoolean());
-                        }
-                      });
-                    }
+                  if (p.y <= 0) {
+                    UIThreadRunner.invokeLater(() -> {
+                      mMenuBar.setVisible(true && Settings.propIsMenubarVisible.getBoolean());
+                    });
                   }
-                  else if(mStatusBar != null && mStatusBar.isVisible() && p.y < screen.height - mStatusBar.getHeight()) {
-                    UIThreadRunner.invokeLater(new Runnable() {
-
-                      @Override
-                      public void run() {
-                        mStatusBar.setVisible(!isFullScreenMode());
-                      }
+                }
+                else if(p.y > (mMenuBar != null && mMenuBar.isVisible() ? mMenuBar.getHeight() : 0) + (Settings.propIsToolbarVisible.getBoolean() ? mToolBarPanel.getHeight() : 0)) {
+                  if(mMenuBar.isVisible()) {
+                    UIThreadRunner.invokeLater(() -> {
+                      mMenuBar.setVisible(!isFullScreenMode()&& Settings.propIsMenubarVisible.getBoolean());
                     });
                   }
 
-                  // mouse pointer is on the left side
-                  if(p.x <= 5) {
-                    if(p.x == 0 && mToolBarPanel != null && mToolBar.getToolbarLocation().compareTo(BorderLayout.WEST) == 0) {
-                      if(!mToolBarPanel.isVisible()) {
-                        UIThreadRunner.invokeLater(new Runnable() {
-
-                          @Override
-                          public void run() {
-                            mToolBarPanel.setVisible(Settings.propIsToolbarVisible.getBoolean());
-                          }
-                        });
-                      }
-                    }
-
-                    if(Settings.propPluginViewIsLeft.getBoolean()) {
-                      if(Settings.propShowPluginView.getBoolean())  {
-                        SwingUtilities.invokeLater(new Runnable() {
-                          public void run() {
-                            setShowPluginOverview(true, false);
-                          }
-                        });
-                      }
-                    }
-                    else {
-                      checkIfToShowTimeDateChannelList();
-                    }
-                  }
-                  else {
-                    int toolBarWidth = (mToolBarPanel != null && mToolBarPanel.isVisible() && mToolBar.getToolbarLocation().compareTo(BorderLayout.WEST) == 0) ? mToolBarPanel.getWidth() : 0;
-
-                    if(p.x > toolBarWidth && toolBarWidth != 0) {
-                      UIThreadRunner.invokeLater(new Runnable() {
-
-                        @Override
-                        public void run() {
-                          mToolBarPanel.setVisible(!isFullScreenMode());
-                        }
-                      });
-                    }
-
-                    if(Settings.propPluginViewIsLeft.getBoolean()) {
-                      if(Settings.propShowPluginView.getBoolean() && mPluginView != null && mPluginView.isVisible() && p.x > mPluginView.getWidth() + toolBarWidth + 25) {
-                        SwingUtilities.invokeLater(new Runnable() {
-                          public void run() {
-                            setShowPluginOverview(!isFullScreenMode(), false);
-                          }
-                        });
-                      }
-                    }
-                    else if(Settings.propShowChannels.getBoolean() ||
-                        Settings.propShowDatelist.getBoolean() ||
-                        Settings.propShowTimeButtons.getBoolean()) {
-                      SwingUtilities.invokeLater(new Runnable() {
-                        public void run() {
-                          if(mChannelChooser != null && mChannelChooser.isVisible() && p.x > mChannelChooser.getWidth()) {
-                            setShowChannellist(!isFullScreenMode(), false);
-                          }
-
-                          if(mFinderPanel != null && mFinderPanel.getComponent().isVisible() && p.x > mFinderPanel.getComponent().getWidth()) {
-                            setShowDatelist(!isFullScreenMode(), false);
-                          }
-
-                          if(mTimeChooserPanel != null && mTimeChooserPanel.isVisible() && p.x > mTimeChooserPanel.getWidth()) {
-                            setShowTimeButtons(!isFullScreenMode(), false);
-                          }
-                        }
-                      });
-                    }
-                  }
-
-                  // mouse pointer is on the right side
-                  if(p.x >= screen.width - 1) {
-                    if(!Settings.propPluginViewIsLeft.getBoolean()) {
-                      if(Settings.propShowPluginView.getBoolean())  {
-                        SwingUtilities.invokeLater(new Runnable() {
-                          public void run() {
-                            setShowPluginOverview(true, false);
-                          }
-                        });
-                      }
-                    }
-                    else {
-                      checkIfToShowTimeDateChannelList();
-                    }
-                  }
-                  else {
-                    if(!Settings.propPluginViewIsLeft.getBoolean()) {
-                      if(Settings.propShowPluginView.getBoolean() && mPluginView != null && mPluginView.isVisible() && p.x < screen.width - mPluginView.getWidth()) {
-                        SwingUtilities.invokeLater(new Runnable() {
-                          public void run() {
-                            setShowPluginOverview(!isFullScreenMode(), false);
-                          }
-                        });
-                      }
-                    }
-                    else if(Settings.propShowChannels.getBoolean() ||
-                        Settings.propShowDatelist.getBoolean() ||
-                        Settings.propShowTimeButtons.getBoolean()) {
-                      SwingUtilities.invokeLater(new Runnable() {
-                        public void run() {
-                          if(mChannelChooser != null && mChannelChooser.isVisible() && p.x < screen.width - mChannelChooser.getWidth()) {
-                            setShowChannellist(!isFullScreenMode(), false);
-                          }
-
-                          if(mFinderPanel != null && mFinderPanel.getComponent().isVisible() && p.x < screen.width - mFinderPanel.getComponent().getWidth()) {
-                            setShowDatelist(!isFullScreenMode(), false);
-                          }
-
-                          if(mTimeChooserPanel != null && mTimeChooserPanel.isVisible() && p.x < screen.width - mTimeChooserPanel.getWidth()) {
-                            setShowTimeButtons(!isFullScreenMode(), false);
-                          }
-                        }
-                      });
-                    }
+                  if(mToolBarPanel != null && mToolBarPanel.isVisible() && mToolBar.getToolbarLocation().compareTo(BorderLayout.NORTH) == 0) {
+                    UIThreadRunner.invokeLater(() -> {
+                      mToolBarPanel.setVisible(!isFullScreenMode());
+                    });
                   }
                 }
-                try {
-                  Thread.sleep(200);
-                }catch(Exception e) {}
+
+                // mouse pointer is at the bottom
+                if(p.y >= screen.height - 1 ) {
+                  if(mStatusBar != null && !mStatusBar.isVisible()) {
+                    UIThreadRunner.invokeLater(() -> {
+                      mStatusBar.setVisible(Settings.propIsStatusbarVisible.getBoolean());
+                    });
+                  }
+                }
+                else if(mStatusBar != null && mStatusBar.isVisible() && p.y < screen.height - mStatusBar.getHeight()) {
+                  UIThreadRunner.invokeLater(() -> {
+                    mStatusBar.setVisible(!isFullScreenMode());
+                  });
+                }
+
+                // mouse pointer is on the left side
+                if(p.x <= 5) {
+                  if(p.x == 0 && mToolBarPanel != null && mToolBar.getToolbarLocation().compareTo(BorderLayout.WEST) == 0) {
+                    if(!mToolBarPanel.isVisible()) {
+                      UIThreadRunner.invokeLater(() -> {
+                        mToolBarPanel.setVisible(Settings.propIsToolbarVisible.getBoolean());
+                      });
+                    }
+                  }
+
+                  if(Settings.propPluginViewIsLeft.getBoolean()) {
+                    if(Settings.propShowPluginView.getBoolean())  {
+                      SwingUtilities.invokeLater(() -> {
+                        setShowPluginOverview(true, false);
+                      });
+                    }
+                  }
+                  else {
+                    checkIfToShowTimeDateChannelList();
+                  }
+                }
+                else {
+                  int toolBarWidth = (mToolBarPanel != null && mToolBarPanel.isVisible() && mToolBar.getToolbarLocation().compareTo(BorderLayout.WEST) == 0) ? mToolBarPanel.getWidth() : 0;
+
+                  if(p.x > toolBarWidth && toolBarWidth != 0) {
+                    UIThreadRunner.invokeLater(() -> {
+                      mToolBarPanel.setVisible(!isFullScreenMode());
+                    });
+                  }
+
+                  if(Settings.propPluginViewIsLeft.getBoolean()) {
+                    if(Settings.propShowPluginView.getBoolean() && mPluginView != null && mPluginView.isVisible() && p.x > mPluginView.getWidth() + toolBarWidth + 25) {
+                      SwingUtilities.invokeLater(() -> {
+                        setShowPluginOverview(!isFullScreenMode(), false);
+                      });
+                    }
+                  }
+                  else if(Settings.propShowChannels.getBoolean() ||
+                      Settings.propShowDatelist.getBoolean() ||
+                      Settings.propShowTimeButtons.getBoolean()) {
+                    SwingUtilities.invokeLater(() -> {
+                      if(mChannelChooser != null && mChannelChooser.isVisible() && p.x > mChannelChooser.getWidth()) {
+                        setShowChannellist(!isFullScreenMode(), false);
+                      }
+
+                      if(mFinderPanel != null && mFinderPanel.getComponent().isVisible() && p.x > mFinderPanel.getComponent().getWidth()) {
+                        setShowDatelist(!isFullScreenMode(), false);
+                      }
+
+                      if(mTimeChooserPanel != null && mTimeChooserPanel.isVisible() && p.x > mTimeChooserPanel.getWidth()) {
+                        setShowTimeButtons(!isFullScreenMode(), false);
+                      }
+                    });
+                  }
+                }
+
+                // mouse pointer is on the right side
+                if(p.x >= screen.width - 1) {
+                  if(!Settings.propPluginViewIsLeft.getBoolean()) {
+                    if(Settings.propShowPluginView.getBoolean())  {
+                      SwingUtilities.invokeLater(() -> {
+                        setShowPluginOverview(true, false);
+                      });
+                    }
+                  }
+                  else {
+                    checkIfToShowTimeDateChannelList();
+                  }
+                }
+                else {
+                  if(!Settings.propPluginViewIsLeft.getBoolean()) {
+                    if(Settings.propShowPluginView.getBoolean() && mPluginView != null && mPluginView.isVisible() && p.x < screen.width - mPluginView.getWidth()) {
+                      SwingUtilities.invokeLater(() -> {
+                        setShowPluginOverview(!isFullScreenMode(), false);
+                      });
+                    }
+                  }
+                  else if(Settings.propShowChannels.getBoolean() ||
+                      Settings.propShowDatelist.getBoolean() ||
+                      Settings.propShowTimeButtons.getBoolean()) {
+                    SwingUtilities.invokeLater(() -> {
+                      if(mChannelChooser != null && mChannelChooser.isVisible() && p.x < screen.width - mChannelChooser.getWidth()) {
+                        setShowChannellist(!isFullScreenMode(), false);
+                      }
+
+                      if(mFinderPanel != null && mFinderPanel.getComponent().isVisible() && p.x < screen.width - mFinderPanel.getComponent().getWidth()) {
+                        setShowDatelist(!isFullScreenMode(), false);
+                      }
+
+                      if(mTimeChooserPanel != null && mTimeChooserPanel.isVisible() && p.x < screen.width - mTimeChooserPanel.getWidth()) {
+                        setShowTimeButtons(!isFullScreenMode(), false);
+                      }
+                    });
+                  }
+                }
               }
+              try {
+                Thread.sleep(200);
+              }catch(Exception e) {}
             }
-          }.start();
-        }
+          }
+        }.start();
       }
     });
   }
@@ -950,19 +898,17 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     if(Settings.propShowTimeButtons.getBoolean() ||
         Settings.propShowDatelist.getBoolean() ||
         Settings.propShowChannels.getBoolean()) {
-      SwingUtilities.invokeLater(new Runnable() {
-        public void run() {
-          if(Settings.propShowTimeButtons.getBoolean() && !mTimeChooserPanel.isVisible()) {
-            setShowTimeButtons(true, false);
-          }
+      SwingUtilities.invokeLater(() -> {
+        if(Settings.propShowTimeButtons.getBoolean() && !mTimeChooserPanel.isVisible()) {
+          setShowTimeButtons(true, false);
+        }
 
-          if(Settings.propShowDatelist.getBoolean() && !mFinderPanel.getComponent().isVisible()) {
-            setShowDatelist(true, false);
-          }
+        if(Settings.propShowDatelist.getBoolean() && !mFinderPanel.getComponent().isVisible()) {
+          setShowDatelist(true, false);
+        }
 
-          if(Settings.propShowChannels.getBoolean() && !mChannelChooser.isVisible()) {
-            setShowChannellist(true, false);
-          }
+        if(Settings.propShowChannels.getBoolean() && !mChannelChooser.isVisible()) {
+          setShowChannellist(true, false);
         }
       });
     }
@@ -1446,20 +1392,16 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     if(mCurrentFilterName == null || !mCurrentFilterName.equals(filter.getName())) {
       if ((mStoredViewPosition != null) && (isDefaultFilter)) {
         // Recreate last Position
-        SwingUtilities.invokeLater(new Runnable() {
-          public void run() {
-            if (mStoredViewPosition != null) {
-              mProgramTableScrollPane.getViewport().setViewPosition(mStoredViewPosition);
-            }
+        SwingUtilities.invokeLater(() -> {
+          if (mStoredViewPosition != null) {
+            mProgramTableScrollPane.getViewport().setViewPosition(mStoredViewPosition);
           }
         });
       }
       else { // on switching filters go to now, but only if we are at current date
-        SwingUtilities.invokeLater(new Runnable() {
-          public void run() {
-            if (getCurrentSelectedDate().equals(Date.getCurrentDate()) && !isStarting()) {
-              scrollToNow();
-            }
+        SwingUtilities.invokeLater(() -> {
+          if (getCurrentSelectedDate().equals(Date.getCurrentDate()) && !isStarting()) {
+            scrollToNow();
           }
         });
       }
@@ -1562,19 +1504,17 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
       info.pack();
       info.setLocationRelativeTo(this);
 
-      SwingUtilities.invokeLater(new Runnable() {
-        public void run() {
-          if(downloadingThread != null && downloadingThread.isAlive()) {
-            try {
-              downloadingThread.join();
-            } catch (InterruptedException e) {
-              e.printStackTrace();
-            }
+      SwingUtilities.invokeLater(() -> {
+        if(downloadingThread != null && downloadingThread.isAlive()) {
+          try {
+            downloadingThread.join();
+          } catch (InterruptedException e) {
+            e.printStackTrace();
           }
-
-          info.setVisible(false);
-          info.dispose();
         }
+
+        info.setVisible(false);
+        info.dispose();
       });
 
       info.setVisible(true);
@@ -1634,27 +1574,24 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     mMenuBar.updateChannelGroupMenu();
     PluginProxyManager.getInstance().addPluginStateListener(this);
     
-    SwingUtilities.invokeLater(new Runnable() {
-      @Override
-      public void run() {
-        mStarting = false;
-        mMenuBar.updateChannelItems();
-        if(Persona.getInstance().getHeaderImage() != null) {
-          updatePersona();
-        }
-        
-        if(PluginLoader.getInstance().hasToShowMouseInfo() && 
-            JOptionPane.showConfirmDialog(MainFrame.this, 
-                mLocalizer.msg("askOpenMouseSettings", "Plugins were installed that support mouse actions.\n\nDo you want to open the mouse settings now to configure those actions?"), 
-                Localizer.getLocalization(Localizer.I18N_INFO), JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
-          showSettingsDialog(SettingsItem.MOUSE);
-        }
-        
-        PluginTree.getInstance().updateUI();
-        
-        if(!Settings.propIsUsingFullscreen.getBoolean()) {
-          mRootNode.update();
-        }
+    SwingUtilities.invokeLater(() -> {
+      mStarting = false;
+      mMenuBar.updateChannelItems();
+      if(Persona.getInstance().getHeaderImage() != null) {
+        updatePersona();
+      }
+      
+      if(PluginLoader.getInstance().hasToShowMouseInfo() && 
+          JOptionPane.showConfirmDialog(MainFrame.this, 
+              mLocalizer.msg("askOpenMouseSettings", "Plugins were installed that support mouse actions.\n\nDo you want to open the mouse settings now to configure those actions?"), 
+              Localizer.getLocalization(Localizer.I18N_INFO), JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+        showSettingsDialog(SettingsItem.MOUSE);
+      }
+      
+      PluginTree.getInstance().updateUI();
+      
+      if(!Settings.propIsUsingFullscreen.getBoolean()) {
+        mRootNode.update();
       }
     });
   }
@@ -1830,11 +1767,9 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
             e.printStackTrace();
           }
           // now delete the data
-          SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-              mLog.info("Deleting expired TV listings...");
-              TvDataBase.getInstance().deleteExpiredFiles(1, true);
-            }
+          SwingUtilities.invokeLater(() -> {
+            mLog.info("Deleting expired TV listings...");
+            TvDataBase.getInstance().deleteExpiredFiles(1, true);
           });
         }
       };
@@ -1920,11 +1855,10 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     mProgramTableScrollPane.resetScrolledTime();
     // invoke scrolling later as the upper filter deactivation may have pending operations for the UI
     // so we currently can't scroll there yet
-    SwingUtilities.invokeLater(new Runnable() {
-      public void run() {
-        mProgramTableScrollPane.scrollToChannel(program.getChannel());
-        scrollTo(program.getDate(), program.getStartTime(), callback);
-      }});
+    SwingUtilities.invokeLater(() -> {
+      mProgramTableScrollPane.scrollToChannel(program.getChannel());
+      scrollTo(program.getDate(), program.getStartTime(), callback);
+    });
     
     for(PluginCenterPanelWrapper wrapper : mCenterPanelWrapperList) {
       wrapper.programScrolled(program);
@@ -1940,10 +1874,9 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
   public void selectProgram(final Program program, boolean scroll) {
     if(program != null) {
       if(scroll) {
-        scrollToProgram(program, new Runnable() {
-          public void run() {
-            selectProgramInternal(program);
-          }});
+        scrollToProgram(program, () -> {
+          selectProgramInternal(program);
+        });
       }
       else {
         selectProgramInternal(program);
@@ -2012,11 +1945,8 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
   /** Very first scrollToNow should only be called from TVBrowser.java */
   public void scrollToNowFirst() {
     handleTimerEvent();
-    SwingUtilities.invokeLater(new Runnable() {
-      @Override
-      public void run() {
-        scrollToNow(true);    
-      }
+    SwingUtilities.invokeLater(() -> {
+      scrollToNow(true);
     });
     
   }
@@ -2051,13 +1981,11 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     // Change to the shown day program to today if necessary
     // and scroll to "now" afterwards
     final int scrollMinute = minute;
-    mFinderPanel.markDate(day, new Runnable() {
-      public void run() {
-        // Scroll to now
-        mProgramTableScrollPane.scrollToTime(scrollMinute);
-        if (callback != null) {
-          callback.run();
-        }
+    mFinderPanel.markDate(day, () -> {
+      // Scroll to now
+      mProgramTableScrollPane.scrollToTime(scrollMinute);
+      if (callback != null) {
+        callback.run();
       }
     },false);
   }
@@ -2070,13 +1998,8 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     progWin.run(new Progress() {
       public void run() {
         try {
-          UIThreadRunner.invokeAndWait(new Runnable() {
-
-            @Override
-            public void run() {
-              mConfigAssistantDialog = new tvbrowser.ui.configassistant.ConfigAssistant(
-                  parent);
-            }
+          UIThreadRunner.invokeAndWait(() -> {
+            mConfigAssistantDialog = new tvbrowser.ui.configassistant.ConfigAssistant(parent);
           });
         } catch (InterruptedException e) {
           e.printStackTrace();
@@ -2206,11 +2129,9 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
    */
   public void handleChangedTvDataDir() {
     mFinderPanel.updateItems();
-    changeDate(Date.getCurrentDate(), null, new Runnable() {
-      public void run() {
-        scrollToNow();
-        resetOnAirArrays();
-      }
+    changeDate(Date.getCurrentDate(), null, () -> {
+      scrollToNow();
+      resetOnAirArrays();
     },false);
   }
 
@@ -2229,10 +2150,8 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
    */
   private void newTvDataAvailable(boolean scroll) {
     if(scroll) {
-      changeDate(mFinderPanel.getSelectedDate(), null, new Runnable() {
-        public void run() {
-          scrollToNow();
-        }
+      changeDate(mFinderPanel.getSelectedDate(), null, () -> {
+        scrollToNow();
       },false);
     } else {
       changeDate(mFinderPanel.getSelectedDate(), null, null, true);
@@ -2376,25 +2295,19 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
 
   private void changeDate(final Date date, final ProgressMonitor monitor,
       final Runnable callback, boolean informPluginPanels) {
-    SwingUtilities.invokeLater(new Runnable() {
-      public void run() {
-        final int currentTime = mProgramTableScrollPane.getScrolledTime();
-        mProgramTableScrollPane.deSelectItem(false);
-        mProgramTableModel.setDate(date, monitor, new Runnable() {
-
-          @Override
-          public void run() {
-            if (callback != null) {
-              callback.run();
-            }
-            if (currentTime >= 0) {
-              mProgramTableScrollPane.scrollToTime(currentTime);
-            }
-          }
-        });
-        
-        checkFilterInfoPanel();
-      }
+    SwingUtilities.invokeLater(() -> {
+      final int currentTime = mProgramTableScrollPane.getScrolledTime();
+      mProgramTableScrollPane.deSelectItem(false);
+      mProgramTableModel.setDate(date, monitor, () -> {
+        if (callback != null) {
+          callback.run();
+        }
+        if (currentTime >= 0) {
+          mProgramTableScrollPane.scrollToTime(currentTime);
+        }
+      });
+      
+      checkFilterInfoPanel();
     });
     
     if(informPluginPanels) {
@@ -2436,14 +2349,12 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
           String msg = mLocalizer.msg("error.3", "An unexpected error occurred during update.");
           ErrorHandler.handle(msg, t);
         } finally {
-          SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-              onDownloadDone();
-              newTvDataAvailable(scroll);
+          SwingUtilities.invokeLater(() -> {
+            onDownloadDone();
+            newTvDataAvailable(scroll);
 
-              if((Settings.propLastPluginsUpdate.getDate() == null || Settings.propLastPluginsUpdate.getDate().addDays(7).compareTo(Date.getCurrentDate()) <= 0)) {
-                PluginAutoUpdater.searchForPluginUpdates(mStatusBar.getLabel());
-              }
+            if((Settings.propLastPluginsUpdate.getDate() == null || Settings.propLastPluginsUpdate.getDate().addDays(7).compareTo(Date.getCurrentDate()) <= 0)) {
+              PluginAutoUpdater.searchForPluginUpdates(mStatusBar.getLabel());
             }
           });
         }
@@ -2590,38 +2501,34 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     }
 
     try {
-      UIThreadRunner.invokeAndWait(new Runnable() {
-        public void run() {
-          mSettingsWillBeOpened = true;
+      UIThreadRunner.invokeAndWait(() -> {
+        mSettingsWillBeOpened = true;
 
-          // show busy cursor
-          Window comp = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
-          ProgramTable programTable = MainFrame.getInstance().getProgramTableScrollPane().getProgramTable();
-          Cursor oldWindowCursor = comp.getCursor();
-          Cursor oldTableCursor = programTable.getCursor();
-          comp.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-          programTable.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-          
-          SettingsDialog dlg = new SettingsDialog(MainFrame.this, visibleTabId);
-          dlg.centerAndShow();
-          
-          // restore cursors
-          programTable.setCursor(oldTableCursor);
-          comp.setCursor(oldWindowCursor);
+        // show busy cursor
+        Window comp = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
+        ProgramTable programTable = MainFrame.getInstance().getProgramTableScrollPane().getProgramTable();
+        Cursor oldWindowCursor = comp.getCursor();
+        Cursor oldTableCursor = programTable.getCursor();
+        comp.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        programTable.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        
+        SettingsDialog dlg = new SettingsDialog(MainFrame.this, visibleTabId);
+        dlg.centerAndShow();
+        
+        // restore cursors
+        programTable.setCursor(oldTableCursor);
+        comp.setCursor(oldWindowCursor);
 
-          SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-              Settings.handleChangedSettings();
-              if (mPluginView != null) {
-                mPluginView.refreshTree();
-              }
-              if(mCenterPluginView != null) {
-                mCenterPluginView.refreshTree();
-              }
-            }
-          });
-          mSettingsWillBeOpened = false;
-        }
+        SwingUtilities.invokeLater(() -> {
+          Settings.handleChangedSettings();
+          if (mPluginView != null) {
+            mPluginView.refreshTree();
+          }
+          if(mCenterPluginView != null) {
+            mCenterPluginView.refreshTree();
+          }
+        });
+        mSettingsWillBeOpened = false;
       });
     } catch (InterruptedException e) {
       e.printStackTrace();
@@ -2702,14 +2609,10 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
             final Window parent = UiUtilities.getLastModalChildOf(MainFrame
                 .getInstance());
             try {
-              UIThreadRunner.invokeAndWait(new Runnable() {
-
-                @Override
-                public void run() {
-                  SoftwareUpdateDlg dlg = new SoftwareUpdateDlg(parent, baseUrl,
-                      dialogType, mSoftwareUpdateItems);
-                  dlg.setVisible(true);
-                }
+              UIThreadRunner.invokeAndWait(() -> {
+                SoftwareUpdateDlg dlg = new SoftwareUpdateDlg(parent, baseUrl,
+                    dialogType, mSoftwareUpdateItems);
+                dlg.setVisible(true);
               });
             } catch (InterruptedException e) {
               e.printStackTrace();
@@ -3348,51 +3251,48 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
    * Updates the search field on Persona change.
    */
   public void updatePersona() {
-    SwingUtilities.invokeLater(new Runnable() {
-      @Override
-      public void run() {
-        repaint();
-        if(Persona.getInstance().getHeaderImage() != null) {
-          mCenterTabPane.setUI(mPersonaUI);
-          if(mToolBarPanel != null) {
-            mToolBarPanel.setOpaque(false);
-          }
-          if(mSearchField != null) {
-            mSearchField.setOpaque(false);
-          }
-          mCenterTabPane.setOpaque(false);
-          mCenterTabPane.setBackground(new Color(0,0,0,0));
-          mCenterTabPane.setForeground(Persona.getInstance().getTextColor());
-        }
-        else {
-          mCenterTabPane.setUI(mDefaultUI);
-          
-          if(mToolBarPanel != null) {
-            mToolBarPanel.setOpaque(true);
-          }
-          if(mSearchField != null) {
-            mSearchField.setOpaque(true);
-          }
-          mCenterTabPane.setOpaque(true);
-          mCenterTabPane.setBackground(UIManager.getColor("Panel.background"));
-          mCenterTabPane.setForeground(UIManager.getColor("List.foreground"));
-        }
+    SwingUtilities.invokeLater(() -> {
+      repaint();
+      if(Persona.getInstance().getHeaderImage() != null) {
+        mCenterTabPane.setUI(mPersonaUI);
         if(mToolBarPanel != null) {
-          mToolBarPanel.updateUI();
+          mToolBarPanel.setOpaque(false);
         }
-        
-        mMenuBar.updatePersona();
-        mToolBar.updatePersona();
-        
         if(mSearchField != null) {
-          mSearchField.updatePersona();
+          mSearchField.setOpaque(false);
         }
-        
-        mTimeChooserPanel.updatePersona();
-        mStatusBar.updatePersona();
-        mProgramTableScrollPane.updatePersona();
-        mFilterPanel.updatePersona();
+        mCenterTabPane.setOpaque(false);
+        mCenterTabPane.setBackground(new Color(0,0,0,0));
+        mCenterTabPane.setForeground(Persona.getInstance().getTextColor());
       }
+      else {
+        mCenterTabPane.setUI(mDefaultUI);
+        
+        if(mToolBarPanel != null) {
+          mToolBarPanel.setOpaque(true);
+        }
+        if(mSearchField != null) {
+          mSearchField.setOpaque(true);
+        }
+        mCenterTabPane.setOpaque(true);
+        mCenterTabPane.setBackground(UIManager.getColor("Panel.background"));
+        mCenterTabPane.setForeground(UIManager.getColor("List.foreground"));
+      }
+      if(mToolBarPanel != null) {
+        mToolBarPanel.updateUI();
+      }
+      
+      mMenuBar.updatePersona();
+      mToolBar.updatePersona();
+      
+      if(mSearchField != null) {
+        mSearchField.updatePersona();
+      }
+      
+      mTimeChooserPanel.updatePersona();
+      mStatusBar.updatePersona();
+      mProgramTableScrollPane.updatePersona();
+      mFilterPanel.updatePersona();
     });
   }
   
@@ -3521,24 +3421,16 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
 
   @Override
   public void pluginActivated(PluginProxy plugin) {   
-    SwingUtilities.invokeLater(new Runnable() {
-      
-      @Override
-      public void run() {
-        updateCenterPanels();    
-      }
+    SwingUtilities.invokeLater(() -> {
+      updateCenterPanels();
     });
   }
 
   @Override
   public void pluginDeactivated(PluginProxy plugin) {
     if(!isShuttingDown()) {
-      SwingUtilities.invokeLater(new Runnable() {
-        
-        @Override
-        public void run() {
-          updateCenterPanels();    
-        }
+      SwingUtilities.invokeLater(() -> {
+        updateCenterPanels();
       });
     }
   }

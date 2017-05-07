@@ -32,8 +32,6 @@ import java.awt.dnd.DnDConstants;
 import java.awt.dnd.DragGestureEvent;
 import java.awt.dnd.DragGestureListener;
 import java.awt.dnd.DragSource;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ItemEvent;
@@ -289,34 +287,27 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction<Object> 
 
     mRightButton = new JButton(TVBrowserIcons.right(TVBrowserIcons.SIZE_LARGE));
 
-    mRightButton.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        moveChannelsToRight();
-      }
+    mRightButton.addActionListener(e -> {
+      moveChannelsToRight();
     });
 
     mLeftButton = new JButton(TVBrowserIcons.left(TVBrowserIcons.SIZE_LARGE));
 
-    mLeftButton.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        moveChannelsToLeft();
-      }
+    mLeftButton.addActionListener(e -> {
+      moveChannelsToLeft();
     });
     
     mButtonAddSeparator = new LineButton();
     mButtonAddSeparator.setToolTipText(mLocalizer.msg("addSeparator", "Add separator"));
-    mButtonAddSeparator.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        int index = mSubscribedChannels.getSelectedIndex()+1;
-        Object test = mSubscribedChannels.getSelectedValue();
-        
-        if(test instanceof Channel && ((Channel) test).getJointChannel() != null) {
-          index++;
-        }
-        
-        ((DefaultListModel<Object>)mSubscribedChannels.getModel()).insertElementAt(Channel.SEPARATOR,index);
+    mButtonAddSeparator.addActionListener(e -> {
+      int index = mSubscribedChannels.getSelectedIndex()+1;
+      Object test = mSubscribedChannels.getSelectedValue();
+      
+      if(test instanceof Channel && ((Channel) test).getJointChannel() != null) {
+        index++;
       }
+      
+      ((DefaultListModel<Object>)mSubscribedChannels.getModel()).insertElementAt(Channel.SEPARATOR,index);
     });
     
     mButtonAddSeparator.setSize(TVBrowserIcons.SIZE_LARGE, TVBrowserIcons.SIZE_LARGE);
@@ -332,17 +323,14 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction<Object> 
     
     mButtonDeleteSeparator = new JButton(TVBrowserIcons.delete(TVBrowserIcons.SIZE_LARGE));
     mButtonDeleteSeparator.setToolTipText(mLocalizer.msg("deleteSeparator", "Delete selected separator"));
-    mButtonDeleteSeparator.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        int index = mSubscribedChannels.getSelectedIndex();
-        
-        ((DefaultListModel<Object>)mSubscribedChannels.getModel()).remove(index);
-        mButtonDeleteSeparator.setEnabled(false);
-        
-        if(index < mSubscribedChannels.getModel().getSize()) {
-          mSubscribedChannels.setSelectedIndex(index);
-        }
+    mButtonDeleteSeparator.addActionListener(e -> {
+      int index = mSubscribedChannels.getSelectedIndex();
+      
+      ((DefaultListModel<Object>)mSubscribedChannels.getModel()).remove(index);
+      mButtonDeleteSeparator.setEnabled(false);
+      
+      if(index < mSubscribedChannels.getModel().getSize()) {
+        mSubscribedChannels.setSelectedIndex(index);
       }
     });
     
@@ -375,11 +363,8 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction<Object> 
     restoreForPopup();
     
     mImExportChannels = new JButton(mLocalizer.msg("imExportChannels", "Export/import channels"));
-    mImExportChannels.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        showImExportSelection();
-      }
+    mImExportChannels.addActionListener(e -> {
+      showImExportSelection();
     });
     
     loadSyncCommunication();
@@ -392,21 +377,16 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction<Object> 
     final JButton setSortNumbers = new JButton(mLocalizer.msg("setSortNumbers", "Set sort numbers"));
     setSortNumbers.setEnabled(false);
     
-    setSortNumbers.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent arg0) {
-        setSortNumbers();
-      }
+    setSortNumbers.addActionListener(e -> {
+      setSortNumbers();
     });
     
     final JButton configureChannels = new JButton(mLocalizer.msg(
         "configSelectedChannels", "Configure selected channels"));
     configureChannels.setEnabled(false);
 
-    configureChannels.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        configChannels();
-      }
+    configureChannels.addActionListener(e -> {
+      configChannels();
     });
     
     mSubscribedChannels.addListSelectionListener(new ListSelectionListener() {
@@ -488,10 +468,8 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction<Object> 
     JButton refreshList = new JButton(mLocalizer.msg("updateChannelList",
         "Update channel list"), TVBrowserIcons.refresh(TVBrowserIcons.SIZE_SMALL));
 
-    refreshList.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        refreshChannelList();
-      }
+    refreshList.addActionListener(e -> {
+      refreshChannelList();
     });
 
     southPn.add(refreshList, BorderLayout.WEST);
@@ -538,11 +516,8 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction<Object> 
     });
 
     if(mIsWizard) {
-      SwingUtilities.invokeLater(new Runnable() {
-        @Override
-        public void run() {
-          askForSynchronization(mSyncCommunication == null);
-        }
+      SwingUtilities.invokeLater(() -> {
+        askForSynchronization(mSyncCommunication == null);
       });
     }
     
@@ -630,11 +605,8 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction<Object> 
       
       if(mSyncCommunication != null) {
         JMenuItem item = new JMenuItem(mLocalizer.msg("synchronize", "Synchronize channels with AndroidSync"));
-        item.addActionListener(new ActionListener() {
-          @Override
-          public void actionPerformed(ActionEvent e) {
-            synchronizeChannels();
-          }
+        item.addActionListener(e -> {
+          synchronizeChannels();
         });
         
         imExportChannelsPopup.add(item);
@@ -642,21 +614,15 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction<Object> 
       }
       
       JMenuItem item = new JMenuItem(mLocalizer.msg("exportChannelsBtn", "Export channels to file"));
-      item.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-          exportChannelsToFile();
-        }
+      item.addActionListener(e -> {
+        exportChannelsToFile();
       });
       
       imExportChannelsPopup.add(item);
       
       item = new JMenuItem(mLocalizer.msg("importChannelsBtn", "Import channels from file"));
-      item.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-          importChannelsFromFile();
-        }
+      item.addActionListener(e -> {
+        importChannelsFromFile();
       });
       
       imExportChannelsPopup.add(item);
@@ -927,13 +893,11 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction<Object> 
     
     JButton reset = new JButton(mLocalizer.msg("reset", "Reset"));
 
-    reset.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        mChannelName.setText("");
-        mCategoryCB.setSelectedIndex(1);
-        mCountryCB.setSelectedIndex(0);
-        mPluginCB.setSelectedIndex(0);
-      }
+    reset.addActionListener(e -> {
+      mChannelName.setText("");
+      mCategoryCB.setSelectedIndex(1);
+      mCountryCB.setSelectedIndex(0);
+      mPluginCB.setSelectedIndex(0);
     });
 
     if (mShowPlugins) {
@@ -944,18 +908,14 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction<Object> 
 
     filter.add(filterPanel, cc.xy(1, 3));
 
-    final ItemListener filterItemListener = new ItemListener() {
-      public void itemStateChanged(ItemEvent e) {
-        if ((e == null) || (e.getStateChange() == ItemEvent.SELECTED)) {
-          if (!mListUpdating) {
-            SwingUtilities.invokeLater(new Runnable() {
-              public void run() {
-                mListUpdating = true;
-                fillAvailableChannelsListBox();
-                mListUpdating = false;
-              }
-            });
-          }
+    final ItemListener filterItemListener = e -> {
+      if ((e == null) || (e.getStateChange() == ItemEvent.SELECTED)) {
+        if (!mListUpdating) {
+          SwingUtilities.invokeLater(() -> {
+            mListUpdating = true;
+            fillAvailableChannelsListBox();
+            mListUpdating = false;
+          });
         }
       }
     };
@@ -1508,15 +1468,12 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction<Object> 
         ChannelGroupManager.getInstance().checkForAvailableGroupsAndChannels(
             win);
 
-        SwingUtilities.invokeLater(new Runnable() {
-          public void run() {
-            mChannelListModel.refresh();
-            updateFilterPanel();
-            fillSubscribedChannelsListBox();
-            fillAvailableChannelsListBox();
-            showChannelChanges(before);
-          }
-
+        SwingUtilities.invokeLater(() -> {
+          mChannelListModel.refresh();
+          updateFilterPanel();
+          fillSubscribedChannelsListBox();
+          fillAvailableChannelsListBox();
+          showChannelChanges(before);
         });
       }
     });

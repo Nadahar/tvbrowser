@@ -1,7 +1,6 @@
 package util.ui.findasyoutype;
 
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.FocusEvent;
@@ -25,12 +24,12 @@ import javax.swing.text.Caret;
 import javax.swing.text.JTextComponent;
 import javax.swing.text.Position;
 
-import tvbrowser.core.icontheme.IconLoader;
-import util.ui.TVBrowserIcons;
-
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
+
+import tvbrowser.core.icontheme.IconLoader;
+import util.ui.TVBrowserIcons;
 
 /**
  * This TextComponentFindAction is based on the Implementation of Santosh
@@ -104,10 +103,8 @@ public class TextComponentFindAction extends FindAction implements
     mFindNext.setIcon(TVBrowserIcons.down(TVBrowserIcons.SIZE_SMALL));
     mFindNext.setContentAreaFilled(false);
     mFindNext.setFocusable(false);
-    mFindNext.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        next();
-      }
+    mFindNext.addActionListener(e -> {
+      next();
     });
 
     mFindPrev = new JButton(mLocalizer.msg("prev", "Find Previous"));
@@ -115,10 +112,8 @@ public class TextComponentFindAction extends FindAction implements
     mFindPrev.setIcon(TVBrowserIcons.up(TVBrowserIcons.SIZE_SMALL));
     mFindPrev.setContentAreaFilled(false);
     mFindPrev.setFocusable(false);
-    mFindPrev.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        prev();
-      }
+    mFindPrev.addActionListener(e -> {
+      prev();
     });
 
     addMouseAdapter(mFindNext);
@@ -317,7 +312,6 @@ public class TextComponentFindAction extends FindAction implements
       return bias == null || bias == Position.Bias.Forward ? text.indexOf(str,
           startingOffset) : text.lastIndexOf(str, startingOffset);
     } catch (Exception e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
 
