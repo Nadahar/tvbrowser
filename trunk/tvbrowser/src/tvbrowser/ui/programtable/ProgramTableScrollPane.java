@@ -402,17 +402,13 @@ public class ProgramTableScrollPane extends JScrollPane implements ProgramTableM
       if(getVerticalScrollBar().getValue() + getVerticalScrollBar().getVisibleAmount() >= getVerticalScrollBar().getMaximum() || getVerticalScrollBar().getValue() == getVerticalScrollBar().getMinimum()) {
         if(System.currentTimeMillis()-mLastScrollTime <= 500 && System.currentTimeMillis()-mLastScrollTime >= 200) {
           if(e.getWheelRotation() < 0) {
-            MainFrame.getInstance().goToPreviousDay(new Runnable() {
-              public void run() {
-                getVerticalScrollBar().setValue(getVerticalScrollBar().getMaximum());
-              }
+            MainFrame.getInstance().goToPreviousDay(() -> {
+              getVerticalScrollBar().setValue(getVerticalScrollBar().getMaximum());
             });
           }
           else {
-            MainFrame.getInstance().goToNextDay(new Runnable() {
-              public void run() {
-                MainFrame.getInstance().scrollToTime(Settings.propProgramTableEndOfDay.getInt(),false);
-              }
+            MainFrame.getInstance().goToNextDay(() -> {
+              MainFrame.getInstance().scrollToTime(Settings.propProgramTableEndOfDay.getInt(),false);
             });
           }
           

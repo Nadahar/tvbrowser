@@ -169,11 +169,8 @@ public class FrameReminders extends JFrame implements InterfaceClose<PanelRemind
         mGlobalReminderList.unblockProgram(program);
       }
       
-      SwingUtilities.invokeLater(new Runnable() {
-        @Override
-        public void run() {
-          ReminderPlugin.getInstance().updateRootNode(true);
-        }
+      SwingUtilities.invokeLater(() -> {
+        ReminderPlugin.getInstance().updateRootNode(true);
       });
       
       ReminderListDialog.updateReminderList();

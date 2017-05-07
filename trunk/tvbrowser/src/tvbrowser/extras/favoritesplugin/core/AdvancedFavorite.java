@@ -26,8 +26,6 @@
 
 package tvbrowser.extras.favoritesplugin.core;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -351,27 +349,25 @@ public class AdvancedFavorite extends Favorite implements PendingFilterLoader {
       }
       
       mEditFilter = new JButton(SelectFilterDlg.mLocalizer.msg("title", "Edit Filters"));
-      mEditFilter.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-          SelectFilterDlg filterDlg = SelectFilterDlg.create(UiUtilities.getLastModalChildOf(MainFrame.getInstance()));
-          filterDlg.setVisible(true);
-          
-          Object selected = mFilterCombo.getSelectedItem();
-          
-          ((DefaultComboBoxModel<WrapperFilter>)mFilterCombo.getModel()).removeAllElements();
-          
-          ProgramFilter[] availableFilter = Plugin.getPluginManager().getFilterManager().getAvailableFilters();
-          
-          for(ProgramFilter filter : availableFilter) {
-            if(!(filter instanceof FavoriteFilter)) {
-              ((DefaultComboBoxModel<WrapperFilter>)mFilterCombo.getModel()).addElement(new WrapperFilter(filter));
-            }
+      mEditFilter.addActionListener(e -> {
+        SelectFilterDlg filterDlg = SelectFilterDlg.create(UiUtilities.getLastModalChildOf(MainFrame.getInstance()));
+        filterDlg.setVisible(true);
+        
+        Object selected = mFilterCombo.getSelectedItem();
+        
+        ((DefaultComboBoxModel<WrapperFilter>)mFilterCombo.getModel()).removeAllElements();
+        
+        ProgramFilter[] availableFilter1 = Plugin.getPluginManager().getFilterManager().getAvailableFilters();
+        
+        for(ProgramFilter filter : availableFilter1) {
+          if(!(filter instanceof FavoriteFilter)) {
+            ((DefaultComboBoxModel<WrapperFilter>)mFilterCombo.getModel()).addElement(new WrapperFilter(filter));
           }
-          
-          mFilterCombo.setSelectedItem(new WrapperFilter((ProgramFilter)selected));
         }
-      });
+        
+        mFilterCombo.setSelectedItem(new WrapperFilter((ProgramFilter)selected));
+        }
+      );
       
       panelBuilder.add(mEditFilter, cc.xy(5, 3));
             
@@ -384,11 +380,9 @@ public class AdvancedFavorite extends Favorite implements PendingFilterLoader {
         mEditFilter.setEnabled(false);
       }
 
-      mFilterCheckbox.addActionListener(new ActionListener(){
-        public void actionPerformed(ActionEvent e) {
-          mFilterCombo.setEnabled(mFilterCheckbox.isSelected());
-          mEditFilter.setEnabled(mFilterCheckbox.isSelected());
-        }
+      mFilterCheckbox.addActionListener(e -> {
+        mFilterCombo.setEnabled(mFilterCheckbox.isSelected());
+        mEditFilter.setEnabled(mFilterCheckbox.isSelected());
       });
 
       return panelBuilder.getPanel();

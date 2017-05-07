@@ -501,11 +501,8 @@ public class PluginTreeNode implements Comparable<PluginTreeNode> {
     else {
       createDefaultNodes();
     }
-    UIThreadRunner.invokeLater(new Runnable() {
-      @Override
-      public void run() {
-        PluginTreeModel.getInstance().reload(mDefaultNode);
-      }
+    UIThreadRunner.invokeLater(() -> {
+      PluginTreeModel.getInstance().reload(mDefaultNode);
     });
   }
 

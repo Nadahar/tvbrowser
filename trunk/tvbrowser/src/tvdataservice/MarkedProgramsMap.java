@@ -37,14 +37,14 @@ import java.util.Map;
 
 import javax.swing.SwingUtilities;
 
+import devplugin.Marker;
+import devplugin.Program;
+import devplugin.ProgramFilter;
 import tvbrowser.core.Settings;
 import tvbrowser.core.plugin.PluginManagerImpl;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.program.ProgramUtilities;
-import devplugin.Marker;
-import devplugin.Program;
-import devplugin.ProgramFilter;
 
 /**
  * A class that contains all markings for programs.
@@ -240,10 +240,8 @@ public class MarkedProgramsMap {
           }catch(Exception e) {}
         }
 
-        SwingUtilities.invokeLater(new Runnable() {
-          public void run() {
-            MainFrame.getInstance().getProgramTableModel().updateTableContent();
-          }
+        SwingUtilities.invokeLater(() -> {
+          MainFrame.getInstance().getProgramTableModel().updateTableContent();
         });
       }
     };

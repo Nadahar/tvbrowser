@@ -28,7 +28,6 @@ package tvbrowser.extras.favoritesplugin.wizards;
 
 import java.awt.Window;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 
@@ -137,34 +136,26 @@ public class WizardDlg extends JDialog implements WindowClosingIf {
       }
     }
 
-    mDoneBtn.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        if (mStep.isValid()) {
-          mDataObject = mStep.createDataObject(mDataObject);
-          close(FINISH);
-        }
+    mDoneBtn.addActionListener(e -> {
+      if (mStep.isValid()) {
+        mDataObject = mStep.createDataObject(mDataObject);
+        close(FINISH);
       }
     });
 
-    mCancelBtn.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        close();
+    mCancelBtn.addActionListener(e -> {
+      close();
+    });
+
+    mNextBtn.addActionListener(e -> {
+      if (mStep.isValid()) {
+        mDataObject = mStep.createDataObject(mDataObject);
+        switchToStep(mStep.next());
       }
     });
 
-    mNextBtn.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        if (mStep.isValid()) {
-          mDataObject = mStep.createDataObject(mDataObject);
-          switchToStep(mStep.next());
-        }
-      }
-    });
-
-    mBackBtn.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        switchToStep(mStep.back());
-      }
+    mBackBtn.addActionListener(e -> {
+      switchToStep(mStep.back());
     });
 
     if(mNextBtn.isEnabled() && !mStep.isSingleStep()) {

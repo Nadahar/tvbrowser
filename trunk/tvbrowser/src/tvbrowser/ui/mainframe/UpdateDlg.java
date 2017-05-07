@@ -32,7 +32,6 @@ import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -237,13 +236,11 @@ public class UpdateDlg extends JDialog implements ActionListener, WindowClosingI
     
     pb.add(open, CC.xy(4,2));
 
-    mAutoUpdate.addItemListener(new ItemListener() {
-      public void itemStateChanged(ItemEvent e) {
-        mRecurrentUpdate.setEnabled(e.getStateChange() == ItemEvent.SELECTED);
-        mStartUpdate.setEnabled(e.getStateChange() == ItemEvent.SELECTED);
-        label.setEnabled(e.getStateChange() == ItemEvent.SELECTED);
-        mAutoDownloadPeriodSelection.setEnabled(e.getStateChange() == ItemEvent.SELECTED);
-      }
+    mAutoUpdate.addItemListener(e -> {
+      mRecurrentUpdate.setEnabled(e.getStateChange() == ItemEvent.SELECTED);
+      mStartUpdate.setEnabled(e.getStateChange() == ItemEvent.SELECTED);
+      label.setEnabled(e.getStateChange() == ItemEvent.SELECTED);
+      mAutoDownloadPeriodSelection.setEnabled(e.getStateChange() == ItemEvent.SELECTED);
     });
 
     northPanel.add(pb.getPanel());
@@ -381,17 +378,15 @@ class PanelButton extends JButton {
     super(panel.isVisible() ? "<<" : ">>");
     setContentAreaFilled(false);
     setBorder(BorderFactory.createEtchedBorder());
-    addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        panel.setVisible(!panel.isVisible());
-        if(panel.isVisible()) {
-          setText("<<");
-        }
-        else {
-          setText(">>");
-        }
-        dialog.pack();
+    addActionListener(e -> {
+      panel.setVisible(!panel.isVisible());
+      if(panel.isVisible()) {
+        setText("<<");
       }
+      else {
+        setText(">>");
+      }
+      dialog.pack();
     });
     
     addMouseListener(new MouseAdapter() {

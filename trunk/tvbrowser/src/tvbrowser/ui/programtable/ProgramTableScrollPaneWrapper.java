@@ -24,8 +24,6 @@
 package tvbrowser.ui.programtable;
 
 import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -132,15 +130,12 @@ public class ProgramTableScrollPaneWrapper extends PluginCenterPanel {
       }
       
       JButton action = new JButton(buttonText);
-      action.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-          switch(type) {
-            case INFO_EMPTY_FILTER_RESULT: MainFrame.getInstance().setProgramFilter(FilterManagerImpl.getInstance().getAllFilter());break;
-            case INFO_NO_CHANNELS_SUBSCRIBED: PluginManagerImpl.getInstance().showSettings(SettingsItem.CHANNELS);break;
-            case INFO_EMPTY_CHANNEL_GROUP: MainFrame.getInstance().setChannelFilter(null);break;
-            case INFO_NO_DATA: MainFrame.getInstance().updateTvData();break;
-          }
+      action.addActionListener(e -> {
+        switch(type) {
+          case INFO_EMPTY_FILTER_RESULT: MainFrame.getInstance().setProgramFilter(FilterManagerImpl.getInstance().getAllFilter());break;
+          case INFO_NO_CHANNELS_SUBSCRIBED: PluginManagerImpl.getInstance().showSettings(SettingsItem.CHANNELS);break;
+          case INFO_EMPTY_CHANNEL_GROUP: MainFrame.getInstance().setChannelFilter(null);break;
+          case INFO_NO_DATA: MainFrame.getInstance().updateTvData();break;
         }
       });
       

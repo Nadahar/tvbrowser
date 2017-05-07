@@ -122,11 +122,8 @@ public class PluginProxyManager {
         else {
           mPlugin.removeArtificialPluginTree();
         }
-        SwingUtilities.invokeLater(new Runnable() {
-          @Override
-          public void run() {
-            MainFrame.getInstance().updatePluginTree();
-          }
+        SwingUtilities.invokeLater(() -> {
+          MainFrame.getInstance().updatePluginTree();
         });
       }
     }
@@ -1299,29 +1296,25 @@ public class PluginProxyManager {
       int processors = Runtime.getRuntime().availableProcessors();
       mThreadPool = Executors.newFixedThreadPool(processors);
       for (int i = 0; i < processors; i++) {
-        mThreadPool.execute(new Runnable() {
-          
-          @Override
-          public void run() {
-            while(true) {
-              ThreadPoolMethod poolMethod = null;
-              int count;
-              synchronized (mPoolMethods) {
-                count = mPoolMethods.size();
-                if (count > 0) {
-                  poolMethod = mPoolMethods.remove(0);
-                }
+        mThreadPool.execute(() -> {
+          while(true) {
+            ThreadPoolMethod poolMethod = null;
+            int count;
+            synchronized (mPoolMethods) {
+              count = mPoolMethods.size();
+              if (count > 0) {
+                poolMethod = mPoolMethods.remove(0);
               }
-              if (poolMethod != null) {
+            }
+            if (poolMethod != null) {
 //                mLog.info("Exec (" + count + "): " + poolMethod.mName);
-                poolMethod.run();
-              }
-              else {
-                try {
-                  Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                  e.printStackTrace();
-                }
+              poolMethod.run();
+            }
+            else {
+              try {
+                Thread.sleep(1000);
+              } catch (InterruptedException e) {
+                e.printStackTrace();
               }
             }
           }

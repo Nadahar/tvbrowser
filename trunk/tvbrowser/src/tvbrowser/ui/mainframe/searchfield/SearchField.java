@@ -32,8 +32,6 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.RenderingHints;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
@@ -61,6 +59,11 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
 
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+
+import devplugin.Plugin;
 import tvbrowser.core.filters.FilterManagerImpl;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.ui.mainframe.MainFrame;
@@ -78,12 +81,6 @@ import util.ui.TVBrowserIcons;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 import util.ui.persona.Persona;
-
-import com.jgoodies.forms.factories.Borders;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
-
-import devplugin.Plugin;
 
 /**
  * A SearchField for the Toolbar
@@ -184,13 +181,9 @@ public class SearchField extends JPanel {
         Color c = UIManager.getColor("List.background");
         mSearchParent.setBackground(new Color(c.getRed(),c.getGreen(),c.getBlue(),180));
         mSearchParent.setOpaque(false);
-        SwingUtilities.invokeLater(new Runnable() {
-          
-          @Override
-          public void run() {
-            mSearchParent.setOpaque(true);
-            panel.repaint();            
-          }
+        SwingUtilities.invokeLater(() -> {
+          mSearchParent.setOpaque(true);
+          panel.repaint();            
         });
       }
       
@@ -321,10 +314,8 @@ public class SearchField extends JPanel {
           MainFrame.getInstance().setProgramFilter(filter);
           setCancelButton();
 
-          SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-              mText.setCaretPosition(mText.getText().length());
-            }
+          SwingUtilities.invokeLater(() -> {
+            mText.setCaretPosition(mText.getText().length());
           });
         } catch (TvBrowserException e1) {
           e1.printStackTrace();
@@ -372,15 +363,13 @@ public class SearchField extends JPanel {
     panel.add(form, cc.xyw(1, 1, 3));
 
     JButton ok = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
-    ok.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        configure.setVisible(false);
-        mSearchFormSettings = form.getSearchFormSettings();
-        saveSearchFormSettings();
-        textField.requestFocusInWindow();
-        textField.selectAll();
-        
-      }
+    ok.addActionListener(e -> {
+      configure.setVisible(false);
+      mSearchFormSettings = form.getSearchFormSettings();
+      saveSearchFormSettings();
+      textField.requestFocusInWindow();
+      textField.selectAll();
+      
     });
 
     panel.add(ok, cc.xy(3,3));

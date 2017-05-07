@@ -1,7 +1,6 @@
 package tvbrowser.ui.settings;
 
 import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 
 import javax.swing.Icon;
 import javax.swing.JCheckBox;
@@ -59,12 +58,10 @@ public class NetworkSettingsTab implements SettingsTab {
     urlList.setEnabled(false);
     pb.add(new JScrollPane(urlList), cc.xyw(2, pb.getRowCount(), 3));
     
-    mConnectionTest.addItemListener(new ItemListener() {
-      public void itemStateChanged(ItemEvent e) {
-        boolean enabled = e.getStateChange() == ItemEvent.SELECTED;
-        mNetworkCheckTimeout.setEnabled(enabled);
-        label.setEnabled(enabled);
-      }
+    mConnectionTest.addItemListener(e -> {
+      boolean enabled = e.getStateChange() == ItemEvent.SELECTED;
+      mNetworkCheckTimeout.setEnabled(enabled);
+      label.setEnabled(enabled);
     });
     
     mNetworkCheckTimeout.setEnabled(mConnectionTest.isSelected());

@@ -31,9 +31,6 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.File;
 import java.net.URL;
@@ -65,6 +62,13 @@ import javax.swing.JTextArea;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.factories.CC;
+import com.jgoodies.forms.factories.DefaultComponentFactory;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+
 import tvbrowser.TVBrowser;
 import tvbrowser.core.PluginLoader;
 import tvbrowser.core.Settings;
@@ -78,13 +82,6 @@ import util.ui.WindowClosingIf;
 import util.ui.customizableitems.SelectableItem;
 import util.ui.customizableitems.SelectableItemList;
 import util.ui.customizableitems.SelectableItemRendererCenterComponentIf;
-
-import com.jgoodies.forms.builder.PanelBuilder;
-import com.jgoodies.forms.factories.Borders;
-import com.jgoodies.forms.factories.CC;
-import com.jgoodies.forms.factories.DefaultComponentFactory;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
 
 /**
  * Locale Settings
@@ -150,11 +147,8 @@ public class LocaleSettingsTab implements devplugin.SettingsTab {
     });
     
     JButton downloadLanguages = new JButton(mLocalizer.msg("downloadLanguages", "Install additional languages"));
-    downloadLanguages.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        downloadAdditionalLanguages();
-      }
+    downloadLanguages.addActionListener(e -> {
+      downloadAdditionalLanguages();
     });
     
     mSettingsPn.add(downloadLanguages, CC.xy(6,3));
@@ -273,13 +267,10 @@ public class LocaleSettingsTab implements devplugin.SettingsTab {
 
     mRestartButton = new JButton(LookAndFeelSettingsTab.mLocalizer.msg("restart", "Restart now"));
     mRestartButton.setVisible(mSomethingChanged);
-    mRestartButton.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        mSettingsDialog.saveSettings();
-        TVBrowser.addRestart();
-        MainFrame.getInstance().quit();
-      }
+    mRestartButton.addActionListener(e -> {
+      mSettingsDialog.saveSettings();
+      TVBrowser.addRestart();
+      MainFrame.getInstance().quit();
     });
     
     if(!mSomethingChanged) {
@@ -289,15 +280,13 @@ public class LocaleSettingsTab implements devplugin.SettingsTab {
       mFirstDayOfWeekIndex = mFirstDayOfWeek.getSelectedIndex();
     }
 
-    ItemListener itemListener= new ItemListener() {
-      public void itemStateChanged(ItemEvent e) {
-        mInfoArea.setVisible(mLanguageCB.getSelectedIndex() != mStartLanguageIndex ||
-            mTimezoneCB.getSelectedIndex() != mStartTimeZoneIndex ||
-            (mTwelveHourFormatIsSelected && !mTwelveHourFormat.isSelected() ||
-                !mTwelveHourFormatIsSelected && !mTwentyfourHourFormat.isSelected() ||
-                mFirstDayOfWeek.getSelectedIndex() != mFirstDayOfWeekIndex));
-        mRestartButton.setVisible(mInfoArea.isVisible());
-      }
+    ItemListener itemListener= e -> {
+      mInfoArea.setVisible(mLanguageCB.getSelectedIndex() != mStartLanguageIndex ||
+          mTimezoneCB.getSelectedIndex() != mStartTimeZoneIndex ||
+          (mTwelveHourFormatIsSelected && !mTwelveHourFormat.isSelected() ||
+              !mTwelveHourFormatIsSelected && !mTwentyfourHourFormat.isSelected() ||
+              mFirstDayOfWeek.getSelectedIndex() != mFirstDayOfWeekIndex));
+      mRestartButton.setVisible(mInfoArea.isVisible());
     };
 
     mLanguageCB.addItemListener(itemListener);
@@ -459,24 +448,18 @@ public class LocaleSettingsTab implements devplugin.SettingsTab {
     
     final JButton download = new JButton(mLocalizer.msg("downloadSelectedLanguages", "Download selected languages"));
     download.setEnabled(false);
-    download.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        for(LocaleLink localeLink : list.getSelectionList()) {
-          if(localeLink.download()) {
-            mLanguageCB.addItem(localeLink.getLocale());
-          }
+    download.addActionListener(e -> {
+      for(LocaleLink localeLink : list.getSelectionList()) {
+        if(localeLink.download()) {
+          mLanguageCB.addItem(localeLink.getLocale());
         }
-        dialog.dispose();
       }
+      dialog.dispose();
     });
     
     JButton close = new JButton(Localizer.getLocalization(Localizer.I18N_CLOSE));
-    close.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        dialog.dispose();
-      }
+    close.addActionListener(e -> {
+      dialog.dispose();
     });
     
     pb.add(download, cc.xy(2,6));

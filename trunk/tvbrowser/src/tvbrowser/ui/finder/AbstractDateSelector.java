@@ -16,8 +16,6 @@
  */
 package tvbrowser.ui.finder;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
@@ -26,9 +24,9 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 
+import devplugin.Date;
 import tvbrowser.core.TvDataBase;
 import tvbrowser.ui.mainframe.MainFrame;
-import devplugin.Date;
 
 /**
  * common super class for date selection UI components
@@ -114,10 +112,8 @@ public abstract class AbstractDateSelector extends JPanel implements
 
     JMenuItem update = new JMenuItem(mLocalizer.msg("update", "Update"));
 
-    update.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        MainFrame.getInstance().updateTvData();
-      }
+    update.addActionListener(evt -> {
+      MainFrame.getInstance().updateTvData();
     });
 
     menu.add(update);

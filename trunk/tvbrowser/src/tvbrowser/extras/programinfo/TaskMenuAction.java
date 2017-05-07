@@ -222,13 +222,9 @@ public class TaskMenuAction {
       }
     }
     else {
-      UIThreadRunner.invokeLater(new Runnable() {
-
-        @Override
-        public void run() {
-          for (ActionMenu subMenu : subs) {
-            new TaskMenuAction(group, program, subMenu, info, id, mFind);
-          }
+      UIThreadRunner.invokeLater(() -> {
+        for (ActionMenu subMenu : subs) {
+          new TaskMenuAction(group, program, subMenu, info, id, mFind);
         }
       });
     }

@@ -42,8 +42,6 @@ import java.awt.dnd.DropTargetDragEvent;
 import java.awt.dnd.DropTargetDropEvent;
 import java.awt.dnd.DropTargetEvent;
 import java.awt.dnd.DropTargetListener;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -229,10 +227,8 @@ public class FilterTree extends JTree implements DragGestureListener, DropTarget
       if(mTarget == 0 && (System.currentTimeMillis() - mDragOverStart) > 1000 && isCollapsed(new TreePath(last.getPath())) && last.getChildCount() > 0) {
         expandPath(new TreePath(last.getPath()));
 
-        SwingUtilities.invokeLater(new Runnable() {
-          public void run() {
-            mTarget = -2;
-          }
+        SwingUtilities.invokeLater(() -> {
+          mTarget = -2;
         });
       }
 
@@ -482,13 +478,11 @@ public class FilterTree extends JTree implements DragGestureListener, DropTarget
     if(last.isDirectoryNode() && last.getChildCount() > 0) {
       item = new JMenuItem(isExpanded(path) ? mLocalizer.msg("collapse", "Collapse") : mLocalizer.msg("expand", "Expand"));
       item.setFont(item.getFont().deriveFont(Font.BOLD));
-      item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          if(isExpanded(path)) {
-            collapsePath(path);
-          } else {
-            expandPath(path);
-          }
+      item.addActionListener(e -> {
+        if(isExpanded(path)) {
+          collapsePath(path);
+        } else {
+          expandPath(path);
         }
       });
 
@@ -497,29 +491,22 @@ public class FilterTree extends JTree implements DragGestureListener, DropTarget
       }
 
       item = new JMenuItem(mLocalizer.msg("expandAll", "Expand all"));
-      item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          expandAll(last);
-        }
+      item.addActionListener(e -> {
+        expandAll(last);
       });
 
       menu.add(item);
 
       item = new JMenuItem(mLocalizer.msg("collapseAll", "Collapse all"));
-      item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          collapseAll(last);
-        }
+      item.addActionListener(e -> {
+        collapseAll(last);
       });
       
       menu.add(item);
       
       item = new JMenuItem(SelectFilterDlg.mLocalizer.msg("sortAlphabetically", "Sort filters alphabetically"), IconLoader.getInstance().getIconFromTheme("actions", "sort-list", TVBrowserIcons.SIZE_SMALL));
-      item.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-          sortAlphabetically(last);
-        }
+      item.addActionListener(e -> {
+        sortAlphabetically(last);
       });
       
       menu.add(item);
@@ -531,10 +518,8 @@ public class FilterTree extends JTree implements DragGestureListener, DropTarget
           TVBrowserIcons.edit(TVBrowserIcons.SIZE_SMALL));
       item.setFont(item.getFont().deriveFont(Font.BOLD));
 
-      item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          SelectFilterDlg.getInstance().editSelectedFilter(last);
-        }
+      item.addActionListener(e -> {
+        SelectFilterDlg.getInstance().editSelectedFilter(last);
       });
       menu.add(item);
       menu.addSeparator();
@@ -543,19 +528,15 @@ public class FilterTree extends JTree implements DragGestureListener, DropTarget
     item = new JMenuItem(mLocalizer.msg("newFolder", "New folder"),
         IconLoader.getInstance().getIconFromTheme("actions", "folder-new", 16));
 
-    item.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        SelectFilterDlg.getInstance().createNewFolder(last);
-      }
+    item.addActionListener(e -> {
+      SelectFilterDlg.getInstance().createNewFolder(last);
     });
     menu.add(item);
 
     item = new JMenuItem(mLocalizer.msg("newFilter", "New Filter"), TVBrowserIcons.newIcon(TVBrowserIcons.SIZE_SMALL));
 
-    item.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        SelectFilterDlg.getInstance().createNewFilter(last);
-      }
+    item.addActionListener(e -> {
+      SelectFilterDlg.getInstance().createNewFilter(last);
     });
     menu.add(item);
 
@@ -564,10 +545,8 @@ public class FilterTree extends JTree implements DragGestureListener, DropTarget
         item = new JMenuItem(mLocalizer.msg("renameFolder", "Rename folder"),
             TVBrowserIcons.edit(TVBrowserIcons.SIZE_SMALL));
 
-        item.addActionListener(new ActionListener() {
-          public void actionPerformed(ActionEvent e) {
-            renameFolder(last);
-          }
+        item.addActionListener(e -> {
+          renameFolder(last);
         });
 
         menu.add(item);
@@ -575,10 +554,8 @@ public class FilterTree extends JTree implements DragGestureListener, DropTarget
     }
 
     item = new JMenuItem(mLocalizer.msg("newSeparator", "Add separator"),IconLoader.getInstance().getIconFromTheme("emblems", "separator", 16));
-    item.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        SelectFilterDlg.getInstance().addSeparator(last);
-      }
+    item.addActionListener(e -> {
+      SelectFilterDlg.getInstance().addSeparator(last);
     });
     
     menu.add(item);
@@ -587,10 +564,8 @@ public class FilterTree extends JTree implements DragGestureListener, DropTarget
       item = new JMenuItem(Localizer.getLocalization(Localizer.I18N_DELETE),
           TVBrowserIcons.delete(TVBrowserIcons.SIZE_SMALL));
   
-      item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          SelectFilterDlg.getInstance().deleteSelectedItem(last);
-        }
+      item.addActionListener(e -> {
+        SelectFilterDlg.getInstance().deleteSelectedItem(last);
       });
       
   
@@ -606,10 +581,8 @@ public class FilterTree extends JTree implements DragGestureListener, DropTarget
       if(!((Settings.propDefaultFilter.getString().equals(id + "###" + name)) ||
           (Settings.propDefaultFilter.getString().trim().length() < 1 && last.getFilter() instanceof ShowAllFilter))) {
         item = new JMenuItem(mLocalizer.msg("setDefault","Set as default"),IconLoader.getInstance().getIconFromTheme("actions", "view-filter", 16));
-        item.addActionListener(new ActionListener() {
-          public void actionPerformed(ActionEvent e) {
-            SelectFilterDlg.getInstance().setDefaultFilter(last);
-          }
+        item.addActionListener(e -> {
+          SelectFilterDlg.getInstance().setDefaultFilter(last);
         });
         
         menu.addSeparator();

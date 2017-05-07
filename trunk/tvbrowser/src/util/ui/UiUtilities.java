@@ -172,18 +172,14 @@ public class UiUtilities {
     final AtomicReference<JDialog> result = new AtomicReference<JDialog>();
     final Window parentWin = getBestDialogParent(parent);
     try {
-      UIThreadRunner.invokeAndWait(new Runnable() {
-
-        @Override
-        public void run() {
-          JDialog dialog = new JDialog(parentWin);
-          
-          if(modal) {
-            dialog.setModalityType(ModalityType.DOCUMENT_MODAL);
-          }
-          
-          result.set(dialog);
+      UIThreadRunner.invokeAndWait(() -> {
+        JDialog dialog = new JDialog(parentWin);
+        
+        if(modal) {
+          dialog.setModalityType(ModalityType.DOCUMENT_MODAL);
         }
+        
+        result.set(dialog);
       });
     } catch (InterruptedException e) {
       e.printStackTrace();
@@ -1117,15 +1113,11 @@ public class UiUtilities {
   public static JFileChooser createNewFileChooser(final FileFilter fileFilter) {
     final AtomicReference<JFileChooser> fileChooser = new AtomicReference<JFileChooser>();
     try {
-      UIThreadRunner.invokeAndWait(new Runnable() {
-
-        @Override
-        public void run() {
-          JFileChooser select = new JFileChooser();
-          fileChooser.set(select);
-          if (fileFilter != null) {
-            select.addChoosableFileFilter(fileFilter);
-          }
+      UIThreadRunner.invokeAndWait(() -> {
+        JFileChooser select = new JFileChooser();
+        fileChooser.set(select);
+        if (fileFilter != null) {
+          select.addChoosableFileFilter(fileFilter);
         }
       });
     } catch (InterruptedException e) {

@@ -27,9 +27,6 @@
 
 package tvbrowser.core.contextmenu;
 
-//import java.awt.Color;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -379,10 +376,8 @@ public class ContextMenuManager {
         JMenuItem item = new JMenuItem(menuIf.toString());
         item.setIcon(TVBrowserIcons.preferences(TVBrowserIcons.SIZE_SMALL));
         item.setFont(MenuUtil.CONTEXT_MENU_PLAINFONT);
-        item.addActionListener(new ActionListener() {
-          public void actionPerformed(java.awt.event.ActionEvent e) {
-            MainFrame.getInstance().showSettingsDialog(SettingsItem.CONTEXTMENU);
-          };
+        item.addActionListener(e -> {
+          MainFrame.getInstance().showSettingsDialog(SettingsItem.CONTEXTMENU);
         });
         rootMenu.add(item);
       } else if (menuIf instanceof LeaveFullScreenMenuItem) {
@@ -390,12 +385,10 @@ public class ContextMenuManager {
           JMenuItem item = new JMenuItem(menuIf.toString());
           item.setFont(MenuUtil.CONTEXT_MENU_PLAINFONT);
           item.setIcon(TVBrowserIcons.fullScreen(TVBrowserIcons.SIZE_SMALL));
-          item.addActionListener(new ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent e) {
-              if (MainFrame.getInstance().isFullScreenMode()) {
-                MainFrame.getInstance().switchFullscreenMode();
-              }
-            };
+          item.addActionListener(e -> {
+            if (MainFrame.getInstance().isFullScreenMode()) {
+              MainFrame.getInstance().switchFullscreenMode();
+            }
           });
           rootMenu.add(item);
         }
@@ -494,14 +487,11 @@ public class ContextMenuManager {
     
     JMenuItem item = new JMenuItem(mLocalizer.msg("scrollToPlaceOfProgram","Scroll to last place of program in program table"));
     item.setFont(MenuUtil.CONTEXT_MENU_PLAINFONT);
-    item.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        MainFrame.getInstance().goTo(program.getDate());
-        MainFrame.getInstance().showChannel(program.getChannel());
-        MainFrame.getInstance().scrollToTime(program.getStartTime(),false);
-        MainFrame.getInstance().showProgramTableTabIfAvailable();
-      }
+    item.addActionListener(e -> {
+      MainFrame.getInstance().goTo(program.getDate());
+      MainFrame.getInstance().showChannel(program.getChannel());
+      MainFrame.getInstance().scrollToTime(program.getStartTime(),false);
+      MainFrame.getInstance().showProgramTableTabIfAvailable();
     });
     
     menu.add(item);

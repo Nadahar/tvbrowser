@@ -27,8 +27,6 @@ package tvbrowser.ui.settings.looksSettings;
 
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.Arrays;
@@ -41,18 +39,18 @@ import javax.swing.JPanel;
 
 import org.apache.commons.lang3.StringUtils;
 
-import tvbrowser.core.Settings;
-import util.misc.OperatingSystem;
-import util.ui.Localizer;
-import util.ui.UiUtilities;
-import util.ui.WindowClosingIf;
-
 import com.jgoodies.forms.builder.ButtonBarBuilder;
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.factories.DefaultComponentFactory;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.Sizes;
+
+import tvbrowser.core.Settings;
+import util.misc.OperatingSystem;
+import util.ui.Localizer;
+import util.ui.UiUtilities;
+import util.ui.WindowClosingIf;
 
 /**
  * Settings for the Skin LnF
@@ -101,17 +99,13 @@ public class SkinLNFSettings extends JDialog implements WindowClosingIf {
     content.add(mThemePack, cc.xy(2,7));
 
     JButton ok = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
-    ok.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        okPressed();
-      }
+    ok.addActionListener(e -> {
+      okPressed();
     });
 
     JButton cancel = new JButton(Localizer.getLocalization(Localizer.I18N_CANCEL));
-    cancel.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        cancelPressed();
-      }
+    cancel.addActionListener(e -> {
+      cancelPressed();
     });
 
     ButtonBarBuilder bar = new ButtonBarBuilder();

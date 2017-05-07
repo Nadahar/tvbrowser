@@ -29,7 +29,6 @@ package tvbrowser.extras.reminderplugin;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -60,11 +59,8 @@ public class RemovedProgramsPanel extends AfterDataUpdateInfoPanel {
 
     JLabel lb = new JLabel(mLocalizer.msg("header","<html>Die folgenden Sendungen, an die sie erinnert werden wollten, sind in der aktualisierten Programmvorschau nicht mehr enthalten:</html>"));
     mDisable = new JCheckBox(mLocalizer.msg("dontShowAnymore","Don't show anymore"));
-    mDisable.addItemListener(new ItemListener() {
-      @Override
-      public void itemStateChanged(ItemEvent e) {
-        ReminderPlugin.getInstance().getSettings().setProperty("showRemovedDialog", String.valueOf(e.getStateChange() == ItemEvent.DESELECTED));
-      }
+    mDisable.addItemListener(e -> {
+      ReminderPlugin.getInstance().getSettings().setProperty("showRemovedDialog", String.valueOf(e.getStateChange() == ItemEvent.DESELECTED));
     });
     
     add(lb, BorderLayout.NORTH);

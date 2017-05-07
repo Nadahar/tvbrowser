@@ -29,8 +29,6 @@ package util.ui;
 import java.awt.Dialog;
 import java.awt.Frame;
 import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.List;
 
 import javax.swing.JButton;
@@ -217,22 +215,18 @@ public ChannelChooserDlg(Frame parent, Channel[] channelArr, String description,
     JButton okBt = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
     JButton cancelBt = new JButton(Localizer.getLocalization(Localizer.I18N_CANCEL));
 
-    okBt.addActionListener(new ActionListener(){
-      public void actionPerformed(ActionEvent event) {
-        List<Channel> listChannel = mChannelOrderChooser != null ? mChannelOrderChooser.getOrderList() : mChannelItemList.getSelectionList();
-        mResultChannelArr = new Channel[listChannel.size()];
-        for (int i = 0; i < listChannel.size(); i++) {
-          mResultChannelArr[i] = listChannel.get(i);
-        }
-        setVisible(false);
+    okBt.addActionListener(event -> {
+      List<Channel> listChannel = mChannelOrderChooser != null ? mChannelOrderChooser.getOrderList() : mChannelItemList.getSelectionList();
+      mResultChannelArr = new Channel[listChannel.size()];
+      for (int i = 0; i < listChannel.size(); i++) {
+        mResultChannelArr[i] = listChannel.get(i);
       }
+      setVisible(false);
     });
 
-    cancelBt.addActionListener(new ActionListener(){
-      public void actionPerformed(ActionEvent event) {
-        mResultChannelArr = null;
-        setVisible(false);
-      }
+    cancelBt.addActionListener(event -> {
+      mResultChannelArr = null;
+      setVisible(false);
     });
 
     ButtonBarBuilder builder = new ButtonBarBuilder();

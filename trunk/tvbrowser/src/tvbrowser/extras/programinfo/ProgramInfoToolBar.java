@@ -25,8 +25,6 @@ package tvbrowser.extras.programinfo;
 
 import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -41,7 +39,6 @@ import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
 import devplugin.Program;
-
 import tvbrowser.core.Settings;
 import util.io.IOUtilities;
 import util.ui.ObjectSelectionButton;
@@ -93,20 +90,14 @@ public class ProgramInfoToolBar extends JPanel implements ObjectSelectionListene
     
     mHistPrevious = new JButton(TVBrowserIcons.left(TVBrowserIcons.SIZE_SMALL));
     mHistPrevious.setEnabled(false);
-    mHistPrevious.addActionListener(new ActionListener() {  
-      @Override
-      public void actionPerformed(ActionEvent arg0) {
-        ProgramInfo.getInstance().historyBack();
-      }
+    mHistPrevious.addActionListener(e -> {
+      ProgramInfo.getInstance().historyBack();
     });
     
     mHistNext = new JButton(TVBrowserIcons.right(TVBrowserIcons.SIZE_SMALL));
     mHistNext.setEnabled(false);
-    mHistNext.addActionListener(new ActionListener() {      
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        ProgramInfo.getInstance().historyForward();
-      }
+    mHistNext.addActionListener(e -> {
+      ProgramInfo.getInstance().historyForward();
     });
     
     mPreviousSelection = new ObjectSelectionButton<Program>(null, TVBrowserIcons.left(TVBrowserIcons.SIZE_SMALL));
@@ -142,11 +133,8 @@ public class ProgramInfoToolBar extends JPanel implements ObjectSelectionListene
     mPrevious.setOpaque(false);
     mPrevious.addMouseListener(mouseAdapter);
     
-    mPrevious.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        ProgramInfo.getInstance().previousProgram();
-      }
+    mPrevious.addActionListener(e -> {
+      ProgramInfo.getInstance().previousProgram();
     });
     
     mNext = new JButton() {
@@ -166,11 +154,8 @@ public class ProgramInfoToolBar extends JPanel implements ObjectSelectionListene
     mNext.setBorder(BorderFactory.createEmptyBorder());
     mNext.setOpaque(false);
     mNext.addMouseListener(mouseAdapter);
-    mNext.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        ProgramInfo.getInstance().nextProgram();
-      }
+    mNext.addActionListener(e -> {
+      ProgramInfo.getInstance().nextProgram();
     });
     
     CellConstraints cc = new CellConstraints();

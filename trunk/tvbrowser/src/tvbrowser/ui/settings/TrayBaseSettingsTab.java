@@ -25,9 +25,6 @@
  */
 package tvbrowser.ui.settings;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
 import javax.swing.ButtonGroup;
 import javax.swing.Icon;
 import javax.swing.JCheckBox;
@@ -90,13 +87,11 @@ public class TrayBaseSettingsTab implements SettingsTab {
     mTrayIsAnialiasing = new JCheckBox(msg, checked);
     
     if(System.getProperty("os.name").toLowerCase().startsWith("linux") && (JavaVersion.getVersion() < JavaVersion.VERSION_1_6 || OperatingSystem.isKDE())) {
-      mMinimizeToTrayChb.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          if(mMinimizeToTrayChb.isSelected()) {
-            JOptionPane.showMessageDialog(builder.getPanel(),mLocalizer.msg("minimizeToTrayWarning","This function might not work as expected on Unix systems like KDE or Gnome.\nSo it's recommended not to select this checkbox."),mLocalizer.msg("warning","Warning"), JOptionPane.WARNING_MESSAGE);
-          }
+      mMinimizeToTrayChb.addActionListener(e -> {
+        if(mMinimizeToTrayChb.isSelected()) {
+          JOptionPane.showMessageDialog(builder.getPanel(),mLocalizer.msg("minimizeToTrayWarning","This function might not work as expected on Unix systems like KDE or Gnome.\nSo it's recommended not to select this checkbox."),mLocalizer.msg("warning","Warning"), JOptionPane.WARNING_MESSAGE);
         }
-    });
+      });
     }
     
     //filter settings
@@ -133,21 +128,19 @@ public class TrayBaseSettingsTab implements SettingsTab {
     builder.add(mNoMarkedFiltering, cc.xy(2,12));
     builder.add(mNoFiltering, cc.xy(2,13));
 
-    mTrayIsEnabled.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        mIsEnabled = mTrayIsEnabled.isSelected();
-        TrayImportantSettingsTab.setTrayIsEnabled(mIsEnabled);
-        TrayNowSettingsTab.setTrayIsEnabled(mIsEnabled);
-        TrayOnTimeSettingsTab.setTrayIsEnabled(mIsEnabled);
-        TraySoonSettingsTab.setTrayIsEnabled(mIsEnabled);
-        TrayProgramsChannelsSettingsTab.setTrayIsEnabled(mIsEnabled);
-        mMinimizeToTrayChb.setEnabled(mTrayIsEnabled.isSelected());
-        mNowOnRestore.setEnabled(mTrayIsEnabled.isSelected());
-        mTrayIsAnialiasing.setEnabled(mTrayIsEnabled.isSelected());
-        mFilterAll.setEnabled(mTrayIsEnabled.isSelected());
-        mNoMarkedFiltering.setEnabled(mTrayIsEnabled.isSelected());
-        mNoFiltering.setEnabled(mTrayIsEnabled.isSelected());
-      }
+    mTrayIsEnabled.addActionListener(e -> {
+      mIsEnabled = mTrayIsEnabled.isSelected();
+      TrayImportantSettingsTab.setTrayIsEnabled(mIsEnabled);
+      TrayNowSettingsTab.setTrayIsEnabled(mIsEnabled);
+      TrayOnTimeSettingsTab.setTrayIsEnabled(mIsEnabled);
+      TraySoonSettingsTab.setTrayIsEnabled(mIsEnabled);
+      TrayProgramsChannelsSettingsTab.setTrayIsEnabled(mIsEnabled);
+      mMinimizeToTrayChb.setEnabled(mTrayIsEnabled.isSelected());
+      mNowOnRestore.setEnabled(mTrayIsEnabled.isSelected());
+      mTrayIsAnialiasing.setEnabled(mTrayIsEnabled.isSelected());
+      mFilterAll.setEnabled(mTrayIsEnabled.isSelected());
+      mNoMarkedFiltering.setEnabled(mTrayIsEnabled.isSelected());
+      mNoFiltering.setEnabled(mTrayIsEnabled.isSelected());
     });
 
     return builder.getPanel();

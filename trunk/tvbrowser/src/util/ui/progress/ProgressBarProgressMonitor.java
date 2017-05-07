@@ -56,31 +56,22 @@ public class ProgressBarProgressMonitor implements ProgressMonitor {
     }
 
     public void setMaximum(final int maximum) {
-        SwingUtilities.invokeLater(new Runnable() {
-
-            public void run() {
-                mProgressBar.setMaximum(maximum);
-            }
+        SwingUtilities.invokeLater(() -> {
+          mProgressBar.setMaximum(maximum);
         });
     }
 
     public void setValue(final int value) {
-        SwingUtilities.invokeLater(new Runnable() {
-
-            public void run() {
-                mProgressBar.setValue(value);
-            }
+        SwingUtilities.invokeLater(() -> {
+          mProgressBar.setValue(value);
         });
     }
 
     public void setMessage(final String msg) {
-        SwingUtilities.invokeLater(new Runnable() {
-
-            public void run() {
-                if (mLabel != null) {
-                    mLabel.setText(msg);
-                    mLog.info("Progress: " + msg);
-                }
+        SwingUtilities.invokeLater(() -> {
+            if (mLabel != null) {
+                mLabel.setText(msg);
+                mLog.info("Progress: " + msg);
             }
         });
     }

@@ -25,8 +25,6 @@
 package util.paramhandler;
 
 import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -182,22 +180,14 @@ public class ParamCheckDialog extends JDialog implements WindowClosingIf {
     final JScrollPane spane = new JScrollPane(area);
 		panel.add(spane, cc.xyw(1,3, 3));
 		
-    SwingUtilities.invokeLater(new Runnable() {
-
-      public void run() {
-        spane.getVerticalScrollBar().setValue(0);
-      }
-
+    SwingUtilities.invokeLater(() -> {
+      spane.getVerticalScrollBar().setValue(0);
     });
     
 		JButton ok = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
 		
-		ok.addActionListener(new ActionListener() {
-
-			public void actionPerformed(ActionEvent arg0) {
-        setVisible(false);
-			}
-			
+		ok.addActionListener(e -> {
+      setVisible(false);
 		});
 		
 		getRootPane().setDefaultButton(ok);

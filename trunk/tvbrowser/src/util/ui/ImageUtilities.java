@@ -57,11 +57,8 @@ public class ImageUtilities {
   private static JLabel HELPER_LABEL;
   
   static {
-    SwingUtilities.invokeLater(new Runnable() {
-      @Override
-      public void run() {
-        HELPER_LABEL = new JLabel();
-      }
+    SwingUtilities.invokeLater(() -> {
+      HELPER_LABEL = new JLabel();
     });
   }
 

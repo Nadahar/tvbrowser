@@ -28,8 +28,6 @@ package tvbrowser.ui.settings;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -137,30 +135,26 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab {
 
     JButton addSeparator = new LineButton();
     addSeparator.setToolTipText(mLocalizer.msg("separator", "Add Separator"));
-    addSeparator.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        int pos = mList.getList().getSelectedIndex();
-        if (pos < 0) {
-          pos = mList.getList().getModel().getSize();
-        }
-        mList.addElement(pos, new SeparatorMenuItem());
-        mList.getList().setSelectedIndex(pos);
-        mList.getList().ensureIndexIsVisible(pos);
+    addSeparator.addActionListener(e -> {
+      int pos = mList.getList().getSelectedIndex();
+      if (pos < 0) {
+        pos = mList.getList().getModel().getSize();
       }
+      mList.addElement(pos, new SeparatorMenuItem());
+      mList.getList().setSelectedIndex(pos);
+      mList.getList().ensureIndexIsVisible(pos);
     });
 
     mList.addButton(addSeparator);
 
     final JButton garbage = new JButton(TVBrowserIcons.delete(TVBrowserIcons.SIZE_LARGE));
     garbage.setToolTipText(mLocalizer.msg("garbage", "Remove Separator"));
-    garbage.addActionListener(new ActionListener(){
-      public void actionPerformed(ActionEvent e) {
-        List<ContextMenuIf> items = mList.getList().getSelectedValuesList();
-        
-        for (ContextMenuIf item : items) {
-          mList.removeElement(item);
-        }
-      };
+    garbage.addActionListener(e -> {
+      List<ContextMenuIf> items = mList.getList().getSelectedValuesList();
+      
+      for (ContextMenuIf item : items) {
+        mList.removeElement(item);
+      }
     });
 
     mList.getList().addListSelectionListener(new ListSelectionListener() {

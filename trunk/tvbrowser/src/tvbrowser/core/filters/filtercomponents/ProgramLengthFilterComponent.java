@@ -29,8 +29,6 @@ package tvbrowser.core.filters.filtercomponents;
 import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -153,15 +151,11 @@ public class ProgramLengthFilterComponent extends AbstractFilterComponent {
       mMaxSpinner.setEnabled(false);
     }
 
-    mMinCheck.addActionListener(new ActionListener() {
-      public void actionPerformed(final ActionEvent e) {
-        mMinSpinner.setEnabled(mMinCheck.isSelected());
-      }
+    mMinCheck.addActionListener(e -> {
+      mMinSpinner.setEnabled(mMinCheck.isSelected());
     });
-    mMaxCheck.addActionListener(new ActionListener() {
-      public void actionPerformed(final ActionEvent e) {
-        mMaxSpinner.setEnabled(mMaxCheck.isSelected());
-      }
+    mMaxCheck.addActionListener(e -> {
+      mMaxSpinner.setEnabled(mMaxCheck.isSelected());
     });
 
     panel.setLayout(new GridBagLayout());

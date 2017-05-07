@@ -28,9 +28,6 @@
 
 package tvbrowser.ui.pluginview.contextmenu;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
 import javax.swing.Action;
 import javax.swing.ImageIcon;
 import javax.swing.JMenuItem;
@@ -108,25 +105,21 @@ public abstract class PluginContextMenu extends AbstractContextMenu {
     if (hasSettingsTab()) {
       JMenuItem menuItem = MenuUtil.createMenuItem(Localizer.getEllipsisLocalization(Localizer.I18N_SETTINGS));
       menuItem.setIcon(TVBrowserIcons.preferences(TVBrowserIcons.SIZE_SMALL));
-      menuItem.addActionListener(new ActionListener(){
-        public void actionPerformed(ActionEvent e) {
-          MainFrame.getInstance().showSettingsDialog(getPluginId());
-        }
+      menuItem.addActionListener(e -> {
+        MainFrame.getInstance().showSettingsDialog(getPluginId());
       });
       menu.add(menuItem);
     }
     JMenuItem menuItem = MenuUtil.createMenuItem(mLocalizer.msg(
         "disablePlugin", "Disable plugin"));
-    menuItem.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        final PluginProxy plugin = PluginProxyManager.getInstance()
-            .getPluginForId(getPluginId());
-        if (plugin != null) {
-          try {
-            PluginProxyManager.getInstance().deactivatePlugin(plugin);
-          } catch (TvBrowserException e1) {
-            e1.printStackTrace();
-          }
+    menuItem.addActionListener(e -> {
+      final PluginProxy plugin = PluginProxyManager.getInstance()
+          .getPluginForId(getPluginId());
+      if (plugin != null) {
+        try {
+          PluginProxyManager.getInstance().deactivatePlugin(plugin);
+        } catch (TvBrowserException e1) {
+          e1.printStackTrace();
         }
       }
     });
@@ -135,18 +128,16 @@ public abstract class PluginContextMenu extends AbstractContextMenu {
         "help-browser", 16);
     menuItem = MenuUtil.createMenuItem(Localizer.getLocalization(Localizer.I18N_HELP));
     menuItem.setIcon(icon);
-    menuItem.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        final PluginProxy plugin = PluginProxyManager.getInstance()
-            .getPluginForId(getPluginId());
-        if (plugin != null) {
-          String helpUrl = plugin.getInfo().getHelpUrl();
-          if (helpUrl == null) {
-            helpUrl = PluginInfo.getHelpUrl(plugin.getId());
-          }
-          if (helpUrl != null) {
-            Launch.openURL(helpUrl);
-          }
+    menuItem.addActionListener(e -> {
+      final PluginProxy plugin = PluginProxyManager.getInstance()
+          .getPluginForId(getPluginId());
+      if (plugin != null) {
+        String helpUrl = plugin.getInfo().getHelpUrl();
+        if (helpUrl == null) {
+          helpUrl = PluginInfo.getHelpUrl(plugin.getId());
+        }
+        if (helpUrl != null) {
+          Launch.openURL(helpUrl);
         }
       }
     });

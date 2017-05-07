@@ -31,8 +31,6 @@ import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -80,7 +78,6 @@ import devplugin.Date;
 import devplugin.Program;
 import devplugin.ProgramFilter;
 import devplugin.SettingsItem;
-
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
 import tvbrowser.extras.favoritesplugin.core.AdvancedFavorite;
@@ -180,15 +177,13 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction<Favor
         JButton newFolder = UiUtilities.createToolBarButton(mLocalizer.msg("newFolder", "New folder"),
             IconLoader.getInstance().getIconFromTheme("actions", "folder-new", 22));
         newFolder.setOpaque(false);
-        newFolder.addActionListener(new ActionListener() {
-          public void actionPerformed(ActionEvent e) {
-            TreePath path = mFavoriteTree.getSelectionPath();
-            
-            if(path != null) {
-              FavoritesPlugin.getInstance().newFolder((FavoriteNode)path.getLastPathComponent());
-            } else {
-              FavoritesPlugin.getInstance().newFolder(mFavoriteTree.getRoot());
-            }
+        newFolder.addActionListener(e -> {
+          TreePath path = mFavoriteTree.getSelectionPath();
+          
+          if(path != null) {
+            FavoritesPlugin.getInstance().newFolder((FavoriteNode)path.getLastPathComponent());
+          } else {
+            FavoritesPlugin.getInstance().newFolder(mFavoriteTree.getRoot());
           }
         });
 
@@ -201,17 +196,15 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction<Favor
       icon = TVBrowserIcons.newIcon(TVBrowserIcons.SIZE_LARGE);
       mNewBt = UiUtilities.createToolBarButton(msg, icon);
       mNewBt.setOpaque(false);
-      mNewBt.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent evt) {
-          TreePath path = mFavoriteTree.getSelectionPath();
+      mNewBt.addActionListener(e -> {
+        TreePath path = mFavoriteTree.getSelectionPath();
 
-          if(path == null) {
-            newFavorite(mFavoriteTree.getRoot());
-          } else {
-            FavoriteNode node = (FavoriteNode)path.getLastPathComponent();
+        if(path == null) {
+          newFavorite(mFavoriteTree.getRoot());
+        } else {
+          FavoriteNode node = (FavoriteNode)path.getLastPathComponent();
 
-            newFavorite(node.isDirectoryNode() ? node : (FavoriteNode)node.getParent());
-          }
+          newFavorite(node.isDirectoryNode() ? node : (FavoriteNode)node.getParent());
         }
       });
 
@@ -222,18 +215,16 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction<Favor
     icon = TVBrowserIcons.edit(TVBrowserIcons.SIZE_LARGE);
     mEditBt = UiUtilities.createToolBarButton(msg, icon);
     mEditBt.setOpaque(false);
-    mEditBt.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent evt) {
-        if(mShowNew) {
-          editSelectedFavorite();
-        } else {
-          FavoriteNode node = (FavoriteNode)mFavoriteTree.getSelectionPath().getLastPathComponent();
+    mEditBt.addActionListener(e -> {
+      if(mShowNew) {
+        editSelectedFavorite();
+      } else {
+        FavoriteNode node = (FavoriteNode)mFavoriteTree.getSelectionPath().getLastPathComponent();
 
-          if(node.isDirectoryNode()) {
-            mFavoriteTree.renameFolder(node);
-          } else {
-            editSelectedFavorite();
-          }
+        if(node.isDirectoryNode()) {
+          mFavoriteTree.renameFolder(node);
+        } else {
+          editSelectedFavorite();
         }
       }
     });
@@ -243,18 +234,16 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction<Favor
     icon = TVBrowserIcons.delete(TVBrowserIcons.SIZE_LARGE);
     mDeleteBt = UiUtilities.createToolBarButton(msg, icon);
     mDeleteBt.setOpaque(false);
-    mDeleteBt.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent evt) {
-        if(mShowNew) {
-          deleteSelectedFavorite();
-        } else {
-          FavoriteNode node = (FavoriteNode)mFavoriteTree.getSelectionPath().getLastPathComponent();
+    mDeleteBt.addActionListener(e -> {
+      if(mShowNew) {
+        deleteSelectedFavorite();
+      } else {
+        FavoriteNode node = (FavoriteNode)mFavoriteTree.getSelectionPath().getLastPathComponent();
 
-          if(node.isDirectoryNode()) {
-            mFavoriteTree.delete(node);
-          } else {
-            deleteSelectedFavorite();
-          }
+        if(node.isDirectoryNode()) {
+          mFavoriteTree.delete(node);
+        } else {
+          deleteSelectedFavorite();
         }
       }
     });
@@ -264,10 +253,8 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction<Favor
     icon = TVBrowserIcons.up(TVBrowserIcons.SIZE_LARGE);
     mUpBt = UiUtilities.createToolBarButton(msg, icon);
     mUpBt.setOpaque(false);
-    mUpBt.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent evt) {
-        mFavoriteTree.moveSelectedFavorite(-1);
-      }
+    mUpBt.addActionListener(e -> {
+      mFavoriteTree.moveSelectedFavorite(-1);
     });
 
     if(!mShowNew) {
@@ -279,10 +266,8 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction<Favor
     icon = TVBrowserIcons.down(TVBrowserIcons.SIZE_LARGE);
     mDownBt = UiUtilities.createToolBarButton(msg, icon);
     mDownBt.setOpaque(false);
-    mDownBt.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent evt) {
-        mFavoriteTree.moveSelectedFavorite(1);
-      }
+    mDownBt.addActionListener(e -> {
+      mFavoriteTree.moveSelectedFavorite(1);
     });
 
     if(!mShowNew) {
@@ -294,10 +279,8 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction<Favor
     final String titleAlpha = msg;
     mSortAlphaBt = UiUtilities.createToolBarButton(msg, icon);
     mSortAlphaBt.setOpaque(false);
-    mSortAlphaBt.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent evt) {
-        sortFavorites(FavoriteNodeComparator.getInstance(), titleAlpha);
-      }
+    mSortAlphaBt.addActionListener(e -> {
+      sortFavorites(FavoriteNodeComparator.getInstance(), titleAlpha);
     });
 
     msg = mLocalizer.msg("sortCount", "Sort favorites by number of programs");
@@ -305,10 +288,8 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction<Favor
     final String titleCount = msg;
     mSortCountBt = UiUtilities.createToolBarButton(msg, icon);
     mSortCountBt.setOpaque(false);
-    mSortCountBt.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent evt) {
-        sortFavorites(FavoriteNodeCountComparator.getInstance(), titleCount);
-      }
+    mSortCountBt.addActionListener(e -> {
+      sortFavorites(FavoriteNodeCountComparator.getInstance(), titleCount);
     });
 
     if(!mShowNew) {
@@ -320,10 +301,8 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction<Favor
     icon = TVBrowserIcons.copy(TVBrowserIcons.SIZE_LARGE);
     mSendBt = UiUtilities.createToolBarButton(msg, icon);
     mSendBt.setOpaque(false);
-    mSendBt.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent evt) {
-         showSendDialog();
-      }
+    mSendBt.addActionListener(e -> {
+       showSendDialog();
     });
 
     addToolbarSeperator(toolbarPn);
@@ -333,10 +312,8 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction<Favor
     icon = FavoritesPlugin.getIconFromTheme("actions", "document-open", 22);
     mImportBt = UiUtilities.createToolBarButton(msg, icon);
     mImportBt.setOpaque(false);
-    mImportBt.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent evt) {
-        importFavorites();
-      }
+    mImportBt.addActionListener(e -> {
+      importFavorites();
     });
 
     if(!mShowNew) {
@@ -349,14 +326,12 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction<Favor
     if(ManageFavoritesDialog.getInstance() != null) {
       JButton settings = UiUtilities.createToolBarButton(msg, icon);
   
-      settings.addActionListener(new ActionListener() {
-          public void actionPerformed(ActionEvent e) {
-            if(ManageFavoritesDialog.getInstance() != null && ManageFavoritesDialog.getInstance().isVisible()) {
-              ManageFavoritesDialog.getInstance().close();
-            }
-  
-            MainFrame.getInstance().showSettingsDialog(SettingsItem.FAVORITE);
+      settings.addActionListener(e -> {
+          if(ManageFavoritesDialog.getInstance() != null && ManageFavoritesDialog.getInstance().isVisible()) {
+            ManageFavoritesDialog.getInstance().close();
           }
+
+          MainFrame.getInstance().showSettingsDialog(SettingsItem.FAVORITE);
         });
   
       addToolbarSeperator(toolbarPn);
@@ -368,11 +343,8 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction<Favor
     mScrollToFirstNotExpired = UiUtilities.createToolBarButton(mLocalizer.msg("scrollToFirstNotExpired", "Scroll to first not expired program."),TVBrowserIcons.scrollToNow(TVBrowserIcons.SIZE_LARGE));
     mScrollToFirstNotExpired.setOpaque(false);
     toolbarPn.add(mScrollToFirstNotExpired);
-    mScrollToFirstNotExpired.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        scrollToFirstNotExpiredIndex(false);
-      }
+    mScrollToFirstNotExpired.addActionListener(e -> {
+      scrollToFirstNotExpiredIndex(false);
     });
     
     toolbarPn.add(Box.createRigidArea(new Dimension(15,0)));
@@ -380,21 +352,15 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction<Favor
     mScrollToPreviousDay = UiUtilities.createToolBarButton(ProgramList.getPreviousActionTooltip(),TVBrowserIcons.left(TVBrowserIcons.SIZE_LARGE));
     mScrollToPreviousDay.setOpaque(false);
     toolbarPn.add(mScrollToPreviousDay);
-    mScrollToPreviousDay.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        mProgramList.scrollToPreviousDayIfAvailable();
-      }
+    mScrollToPreviousDay.addActionListener(e -> {
+      mProgramList.scrollToPreviousDayIfAvailable();
     });
 
     mScrollToNextDay = UiUtilities.createToolBarButton(ProgramList.getNextActionTooltip(),TVBrowserIcons.right(TVBrowserIcons.SIZE_LARGE));
     mScrollToNextDay.setOpaque(false);
     toolbarPn.add(mScrollToNextDay);
-    mScrollToNextDay.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        mProgramList.scrollToNextDayIfAvailable();
-      }
+    mScrollToNextDay.addActionListener(e -> {
+      mProgramList.scrollToNextDayIfAvailable();
     });   
     
     mSplitPane = new JSplitPane();
@@ -535,11 +501,9 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction<Favor
     mBlackListChb.setOpaque(false);
     mBlackListChb.setSelected(FavoritesPlugin.getInstance().isShowingBlackListEntries());
     mBlackListChb.setOpaque(false);
-    mBlackListChb.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent evt) {
-        FavoritesPlugin.getInstance().setIsShowingBlackListEntries(mBlackListChb.isSelected());
-        favoriteSelectionChanged();
-      }
+    mBlackListChb.addActionListener(e -> {
+      FavoritesPlugin.getInstance().setIsShowingBlackListEntries(mBlackListChb.isSelected());
+      favoriteSelectionChanged();
     });
 
     JPanel buttonPn = new JPanel(new BorderLayout());
@@ -554,11 +518,9 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction<Favor
     mCloseBt = new JButton(Localizer.getLocalization(Localizer.I18N_CLOSE));
     
     if(ManageFavoritesDialog.getInstance() != null) {
-      mCloseBt.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent evt) {
-          if(ManageFavoritesDialog.getInstance() != null && ManageFavoritesDialog.getInstance().isVisible()) {
-            ManageFavoritesDialog.getInstance().close();
-          }
+      mCloseBt.addActionListener(e -> {
+        if(ManageFavoritesDialog.getInstance() != null && ManageFavoritesDialog.getInstance().isVisible()) {
+          ManageFavoritesDialog.getInstance().close();
         }
       });
       buttonPn.add(mCloseBt, BorderLayout.EAST);
@@ -608,10 +570,8 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction<Favor
       JMenuItem createNew = new JMenuItem(mLocalizer.ellipsisMsg("new", "Create a new favorite"),
           TVBrowserIcons.newIcon(TVBrowserIcons.SIZE_SMALL));
 
-      createNew.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          newFavorite(mFavoriteTree.getRoot());
-        }
+      createNew.addActionListener(e -> {
+        newFavorite(mFavoriteTree.getRoot());
       });
 
       menu.add(createNew);
@@ -621,10 +581,8 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction<Favor
     JMenuItem edit = new JMenuItem(mLocalizer.ellipsisMsg("edit", "Edit the selected favorite"),
         TVBrowserIcons.edit(TVBrowserIcons.SIZE_SMALL));
 
-    edit.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        editSelectedFavorite();
-      }
+    edit.addActionListener(e -> {
+      editSelectedFavorite();
     });
 
     menu.add(edit);
@@ -632,10 +590,8 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction<Favor
     JMenuItem delete = new JMenuItem(mLocalizer.ellipsisMsg("delete", "Delete selected favorite"),
         TVBrowserIcons.delete(TVBrowserIcons.SIZE_SMALL));
 
-    delete.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        deleteSelectedFavorite();
-      }
+    delete.addActionListener(e -> {
+      deleteSelectedFavorite();
     });
 
     menu.add(delete);
@@ -644,10 +600,8 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction<Favor
     JMenuItem sendPrograms = new JMenuItem(mLocalizer.msg("send", "Send Programs to another Plugin"),
         TVBrowserIcons.copy(TVBrowserIcons.SIZE_SMALL));
 
-    sendPrograms.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        showSendDialog();
-      }
+    sendPrograms.addActionListener(e -> {
+      showSendDialog();
     });
     
     sendPrograms.setEnabled(mProgramList.getModel().getSize() > 0);
@@ -1206,12 +1160,9 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction<Favor
   }
   
   public void handleFavoriteEvent() {
-    SwingUtilities.invokeLater(new Runnable() {
-      @Override
-      public void run() {
-        mFavoriteTree.updateUI();
-        favoriteSelectionChanged();
-      }
+    SwingUtilities.invokeLater(() -> {
+      mFavoriteTree.updateUI();
+      favoriteSelectionChanged();
     });
   }
   

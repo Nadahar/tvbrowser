@@ -303,10 +303,8 @@ public class DefaultToolBarModel implements ToolBarModel, DateListener {
           scrollTo + time, IconLoader.getInstance().getIconFromTheme("actions",
               "scroll-to-specific-time", 16), IconLoader.getInstance().getIconFromTheme(
               "actions", "scroll-to-specific-time", 22), ToolBar.BUTTON_ACTION,
-          new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-              MainFrame.getInstance().scrollToTime(timeMinutes,true);
-            }
+          e -> {
+            MainFrame.getInstance().scrollToTime(timeMinutes,true);
           });
     }
 
@@ -691,12 +689,10 @@ public class DefaultToolBarModel implements ToolBarModel, DateListener {
       JMenuItem menuItem = new JMenuItem(TVBrowserActions.scrollToNow.getValue(Action.NAME).toString());
       menuItem.setHorizontalTextPosition(SwingConstants.CENTER);
 
-      menuItem.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          MainFrame.getInstance().scrollToNow();
-          btn.setSelected(false);
-          MainFrame.getInstance().updateToolbar();
-        }
+      menuItem.addActionListener(e -> {
+        MainFrame.getInstance().scrollToNow();
+        btn.setSelected(false);
+        MainFrame.getInstance().updateToolbar();
       });
       popup.add(menuItem);
     }
@@ -751,10 +747,8 @@ public class DefaultToolBarModel implements ToolBarModel, DateListener {
       item.setFont(item.getFont().deriveFont(Font.BOLD));
     }
 
-    item.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        MainFrame.getInstance().goTo(date);
-      }
+    item.addActionListener(e -> {
+      MainFrame.getInstance().goTo(date);
     });
     return item;
   }
@@ -781,12 +775,10 @@ public class DefaultToolBarModel implements ToolBarModel, DateListener {
           .getIcon().getIconHeight()));
     }
 
-    item.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        MainFrame.getInstance().showChannel(ch);
-        btn.setSelected(false);
-        MainFrame.getInstance().updateToolbar();
-      }
+    item.addActionListener(e -> {
+      MainFrame.getInstance().showChannel(ch);
+      btn.setSelected(false);
+      MainFrame.getInstance().updateToolbar();
     });
     return item;
   }
@@ -805,26 +797,20 @@ public class DefaultToolBarModel implements ToolBarModel, DateListener {
     JMenuItem item = new JMenuItem(hour + ":" + minute);
     item.setHorizontalTextPosition(SwingConstants.CENTER);
 
-    item.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        MainFrame.getInstance().scrollToTime(time,true);
-        btn.setSelected(false);
-        MainFrame.getInstance().updateToolbar();
-      }
+    item.addActionListener(e -> {
+      MainFrame.getInstance().scrollToTime(time,true);
+      btn.setSelected(false);
+      MainFrame.getInstance().updateToolbar();
     });
     return item;
   }
 
   public void dateChanged(final Date date, ProgressMonitor monitor, Runnable callback, boolean informPluginPanels) {
-    UIThreadRunner.invokeLater(new Runnable() {
-
-      @Override
-      public void run() {
-        mGoToPreviousDayAction.setEnabled(TvDataBase.getInstance().dataAvailable(date.addDays(-1)));
-        mGoToNextDayAction.setEnabled(TvDataBase.getInstance().dataAvailable(date.addDays(1)));
-        mGoToPreviousWeekAction.setEnabled(TvDataBase.getInstance().dataAvailable(date.addDays(-7)));
-        mGoToNextWeekAction.setEnabled(TvDataBase.getInstance().dataAvailable(date.addDays(7)));
-      }
+    UIThreadRunner.invokeLater(() -> {
+      mGoToPreviousDayAction.setEnabled(TvDataBase.getInstance().dataAvailable(date.addDays(-1)));
+      mGoToNextDayAction.setEnabled(TvDataBase.getInstance().dataAvailable(date.addDays(1)));
+      mGoToPreviousWeekAction.setEnabled(TvDataBase.getInstance().dataAvailable(date.addDays(-7)));
+      mGoToNextWeekAction.setEnabled(TvDataBase.getInstance().dataAvailable(date.addDays(7)));
     });
   }
 

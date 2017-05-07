@@ -27,10 +27,7 @@
 package tvbrowser.ui.settings;
 
 import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
@@ -154,17 +151,14 @@ public class MouseSettingsTab implements devplugin.SettingsTab {
     updateList();
 
     JButton add = new JButton(mLocalizer.msg("add","Add a new mouse action"),TVBrowserIcons.newIcon(TVBrowserIcons.SIZE_SMALL));
-    add.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        ContextMenuMouseActionSetting setting = new ContextMenuMouseActionSetting(ContextMenuManager.NO_MOUSE_MODIFIER_EX, DoNothingContextMenuItem.getInstance().getId(), ActionMenu.ID_ACTION_NONE);
-        
-        ContextMenuPanel contextMenuPanel = new ContextMenuPanel(setting, 1, 1);
-        mMouseActions.add(contextMenuPanel);
-        
-        mMainPanel.add(contextMenuPanel);
-        mMainPanel.updateUI();
-      }
+    add.addActionListener(e -> {
+      ContextMenuMouseActionSetting setting = new ContextMenuMouseActionSetting(ContextMenuManager.NO_MOUSE_MODIFIER_EX, DoNothingContextMenuItem.getInstance().getId(), ActionMenu.ID_ACTION_NONE);
+      
+      ContextMenuPanel contextMenuPanel = new ContextMenuPanel(setting, 1, 1);
+      mMouseActions.add(contextMenuPanel);
+      
+      mMainPanel.add(contextMenuPanel);
+      mMainPanel.updateUI();
     });
     
     contentPanel.addRow();
@@ -278,35 +272,29 @@ public class MouseSettingsTab implements devplugin.SettingsTab {
 	    mClickCount = new JComboBox<>(CLICK_COUNT_TEXT);
 	    mClickCount.setSelectedIndex(clickCount-1);
 	    
-	    mMouseButton.addItemListener(new ItemListener() {
-        @Override
-        public void itemStateChanged(ItemEvent e) {
-          if(e.getStateChange() == ItemEvent.SELECTED) {
-            ((DefaultComboBoxModel<String>)mModifiersEx.getModel()).removeAllElements();
-            
-            if(e.getItem().equals(MOUSE_BUTTON_TEXT[0])) {
-              for(String name : mLeftModifiersName) {
-                ((DefaultComboBoxModel<String>)mModifiersEx.getModel()).addElement(name);
-              }
+	    mMouseButton.addItemListener(e -> {
+        if(e.getStateChange() == ItemEvent.SELECTED) {
+          ((DefaultComboBoxModel<String>)mModifiersEx.getModel()).removeAllElements();
+          
+          if(e.getItem().equals(MOUSE_BUTTON_TEXT[0])) {
+            for(String name1 : mLeftModifiersName) {
+              ((DefaultComboBoxModel<String>)mModifiersEx.getModel()).addElement(name1);
             }
-            else {
-              for(String name : mMiddleModifiersName) {
-                ((DefaultComboBoxModel<String>)mModifiersEx.getModel()).addElement(name);
-              }              
-            }
+          }
+          else {
+            for(String name2 : mMiddleModifiersName) {
+              ((DefaultComboBoxModel<String>)mModifiersEx.getModel()).addElement(name2);
+            }              
           }
         }
       });
 	    
 	    JButton delete = new JButton(TVBrowserIcons.delete(TVBrowserIcons.SIZE_SMALL));
 	    delete.setToolTipText(Localizer.getLocalization(Localizer.I18N_DELETE));
-	    delete.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-          mMouseActions.remove(ContextMenuPanel.this);
-          mMainPanel.remove(ContextMenuPanel.this);
-          mMainPanel.updateUI();
-        }
+	    delete.addActionListener(e -> {
+        mMouseActions.remove(ContextMenuPanel.this);
+        mMainPanel.remove(ContextMenuPanel.this);
+        mMainPanel.updateUI();
       });
 	    
 	    pb.add(mMouseButton, CC.xy(1, pb.getRow()));

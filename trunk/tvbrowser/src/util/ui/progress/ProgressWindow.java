@@ -89,35 +89,26 @@ public class ProgressWindow implements devplugin.ProgressMonitor {
   }
 
   public void setMaximum(final int maximum) {
-    UIThreadRunner.invokeLater(new Runnable() {
-      @Override
-      public void run() {
-        if(maximum == -1) {
-          mBar.setVisible(false);
-        } else {
-          mBar.setMaximum(maximum);
-          mBar.setVisible(true);
-          mBar.setStringPainted(true);
-        }
+    UIThreadRunner.invokeLater(() -> {
+      if(maximum == -1) {
+        mBar.setVisible(false);
+      } else {
+        mBar.setMaximum(maximum);
+        mBar.setVisible(true);
+        mBar.setStringPainted(true);
       }
     });
   }
 
   public void setValue(final int value) {
-    UIThreadRunner.invokeLater(new Runnable() {
-
-      @Override
-      public void run() {
-        mBar.setValue(value);
-      }
+    UIThreadRunner.invokeLater(() -> {
+      mBar.setValue(value);
     });
   }
 
   public void setMessage(final String msg) {
-    SwingUtilities.invokeLater(new Runnable() {
-      public void run() {
-        mLabel.setText(msg);
-      }
+    SwingUtilities.invokeLater(() -> {
+      mLabel.setText(msg);
     });
   }
 

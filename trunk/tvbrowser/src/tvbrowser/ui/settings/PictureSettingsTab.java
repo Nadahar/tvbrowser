@@ -20,10 +20,7 @@ package tvbrowser.ui.settings;
 
 import java.awt.Color;
 import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -152,11 +149,8 @@ public class PictureSettingsTab extends AbstractSettingsTab {
       mPictureEndTime.setValue(cal.getTime());
 
       mShowDescription = new JCheckBox(mLocalizer.msg("showDescription", "Show description for pictures"), Settings.propIsPictureShowingDescription.getBoolean());
-      mShowDescription.addItemListener(new ItemListener() {
-        @Override
-        public void itemStateChanged(ItemEvent e) {
-          mShowPictureBorderProgramTable.setEnabled(e.getStateChange() == ItemEvent.DESELECTED);
-        }
+      mShowDescription.addItemListener(e -> {
+        mShowPictureBorderProgramTable.setEnabled(e.getStateChange() == ItemEvent.DESELECTED);
       });
       
       JEditorPane helpLabel = UiUtilities.createHtmlHelpTextArea(mLocalizer.msg("help", "These settings affect only the showing of the pictures. The pictures can only be shown if the download of pictures in enabled. To enable the picture download look at the <a href=\"#link\">settings of the TV dataservices</a>."), new HyperlinkListener() {
@@ -204,28 +198,24 @@ public class PictureSettingsTab extends AbstractSettingsTab {
         mPluginLabel.setEnabled(ProgramPanelSettings.typeContainsType(Settings.propPictureType.getInt(), ProgramPanelSettings.SHOW_PICTURES_FOR_PLUGINS));
 
         choose = new JButton(mLocalizer.msg("selectPlugins", "Choose Plugins"));
-        choose.addActionListener(new ActionListener() {
-          public void actionPerformed(ActionEvent e) {
-            Window parent = UiUtilities.getLastModalChildOf(MainFrame
-                .getInstance());
-            MarkerChooserDlg chooser = new MarkerChooserDlg(parent,
-                mClientPlugins, null);
+        choose.addActionListener(e -> {
+          Window parent = UiUtilities.getLastModalChildOf(MainFrame
+              .getInstance());
+          MarkerChooserDlg chooser = new MarkerChooserDlg(parent,
+              mClientPlugins, null);
 
-            chooser.setLocationRelativeTo(parent);
-            chooser.setVisible(true);
+          chooser.setLocationRelativeTo(parent);
+          chooser.setVisible(true);
 
-            mClientPlugins = chooser.getMarker();
+          mClientPlugins = chooser.getMarker();
 
-            handlePluginSelection();
-          }
+          handlePluginSelection();
         });
         choose.setEnabled(ProgramPanelSettings.typeContainsType(Settings.propPictureType.getInt(), ProgramPanelSettings.SHOW_PICTURES_FOR_PLUGINS));
 
-        mShowPicturesForPlugins.addItemListener(new ItemListener() {
-          public void itemStateChanged(ItemEvent e) {
-            mPluginLabel.setEnabled(e.getStateChange() == ItemEvent.SELECTED);
-            choose.setEnabled(e.getStateChange() == ItemEvent.SELECTED);
-          }
+        mShowPicturesForPlugins.addItemListener(e -> {
+          mPluginLabel.setEnabled(e.getStateChange() == ItemEvent.SELECTED);
+          choose.setEnabled(e.getStateChange() == ItemEvent.SELECTED);
         });
 
         String[] clientPluginIdArr = Settings.propPicturePluginIds.getStringArray();
@@ -260,24 +250,18 @@ public class PictureSettingsTab extends AbstractSettingsTab {
       
       final JButton editFilter = new JButton(mLocalizer.msg("editFilter", "Edit filter"));
       editFilter.setEnabled(mShowPicturesForFilter.isSelected());
-      editFilter.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-          final UserFilter filter = GenericFilterMap.getInstance().getGenericPictureFilter();
-          
-          final EditFilterDlg editFilter = new EditFilterDlg(UiUtilities.getLastModalChildOf(MainFrame.getInstance()), FilterList.getInstance(), filter, false);
-          
-          if(editFilter.getOkWasPressed()) {
-            GenericFilterMap.getInstance().updateGenericPictureFilter(filter);
-          }
+      editFilter.addActionListener(e -> {
+        final UserFilter filter = GenericFilterMap.getInstance().getGenericPictureFilter();
+        
+        final EditFilterDlg editFilter1 = new EditFilterDlg(UiUtilities.getLastModalChildOf(MainFrame.getInstance()), FilterList.getInstance(), filter, false);
+        
+        if(editFilter1.getOkWasPressed()) {
+          GenericFilterMap.getInstance().updateGenericPictureFilter(filter);
         }
       });
       
-      mShowPicturesForFilter.addItemListener(new ItemListener() {
-        @Override
-        public void itemStateChanged(ItemEvent e) {
-          editFilter.setEnabled(e.getStateChange() == ItemEvent.SELECTED);
-        }
+      mShowPicturesForFilter.addItemListener(e -> {
+        editFilter.setEnabled(e.getStateChange() == ItemEvent.SELECTED);
       });
             
       layout.insertRow(y, RowSpec.decode("default"));
@@ -304,13 +288,10 @@ public class PictureSettingsTab extends AbstractSettingsTab {
   	  mDescriptionLabel.setEnabled(mShowDescription.isSelected());
   	  mDescriptionLines.setEnabled(mShowDescription.isSelected());
   	  mShowPictureBorderProgramTable.setEnabled(!mShowDescription.isSelected());
-  	  mShowDescription.addActionListener(new ActionListener() {
-  
-  		@Override
-  		public void actionPerformed(ActionEvent e) {
+  	  mShowDescription.addActionListener(e -> {
   		  mDescriptionLines.setEnabled(mShowDescription.isSelected());
   		  mDescriptionLabel.setEnabled(mShowDescription.isSelected());
-  		}});
+  		});
     
       pb.addSeparator(mLocalizer.msg("pluginPictureTitle", "Default picture settings for the program lists of the Plugins"), CC.xyw(1, y+=2, 9));
       pb.add(mPluginsPictureSettings = new PluginsPictureSettingsPanel(new PluginPictureSettings(Settings.propPluginsPictureSetting.getInt()), true), CC.xyw(2, y+=2, 8));
@@ -326,13 +307,10 @@ public class PictureSettingsTab extends AbstractSettingsTab {
       
       mRestartButton = new JButton(mLocalizer.msg("restart", "Restart now"));
       mRestartButton.setVisible(PLUGIN_PICTURE_SELECTION_ORIGINAL != mPluginsPictureSettings.getSettings().getType());
-      mRestartButton.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-          mSettingsDialog.saveSettings();
-          TVBrowser.addRestart();
-          MainFrame.getInstance().quit();
-        }
+      mRestartButton.addActionListener(e -> {
+        mSettingsDialog.saveSettings();
+        TVBrowser.addRestart();
+        MainFrame.getInstance().quit();
       });
       
       mPluginsPictureSettings.addChangeListener(new ChangeListener() {
@@ -347,50 +325,42 @@ public class PictureSettingsTab extends AbstractSettingsTab {
       pb.add(mRestartMessage, CC.xyw(1, y, 8));
       pb.add(mRestartButton, CC.xy(9, y));
       
-      mShowPicturesInTimeRange.addItemListener(new ItemListener() {
-        public void itemStateChanged(ItemEvent e) {
-          mPictureStartTime.setEnabled(mShowPicturesInTimeRange.isSelected());
-          mPictureEndTime.setEnabled(mShowPicturesInTimeRange.isSelected());
-          mStartLabel.setEnabled(mShowPicturesInTimeRange.isSelected());
-          mEndLabel.setEnabled(mShowPicturesInTimeRange.isSelected());
-        }
+      mShowPicturesInTimeRange.addItemListener(e -> {
+        mPictureStartTime.setEnabled(mShowPicturesInTimeRange.isSelected());
+        mPictureEndTime.setEnabled(mShowPicturesInTimeRange.isSelected());
+        mStartLabel.setEnabled(mShowPicturesInTimeRange.isSelected());
+        mEndLabel.setEnabled(mShowPicturesInTimeRange.isSelected());
       });
 
-      mShowPicturesForDuration.addItemListener(new ItemListener() {
-        public void itemStateChanged(ItemEvent e) {
-          mDuration.setEnabled(mShowPicturesForDuration.isSelected());
-          minutesLabel.setEnabled(mShowPicturesForDuration.isSelected());
-        }
+      mShowPicturesForDuration.addItemListener(e -> {
+        mDuration.setEnabled(mShowPicturesForDuration.isSelected());
+        minutesLabel.setEnabled(mShowPicturesForDuration.isSelected());
       });
 
-      mShowPicturesNever.addItemListener(new ItemListener() {
-        public void itemStateChanged(ItemEvent e) {
-          mShowDescription.setEnabled(!mShowPicturesNever.isSelected());
-          mDescriptionLines.setEnabled(!mShowPicturesNever.isSelected() && mShowDescription.isSelected());
-          mShowPictureBorderProgramTable.setEnabled(!mShowPicturesNever.isSelected() && !mShowDescription.isSelected());
-        }
+      mShowPicturesNever.addItemListener(e -> {
+        mShowDescription.setEnabled(!mShowPicturesNever.isSelected());
+        mDescriptionLines.setEnabled(!mShowPicturesNever.isSelected() && mShowDescription.isSelected());
+        mShowPictureBorderProgramTable.setEnabled(!mShowPicturesNever.isSelected() && !mShowDescription.isSelected());
       });
 
-      mShowPicturesForSelection.addItemListener(new ItemListener() {
-        public void itemStateChanged(ItemEvent e) {
-          mShowPicturesForDuration.setEnabled(mShowPicturesForSelection.isSelected());
-          mShowPicturesInTimeRange.setEnabled(mShowPicturesForSelection.isSelected());
-          mStartLabel.setEnabled(mShowPicturesForSelection.isSelected() && mShowPicturesInTimeRange.isSelected());
-          mEndLabel.setEnabled(mShowPicturesForSelection.isSelected() && mShowPicturesInTimeRange.isSelected());
-          minutesLabel.setEnabled(mShowPicturesForSelection.isSelected() && mShowPicturesForDuration.isSelected());
-          mPictureStartTime.setEnabled(mShowPicturesForSelection.isSelected() && mShowPicturesInTimeRange.isSelected());
-          mPictureEndTime.setEnabled(mShowPicturesForSelection.isSelected() && mShowPicturesInTimeRange.isSelected());
-          mDuration.setEnabled(mShowPicturesForSelection.isSelected() && mShowPicturesForDuration.isSelected());
-          
-          if (mShowPicturesForPlugins != null) {
-            mShowPicturesForPlugins.setEnabled(mShowPicturesForSelection.isSelected());
-          }
-          if (mPluginLabel != null) {
-            mPluginLabel.setEnabled(mShowPicturesForSelection.isSelected() && mShowPicturesForPlugins.isSelected());
-          }
-          if (choose != null) {
-            choose.setEnabled(mShowPicturesForSelection.isSelected() && mShowPicturesForPlugins.isSelected());
-          }
+      mShowPicturesForSelection.addItemListener(e -> {
+        mShowPicturesForDuration.setEnabled(mShowPicturesForSelection.isSelected());
+        mShowPicturesInTimeRange.setEnabled(mShowPicturesForSelection.isSelected());
+        mStartLabel.setEnabled(mShowPicturesForSelection.isSelected() && mShowPicturesInTimeRange.isSelected());
+        mEndLabel.setEnabled(mShowPicturesForSelection.isSelected() && mShowPicturesInTimeRange.isSelected());
+        minutesLabel.setEnabled(mShowPicturesForSelection.isSelected() && mShowPicturesForDuration.isSelected());
+        mPictureStartTime.setEnabled(mShowPicturesForSelection.isSelected() && mShowPicturesInTimeRange.isSelected());
+        mPictureEndTime.setEnabled(mShowPicturesForSelection.isSelected() && mShowPicturesInTimeRange.isSelected());
+        mDuration.setEnabled(mShowPicturesForSelection.isSelected() && mShowPicturesForDuration.isSelected());
+        
+        if (mShowPicturesForPlugins != null) {
+          mShowPicturesForPlugins.setEnabled(mShowPicturesForSelection.isSelected());
+        }
+        if (mPluginLabel != null) {
+          mPluginLabel.setEnabled(mShowPicturesForSelection.isSelected() && mShowPicturesForPlugins.isSelected());
+        }
+        if (choose != null) {
+          choose.setEnabled(mShowPicturesForSelection.isSelected() && mShowPicturesForPlugins.isSelected());
         }
       });
 

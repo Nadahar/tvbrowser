@@ -39,10 +39,6 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -152,15 +148,12 @@ public class ReminderDialog extends JDialog implements WindowClosingIf {
     JPanel pn1 = new JPanel(new BorderLayout());
     pn1.add(mRememberSettingsCb, BorderLayout.NORTH);
     
-    mList.addItemListener(new ItemListener() {
-      @Override
-      public void itemStateChanged(ItemEvent e) {
-        if(mRememberSettingsCb.isSelected() && ((RemindValue)mList.getSelectedItem()).getMinutes() < 0) {
-          mRememberSettingsCb.setSelected(false);
-        }
-        
-        mRememberSettingsCb.setEnabled(((RemindValue)mList.getSelectedItem()).getMinutes() >= 0);
+    mList.addItemListener(e -> {
+      if(mRememberSettingsCb.isSelected() && ((RemindValue)mList.getSelectedItem()).getMinutes() < 0) {
+        mRememberSettingsCb.setSelected(false);
       }
+      
+      mRememberSettingsCb.setEnabled(((RemindValue)mList.getSelectedItem()).getMinutes() >= 0);
     });
 
     mDontShowDialog = new JCheckBox(mLocalizer.msg("dontShow","Don't show this dialog anymore"));
@@ -174,25 +167,21 @@ public class ReminderDialog extends JDialog implements WindowClosingIf {
     btnPn.setBorder(BorderFactory.createEmptyBorder(10,0,0,0));
 
     JButton okBtn=new JButton(Localizer.getLocalization(Localizer.I18N_OK));
-    okBtn.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        mOkPressed=true;
-        if (mRememberSettingsCb.isSelected()) {
-          settings.setProperty("defaultReminderEntry", Integer.toString(mList
-              .getSelectedIndex() - ReminderPlugin.getStartIndexForBeforeReminders(program)));
-        }
-        settings.setProperty("showTimeSelectionDialog",String.valueOf(!mDontShowDialog.isSelected()));
-        setVisible(false);
+    okBtn.addActionListener(e -> {
+      mOkPressed=true;
+      if (mRememberSettingsCb.isSelected()) {
+        settings.setProperty("defaultReminderEntry", Integer.toString(mList
+            .getSelectedIndex() - ReminderPlugin.getStartIndexForBeforeReminders(program)));
       }
+      settings.setProperty("showTimeSelectionDialog",String.valueOf(!mDontShowDialog.isSelected()));
+      setVisible(false);
     });
     btnPn.add(okBtn);
     getRootPane().setDefaultButton(okBtn);
 
     JButton cancelBtn=new JButton(Localizer.getLocalization(Localizer.I18N_CANCEL));
-    cancelBtn.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        setVisible(false);
-      }
+    cancelBtn.addActionListener(e -> {
+      setVisible(false);
     });
     btnPn.add(cancelBtn);
 

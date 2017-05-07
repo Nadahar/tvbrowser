@@ -26,8 +26,6 @@
 package tvbrowser.ui.settings;
 
 import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -132,25 +130,23 @@ public class ConfigPluginSettingsTab extends AbstractSettingsTab implements Canc
       panelActivate.add(new JLabel(mLocalizer.msg("notactivated", "This Plugin is currently not activated.")), cc.xy(2, panelActivate.getRow()));
 
       final JButton btnActivate = new JButton(mLocalizer.msg("activate", "Activate"));
-      btnActivate.addActionListener(new ActionListener() {
-
-        public void actionPerformed(ActionEvent e) {
-          try {
-            btnActivate.setEnabled(false);
-            PluginProxyManager.getInstance().activatePlugin(mPlugin);
-            SettingsDialog settingsDialog = SettingsDialog.getInstance();
-            settingsDialog.invalidateTree();
-            settingsDialog.createPluginTreeItems();
-            settingsDialog.showSettingsTab(mPlugin.getId());
-            MainFrame.getInstance().getToolbar().updatePluginButtons();
-            // Update the settings
-            String[] deactivatedPlugins = PluginProxyManager.getInstance().getDeactivatedPluginIds();
-            Settings.propDeactivatedPlugins.setStringArray(deactivatedPlugins);
-          } catch (TvBrowserException e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
-          }
-        }});
+      btnActivate.addActionListener(e -> {
+        try {
+          btnActivate.setEnabled(false);
+          PluginProxyManager.getInstance().activatePlugin(mPlugin);
+          SettingsDialog settingsDialog = SettingsDialog.getInstance();
+          settingsDialog.invalidateTree();
+          settingsDialog.createPluginTreeItems();
+          settingsDialog.showSettingsTab(mPlugin.getId());
+          MainFrame.getInstance().getToolbar().updatePluginButtons();
+          // Update the settings
+          String[] deactivatedPlugins = PluginProxyManager.getInstance().getDeactivatedPluginIds();
+          Settings.propDeactivatedPlugins.setStringArray(deactivatedPlugins);
+        } catch (TvBrowserException e1) {
+          // TODO Auto-generated catch block
+          e1.printStackTrace();
+        }
+      });
 
       panelActivate.add(btnActivate, cc.xy(4, panelActivate.getRow()));
       mPluginPanel.add(panelActivate.getPanel(), BorderLayout.NORTH);

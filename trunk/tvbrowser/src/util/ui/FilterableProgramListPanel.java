@@ -26,7 +26,6 @@ package util.ui;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -194,13 +193,10 @@ public class FilterableProgramListPanel extends JPanel implements FilterChangeLi
     mProgramFilterBox = new WideComboBox<>();
     
     if(type == TYPE_NAME_AND_PROGRAM_FILTER || type == TYPE_PROGRAM_ONLY_FILTER) {
-      mProgramFilterBox.addItemListener(new ItemListener() {
-        @Override
-        public void itemStateChanged(ItemEvent e) {
-          if(e.getStateChange() == ItemEvent.SELECTED) {
-            filterPrograms(((WrapperFilter)mProgramFilterBox.getSelectedItem()).getFilter());
-            scrollToFirstNotExpiredIndex(false);
-          }
+      mProgramFilterBox.addItemListener(e -> {
+        if(e.getStateChange() == ItemEvent.SELECTED) {
+          filterPrograms(((WrapperFilter)mProgramFilterBox.getSelectedItem()).getFilter());
+          scrollToFirstNotExpiredIndex(false);
         }
       });
       
@@ -480,12 +476,10 @@ public class FilterableProgramListPanel extends JPanel implements FilterChangeLi
       return;
     }
     
-    SwingUtilities.invokeLater(new Runnable() {
-      public void run() {
-        Point p = mProgramList.indexToLocation(index);
-        if (p != null) {
-          mProgramList.scrollRectToVisible(new Rectangle(p.x,p.y,1,mProgramList.getVisibleRect().height));
-        }
+    SwingUtilities.invokeLater(() -> {
+      Point p = mProgramList.indexToLocation(index);
+      if (p != null) {
+        mProgramList.scrollRectToVisible(new Rectangle(p.x,p.y,1,mProgramList.getVisibleRect().height));
       }
     });
   }

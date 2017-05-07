@@ -27,7 +27,6 @@
 package tvbrowser.ui.settings;
 
 import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.Icon;
@@ -37,15 +36,15 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
-import tvbrowser.TVBrowser;
-import tvbrowser.core.Settings;
-import tvbrowser.core.icontheme.IconLoader;
-import util.ui.TabLayout;
-
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.factories.DefaultComponentFactory;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
+
+import tvbrowser.TVBrowser;
+import tvbrowser.core.Settings;
+import tvbrowser.core.icontheme.IconLoader;
+import util.ui.TabLayout;
 
 /**
  *
@@ -139,10 +138,8 @@ public class ProxySettingsTab implements devplugin.SettingsTab {
     public ProxySettingsPanel(String msgProxy, String msgUseProxy) {
       super(new FormLayout("5dlu, 10dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, fill:pref:grow", "pref, 5dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref, 3dlu, pref"));
 
-      ActionListener updateEnabledListener = new ActionListener() {
-        public void actionPerformed(ActionEvent evt) {
-          updateEnabled();
-        }
+      ActionListener updateEnabledListener = e -> {
+        updateEnabled();
       };
 
       String msg;

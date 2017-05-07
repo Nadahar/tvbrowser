@@ -35,27 +35,25 @@ public class KeyboardAction extends AbstractAction {
   }
 
   public void actionPerformed(ActionEvent e) {
-    SwingUtilities.invokeLater(new Runnable() {
-      public void run() {
-        if (mType == KEY_UP) {
-          mScrollPane.up();
-        }
-        if (mType == KEY_DOWN) {
-          mScrollPane.down();
-        }
-        if (mType == KEY_LEFT) {
-          mScrollPane.left();
-        }
-        if (mType == KEY_RIGHT) {
-          mScrollPane.right();
-        }
-        if (mType == KEY_CONTEXTMENU) {
-          mScrollPane.togglePopupMenu();
-        }
-        if (mType == KEY_DESELECT) {
-          mScrollPane.deSelectItem(false);
-        }
-      };
+    SwingUtilities.invokeLater(() -> {
+      if (mType == KEY_UP) {
+        mScrollPane.up();
+      }
+      if (mType == KEY_DOWN) {
+        mScrollPane.down();
+      }
+      if (mType == KEY_LEFT) {
+        mScrollPane.left();
+      }
+      if (mType == KEY_RIGHT) {
+        mScrollPane.right();
+      }
+      if (mType == KEY_CONTEXTMENU) {
+        mScrollPane.togglePopupMenu();
+      }
+      if (mType == KEY_DESELECT) {
+        mScrollPane.deSelectItem(false);
+      }
     });
   }
 }

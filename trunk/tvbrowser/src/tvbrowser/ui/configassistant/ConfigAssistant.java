@@ -168,69 +168,67 @@ public class ConfigAssistant extends JDialog implements ActionListener, PrevNext
   }
 
   public void actionPerformed(final ActionEvent e) {
-    new Thread(new Runnable() {
-      public void run() {
-        boolean next = mNextBt.isEnabled();
-        boolean back = mBackBt.isEnabled();
-        boolean cancel = mCancelBt.isEnabled();
-        mNextBt.setEnabled(false);
-        mBackBt.setEnabled(false);
-        mCancelBt.setEnabled(false);
+    new Thread(() -> {
+      boolean next = mNextBt.isEnabled();
+      boolean back = mBackBt.isEnabled();
+      boolean cancel = mCancelBt.isEnabled();
+      mNextBt.setEnabled(false);
+      mBackBt.setEnabled(false);
+      mCancelBt.setEnabled(false);
 
-        Object o = e.getSource();
-        if (o == mBackBt) {
-          if (mCurCardPanel == mFinishedPanel) {
-            mCancelBt.setVisible(true);
-            mNextBt.setText(Localizer.getLocalization(Localizer.I18N_NEXT) + " >>");
-          }
+      Object o = e.getSource();
+      if (o == mBackBt) {
+        if (mCurCardPanel == mFinishedPanel) {
+          mCancelBt.setVisible(true);
+          mNextBt.setText(Localizer.getLocalization(Localizer.I18N_NEXT) + " >>");
+        }
 
-          if (!mCurCardPanel.onPrev()) {
+        if (!mCurCardPanel.onPrev()) {
+          mNextBt.setEnabled(next);
+          mBackBt.setEnabled(back);
+          mCancelBt.setEnabled(cancel);
+          return;
+        }
+        mCurCardPanel = mCurCardPanel.getPrev();
+        CardLayout cl1 = (CardLayout) mCardPn.getLayout();
+
+        mCurCardPanel.onShow();
+        cl1.show(mCardPn, mCurCardPanel.toString());
+        mCancelBt.setEnabled(true);
+      } else if (o == mNextBt) {
+        if (mCurCardPanel == mFinishedPanel) {
+          tvbrowser.core.Settings.propShowAssistant.setBoolean(false);
+          setVisible(false);
+        } else {
+          if (!mCurCardPanel.onNext()) {
             mNextBt.setEnabled(next);
             mBackBt.setEnabled(back);
             mCancelBt.setEnabled(cancel);
             return;
           }
-          mCurCardPanel = mCurCardPanel.getPrev();
-          CardLayout cl = (CardLayout) mCardPn.getLayout();
+          mCurCardPanel = mCurCardPanel.getNext();
+          CardLayout cl2 = (CardLayout) mCardPn.getLayout();
 
           mCurCardPanel.onShow();
-          cl.show(mCardPn, mCurCardPanel.toString());
+
+          cl2.show(mCardPn, mCurCardPanel.toString());
+
           mCancelBt.setEnabled(true);
-        } else if (o == mNextBt) {
           if (mCurCardPanel == mFinishedPanel) {
-            tvbrowser.core.Settings.propShowAssistant.setBoolean(false);
-            setVisible(false);
-          } else {
-            if (!mCurCardPanel.onNext()) {
-              mNextBt.setEnabled(next);
-              mBackBt.setEnabled(back);
-              mCancelBt.setEnabled(cancel);
-              return;
-            }
-            mCurCardPanel = mCurCardPanel.getNext();
-            CardLayout cl = (CardLayout) mCardPn.getLayout();
-
-            mCurCardPanel.onShow();
-
-            cl.show(mCardPn, mCurCardPanel.toString());
-
-            mCancelBt.setEnabled(true);
-            if (mCurCardPanel == mFinishedPanel) {
-              mCancelBt.setVisible(false);
-              mNextBt.setText(mLocalizer.msg("finish", "Finish"));
-              mNextBt.setEnabled(true);
-              mBackBt.setEnabled(true);
-            }
+            mCancelBt.setVisible(false);
+            mNextBt.setText(mLocalizer.msg("finish", "Finish"));
+            mNextBt.setEnabled(true);
+            mBackBt.setEnabled(true);
           }
-
-        } else if (o == mCancelBt) {
-          cancel();
-          mNextBt.setEnabled(next);
-          mBackBt.setEnabled(back);
-          mCancelBt.setEnabled(cancel);
         }
 
+      } else if (o == mCancelBt) {
+        cancel();
+        mNextBt.setEnabled(next);
+        mBackBt.setEnabled(back);
+        mCancelBt.setEnabled(cancel);
       }
+
     }).start();
 
   }

@@ -147,23 +147,21 @@ public class CaretPositionCorrector {
           }
         }
         
-        SwingUtilities.invokeLater(new Runnable() {
-          public void run() {
-            if(mClickLocation != null) {
-              mCaretPosition = field.getUI().viewToModel(field, mClickLocation);
-            }
-            
-            mClickLocation = null;
-            
-            if(mCaretPosition <= field.getText().length() && mCaretPosition > 0 &&
-                field.getSelectedText() == null && !mMouseDown &&
-                (mCaretPosition >= field.getText().length() || hasToMoveCaret(field.getText(), mCaretPosition))) {
-              mCaretPosition--;
-            }
-            
-            field.setCaretPosition(mCaretPosition);
-            field.addCaretListener(mCaretListener);
+        SwingUtilities.invokeLater(() -> {
+          if(mClickLocation != null) {
+            mCaretPosition = field.getUI().viewToModel(field, mClickLocation);
           }
+          
+          mClickLocation = null;
+          
+          if(mCaretPosition <= field.getText().length() && mCaretPosition > 0 &&
+              field.getSelectedText() == null && !mMouseDown &&
+              (mCaretPosition >= field.getText().length() || hasToMoveCaret(field.getText(), mCaretPosition))) {
+            mCaretPosition--;
+          }
+          
+          field.setCaretPosition(mCaretPosition);
+          field.addCaretListener(mCaretListener);
         });
       }
 

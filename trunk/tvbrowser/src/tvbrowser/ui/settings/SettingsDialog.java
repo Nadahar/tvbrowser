@@ -30,8 +30,6 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
@@ -62,6 +60,17 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
+import com.jgoodies.forms.builder.ButtonBarBuilder;
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+
+import devplugin.CancelableSettingsTab;
+import devplugin.InfoIf;
+import devplugin.PluginAccess;
+import devplugin.PluginInfo;
+import devplugin.SettingsItem;
+import devplugin.SettingsTab;
 import tvbrowser.TVBrowser;
 import tvbrowser.core.ChannelList;
 import tvbrowser.core.PluginAndDataServiceComparator;
@@ -83,18 +92,6 @@ import util.ui.SingleAndDoubleClickTreeUI;
 import util.ui.TVBrowserIcons;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
-
-import com.jgoodies.forms.builder.ButtonBarBuilder;
-import com.jgoodies.forms.factories.Borders;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
-
-import devplugin.CancelableSettingsTab;
-import devplugin.InfoIf;
-import devplugin.PluginAccess;
-import devplugin.PluginInfo;
-import devplugin.SettingsItem;
-import devplugin.SettingsTab;
 
 /**
  *
@@ -192,42 +189,34 @@ public class SettingsDialog implements WindowClosingIf {
     ButtonBarBuilder builder = new ButtonBarBuilder();
 
     mHelpBt = new JButton(mLocalizer.msg("help", "Online help"));
-    mHelpBt.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent evt) {
-        Launch.openURL(mHelpBt.getToolTipText());
-      }
+    mHelpBt.addActionListener(e -> {
+      Launch.openURL(mHelpBt.getToolTipText());
     });
 
     builder.addButton(mHelpBt);
 
     JButton okBt = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
-    okBt.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent evt) {
-        saveSettingsTab();
-        saveSettings();
-        invalidateTree();
-        close();
-      }
+    okBt.addActionListener(evt -> {
+      saveSettingsTab();
+      saveSettings();
+      invalidateTree();
+      close();
     });
     mDialog.getRootPane().setDefaultButton(okBt);
 
     JButton cancelBt = new JButton(Localizer
         .getLocalization(Localizer.I18N_CANCEL));
-    cancelBt.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent evt) {
-        cancelSettings();
-        close();
-      }
+    cancelBt.addActionListener(evt -> {
+      cancelSettings();
+      close();
     });
 
     JButton applyBt = new JButton(mLocalizer.msg("apply", "Apply"));
-    applyBt.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent evt) {
-        saveSettings();
-        invalidateTree();
-        Settings.handleChangedSettings();
-        showSettingsPanelForSelectedNode();
-      }
+    applyBt.addActionListener(evt -> {
+      saveSettings();
+      invalidateTree();
+      Settings.handleChangedSettings();
+      showSettingsPanelForSelectedNode();
     });
 
     builder.addGlue();
@@ -513,11 +502,9 @@ public class SettingsDialog implements WindowClosingIf {
       Window parent = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
       final SettingsWaitingDialog dialog = new SettingsWaitingDialog(parent);
 
-      SwingUtilities.invokeLater(new Runnable() {
-        public void run() {
-          if (t.isAlive()) {
-            UiUtilities.centerAndShow(dialog);
-          }
+      SwingUtilities.invokeLater(() -> {
+        if (t.isAlive()) {
+          UiUtilities.centerAndShow(dialog);
         }
       });
 
@@ -567,12 +554,8 @@ public class SettingsDialog implements WindowClosingIf {
         
         @Override
         public void ancestorAdded(AncestorEvent event) {
-          SwingUtilities.invokeLater(new Runnable() {
-            
-            @Override
-            public void run() {
-              pane.getVerticalScrollBar().setValue(0);
-            }
+          SwingUtilities.invokeLater(() -> {
+            pane.getVerticalScrollBar().setValue(0);
           });
         }
       });

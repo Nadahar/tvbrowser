@@ -26,8 +26,6 @@ package tvbrowser.core.filters.filtercomponents;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -37,14 +35,14 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-import util.exc.ErrorHandler;
-import util.ui.LineNumberHeader;
-import util.ui.beanshell.BeanShellEditor;
 import bsh.EvalError;
 import bsh.Interpreter;
 import devplugin.Plugin;
 import devplugin.Program;
 import devplugin.beanshell.BeanShellProgramFilterIf;
+import util.exc.ErrorHandler;
+import util.ui.LineNumberHeader;
+import util.ui.beanshell.BeanShellEditor;
 
 /**
  * This Filter allows the User to create a small Script that Filters the
@@ -125,12 +123,8 @@ public class BeanShellFilterComponent extends AbstractFilterComponent {
 
     JButton test = new JButton(mLocalizer.msg("testScript", "Test Script"));
 
-    test.addActionListener(new ActionListener() {
-
-      public void actionPerformed(ActionEvent arg0) {
-        testScript();
-      }
-
+    test.addActionListener(e -> {
+      testScript();
     });
 
     buttonp.add(test);

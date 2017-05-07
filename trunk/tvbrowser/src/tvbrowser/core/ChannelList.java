@@ -47,6 +47,7 @@ import java.util.zip.GZIPInputStream;
 
 import javax.swing.SwingUtilities;
 
+import devplugin.Channel;
 import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
 import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
@@ -56,7 +57,6 @@ import util.io.IOUtilities;
 import util.io.stream.ObjectInputStreamProcessor;
 import util.io.stream.ObjectOutputStreamProcessor;
 import util.io.stream.StreamUtilities;
-import devplugin.Channel;
 
 /**
  * ChannelList contains a list of all available mAvailableChannels in the
@@ -559,10 +559,8 @@ public class ChannelList {
     TvDataBase.getInstance().unsubscribeChannels(unsubscribedChannels.toArray(new Channel[unsubscribedChannels.size()]));
 
     if (channelsAdded && update) {
-      SwingUtilities.invokeLater(new Runnable() {
-        public void run() {
-          MainFrame.getInstance().askForDataUpdateChannelsAdded();
-        }
+      SwingUtilities.invokeLater(() -> {
+        MainFrame.getInstance().askForDataUpdateChannelsAdded();
       });
     }
   }

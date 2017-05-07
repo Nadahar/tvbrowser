@@ -23,8 +23,6 @@
  */
 package tvbrowser.extras.favoritesplugin.core;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -36,6 +34,15 @@ import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.factories.CC;
+import com.jgoodies.forms.layout.FormLayout;
+
+import devplugin.Plugin;
+import devplugin.PluginManager;
+import devplugin.Program;
+import devplugin.ProgramFilter;
 import tvbrowser.core.filters.PluginFilter;
 import tvbrowser.core.filters.SeparatorFilter;
 import tvbrowser.core.filters.ShowAllFilter;
@@ -48,16 +55,6 @@ import util.exc.TvBrowserException;
 import util.ui.Localizer;
 import util.ui.SearchFormSettings;
 import util.ui.UiUtilities;
-
-import com.jgoodies.forms.builder.PanelBuilder;
-import com.jgoodies.forms.factories.Borders;
-import com.jgoodies.forms.factories.CC;
-import com.jgoodies.forms.layout.FormLayout;
-
-import devplugin.Plugin;
-import devplugin.PluginManager;
-import devplugin.Program;
-import devplugin.ProgramFilter;
 
 /**
  * A Favorite with usage of filter for program matching.
@@ -215,26 +212,23 @@ public class FilterFavorite extends Favorite implements PendingFilterLoader {
       }
       
       JButton editFilter = new JButton(SelectFilterDlg.mLocalizer.msg("title", "Edit Filters"));
-      editFilter.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-          SelectFilterDlg filterDlg = SelectFilterDlg.create(UiUtilities.getLastModalChildOf(MainFrame.getInstance()));
-          filterDlg.setVisible(true);
-          
-          Object selected = mFilterSelection.getSelectedItem();
-          
-          ((DefaultComboBoxModel<ProgramFilter>)mFilterSelection.getModel()).removeAllElements();
-          
-          ProgramFilter[] availableFilter = Plugin.getPluginManager().getFilterManager().getAvailableFilters();
-          
-          for(ProgramFilter filter : availableFilter) {
-            if(!(filter instanceof FavoriteFilter)) {
-              ((DefaultComboBoxModel<ProgramFilter>)mFilterSelection.getModel()).addElement(filter);
-            }
+      editFilter.addActionListener(e -> {
+        SelectFilterDlg filterDlg = SelectFilterDlg.create(UiUtilities.getLastModalChildOf(MainFrame.getInstance()));
+        filterDlg.setVisible(true);
+        
+        Object selected = mFilterSelection.getSelectedItem();
+        
+        ((DefaultComboBoxModel<ProgramFilter>)mFilterSelection.getModel()).removeAllElements();
+        
+        ProgramFilter[] availableFilter = Plugin.getPluginManager().getFilterManager().getAvailableFilters();
+        
+        for(ProgramFilter filter : availableFilter) {
+          if(!(filter instanceof FavoriteFilter)) {
+            ((DefaultComboBoxModel<ProgramFilter>)mFilterSelection.getModel()).addElement(filter);
           }
-          
-          mFilterSelection.setSelectedItem(selected);
         }
+        
+        mFilterSelection.setSelectedItem(selected);
       });
       
       pb.addLabel(LOCALIZER.msg("message", "Programs that are accepted by this filter will be marked as Favorite:"), CC.xyw(1, 1, 3));

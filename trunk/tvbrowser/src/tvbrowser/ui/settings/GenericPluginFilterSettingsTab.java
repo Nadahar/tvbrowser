@@ -23,8 +23,6 @@
  */
 package tvbrowser.ui.settings;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -87,23 +85,20 @@ public class GenericPluginFilterSettingsTab implements SettingsTab {
     scrollPane.setBorder(BorderFactory.createEmptyBorder());
     
     final JButton edit = new JButton(Localizer.getLocalization(Localizer.I18N_EDIT), TVBrowserIcons.edit(TVBrowserIcons.SIZE_SMALL));
-    edit.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        SelectableItem<PluginProxy> item = mGenericPluginFilterList.getSelectedValue();
-        PluginProxy proxy = (PluginProxy)item.getItem();
-        
-        UserFilter filter = GenericFilterMap.getInstance().getGenericPluginFilter(proxy, false);
-        
-        if(filter == null) {
-          filter = new UserFilter(proxy.getInfo().getName());
-        }
-        
-        EditFilterDlg editFilter = new EditFilterDlg(UiUtilities.getLastModalChildOf(MainFrame.getInstance()), FilterList.getInstance(), filter, false);
-        
-        if(editFilter.getOkWasPressed()) {
-          GenericFilterMap.getInstance().updateGenericPluginFilter(proxy, filter, item.isSelected());
-        }
+    edit.addActionListener(e -> {
+      SelectableItem<PluginProxy> item = mGenericPluginFilterList.getSelectedValue();
+      PluginProxy proxy = (PluginProxy)item.getItem();
+      
+      UserFilter filter = GenericFilterMap.getInstance().getGenericPluginFilter(proxy, false);
+      
+      if(filter == null) {
+        filter = new UserFilter(proxy.getInfo().getName());
+      }
+      
+      EditFilterDlg editFilter = new EditFilterDlg(UiUtilities.getLastModalChildOf(MainFrame.getInstance()), FilterList.getInstance(), filter, false);
+      
+      if(editFilter.getOkWasPressed()) {
+        GenericFilterMap.getInstance().updateGenericPluginFilter(proxy, filter, item.isSelected());
       }
     });
     edit.setEnabled(false);

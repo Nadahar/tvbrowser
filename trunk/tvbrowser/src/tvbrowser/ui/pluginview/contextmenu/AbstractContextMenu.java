@@ -28,7 +28,6 @@ package tvbrowser.ui.pluginview.contextmenu;
 
 
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 import javax.swing.AbstractAction;
@@ -166,12 +165,10 @@ public abstract class AbstractContextMenu implements ContextMenu {
           item.setFont(MenuUtil.CONTEXT_MENU_PLAINFONT);
           item.setIcon(internalProxy.getIcon());
           menu.add(item);
-          item.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e) {
-              Program[] programs = collectProgramsFromNode(node);
-              if ((programs != null) &&(programs.length > 0)) {
-                receiveProxy.receivePrograms(programs, target);
-              }
+          item.addActionListener(e -> {
+            Program[] programs = collectProgramsFromNode(node);
+            if ((programs != null) &&(programs.length > 0)) {
+              receiveProxy.receivePrograms(programs, target);
             }
           });
         }
@@ -193,12 +190,10 @@ public abstract class AbstractContextMenu implements ContextMenu {
 
             item.setIcon(icon != null ? icon : null);
             menu.add(item);
-            item.addActionListener(new ActionListener() {
-              public void actionPerformed(ActionEvent e) {
-                Program[] programs = collectProgramsFromNode(node);
-                if ((programs != null) && (programs.length > 0)) {
-                  plugin.receivePrograms(programs, ProgramReceiveTarget.createDefaultTargetForProgramReceiveIfId(plugin.getId()));
-                }
+            item.addActionListener(e -> {
+              Program[] programs = collectProgramsFromNode(node);
+              if ((programs != null) && (programs.length > 0)) {
+                plugin.receivePrograms(programs, ProgramReceiveTarget.createDefaultTargetForProgramReceiveIfId(plugin.getId()));
               }
             });
           } else if (targets.length == 1 && (!(o instanceof ProgramReceiveTarget) || !o.equals(targets[0]))) {
@@ -212,12 +207,10 @@ public abstract class AbstractContextMenu implements ContextMenu {
 
             final ProgramReceiveTarget target = targets[0];
 
-            item.addActionListener(new ActionListener() {
-              public void actionPerformed(ActionEvent e) {
-                Program[] programs = collectProgramsFromNode(node);
-                if ((programs != null) && (programs.length > 0)) {
-                  plugin.receivePrograms(programs, target);
-                }
+            item.addActionListener(e -> {
+              Program[] programs = collectProgramsFromNode(node);
+              if ((programs != null) && (programs.length > 0)) {
+                plugin.receivePrograms(programs, target);
               }
             });
           } else if (targets.length >= 1) {
@@ -235,12 +228,10 @@ public abstract class AbstractContextMenu implements ContextMenu {
                 item.setFont(MenuUtil.CONTEXT_MENU_PLAINFONT);
                 subMenu.add(item);
 
-                item.addActionListener(new ActionListener() {
-                  public void actionPerformed(ActionEvent e) {
-                    Program[] programs = collectProgramsFromNode(node);
-                    if ((programs != null) && (programs.length > 0)) {
-                      plugin.receivePrograms(programs, target);
-                    }
+                item.addActionListener(e -> {
+                  Program[] programs = collectProgramsFromNode(node);
+                  if ((programs != null) && (programs.length > 0)) {
+                    plugin.receivePrograms(programs, target);
                   }
                 });
               }

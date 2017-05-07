@@ -27,8 +27,6 @@ package tvbrowser.ui.update;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.IOException;
 
 import javax.swing.BorderFactory;
@@ -114,43 +112,37 @@ public class TvBrowserVersionChangeDlg extends JDialog implements WindowClosingI
         new JButton(mLocalizer.msg("closeTvBrowser","Close TV-Browser now")),
         new JButton(mLocalizer.msg("closeDialog","Close this dialog and don't update"))};
     
-    buttons[0].addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        try {
-          SoftwareUpdateItem[] updateItems = PluginAutoUpdater.getUpdateItemsForVersionChange();
+    buttons[0].addActionListener(e -> {
+      try {
+        SoftwareUpdateItem[] updateItems = PluginAutoUpdater.getUpdateItemsForVersionChange();
+        
+        if(updateItems.length > 0) {
+          Settings.propPluginBetaWarning.setBoolean(false);
+          SoftwareUpdateDlg updateDlg = new SoftwareUpdateDlg(null,SoftwareUpdater.ONLY_UPDATE_TYPE,updateItems,true,oldTvBrowserVersion);
           
-          if(updateItems.length > 0) {
-            Settings.propPluginBetaWarning.setBoolean(false);
-            SoftwareUpdateDlg updateDlg = new SoftwareUpdateDlg(null,SoftwareUpdater.ONLY_UPDATE_TYPE,updateItems,true,oldTvBrowserVersion);
-            
-            if(!updateDlg.isEmpty()) {
-              updateDlg.setLocationRelativeTo(null);
-              updateDlg.setVisible(true);
-            }
-            else {
-              Settings.propPluginBetaWarning.setBoolean(true);
-            }
+          if(!updateDlg.isEmpty()) {
+            updateDlg.setLocationRelativeTo(null);
+            updateDlg.setVisible(true);
           }
-          
-          mCloseTvBrowser = false;
-        } catch (IOException e1) {
+          else {
+            Settings.propPluginBetaWarning.setBoolean(true);
+          }
         }
         
-        close();
-      }
-    });
-    
-    buttons[1].addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        close();
-      }
-    });
-    
-    buttons[2].addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
         mCloseTvBrowser = false;
-        close();
+      } catch (IOException e1) {
       }
+      
+      close();
+    });
+    
+    buttons[1].addActionListener(e -> {
+      close();
+    });
+    
+    buttons[2].addActionListener(e -> {
+      mCloseTvBrowser = false;
+      close();
     });
     
     buttons[0].setFont(buttons[0].getFont().deriveFont(Font.BOLD,13));

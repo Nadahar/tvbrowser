@@ -171,10 +171,8 @@ public class ChannelConfigDlg extends JDialog implements ActionListener, WindowC
     
     mIconLabel = new JLabel(createUserIcon());
     mChangeIcon = new JButton(mLocalizer.msg("useIcon", "Select channel icon"));
-    mChangeIcon.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        changeIcon();
-      }
+    mChangeIcon.addActionListener(e -> {
+      changeIcon();
     });
 
     panel.add(mIconLabel, CC.xy(3, y++));
@@ -256,11 +254,8 @@ public class ChannelConfigDlg extends JDialog implements ActionListener, WindowC
     ButtonBarBuilder builder = new ButtonBarBuilder();
     JButton defaultButton = new JButton(Localizer.getLocalization(Localizer.I18N_DEFAULT));
     
-    defaultButton.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        resetToDefaults();
-      }
-
+    defaultButton.addActionListener(e -> {
+      resetToDefaults();
     });
     
     builder.addButton(defaultButton);

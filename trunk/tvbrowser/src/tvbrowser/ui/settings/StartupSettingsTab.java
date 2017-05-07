@@ -23,10 +23,7 @@
  */
 package tvbrowser.ui.settings;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -43,6 +40,15 @@ import javax.swing.JRadioButton;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.factories.DefaultComponentFactory;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.RowSpec;
+
+import ca.beq.util.win32.registry.RegistryKey;
+import ca.beq.util.win32.registry.RootKey;
 import tvbrowser.TVBrowser;
 import tvbrowser.core.Settings;
 import tvbrowser.core.icontheme.IconLoader;
@@ -51,15 +57,6 @@ import tvbrowser.ui.mainframe.PeriodItem;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.ui.WideComboBox;
-import ca.beq.util.win32.registry.RegistryKey;
-import ca.beq.util.win32.registry.RootKey;
-
-import com.jgoodies.forms.builder.PanelBuilder;
-import com.jgoodies.forms.factories.Borders;
-import com.jgoodies.forms.factories.DefaultComponentFactory;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.RowSpec;
 
 /**
  * TV-Browser
@@ -145,19 +142,15 @@ public class StartupSettingsTab implements devplugin.SettingsTab {
         Settings.propIsUsingFullscreen.getBoolean());
     mSettingsPn.add(mStartFullscreen, cc.xy(2,++y));
 
-    mMinimizeAfterStartUpChB.addItemListener(new ItemListener() {
-      public void itemStateChanged(ItemEvent e) {
-        if(e.getStateChange() == ItemEvent.SELECTED) {
-          mStartFullscreen.setSelected(false);
-        }
+    mMinimizeAfterStartUpChB.addItemListener(e -> {
+      if(e.getStateChange() == ItemEvent.SELECTED) {
+        mStartFullscreen.setSelected(false);
       }
     });
 
-    mStartFullscreen.addItemListener(new ItemListener() {
-      public void itemStateChanged(ItemEvent e) {
-        if(e.getStateChange() == ItemEvent.SELECTED) {
-          mMinimizeAfterStartUpChB.setSelected(false);
-        }
+    mStartFullscreen.addItemListener(e -> {
+      if(e.getStateChange() == ItemEvent.SELECTED) {
+        mMinimizeAfterStartUpChB.setSelected(false);
       }
     });
 
@@ -410,28 +403,20 @@ public class StartupSettingsTab implements devplugin.SettingsTab {
         Settings.propAutoDownloadWaitingTime.getShort(), 1, 300, 1));
     mSecondsLabel = new JLabel(mLocalizer.msg("autoDownload.seconds","seconds"));
 
-    mAutoDownload.addItemListener(new ItemListener() {
-      public void itemStateChanged(ItemEvent e) {
-        setAutoDownloadEnabled(e.getStateChange() == ItemEvent.SELECTED);
-      }
+    mAutoDownload.addItemListener(e -> {
+      setAutoDownloadEnabled(e.getStateChange() == ItemEvent.SELECTED);
     });
 
-    mAskBeforeDownloadRadio.addItemListener(new ItemListener() {
-      public void itemStateChanged(ItemEvent e) {
-        setAutoDownloadEnabled(mAutoDownload.isSelected());
-      }
+    mAskBeforeDownloadRadio.addItemListener(e -> {
+      setAutoDownloadEnabled(mAutoDownload.isSelected());
     });
 
-    mAskTimeRadio.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        setAutoDownloadEnabled(mAskTimeRadio.isSelected());
-      };
+    mAskTimeRadio.addActionListener(e -> {
+      setAutoDownloadEnabled(mAskTimeRadio.isSelected());
     });
 
-    mAutoDownloadWaitingTime.addItemListener(new ItemListener() {
-      public void itemStateChanged(ItemEvent e) {
-        mAutoDownloadWaitingTimeSp.setEnabled(e.getStateChange() == ItemEvent.SELECTED);
-      }
+    mAutoDownloadWaitingTime.addItemListener(e -> {
+      mAutoDownloadWaitingTimeSp.setEnabled(e.getStateChange() == ItemEvent.SELECTED);
     });
 
     JPanel waitingPanel = new JPanel(new FormLayout("pref,2dlu,pref,2dlu,pref","pref"));
@@ -481,11 +466,8 @@ public class StartupSettingsTab implements devplugin.SettingsTab {
       mAutoChannelDownloadPeriod.setEnabled(false);
     }
     
-    mAutoChannelDownload.addItemListener(new ItemListener() {
-      @Override
-      public void itemStateChanged(ItemEvent e) {
-        mAutoChannelDownloadPeriod.setEnabled(e.getStateChange() == ItemEvent.SELECTED);
-      }
+    mAutoChannelDownload.addItemListener(e -> {
+      mAutoChannelDownloadPeriod.setEnabled(e.getStateChange() == ItemEvent.SELECTED);
     });
     
     y += 2;

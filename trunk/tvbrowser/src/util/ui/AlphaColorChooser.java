@@ -35,8 +35,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -229,26 +227,18 @@ public class AlphaColorChooser extends JDialog implements ChangeListener {
         
         JButton ok = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
         JButton cancel = new JButton(Localizer.getLocalization(Localizer.I18N_CANCEL));
-        ok.addActionListener(new ActionListener() {
+        ok.addActionListener(e -> {
+              stopEditing();
+              updateColorPanel();
+              mReturnValue = JOptionPane.OK_OPTION;
+              setVisible(false);
+          });
 
-          public void actionPerformed(ActionEvent e) {
-                stopEditing();
-                updateColorPanel();
-                mReturnValue = JOptionPane.OK_OPTION;
-                setVisible(false);
-            }
-
-        });
-
-        cancel.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                mCurrentColor = mDefaultColor;
-                updateColorPanel();
-                mReturnValue = JOptionPane.CANCEL_OPTION;
-                setVisible(false);
-            }
-
+        cancel.addActionListener(e -> {
+            mCurrentColor = mDefaultColor;
+            updateColorPanel();
+            mReturnValue = JOptionPane.CANCEL_OPTION;
+            setVisible(false);
         });
         
         CellConstraints cc = new CellConstraints();
@@ -256,11 +246,9 @@ public class AlphaColorChooser extends JDialog implements ChangeListener {
         if(mStandardColor != null) {
           JButton def = new JButton(Localizer
           .getLocalization(Localizer.I18N_DEFAULT));
-          def.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-              setColor(mStandardColor);
-              mCurrentColor = mStandardColor;
-            }
+          def.addActionListener(e -> {
+            setColor(mStandardColor);
+            mCurrentColor = mStandardColor;
           });
           buttonPanel.add(def, cc.xy(1,1));
         }

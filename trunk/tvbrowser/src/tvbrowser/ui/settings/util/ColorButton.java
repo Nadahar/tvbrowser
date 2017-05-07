@@ -27,8 +27,6 @@
 package tvbrowser.ui.settings.util;
 
 import java.awt.Color;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 
@@ -46,13 +44,11 @@ public class ColorButton extends JButton {
 
   public ColorButton(final ColorLabel lb) {
     super(mLocalizer.msg("Change", "Change"));
-    addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        Color newColor = AlphaColorChooser.showDialog(UiUtilities.getBestDialogParent(getParent()), mLocalizer.msg(
-            "ChooseColor", "Please choose the Color"), lb.getColor(), lb.getStandardColor());
-        lb.setColor(newColor);
+    addActionListener(e -> {
+      Color newColor = AlphaColorChooser.showDialog(UiUtilities.getBestDialogParent(getParent()), mLocalizer.msg(
+          "ChooseColor", "Please choose the Color"), lb.getColor(), lb.getStandardColor());
+      lb.setColor(newColor);
 
-      }
     });
   }
 

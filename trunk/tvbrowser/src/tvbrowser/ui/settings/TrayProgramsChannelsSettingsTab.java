@@ -27,8 +27,6 @@ package tvbrowser.ui.settings;
 
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.Collections;
 import java.util.List;
 
@@ -128,10 +126,8 @@ public class TrayProgramsChannelsSettingsTab implements SettingsTab {
     });
     
     JButton reset = new JButton(Localizer.getLocalization(Localizer.I18N_DEFAULT));
-    reset.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        mChannelWidth.setValue(Settings.propTrayChannelWidth.getDefault());
-      }
+    reset.addActionListener(e -> {
+      mChannelWidth.setValue(Settings.propTrayChannelWidth.getDefault());
     });
     
     builder.add(reset, cc.xy(6,3));
@@ -147,10 +143,8 @@ public class TrayProgramsChannelsSettingsTab implements SettingsTab {
     
     setEnabled(true);
     
-    mUseUserChannels.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        setEnabled(false);
-      }
+    mUseUserChannels.addActionListener(e -> {
+      setEnabled(false);
     });
     
     return builder.getPanel();

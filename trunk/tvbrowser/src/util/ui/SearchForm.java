@@ -28,10 +28,8 @@ package util.ui;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -175,13 +173,11 @@ public class SearchForm extends JPanel {
         mPatternCBModel = new DefaultComboBoxModel<>();
         mPatternCB = new JComboBox<>(mPatternCBModel);
         mPatternCB.setEditable(true);
-        mPatternCB.addItemListener(new ItemListener() {
-          public void itemStateChanged (ItemEvent evt) {
-            if (evt.getStateChange() == ItemEvent.SELECTED) {
-              Object selection = mPatternCB.getSelectedItem();
-              if (selection instanceof SearchFormSettings) {
-                setSearchFormSettings((SearchFormSettings) selection,false);
-              }
+        mPatternCB.addItemListener(evt -> {
+          if (evt.getStateChange() == ItemEvent.SELECTED) {
+            Object selection = mPatternCB.getSelectedItem();
+            if (selection instanceof SearchFormSettings) {
+              setSearchFormSettings((SearchFormSettings) selection,false);
             }
           }
         });
@@ -204,10 +200,8 @@ public class SearchForm extends JPanel {
 
     searchInPanel.addSeparator(mLocalizer.msg("searchIn", "Search in"), CC.xyw(1,1,2));
 
-    final ActionListener updateEnabledListener = new ActionListener() {
-      public void actionPerformed(ActionEvent evt) {
-        updateEnabled();
-      }
+    final ActionListener updateEnabledListener = e -> {
+      updateEnabled();
     };
 
     mSearchTitleRB = new JRadioButton(mLocalizer.msg("onlyTitle", "Only in title"));
@@ -227,10 +221,8 @@ public class SearchForm extends JPanel {
     bg.add(mSearchUserDefinedRB);
 
     mChangeSearchFieldsBt = new JButton(Localizer.getLocalization(Localizer.I18N_SELECT));
-    mChangeSearchFieldsBt.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent evt) {
-        showSelectSearchFieldsDialog(showDefaultSelection);
-      }
+    mChangeSearchFieldsBt.addActionListener(e -> {
+      showSelectSearchFieldsDialog(showDefaultSelection);
     });
 
     JPanel panel = new JPanel(new FormLayout("pref,1dlu:grow,pref","pref"));
@@ -312,14 +304,10 @@ public class SearchForm extends JPanel {
       //             after he has called all the listeners.
       //             To ensure that editing is finished we call our listener,
       //             after the editor is done
-      ActionListener invokeLaterListener = new ActionListener() {
-        public void actionPerformed(final ActionEvent evt) {
-          SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-              listener.actionPerformed(evt);
-            }
-          });
-        }
+      ActionListener invokeLaterListener = e -> {
+        SwingUtilities.invokeLater(() -> {
+          listener.actionPerformed(e);
+        });
       };
 
       mPatternCB.getEditor().addActionListener(invokeLaterListener);
@@ -700,20 +688,16 @@ public class SearchForm extends JPanel {
       main.add(buttons.getPanel(), BorderLayout.SOUTH);
 
       JButton okBt = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
-      okBt.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent evt) {
-          handleOk();
-        }
+      okBt.addActionListener(e -> {
+        handleOk();
       });
       mDlg.getRootPane().setDefaultButton(okBt);
       buttons.addButton(okBt);
       buttons.addRelatedGap();
 
       JButton cancelBt = new JButton(Localizer.getLocalization(Localizer.I18N_CANCEL));
-      cancelBt.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent evt) {
-          mDlg.dispose();
-        }
+      cancelBt.addActionListener(e -> {
+        mDlg.dispose();
       });
       buttons.addButton(cancelBt);
 

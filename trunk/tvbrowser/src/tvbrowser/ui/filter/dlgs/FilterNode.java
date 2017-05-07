@@ -24,8 +24,6 @@
 package tvbrowser.ui.filter.dlgs;
 
 import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -409,11 +407,9 @@ public class FilterNode extends DefaultMutableTreeNode {
           if(test.containsFilter()) {
             final JRadioButtonMenuItem item = new JRadioButtonMenuItem(test.toString());
             group.add(item);
-            item.addActionListener(new ActionListener() {
-              public void actionPerformed(ActionEvent e) {
-                MainFrame.getInstance().setProgramFilter(test.getFilter());
-                item.setSelected(true);
-              }
+            item.addActionListener(e -> {
+              MainFrame.getInstance().setProgramFilter(test.getFilter());
+              item.setSelected(true);
             });
             parent.add(item);
             

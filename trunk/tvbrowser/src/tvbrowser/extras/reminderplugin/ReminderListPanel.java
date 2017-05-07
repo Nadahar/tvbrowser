@@ -4,8 +4,6 @@ import java.awt.Component;
 import java.awt.Font;
 import java.awt.Rectangle;
 import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -142,10 +140,8 @@ public class ReminderListPanel extends JPanel implements PersonaListener, Progra
 
     config.setToolTipText(mLocalizer.msg("config", "Configure Reminder"));
     
-    config.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        MainFrame.getInstance().showSettingsDialog(SettingsItem.REMINDER);
-      }
+    config.addActionListener(e -> {
+      MainFrame.getInstance().showSettingsDialog(SettingsItem.REMINDER);
     });
 
     if(close != null) {
@@ -157,10 +153,8 @@ public class ReminderListPanel extends JPanel implements PersonaListener, Progra
     mSend.setToolTipText(mLocalizer.msg("send", "Send to other Plugins"));
     mSend.setEnabled(mTable.getRowCount() > 0);
 
-    mSend.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        showSendDialog();
-      }
+    mSend.addActionListener(e -> {
+      showSendDialog();
     });
 
     builder.addFixed(mSend);
@@ -170,10 +164,8 @@ public class ReminderListPanel extends JPanel implements PersonaListener, Progra
     mDelete.setToolTipText(mLocalizer.msg("delete", "Remove all/selected programs from reminder list"));
     mDelete.setEnabled(mTable.getRowCount() > 0);
     
-    mDelete.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        deleteItems();
-      }
+    mDelete.addActionListener(e -> {
+      deleteItems();
     });
 
     builder.addFixed(mDelete);
@@ -183,10 +175,8 @@ public class ReminderListPanel extends JPanel implements PersonaListener, Progra
     mUndo.setToolTipText(mLocalizer.msg("undo","Undo"));
     mUndo.setEnabled(false);
     
-    mUndo.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        undo();
-      }
+    mUndo.addActionListener(e -> {
+      undo();
     });
     
     builder.addFixed(mUndo);
@@ -194,36 +184,33 @@ public class ReminderListPanel extends JPanel implements PersonaListener, Progra
     mScrollToPreviousDay = new JButton(TVBrowserIcons.left(TVBrowserIcons.SIZE_SMALL));
     mScrollToPreviousDay.setToolTipText(ProgramList.getPreviousActionTooltip());
     mScrollToPreviousDay.setEnabled(mTable.getRowCount() > 0);
-    mScrollToPreviousDay.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        int row = mTable.rowAtPoint(mTable.getVisibleRect().getLocation())-1;
+    mScrollToPreviousDay.addActionListener(e -> {
+      int row = mTable.rowAtPoint(mTable.getVisibleRect().getLocation())-1;
+      
+      if(row > 0) {
+        Object o = mTable.getValueAt(row, 0);
+        
+        if(o.equals(PluginManagerImpl.getInstance().getExampleProgram())) {
+          o = mTable.getValueAt(row-1, 0);
+          row--;
+        }
         
         if(row > 0) {
-          Object o = mTable.getValueAt(row, 0);
+          Date current = ((Program)o).getDate();
           
-          if(o.equals(PluginManagerImpl.getInstance().getExampleProgram())) {
-            o = mTable.getValueAt(row-1, 0);
-            row--;
-          }
-          
-          if(row > 0) {
-            Date current = ((Program)o).getDate();
+          for(int i = row-1; i >= 0; i--) {
+            Object test = mTable.getValueAt(i, 0);
             
-            for(int i = row-1; i >= 0; i--) {
-              Object test = mTable.getValueAt(i, 0);
-              
-              if(!test.equals(PluginManagerImpl.getInstance().getExampleProgram()) && test instanceof Program && current.compareTo(((Program)test).getDate()) > 0) {
-                mTable.scrollRectToVisible(mTable.getCellRect(i+1, 0, true));
-                return;
-              }
+            if(!test.equals(PluginManagerImpl.getInstance().getExampleProgram()) && test instanceof Program && current.compareTo(((Program)test).getDate()) > 0) {
+              mTable.scrollRectToVisible(mTable.getCellRect(i+1, 0, true));
+              return;
             }
           }
         }
-        
-        if(mTable.getRowCount() > 0) {
-          mTable.scrollRectToVisible(mTable.getCellRect(0, 0, true));
-        }
+      }
+      
+      if(mTable.getRowCount() > 0) {
+        mTable.scrollRectToVisible(mTable.getCellRect(0, 0, true));
       }
     });
         
@@ -233,34 +220,31 @@ public class ReminderListPanel extends JPanel implements PersonaListener, Progra
     mScrollToNextDay = new JButton(TVBrowserIcons.right(TVBrowserIcons.SIZE_SMALL));
     mScrollToNextDay.setToolTipText(ProgramList.getNextActionTooltip());
     mScrollToNextDay.setEnabled(mTable.getRowCount() > 0);
-    mScrollToNextDay.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        int row = mTable.rowAtPoint(mTable.getVisibleRect().getLocation());
+    mScrollToNextDay.addActionListener(e -> {
+      int row = mTable.rowAtPoint(mTable.getVisibleRect().getLocation());
+      
+      if(row < mTable.getRowCount() - 1) {
+        Object o = mTable.getValueAt(row, 0);
+        
+        if(o.equals(PluginManagerImpl.getInstance().getExampleProgram())) {
+          o = mTable.getValueAt(row+1, 0);
+          row++;
+        }
         
         if(row < mTable.getRowCount() - 1) {
-          Object o = mTable.getValueAt(row, 0);
+          Date current = ((Program)o).getDate();
           
-          if(o.equals(PluginManagerImpl.getInstance().getExampleProgram())) {
-            o = mTable.getValueAt(row+1, 0);
-            row++;
-          }
-          
-          if(row < mTable.getRowCount() - 1) {
-            Date current = ((Program)o).getDate();
+          for(int i = row + 1; i < mTable.getRowCount(); i++) {
+            Object test = mTable.getValueAt(i, 0);
             
-            for(int i = row + 1; i < mTable.getRowCount(); i++) {
-              Object test = mTable.getValueAt(i, 0);
+            if(test instanceof Program && current.compareTo(((Program)test).getDate()) < 0) {
+              Rectangle rect = mTable.getCellRect(i-(ReminderPlugin.getInstance().showDateSeparators() ? 1 : 0), 0, true);
+              rect.setSize(rect.width, mTable.getVisibleRect().height);
               
-              if(test instanceof Program && current.compareTo(((Program)test).getDate()) < 0) {
-                Rectangle rect = mTable.getCellRect(i-(ReminderPlugin.getInstance().showDateSeparators() ? 1 : 0), 0, true);
-                rect.setSize(rect.width, mTable.getVisibleRect().height);
-                
-                mTable.scrollRectToVisible(rect);
-                return;
-              }
-            }            
-          }
+              mTable.scrollRectToVisible(rect);
+              return;
+            }
+          }            
         }
       }
     });
@@ -364,14 +348,10 @@ public class ReminderListPanel extends JPanel implements PersonaListener, Progra
     mTable.getColumnModel().getColumn(1).setCellRenderer(new MinutesCellRenderer());
     updateButtons();
 
-    SwingUtilities.invokeLater(new Runnable() {
-      
-      @Override
-      public void run() {
-        try {
-          mTable.updateUI();
-        }catch(Exception e1) {}
-      }
+    SwingUtilities.invokeLater(() -> {
+      try {
+        mTable.updateUI();
+      }catch(Exception e1) {}
     });
   }
   
@@ -404,10 +384,8 @@ public class ReminderListPanel extends JPanel implements PersonaListener, Progra
       final int row = selected[0] - 1;
 
       installTableModel(new ReminderTableModel(mReminderList, mTitleSelection));
-      SwingUtilities.invokeLater(new Runnable() {
-        public void run() {
-          mTable.scrollRectToVisible(mTable.getCellRect(row, 0, true));
-        };
+      SwingUtilities.invokeLater(() -> {
+        mTable.scrollRectToVisible(mTable.getCellRect(row, 0, true));
       });
       
       ReminderPlugin.getInstance().updateRootNode(true,false);
@@ -487,11 +465,8 @@ public class ReminderListPanel extends JPanel implements PersonaListener, Progra
     installTableModel(new ReminderTableModel(mReminderList, mTitleSelection));
     
     if(scroll) {
-      SwingUtilities.invokeLater(new Runnable() {
-        @Override
-        public void run() {
-          mTable.scrollRectToVisible(new Rectangle(0,0));
-        }
+      SwingUtilities.invokeLater(() -> {
+        mTable.scrollRectToVisible(new Rectangle(0,0));
       });
     }
   }
@@ -583,58 +558,6 @@ public class ReminderListPanel extends JPanel implements PersonaListener, Progra
     menu.show(mTable, e.getX() - 15, e.getY() - 15);
   }
   
- /* public void scrollToDate(Date date) {
-    for(int i = 0; i < mTable.getRowCount(); i++) {
-      Program test = (Program)mTable.getValueAt(i, 0);
-      
-      if(test instanceof Program &&  && !test.equals(PluginManagerImpl.getInstance().getExampleProgram())) {
-        int add = 0;
-        
-        if(i > 0 && ((Program)mTable.getValueAt(i-1, 0)).equals(PluginManagerImpl.getInstance().getExampleProgram())) {
-          add = 1;
-        }
-
-        final Rectangle rect = mTable.getCellRect(i-add, 0, true);
-        rect.setSize(rect.width, mTable.getVisibleRect().height);
-        
-        SwingUtilities.invokeLater(new Runnable() {
-          @Override
-          public void run() {
-            mTable.scrollRectToVisible(rect);
-          }
-        });
-        
-        return;
-      }
-    }
-  }
-  
-  public void scrollToNow() {
-    for(int i = 0; i < mTable.getRowCount(); i++) {
-      Program test = (Program)mTable.getValueAt(i, 0);
-      
-      if(test instanceof Program && !test.isExpired() && !test.equals(PluginManagerImpl.getInstance().getExampleProgram())) {
-        int add = 0;
-        
-        if(i > 0 && ((Program)mTable.getValueAt(i-1, 0)).equals(PluginManagerImpl.getInstance().getExampleProgram())) {
-          add = 1;
-        }
-        
-        final Rectangle rect = mTable.getCellRect(i-add, 0, true);
-        rect.setSize(rect.width, mTable.getVisibleRect().height);
-        
-        SwingUtilities.invokeLater(new Runnable() {
-          @Override
-          public void run() {
-            mTable.scrollRectToVisible(rect);
-          }
-        });
-        
-        return;
-      }
-    }
-  }*/
-  
   public static final int SCROLL_TO_DATE_TYPE = 0;
   public static final int SCROLL_TO_NOW_TYPE = 1;
   public static final int SCROLL_TO_NEXT_TIME_TYPE = 2;
@@ -702,11 +625,8 @@ public class ReminderListPanel extends JPanel implements PersonaListener, Progra
           final Rectangle rect = mTable.getCellRect(i-add-sub, 0, true);
           rect.setSize(rect.width, mTable.getVisibleRect().height);
           
-          SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-              mTable.scrollRectToVisible(rect);
-            }
+          SwingUtilities.invokeLater(() -> {
+            mTable.scrollRectToVisible(rect);
           });
           
           return;

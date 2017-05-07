@@ -29,8 +29,6 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
 import java.awt.Frame;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.WindowEvent;
@@ -51,6 +49,14 @@ import javax.swing.event.MenuListener;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 
+import devplugin.ActionMenu;
+import devplugin.Channel;
+import devplugin.ChannelFilter;
+import devplugin.Date;
+import devplugin.Marker;
+import devplugin.Program;
+import devplugin.ProgramFilter;
+import devplugin.SettingsItem;
 import tvbrowser.TVBrowser;
 import tvbrowser.core.Settings;
 import tvbrowser.core.TvDataBase;
@@ -70,14 +76,6 @@ import util.ui.ScrollableMenu;
 import util.ui.TVBrowserIcons;
 import util.ui.UiUtilities;
 import util.ui.menu.MenuUtil;
-import devplugin.ActionMenu;
-import devplugin.Channel;
-import devplugin.ChannelFilter;
-import devplugin.Date;
-import devplugin.Marker;
-import devplugin.Program;
-import devplugin.ProgramFilter;
-import devplugin.SettingsItem;
 
 /**
  * This Class creates a SystemTray
@@ -166,10 +164,8 @@ public class SystemTray {
       mConfigure = new JMenuItem(mLocalizer.msg("menu.configure", "Configure"), TVBrowserIcons
           .preferences(TVBrowserIcons.SIZE_SMALL));
 
-      mConfigure.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          MainFrame.getInstance().showSettingsDialog(SettingsItem.TRAY);
-        }
+      mConfigure.addActionListener(e -> {
+        MainFrame.getInstance().showSettingsDialog(SettingsItem.TRAY);
       });
 
       mOpenCloseMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -178,12 +174,9 @@ public class SystemTray {
         }
       });
       
-      mRestartMenuItem.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-          TVBrowser.addRestart();
-          MainFrame.getInstance().quit();
-        }
+      mRestartMenuItem.addActionListener(e -> {
+        TVBrowser.addRestart();
+        MainFrame.getInstance().quit();
       });
 
       mQuitMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -192,11 +185,9 @@ public class SystemTray {
         }
       });
 
-      mSystemTray.addLeftClickAction(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          if (mClickTimer == null || !mClickTimer.isAlive()) {
-            toggleShowHide();
-          }
+      mSystemTray.addLeftClickAction(e -> {
+        if (mClickTimer == null || !mClickTimer.isAlive()) {
+          toggleShowHide();
         }
       });
 
@@ -258,13 +249,8 @@ public class SystemTray {
 
       mTrayMenu = new JPopupMenu();
 
-      mSystemTray.addRightClickAction(new ActionListener() {
-
-        public void actionPerformed(ActionEvent e) {
-          // mTrayMenu.getPopupMenu().setVisible(false);
-          buildMenu();
-        }
-
+      mSystemTray.addRightClickAction(e -> {
+        buildMenu();
       });
       mSystemTray.setTrayPopUp(mTrayMenu);
 
@@ -994,14 +980,12 @@ public class SystemTray {
 
     if (!MainFrame.getInstance().isVisible()
         || ((MainFrame.getInstance().getExtendedState() & Frame.ICONIFIED) == Frame.ICONIFIED)) {
-      SwingUtilities.invokeLater(new Runnable() {
-        public void run() {
-          MainFrame.getInstance().showFromTray(mState);
-          //toggleReminderState(true);
+      SwingUtilities.invokeLater(() -> {
+        MainFrame.getInstance().showFromTray(mState);
+        //toggleReminderState(true);
 
-          if (Settings.propNowOnRestore.getBoolean()) {
-            MainFrame.getInstance().scrollToNow();
-          }
+        if (Settings.propNowOnRestore.getBoolean()) {
+          MainFrame.getInstance().scrollToNow();
         }
       });
       toggleOpenCloseMenuItem(false);

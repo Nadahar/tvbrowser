@@ -27,8 +27,6 @@ package util.browserlauncher;
 
 import java.awt.Desktop;
 import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.net.URI;
 
@@ -158,23 +156,19 @@ public class Launch {
         content.add(showBrowserDialog, cc.xy(1, 3));
 
         JButton ok = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
-        ok.addActionListener(new ActionListener() {
-          public void actionPerformed(ActionEvent e) {
-            dialog.setVisible(false);
-            if (showBrowserDialog.isSelected()) {
-              Settings.propShowBrowserOpenDialog.setBoolean(false);
-            } else {
-              Settings.propShowBrowserOpenDialog.setBoolean(true);
-            }
-          };
+        ok.addActionListener(e -> {
+          dialog.setVisible(false);
+          if (showBrowserDialog.isSelected()) {
+            Settings.propShowBrowserOpenDialog.setBoolean(false);
+          } else {
+            Settings.propShowBrowserOpenDialog.setBoolean(true);
+          }
         });
 
         JButton configure = new JButton(mLocalizer.msg("okConfigure", "Configure"));
-        configure.addActionListener(new ActionListener() {
-          public void actionPerformed(ActionEvent e) {
-            dialog.setVisible(false);
-            MainFrame.getInstance().showSettingsDialog(SettingsItem.WEBBROWSER);
-          }
+        configure.addActionListener(e -> {
+          dialog.setVisible(false);
+          MainFrame.getInstance().showSettingsDialog(SettingsItem.WEBBROWSER);
         });
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));

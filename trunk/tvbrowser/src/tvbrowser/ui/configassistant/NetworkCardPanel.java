@@ -27,13 +27,11 @@
 package tvbrowser.ui.configassistant;
 
 import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
+import java.net.Proxy.Type;
 import java.net.ProxySelector;
 import java.net.URI;
-import java.net.Proxy.Type;
 import java.util.List;
 
 import javax.swing.BorderFactory;
@@ -44,16 +42,16 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.Sizes;
+
 import tvbrowser.TVBrowser;
 import tvbrowser.core.Settings;
 import util.io.NetworkUtilities;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
-
-import com.jgoodies.forms.factories.Borders;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.Sizes;
 
 class NetworkCardPanel extends AbstractCardPanel {
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(NetworkCardPanel.class);
@@ -140,16 +138,12 @@ class NetworkCardPanel extends AbstractCardPanel {
 
     updateFieldState();
 
-    mProxyCB.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        updateFieldState();
-      }
+    mProxyCB.addActionListener(e -> {
+      updateFieldState();
     });
 
-    mAuthCB.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        updateFieldState();
-      }
+    mAuthCB.addActionListener(e -> {
+      updateFieldState();
     });
 
     findProxySettings();

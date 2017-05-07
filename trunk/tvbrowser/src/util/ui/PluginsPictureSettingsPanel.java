@@ -73,12 +73,9 @@ public class PluginsPictureSettingsPanel extends JPanel {
     
     setLayout(new FormLayout("14dlu,default:grow","default," + (!showDisableButtonDontShowAllButton ? "2dlu,default,5dlu,"  : "") + "2dlu,default,2dlu,default"));
 
-    final ItemListener itemListener = new ItemListener() {
-      @Override
-      public void itemStateChanged(ItemEvent e) {
-        if(e.getStateChange() == ItemEvent.SELECTED) {
-          fireChangeEvent();
-        }
+    final ItemListener itemListener = e -> {
+      if(e.getStateChange() == ItemEvent.SELECTED) {
+        fireChangeEvent();
       }
     };
     

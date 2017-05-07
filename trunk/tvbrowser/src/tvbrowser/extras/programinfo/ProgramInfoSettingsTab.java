@@ -3,10 +3,6 @@ package tvbrowser.extras.programinfo;
 import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -162,20 +158,14 @@ public class ProgramInfoSettingsTab implements SettingsTab {
 
     mShowTextSearchButton.setEnabled(mShowFunctions.isSelected());
 
-    mShowFunctions.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        mShowTextSearchButton.setEnabled(mShowFunctions.isSelected());
-      }
+    mShowFunctions.addActionListener(e -> {
+      mShowTextSearchButton.setEnabled(mShowFunctions.isSelected());
     });
 
     mHighlight = new JCheckBox(ProgramInfoDialog.mLocalizer.msg("highlight", "Highlight favorite matches"), settings.getHighlightFavorite());
-    mHighlight.addActionListener(new ActionListener() {
-
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        mHighlightColorLb.setEnabled(mHighlight.isSelected());
-        mHighlightButton.setEnabled(mHighlight.isSelected());
-      }
+    mHighlight.addActionListener(e -> {
+      mHighlightColorLb.setEnabled(mHighlight.isSelected());
+      mHighlightButton.setEnabled(mHighlight.isSelected());
     });
 
     CellConstraints cc = new CellConstraints();
@@ -238,20 +228,16 @@ public class ProgramInfoSettingsTab implements SettingsTab {
     mShowShortDescriptionOnlyWhenNoDescription = new JCheckBox(ProgramInfo.mLocalizer.msg("showShortDescriptionOnlyWhenNoDescription", "Show short description only, if no long description exists"), settings.getShowShortDescriptionOnlyWithoutDescription());
     
     JButton previewBtn = new JButton(ProgramInfo.mLocalizer.msg("preview", "Preview"));
-    previewBtn.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        saveSettings();
-        ProgramInfo.getInstance().showProgramInformation(
-            Plugin.getPluginManager().getExampleProgram(), false);
-        restoreSettings();
-      }
+    previewBtn.addActionListener(e -> {
+      saveSettings();
+      ProgramInfo.getInstance().showProgramInformation(
+          Plugin.getPluginManager().getExampleProgram(), false);
+      restoreSettings();
     });
 
     JButton defaultBtn = new JButton(ProgramInfo.mLocalizer.msg("default", "Default"));
-    defaultBtn.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        resetSettings();
-      }
+    defaultBtn.addActionListener(e -> {
+      resetSettings();
     });
 
     EnhancedPanelBuilder orderPanel = new EnhancedPanelBuilder("default:grow");
@@ -279,11 +265,9 @@ public class ProgramInfoSettingsTab implements SettingsTab {
         .getInstance().getSettings().getZoomValue(), 50, 300, 1)), cc.xy(3, 1));
     final JLabel label = pb.addLabel("%",cc.xy(5,1));
 
-    mZoomEnabled.addItemListener(new ItemListener() {
-      public void itemStateChanged(ItemEvent e) {
-        mZoomValue.setEnabled(mZoomEnabled.isSelected());
-        label.setEnabled(mZoomEnabled.isSelected());
-      }
+    mZoomEnabled.addItemListener(e -> {
+      mZoomValue.setEnabled(mZoomEnabled.isSelected());
+      label.setEnabled(mZoomEnabled.isSelected());
     });
 
     mZoomValue.setEnabled(mZoomEnabled.isSelected());
@@ -360,14 +344,11 @@ public class ProgramInfoSettingsTab implements SettingsTab {
     actorPanel.add(searchLabel, cc.xy(1, 3));
     actorPanel.add(scrollPane, cc.xy(1, 5));
 
-    mPersonSearchCB.addActionListener(new ActionListener() {
-
-      public void actionPerformed(ActionEvent e) {
-        scrollPane.setEnabled(mPersonSearchCB.isSelected());
-        searchLabel.setEnabled(mPersonSearchCB.isSelected());
-        for (InternalRadioButton<?> button : availableDefaultTargets) {
-          button.setEnabled(mPersonSearchCB.isSelected());
-        }
+    mPersonSearchCB.addActionListener(e -> {
+      scrollPane.setEnabled(mPersonSearchCB.isSelected());
+      searchLabel.setEnabled(mPersonSearchCB.isSelected());
+      for (InternalRadioButton<?> button : availableDefaultTargets) {
+        button.setEnabled(mPersonSearchCB.isSelected());
       }
     });
     mPersonSearchCB.setSelected(settings.getEnableSearch());

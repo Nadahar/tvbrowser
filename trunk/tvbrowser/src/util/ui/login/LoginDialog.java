@@ -25,8 +25,6 @@ package util.ui.login;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -139,21 +137,17 @@ public class LoginDialog extends JDialog implements WindowClosingIf {
     
     JButton ok = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
     
-    ok.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        mReturnValue = JOptionPane.OK_OPTION;
-        setVisible(false);
-      }
+    ok.addActionListener(e -> {
+      mReturnValue = JOptionPane.OK_OPTION;
+      setVisible(false);
     });
     
     getRootPane().setDefaultButton(ok);
     
     JButton cancel = new JButton (Localizer.getLocalization(Localizer.I18N_CANCEL));
     
-    cancel.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        close();
-      }
+    cancel.addActionListener(e -> {
+      close();
     });
     
     builder.addButton(new JButton[] {ok, cancel});

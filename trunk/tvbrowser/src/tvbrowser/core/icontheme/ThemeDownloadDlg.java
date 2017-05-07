@@ -30,13 +30,10 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Rectangle;
 import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -61,16 +58,16 @@ import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.factories.CC;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.Sizes;
+
 import tvbrowser.core.Settings;
 import util.ui.Localizer;
 import util.ui.ScrollableJPanel;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
-
-import com.jgoodies.forms.factories.Borders;
-import com.jgoodies.forms.factories.CC;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.Sizes;
 
 /**
  * Dialog for download of theme icons.
@@ -145,28 +142,22 @@ public class ThemeDownloadDlg extends JDialog implements WindowClosingIf {
     mainPanel.setBackground(UIManager.getColor("List.background"));
     
     mDownload = new JButton(LOCALIZER.msg("download", "Download selected themes"));
-    mDownload.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        for(ThemeDownloadItem item : mSelectedItems) {
-          if(!item.download(mDownloadDirectory)) {
-            // TODO info message
-          }
-          else {
-            mSuccessDownloads.add(item);
-          }
+    mDownload.addActionListener(e -> {
+      for(ThemeDownloadItem item : mSelectedItems) {
+        if(!item.download(mDownloadDirectory)) {
+          // TODO info message
         }
-        
-        close();
+        else {
+          mSuccessDownloads.add(item);
+        }
       }
+      
+      close();
     });
     
     JButton close = new JButton(Localizer.getLocalization(Localizer.I18N_CLOSE));
-    close.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        close();
-      }
+    close.addActionListener(e -> {
+      close();
     });
     
     JPanel buttons = new JPanel(new FormLayout("default:grow,default,2dlu,default","5dlu,default"));
@@ -189,7 +180,6 @@ public class ThemeDownloadDlg extends JDialog implements WindowClosingIf {
         }
       }
     } catch (MalformedURLException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
     
@@ -204,11 +194,8 @@ public class ThemeDownloadDlg extends JDialog implements WindowClosingIf {
     
     Settings.layoutWindow("themeDownloadDlg", this, new Dimension(500,500));
     
-    SwingUtilities.invokeLater(new Runnable() {
-      @Override
-      public void run() {
-        scroll.getVerticalScrollBar().setValue(0);        
-      }
+    SwingUtilities.invokeLater(() -> {
+      scroll.getVerticalScrollBar().setValue(0);
     });
     
     UiUtilities.registerForClosing(this);
@@ -307,18 +294,15 @@ public class ThemeDownloadDlg extends JDialog implements WindowClosingIf {
       mItem = item;
       mSelected = new JCheckBox();
       mSelected.setOpaque(false);
-      mSelected.addItemListener(new ItemListener() {
-        @Override
-        public void itemStateChanged(ItemEvent e) {
-          if(e.getStateChange() == ItemEvent.SELECTED) {
-            mSelectedItems.add(mItem);
-          }
-          else { 
-            mSelectedItems.remove(mItem);
-          }
-          
-          mDownload.setEnabled(!mSelectedItems.isEmpty());
+      mSelected.addItemListener(e -> {
+        if(e.getStateChange() == ItemEvent.SELECTED) {
+          mSelectedItems.add(mItem);
         }
+        else { 
+          mSelectedItems.remove(mItem);
+        }
+        
+        mDownload.setEnabled(!mSelectedItems.isEmpty());
       });
       mSelected.addFocusListener(focusListener);
       

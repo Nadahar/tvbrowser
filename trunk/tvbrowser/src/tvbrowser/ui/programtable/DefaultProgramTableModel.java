@@ -25,8 +25,6 @@
  */
 package tvbrowser.ui.programtable;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -105,10 +103,8 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
 	  setChannels(channelArr);
 
 
-    mTimer = new Timer(10000, new ActionListener() {
-      public void actionPerformed(ActionEvent evt) {
-        handleTimerEvent();
-      }
+    mTimer = new Timer(10000, e -> {
+      handleTimerEvent();
     });
     mTimer.start();
   }
@@ -647,10 +643,8 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
   public void stateChanged(ChangeEvent evt) {
     // A program has changed -> fire the event
     final Program program = (Program) evt.getSource();
-    SwingUtilities.invokeLater(new Runnable() {
-      public void run() {
-        fireProgramHasChanged(program);
-      }
+    SwingUtilities.invokeLater(() -> {
+      fireProgramHasChanged(program);
     });
   }
 

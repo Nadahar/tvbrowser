@@ -38,7 +38,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
@@ -225,10 +224,8 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
 
     if(dialogType == SoftwareUpdater.ONLY_UPDATE_TYPE && !mIsVersionChange) {
       mAutoUpdates = new JCheckBox(mLocalizer.msg("autoUpdates","Find plugin updates automatically"), Settings.propAutoUpdatePlugins.getBoolean());
-      mAutoUpdates.addItemListener(new ItemListener() {
-        public void itemStateChanged(ItemEvent e) {
-          Settings.propAutoUpdatePlugins.setBoolean(e.getStateChange() == ItemEvent.SELECTED);
-        }
+      mAutoUpdates.addItemListener(e -> {
+        Settings.propAutoUpdatePlugins.setBoolean(e.getStateChange() == ItemEvent.SELECTED);
       });
 
       builder.addFixed(mAutoUpdates);
@@ -666,10 +663,8 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
             JPopupMenu menu = new JPopupMenu();
 
             JMenuItem menuItem = new JMenuItem(mLocalizer.msg("openWebsite","Open website"), TVBrowserIcons.webBrowser(TVBrowserIcons.SIZE_SMALL));
-            menuItem.addActionListener(new ActionListener() {
-              public void actionPerformed(ActionEvent e) {
-                Launch.openURL(((SoftwareUpdateItem)item).getWebsite());
-              }
+            menuItem.addActionListener(evt -> {
+              Launch.openURL(((SoftwareUpdateItem)item).getWebsite());
             });
 
             menu.add(menuItem);

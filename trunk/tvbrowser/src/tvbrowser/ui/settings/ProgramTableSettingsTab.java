@@ -33,7 +33,6 @@ import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.io.File;
 import java.util.Calendar;
 import java.util.Date;
@@ -53,6 +52,13 @@ import javax.swing.SpinnerDateModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.border.EmptyBorder;
 
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.factories.DefaultComponentFactory;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.RowSpec;
+
+import devplugin.SettingsTab;
 import tvbrowser.core.Settings;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.settings.tablebackgroundstyles.DayTimeBackgroundStyle;
@@ -67,14 +73,6 @@ import tvbrowser.ui.settings.util.ColorLabel;
 import util.ui.CaretPositionCorrector;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
-
-import com.jgoodies.forms.factories.Borders;
-import com.jgoodies.forms.factories.DefaultComponentFactory;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.RowSpec;
-
-import devplugin.SettingsTab;
 
 /**
  * 
@@ -212,11 +210,9 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     mCutLongTitlesLabel = new JLabel(mLocalizer.msg("lines", "Lines"));
     mSettingsPn.add(mCutLongTitlesLabel, cc.xy(6, currentRow));
     
-    mCutLongTitlesCB.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        mCutLongTitlesSelection.setEnabled(mCutLongTitlesCB.isSelected());
-        mCutLongTitlesLabel.setEnabled(mCutLongTitlesCB.isSelected());
-      }
+    mCutLongTitlesCB.addActionListener(e -> {
+      mCutLongTitlesSelection.setEnabled(mCutLongTitlesCB.isSelected());
+      mCutLongTitlesLabel.setEnabled(mCutLongTitlesCB.isSelected());
     });
     mCutLongTitlesCB.getActionListeners()[0].actionPerformed(null);
     
@@ -241,12 +237,9 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
         "minutes, then hide description"));
     mSettingsPn.add(mShortProgramsLabel, cc.xy(6, currentRow));
 
-    mShortProgramsCB.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        mShortProgramsMinutes.setEnabled(mShortProgramsCB.isSelected());
-        mShortProgramsLabel.setEnabled(mShortProgramsCB.isSelected());
-      }
+    mShortProgramsCB.addActionListener(e -> {
+      mShortProgramsMinutes.setEnabled(mShortProgramsCB.isSelected());
+      mShortProgramsLabel.setEnabled(mShortProgramsCB.isSelected());
     });
     mShortProgramsCB.getActionListeners()[0].actionPerformed(null);
     
@@ -362,22 +355,18 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
       }
     }
 
-    mBackgroundStyleCB.addItemListener(new ItemListener() {
-      public void itemStateChanged(ItemEvent e) {
-        updateBackgroundStyleConfigureButton();
-      }
+    mBackgroundStyleCB.addItemListener(e -> {
+      updateBackgroundStyleConfigureButton();
     });
 
     mSettingsPn.add(mBackgroundStyleCB, cc.xy(4, currentRow));
     
     mConfigBackgroundStyleBt = new JButton(mLocalizer.ellipsisMsg("configure", "Configure"));
 
-    mConfigBackgroundStyleBt.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        ConfigureBackgroundStyleDialog dlg = new ConfigureBackgroundStyleDialog(mBackgroundStyleCB,
-            (TableBackgroundStyle) mBackgroundStyleCB.getSelectedItem());
-        dlg.show();
-      }
+    mConfigBackgroundStyleBt.addActionListener(e -> {
+      ConfigureBackgroundStyleDialog dlg = new ConfigureBackgroundStyleDialog(mBackgroundStyleCB,
+          (TableBackgroundStyle) mBackgroundStyleCB.getSelectedItem());
+      dlg.show();
     });
 
     mSettingsPn.add(mConfigBackgroundStyleBt, cc.xy(6, currentRow));
@@ -448,12 +437,10 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     mMouseOverColorLb = new ColorLabel(Settings.propProgramTableMouseOverColor.getColor());
     mMouseOverColorLb.setStandardColor(Settings.propProgramTableMouseOverColor.getDefaultColor());
     final ColorButton mouseOverColorChangeBtn = new ColorButton(mMouseOverColorLb);
-    mMouseOverCb.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        boolean enabled = mMouseOverCb.isSelected();
-        mMouseOverColorLb.setEnabled(enabled);
-        mouseOverColorChangeBtn.setEnabled(enabled);
-      }
+    mMouseOverCb.addActionListener(e -> {
+      boolean enabled = mMouseOverCb.isSelected();
+      mMouseOverColorLb.setEnabled(enabled);
+      mouseOverColorChangeBtn.setEnabled(enabled);
     });
     mMouseOverCb.getActionListeners()[0].actionPerformed(null);
     
@@ -562,17 +549,15 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
 
   public static JButton createBrowseButton(final Component parent, final JTextField tf) {
     JButton bt = new JButton(mLocalizer.msg("change", "Change"));
-    bt.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent event) {
-        File file = new File(tf.getText());
-        JFileChooser fileChooser = new JFileChooser(file.getParent());
-        String[] extArr = { ".jpg", ".jpeg", ".gif", ".png" };
-        fileChooser.setFileFilter(new util.ui.ExtensionFileFilter(extArr, ".jpg, .gif, png"));
-        if (fileChooser.showOpenDialog(parent) == JFileChooser.APPROVE_OPTION) {
-          File selection = fileChooser.getSelectedFile();
-          if (selection != null) {
-            tf.setText(selection.getAbsolutePath());
-          }
+    bt.addActionListener(event -> {
+      File file = new File(tf.getText());
+      JFileChooser fileChooser = new JFileChooser(file.getParent());
+      String[] extArr = { ".jpg", ".jpeg", ".gif", ".png" };
+      fileChooser.setFileFilter(new util.ui.ExtensionFileFilter(extArr, ".jpg, .gif, png"));
+      if (fileChooser.showOpenDialog(parent) == JFileChooser.APPROVE_OPTION) {
+        File selection = fileChooser.getSelectedFile();
+        if (selection != null) {
+          tf.setText(selection.getAbsolutePath());
         }
       }
     });
@@ -728,17 +713,13 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
       pn.add(okBtn);
       pn.add(cancelBtn);
 
-      okBtn.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          mStyle.storeSettings();
-          mDialog.setVisible(false);
-        }
+      okBtn.addActionListener(e -> {
+        mStyle.storeSettings();
+        mDialog.setVisible(false);
       });
 
-      cancelBtn.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          mDialog.setVisible(false);
-        }
+      cancelBtn.addActionListener(e -> {
+        mDialog.setVisible(false);
       });
 
       buttonPn.add(pn, BorderLayout.EAST);

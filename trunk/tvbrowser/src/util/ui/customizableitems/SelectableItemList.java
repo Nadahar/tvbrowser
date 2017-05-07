@@ -29,10 +29,7 @@ package util.ui.customizableitems;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -201,19 +198,15 @@ public class SelectableItemList<E> extends JPanel implements ListSelectionListen
     
     mSelectAllBt = new JButton(mLocalizer.msg("addAll", "Select all items"));
     mSelectAllBt.setToolTipText(mLocalizer.msg("tooltip.all", "Select all items in the list."));
-    mSelectAllBt.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        selectAll();
-      }
+    mSelectAllBt.addActionListener(e -> {
+      selectAll();
     });
     p3.add(mSelectAllBt, cc.xy(1,1));
 
     mDeSelectAllBt = new JButton(mLocalizer.msg("delAll", "Deselect all items"));
     mDeSelectAllBt.setToolTipText(mLocalizer.msg("tooltip.none", "Deselect all items in the list."));
-    mDeSelectAllBt.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        clearSelection();
-      }
+    mDeSelectAllBt.addActionListener(e -> {
+      clearSelection();
     });
     p3.add(mDeSelectAllBt, cc.xy(3,1));
     
@@ -534,13 +527,10 @@ public class SelectableItemList<E> extends JPanel implements ListSelectionListen
     mList.add(mEditorComp);
 
     mList.validate();
-    ((JCheckBox) mEditorComp.getComponent(0)).addItemListener(new ItemListener(){
-      public void itemStateChanged(ItemEvent arg0) {
-        JCheckBox cb = ((JCheckBox) mEditorComp.getComponent(0));
-        ((SelectableItem<E>) mListModel.getElementAt(mEditingIndex)).setSelected(cb.isSelected());
-        handleItemSelectionChanged();
-      }
-      
+    ((JCheckBox) mEditorComp.getComponent(0)).addItemListener(e -> {
+      JCheckBox cb1 = ((JCheckBox) mEditorComp.getComponent(0));
+      ((SelectableItem<E>) mListModel.getElementAt(mEditingIndex)).setSelected(cb1.isSelected());
+      handleItemSelectionChanged();
     });
     mEditorComp.repaint();
 
@@ -556,30 +546,27 @@ public class SelectableItemList<E> extends JPanel implements ListSelectionListen
     protected void setComboBox(JComboBox<? extends ItemFilter> filterBox) {
       mFilterBox = filterBox;
       
-      mFilterBox.addItemListener(new ItemListener() {
-        public void itemStateChanged(ItemEvent e) {
-          if(e.getStateChange() == ItemEvent.SELECTED) {
-            mFilteredList.clear();
-            removeEditor();
-            
-            Object filter = mFilterBox.getSelectedItem();
-            
-            for(SelectableItem<E> o : mFullList) {
-              if(filter instanceof ItemFilter) {
-                if((((ItemFilter)filter).accept(o.getItem()))) {
-                  mFilteredList.add(o);
-                }
-              }
-              else {
+      mFilterBox.addItemListener(e -> {
+        if(e.getStateChange() == ItemEvent.SELECTED) {
+          mFilteredList.clear();
+          removeEditor();
+          
+          Object filter = mFilterBox.getSelectedItem();
+          
+          for(SelectableItem<E> o : mFullList) {
+            if(filter instanceof ItemFilter) {
+              if((((ItemFilter)filter).accept(o.getItem()))) {
                 mFilteredList.add(o);
               }
             }
-            
-            fireIntervalRemoved(this,0,mFullList.size());
-            fireIntervalAdded(this,0,mFilteredList.size());
+            else {
+              mFilteredList.add(o);
+            }
           }
+          
+          fireIntervalRemoved(this,0,mFullList.size());
+          fireIntervalAdded(this,0,mFilteredList.size());
         }
-
       });
     }
 

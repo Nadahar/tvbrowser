@@ -27,8 +27,6 @@ package tvbrowser.ui.settings.looksSettings;
 
 import java.awt.Component;
 import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.List;
 
 import javax.swing.DefaultListCellRenderer;
@@ -40,19 +38,19 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 
-import tvbrowser.core.Settings;
-import tvbrowser.ui.BrownSugarDark;
-import tvbrowser.ui.DarkStarDark;
-import util.ui.Localizer;
-import util.ui.UiUtilities;
-import util.ui.WindowClosingIf;
-
 import com.jgoodies.forms.builder.ButtonBarBuilder;
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.looks.plastic.PlasticLookAndFeel;
 import com.jgoodies.looks.plastic.PlasticTheme;
+
+import tvbrowser.core.Settings;
+import tvbrowser.ui.BrownSugarDark;
+import tvbrowser.ui.DarkStarDark;
+import util.ui.Localizer;
+import util.ui.UiUtilities;
+import util.ui.WindowClosingIf;
 
 /**
  * Settings for the JGoodies LnF
@@ -127,17 +125,13 @@ public class JGoodiesLNFSettings extends JDialog implements WindowClosingIf {
     content.add(mShadow, cc.xyw(1,3,3));
     
     JButton ok = new JButton(Localizer.getLocalization(Localizer.I18N_OK));
-    ok.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        okPressed();
-      }
+    ok.addActionListener(e -> {
+      okPressed();
     });
     
     JButton cancel = new JButton(Localizer.getLocalization(Localizer.I18N_CANCEL));
-    cancel.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        cancelPressed();
-      }
+    cancel.addActionListener(e -> {
+      cancelPressed();
     });
 
     ButtonBarBuilder bar = new ButtonBarBuilder();

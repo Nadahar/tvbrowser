@@ -42,8 +42,6 @@ import java.awt.dnd.DropTargetDragEvent;
 import java.awt.dnd.DropTargetDropEvent;
 import java.awt.dnd.DropTargetEvent;
 import java.awt.dnd.DropTargetListener;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -230,13 +228,11 @@ public class FavoriteTree extends JTree implements DragGestureListener, DropTarg
         item = new JMenuItem(isExpanded(path) ? LOCALIZER.msg("collapse", "Collapse") : LOCALIZER.msg("expand", "Expand"));
         item.setFont(item.getFont().deriveFont(Font.BOLD));
 
-        item.addActionListener(new ActionListener() {
-          public void actionPerformed(ActionEvent e) {
-            if(isExpanded(path)) {
-              collapsePath(path);
-            } else {
-              expandPath(path);
-            }
+        item.addActionListener(e -> {
+          if(isExpanded(path)) {
+            collapsePath(path);
+          } else {
+            expandPath(path);
           }
         });
 
@@ -246,20 +242,16 @@ public class FavoriteTree extends JTree implements DragGestureListener, DropTarg
 
         item = new JMenuItem(LOCALIZER.msg("expandAll", "Expand all"));
 
-        item.addActionListener(new ActionListener() {
-          public void actionPerformed(ActionEvent e) {
-            expandAll(last);
-          }
+        item.addActionListener(e -> {
+          expandAll(last);
         });
 
         menu.add(item);
 
         item = new JMenuItem(LOCALIZER.msg("collapseAll", "Collapse all"));
 
-        item.addActionListener(new ActionListener() {
-          public void actionPerformed(ActionEvent e) {
-            collapseAll(last);
-          }
+        item.addActionListener(e -> {
+          collapseAll(last);
         });
         menu.add(item);
 
@@ -271,10 +263,8 @@ public class FavoriteTree extends JTree implements DragGestureListener, DropTarg
             TVBrowserIcons.edit(TVBrowserIcons.SIZE_SMALL));
         item.setFont(item.getFont().deriveFont(Font.BOLD));
 
-        item.addActionListener(new ActionListener() {
-          public void actionPerformed(ActionEvent e) {
-            FavoritesPlugin.getInstance().editSelectedFavorite();
-          }
+        item.addActionListener(e -> {
+          FavoritesPlugin.getInstance().editSelectedFavorite();
         });
         menu.add(item);
         menu.addSeparator();
@@ -283,20 +273,16 @@ public class FavoriteTree extends JTree implements DragGestureListener, DropTarg
       item = new JMenuItem(LOCALIZER.msg("newFolder", "New folder"),
           IconLoader.getInstance().getIconFromTheme("actions", "folder-new", 16));
 
-      item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          FavoritesPlugin.getInstance().newFolder(last);
-        }
+      item.addActionListener(e -> {
+        FavoritesPlugin.getInstance().newFolder(last);
       });
       menu.add(item);
 
       item = new JMenuItem(LOCALIZER.ellipsisMsg("newFavorite", "New Favorite"),
           TVBrowserIcons.newIcon(TVBrowserIcons.SIZE_SMALL));
 
-      item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          FavoritesPlugin.getInstance().newFavorite(last.isDirectoryNode() ? last : (FavoriteNode)last.getParent());
-        }
+      item.addActionListener(e -> {
+        FavoritesPlugin.getInstance().newFavorite(last.isDirectoryNode() ? last : (FavoriteNode)last.getParent());
       });
       menu.add(item);
 
@@ -305,10 +291,8 @@ public class FavoriteTree extends JTree implements DragGestureListener, DropTarg
           item = new JMenuItem(LOCALIZER.msg("renameFolder", "Rename folder"),
               TVBrowserIcons.edit(TVBrowserIcons.SIZE_SMALL));
 
-          item.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-              renameFolder(last);
-            }
+          item.addActionListener(e -> {
+            renameFolder(last);
           });
 
           menu.add(item);
@@ -320,41 +304,35 @@ public class FavoriteTree extends JTree implements DragGestureListener, DropTarg
           menu.addSeparator();
                     
           item = new JMenuItem(LOCALIZER.msg("enableReminder","Enable reminder window for all favorites in folder"), IconLoader.getInstance().getIconFromTheme("apps", "appointment", TVBrowserIcons.SIZE_SMALL));
-          item.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-              for(Favorite favorite : favorites) {
-                boolean isReminderEnabled = favorite.getReminderConfiguration().containsService(ReminderConfiguration.REMINDER_DEFAULT);
-                
-                if(!isReminderEnabled) {
-                  favorite.getReminderConfiguration().setReminderServices(new String[] { ReminderConfiguration.REMINDER_DEFAULT });
-                  ReminderPlugin.getInstance().addPrograms(favorite.getPrograms());
-                }
-              }
+          item.addActionListener(e -> {
+            for(Favorite favorite : favorites) {
+              boolean isReminderEnabled = favorite.getReminderConfiguration().containsService(ReminderConfiguration.REMINDER_DEFAULT);
               
-              FavoritesPlugin.getInstance().saveFavorites();
-              ReminderPlugin.getInstance().updateRootNode(true);
+              if(!isReminderEnabled) {
+                favorite.getReminderConfiguration().setReminderServices(new String[] { ReminderConfiguration.REMINDER_DEFAULT });
+                ReminderPlugin.getInstance().addPrograms(favorite.getPrograms());
+              }
             }
+            
+            FavoritesPlugin.getInstance().saveFavorites();
+            ReminderPlugin.getInstance().updateRootNode(true);
           });
           
           menu.add(item);
           
           item = new JMenuItem(LOCALIZER.msg("disableReminder","Disable reminder window for all favorites in folder"));
-          item.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-              for(Favorite favorite : favorites) {
-                boolean isReminderEnabled = favorite.getReminderConfiguration().containsService(ReminderConfiguration.REMINDER_DEFAULT);
-                
-                if(isReminderEnabled) {
-                  ReminderPlugin.getInstance().removePrograms(favorite.getPrograms());
-                  favorite.getReminderConfiguration().setReminderServices(new String[] {});
-                }
-              }
+          item.addActionListener(e -> {
+            for(Favorite favorite : favorites) {
+              boolean isReminderEnabled = favorite.getReminderConfiguration().containsService(ReminderConfiguration.REMINDER_DEFAULT);
               
-              FavoritesPlugin.getInstance().saveFavorites();
-              ReminderPlugin.getInstance().updateRootNode(true);
+              if(isReminderEnabled) {
+                ReminderPlugin.getInstance().removePrograms(favorite.getPrograms());
+                favorite.getReminderConfiguration().setReminderServices(new String[] {});
+              }
             }
+            
+            FavoritesPlugin.getInstance().saveFavorites();
+            ReminderPlugin.getInstance().updateRootNode(true);
           });
           
           menu.add(item);
@@ -362,29 +340,23 @@ public class FavoriteTree extends JTree implements DragGestureListener, DropTarg
           menu.addSeparator();
           
           item = new JMenuItem(LOCALIZER.msg("enableAlert","Enable alert for new found programs for all favorites in folder"));
-          item.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-              for(Favorite favorite : favorites) {
-                favorite.setRemindAfterDownload(true);
-              }
-              
-              FavoritesPlugin.getInstance().saveFavorites();
+          item.addActionListener(e -> {
+            for(Favorite favorite : favorites) {
+              favorite.setRemindAfterDownload(true);
             }
+            
+            FavoritesPlugin.getInstance().saveFavorites();
           });
           
           menu.add(item);
           
           item = new JMenuItem(LOCALIZER.msg("disableAlert","Disable alert for new found programs for all favorites in folder"));
-          item.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-              for(Favorite favorite : favorites) {
-                favorite.setRemindAfterDownload(false);
-              }
-              
-              FavoritesPlugin.getInstance().saveFavorites();
+          item.addActionListener(e -> {
+            for(Favorite favorite : favorites) {
+              favorite.setRemindAfterDownload(false);
             }
+            
+            FavoritesPlugin.getInstance().saveFavorites();
           });
           
           menu.add(item);
@@ -393,16 +365,13 @@ public class FavoriteTree extends JTree implements DragGestureListener, DropTarg
           
           item = new JMenuItem(LOCALIZER.msg("deleteAllFavoritesInFolder", "Delete all Favorites in folder"), TVBrowserIcons.delete(TVBrowserIcons.SIZE_SMALL));
           
-          item.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-              if(JOptionPane.showConfirmDialog(UiUtilities.getLastModalChildOf(MainFrame.getInstance()), LOCALIZER.msg("deleteAllFavoritesInFolder.warningMessage", "You are about to delete all favorites in this folder.\n\nAre you sure, you want to delete all favorites in this folder (this cannot be undone)?"), LOCALIZER.msg("deleteAllFavoritesInFolder.warningTitle", "Delete all Favorites in folder?"), JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE) == JOptionPane.YES_OPTION) {
-                for(Favorite favorite : favorites) {
-                  FavoriteTreeModel.getInstance().deleteFavorite(favorite,false);
-                }
-                
-                FavoritesPlugin.getInstance().updateRootNode(true);
+          item.addActionListener(e -> {
+            if(JOptionPane.showConfirmDialog(UiUtilities.getLastModalChildOf(MainFrame.getInstance()), LOCALIZER.msg("deleteAllFavoritesInFolder.warningMessage", "You are about to delete all favorites in this folder.\n\nAre you sure, you want to delete all favorites in this folder (this cannot be undone)?"), LOCALIZER.msg("deleteAllFavoritesInFolder.warningTitle", "Delete all Favorites in folder?"), JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE) == JOptionPane.YES_OPTION) {
+              for(Favorite favorite : favorites) {
+                FavoriteTreeModel.getInstance().deleteFavorite(favorite,false);
               }
+              
+              FavoritesPlugin.getInstance().updateRootNode(true);
             }
           });
           
@@ -424,22 +393,18 @@ public class FavoriteTree extends JTree implements DragGestureListener, DropTarg
         item = new JMenuItem(LOCALIZER.msg("sort", "Sort alphabetically"),
             IconLoader.getInstance().getIconFromTheme("actions", "sort-list", 16));
         final String titleAlpha = item.getText();
-        item.addActionListener(new ActionListener() {
-          public void actionPerformed(ActionEvent e) {
-              FavoriteTreeModel.getInstance().sort(sortNode,FavoriteNodeComparator.getInstance(), titleAlpha);
-              reload(sortNode);
-          }
+        item.addActionListener(e -> {
+            FavoriteTreeModel.getInstance().sort(sortNode,FavoriteNodeComparator.getInstance(), titleAlpha);
+            reload(sortNode);
         });
         menu.add(item);
 
         item = new JMenuItem(LOCALIZER.msg("sortCount", "Sort by number of programs"),
             IconLoader.getInstance().getIconFromTheme("actions", "sort-list-numerical", 16));
         final String titleCount = item.getText();
-        item.addActionListener(new ActionListener() {
-          public void actionPerformed(ActionEvent e) {
-              FavoriteTreeModel.getInstance().sort(sortNode,FavoriteNodeCountComparator.getInstance(),titleCount);
-              reload(sortNode);
-          }
+        item.addActionListener(e -> {
+            FavoriteTreeModel.getInstance().sort(sortNode,FavoriteNodeCountComparator.getInstance(),titleCount);
+            reload(sortNode);
         });
         menu.add(item);
       }
@@ -452,10 +417,8 @@ public class FavoriteTree extends JTree implements DragGestureListener, DropTarg
       item = new JMenuItem(Localizer.getLocalization(Localizer.I18N_DELETE),
           TVBrowserIcons.delete(TVBrowserIcons.SIZE_SMALL));
 
-      item.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          delete(last);
-        }
+      item.addActionListener(e -> {
+        delete(last);
       });
 
       if(!last.equals(mRootNode) && last.getChildCount() < 1) {
@@ -466,10 +429,8 @@ public class FavoriteTree extends JTree implements DragGestureListener, DropTarg
         menu.addSeparator();
 
         item = new JMenuItem(ManageFavoritesDialog.mLocalizer.msg("send", "Send Programs to another Plugin"), TVBrowserIcons.copy(TVBrowserIcons.SIZE_SMALL));
-        item.addActionListener(new ActionListener() {
-          public void actionPerformed(ActionEvent evt) {
-             FavoritesPlugin.getInstance().showSendDialog();
-          }
+        item.addActionListener(e -> {
+           FavoritesPlugin.getInstance().showSendDialog();
         });
 
         menu.add(item);
@@ -633,10 +594,8 @@ public class FavoriteTree extends JTree implements DragGestureListener, DropTarg
       if(mTarget == 0 && (System.currentTimeMillis() - mDragOverStart) > 1000 && isCollapsed(new TreePath(last.getPath())) && last.getChildCount() > 0) {
         expandPath(new TreePath(last.getPath()));
 
-        SwingUtilities.invokeLater(new Runnable() {
-          public void run() {
-            mTarget = -2;
-          }
+        SwingUtilities.invokeLater(() -> {
+          mTarget = -2;
         });
       }
 

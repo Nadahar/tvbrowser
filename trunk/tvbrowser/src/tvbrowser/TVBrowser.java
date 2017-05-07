@@ -33,8 +33,6 @@ import java.awt.Image;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.Dialog.ModalityType;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.io.BufferedReader;
 import java.io.File;
@@ -457,14 +455,8 @@ public class TVBrowser {
     final AtomicReference<Splash> splashRef = new AtomicReference<Splash>();
 
     if (mShowStartScreen && Settings.propStartScreenShow.getBoolean()) {
-      /*UIThreadRunner.invokeLater(new Runnable() {
-
-        @Override
-        public void run() {*/
-          splashRef.set(new SplashScreen());
-          splashRef.get().showSplash();
-        /*}
-      });*/
+      splashRef.set(new SplashScreen());
+      splashRef.get().showSplash();
     }
     else {
       if(java.awt.SplashScreen.getSplashScreen() != null && java.awt.SplashScreen.getSplashScreen().isVisible()) {
@@ -544,229 +536,225 @@ public class TVBrowser {
 
     // Init the UI
     final boolean fStartMinimized = Settings.propMinimizeAfterStartup.getBoolean() || mMinimized;
-    SwingUtilities.invokeLater(new Runnable() {
-      public void run() {
-        initUi(splashRef.get(), fStartMinimized);
+    SwingUtilities.invokeLater(() -> {
+      initUi(splashRef.get(), fStartMinimized);
 
-        new Thread("Start finished callbacks") {
-          public void run() {
-            setPriority(Thread.MIN_PRIORITY);
+      new Thread("Start finished callbacks") {
+        public void run() {
+          setPriority(Thread.MIN_PRIORITY);
 
-            // first reset "starting" flag of mainframe
-            mainFrame.handleTvBrowserStartFinished();
-            
-            // first initialize the internal plugins
-            InternalPluginProxyIf[] internalPlugins = InternalPluginProxyList.getInstance().getAvailableProxys();
-            
-            for(InternalPluginProxyIf internalPlugin : internalPlugins) {
-              internalPlugin.handleTvBrowserStartFinished();
+          // first reset "starting" flag of mainframe
+          mainFrame.handleTvBrowserStartFinished();
+          
+          // first initialize the internal plugins
+          InternalPluginProxyIf[] internalPlugins = InternalPluginProxyList.getInstance().getAvailableProxys();
+          
+          for(InternalPluginProxyIf internalPlugin : internalPlugins) {
+            internalPlugin.handleTvBrowserStartFinished();
+          }
+          
+          // now handle all plugins and services
+          GlobalPluginProgramFormatingManager.getInstance();
+          PluginProxyManager.getInstance().fireTvBrowserStartFinished();
+          TvDataServiceProxyManager.getInstance()
+              .fireTvBrowserStartFinished();
+
+          // finally submit plugin caused updates to database
+          TvDataBase.getInstance().handleTvBrowserStartFinished();
+          
+          mainFrame.addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowIconified(java.awt.event.WindowEvent e) {
+              mSaveThreadShouldStop = true;
+              flushSettings(true);
             }
             
-            // now handle all plugins and services
-            GlobalPluginProgramFormatingManager.getInstance();
-            PluginProxyManager.getInstance().fireTvBrowserStartFinished();
-            TvDataServiceProxyManager.getInstance()
-                .fireTvBrowserStartFinished();
-
-            // finally submit plugin caused updates to database
-            TvDataBase.getInstance().handleTvBrowserStartFinished();
-            
-            mainFrame.addWindowListener(new java.awt.event.WindowAdapter() {
-              public void windowIconified(java.awt.event.WindowEvent e) {
-                mSaveThreadShouldStop = true;
-                flushSettings(true);
+            public void windowDeiconified(java.awt.event.WindowEvent e) {
+              mSaveThreadShouldStop = false;
+              if (mSaveThreadIsRunning == false) {
+                startPeriodicSaveSettings();   
               }
-              
-              public void windowDeiconified(java.awt.event.WindowEvent e) {
-                mSaveThreadShouldStop = false;
-                if (mSaveThreadIsRunning == false) {
-                  startPeriodicSaveSettings();   
-                }
-              }
-            });
+            }
+          });
 
-            startPeriodicSaveSettings();
+          startPeriodicSaveSettings();
 
-          }
-        }.start();
-        SwingUtilities.invokeLater(new Runnable() {
-          public void run() {
-            ChannelList.completeChannelLoading();
-            initializeAutomaticDownload();
-            if (Launch.isOsWindowsNtBranch()) {
-              try {
-                RegistryKey desktopSettings = new RegistryKey(
-                    RootKey.HKEY_CURRENT_USER, "Control Panel\\Desktop");
-                RegistryValue autoEnd = desktopSettings
-                    .getValue("AutoEndTasks");
+        }
+      }.start();
+      SwingUtilities.invokeLater(() -> {
+        ChannelList.completeChannelLoading();
+        initializeAutomaticDownload();
+        if (Launch.isOsWindowsNtBranch()) {
+          try {
+            RegistryKey desktopSettings = new RegistryKey(
+                RootKey.HKEY_CURRENT_USER, "Control Panel\\Desktop");
+            RegistryValue autoEnd = desktopSettings
+                .getValue("AutoEndTasks");
 
-                if (autoEnd.getData().equals("1")) {
-                  RegistryValue killWait = desktopSettings
-                      .getValue("WaitToKillAppTimeout");
+            if (autoEnd.getData().equals("1")) {
+              RegistryValue killWait = desktopSettings
+                  .getValue("WaitToKillAppTimeout");
 
-                  int i = Integer.parseInt(killWait.getData().toString());
+              int i1 = Integer.parseInt(killWait.getData().toString());
 
-                  if (i < 5000) {
-                    JOptionPane pane = new JOptionPane();
+              if (i1 < 5000) {
+                JOptionPane pane = new JOptionPane();
 
-                    String cancel = mLocalizer.msg("registryCancel",
-                        "Close TV-Browser");
-                    String dontDoIt = mLocalizer.msg("registryJumpOver",
-                        "Not this time");
+                String cancel = mLocalizer.msg("registryCancel",
+                    "Close TV-Browser");
+                String dontDoIt = mLocalizer.msg("registryJumpOver",
+                    "Not this time");
 
-                    pane.setOptions(new String[] {
-                        Localizer.getLocalization(Localizer.I18N_OK), dontDoIt,
-                        cancel });
-                    pane.setOptionType(JOptionPane.YES_NO_CANCEL_OPTION);
-                    pane.setMessageType(JOptionPane.WARNING_MESSAGE);
-                    pane
-                        .setMessage(mLocalizer
-                            .msg(
-                                "registryWarning",
-                                "The fast shutdown of Windows is activated.\nThe timeout to wait for before Windows is closing an application is too short,\nto give TV-Browser enough time to save all settings.\n\nThe setting hasn't the default value. It was changed by a tool or by you.\nTV-Browser will now try to change the timeout.\n\nIf you don't want to change this timeout select 'Not this time' or 'Close TV-Browser'."));
+                pane.setOptions(new String[] {
+                    Localizer.getLocalization(Localizer.I18N_OK), dontDoIt,
+                    cancel });
+                pane.setOptionType(JOptionPane.YES_NO_CANCEL_OPTION);
+                pane.setMessageType(JOptionPane.WARNING_MESSAGE);
+                pane
+                    .setMessage(mLocalizer
+                        .msg(
+                            "registryWarning",
+                            "The fast shutdown of Windows is activated.\nThe timeout to wait for before Windows is closing an application is too short,\nto give TV-Browser enough time to save all settings.\n\nThe setting hasn't the default value. It was changed by a tool or by you.\nTV-Browser will now try to change the timeout.\n\nIf you don't want to change this timeout select 'Not this time' or 'Close TV-Browser'."));
 
-                    pane.setInitialValue(mLocalizer.msg("registryCancel",
-                        "Close TV-Browser"));
+                pane.setInitialValue(mLocalizer.msg("registryCancel",
+                    "Close TV-Browser"));
 
-                    JDialog d = pane.createDialog(UiUtilities
-                        .getLastModalChildOf(mainFrame), UIManager
-                        .getString("OptionPane.messageDialogTitle"));
-                    d.setModalityType(ModalityType.DOCUMENT_MODAL);
-                    UiUtilities.centerAndShow(d);
+                JDialog d = pane.createDialog(UiUtilities
+                    .getLastModalChildOf(mainFrame), UIManager
+                    .getString("OptionPane.messageDialogTitle"));
+                d.setModalityType(ModalityType.DOCUMENT_MODAL);
+                UiUtilities.centerAndShow(d);
 
-                    if (pane.getValue() == null
-                        || pane.getValue().equals(cancel)) {
-                      mainFrame.quit();
-                    } else if (!pane.getValue().equals(dontDoIt)) {
-                      try {
-                        killWait.setData("5000");
-                        desktopSettings.setValue(killWait);
-                        JOptionPane
-                            .showMessageDialog(
-                                UiUtilities.getLastModalChildOf(mainFrame),
-                                mLocalizer
-                                    .msg("registryChanged",
-                                        "The timeout was changed successfully.\nPlease reboot Windows!"));
-                      } catch (Exception registySetting) {
-                        JOptionPane
-                            .showMessageDialog(
-                                UiUtilities.getLastModalChildOf(mainFrame),
-                                mLocalizer
-                                    .msg(
-                                        "registryNotChanged",
-                                        "<html>The Registry value couldn't be changed. Maybe you haven't the right to do it.<br>If it is so contact you Administrator and let him do it for you.<br><br><b><Attention:/b> The following description is for experts. If you change or delete the wrong value in the Registry you could destroy your Windows installation.<br><br>To get no warning on TV-Browser start the Registry value <b>WaitToKillAppTimeout</b> in the Registry path<br><b>HKEY_CURRENT_USER\\Control Panel\\Desktop</b> have to be at least <b>5000</b> or the value for <b>AutoEndTasks</b> in the same path have to be <b>0</b>.</html>"),
-                                Localizer.getLocalization(Localizer.I18N_ERROR),
-                                JOptionPane.ERROR_MESSAGE);
-                      }
-                    }
+                if (pane.getValue() == null
+                    || pane.getValue().equals(cancel)) {
+                  mainFrame.quit();
+                } else if (!pane.getValue().equals(dontDoIt)) {
+                  try {
+                    killWait.setData("5000");
+                    desktopSettings.setValue(killWait);
+                    JOptionPane
+                        .showMessageDialog(
+                            UiUtilities.getLastModalChildOf(mainFrame),
+                            mLocalizer
+                                .msg("registryChanged",
+                                    "The timeout was changed successfully.\nPlease reboot Windows!"));
+                  } catch (Exception registySetting) {
+                    JOptionPane
+                        .showMessageDialog(
+                            UiUtilities.getLastModalChildOf(mainFrame),
+                            mLocalizer
+                                .msg(
+                                    "registryNotChanged",
+                                    "<html>The Registry value couldn't be changed. Maybe you haven't the right to do it.<br>If it is so contact you Administrator and let him do it for you.<br><br><b><Attention:/b> The following description is for experts. If you change or delete the wrong value in the Registry you could destroy your Windows installation.<br><br>To get no warning on TV-Browser start the Registry value <b>WaitToKillAppTimeout</b> in the Registry path<br><b>HKEY_CURRENT_USER\\Control Panel\\Desktop</b> have to be at least <b>5000</b> or the value for <b>AutoEndTasks</b> in the same path have to be <b>0</b>.</html>"),
+                            Localizer.getLocalization(Localizer.I18N_ERROR),
+                            JOptionPane.ERROR_MESSAGE);
                   }
                 }
-              } catch (Throwable registry) {
               }
             }
-
-            if (currentVersion != null
-                && currentVersion.compareTo(new Version(2, 71, false)) < 0) {
-              if (Settings.propProgramPanelMarkedMinPriorityColor.getColor()
-                  .equals(
-                      Settings.propProgramPanelMarkedMinPriorityColor
-                          .getDefaultColor())) {
-                Settings.propProgramPanelMarkedMinPriorityColor
-                    .setColor(new Color(255, 0, 0, 30));
-              }
-              if (Settings.propProgramPanelMarkedMediumPriorityColor.getColor()
-                  .equals(
-                      Settings.propProgramPanelMarkedMediumPriorityColor
-                          .getDefaultColor())) {
-                Settings.propProgramPanelMarkedMediumPriorityColor
-                    .setColor(new Color(140, 255, 0, 60));
-              }
-              if (Settings.propProgramPanelMarkedHigherMediumPriorityColor
-                  .getColor().equals(
-                      Settings.propProgramPanelMarkedHigherMediumPriorityColor
-                          .getDefaultColor())) {
-                Settings.propProgramPanelMarkedHigherMediumPriorityColor
-                    .setColor(new Color(255, 255, 0, 60));
-              }
-              if (Settings.propProgramPanelMarkedMaxPriorityColor.getColor()
-                  .equals(
-                      Settings.propProgramPanelMarkedMaxPriorityColor
-                          .getDefaultColor())) {
-                Settings.propProgramPanelMarkedMaxPriorityColor
-                    .setColor(new Color(255, 180, 0, 110));
-              }
-            }
-
-            // check if user should select picture settings
-            if (currentVersion != null
-                && currentVersion.compareTo(new Version(2, 22)) < 0) {
-              TvBrowserPictureSettingsUpdateDialog.createAndShow(mainFrame);
-            } else if (currentVersion != null
-                && currentVersion.compareTo(new Version(2, 51, true)) < 0) {
-              Settings.propAcceptedLicenseArrForServiceIds
-                  .setStringArray(new String[0]);
-            }
-
-            if (currentVersion != null
-                && currentVersion.compareTo(new Version(2, 60, true)) < 0) {
-              int startOfDay = Settings.propProgramTableStartOfDay.getInt();
-              int endOfDay = Settings.propProgramTableEndOfDay.getInt();
-
-              if (endOfDay - startOfDay < -1) {
-                Settings.propProgramTableEndOfDay.setInt(startOfDay);
-
-                JOptionPane
-                    .showMessageDialog(
-                        UiUtilities.getLastModalChildOf(mainFrame),
-                        mLocalizer
-                            .msg(
-                                "timeInfoText",
-                                "The time range of the program table was corrected because the defined day was shorter than 24 hours.\n\nIf the program table should show less than 24h use a time filter for that. That time filter can be selected\nto be the default filter by selecting it in the filter settings and pressing on the button 'Default'."),
-                        mLocalizer.msg("timeInfoTitle", "Times corrected"),
-                        JOptionPane.INFORMATION_MESSAGE);
-                Settings.handleChangedSettings();
-              }
-            }
-            
-            if(currentVersion != null 
-                && currentVersion.compareTo(new Version(3,43,52,false)) < 0) {
-              FilterComponentList.getInstance().store();
-            }
-            
-            if(currentVersion != null
-                && currentVersion.compareTo(new Version(3,30,51,false)) < 0) {
-              Settings.updateContextMenuSettings();
-            }
-
-            if(currentVersion != null
-                && currentVersion.compareTo(new Version(3,33,51,false)) < 0) {
-              Settings.propSubscribedChannels.setChannelArray(ChannelList.getSubscribedChannels());
-            }
-            
-            if(currentVersion != null
-                && currentVersion.compareTo(new Version(3,39,7,false)) < 0) {
-              ProgramFieldType[] typeArr = Settings.propProgramInfoFields.getProgramFieldTypeArray();
-              String[] separators = Settings.propProgramInfoFieldsSeparators.getStringArray();
-              
-              ArrayList<String> separatorList = new ArrayList<String>();
-              
-              for(int i = 0; i < typeArr.length - 1; i++) {
-                if(i < separators.length - 1 && separators[i].equals("\n")) {
-                  separatorList.add(separators[i]);
-                }
-                else {
-                  separatorList.add(" - ");
-                }
-              }
-              
-              Settings.propProgramInfoFieldsSeparators.setStringArray(separatorList.toArray(new String[separatorList.size()]));
-            }
-            
-            MainFrame.getInstance().getProgramTableScrollPane()
-                .requestFocusInWindow();
+          } catch (Throwable registry) {
           }
-        });
-      }
+        }
+
+        if (currentVersion != null
+            && currentVersion.compareTo(new Version(2, 71, false)) < 0) {
+          if (Settings.propProgramPanelMarkedMinPriorityColor.getColor()
+              .equals(
+                  Settings.propProgramPanelMarkedMinPriorityColor
+                      .getDefaultColor())) {
+            Settings.propProgramPanelMarkedMinPriorityColor
+                .setColor(new Color(255, 0, 0, 30));
+          }
+          if (Settings.propProgramPanelMarkedMediumPriorityColor.getColor()
+              .equals(
+                  Settings.propProgramPanelMarkedMediumPriorityColor
+                      .getDefaultColor())) {
+            Settings.propProgramPanelMarkedMediumPriorityColor
+                .setColor(new Color(140, 255, 0, 60));
+          }
+          if (Settings.propProgramPanelMarkedHigherMediumPriorityColor
+              .getColor().equals(
+                  Settings.propProgramPanelMarkedHigherMediumPriorityColor
+                      .getDefaultColor())) {
+            Settings.propProgramPanelMarkedHigherMediumPriorityColor
+                .setColor(new Color(255, 255, 0, 60));
+          }
+          if (Settings.propProgramPanelMarkedMaxPriorityColor.getColor()
+              .equals(
+                  Settings.propProgramPanelMarkedMaxPriorityColor
+                      .getDefaultColor())) {
+            Settings.propProgramPanelMarkedMaxPriorityColor
+                .setColor(new Color(255, 180, 0, 110));
+          }
+        }
+
+        // check if user should select picture settings
+        if (currentVersion != null
+            && currentVersion.compareTo(new Version(2, 22)) < 0) {
+          TvBrowserPictureSettingsUpdateDialog.createAndShow(mainFrame);
+        } else if (currentVersion != null
+            && currentVersion.compareTo(new Version(2, 51, true)) < 0) {
+          Settings.propAcceptedLicenseArrForServiceIds
+              .setStringArray(new String[0]);
+        }
+
+        if (currentVersion != null
+            && currentVersion.compareTo(new Version(2, 60, true)) < 0) {
+          int startOfDay = Settings.propProgramTableStartOfDay.getInt();
+          int endOfDay = Settings.propProgramTableEndOfDay.getInt();
+
+          if (endOfDay - startOfDay < -1) {
+            Settings.propProgramTableEndOfDay.setInt(startOfDay);
+
+            JOptionPane
+                .showMessageDialog(
+                    UiUtilities.getLastModalChildOf(mainFrame),
+                    mLocalizer
+                        .msg(
+                            "timeInfoText",
+                            "The time range of the program table was corrected because the defined day was shorter than 24 hours.\n\nIf the program table should show less than 24h use a time filter for that. That time filter can be selected\nto be the default filter by selecting it in the filter settings and pressing on the button 'Default'."),
+                    mLocalizer.msg("timeInfoTitle", "Times corrected"),
+                    JOptionPane.INFORMATION_MESSAGE);
+            Settings.handleChangedSettings();
+          }
+        }
+        
+        if(currentVersion != null 
+            && currentVersion.compareTo(new Version(3,43,52,false)) < 0) {
+          FilterComponentList.getInstance().store();
+        }
+        
+        if(currentVersion != null
+            && currentVersion.compareTo(new Version(3,30,51,false)) < 0) {
+          Settings.updateContextMenuSettings();
+        }
+
+        if(currentVersion != null
+            && currentVersion.compareTo(new Version(3,33,51,false)) < 0) {
+          Settings.propSubscribedChannels.setChannelArray(ChannelList.getSubscribedChannels());
+        }
+        
+        if(currentVersion != null
+            && currentVersion.compareTo(new Version(3,39,7,false)) < 0) {
+          ProgramFieldType[] typeArr = Settings.propProgramInfoFields.getProgramFieldTypeArray();
+          String[] separators = Settings.propProgramInfoFieldsSeparators.getStringArray();
+          
+          ArrayList<String> separatorList = new ArrayList<String>();
+          
+          for(int i2 = 0; i2 < typeArr.length - 1; i2++) {
+            if(i2 < separators.length - 1 && separators[i2].equals("\n")) {
+              separatorList.add(separators[i2]);
+            }
+            else {
+              separatorList.add(" - ");
+            }
+          }
+          
+          Settings.propProgramInfoFieldsSeparators.setStringArray(separatorList.toArray(new String[separatorList.size()]));
+        }
+        
+        MainFrame.getInstance().getProgramTableScrollPane()
+            .requestFocusInWindow();
+      });
     });
 
      // register the shutdown hook
@@ -1008,16 +996,13 @@ public class TVBrowser {
 
   private static void showTVBrowserIsAlreadyRunningMessageBox() {
     try {
-      UIThreadRunner.invokeAndWait(new Runnable() {
-        @Override
-        public void run() {
-          Object[] options = { Localizer.getLocalization(Localizer.I18N_CLOSE),
-              mLocalizer.msg("startAnyway", "start anyway") };
-          if (JOptionPane.showOptionDialog(null, mLocalizer.msg("alreadyRunning", "TV-Browser is already running"),
-              mLocalizer.msg("alreadyRunning", "TV-Browser is already running"), JOptionPane.DEFAULT_OPTION,
-              JOptionPane.WARNING_MESSAGE, null, options, options[0]) != 1) {
-            System.exit(-1);
-          }
+      UIThreadRunner.invokeAndWait(() -> {
+        Object[] options = { Localizer.getLocalization(Localizer.I18N_CLOSE),
+            mLocalizer.msg("startAnyway", "start anyway") };
+        if (JOptionPane.showOptionDialog(null, mLocalizer.msg("alreadyRunning", "TV-Browser is already running"),
+            mLocalizer.msg("alreadyRunning", "TV-Browser is already running"), JOptionPane.DEFAULT_OPTION,
+            JOptionPane.WARNING_MESSAGE, null, options, options[0]) != 1) {
+          System.exit(-1);
         }
       });
     } catch (InterruptedException e) {
@@ -1064,17 +1049,14 @@ public class TVBrowser {
       mainFrame.setLocation(windowX, windowY);
     }
     
-    SwingUtilities.invokeLater(new Runnable() {
-      @Override
-      public void run() {
-        Point p = mainFrame.getLocation();
-        
-        if(windowX < 0 || windowY < 0 || windowX > screen.width || windowY > screen.height) {
-          mainFrame.setLocationRelativeTo(null);
-        }
-        else if(p.x != windowX || windowY != p.y) {
-          mainFrame.setLocation(windowX - Math.abs(p.x-windowX), windowY - Math.abs(p.y-windowY));
-        }
+    SwingUtilities.invokeLater(() -> {
+      Point p = mainFrame.getLocation();
+      
+      if(windowX < 0 || windowY < 0 || windowX > screen.width || windowY > screen.height) {
+        mainFrame.setLocationRelativeTo(null);
+      }
+      else if(p.x != windowX || windowY != p.y) {
+        mainFrame.setLocation(windowX - Math.abs(p.x-windowX), windowY - Math.abs(p.y-windowY));
       }
     });
 
@@ -1087,15 +1069,11 @@ public class TVBrowser {
 
     // maximize the frame if wanted
     if (Settings.propIsWindowMaximized.getBoolean()) {
-      SwingUtilities.invokeLater(new Runnable() {
-        public void run() {
-          mainFrame.setExtendedState(Frame.MAXIMIZED_BOTH);
-          SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-              mainFrame.repaint();
-            }
-          });
-        }
+      SwingUtilities.invokeLater(() -> {
+        mainFrame.setExtendedState(Frame.MAXIMIZED_BOTH);
+        SwingUtilities.invokeLater(() -> {
+          mainFrame.repaint();
+        });
       });
     }
 
@@ -1105,10 +1083,8 @@ public class TVBrowser {
     }
 
     if (mFullscreen || Settings.propIsUsingFullscreen.getBoolean()) {
-       SwingUtilities.invokeLater(new Runnable() {
-          public void run() {
-            mainFrame.switchFullscreenMode();
-         }
+       SwingUtilities.invokeLater(() -> {
+          mainFrame.switchFullscreenMode();
        });
     }
 
@@ -1123,16 +1099,14 @@ public class TVBrowser {
    */
   private static void initializeAutomaticDownload() {
     if (!Settings.propShowAssistant.getBoolean()) {
-      SwingUtilities.invokeLater(new Runnable() {
-        public void run() {
-          boolean automaticDownloadStarted = handleAutomaticDownload();
+      SwingUtilities.invokeLater(() -> {
+        boolean automaticDownloadStarted = handleAutomaticDownload();
 
-          boolean dataAvailable = TvDataBase.getInstance().dataAvailable(new Date());
-          if (!automaticDownloadStarted && (! dataAvailable) && (ChannelList.getNumberOfSubscribedChannels() > 0)) {
-            mainFrame.askForDataUpdateNoDataAvailable();
-          }
-          mainFrame.scrollToNowFirst();
+        boolean dataAvailable = TvDataBase.getInstance().dataAvailable(new Date());
+        if (!automaticDownloadStarted && (! dataAvailable) && (ChannelList.getNumberOfSubscribedChannels() > 0)) {
+          mainFrame.askForDataUpdateNoDataAvailable();
         }
+        mainFrame.scrollToNowFirst();
       });
     }
   }
@@ -1237,10 +1211,8 @@ public class TVBrowser {
       addTrayWindowListener();
 
       if(!MainFrame.getInstance().isVisible()) {
-        SwingUtilities.invokeLater(new Runnable() {
-          public void run() {
-            MainFrame.getInstance().showFromTray(MainFrame.ICONIFIED);
-          }
+        SwingUtilities.invokeLater(() -> {
+          MainFrame.getInstance().showFromTray(MainFrame.ICONIFIED);
         });
       }
     }
@@ -1288,20 +1260,18 @@ public class TVBrowser {
       final long timerStart = Calendar.getInstance().getTimeInMillis();
       if(mAutoDownloadWaitingTimer == null) {
         mAutoDownloadWaitingTimer = new Timer(1000,
-          new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-              int seconds = (int) ((Calendar.getInstance().getTimeInMillis() - timerStart) / 1000.0);
-              seconds = Settings.propAutoDownloadWaitingTime.getShort() - seconds;
-              if (seconds <= 0) {
-                mAutoDownloadWaitingTimer.stop();
-                mainFrame.getStatusBarLabel().setText("");
-                performAutomaticDownload();
-            } else {
-              mainFrame.getStatusBarLabel().setText(
-                  mLocalizer.msg("downloadwait",
-                      "Automatic download starts in {0} seconds.", seconds));
-            }
-            }
+          e -> {
+            int seconds = (int) ((Calendar.getInstance().getTimeInMillis() - timerStart) / 1000.0);
+            seconds = Settings.propAutoDownloadWaitingTime.getShort() - seconds;
+            if (seconds <= 0) {
+              mAutoDownloadWaitingTimer.stop();
+              mainFrame.getStatusBarLabel().setText("");
+              performAutomaticDownload();
+          } else {
+            mainFrame.getStatusBarLabel().setText(
+                mLocalizer.msg("downloadwait",
+                    "Automatic download starts in {0} seconds.", seconds));
+          }
           }
         );
         mAutoDownloadWaitingTimer.setRepeats(true);
@@ -1500,18 +1470,14 @@ public class TVBrowser {
           }
         }
         if (foundCurrent) {
-          UIThreadRunner.invokeAndWait(new Runnable() {
-
-            @Override
-            public void run() {
-              try {
-                UIManager.setLookAndFeel(curLookAndFeel);
-              } catch (Exception e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-              }
-              mLog.info("setting look and feel to " + curLookAndFeel);
+          UIThreadRunner.invokeAndWait(() -> {
+            try {
+              UIManager.setLookAndFeel(curLookAndFeel);
+            } catch (Exception e) {
+              // TODO Auto-generated catch block
+              e.printStackTrace();
             }
+            mLog.info("setting look and feel to " + curLookAndFeel);
           });
         }
       } catch (Exception exc) {
@@ -1781,24 +1747,20 @@ public class TVBrowser {
   private static void updatePluginsOnVersionChange() {
     final boolean oldBetaWarning = Settings.propPluginBetaWarning.getBoolean();
     try {
-      UIThreadRunner.invokeAndWait(new Runnable() {
+      UIThreadRunner.invokeAndWait(() -> {
+        Version obligartoryUpdate = new Version(3,21,51,false);
+        
+        TvBrowserVersionChangeDlg versionChange = new TvBrowserVersionChangeDlg(Settings.propTVBrowserVersion.getVersion(),obligartoryUpdate);
+        versionChange.pack();
+        versionChange.setLocationRelativeTo(null);
+        versionChange.setVisible(true);
+        versionChange.toFront();
+        versionChange.requestFocus();
 
-        @Override
-        public void run() {
-          Version obligartoryUpdate = new Version(3,21,51,false);
-          
-          TvBrowserVersionChangeDlg versionChange = new TvBrowserVersionChangeDlg(Settings.propTVBrowserVersion.getVersion(),obligartoryUpdate);
-          versionChange.pack();
-          versionChange.setLocationRelativeTo(null);
-          versionChange.setVisible(true);
-          versionChange.toFront();
-          versionChange.requestFocus();
+        Settings.propPluginBetaWarning.setBoolean(oldBetaWarning);
 
-          Settings.propPluginBetaWarning.setBoolean(oldBetaWarning);
-
-          if(versionChange.getIsToCloseTvBrowser()) {
-            System.exit(0);
-          }
+        if(versionChange.getIsToCloseTvBrowser()) {
+          System.exit(0);
         }
       });
     } catch (InterruptedException e) {

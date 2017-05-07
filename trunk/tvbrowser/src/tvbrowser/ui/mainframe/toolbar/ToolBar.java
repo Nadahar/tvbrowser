@@ -38,7 +38,6 @@ import java.awt.LayoutManager;
 import java.awt.dnd.DnDConstants;
 import java.awt.dnd.DragSource;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ContainerEvent;
 import java.awt.event.ContainerListener;
 import java.awt.event.MouseAdapter;
@@ -545,19 +544,17 @@ public class ToolBar extends JToolBar {
     item.setActionCommand(name);
     item.setEnabled(configItemEnabled);
 
-    item.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        if (e.getActionCommand().startsWith("#scrollTo") && e.getActionCommand().indexOf("Channel") == -1) {
-          MainFrame.getInstance().showSettingsDialog("#timebuttons");
-        } else if (e.getActionCommand().startsWith("#filter")) {
-          MainFrame.getInstance().showFilterDialog();
-        } else if (e.getActionCommand().startsWith("#scrollToChannel")) {
-          MainFrame.getInstance().showSettingsDialog(SettingsItem.CHANNELS);
-        } else if (e.getActionCommand().indexOf("##") != -1){
-          MainFrame.getInstance().showSettingsDialog(e.getActionCommand().substring(0,e.getActionCommand().indexOf("##")));
-        } else {
-          MainFrame.getInstance().showSettingsDialog(e.getActionCommand());
-        }
+    item.addActionListener(e1 -> {
+      if (e1.getActionCommand().startsWith("#scrollTo") && e1.getActionCommand().indexOf("Channel") == -1) {
+        MainFrame.getInstance().showSettingsDialog("#timebuttons");
+      } else if (e1.getActionCommand().startsWith("#filter")) {
+        MainFrame.getInstance().showFilterDialog();
+      } else if (e1.getActionCommand().startsWith("#scrollToChannel")) {
+        MainFrame.getInstance().showSettingsDialog(SettingsItem.CHANNELS);
+      } else if (e1.getActionCommand().indexOf("##") != -1){
+        MainFrame.getInstance().showSettingsDialog(e1.getActionCommand().substring(0,e1.getActionCommand().indexOf("##")));
+      } else {
+        MainFrame.getInstance().showSettingsDialog(e1.getActionCommand());
       }
     });
     menu.add(item);
@@ -565,35 +562,32 @@ public class ToolBar extends JToolBar {
 
     item = new JMenuItem(mLocalizer.msg("removeButton", "Remove button"));
     final String buttonName = ((AbstractButton) e.getSource()).getName();
-    item.addActionListener(new ActionListener() {
-
-      public void actionPerformed(ActionEvent e) {
-        Action[] actions = mModel.getActions();
-        ArrayList<String> idList = new ArrayList<String>();
+    item.addActionListener(e1 -> {
+      Action[] actions = mModel.getActions();
+      ArrayList<String> idList = new ArrayList<String>();
+      
+      for(Action a : actions) {
+        String key = (String)a.getValue(ACTION_ID_KEY);
+        String test = key;
         
-        for(Action a : actions) {
-          String key = (String)a.getValue(ACTION_ID_KEY);
-          String test = key;
-          
-          if (test.equals("searchplugin.SearchPlugin") && buttonName.equals("#search")) {
-            test = "#search";
-          } else if (test.equals("reminderplugin.ReminderPlugin") && buttonName.equals("#reminder")) {
-            test = "#reminder";
-          } else if (test.equals("favoritesplugin.FavoritesPlugin") && buttonName.equals("#favorite")) {
-            test = "#favorite";
-          }
-          
-          if (test.compareTo(buttonName) != 0) {
-            idList.add(key);
-          }
+        if (test.equals("searchplugin.SearchPlugin") && buttonName.equals("#search")) {
+          test = "#search";
+        } else if (test.equals("reminderplugin.ReminderPlugin") && buttonName.equals("#reminder")) {
+          test = "#reminder";
+        } else if (test.equals("favoritesplugin.FavoritesPlugin") && buttonName.equals("#favorite")) {
+          test = "#favorite";
         }
-
-        String[] ids = new String[idList.size()];
-        idList.toArray(ids);
-        DefaultToolBarModel.getInstance().setButtonIds(ids);
-        MainFrame.getInstance().updateToolbar();
-        Settings.propToolbarButtons.setStringArray(ids);
+        
+        if (test.compareTo(buttonName) != 0) {
+          idList.add(key);
+        }
       }
+
+      String[] ids = new String[idList.size()];
+      idList.toArray(ids);
+      DefaultToolBarModel.getInstance().setButtonIds(ids);
+      MainFrame.getInstance().updateToolbar();
+      Settings.propToolbarButtons.setStringArray(ids);
     });
     
     menu.add(item);
@@ -612,11 +606,9 @@ public class ToolBar extends JToolBar {
       button.setOpaque(false);
     }
     
-    button.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        action.actionPerformed(new ActionEvent(action,ActionEvent.ACTION_PERFORMED,""));
-        MainFrame.getInstance().getProgramTableScrollPane().requestFocusInWindow();
-      }
+    button.addActionListener(e -> {
+      action.actionPerformed(new ActionEvent(action,ActionEvent.ACTION_PERFORMED,""));
+      MainFrame.getInstance().getProgramTableScrollPane().requestFocusInWindow();
     });
 
     button.setText(title);

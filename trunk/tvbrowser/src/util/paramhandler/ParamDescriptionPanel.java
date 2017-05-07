@@ -117,12 +117,8 @@ public class ParamDescriptionPanel extends JPanel {
 //    helpPanel.setText(text.toString());
     final JScrollPane spane = new JScrollPane(helpPanel);
 
-    SwingUtilities.invokeLater(new Runnable() {
-
-      public void run() {
-        spane.getVerticalScrollBar().setValue(0);
-      }
-
+    SwingUtilities.invokeLater(() -> {
+      spane.getVerticalScrollBar().setValue(0);
     });
 
     add(spane, BorderLayout.CENTER);

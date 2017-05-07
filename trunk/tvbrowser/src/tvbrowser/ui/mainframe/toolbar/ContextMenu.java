@@ -26,8 +26,6 @@
 
 package tvbrowser.ui.mainframe.toolbar;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 
 import javax.swing.JCheckBoxMenuItem;
@@ -114,10 +112,8 @@ public class ContextMenu {
         ToolBarDragAndDropSettings.mLocalizer
             .msg("showSearchField", "Show search field"));
     showSearch.setSelected(Settings.propIsSearchFieldVisible.getBoolean());
-    showSearch.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        MainFrame.getInstance().setShowSearchField(showSearch.isSelected());
-      }
+    showSearch.addActionListener(e -> {
+      MainFrame.getInstance().setShowSearchField(showSearch.isSelected());
     });
     
     return showSearch;
@@ -127,10 +123,8 @@ public class ContextMenu {
     final JCheckBoxMenuItem show = new JCheckBoxMenuItem(
         mLocalizer.msg("moreBorderTop", "Addtional free space above toolbar"));
     show.setSelected(Settings.propIsToolbarAdditonalTopSpace.getBoolean());
-    show.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        MainFrame.getInstance().setIsToolbarAdditonalTopSpace(show.isSelected());
-      }
+    show.addActionListener(e -> {
+      MainFrame.getInstance().setIsToolbarAdditonalTopSpace(show.isSelected());
     });
     
     return show;
@@ -140,10 +134,8 @@ public class ContextMenu {
     final JCheckBoxMenuItem show = new JCheckBoxMenuItem(
         mLocalizer.msg("moreBorderBottom", "Add free spcace below toolbar"));
     show.setSelected(Settings.propIsToolbarAdditonalBottomSpace.getBoolean());
-    show.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        MainFrame.getInstance().setIsToolbarAdditonalBottomSpace(show.isSelected());
-      }
+    show.addActionListener(e -> {
+      MainFrame.getInstance().setIsToolbarAdditonalBottomSpace(show.isSelected());
     });
     
     return show;
@@ -155,10 +147,8 @@ public class ContextMenu {
         mLocalizer.msg("showMenubar", "Show menubar"));
     show.setSelected(Settings.propIsMenubarVisible.getBoolean());
     show.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F7, 0));
-    show.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        MainFrame.getInstance().setShowMenubar(show.isSelected());
-      }
+    show.addActionListener(e -> {
+      MainFrame.getInstance().setShowMenubar(show.isSelected());
     });
     
     return show;
@@ -169,10 +159,8 @@ public class ContextMenu {
         ToolBarDragAndDropSettings.mLocalizer
             .msg("showToolbar", "Show toolbar"));
     show.setSelected(Settings.propIsToolbarVisible.getBoolean());
-    show.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        MainFrame.getInstance().setShowToolbar(show.isSelected());
-      }
+    show.addActionListener(e -> {
+      MainFrame.getInstance().setShowToolbar(show.isSelected());
     });
     
     return show;
@@ -180,10 +168,8 @@ public class ContextMenu {
 
   private static JMenuItem createConfigureItem() {
     JMenuItem item = new JMenuItem(mLocalizer.ellipsisMsg("configure", "Configure"));
-    item.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        new ToolBarDragAndDropSettings();
-      }
+    item.addActionListener(e -> {
+      new ToolBarDragAndDropSettings();
     });
     return item;
   }

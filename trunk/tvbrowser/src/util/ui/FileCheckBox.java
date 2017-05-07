@@ -28,8 +28,6 @@ package util.ui;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 
 import javax.swing.JButton;
@@ -82,27 +80,22 @@ public class FileCheckBox extends JComponent {
       add(mChoosebtn,BorderLayout.EAST);
     }
 
-    mCheckbox.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent event) {
-        setSelected(mCheckbox.isSelected());
+    mCheckbox.addActionListener(e -> {
+      setSelected(mCheckbox.isSelected());
+    });
+
+    mChoosebtn.addActionListener(event -> {
+      if (mFileChooser==null) {
+        mFileChooser=new JFileChooser();
       }
-    }
-    );
+      int retVal = mFileChooser.showOpenDialog(getParent());
+      if (retVal == JFileChooser.APPROVE_OPTION) {
+        File f=mFileChooser.getSelectedFile();
+        if (f!=null) {
+          mTextfield.setText(f.getAbsolutePath());
 
-    mChoosebtn.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent event) {
-        if (mFileChooser==null) {
-          mFileChooser=new JFileChooser();
-        }
-        int retVal = mFileChooser.showOpenDialog(getParent());
-        if (retVal == JFileChooser.APPROVE_OPTION) {
-          File f=mFileChooser.getSelectedFile();
-          if (f!=null) {
-            mTextfield.setText(f.getAbsolutePath());
-
-            if(mTextfield.getKeyListeners().length == 1) {
-              mTextfield.getKeyListeners()[0].keyReleased(null);
-            }
+          if(mTextfield.getKeyListeners().length == 1) {
+            mTextfield.getKeyListeners()[0].keyReleased(null);
           }
         }
       }

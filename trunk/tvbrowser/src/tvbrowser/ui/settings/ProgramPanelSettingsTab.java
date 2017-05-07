@@ -28,8 +28,6 @@ package tvbrowser.ui.settings;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -44,6 +42,14 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
 
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.factories.DefaultComponentFactory;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+
+import devplugin.ProgramFieldType;
+import devplugin.ProgramInfoHelper;
+import devplugin.SettingsTab;
 import tvbrowser.core.Settings;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.icontheme.InfoIconTheme;
@@ -60,15 +66,6 @@ import util.ui.TVBrowserIcons;
 import util.ui.UiUtilities;
 import util.ui.customizableitems.SelectableItem;
 import util.ui.customizableitems.SelectableItemRendererCenterComponentIf;
-
-import com.jgoodies.forms.factories.Borders;
-import com.jgoodies.forms.factories.DefaultComponentFactory;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
-
-import devplugin.ProgramFieldType;
-import devplugin.ProgramInfoHelper;
-import devplugin.SettingsTab;
 
 /**
  * A settings tab for the program panel.
@@ -185,11 +182,8 @@ public class ProgramPanelSettingsTab implements SettingsTab {
     
     JButton addLineBreak = new JButton(IconLoader.getInstance().getIconFromTheme("actions", "add-line-break", TVBrowserIcons.SIZE_LARGE));
     addLineBreak.setToolTipText(mLocalizer.msg("addLineBreakTooltip", "Adds line break"));
-    addLineBreak.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        mInfoTextOCh.addElement("\n",mInfoTextOCh.getSelectedIndex()+1,true);
-      }
+    addLineBreak.addActionListener(e -> {
+      mInfoTextOCh.addElement("\n",mInfoTextOCh.getSelectedIndex()+1,true);
     });
     
     mInfoTextOCh.addButton(addLineBreak);

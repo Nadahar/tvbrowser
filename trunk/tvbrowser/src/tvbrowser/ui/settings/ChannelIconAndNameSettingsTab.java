@@ -24,8 +24,6 @@
 package tvbrowser.ui.settings;
 
 import java.awt.Color;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
@@ -105,10 +103,8 @@ public class ChannelIconAndNameSettingsTab implements SettingsTab {
     
     mShowTooltipInProgramTable.setEnabled(!mShowOnlyNameInProgramTable.isSelected());
     
-    mShowOnlyNameInProgramTable.addItemListener(new ItemListener() {
-      public void itemStateChanged(ItemEvent e) {
-        mShowTooltipInProgramTable.setEnabled(e.getStateChange() == ItemEvent.DESELECTED);
-      }
+    mShowOnlyNameInProgramTable.addItemListener(e -> {
+      mShowTooltipInProgramTable.setEnabled(e.getStateChange() == ItemEvent.DESELECTED);
     });
     
     ButtonGroup programTable = new ButtonGroup();
@@ -152,25 +148,19 @@ public class ChannelIconAndNameSettingsTab implements SettingsTab {
 
     final JButton restart = new JButton(mLocalizer.msg("restart", "Restart now"));
     restart.setVisible(restartInfo.isVisible());
-    restart.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        mDialogSettings.saveSettings();
-        TVBrowser.addRestart();
-        MainFrame.getInstance().quit();
-      }
+    restart.addActionListener(e -> {
+      mDialogSettings.saveSettings();
+      TVBrowser.addRestart();
+      MainFrame.getInstance().quit();
     });
     
-    final ItemListener pluginProgramPanelLogoListener = new ItemListener() {
-      @Override
-      public void itemStateChanged(ItemEvent e) {
-        if(e.getStateChange() == ItemEvent.SELECTED) {
-          boolean showRestart = (mShowIconInProgramPanelPlugins.equals(e.getItem()) && INDEX_ICONS_PROGRAM_PANEL != ProgramPanelSettings.SHOW_CHANNEL_LOGO_PLUGINS_CONTROL)
-              || (mShowIconInProgramPanelNever.equals(e.getItem()) && INDEX_ICONS_PROGRAM_PANEL != ProgramPanelSettings.SHOW_CHANNEL_LOGO_NEVER);
-          
-          restartInfo.setVisible(showRestart);
-          restart.setVisible(showRestart);
-        }
+    final ItemListener pluginProgramPanelLogoListener = e -> {
+      if(e.getStateChange() == ItemEvent.SELECTED) {
+        boolean showRestart = (mShowIconInProgramPanelPlugins.equals(e.getItem()) && INDEX_ICONS_PROGRAM_PANEL != ProgramPanelSettings.SHOW_CHANNEL_LOGO_PLUGINS_CONTROL)
+            || (mShowIconInProgramPanelNever.equals(e.getItem()) && INDEX_ICONS_PROGRAM_PANEL != ProgramPanelSettings.SHOW_CHANNEL_LOGO_NEVER);
+        
+        restartInfo.setVisible(showRestart);
+        restart.setVisible(showRestart);
       }
     };
     

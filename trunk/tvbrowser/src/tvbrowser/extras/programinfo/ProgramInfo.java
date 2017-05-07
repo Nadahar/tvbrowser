@@ -29,8 +29,6 @@ package tvbrowser.extras.programinfo;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Window;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -99,20 +97,14 @@ public class ProgramInfo {
     mInitThread = new Thread("Program Info init thread") {
       public void run() {
         try {
-          UIThreadRunner.invokeAndWait(new Runnable() {
-
-            @Override
-            public void run() {
-              mPreviousPrograms = new Program[0];
-              mNextPrograms = new Program[0];
-              ProgramInfoDialog.getInstance(Plugin.getPluginManager().getExampleProgram(), mLeftSplit, true);
-            }
+          UIThreadRunner.invokeAndWait(() -> {
+            mPreviousPrograms = new Program[0];
+            mNextPrograms = new Program[0];
+            ProgramInfoDialog.getInstance(Plugin.getPluginManager().getExampleProgram(), mLeftSplit, true);
           });
         } catch (InterruptedException e) {
-          // TODO Auto-generated catch block
           e.printStackTrace();
         } catch (InvocationTargetException e) {
-          // TODO Auto-generated catch block
           e.printStackTrace();
         }
       }
@@ -126,24 +118,16 @@ public class ProgramInfo {
     action.setText(mLocalizer.msg("contextMenuText", "Program information"));
     action.setSmallIcon(IconLoader.getInstance().getIconFromTheme("actions",
         "edit-find", 16));
-    action.setActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent event) {
-        try {
-          UIThreadRunner.invokeAndWait(new Runnable() {
-
-            @Override
-            public void run() {
-              setLook();
-              showProgramInformation(program, true);
-            }
-          });
-        } catch (InterruptedException e) {
-          // TODO Auto-generated catch block
-          e.printStackTrace();
-        } catch (InvocationTargetException e) {
-          // TODO Auto-generated catch block
-          e.printStackTrace();
-        }
+    action.setActionListener(event -> {
+      try {
+        UIThreadRunner.invokeAndWait(() -> {
+          setLook();
+          showProgramInformation(program, true);
+        });
+      } catch (InterruptedException e1) {
+        e1.printStackTrace();
+      } catch (InvocationTargetException e2) {
+        e2.printStackTrace();
       }
     });
 
