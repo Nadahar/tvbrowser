@@ -61,7 +61,7 @@ public class MarkingsSettingsTab implements SettingsTab {
 
   private ColorLabel mProgramItemMinMarkedColorLb, mProgramItemLowerMediumMarkedColorLb, mProgramItemMediumMarkedColorLb, mProgramItemHigherMediumMarkedColorLb, mProgramItemMaxMarkedColorLb;
   private JCheckBox mProgramItemWithMarkingsIsShowingBorder, mProgramPanelUsesExtraSpaceForMarkIcons;
-  private JComboBox<String> mDefaultColor;
+  private JComboBox<Object> mDefaultColor;
   private JEditorPane mHelpLabel;
   
   public JPanel createSettingsPanel() {

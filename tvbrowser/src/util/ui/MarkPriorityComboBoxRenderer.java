@@ -47,7 +47,7 @@ public class MarkPriorityComboBoxRenderer extends CustomComboBoxRenderer {
     this(null);
   }
   
-  public MarkPriorityComboBoxRenderer(ListCellRenderer backendRenderer) {
+  public MarkPriorityComboBoxRenderer(ListCellRenderer<Object> backendRenderer) {
     super(backendRenderer);
   }
 

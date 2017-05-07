@@ -81,13 +81,13 @@ public final class LookAndFeelSettingsTab implements SettingsTab {
 
   private JButton mConfigBtn;
 
-  private JComboBox<IconTheme> mIconThemes;
+  private JComboBox<Object> mIconThemes;
 
   private JComboBox<String> mPluginViewPosition;
 
   private JComboBox<String> mDateLayout;
   
-  private JComboBox<PersonaInfo> mPersonaSelection;
+  private JComboBox<Object> mPersonaSelection;
   
   private JComboBox<InfoIconTheme> mInfoIconThemes;
 
@@ -258,7 +258,6 @@ public final class LookAndFeelSettingsTab implements SettingsTab {
     
     mPersonaSelection.setRenderer(new CustomComboBoxRenderer(mPersonaSelection.getRenderer()) {
       public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-        @SuppressWarnings("unchecked")
         JLabel label = (JLabel)getBackendRenderer().getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
         if (value != null) {
           label.setText(((PersonaInfo)value).getName());
@@ -291,7 +290,6 @@ public final class LookAndFeelSettingsTab implements SettingsTab {
     mIconThemes.setRenderer(new CustomComboBoxRenderer(mIconThemes.getRenderer()) {
       @Override
       public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-        @SuppressWarnings("unchecked")
         JLabel label = (JLabel)getBackendRenderer().getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
         if (value != null) {
           label.setText(((IconTheme)value).getName());

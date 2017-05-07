@@ -61,10 +61,12 @@ public class ZipIconTheme extends IconTheme {
    */
   private void loadEntries() {
     mZipFileEntries = new HashMap<String, ZipEntry>();
+    JarFile zf = null;
+    
     try {
       // Open the ZIP file
-      JarFile zf = new JarFile(getBase());
-
+      zf = new JarFile(getBase());
+      
       // Enumerate each entry
       for (Enumeration<JarEntry> entries = zf.entries(); entries.hasMoreElements();) {
         ZipEntry entry = entries.nextElement();
@@ -73,6 +75,12 @@ public class ZipIconTheme extends IconTheme {
     } catch (IOException e) {
       // If something goes wrong, reset Theme
       mZipFileEntries = new HashMap<String, ZipEntry>();
+    } finally {
+      if(zf != null) {
+        try {
+          zf.close();
+        } catch (IOException e) {}
+      }
     }
 
   }
@@ -83,6 +91,7 @@ public class ZipIconTheme extends IconTheme {
    * @param entry File/Entry to load
    * @return InputStream of specific Entry
    */
+  @SuppressWarnings("resource")
   protected InputStream getInputStream(String entry) {
     ZipEntry zipEntry = mZipFileEntries.get(entry);
     try {
@@ -110,9 +119,12 @@ public class ZipIconTheme extends IconTheme {
    * @return Image
    */
   protected ImageIcon getImageFromTheme(String image) {
+    JarFile jar = null;
+    InputStream in = null;
     try {
+      jar = new JarFile(getBase());
       ZipEntry zipEntry = mZipFileEntries.get(image);
-      InputStream in = new JarFile(getBase()).getInputStream(zipEntry);
+      in = jar.getInputStream(zipEntry);
 
       //  Create the byte array to hold the data
       byte[] bytes = new byte[(int)zipEntry.getSize()];
@@ -131,7 +143,19 @@ public class ZipIconTheme extends IconTheme {
 
       return new ImageIcon(Toolkit.getDefaultToolkit().createImage(bytes));
     } catch (Exception e) {
+    } finally {
+      if(in != null) {
+        try {
+          in.close();
+        } catch (IOException e) {}
+      }
+      if(jar != null) {
+        try {
+          jar.close();
+        } catch (IOException e) {}
+      }
     }
+    
     return null;
   }
 

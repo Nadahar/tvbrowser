@@ -297,7 +297,7 @@ public class BeanShellPluginProxy extends AbstractPluginProxy {
 
     @Override
     public String getPluginCategory() {
-      return Plugin.ALL_CATEGORY;
+      return Plugin.CATEGORY_ALL;
     }
 
     @Override

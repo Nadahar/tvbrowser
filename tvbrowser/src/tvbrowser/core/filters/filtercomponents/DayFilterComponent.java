@@ -32,11 +32,12 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 import javax.swing.JPanel;
 
-import util.ui.customizableitems.SelectableItemList;
 import devplugin.Program;
+import util.ui.customizableitems.SelectableItemList;
 
 /**
  * This Filter filters for certain Days of the Week
@@ -51,7 +52,7 @@ public class DayFilterComponent extends AbstractFilterComponent {
   private final String[] allDays = new String[] {mLocalizer.msg("monday", "Monday"), mLocalizer.msg("tuesday", "Tuesday"), mLocalizer.msg("wednesday", "Wednesday"), mLocalizer.msg("thursday", "Thursday"), mLocalizer.msg("friday", "Friday"), mLocalizer.msg("saturday", "Saturday"), mLocalizer.msg("sunday", "Sunday")};
 
   private int mSelectedDays;
-  private SelectableItemList mList;
+  private SelectableItemList<String> mList;
 
   public DayFilterComponent(final String name, final String description) {
     super(name, description);
@@ -78,12 +79,8 @@ public class DayFilterComponent extends AbstractFilterComponent {
 
   public void saveSettings() {
     mSelectedDays = 0;
-    Object[] selection = mList.getSelection();
-    ArrayList<String> listSelection = new ArrayList<String>(selection.length);
-    for (Object object : selection) {
-      listSelection.add((String) object);
-    }
-    
+    List<String> listSelection = mList.getSelectionList();
+        
     int bit = 1;
     for (int day = 0; day < 7; day++) {
       if (listSelection.contains(allDays[day])) {
@@ -111,7 +108,7 @@ public class DayFilterComponent extends AbstractFilterComponent {
       bit <<= 1;
     }
 
-    mList = new SelectableItemList(selectedDays.toArray(), allDays);
+    mList = new SelectableItemList<>(selectedDays.toArray(new String[selectedDays.size()]), allDays);
     content.add(mList, BorderLayout.CENTER);
     return content;
   }

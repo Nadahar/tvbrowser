@@ -52,7 +52,7 @@ public class ProgramMarkingPriorityFilterComponent extends
       .getLocalizerFor(ProgramMarkingPriorityFilterComponent.class);
 
   private int mMarkPriority = Program.MIN_MARK_PRIORITY;
-  private JComboBox mValueSelection;
+  private JComboBox<String> mValueSelection;
 
   /**
    * Creates an new instance of this filter component.
@@ -92,7 +92,7 @@ public class ProgramMarkingPriorityFilterComponent extends
             "4. Color (higher medium priority)"),
         localizer.msg("color.maxPriority", "5. Color (maximum priority)") };
 
-    mValueSelection = new JComboBox(values);
+    mValueSelection = new JComboBox<>(values);
     mValueSelection.setSelectedIndex(mMarkPriority);
     mValueSelection.setRenderer(new MarkPriorityComboBoxRenderer());
 

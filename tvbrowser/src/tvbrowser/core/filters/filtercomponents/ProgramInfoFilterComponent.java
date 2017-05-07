@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -38,15 +39,15 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
 
-import util.ui.UiUtilities;
-import util.ui.customizableitems.SelectableItemList;
-import util.ui.customizableitems.SelectableItemRendererCenterComponentIf;
-
 import com.jgoodies.forms.factories.CC;
 import com.jgoodies.forms.layout.FormLayout;
 
 import devplugin.Program;
 import devplugin.ProgramInfoHelper;
+import util.ui.UiUtilities;
+import util.ui.customizableitems.SelectableItem;
+import util.ui.customizableitems.SelectableItemList;
+import util.ui.customizableitems.SelectableItemRendererCenterComponentIf;
 
 /**
  * Filtert nach bestimmten Programm-Informationen (zum Beispiel Untertitel)
@@ -55,7 +56,7 @@ import devplugin.ProgramInfoHelper;
  */
 public class ProgramInfoFilterComponent extends AbstractFilterComponent {
 
-  private SelectableItemList mList;
+  private SelectableItemList<String> mList;
 
   /**
    * Erzeugt einen leeren Filter
@@ -137,23 +138,23 @@ public class ProgramInfoFilterComponent extends AbstractFilterComponent {
         selectedItems.add(item);
       }
     }
-    mList = new SelectableItemList(selectedItems.toArray(), allItems);
+    mList = new SelectableItemList<>(selectedItems.toArray(new String[selectedItems.size()]), allItems);
     mList.addCenterRendererComponent(String.class,
-        new SelectableItemRendererCenterComponentIf() {
+        new SelectableItemRendererCenterComponentIf<String>() {
           @Override
-          public void calculateSize(JList list, int index, JPanel contentPane) {
-          }
-
-          @Override
-          public JPanel createCenterPanel(JList list, Object value, int index,
-              boolean isSelected, boolean isEnabled,
-              JScrollPane parentScrollPane, int leftColumnWidth) {
-            JLabel label = new JLabel(value.toString());
-            label.setIcon(ProgramInfoHelper.getInfoIcons()[index]);
+          public JPanel createCenterPanel(JList<? extends SelectableItem<String>> list, String value, int index, boolean isSelected, boolean isEnabled, JScrollPane parentScrollPane, int leftColumnWidth) {
+            JLabel label = new JLabel();
+            
             label.setHorizontalAlignment(SwingConstants.LEADING);
             label.setVerticalAlignment(SwingConstants.CENTER);
 
             JPanel panel = new JPanel(new BorderLayout());
+            
+            panel.add(label, BorderLayout.WEST);
+            
+            label.setIcon(ProgramInfoHelper.getInfoIcons()[index]);
+            label.setText(value);
+            
             if (isSelected && isEnabled) {
               panel.setOpaque(true);
               label.setForeground(list.getSelectionForeground());
@@ -163,9 +164,12 @@ public class ProgramInfoFilterComponent extends AbstractFilterComponent {
               label.setForeground(list.getForeground());
               panel.setBackground(list.getBackground());
             }
-            panel.add(label, BorderLayout.WEST);
+            
             return panel;
           }
+
+          @Override
+          public void calculateSize(JList<? extends SelectableItem<String>> list, int index,JPanel contentPane) {}
         });
     centerPanel.add(mList, CC.xy(1, 2));
     
@@ -179,9 +183,10 @@ public class ProgramInfoFilterComponent extends AbstractFilterComponent {
 
     String[] infoMessages = ProgramInfoHelper.getInfoIconMessages();
     int[] infoBits = ProgramInfoHelper.getInfoBits();
-    final Object[] checked = mList.getSelection();
-    for (Object element : checked) {
-      final String item = (String) element;
+    
+    final List<String> checked = mList.getSelectionList();
+    
+    for (final String item : checked) {
       for (int infoIndex = 0; infoIndex < infoMessages.length; infoIndex++) {
         if (item.equals(infoMessages[infoIndex])) {
           bits |= infoBits[infoIndex];
@@ -189,6 +194,7 @@ public class ProgramInfoFilterComponent extends AbstractFilterComponent {
         }
       }
     }
+    
     mSelectedBits = bits;
   }
 

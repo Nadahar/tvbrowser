@@ -87,7 +87,7 @@ public class SearchHelper {
   /** Instance of the Helper */
   private static SearchHelper mInstance;
 
-  private DefaultListModel mListModel;
+  private DefaultListModel<Object> mListModel;
 
   private ProgressMonitor mProgressMonitor;
 
@@ -99,7 +99,7 @@ public class SearchHelper {
 
   private JScrollPane mProgramListScrollPane;
   
-  private JComboBox mFilterSelection;
+  private JComboBox<ProgramFilter> mFilterSelection;
   
   private ProgramSearcher mSearcher;
 
@@ -328,7 +328,7 @@ public class SearchHelper {
         i++;
     }
 
-    mListModel = new DefaultListModel();
+    mListModel = new DefaultListModel<>();
 
     for (Program program : programArr) {
       mListModel.addElement(program);
@@ -366,7 +366,7 @@ public class SearchHelper {
       pb.add(mProgressBar, CC.xy(1, pb.getRow()));
     }
     
-    mFilterSelection = new JComboBox(FilterManagerImpl.getInstance().getAvailableFilters());
+    mFilterSelection = new JComboBox<>(FilterManagerImpl.getInstance().getAvailableFilters());
     mFilterSelection.setSelectedItem(FilterManagerImpl.getInstance().getAllFilter());
     mFilterSelection.setEnabled(false);
     

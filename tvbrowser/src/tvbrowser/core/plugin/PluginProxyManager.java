@@ -41,6 +41,11 @@ import javax.swing.JMenu;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 
+import devplugin.ChannelDayProgram;
+import devplugin.ContextMenuIf;
+import devplugin.Date;
+import devplugin.PluginsProgramFilter;
+import devplugin.Program;
 import tvbrowser.core.Settings;
 import tvbrowser.core.TvDataBase;
 import tvbrowser.core.TvDataBaseListener;
@@ -49,17 +54,11 @@ import tvbrowser.core.TvDataUpdater;
 import tvbrowser.core.contextmenu.ContextMenuManager;
 import tvbrowser.core.filters.FilterList;
 import tvbrowser.core.filters.FilterManagerImpl;
-import tvbrowser.ui.filter.dlgs.FilterTreeModel;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvdataservice.MarkedProgramsMap;
 import tvdataservice.MutableChannelDayProgram;
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
-import devplugin.ChannelDayProgram;
-import devplugin.ContextMenuIf;
-import devplugin.Date;
-import devplugin.PluginsProgramFilter;
-import devplugin.Program;
 
 /**
  * Manages all plugin proxies and creates them on startup.
@@ -144,7 +143,6 @@ public class PluginProxyManager {
     
     @Override
     public void run() {
-      // TODO Auto-generated method stub
       try {
         mPlugin.handleTvBrowserSettingsChanged();
       }catch(Throwable t) {
@@ -155,15 +153,15 @@ public class PluginProxyManager {
   }
 
   private abstract class ThreadPoolMethod {
-    private String mName;
+   // private String mName;
 
     public ThreadPoolMethod(final String name) {
-      mName = name;
+     // mName = name;
     }
-
+/*
     public String getName() {
       return mName;
-    }
+    }*/
 
     public abstract void run();
   }
@@ -305,7 +303,7 @@ public class PluginProxyManager {
    */
   private static final int ACTIVATED_STATE = 3;
 
-  private static final long MAX_THREAD_POOL_WAIT_SECONDS = 30;
+ // private static final long MAX_THREAD_POOL_WAIT_SECONDS = 30;
 
   /**
    * The list containing all plugins (PluginListItem objects) in the right
@@ -1322,7 +1320,6 @@ public class PluginProxyManager {
                 try {
                   Thread.sleep(1000);
                 } catch (InterruptedException e) {
-                  // TODO Auto-generated catch block
                   e.printStackTrace();
                 }
               }

@@ -33,14 +33,11 @@ import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
-import com.jgoodies.common.swing.MnemonicUtils;
-
+import devplugin.ThemeIcon;
 import util.io.IniFileReader;
 import util.ui.UiUtilities;
-import devplugin.ThemeIcon;
 
 /**
  * This class implements the IconTheme-Loading

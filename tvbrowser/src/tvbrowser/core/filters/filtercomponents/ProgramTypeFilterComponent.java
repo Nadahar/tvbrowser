@@ -47,7 +47,7 @@ public class ProgramTypeFilterComponent extends AbstractFilterComponent {
       Channel.CATEGORY_SPECIAL_OTHER, Channel.CATEGORY_PAY_TV,
       Channel.CATEGORY_PAYED_DATA_TV };
 
-  private SelectableItemList mList;
+  private SelectableItemList<String> mList;
   private int mCategories;
 
   public ProgramTypeFilterComponent(final String name, final String description) {
@@ -75,8 +75,8 @@ public class ProgramTypeFilterComponent extends AbstractFilterComponent {
         checkedCategories.add(name);
       }
     }
-    mList = new SelectableItemList(checkedCategories.toArray(), allCategories
-        .toArray());
+    mList = new SelectableItemList<>(checkedCategories.toArray(new String[checkedCategories.size()]), allCategories
+        .toArray(new String[allCategories.size()]));
     panel.add(mList, BorderLayout.CENTER);
     return panel;
   }
@@ -99,8 +99,7 @@ public class ProgramTypeFilterComponent extends AbstractFilterComponent {
   @Override
   public void saveSettings() {
     mCategories = 0;
-    for (Object object : mList.getSelection()) {
-      String name = (String) object;
+    for (String name : mList.getSelectionList()) {
       for (int category : CATEGORIES) {
         if (Channel.getLocalizedCategory(category).equals(name)) {
           mCategories |= category;

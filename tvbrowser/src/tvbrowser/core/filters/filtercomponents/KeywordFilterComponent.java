@@ -25,23 +25,20 @@
  */
 package tvbrowser.core.filters.filtercomponents;
 
-import java.awt.BorderLayout;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
-import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 
+import devplugin.Program;
+import devplugin.ProgramFieldType;
+import devplugin.ProgramSearcher;
 import util.exc.ErrorHandler;
 import util.exc.TvBrowserException;
 import util.ui.SearchForm;
 import util.ui.SearchFormSettings;
-import util.ui.UiUtilities;
-import devplugin.Program;
-import devplugin.ProgramFieldType;
-import devplugin.ProgramSearcher;
 
 public class KeywordFilterComponent extends AbstractFilterComponent {
 

@@ -18,7 +18,6 @@ import java.awt.geom.Rectangle2D;
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
 import javax.swing.SwingUtilities;
-import javax.swing.plaf.SliderUI;
 
 import devplugin.Channel;
 

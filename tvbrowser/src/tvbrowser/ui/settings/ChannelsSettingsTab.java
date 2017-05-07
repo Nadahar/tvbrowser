@@ -171,7 +171,7 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction<Object> 
   /**
    * Drag n Drop Support
    */
-  private DragAndDropMouseListener mSubscribedChannelListener;
+  private DragAndDropMouseListener<Object> mSubscribedChannelListener;
 
   /**
    * Drag n Drop Support
@@ -367,9 +367,9 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction<Object> 
     mDnDHandler.setPaintCueLine(false, true);
 
     // Register the listener for DnD on the lists.
-    new DragAndDropMouseListener(mAllChannels, mSubscribedChannels, this,
+    new DragAndDropMouseListener<Object>(mAllChannels, mSubscribedChannels, this,
         mDnDHandler);
-    mSubscribedChannelListener = new DragAndDropMouseListener(
+    mSubscribedChannelListener = new DragAndDropMouseListener<Object>(
         mSubscribedChannels, mAllChannels, this, mDnDHandler);
     
     restoreForPopup();

@@ -25,7 +25,6 @@ import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 
-import util.ui.UiUtilities;
 import devplugin.Program;
 import devplugin.ProgramFieldType;
 

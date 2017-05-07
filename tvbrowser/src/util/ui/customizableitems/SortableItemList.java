@@ -137,7 +137,7 @@ public class SortableItemList<E> extends JPanel implements ActionListener, ListD
  
     //Register DnD on the List.
     ListDragAndDropHandler dnDHandler = new ListDragAndDropHandler(mList, mList, this);
-    new DragAndDropMouseListener(mList,mList,this,dnDHandler);
+    new DragAndDropMouseListener<E>(mList,mList,this,dnDHandler);
     
     mTitleLb=new JLabel(title);
     

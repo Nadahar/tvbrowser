@@ -56,4 +56,6 @@ public interface SelectableItemRendererCenterComponentIf<E> {
    * @param contentPane The content pane with all components used to paint the item in the list.
    */
   public void calculateSize(JList<? extends SelectableItem<E>> list, int index, JPanel contentPane);
+  
+  public default void initialize() {}
 }

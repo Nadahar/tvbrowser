@@ -38,10 +38,9 @@ import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerDateModel;
 
+import devplugin.Program;
 import tvbrowser.core.Settings;
 import util.ui.CaretPositionCorrector;
-import util.ui.UiUtilities;
-import devplugin.Program;
 
 public class TimeFilterComponent extends AbstractFilterComponent {
 
