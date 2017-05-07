@@ -62,7 +62,6 @@ public class SelectableItemRenderer<E> implements ListCellRenderer<SelectableIte
   
   public JPanel getListCellComponent(JList<? extends SelectableItem<E>> list, SelectableItem<E> value,
   int index, boolean isSelected, boolean cellHasFocus) {
-
     SelectableItem<E> selectableItem = value;
     JCheckBox cb = new JCheckBox("",selectableItem.isSelected());
     
@@ -102,7 +101,7 @@ public class SelectableItemRenderer<E> implements ListCellRenderer<SelectableIte
         l.setIcon(UiUtilities.createChannelIcon(((Channel)selectableItem.getItem()).getIcon()));
       }
       
-      p.add(l, BorderLayout.CENTER);
+      p.add(l, CC.xy(3, 1));
       
       if(isSelected && mIsEnabled) {
         l.setForeground(list.getSelectionForeground());
