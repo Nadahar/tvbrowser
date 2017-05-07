@@ -21,7 +21,6 @@ import javax.swing.JComponent;
 import javax.swing.JEditorPane;
 import javax.swing.JPanel;
 import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkListener;
 
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -148,11 +147,9 @@ public final class DefaultMarkingPrioritySelectionPanel extends JPanel {
     }
 
     if (showHelpLabel) {
-      mHelpLabel = UiUtilities.createHtmlHelpTextArea(LOCALIZER.msg("help", "The selected higlighting color is only shown if the program is higlighted by this plugin only or if the other higlightings have a lower or the same priority. The higlighting colors of the priorities can be changed in the <a href=\"#link\">higlighting settings</a>."), new HyperlinkListener() {
-        public void hyperlinkUpdate(final HyperlinkEvent e) {
-          if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-            SettingsDialog.getInstance().showSettingsTab(SettingsItem.PROGRAMPANELMARKING);
-          }
+      mHelpLabel = UiUtilities.createHtmlHelpTextArea(LOCALIZER.msg("help", "The selected higlighting color is only shown if the program is higlighted by this plugin only or if the other higlightings have a lower or the same priority. The higlighting colors of the priorities can be changed in the <a href=\"#link\">higlighting settings</a>."), e -> {
+        if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+          SettingsDialog.getInstance().showSettingsTab(SettingsItem.PROGRAMPANELMARKING);
         }
       });
 

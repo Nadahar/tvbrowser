@@ -28,7 +28,6 @@ import java.awt.Window;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import com.jgoodies.forms.factories.Borders;
@@ -67,18 +66,6 @@ public class ParamHelpDialog extends JDialog implements WindowClosingIf {
   /**
    * Creates the Help-Dialog
    * 
-   * @param dialog
-   *          Parent
-   * @deprecated since 3.0
-   */
-	@Deprecated
-  public ParamHelpDialog(JDialog dialog) {
-	  this((Window) dialog);
-	}
-
-  /**
-   * Creates the Help-Dialog
-   * 
    * @param parent
    *          Parent window
    * @param lib
@@ -92,47 +79,7 @@ public class ParamHelpDialog extends JDialog implements WindowClosingIf {
     createGui();
     setLocationRelativeTo(parent);
   }
-
-  /**
-   * Creates the Help-Dialog
-   * 
-   * @param dialog
-   *          Parent
-   * @param lib
-   *          Library to use
-   * @deprecated since 3.0
-   */
-	@Deprecated
-  public ParamHelpDialog(JDialog dialog, ParamLibrary lib) {
-	  this((Window) dialog, lib);
-	}
-
-  /**
-   * Creates the Help-Dialog
-   * 
-   * @param frame
-   *          Parent
-   * @deprecated since 3.0
-   */
-	@Deprecated
-  public ParamHelpDialog(JFrame frame) {
-	  this((Window) frame);
-	}
-
-  /**
-   * Creates the Help-Dialog
-   * 
-   * @param frame
-   *          Parent
-   * @param lib
-   *          Library to use
-   * @deprecated since 3.0
-   */
-	@Deprecated
-  public ParamHelpDialog(JFrame frame, ParamLibrary lib) {
-	  this((Window) frame, lib);
-	}
-
+  
   /**
    * Creates the GUI
    */

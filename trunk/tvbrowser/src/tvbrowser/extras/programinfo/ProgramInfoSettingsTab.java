@@ -23,8 +23,6 @@ import javax.swing.JSpinner;
 import javax.swing.JTabbedPane;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.UIManager;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.factories.Borders;
@@ -185,13 +183,11 @@ public class ProgramInfoSettingsTab implements SettingsTab {
     formatPanel.add(bodyLabel, cc.xy(3,formatPanel.getRowCount()));
     formatPanel.add(mBodyFont, cc.xyw(6,formatPanel.getRowCount(),2));
 
-    mUserFont.addChangeListener(new ChangeListener() {
-      public void stateChanged(ChangeEvent e) {
-        mTitleFont.setEnabled(mUserFont.isSelected());
-        mBodyFont.setEnabled(mUserFont.isSelected());
-        titleLabel.setEnabled(mUserFont.isSelected());
-        bodyLabel.setEnabled(mUserFont.isSelected());
-      }
+    mUserFont.addChangeListener(e -> {
+      mTitleFont.setEnabled(mUserFont.isSelected());
+      mBodyFont.setEnabled(mUserFont.isSelected());
+      titleLabel.setEnabled(mUserFont.isSelected());
+      bodyLabel.setEnabled(mUserFont.isSelected());
     });
 
     mTitleFont.setEnabled(mUserFont.isSelected());

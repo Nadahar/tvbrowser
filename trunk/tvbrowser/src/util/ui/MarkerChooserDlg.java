@@ -25,8 +25,6 @@
  */
 package util.ui;
 
-import java.awt.Dialog;
-import java.awt.Frame;
 import java.awt.Window;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -80,34 +78,6 @@ public class MarkerChooserDlg extends JDialog implements WindowClosingIf {
     super(parent);
     setModalityType(ModalityType.DOCUMENT_MODAL);
     init(pluginArr, description);
-  }
-
-  /**
-   * 
-   * @param parent
-   * @param pluginArr
-   *          The initially selected Plugins.
-   * @param description
-   *          A description text below the Plugin list.
-   * @deprecated since 3.0
-   */
-  @Deprecated
-  public MarkerChooserDlg(Dialog parent, Marker[] pluginArr, String description) {
-    this((Window) parent, pluginArr, description);
-  }
-
-  /**
-   * 
-   * @param parent
-   * @param pluginArr
-   *          The initially selected Plugins.
-   * @param description
-   *          A description text below the Plugin list.
-   * @deprecated since 3.0
-   */
-  @Deprecated
-  public MarkerChooserDlg(Frame parent, Marker[] pluginArr, String description) {
-    this((Window) parent, pluginArr, description);
   }
   
   private void init(Marker[] channelArr, String description) {

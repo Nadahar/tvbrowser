@@ -42,7 +42,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerDateModel;
 import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkListener;
 
 import tvbrowser.TVBrowser;
 import tvbrowser.core.Settings;
@@ -97,11 +96,9 @@ public class ButtonsSettingsTab implements SettingsTab {
     mSettingsPn.add(pane, cc.xy(2, 3));
     
     if(TVBrowser.isUsingSystemTray()) {
-      JEditorPane helpLabel = UiUtilities.createHtmlHelpTextArea(mLocalizer.msg("info","The times of the  buttons are also used for the '<a href=\"#link\">{0}</a>' in the tray menu.", TrayOnTimeSettingsTab.getName()), new HyperlinkListener() {
-        public void hyperlinkUpdate(HyperlinkEvent e) {
-          if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-            Plugin.getPluginManager().showSettings(SettingsItem.TRAYONTIMEPROGRAMS);
-          }
+      JEditorPane helpLabel = UiUtilities.createHtmlHelpTextArea(mLocalizer.msg("info","The times of the  buttons are also used for the '<a href=\"#link\">{0}</a>' in the tray menu.", TrayOnTimeSettingsTab.getName()), e -> {
+        if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+          Plugin.getPluginManager().showSettings(SettingsItem.TRAYONTIMEPROGRAMS);
         }
       });
       

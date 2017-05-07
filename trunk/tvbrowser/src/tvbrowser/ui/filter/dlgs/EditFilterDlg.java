@@ -56,8 +56,6 @@ import javax.swing.UIManager;
 import javax.swing.event.CaretListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.PlainDocument;
@@ -215,10 +213,8 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
         return label;
       }
     });
-    mFilterComponentList.addListSelectionListener(new ListSelectionListener() {
-      public void valueChanged(ListSelectionEvent e) {
-        updateBtns();
-      }
+    mFilterComponentList.addListSelectionListener(e -> {
+      updateBtns();
     });
     mFilterComponentList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     

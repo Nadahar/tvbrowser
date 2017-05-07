@@ -61,7 +61,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
 import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkListener;
 
 import devplugin.ActionMenu;
 import devplugin.AfterDataUpdateInfoPanel;
@@ -830,11 +829,9 @@ public class FavoritesPlugin {
 
       for(Favorite fav : errorFavorites) {
         final Favorite finalFav = fav;
-        panel.add(UiUtilities.createHtmlHelpTextArea("<a href=\"#link\">" + fav.getName() + "</a>",new HyperlinkListener() {
-          public void hyperlinkUpdate(HyperlinkEvent e) {
-            if(e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-              editFavorite(finalFav);
-            }
+        panel.add(UiUtilities.createHtmlHelpTextArea("<a href=\"#link\">" + fav.getName() + "</a>",e -> {
+          if(e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+            editFavorite(finalFav);
           }
         }));
       }

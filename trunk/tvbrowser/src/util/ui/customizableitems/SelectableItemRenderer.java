@@ -24,7 +24,6 @@
 
 package util.ui.customizableitems;
 
-import java.awt.BorderLayout;
 import java.awt.Component;
 import java.util.HashMap;
 

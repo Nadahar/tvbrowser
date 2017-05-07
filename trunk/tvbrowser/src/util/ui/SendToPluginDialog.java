@@ -4,9 +4,7 @@
 package util.ui;
 
 import java.awt.BorderLayout;
-import java.awt.Dialog;
 import java.awt.Dimension;
-import java.awt.Frame;
 import java.awt.Window;
 import java.awt.event.ItemEvent;
 import java.util.Arrays;
@@ -68,57 +66,7 @@ public class SendToPluginDialog extends JDialog implements WindowClosingIf {
   public SendToPluginDialog(ProgramReceiveIf caller, Window owner, Program[] prg) {
     this(caller, null, owner, prg);
   }
-
-  /**
-   * Create the Dialog
-   * 
-   * @param caller
-   *          Sender-Plugin
-   * @param owner
-   *          Owner Frame
-   * @param prg
-   *          List of Programs to send
-   * @deprecated since 3.0
-   */
-  @Deprecated
-  public SendToPluginDialog(ProgramReceiveIf caller, Frame owner, Program[] prg) {
-    this(caller, null, (Window) owner, prg);
-  }
-
-  /**
-   * Create the Dialog
-   * 
-   * @param caller
-   *          Sender-Plugin
-   * @param owner
-   *          Owner Frame
-   * @param prg
-   *          List of Programs to send
-   * @deprecated since 3.0
-   */
-  @Deprecated
-  public SendToPluginDialog(ProgramReceiveIf caller, Dialog owner, Program[] prg) {
-    this(caller, null, (Window) owner, prg);
-  }
-
-  /**
-   * Create the Dialog
-   * 
-   * @param caller
-   *          Sender-Plugin
-   * @param callerTarget
-   *          The target which calls this dialog
-   * @param owner
-   *          Owner Frame
-   * @param prg
-   *          List of Programs to send
-   * @deprecated since 3.0
-   */
-  @Deprecated
-  public SendToPluginDialog(ProgramReceiveIf caller, ProgramReceiveTarget callerTarget, Frame owner, Program[] prg) {
-    this(caller, callerTarget, (Window) owner, prg);
-  }
-
+  
   /**
    * Create the Dialog
    * 
@@ -141,26 +89,7 @@ public class SendToPluginDialog extends JDialog implements WindowClosingIf {
     mCallerTarget = callerTarget;
     createDialog(owner);
   }
-
-  /**
-   * Create the Dialog
-   * 
-   * @param caller
-   *          Sender-Plugin
-   * @param callerTarget
-   *          The target which calls this dialog
-   * @param owner
-   *          Owner Frame
-   * @param prg
-   *          List of Programs to send
-   * @since 2.5
-   * @deprecated since 3.0
-   */
-  @Deprecated
-  public SendToPluginDialog(ProgramReceiveIf caller, ProgramReceiveTarget callerTarget, Dialog owner, Program[] prg) {
-    this(caller, callerTarget, (Window) owner, prg);
-  }
-
+  
   /**
    * Creates the Dialog
    */

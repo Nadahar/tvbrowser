@@ -36,7 +36,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkListener;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -97,13 +96,11 @@ public class ChannelGroupInfoDialog extends JDialog implements WindowClosingIf{
     infoPanel.setEditable(false);
     infoPanel.setText(generateHtml(doc));
 
-    infoPanel.addHyperlinkListener(new HyperlinkListener() {
-      public void hyperlinkUpdate(HyperlinkEvent evt) {
-        if (evt.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-          URL url = evt.getURL();
-          if (url != null) {
-              Launch.openURL(url.toString());
-          }
+    infoPanel.addHyperlinkListener(evt -> {
+      if (evt.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+        URL url = evt.getURL();
+        if (url != null) {
+            Launch.openURL(url.toString());
         }
       }
     });

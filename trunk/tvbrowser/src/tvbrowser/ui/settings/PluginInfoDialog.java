@@ -13,7 +13,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.UIManager;
 import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkListener;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -95,13 +94,11 @@ public class PluginInfoDialog extends JDialog implements WindowClosingIf {
     
     UiUtilities.updateHtmlHelpTextArea(infoPanel,generateHtml(doc),UIManager.getColor("EditorPane.background"));
 
-    infoPanel.addHyperlinkListener(new HyperlinkListener() {
-      public void hyperlinkUpdate(HyperlinkEvent evt) {
-        if (evt.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-          URL url = evt.getURL();
-          if (url != null) {
-              Launch.openURL(url.toString());
-          }
+    infoPanel.addHyperlinkListener(evt -> {
+      if (evt.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+        URL url = evt.getURL();
+        if (url != null) {
+            Launch.openURL(url.toString());
         }
       }
     });

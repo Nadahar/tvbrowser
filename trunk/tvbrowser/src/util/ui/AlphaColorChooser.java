@@ -39,7 +39,6 @@ import java.awt.Window;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -119,43 +118,6 @@ public class AlphaColorChooser extends JDialog implements ChangeListener {
     mDefaultColor = color;
     setColor(color);
   }
-
-  /**
-   * Creates the Dialog
-   * 
-   * @param parent
-   *          Parent-Dialog
-   * @param title
-   *          Title
-   * @param color
-   *          Color to start with
-   * @param stdColor
-   *          The standard color
-   * @deprecated since 3.0
-   */
-  @Deprecated
-  public AlphaColorChooser(JDialog parent, String title, Color color,
-      Color stdColor) {
-    this((Window) parent, title, color, stdColor);
-  }
-
-  /**
-   * Creates the Dialog
-   * 
-   * @param parent
-   *          Parent-Frame
-   * @param title
-   *          Title
-   * @param color
-   *          Color to start with
-   * @param stdColor
-   *          The standard color
-   * @deprecated since 3.0
-   */
-    @Deprecated
-    public AlphaColorChooser(JFrame parent, String title, Color color, Color stdColor) {
-      this((Window) parent, title, color, stdColor);
-    }
     
     /**
      * Create the GUI

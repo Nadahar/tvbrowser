@@ -133,7 +133,6 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
         doubleClickTime = (Integer) property;
       }
     } catch (Exception e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
     if (doubleClickTime < 50 || doubleClickTime > 2000) {

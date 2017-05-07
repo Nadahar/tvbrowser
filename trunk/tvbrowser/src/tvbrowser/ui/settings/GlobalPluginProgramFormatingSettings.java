@@ -33,8 +33,6 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 
 import tvbrowser.core.plugin.programformating.GlobalPluginProgramFormating;
 import tvbrowser.core.plugin.programformating.GlobalPluginProgramFormatingManager;
@@ -112,12 +110,10 @@ public class GlobalPluginProgramFormatingSettings implements SettingsTab, Action
       pb.add(buttonPanel, cc.xy(2,5));
       pb.addLabel(mLocalizer.msg("help","<html>This list of formating can be used by several plugins. So a formating don't have to be entered in every plugin that should use the formating. The selection of the formating can be done in the settings of the plugin.</html>"), cc.xy(2,7));
 
-      mConfigurations.getList().addListSelectionListener(new ListSelectionListener() {
-        public void valueChanged(ListSelectionEvent e) {
-          if(!e.getValueIsAdjusting()) {
-            mEdit.setEnabled(mConfigurations.getList().getSelectedIndex() != -1);
-            mDelete.setEnabled(mConfigurations.getList().getSelectedIndex() != -1);
-          }
+      mConfigurations.getList().addListSelectionListener(e -> {
+        if(!e.getValueIsAdjusting()) {
+          mEdit.setEnabled(mConfigurations.getList().getSelectedIndex() != -1);
+          mDelete.setEnabled(mConfigurations.getList().getSelectedIndex() != -1);
         }
       });
 

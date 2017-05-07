@@ -31,8 +31,6 @@ import javax.swing.JComboBox;
 import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkListener;
 
 import tvbrowser.core.Settings;
 import tvbrowser.ui.settings.util.ColorButton;
@@ -126,9 +124,7 @@ public class MarkingsSettingsTab implements SettingsTab {
     markings.add(new ColorButton(mProgramItemMaxMarkedColorLb), cc.xy(5,9));
 
     
-    mHelpLabel = UiUtilities.createHtmlHelpTextArea(mLocalizer.msg("color.help","The priority that a plugin uses for a program is used to decide which color have to be used for the marking. A higher priority color replaces a lower priority color. The setting for the default color is only for plugins that do not care about the priority. But it works like for plugins that uses the priorities, so if you select the highest priority color there, all marking of plugin which do not care about the priority will replace lower marking colors."), new HyperlinkListener() {
-      public void hyperlinkUpdate(HyperlinkEvent e) {
-      }
+    mHelpLabel = UiUtilities.createHtmlHelpTextArea(mLocalizer.msg("color.help","The priority that a plugin uses for a program is used to decide which color have to be used for the marking. A higher priority color replaces a lower priority color. The setting for the default color is only for plugins that do not care about the priority. But it works like for plugins that uses the priorities, so if you select the highest priority color there, all marking of plugin which do not care about the priority will replace lower marking colors."), e -> {
     });
     
     pb.addSeparator(mLocalizer.msg("color.programMarked","Highlighting by plugins"), cc.xyw(1,1,2));

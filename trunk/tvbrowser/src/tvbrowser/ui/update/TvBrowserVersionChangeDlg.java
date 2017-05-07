@@ -37,7 +37,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
 import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkListener;
 
 import com.jgoodies.forms.builder.ButtonBarBuilder;
 import com.jgoodies.forms.builder.PanelBuilder;
@@ -93,11 +92,9 @@ public class TvBrowserVersionChangeDlg extends JDialog implements WindowClosingI
     l.setBorder(Borders.createEmptyBorder("10dlu,3dlu,5dlu,3dlu"));
     
     JEditorPane pane = UiUtilities.createHtmlHelpTextArea(mLocalizer.msg("text","<div style=\"font-size:large;text-align:justify\"><p>TV-Browser is developed on a regular basis. Every version contains changes to improve TV-Browser, but sometimes it is necessary to change some functions that could lead to discontinued support for old Plugin versions.</p><br><div style=\"font-weight:bold;color:red\">We recommend to update all installed plugins now. (It can happen that a plugin update is obligatory.)</div><p>You will need an Internet connection.</b> If you currently don't have an internet connection we recommend to close TV-Browser now and using the previous version until a Plugin update is possible.</p><p>Do you want to update your Plugins now (this may take some time)?</p></div>"),
-        new HyperlinkListener() {
-          public void hyperlinkUpdate(HyperlinkEvent e) {
-            if(e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-              Launch.openURL(e.getURL().toString());
-            }
+        e -> {
+          if(e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+            Launch.openURL(e.getURL().toString());
           }
         },UIManager.getColor("EditorPane.background"));
     

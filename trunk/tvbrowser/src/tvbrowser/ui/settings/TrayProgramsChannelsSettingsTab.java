@@ -38,10 +38,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.SwingConstants;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkListener;
 
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.factories.Borders;
@@ -101,11 +98,9 @@ public class TrayProgramsChannelsSettingsTab implements SettingsTab {
         Settings.propTraySpecialChannels.getChannelArray(),
         Settings.propSubscribedChannels.getChannelArray(), true);
     
-    mHelpLabel = UiUtilities.createHtmlHelpTextArea(mLocalizer.msg("help","The Tray is deactivated. To activate these settings activate the option <b>Tray activated</b> in the <a href=\"#link\">Tray Base settings</a>."),new HyperlinkListener() {
-      public void hyperlinkUpdate(HyperlinkEvent e) {
-        if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-          SettingsDialog.getInstance().showSettingsTab(SettingsItem.TRAY);
-        }
+    mHelpLabel = UiUtilities.createHtmlHelpTextArea(mLocalizer.msg("help","The Tray is deactivated. To activate these settings activate the option <b>Tray activated</b> in the <a href=\"#link\">Tray Base settings</a>."),e -> {
+      if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+        SettingsDialog.getInstance().showSettingsTab(SettingsItem.TRAY);
       }
     });
     
@@ -119,10 +114,8 @@ public class TrayProgramsChannelsSettingsTab implements SettingsTab {
     Dimension dim = valueLabel.getPreferredSize();
     valueLabel.setPreferredSize(new Dimension(Sizes.dialogUnitXAsPixel(20, builder.getPanel()), dim.height));
 
-    mChannelWidth.addChangeListener(new ChangeListener() {
-      public void stateChanged(ChangeEvent e) {
-        valueLabel.setText(String.valueOf(mChannelWidth.getValue()));
-      }
+    mChannelWidth.addChangeListener(e -> {
+      valueLabel.setText(String.valueOf(mChannelWidth.getValue()));
     });
     
     JButton reset = new JButton(Localizer.getLocalization(Localizer.I18N_DEFAULT));

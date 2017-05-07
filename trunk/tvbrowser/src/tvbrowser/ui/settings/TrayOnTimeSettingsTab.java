@@ -8,7 +8,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkListener;
 
 import tvbrowser.core.Settings;
 import tvbrowser.ui.settings.util.ColorButton;
@@ -87,19 +86,15 @@ public class TrayOnTimeSettingsTab implements SettingsTab {
     mDarkColorLb = new ColorLabel(Settings.propTrayOnTimeProgramsDarkBackground.getColor());
     mDarkColorLb.setStandardColor(Settings.propTrayOnTimeProgramsDarkBackground.getDefaultColor());
     
-    mTimeHelp =  UiUtilities.createHtmlHelpTextArea(mLocalizer.msg("helpTime","If you want to change the times of this view, you simply have to change the times of the <a href=\"#link\">time buttons</a>."), new HyperlinkListener() {
-      public void hyperlinkUpdate(HyperlinkEvent e) {
-        if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-          SettingsDialog.getInstance().showSettingsTab(SettingsItem.TIMEBUTTONS);
-        }
+    mTimeHelp =  UiUtilities.createHtmlHelpTextArea(mLocalizer.msg("helpTime","If you want to change the times of this view, you simply have to change the times of the <a href=\"#link\">time buttons</a>."), e -> {
+      if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+        SettingsDialog.getInstance().showSettingsTab(SettingsItem.TIMEBUTTONS);
       }
     });
     
-    mHelpLabel = UiUtilities.createHtmlHelpTextArea(mLocalizer.msg("help","The Tray is deactivated. To activate these settings activate the option <b>Tray activated</b> in the <a href=\"#link\">Tray Base settings</a>."), new HyperlinkListener() {
-      public void hyperlinkUpdate(HyperlinkEvent e) {
-        if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-          SettingsDialog.getInstance().showSettingsTab(SettingsItem.TRAY);
-        }
+    mHelpLabel = UiUtilities.createHtmlHelpTextArea(mLocalizer.msg("help","The Tray is deactivated. To activate these settings activate the option <b>Tray activated</b> in the <a href=\"#link\">Tray Base settings</a>."), e -> {
+      if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+        SettingsDialog.getInstance().showSettingsTab(SettingsItem.TRAY);
       }
     });
     

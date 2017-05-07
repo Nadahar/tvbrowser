@@ -10,8 +10,6 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Rectangle;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 
 import javax.swing.JComponent;
 import javax.swing.JTextArea;
@@ -84,10 +82,8 @@ public class LineNumberHeader extends JComponent {
       }
     });
 
-    this.textComponent.addPropertyChangeListener("font", new PropertyChangeListener() {
-      public void propertyChange(PropertyChangeEvent evt) {
-        setMetrics();
-      }
+    this.textComponent.addPropertyChangeListener("font", e -> {
+      setMetrics();
     });
     // Initiale Werte setzen
     setMetrics();

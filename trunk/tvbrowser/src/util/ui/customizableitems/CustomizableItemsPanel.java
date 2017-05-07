@@ -44,7 +44,6 @@ import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 
 import util.ui.TVBrowserIcons;
 import util.ui.UiUtilities;
@@ -80,35 +79,25 @@ public class CustomizableItemsPanel<E> extends JPanel {
     mLeftList = new JList<>(mLeftListModel);
     mLeftList.setVisibleRowCount(10);
     mLeftList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-    mLeftList.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-      public void valueChanged(ListSelectionEvent evt) {
-        updateEnabled();
-      }
+    mLeftList.getSelectionModel().addListSelectionListener(e -> {
+      updateEnabled();
     });
 
     mRightListModel = new DefaultListModel<>();
     mRightList = new JList<>(mRightListModel);
     mRightList.setVisibleRowCount(10);
     mRightList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-    mRightList.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-      public void valueChanged(ListSelectionEvent evt) {
-        updateEnabled();
-      }
+    mRightList.getSelectionModel().addListSelectionListener(e -> {
+      updateEnabled();
     });
 
-    mLeftList.addListSelectionListener(new ListSelectionListener() {
-      public void valueChanged(ListSelectionEvent e) {
-        fireLeftListSelectionChanged(e);
-      }
-    }
-    );
+    mLeftList.addListSelectionListener(e -> {
+      fireLeftListSelectionChanged(e);
+    });
 
-    mRightList.addListSelectionListener(new ListSelectionListener() {
-      public void valueChanged(ListSelectionEvent e) {
-        fireRightListSelectionChanged(e);
-      }
-    }
-    );
+    mRightList.addListSelectionListener(e -> {
+      fireRightListSelectionChanged(e);
+    });
 
     mLeftLabel=new JLabel(leftText);
     mRightLabel=new JLabel(rightText);
@@ -373,27 +362,6 @@ public class CustomizableItemsPanel<E> extends JPanel {
       listener.itemsTransferredToRightList(items);
     }
   }
-
-        /*
-  public void addListSelectionListenerLeft(final CustomizableItemsListener listener) {
-    mLeftList.addListSelectionListener(new ListSelectionListener() {
-      public void valueChanged(ListSelectionEvent e) {
-        listener.leftListSelectionChanged(e);
-      }
-    }
-    );
-  }
-
-  public void addListSelectionListenerRight(final CustomizableItemsListener listener) {
-    mRightList.addListSelectionListener(new ListSelectionListener() {
-      public void valueChanged(ListSelectionEvent e) {
-        listener.rightListSelectionChanged(e);
-      }
-    }
-    );
-  }
-       */
-
 
   public static <E> CustomizableItemsPanel<E> createCustomizableItemsPanel(String leftText, String rightText) {
     return new CustomizableItemsPanel<E>(leftText, rightText);
