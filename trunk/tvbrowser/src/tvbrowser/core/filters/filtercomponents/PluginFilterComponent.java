@@ -34,17 +34,17 @@ import java.util.Arrays;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
 
-import tvbrowser.core.plugin.PluginProxy;
-import tvbrowser.core.plugin.PluginProxyManager;
 import devplugin.Marker;
 import devplugin.Program;
+import tvbrowser.core.plugin.PluginProxy;
+import tvbrowser.core.plugin.PluginProxyManager;
 
 public class PluginFilterComponent extends AbstractFilterComponent {
 
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer
       .getLocalizerFor(PluginFilterComponent.class);
 
-  private JComboBox mBox;
+  private JComboBox<PluginProxy> mBox;
 
   private String mPluginId;
 
@@ -104,7 +104,7 @@ public class PluginFilterComponent extends AbstractFilterComponent {
         .getActivatedPlugins();
     Arrays.sort(plugins, new PluginProxy.Comparator());
 
-    mBox = new JComboBox(plugins);
+    mBox = new JComboBox<>(plugins);
     if (mPluginId != null) {
       PluginProxy plugin = PluginProxyManager.getInstance().getPluginForId(mPluginId);
       if (plugin != null) {

@@ -56,13 +56,13 @@ import util.ui.UiUtilities;
  *
  * @author Martin Oberhauser
  */
-public class CustomizableItemsPanel extends JPanel {
+public class CustomizableItemsPanel<E> extends JPanel {
 
   private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(CustomizableItemsPanel.class);
 
-  private final DefaultListModel mLeftListModel, mRightListModel;
-  private final JList mLeftList, mRightList;
+  private final DefaultListModel<E> mLeftListModel, mRightListModel;
+  private final JList<E> mLeftList, mRightList;
   private JLabel mRightLabel, mLeftLabel;
 
   private JButton mRightBt, mLeftBt, mUpBt, mDownBt;
@@ -78,8 +78,8 @@ public class CustomizableItemsPanel extends JPanel {
     JPanel leftPanel=new JPanel(new BorderLayout());
     JPanel rightPanel=new JPanel(new BorderLayout());
 
-    mLeftListModel = new DefaultListModel();
-    mLeftList = new JList(mLeftListModel);
+    mLeftListModel = new DefaultListModel<>();
+    mLeftList = new JList<>(mLeftListModel);
     mLeftList.setVisibleRowCount(10);
     mLeftList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
     mLeftList.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
@@ -88,8 +88,8 @@ public class CustomizableItemsPanel extends JPanel {
       }
     });
 
-    mRightListModel = new DefaultListModel();
-    mRightList = new JList(mRightListModel);
+    mRightListModel = new DefaultListModel<>();
+    mRightList = new JList<>(mRightListModel);
     mRightList.setVisibleRowCount(10);
     mRightList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
     mRightList.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
@@ -254,40 +254,40 @@ public class CustomizableItemsPanel extends JPanel {
     mRightListModel.clear();
   }
   
-  public JList getLeftList() {
+  public JList<E> getLeftList() {
     return mLeftList;
   }
   
-  public JList getRightList() {
+  public JList<E> getRightList() {
     return mRightList;
   }
 
-  public void addElementLeft(Object item) {
+  public void addElementLeft(E item) {
     mLeftListModel.addElement(item);
   }
 
-  public void addElementRight(Object item) {
+  public void addElementRight(E item) {
     mRightListModel.addElement(item);
   }
 
-  public void insertElementLeft(int index, Object item) {
+  public void insertElementLeft(int index, E item) {
     mLeftListModel.add(index, item);
   }
 
-  public void insertElementRight(int index, Object item) {
+  public void insertElementRight(int index, E item) {
     mRightListModel.add(index, item);
   }
 
-  public void setElementsLeft(Object[] items) {
+  public void setElementsLeft(E[] items) {
     mLeftListModel.clear();
-    for (Object item : items) {
+    for (E item : items) {
       mLeftListModel.addElement(item);
     }
   }
 
-  public void setElementsRight(Object[] items) {
+  public void setElementsRight(E[] items) {
     mRightListModel.clear();
-    for (Object item : items) {
+    for (E item : items) {
       mRightListModel.addElement(item);
     }
   }
@@ -332,7 +332,7 @@ public class CustomizableItemsPanel extends JPanel {
       return getSelectedValues(mLeftList);
   }
 
-  private Object[] getSelectedValues(JList list) {
+  private Object[] getSelectedValues(JList<E> list) {
     int[] inx=list.getSelectedIndices();
     Object[] res=new Object[inx.length];
     for (int i=0;i<inx.length;i++) {
@@ -342,7 +342,7 @@ public class CustomizableItemsPanel extends JPanel {
   }
 
 
-  public void setCellRenderer(ListCellRenderer renderer) {
+  public void setCellRenderer(ListCellRenderer<E> renderer) {
     mLeftList.setCellRenderer(renderer);
     mRightList.setCellRenderer(renderer);
   }
@@ -405,8 +405,8 @@ public class CustomizableItemsPanel extends JPanel {
        */
 
 
-  public static CustomizableItemsPanel createCustomizableItemsPanel(String leftText, String rightText) {
-    return new CustomizableItemsPanel(leftText, rightText);
+  public static <E> CustomizableItemsPanel<E> createCustomizableItemsPanel(String leftText, String rightText) {
+    return new CustomizableItemsPanel<E>(leftText, rightText);
   }
   
   private void updateEnabled() {

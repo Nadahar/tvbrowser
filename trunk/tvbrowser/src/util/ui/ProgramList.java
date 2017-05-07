@@ -33,6 +33,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.AbstractAction;
@@ -47,28 +48,27 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 
+import devplugin.ContextMenuIf;
+import devplugin.Date;
+import devplugin.Plugin;
+import devplugin.PluginManager;
+import devplugin.Program;
 import tvbrowser.core.contextmenu.ContextMenuManager;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.core.plugin.PluginStateListener;
 import util.exc.TvBrowserException;
-import util.io.IOUtilities;
 import util.programkeyevent.ProgramKeyAndContextMenuListener;
 import util.programkeyevent.ProgramKeyEventHandler;
 import util.programmouseevent.ProgramMouseAndContextMenuListener;
 import util.programmouseevent.ProgramMouseEventHandler;
 import util.settings.PluginPictureSettings;
 import util.settings.ProgramPanelSettings;
-import devplugin.ContextMenuIf;
-import devplugin.Date;
-import devplugin.Plugin;
-import devplugin.PluginManager;
-import devplugin.Program;
 
 /**
  * This Class extends a JList for showing Programs
  */
-public class ProgramList extends JList implements ChangeListener,
+public class ProgramList extends JList<Object> implements ChangeListener,
     ListDataListener, PluginStateListener, ProgramMouseAndContextMenuListener, 
     ProgramKeyAndContextMenuListener {
   private final static Localizer mLocalizer = Localizer.getLocalizerFor(ProgramList.class);
@@ -111,7 +111,7 @@ public class ProgramList extends JList implements ChangeListener,
    * @param programs
    *          Model with Programs to show
    */
-  public ProgramList(ListModel programs) {
+  public ProgramList(ListModel<Object> programs) {
     this(programs, new PluginPictureSettings(
         PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE));
   }
@@ -162,7 +162,7 @@ public class ProgramList extends JList implements ChangeListener,
    * 
    * @since 2.2.2
    */
-  public ProgramList(ListModel programs, ProgramPanelSettings settings) {
+  public ProgramList(ListModel<Object> programs, ProgramPanelSettings settings) {
     super(programs);
     programs.addListDataListener(this);
     initialize(settings);
@@ -207,7 +207,7 @@ public class ProgramList extends JList implements ChangeListener,
    * 
    * @since 2.6
    */
-  public ProgramList(ListModel programs, PluginPictureSettings settings) {
+  public ProgramList(ListModel<Object> programs, PluginPictureSettings settings) {
     this(programs, new ProgramPanelSettings(settings, false));
   }
   
@@ -251,14 +251,14 @@ public class ProgramList extends JList implements ChangeListener,
   }
 
   private void addToPrograms() {
-    ListModel list = getModel();
+    ListModel<Object> list = getModel();
     
     synchronized (list) {
       addToPrograms(0, list.getSize() - 1, list);
     }
   }
 
-  private void addToPrograms(int indexFirst, int indexLast, ListModel list) {
+  private void addToPrograms(int indexFirst, int indexLast, ListModel<Object> list) {
     if(list.getSize() > indexLast) {
       for (int i = indexFirst; i <= indexLast; i++) {
         Object element = list.getElementAt(i);
@@ -357,7 +357,7 @@ public class ProgramList extends JList implements ChangeListener,
   }
 
   public void intervalAdded(ListDataEvent e) {
-    ListModel list = getModel();
+    ListModel<Object> list = getModel();
     
     synchronized (list) {
       addToPrograms(e.getIndex0(), e.getIndex1(), list);
@@ -373,14 +373,14 @@ public class ProgramList extends JList implements ChangeListener,
    * @since 2.2
    */
   public Program[] getSelectedPrograms() {
-    Object[] o = getSelectedValues();
+    List<Object> o = getSelectedValuesList();
 
-    if (o == null || o.length == 0) {
+    if (o == null || o.size() == 0) {
       return null;
     }
 
     if(mSeparatorsCreated) {
-      ArrayList<Program> progs = new ArrayList<Program>(o.length);
+      ArrayList<Program> progs = new ArrayList<Program>(o.size());
       
       for(Object p : o) {
         if(p instanceof Program) {
@@ -391,10 +391,10 @@ public class ProgramList extends JList implements ChangeListener,
       return progs.toArray(new Program[progs.size()]);
     }
     else {
-      Program[] p = new Program[o.length];
+      Program[] p = new Program[o.size()];
       
-      for (int i = 0; i < o.length; i++) {
-        p[i] = (Program) o[i];
+      for (int i = 0; i < o.size(); i++) {
+        p[i] = (Program) o.get(i);
       }
   
       return p;
@@ -463,7 +463,7 @@ public class ProgramList extends JList implements ChangeListener,
     if(getModel() instanceof DefaultListModel) {
       mSeparatorsCreated = true;
       
-      DefaultListModel newModel = new DefaultListModel();
+      DefaultListModel<Object> newModel = new DefaultListModel<>();
       
       Program previous = null;
       
@@ -490,7 +490,7 @@ public class ProgramList extends JList implements ChangeListener,
     }
   }
   
-  public void setModel(ListModel model) {
+  public void setModel(ListModel<Object> model) {
     mSeparatorsCreated = false;
     super.setModel(model);
   }

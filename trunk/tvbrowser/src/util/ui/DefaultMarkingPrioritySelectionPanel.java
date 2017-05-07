@@ -53,7 +53,7 @@ public final class DefaultMarkingPrioritySelectionPanel extends JPanel {
   /**
    * the dropdowns for the mark priority selection.
    */
-  private ArrayList<JComboBox<String>> mPrioritySelection;
+  private ArrayList<Object> mPrioritySelection;
 
   /**
    * a comment/help text shown below the drop down for the
@@ -133,16 +133,18 @@ public final class DefaultMarkingPrioritySelectionPanel extends JPanel {
       pb.addRow();
       mLabel[i] = pb.addLabel(label[i], cc.xy(2, pb.getRowCount()));
 
-      mPrioritySelection.add(new JComboBox<>(getMarkingColorNames(true)));
-      mPrioritySelection.get(i).setSelectedIndex(priority[i] + 1);
-      mPrioritySelection.get(i).setRenderer(new MarkPriorityComboBoxRenderer(mPrioritySelection.get(i).getRenderer()));
+      final JComboBox<Object> box = new JComboBox<>(getMarkingColorNames(true));
+      
+      mPrioritySelection.add(box);
+      box.setSelectedIndex(priority[i] + 1);
+      box.setRenderer(new MarkPriorityComboBoxRenderer(box.getRenderer()));
       /*
       mPrioritySelection[i] = new JComboBox(getMarkingColorNames(true));
       mPrioritySelection[i].setSelectedIndex(priority[i] + 1);
       mPrioritySelection[i].setRenderer(new MarkPriorityComboBoxRenderer(mPrioritySelection[i].getRenderer()));
 
       pb.add(mPrioritySelection[i], cc.xy(4, pb.getRowCount()));*/
-      pb.add(mPrioritySelection.get(i), cc.xy(4, pb.getRowCount()));
+      pb.add(box, cc.xy(4, pb.getRowCount()));
     }
 
     if (showHelpLabel) {
@@ -210,16 +212,18 @@ public final class DefaultMarkingPrioritySelectionPanel extends JPanel {
   /**
    * @return The selected marking priority of the first dropdown
    */
+  @SuppressWarnings("unchecked")
   public int getSelectedPriority() {
-    return mPrioritySelection.get(0).getSelectedIndex() - 1;
+    return ((JComboBox<Object>)mPrioritySelection.get(0)).getSelectedIndex() - 1;
   }
 
   /**
    * @param index the index of the dropdown
    * @return The selected marking priority of the dropdown with the given index
    */
+  @SuppressWarnings("unchecked")
   public int getSelectedPriority(final int index) {
-    return mPrioritySelection.get(index).getSelectedIndex() - 1;
+    return ((JComboBox<Object>)mPrioritySelection.get(0)).getSelectedIndex() - 1;
   }
 
   /**
@@ -264,6 +268,7 @@ public final class DefaultMarkingPrioritySelectionPanel extends JPanel {
    * @param enabled true to enable this panel, false otherwise
    * @see javax.swing.JComponent#setEnabled(boolean)
    */
+  @SuppressWarnings("unchecked")
   @Override
   public void setEnabled(final boolean enabled) {
     if (mSeparator != null) {
@@ -276,7 +281,7 @@ public final class DefaultMarkingPrioritySelectionPanel extends JPanel {
     for (int i = 0; i < mLabel.length; i++)
     {
       mLabel[i].setEnabled(enabled);
-      mPrioritySelection.get(i).setEnabled(enabled);
+      ((JComboBox<Object>)mPrioritySelection.get(0)).setEnabled(enabled);
     }
   }
 }

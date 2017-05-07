@@ -312,7 +312,7 @@ public abstract class AbstractTvDataService {
    * @since 3.0.2
    */
   public String getPluginCategory() {
-    return Plugin.ALL_CATEGORY;
+    return Plugin.CATEGORY_ALL;
   }
     
   /**

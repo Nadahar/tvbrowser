@@ -122,7 +122,7 @@ public interface ProgramSearcher {
    * @since 2.7
    */
   public Program[] search(ProgramFieldType[] fieldArr, Date startDate,
-      int nrDays, Channel[] channels, boolean sortByStartTime, ProgressMonitor progress, DefaultListModel listModel);
+      int nrDays, Channel[] channels, boolean sortByStartTime, ProgressMonitor progress, DefaultListModel<Object> listModel);
 
   /**
    * Stops the seach if the searcher supports it.

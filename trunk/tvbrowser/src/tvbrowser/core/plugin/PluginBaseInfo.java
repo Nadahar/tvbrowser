@@ -32,7 +32,7 @@ import devplugin.Version;
  * <p>
  * @author René Mach
  */
-public class PluginBaseInfo implements Comparable {
+public class PluginBaseInfo implements Comparable<PluginBaseInfo> {
   private String mPluginId;
   private Version mVersion;
   
@@ -65,16 +65,8 @@ public class PluginBaseInfo implements Comparable {
     return mVersion;
   }
   
-  public int compareTo(Object o) {
-    if(o != null && o instanceof PluginBaseInfo) {
-      if(mPluginId.equals(((PluginBaseInfo)o).mPluginId)) {
-        return 0;
-      }
-      
-      return -1;
-    }
-    
-    return 0;
+  public int compareTo(PluginBaseInfo o) {
+    return mPluginId.compareToIgnoreCase(o.mPluginId);
   }
   
   public String toString() {

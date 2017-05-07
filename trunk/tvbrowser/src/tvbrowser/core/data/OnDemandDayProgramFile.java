@@ -246,15 +246,15 @@ public class OnDemandDayProgramFile {
       for (int i = 0; i < fieldCount; i++) {
         int typeId = objIn.readInt();
         ProgramFieldType type = ProgramFieldType.getTypeForId(typeId);
-        if (type.getFormat() == ProgramFieldType.BINARY_FORMAT) {
+        if (type.getFormat() == ProgramFieldType.FORMAT_BINARY) {
           byte[] value = (byte[]) objIn.readObject();
           prog.setBinaryField(type, value);
-        } else if (type.getFormat() == ProgramFieldType.TEXT_FORMAT) {
+        } else if (type.getFormat() == ProgramFieldType.FORMAT_TEXT) {
           String value = (String) objIn.readObject();
           prog.setTextField(type, value);
-        } else if (type.getFormat() == ProgramFieldType.INT_FORMAT) {
+        } else if (type.getFormat() == ProgramFieldType.FORMAT_INT) {
           prog.setIntField(type, objIn.readInt());
-        } else if (type.getFormat() == ProgramFieldType.TIME_FORMAT) {
+        } else if (type.getFormat() == ProgramFieldType.FORMAT_TIME) {
           prog.setTimeField(type, objIn.readInt());
         }
       }
@@ -333,9 +333,9 @@ public class OnDemandDayProgramFile {
         int typeId = dataFile.readInt();
         ProgramFieldType type = ProgramFieldType.getTypeForId(typeId);
 
-        if (type.getFormat() == ProgramFieldType.UNKNOWN_FORMAT) {
+        if (type.getFormat() == ProgramFieldType.FORMAT_UNKNOWN) {
           return null;
-        } else if (type.getFormat() == ProgramFieldType.BINARY_FORMAT) {
+        } else if (type.getFormat() == ProgramFieldType.FORMAT_BINARY) {
           long position = dataFile.getFilePointer();
 
           int n = dataFile.readInt();
@@ -348,7 +348,7 @@ public class OnDemandDayProgramFile {
           } else {
             prog.setBinaryField(type, value);
           }
-        } else if (type.getFormat() == ProgramFieldType.TEXT_FORMAT) {
+        } else if (type.getFormat() == ProgramFieldType.FORMAT_TEXT) {
           long position = dataFile.getFilePointer();
           String value = dataFile.readUTF();
           if (value != null) {
@@ -361,9 +361,9 @@ public class OnDemandDayProgramFile {
               }
             }
           }
-        } else if (type.getFormat() == ProgramFieldType.INT_FORMAT) {
+        } else if (type.getFormat() == ProgramFieldType.FORMAT_INT) {
           prog.setIntField(type, dataFile.readInt());
-        } else if (type.getFormat() == ProgramFieldType.TIME_FORMAT) {
+        } else if (type.getFormat() == ProgramFieldType.FORMAT_TIME) {
           prog.setTimeField(type, dataFile.readInt());
         }
       }
@@ -384,15 +384,15 @@ public class OnDemandDayProgramFile {
       ProgramFieldType type = iter.next();
       dataFile.writeInt(type.getTypeId());
 
-      if (type.getFormat() == ProgramFieldType.BINARY_FORMAT) {
+      if (type.getFormat() == ProgramFieldType.FORMAT_BINARY) {
         byte[] b = program.getBinaryField(type);
         dataFile.writeInt(b.length);
         dataFile.write(b);
-      } else if (type.getFormat() == ProgramFieldType.TEXT_FORMAT) {
+      } else if (type.getFormat() == ProgramFieldType.FORMAT_TEXT) {
         dataFile.writeUTF(program.getTextField(type));
-      } else if (type.getFormat() == ProgramFieldType.INT_FORMAT) {
+      } else if (type.getFormat() == ProgramFieldType.FORMAT_INT) {
         dataFile.writeInt(program.getIntField(type));
-      } else if (type.getFormat() == ProgramFieldType.TIME_FORMAT) {
+      } else if (type.getFormat() == ProgramFieldType.FORMAT_TIME) {
         dataFile.writeInt(program.getTimeField(type));
       }
     }
@@ -409,7 +409,7 @@ public class OnDemandDayProgramFile {
 
       Object value;
 
-      if (type.getFormat() == ProgramFieldType.TEXT_FORMAT) {
+      if (type.getFormat() == ProgramFieldType.FORMAT_TEXT) {
         value = dataFile.readUTF();
       } else {
         int n = dataFile.readInt();

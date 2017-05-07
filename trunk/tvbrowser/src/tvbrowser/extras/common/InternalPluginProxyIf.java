@@ -24,7 +24,6 @@
 package tvbrowser.extras.common;
 
 import javax.swing.Icon;
-import javax.swing.JPanel;
 
 import devplugin.AfterDataUpdateInfoPanel;
 import devplugin.PluginCenterPanelWrapper;

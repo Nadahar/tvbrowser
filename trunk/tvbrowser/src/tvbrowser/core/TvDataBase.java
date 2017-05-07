@@ -1141,7 +1141,7 @@ public class TvDataBase {
       mChannel = channel;
       mDate = date;
     }
-    
+    /*
     public Channel getChannel() {
       return mChannel;
     }
@@ -1149,7 +1149,7 @@ public class TvDataBase {
     public Date getDate() {
       return mDate;
     }
-    
+    */
     public String toString() {
       return mDate + " " + mChannel;
     }

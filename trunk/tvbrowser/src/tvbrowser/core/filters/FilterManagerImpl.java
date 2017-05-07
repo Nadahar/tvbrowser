@@ -22,18 +22,16 @@ import java.util.ArrayList;
 
 import javax.swing.JFrame;
 
-import tvbrowser.core.filters.filtercomponents.ChannelFilterComponent;
-import tvbrowser.core.plugin.PluginProxyManager;
-import tvbrowser.ui.filter.dlgs.EditFilterComponentDlg;
-import tvbrowser.ui.mainframe.MainFrame;
-import devplugin.Channel;
 import devplugin.ChannelFilter;
 import devplugin.ChannelFilterChangeListener;
-import devplugin.FilterChangeListener;
 import devplugin.FilterChangeListenerV2;
 import devplugin.FilterManager;
 import devplugin.PluginsProgramFilter;
 import devplugin.ProgramFilter;
+import tvbrowser.core.filters.filtercomponents.ChannelFilterComponent;
+import tvbrowser.core.plugin.PluginProxyManager;
+import tvbrowser.ui.filter.dlgs.EditFilterComponentDlg;
+import tvbrowser.ui.mainframe.MainFrame;
 
 /**
  * Is the implementation of the FilterManager.
@@ -186,16 +184,6 @@ public class FilterManagerImpl implements FilterManager {
     FilterComponentList.getInstance().store();
     
     return rule.getName();
-  }
-  
-  @Override
-  public void registerFilterChangeListener(FilterChangeListener listener) {
-    FilterList.getInstance().getFilterTreeModel().registerFilterChangeListener(listener);
-  }
-
-  @Override
-  public void unregisterFilterChangeListener(FilterChangeListener listener) {
-    FilterList.getInstance().getFilterTreeModel().unregisterFilterChangeListener(listener);
   }
 
   @Override

@@ -29,8 +29,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.RejectedExecutionException;
 
 import javax.swing.DefaultListModel;
 import javax.swing.SwingUtilities;
@@ -117,7 +115,6 @@ public abstract class AbstractSearcher implements ProgramSearcher {
         return matches(allFields);
       }
     } catch (Exception e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
     return false;
@@ -134,17 +131,17 @@ public abstract class AbstractSearcher implements ProgramSearcher {
   private String getProgramFieldsText(Program prog, ProgramFieldType[] fieldArr) {
     if (fieldArr.length == 1) {
       ProgramFieldType fieldType = fieldArr[0];
-      if (fieldType.getFormat() == ProgramFieldType.TEXT_FORMAT) {
+      if (fieldType.getFormat() == ProgramFieldType.FORMAT_TEXT) {
         return prog.getTextField(fieldType);
       }
-      else if (fieldType.getFormat() == ProgramFieldType.INT_FORMAT) {
+      else if (fieldType.getFormat() == ProgramFieldType.FORMAT_INT) {
         if(fieldType.equals(ProgramFieldType.EPISODE_NUMBER_TYPE) && prog.hasFieldValue(ProgramFieldType.EPISODE_NUMBER_TYPE)) {
           return IOUtilities.decodeSingleFieldValueToMultipleEpisodeString(prog.getIntField(fieldType));
         }
         
         return prog.getIntFieldAsString(fieldType);
       }
-      else if (fieldType.getFormat() == ProgramFieldType.TIME_FORMAT) {
+      else if (fieldType.getFormat() == ProgramFieldType.FORMAT_TIME) {
         if (fieldType == ProgramFieldType.START_TIME_TYPE) {
           return prog.getTimeString();
         }
@@ -162,10 +159,10 @@ public abstract class AbstractSearcher implements ProgramSearcher {
       // Get the field value as String
       String value = null;
       if (fieldType != null) {
-        if (fieldType.getFormat() == ProgramFieldType.TEXT_FORMAT) {
+        if (fieldType.getFormat() == ProgramFieldType.FORMAT_TEXT) {
           value = prog.getTextField(fieldType);
         }
-        else if (fieldType.getFormat() == ProgramFieldType.INT_FORMAT) {
+        else if (fieldType.getFormat() == ProgramFieldType.FORMAT_INT) {
           if(fieldType.equals(ProgramFieldType.EPISODE_NUMBER_TYPE) && prog.hasFieldValue(ProgramFieldType.EPISODE_NUMBER_TYPE)) {
             value = IOUtilities.decodeSingleFieldValueToMultipleEpisodeString(prog.getIntField(fieldType));
           }
@@ -173,7 +170,7 @@ public abstract class AbstractSearcher implements ProgramSearcher {
             value = prog.getIntFieldAsString(fieldType);
           }
         }
-        else if (fieldType.getFormat() == ProgramFieldType.TIME_FORMAT) {
+        else if (fieldType.getFormat() == ProgramFieldType.FORMAT_TIME) {
           if (fieldType == ProgramFieldType.START_TIME_TYPE) {
             value = prog.getTimeString();
           }
@@ -207,9 +204,9 @@ public abstract class AbstractSearcher implements ProgramSearcher {
   {
     return search(fieldArr, startDate, nrDays, channels, sortByStartTime, progress, null);
   }
-
+  
   public synchronized Program[] search(ProgramFieldType[] fieldArr, Date startDate,
-                          int nrDays, Channel[] channels, boolean sortByStartTime, ProgressMonitor progress, final DefaultListModel listModel)
+                          int nrDays, Channel[] channels, boolean sortByStartTime, ProgressMonitor progress, final DefaultListModel<Object> listModel)
   {
     mKeepSearching = true;
     

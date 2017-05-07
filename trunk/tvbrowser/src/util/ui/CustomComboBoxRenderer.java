@@ -7,13 +7,13 @@ import javax.swing.JList;
 import javax.swing.ListCellRenderer;
 
 public abstract class CustomComboBoxRenderer extends DefaultListCellRenderer {
-  private ListCellRenderer mBackendRenderer;
+  private ListCellRenderer<Object> mBackendRenderer;
   
-  public CustomComboBoxRenderer(ListCellRenderer backendRenderer) {
+  public CustomComboBoxRenderer(ListCellRenderer<Object> backendRenderer) {
     mBackendRenderer = backendRenderer;
   }
   
-  public ListCellRenderer getBackendRenderer() {
+  public ListCellRenderer<Object> getBackendRenderer() {
     return mBackendRenderer;
   }
   

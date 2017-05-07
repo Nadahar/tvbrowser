@@ -37,10 +37,13 @@ import javax.swing.JScrollPane;
 import javax.swing.ListCellRenderer;
 import javax.swing.SwingConstants;
 
+import com.jgoodies.forms.factories.CC;
+import com.jgoodies.forms.layout.FormLayout;
+
+import devplugin.Channel;
 import tvbrowser.core.Settings;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
-import devplugin.Channel;
 
 /**
  * A ListCellRenderer for SelectableItems.
@@ -63,11 +66,11 @@ public class SelectableItemRenderer<E> implements ListCellRenderer<SelectableIte
     SelectableItem<E> selectableItem = value;
     JCheckBox cb = new JCheckBox("",selectableItem.isSelected());
     
-    JPanel p = new JPanel(new BorderLayout(2,0));
+    JPanel p = new JPanel(new FormLayout("default,1dlu,default:grow","default"));
     try { p.setBorder(BorderFactory.createEmptyBorder(0,2,0,0));
     mSelectionWidth = cb.getPreferredSize().width + 2 + p.getInsets().left;
     
-    p.add(cb, BorderLayout.WEST);
+    p.add(cb, CC.xy(1, 1));
     
     SelectableItemRendererCenterComponentIf<E> renderIf = mCenterComponentMap.get(selectableItem.getItem().getClass());
     
@@ -79,7 +82,7 @@ public class SelectableItemRenderer<E> implements ListCellRenderer<SelectableIte
       cb.setVerticalAlignment(SwingConstants.TOP);
       cb.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createEmptyBorder(3,3,0,0),cb.getBorder()));
       
-      p.add(renderIf.createCenterPanel(list,selectableItem.getItem(),index,isSelected,mIsEnabled, mParentScrollPane, mSelectionWidth + 2), BorderLayout.CENTER);
+      p.add(renderIf.createCenterPanel(list,selectableItem.getItem(),index,isSelected,mIsEnabled, mParentScrollPane, mSelectionWidth + 2), CC.xy(3, 1));
       renderIf.calculateSize(list, index, p);
     }
     else if(selectableItem.getItem() instanceof Channel) {
@@ -111,6 +114,7 @@ public class SelectableItemRenderer<E> implements ListCellRenderer<SelectableIte
     } else {
       cb.setText(selectableItem.getItem().toString());
     }
+    
     if (isSelected && mIsEnabled) {
       p.setOpaque(true);
       p.setBackground(list.getSelectionBackground());
@@ -122,6 +126,7 @@ public class SelectableItemRenderer<E> implements ListCellRenderer<SelectableIte
       cb.setForeground(list.getForeground());
       cb.setBackground(list.getBackground());
     }
+    
     cb.setEnabled(list.isEnabled() && selectableItem.isSelectable());
     }catch(Throwable t){t.printStackTrace();}
     return p;
@@ -150,6 +155,7 @@ public class SelectableItemRenderer<E> implements ListCellRenderer<SelectableIte
    */
   public void setCenterRendererComponent(Class<?> clazz, SelectableItemRendererCenterComponentIf<E> component) {
     mCenterComponentMap.put(clazz,component);
+    component.initialize();
   }
 
   protected void setScrollPane(JScrollPane parentScrollPane) {

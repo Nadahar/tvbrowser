@@ -96,9 +96,9 @@ public class LocaleSettingsTab implements devplugin.SettingsTab {
   
   private JPanel mSettingsPn;
 
-  private JComboBox<Locale> mLanguageCB;
+  private JComboBox<Object> mLanguageCB;
   private JComboBox<String> mTimezoneCB;
-  private JComboBox<Integer> mFirstDayOfWeek;
+  private JComboBox<Object> mFirstDayOfWeek;
 
   private JLabel mTimezoneLB;
 
@@ -140,7 +140,6 @@ public class LocaleSettingsTab implements devplugin.SettingsTab {
     mSettingsPn.add(mLanguageCB = new JComboBox<>(allLocales), CC.xy(4,3));
 
     mLanguageCB.setRenderer(new CustomComboBoxRenderer(mLanguageCB.getRenderer()) {
-      @SuppressWarnings("unchecked")
       @Override
       public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
         String name = ((Locale)value).getDisplayName((Locale)value);
@@ -253,7 +252,6 @@ public class LocaleSettingsTab implements devplugin.SettingsTab {
     mFirstDayOfWeek.addItem(Calendar.SUNDAY);
     
     mFirstDayOfWeek.setRenderer(new CustomComboBoxRenderer(mFirstDayOfWeek.getRenderer()) {
-      @SuppressWarnings("unchecked")
       @Override
       public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
         Calendar cal = Calendar.getInstance();

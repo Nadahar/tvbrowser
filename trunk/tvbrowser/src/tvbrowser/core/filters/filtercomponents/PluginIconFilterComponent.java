@@ -30,11 +30,10 @@ import java.io.ObjectOutputStream;
 import javax.swing.Icon;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
-import javax.swing.JTextArea;
 
+import devplugin.Program;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
-import devplugin.Program;
 
 /**
  * Accepts Programs that get a Icon from a Plugin
@@ -44,7 +43,7 @@ public class PluginIconFilterComponent extends AbstractFilterComponent {
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer
       .getLocalizerFor(PluginIconFilterComponent.class);
 
-  private JComboBox mBox;
+  private JComboBox<PluginProxy> mBox;
 
   private PluginProxy mPlugin;
 
@@ -93,7 +92,7 @@ public class PluginIconFilterComponent extends AbstractFilterComponent {
 
     final PluginProxy[] plugins = PluginProxyManager.getInstance()
         .getActivatedPlugins();
-    mBox = new JComboBox(plugins);
+    mBox = new JComboBox<>(plugins);
     if (mPlugin != null) {
       mBox.setSelectedItem(mPlugin);
     }

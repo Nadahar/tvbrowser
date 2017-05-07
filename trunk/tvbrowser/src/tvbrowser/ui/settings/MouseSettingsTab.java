@@ -346,19 +346,15 @@ public class MouseSettingsTab implements devplugin.SettingsTab {
 	  }
 	}
 	
-	
-
-	@SuppressWarnings("rawtypes")
   private static class ContextMenuCellRenderer extends CustomComboBoxRenderer {
-    public ContextMenuCellRenderer(ListCellRenderer backendRenderer) {
+    public ContextMenuCellRenderer(ListCellRenderer<Object> backendRenderer) {
 		  super(backendRenderer);
 		}
 
-		public Component getListCellRendererComponent(JList list, Object value,
+		public Component getListCellRendererComponent(JList<?> list, Object value,
 				int index, boolean isSelected, boolean cellHasFocus) {
 
-			@SuppressWarnings("unchecked")
-      JLabel label = (JLabel) getBackendRenderer().getListCellRendererComponent(list, value,
+			JLabel label = (JLabel) getBackendRenderer().getListCellRendererComponent(list, value,
 					index, isSelected, cellHasFocus);
 
 			if (value instanceof ContextMenuActionEntry) {
@@ -393,7 +389,7 @@ public class MouseSettingsTab implements devplugin.SettingsTab {
 	private static class MouseClickSetting {
 		private ContextMenuIf mClickInterface;
 		private ActionMenu mActionMenu;
-		private JComboBox<ContextMenuActionEntry> mComboBox;
+		private JComboBox<Object> mComboBox;
 
 		public MouseClickSetting(ContextMenuIf clickIf, int actionMenuId) {
 			mClickInterface = clickIf;
@@ -414,7 +410,7 @@ public class MouseSettingsTab implements devplugin.SettingsTab {
 		  return (ContextMenuActionEntry) mComboBox.getSelectedItem();
 		}
 
-		public JComboBox<ContextMenuActionEntry> createComboxBox() {
+		public JComboBox<Object> createComboxBox() {
 			mComboBox = new JComboBox<>();
 			mComboBox.setSelectedItem(new ContextMenuActionEntry(mClickInterface,mActionMenu));
 			mComboBox.setMaximumRowCount(15);

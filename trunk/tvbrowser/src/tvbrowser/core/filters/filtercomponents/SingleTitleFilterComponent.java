@@ -25,12 +25,11 @@ import java.io.ObjectOutputStream;
 import java.util.HashSet;
 
 import javax.swing.JCheckBox;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import util.ui.Localizer;
 import devplugin.Program;
 import devplugin.ProgramFieldType;
+import util.ui.Localizer;
 
 public class SingleTitleFilterComponent extends AbstractFilterComponent {
 

@@ -121,20 +121,26 @@ public class InfoIconTheme implements Comparable<InfoIconTheme> {
       try {
         ZipFile iconFile = new ZipFile(dirOrZip);
       
-        ZipEntry name = iconFile.getEntry("name_" + Locale.getDefault().getLanguage());
-        
-        if(name != null) {
-          try {
-            readName(iconFile.getInputStream(name));
-          } catch (FileNotFoundException e) {}
-        }
-        
-        if(mName == null) {
-          name = iconFile.getEntry("name");
+        try {
+          ZipEntry name = iconFile.getEntry("name_" + Locale.getDefault().getLanguage());
           
-          try {
-            readName(iconFile.getInputStream(name));
-          } catch (IOException e) {}
+          if(name != null) {
+            try {
+              readName(iconFile.getInputStream(name));
+            } catch (FileNotFoundException e) {}
+          }
+          
+          if(mName == null) {
+            name = iconFile.getEntry("name");
+            
+            try {
+              readName(iconFile.getInputStream(name));
+            } catch (IOException e) {}
+          }
+        }finally {
+          if(iconFile != null) {
+            iconFile.close();
+          }
         }
       } catch (IOException e1) {
       }
@@ -182,24 +188,29 @@ public class InfoIconTheme implements Comparable<InfoIconTheme> {
   private void loadIconsFromZipFile(File zip) {
     try {
       ZipFile iconFile = new ZipFile(zip);
-            
-      Enumeration<? extends ZipEntry> entries = iconFile.entries();
       
-      String zipURL = zip.toURI().toURL().toString();
-      
-      while(entries.hasMoreElements()) {
-        ZipEntry iconEntry = entries.nextElement();
+      try {
+        Enumeration<? extends ZipEntry> entries = iconFile.entries();
         
-        if(iconEntry.getName().startsWith("Info_")) {
-          try {
-            URL url = new URL("jar:" + zipURL + "!/" + URLEncoder.encode(iconEntry.getName(), "UTF-8"));
-            mapIcon(new ImageIcon(url), iconEntry.getName());
-          } catch (IOException e) {
-            e.printStackTrace();
+        String zipURL = zip.toURI().toURL().toString();
+        
+        while(entries.hasMoreElements()) {
+          ZipEntry iconEntry = entries.nextElement();
+          
+          if(iconEntry.getName().startsWith("Info_")) {
+            try {
+              URL url = new URL("jar:" + zipURL + "!/" + URLEncoder.encode(iconEntry.getName(), "UTF-8"));
+              mapIcon(new ImageIcon(url), iconEntry.getName());
+            } catch (IOException e) {
+              e.printStackTrace();
+            }
           }
         }
+      }finally {
+        if(iconFile != null) {
+          iconFile.close();
+        }
       }
-      
     } catch (ZipException e) {
     } catch (IOException e) {}
   }

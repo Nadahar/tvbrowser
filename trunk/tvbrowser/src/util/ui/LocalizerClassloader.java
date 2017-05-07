@@ -100,6 +100,7 @@ public class LocalizerClassloader extends ClassLoader {
         
         if(zip.isFile()) {
           
+          @SuppressWarnings("resource")
           ZipFile zipFile = new ZipFile(zip);
           
           ZipEntry entry = zipFile.getEntry(name);

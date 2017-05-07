@@ -8,22 +8,16 @@ import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.Window;
-import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.util.Arrays;
 import java.util.Comparator;
 
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-
-import tvbrowser.core.Settings;
 
 import com.jgoodies.forms.builder.ButtonBarBuilder;
 import com.jgoodies.forms.builder.PanelBuilder;
@@ -36,6 +30,7 @@ import devplugin.Plugin;
 import devplugin.Program;
 import devplugin.ProgramReceiveIf;
 import devplugin.ProgramReceiveTarget;
+import tvbrowser.core.Settings;
 
 /**
  * Ein Dialog, der es erlaubt, Programme an andere Plugins weiter zu reichen
@@ -55,8 +50,8 @@ public class SendToPluginDialog extends JDialog implements WindowClosingIf {
   /**
    * List of Plugins
    */
-  private JComboBox mPluginList;
-  private JComboBox mTargetList;
+  private JComboBox<ProgramReceiveIf> mPluginList;
+  private JComboBox<ProgramReceiveTarget> mTargetList;
 
   private ProgramReceiveIf mCaller;
   private ProgramReceiveTarget mCallerTarget;
@@ -185,41 +180,39 @@ public class SendToPluginDialog extends JDialog implements WindowClosingIf {
 
     Arrays.sort(installedPluginArr, new ObjectComparator());
     
-    mPluginList = new JComboBox(installedPluginArr);
+    mPluginList = new JComboBox<>(installedPluginArr);
     pb.add(mPluginList, cc.xy(2, 3));
 
     pb.addSeparator(mLocalizer.msg("target","Target:"), cc.xyw(1,5,3));
     
-    mTargetList = new JComboBox(installedPluginArr[0]
+    mTargetList = new JComboBox<>(installedPluginArr[0]
         .getProgramReceiveTargets());
     pb.add(mTargetList, cc.xy(2, 7));
-    final DefaultComboBoxModel model = (DefaultComboBoxModel)mTargetList.getModel();
+    
     mTargetList.setEnabled(installedPluginArr[0].canReceiveProgramsWithTarget()
         && mTargetList.getItemCount() > 1);
     
-    mPluginList.addItemListener(new ItemListener() {
-      public void itemStateChanged(ItemEvent e) {
-        if(e.getStateChange() == ItemEvent.SELECTED) {
-          ProgramReceiveTarget[] targets = ((ProgramReceiveIf)e.getItem()).getProgramReceiveTargets();
-          
-          model.removeAllElements();
-          
-          if(((ProgramReceiveIf)e.getItem()).canReceiveProgramsWithTarget()) {
-            for(ProgramReceiveTarget target : targets) {
-              if(!target.equals(mCallerTarget)) {
-                model.addElement(target);
-              }
+    mPluginList.addItemListener(e -> {
+      if(e.getStateChange() == ItemEvent.SELECTED) {
+        ProgramReceiveTarget[] targets = ((ProgramReceiveIf)e.getItem()).getProgramReceiveTargets();
+        
+        mTargetList.removeAllItems();
+        
+        if(((ProgramReceiveIf)e.getItem()).canReceiveProgramsWithTarget()) {
+          for(ProgramReceiveTarget target : targets) {
+            if(!target.equals(mCallerTarget)) {
+              mTargetList.addItem(target);
             }
-            
-            mTargetList.setEnabled(targets.length > 1);
-          }
-          else if(targets != null && targets.length > 0) {
-            model.addElement(targets[0]);
-            mTargetList.setEnabled(false);
           }
           
-          mTargetList.repaint();
+          mTargetList.setEnabled(targets.length > 1);
         }
+        else if(targets != null && targets.length > 0) {
+          mTargetList.addItem(targets[0]);
+          mTargetList.setEnabled(false);
+        }
+        
+        mTargetList.repaint();
       }
     });
     

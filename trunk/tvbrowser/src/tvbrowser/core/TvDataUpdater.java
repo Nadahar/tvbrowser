@@ -38,8 +38,6 @@ import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.logging.Level;
@@ -60,6 +58,13 @@ import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
+import devplugin.AfterDataUpdateInfoPanel;
+import devplugin.AfterDataUpdateInfoPanel.AfterDataUpdateInfoPanelListener;
+import devplugin.Channel;
+import devplugin.ChannelDayProgram;
+import devplugin.Date;
+import devplugin.Program;
+import devplugin.ProgressMonitor;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.core.tvdataservice.ChannelGroupManager;
@@ -71,7 +76,6 @@ import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
 import tvbrowser.ui.DontShowAgainOptionBox;
 import tvbrowser.ui.mainframe.MainFrame;
 import tvbrowser.ui.settings.ChannelListChangesDialog;
-import tvbrowser.ui.settings.SettingsDialog;
 import tvbrowser.ui.settings.StartupSettingsTab;
 import tvdataservice.MarkedProgramsMap;
 import tvdataservice.MutableChannelDayProgram;
@@ -85,13 +89,6 @@ import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 import util.ui.progress.ProgressBarProgressMonitor;
 import util.ui.progress.ProgressMonitorGroup;
-import devplugin.AfterDataUpdateInfoPanel;
-import devplugin.AfterDataUpdateInfoPanel.AfterDataUpdateInfoPanelListener;
-import devplugin.Channel;
-import devplugin.ChannelDayProgram;
-import devplugin.Date;
-import devplugin.Program;
-import devplugin.ProgressMonitor;
 
 /**
  * Updates the TV data.
@@ -235,10 +232,8 @@ public class TvDataUpdater {
               }
             });
           } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
           } catch (InvocationTargetException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
           }
         }

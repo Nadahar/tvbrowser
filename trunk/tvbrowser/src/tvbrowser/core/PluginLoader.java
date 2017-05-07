@@ -259,8 +259,8 @@ public class PluginLoader {
         
         if(plugin instanceof Plugin || plugin instanceof devplugin.AbstractTvDataService) {
           try {
-            Method m = plugin.getClass().getMethod("getVersion", new Class<?>[0]);
-            Object o = m.invoke(plugin, new Object[0]);
+            Method m = plugin.getClass().getMethod("getVersion");
+            Object o = m.invoke(plugin);
             
             if(o instanceof Version) {
               version = ((Version)o).toString();
@@ -567,11 +567,11 @@ public class PluginLoader {
 
     // Create a plugin instance
     try {
-      Class pluginClass = classLoader.loadClass(pluginName.toLowerCase() + "." + pluginName);
-      Method getVersion = pluginClass.getMethod("getVersion",new Class[0]);
+      Class<?> pluginClass = classLoader.loadClass(pluginName.toLowerCase() + "." + pluginName);
+      Method getVersion = pluginClass.getMethod("getVersion");
       Version version1 = null;
       try {
-        version1 = (Version)getVersion.invoke(pluginClass, new Object[0]);
+        version1 = (Version)getVersion.invoke(pluginClass);
       } catch (Exception e) {
       }
       if (version1 == null || version1.toString().equals("0.0.0.0")) {
@@ -580,8 +580,8 @@ public class PluginLoader {
       }
 
       if(pluginClass.getSuperclass().equals(devplugin.AbstractTvDataService.class) || classLoader2 != null) {
-        getVersion = pluginClass.getMethod("getVersion",new Class[0]);
-        version1 = (Version)getVersion.invoke(pluginClass, new Object[0]);
+        getVersion = pluginClass.getMethod("getVersion");
+        version1 = (Version)getVersion.invoke(pluginClass);
 
         if(pluginClass.getSuperclass().equals(devplugin.AbstractTvDataService.class)) {
           isBlockedDataService = Settings.propBlockedPluginArray.isBlocked(pluginName.toLowerCase() + "." + pluginName, version1);
@@ -590,10 +590,10 @@ public class PluginLoader {
 
       if(classLoader2 != null) {
         try {
-          Class pluginClass2 = classLoader2.loadClass(pluginName.toLowerCase() + "." + pluginName);
-          Method getVersion2 = pluginClass2.getMethod("getVersion",new Class[0]);
+          Class<?> pluginClass2 = classLoader2.loadClass(pluginName.toLowerCase() + "." + pluginName);
+          Method getVersion2 = pluginClass2.getMethod("getVersion");
 
-          Version version2 = (Version)getVersion2.invoke(pluginClass2, new Object[0]);
+          Version version2 = (Version)getVersion2.invoke(pluginClass2);
 
           if(version2.compareTo(version1) > 0) {
             return null;
@@ -602,8 +602,8 @@ public class PluginLoader {
       }
 
       try {
-        Method preInstancing = pluginClass.getMethod("preInstancing",new Class[0]);
-        preInstancing.invoke(pluginClass,new Object[0]);
+        Method preInstancing = pluginClass.getMethod("preInstancing");
+        preInstancing.invoke(pluginClass);
       }catch(Throwable ti) {}
 
       if(!isBlockedDataService) {
@@ -768,17 +768,17 @@ public class PluginLoader {
       // Get the plugin name
       String pluginName = pluginCopy.getName();
       pluginName = pluginName.substring(0, pluginName.length() - 4);
-      Class pluginClass = null;
+      Class<?> pluginClass = null;
       
       try {
         urls = new URL[] { pluginCopy.toURI().toURL() };
         ClassLoader classLoader = URLClassLoader.newInstance(urls, ClassLoader.getSystemClassLoader());
                         
         pluginClass = classLoader.loadClass(pluginName.toLowerCase() + "." + pluginName);
-        Method getVersion = pluginClass.getMethod("getVersion",new Class[0]);
+        Method getVersion = pluginClass.getMethod("getVersion");
         
         try {
-          Version version = (Version)getVersion.invoke(pluginClass, new Object[0]);
+          Version version = (Version)getVersion.invoke(pluginClass);
           
           PluginBaseInfo baseInfo = new PluginBaseInfo("java." + pluginClass.getName(),version);
           

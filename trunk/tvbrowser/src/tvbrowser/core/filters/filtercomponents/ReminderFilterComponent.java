@@ -4,13 +4,12 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import tvbrowser.extras.reminderplugin.ReminderPlugin;
-import util.ui.Localizer;
 import devplugin.Marker;
 import devplugin.Program;
+import tvbrowser.extras.reminderplugin.ReminderPlugin;
+import util.ui.Localizer;
 
 /**
  * This filter filters all programs that are marked by the Reminder

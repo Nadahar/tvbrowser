@@ -51,7 +51,7 @@ public class TrayImportantSettingsTab implements SettingsTab {
   
   private JCheckBox mShowSortNumber;
   
-  private JComboBox<String> mPriority;
+  private JComboBox<Object> mPriority;
   private JLabel mPriorityText;
   
   private static boolean mTrayIsEnabled = Settings.propTrayIsEnabled.getBoolean();

@@ -186,10 +186,8 @@ public class UiUtilities {
         }
       });
     } catch (InterruptedException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     } catch (InvocationTargetException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
     return result.get();
@@ -559,8 +557,9 @@ public class UiUtilities {
    *          Move into this List
    * @return Moved Elements
    */
+  @SuppressWarnings("rawtypes")
   public static Object[] moveSelectedItems(JList fromList, JList toList) {
-    return moveSelectedItems(fromList,toList,null);
+    return moveSelectedItems(fromList,toList,(Class)null);
   }
   
   /**
@@ -572,6 +571,7 @@ public class UiUtilities {
    *          Move into this List
    * @return Moved Elements
    */
+  @SuppressWarnings({ "rawtypes", "unchecked" })
   public static Object[] moveSelectedItems(JList fromList, JList toList, Class... typeRemoveOnly) {
     DefaultListModel fromModel = (DefaultListModel) fromList.getModel();
     DefaultListModel toModel = (DefaultListModel) toList.getModel();
@@ -667,6 +667,7 @@ public class UiUtilities {
    *          The target row where to insert
    * @return Moved Elements
    */
+  @SuppressWarnings({ "rawtypes", "unchecked" })
   public static Object[] moveSelectedItems(JList fromList, JList toList, int row) {
     DefaultListModel fromModel = (DefaultListModel) fromList.getModel();
     DefaultListModel toModel = (DefaultListModel) toList.getModel();
@@ -718,6 +719,7 @@ public class UiUtilities {
    * @param sort
    *          Dummy parameter, does nothing
    */
+  @SuppressWarnings({ "rawtypes", "unchecked" })
   public static void moveSelectedItems(JList list, int row, boolean sort) {
     DefaultListModel model = (DefaultListModel) list.getModel();
 
@@ -758,6 +760,7 @@ public class UiUtilities {
    * @param nrRows
    *          Move Items nrRows up/down
    */
+  @SuppressWarnings({ "rawtypes", "unchecked" })
   public static void moveSelectedItems(JList list, int nrRows) {
     DefaultListModel model = (DefaultListModel) list.getModel();
 
@@ -1061,12 +1064,12 @@ public class UiUtilities {
     dialog.setSize(size);
   }
 
-	public static void addSeparatorsAfterIndexes(final JComboBox combo,
+	public static void addSeparatorsAfterIndexes(final JComboBox<Object> combo,
 			int[] indexes) {
 		combo.setRenderer(new ComboSeparatorsRenderer(combo.getRenderer(), indexes));
 	}
 
-	public static void addSeparatorsAfterIndexes(final JComboBox combo,
+	public static void addSeparatorsAfterIndexes(final JComboBox<Object> combo,
 			Integer[] indexes) {
 		int[] primitives = new int[indexes.length];
 		for (int i = 0; i < primitives.length; i++) {
@@ -1075,13 +1078,13 @@ public class UiUtilities {
 		combo.setRenderer(new ComboSeparatorsRenderer(combo.getRenderer(), primitives));
 	}
 
-	private static class ComboSeparatorsRenderer implements ListCellRenderer {
-		private ListCellRenderer mOldRenderer;
+	private static class ComboSeparatorsRenderer implements ListCellRenderer<Object>{
+		private ListCellRenderer<Object> mOldRenderer;
 		private JPanel mSeparatorPanel = new JPanel(new BorderLayout());
 		private JSeparator mSeparator = new JSeparator();
 		private ArrayList<Integer> mIndexes;
 
-		public ComboSeparatorsRenderer(ListCellRenderer delegate,
+		public ComboSeparatorsRenderer(ListCellRenderer<Object> delegate,
 				final int[] indexes) {
 			mOldRenderer = delegate;
 			mIndexes = new ArrayList<Integer>(indexes.length);
@@ -1090,21 +1093,20 @@ public class UiUtilities {
 			}
 		}
 
-		public Component getListCellRendererComponent(JList list, Object value,
-				int index, boolean isSelected, boolean cellHasFocus) {
-			Component comp = mOldRenderer.getListCellRendererComponent(list, value,
-					index, isSelected, cellHasFocus);
-			if (index != -1 && mIndexes.contains(index + 1)) { // index==1 if renderer is
-																											// used to paint current
-																											// value in combo
-				mSeparatorPanel.removeAll();
-				mSeparatorPanel.add(comp, BorderLayout.CENTER);
-				mSeparatorPanel.add(mSeparator, BorderLayout.SOUTH);
-				return mSeparatorPanel;
-			} else {
-				return comp;
-			}
-		}
+    @Override
+    public Component getListCellRendererComponent(JList<? extends Object> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+      Component comp = mOldRenderer.getListCellRendererComponent(list, value,index, isSelected, cellHasFocus);
+      if (index != -1 && mIndexes.contains(index + 1)) { // index==1 if renderer is
+                                                      // used to paint current
+                                                      // value in combo
+        mSeparatorPanel.removeAll();
+        mSeparatorPanel.add(comp, BorderLayout.CENTER);
+        mSeparatorPanel.add(mSeparator, BorderLayout.SOUTH);
+        return mSeparatorPanel;
+      } else {
+        return comp;
+      }
+    }
 	}
 
   /**
@@ -1119,7 +1121,6 @@ public class UiUtilities {
 
         @Override
         public void run() {
-          // TODO Auto-generated method stub
           JFileChooser select = new JFileChooser();
           fileChooser.set(select);
           if (fileFilter != null) {
@@ -1128,13 +1129,11 @@ public class UiUtilities {
         }
       });
     } catch (InterruptedException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     } catch (InvocationTargetException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
-    // TODO Auto-generated method stub
+    
     return fileChooser.get();
   }
 

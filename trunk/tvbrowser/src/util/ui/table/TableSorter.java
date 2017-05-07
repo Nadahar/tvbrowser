@@ -80,7 +80,9 @@ public class TableSorter extends AbstractTableModel {
 
   private static Directive EMPTY_DIRECTIVE = new Directive(-1, NOT_SORTED);
 
+  @SuppressWarnings("rawtypes")
   public static final Comparator<Comparable> COMPARABLE_COMPARATOR = new Comparator<Comparable>() {
+    @SuppressWarnings("unchecked")
     public int compare(Comparable c1, Comparable c2) {
       return c1.compareTo(c2);
     }
@@ -218,6 +220,7 @@ public class TableSorter extends AbstractTableModel {
     sortingStatusChanged();
   }
 
+  @SuppressWarnings("rawtypes")
   public void setColumnComparator(Class type, Comparator comparator) {
     if (comparator == null) {
       columnComparators.remove(type);
@@ -226,6 +229,7 @@ public class TableSorter extends AbstractTableModel {
     }
   }
 
+  @SuppressWarnings("rawtypes")
   protected Comparator getComparator(int column) {
     Class columnType = tableModel.getColumnClass(column);
     Comparator comparator = columnComparators.get(columnType);
@@ -315,6 +319,7 @@ public class TableSorter extends AbstractTableModel {
       this.modelIndex = index;
     }
 
+    @SuppressWarnings("unchecked")
     public int compareTo(Row other) {
       int row1 = modelIndex;
       int row2 = other.modelIndex;
