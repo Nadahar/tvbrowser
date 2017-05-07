@@ -28,7 +28,6 @@ package util.ui;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.Window;
-import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;

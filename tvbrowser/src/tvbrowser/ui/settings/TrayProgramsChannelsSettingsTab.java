@@ -29,6 +29,8 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Collections;
+import java.util.List;
 
 import javax.swing.Icon;
 import javax.swing.JButton;
@@ -43,11 +45,6 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
-import tvbrowser.core.Settings;
-import util.ui.Localizer;
-import util.ui.OrderChooser;
-import util.ui.UiUtilities;
-
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -57,6 +54,10 @@ import com.jgoodies.forms.layout.Sizes;
 import devplugin.Channel;
 import devplugin.SettingsItem;
 import devplugin.SettingsTab;
+import tvbrowser.core.Settings;
+import util.ui.Localizer;
+import util.ui.OrderChooser;
+import util.ui.UiUtilities;
 
 /**
  * Channel settings for the program showing in tray.
@@ -69,7 +70,7 @@ public class TrayProgramsChannelsSettingsTab implements SettingsTab {
   private static final util.ui.Localizer mLocalizer = TrayBaseSettingsTab.mLocalizer;
   
   private JCheckBox mUseUserChannels;
-  private OrderChooser mChannelOCh;
+  private OrderChooser<Channel> mChannelOCh;
   private static boolean mTrayIsEnabled = Settings.propTrayIsEnabled.getBoolean();
   private JLabel mSeparator1;
   private JSlider mChannelWidth;
@@ -98,7 +99,7 @@ public class TrayProgramsChannelsSettingsTab implements SettingsTab {
     mUseUserChannels = new JCheckBox(mLocalizer.msg("userChannels","Use user defined channels"),Settings.propTrayUseSpecialChannels.getBoolean());
     mUseUserChannels.setToolTipText(mLocalizer.msg("userChannelsToolTip","<html>If you select this you can choose the channels that will be used for<br><b>Programs at...</b> and <b>Now/Soon running programs</b>.<br>If this isn't selected the first 10 channels in default order will be used.</html>"));
     
-    mChannelOCh = new OrderChooser(
+    mChannelOCh = new OrderChooser<>(
         Settings.propTraySpecialChannels.getChannelArray(),
         Settings.propSubscribedChannels.getChannelArray(), true);
     
@@ -183,16 +184,18 @@ public class TrayProgramsChannelsSettingsTab implements SettingsTab {
     Settings.propTrayUseSpecialChannels.setBoolean(mUseUserChannels
         .isSelected());
     
-    Object[] order = mChannelOCh.getOrder();
-    Channel[] ch = new Channel[order.length];
+    List<Channel> order = mChannelOCh.getOrderList();
+    Channel[] ch = new Channel[order.size()];
 
     if(!mUseUserChannels.isSelected()) {
-      order = Settings.propSubscribedChannels.getChannelArray();
-      ch = new Channel[order.length > 10 ? 10 : order.length];
+      order.clear();
+      Collections.addAll(order, Settings.propSubscribedChannels.getChannelArray());
+      
+      ch = new Channel[order.size() > 10 ? 10 : order.size()];
     }
 
     for (int i = 0; i < ch.length; i++) {
-      ch[i] = (Channel) order[i];
+      ch[i] = order.get(i);
     }
     
     if (order != null) {

@@ -117,10 +117,8 @@ public class PluginSettingsTab implements devplugin.SettingsTab, TableModelListe
   /** The auto update check box */
   private JCheckBox mAutoUpdates;
   private JButton mConfigure;
-  private JComboBox mFilterBox;
+  private JComboBox<FilterItem> mFilterBox;
   
-  private ArrayList<Object> mPluginList;
-
   /**
    * Creates an instance of this class.
    * 
@@ -159,7 +157,7 @@ public class PluginSettingsTab implements devplugin.SettingsTab, TableModelListe
     JPanel categorySelection = new JPanel(new FormLayout("default,3dlu,default:grow","default"));
     
     JLabel filterLabel = new JLabel(SoftwareUpdateDlg.mLocalizer.msg("filterLabel","Show only Plugins with the following category:"));
-    mFilterBox = new JComboBox();
+    mFilterBox = new JComboBox<FilterItem>();
     mFilterBox.addItemListener(new ItemListener() {
       public void itemStateChanged(ItemEvent e) {
         populatePluginList();

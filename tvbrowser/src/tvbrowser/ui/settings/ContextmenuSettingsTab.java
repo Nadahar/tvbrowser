@@ -33,6 +33,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.Action;
 import javax.swing.DefaultListCellRenderer;
@@ -44,6 +45,15 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.event.ListSelectionListener;
 
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+
+import devplugin.ActionMenu;
+import devplugin.ContextMenuIf;
+import devplugin.Plugin;
+import devplugin.Program;
 import tvbrowser.core.Settings;
 import tvbrowser.core.contextmenu.ConfigMenuItem;
 import tvbrowser.core.contextmenu.ContextMenuManager;
@@ -59,19 +69,9 @@ import util.ui.TVBrowserIcons;
 import util.ui.UiUtilities;
 import util.ui.customizableitems.SortableItemList;
 
-import com.jgoodies.forms.builder.PanelBuilder;
-import com.jgoodies.forms.factories.Borders;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
-
-import devplugin.ActionMenu;
-import devplugin.ContextMenuIf;
-import devplugin.Plugin;
-import devplugin.Program;
-
 public class ContextmenuSettingsTab implements devplugin.SettingsTab {
 
-  private SortableItemList mList;
+  private SortableItemList<ContextMenuIf> mList;
 
   /**
    * localizer of this class
@@ -104,7 +104,7 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab {
   }
 
   private void createList() {
-    mList = new SortableItemList();
+    mList = new SortableItemList<>();
 
     mList.getList().addMouseListener(new MouseAdapter() {
       @Override
@@ -155,8 +155,9 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab {
     garbage.setToolTipText(mLocalizer.msg("garbage", "Remove Separator"));
     garbage.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent e) {
-        Object[] items = mList.getList().getSelectedValues();
-        for (Object item : items) {
+        List<ContextMenuIf> items = mList.getList().getSelectedValuesList();
+        
+        for (ContextMenuIf item : items) {
           mList.removeElement(item);
         }
       };
@@ -164,13 +165,13 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab {
 
     mList.getList().addListSelectionListener(new ListSelectionListener() {
       public void valueChanged(javax.swing.event.ListSelectionEvent e) {
-        Object[] items = mList.getList().getSelectedValues();
-        if (items.length == 0) {
+        List<ContextMenuIf> items = mList.getList().getSelectedValuesList();
+        if (items.size() == 0) {
           garbage.setEnabled(false);
           return;
         }
-        for (int i=0;i<items.length;i++) {
-          if (!(items[i] instanceof SeparatorMenuItem)) {
+        for (int i=0;i<items.size();i++) {
+          if (!(items.get(i) instanceof SeparatorMenuItem)) {
             garbage.setEnabled(false);
             return;
           }
@@ -264,7 +265,7 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab {
     }
 
     @Override
-    public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
+    public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
         boolean cellHasFocus) {
 
       JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);

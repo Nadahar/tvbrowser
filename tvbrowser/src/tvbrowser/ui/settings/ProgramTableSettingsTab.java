@@ -86,9 +86,9 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
 
   private JPanel mSettingsPn;
 
-  private JComboBox mProgramArrangementCB;
+  private JComboBox<String> mProgramArrangementCB;
 
-  private JComboBox mBackgroundStyleCB;
+  private JComboBox<TableBackgroundStyle> mBackgroundStyleCB;
 
   private JButton mConfigBackgroundStyleBt;
 
@@ -181,7 +181,7 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
         mLocalizer.msg(Settings.LAYOUT_TIME_BLOCK, "Time block"),
         mLocalizer.msg(Settings.LAYOUT_COMPACT_TIME_BLOCK, "Compact time block"),
         mLocalizer.msg(Settings.LAYOUT_OPTIMIZED_COMPACT_TIME_BLOCK, "Optimized compact time block")};
-    mProgramArrangementCB = new JComboBox(arrangementArr);
+    mProgramArrangementCB = new JComboBox<>(arrangementArr);
     if (Settings.propTableLayout.getString().equals(Settings.LAYOUT_COMPACT)) {
       mProgramArrangementCB.setSelectedIndex(2);
     } else if (Settings.propTableLayout.getString().equals(Settings.LAYOUT_REAL_COMPACT)) {
@@ -352,7 +352,7 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
         "Table background style")), cc.xy(2, (currentRow += 2)));
     
     TableBackgroundStyle[] styles = getTableBackgroundStyles();
-    mBackgroundStyleCB = new JComboBox(styles);
+    mBackgroundStyleCB = new JComboBox<>(styles);
 
     String style = Settings.propTableBackgroundStyle.getString();
     for (int i = 0; i < styles.length; i++) {
@@ -537,9 +537,7 @@ public class ProgramTableSettingsTab implements SettingsTab, ActionListener {
     mSettingsPn.add(mShowScrollChannelHighlight, cc.xy(2, (currentRow += 2)));
     mSettingsPn.add(mScrollChannelLb, cc.xy(4, currentRow));
     mSettingsPn.add(mScrollChannelColor, cc.xy(6, currentRow));
-    
-    System.out.println(currentRow);
-    
+        
     mSettingsPn.add(DefaultComponentFactory.getInstance().createSeparator(
         mLocalizer.msg("misc", "Misc")), cc.xyw(1,
         (currentRow += 2), 8));

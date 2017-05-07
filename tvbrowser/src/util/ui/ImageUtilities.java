@@ -109,7 +109,7 @@ public class ImageUtilities {
    * @param fileName Der Name der ImageIcon-Datei.
    * @param srcClass Eine Klasse, aus deren Jar-File das ImageIcon geladen werden soll.
    */
-  public static ImageIcon createImageIconFromJar(String fileName, Class srcClass) {
+  public static ImageIcon createImageIconFromJar(String fileName, Class<?> srcClass) {
     Image img = createImageFromJar(fileName, srcClass);
     
     if (img == null) {
@@ -132,7 +132,7 @@ public class ImageUtilities {
    * @param fileName Der Name der Image-Datei.
    * @param srcClass Eine Klasse, aus deren Jar-File das Image geladen werden soll.
    */
-  public static Image createImageFromJar(String fileName, Class srcClass) {
+  public static Image createImageFromJar(String fileName, Class<?> srcClass) {
     Image image = null;
     try {
       byte[] data = IOUtilities.loadFileFromJar(fileName, srcClass);

@@ -128,7 +128,7 @@ public class Localizer {
   private static final Object[] THREE_ARGS_ARR = new Object[3];
 
   /** Contains for a Class (key) a Localizer (value). */
-  private static final HashMap<Class, Localizer> mLocalizerCache = new HashMap<Class, Localizer>();
+  private static final HashMap<Class<?>, Localizer> mLocalizerCache = new HashMap<Class<?>, Localizer>();
 
   /** The base name of the ResourceBundle used by this Localizer. */
   private String mBaseName;
@@ -157,11 +157,11 @@ public class Localizer {
    *
    * @param clazz The Class to create the Localizer for.
    */
-  protected Localizer(final Class clazz) {
+  protected Localizer(final Class<?> clazz) {
     initializeForClass(clazz);
   }
 
-  protected void initializeForClass(final Class clazz) {
+  protected void initializeForClass(final Class<?> clazz) {
     String className = clazz.getName();
     int lastDot = className.lastIndexOf('.');
     String packageName;
@@ -208,7 +208,7 @@ public class Localizer {
     return mResource;
   }
 
-  protected static Localizer getCachedLocalizerFor(final Class clazz) {
+  protected static Localizer getCachedLocalizerFor(final Class<?> clazz) {
     return mLocalizerCache.get(clazz);
   }
 
@@ -218,7 +218,7 @@ public class Localizer {
    * @param clazz The Class to get the localizer for.
    * @return the Localizer for the specified Class.
    */
-  public static Localizer getLocalizerFor(final Class clazz) {
+  public static Localizer getLocalizerFor(final Class<?> clazz) {
     Localizer localizer = getCachedLocalizerFor(clazz);
 
     if (localizer == null) {
@@ -229,7 +229,7 @@ public class Localizer {
     return localizer;
   }
 
-  protected static void addLocalizerToCache(final Class clazz, final Localizer localizer) {
+  protected static void addLocalizerToCache(final Class<?> clazz, final Localizer localizer) {
     mLocalizerCache.put(clazz, localizer);
   }
 
@@ -415,14 +415,22 @@ public class Localizer {
       // First Step: look into tvbrowser.jar
       JarFile file = new JarFile(jar);
 
-      Enumeration<JarEntry> entries = file.entries();
-
-      while (entries.hasMoreElements()) {
-        JarEntry entry = entries.nextElement();
-        String name = entry.getName();
-        if (name.startsWith("tvbrowser/tvbrowser_") && (name.lastIndexOf(".properties") > 0)) {
-          name = name.substring(20, name.lastIndexOf(".properties"));
-          langArray.add(getLocaleForString(name));
+      try {
+        Enumeration<JarEntry> entries = file.entries();
+  
+        while (entries.hasMoreElements()) {
+          JarEntry entry = entries.nextElement();
+          String name = entry.getName();
+          if (name.startsWith("tvbrowser/tvbrowser_") && (name.lastIndexOf(".properties") > 0)) {
+            name = name.substring(20, name.lastIndexOf(".properties"));
+            langArray.add(getLocaleForString(name));
+          }
+        }
+      }finally {
+        if(file != null) {
+          try {
+            file.close();
+          }catch(IOException ioe) {}
         }
       }
       

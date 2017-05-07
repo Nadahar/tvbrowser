@@ -91,7 +91,7 @@ public class HelpDialog implements ActionListener, HyperlinkListener {
   private String mSourcePath;
   
   /** A class of the jar where the currently shown site is located. */
-  private Class mSourceClass;
+  private Class<?> mSourceClass;
 
   private JEditorPane mEditorPane;
   private JScrollPane mScrollPane;
@@ -117,7 +117,7 @@ public class HelpDialog implements ActionListener, HyperlinkListener {
    * @param filename The name of the HTML file to show.
    * @param clazz A class in the jar where the HTML file is in.
    */
-  public static void showHelpPage(Component parent, String filename, Class clazz) {
+  public static void showHelpPage(Component parent, String filename, Class<?> clazz) {
     if ((mHelpDialogSingleton == null)
       || (! mHelpDialogSingleton.mDialog.isShowing()))
     {
@@ -271,7 +271,7 @@ public class HelpDialog implements ActionListener, HyperlinkListener {
    * @param clazz A class in the jar where the HTML site is located.
    * @param filename Der Dateiname der HTML-Seite.
    */
-  protected void openSite(String filename, Class clazz) {
+  protected void openSite(String filename, Class<?> clazz) {
     String text;
 
     try {
@@ -384,7 +384,7 @@ public class HelpDialog implements ActionListener, HyperlinkListener {
     public String mSourcePath;
     
     /** The class of the jar, where the page is in. */
-    public Class mSourceClass;
+    public Class<?> mSourceClass;
 
     /** Der Text der zuletzt besuchten Seite. */
     public String mText;

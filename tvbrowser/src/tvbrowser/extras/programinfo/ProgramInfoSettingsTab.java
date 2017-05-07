@@ -9,6 +9,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 
 import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
@@ -38,7 +39,6 @@ import com.l2fprod.common.swing.plaf.LookAndFeelAddons;
 
 import devplugin.Plugin;
 import devplugin.PluginAccess;
-import devplugin.ProgramFieldType;
 import devplugin.ProgramReceiveTarget;
 import devplugin.SettingsTab;
 import tvbrowser.core.icontheme.IconLoader;
@@ -61,7 +61,7 @@ import util.ui.ScrollableJPanel;
  */
 public class ProgramInfoSettingsTab implements SettingsTab {
 
-  private OrderChooser mList;
+  private OrderChooser<Object> mList;
   private Object[] mOldOrder;
   private JCheckBox mShowShortDescriptionOnlyWhenNoDescription;
   
@@ -234,7 +234,7 @@ public class ProgramInfoSettingsTab implements SettingsTab {
     mOldOrder = settings.getFieldOrder();
     mOldSetupState = ProgramInfo.getInstance().getSettings().getSetupwasdone();
 
-    mList = new OrderChooser(mOldOrder, ProgramTextCreator.getDefaultOrderWithActivatedPluginInfo(),true);
+    mList = new OrderChooser<>(mOldOrder, ProgramTextCreator.getDefaultOrderWithActivatedPluginInfo(),true);
     mShowShortDescriptionOnlyWhenNoDescription = new JCheckBox(ProgramInfo.mLocalizer.msg("showShortDescriptionOnlyWhenNoDescription", "Show short description only, if no long description exists"), settings.getShowShortDescriptionOnlyWithoutDescription());
     
     JButton previewBtn = new JButton(ProgramInfo.mLocalizer.msg("preview", "Preview"));
@@ -422,7 +422,9 @@ public class ProgramInfoSettingsTab implements SettingsTab {
       settings.setZoomValue((Integer) mZoomValue.getValue());
       
       settings.setShowShortDescriptionOnlyWithoutDescription(mShowShortDescriptionOnlyWhenNoDescription.isSelected());
-      settings.setFieldOrder(mList.getOrder());
+      final List<Object> order = mList.getOrderList();
+      
+      settings.setFieldOrder(order.toArray(new Object[order.size()]));
       settings.setSetupwasdone(true);
       settings.setPictureSettings(mPictureSettings.getSettings().getType());
 

@@ -23,16 +23,15 @@
 */
 package util.ui;
 
-import java.awt.Color;
 import java.awt.Dimension;
 
 import javax.swing.Icon;
 import javax.swing.JLabel;
 
+import devplugin.Channel;
 import tvbrowser.core.DummyChannel;
 import tvbrowser.core.Settings;
 import util.misc.SoftReferenceCache;
-import devplugin.Channel;
 
 /**
  * A Label for Channels. It shows the Icon and/or the Channel-Name

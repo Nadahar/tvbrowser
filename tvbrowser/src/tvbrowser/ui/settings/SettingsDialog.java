@@ -343,7 +343,7 @@ public class SettingsDialog implements WindowClosingIf {
 
   private TreeNode createSelectionTree() {
     Icon icon;
-    SettingNode node;
+    //SettingNode node;
 
     icon = TVBrowserIcons.preferences(TVBrowserIcons.SIZE_SMALL);
     SettingNode root = new SettingNode(new DefaultSettingsTab(Localizer

@@ -34,6 +34,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
@@ -50,8 +51,6 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentListener;
 
-import tvbrowser.core.Settings;
-
 import com.jgoodies.forms.builder.ButtonBarBuilder;
 import com.jgoodies.forms.builder.DefaultFormBuilder;
 import com.jgoodies.forms.builder.PanelBuilder;
@@ -60,6 +59,7 @@ import com.jgoodies.forms.layout.FormLayout;
 
 import devplugin.PluginManager;
 import devplugin.ProgramFieldType;
+import tvbrowser.core.Settings;
 
 /**
  * A search form for searching TV listings.
@@ -101,9 +101,9 @@ public class SearchForm extends JPanel {
   private static ProgramFieldType[] mSearchableFieldTypes;
 
   private JTextField mPatternTF;
-  private JComboBox mPatternCB;
-  private DefaultComboBoxModel mPatternCBModel;
-  private JComboBox mTimeCB;
+  private JComboBox<SearchFormSettings> mPatternCB;
+  private DefaultComboBoxModel<SearchFormSettings> mPatternCBModel;
+  private JComboBox<String> mTimeCB;
   private JRadioButton mSearchTitleRB, mSearchAllRB, mSearchUserDefinedRB;
   private JButton mChangeSearchFieldsBt;
   private JRadioButton mSearcherTypeExactlyRB;
@@ -172,8 +172,8 @@ public class SearchForm extends JPanel {
 
     if (showInputfield) {
       if (showHistory) {
-        mPatternCBModel = new DefaultComboBoxModel();
-        mPatternCB = new JComboBox(mPatternCBModel);
+        mPatternCBModel = new DefaultComboBoxModel<>();
+        mPatternCB = new JComboBox<>(mPatternCBModel);
         mPatternCB.setEditable(true);
         mPatternCB.addItemListener(new ItemListener() {
           public void itemStateChanged (ItemEvent evt) {
@@ -194,7 +194,7 @@ public class SearchForm extends JPanel {
     }
 
     if (showTimeSelection) {
-      mTimeCB = new JComboBox(TIME_STRING_ARR);
+      mTimeCB = new JComboBox<>(TIME_STRING_ARR);
       topBuilder.append(mLocalizer.msg("period", "Period"), mTimeCB);
     }
 
@@ -592,7 +592,7 @@ public class SearchForm extends JPanel {
       Iterator<ProgramFieldType> iter = ProgramFieldType.getTypeIterator();
       while (iter.hasNext()) {
         ProgramFieldType type = iter.next();
-        if (type.getFormat() != ProgramFieldType.BINARY_FORMAT
+        if (type.getFormat() != ProgramFieldType.FORMAT_BINARY
             && type != ProgramFieldType.PICTURE_COPYRIGHT_TYPE
             && type != ProgramFieldType.INFO_TYPE
             && type != ProgramFieldType.CUSTOM_TYPE) {
@@ -637,7 +637,7 @@ public class SearchForm extends JPanel {
     private ProgramFieldType[] mSelectedTypeArr;
     private ProgramFieldType[] mDefaultTypeArr;
 
-    private OrderChooser mSelectableItemList;
+    private OrderChooser<ProgramFieldType> mSelectableItemList;
     
     private JCheckBox mDefaultSelection;
 
@@ -683,7 +683,7 @@ public class SearchForm extends JPanel {
         "Please select the fields to search for");
       main.add(UiUtilities.createHelpTextArea(msg + "\n"), BorderLayout.NORTH);
 
-      mSelectableItemList = new OrderChooser(selectedTypeArr,getSearchableFieldTypes(),false);
+      mSelectableItemList = new OrderChooser<>(selectedTypeArr,getSearchableFieldTypes(),false);
       main.add(mSelectableItemList, BorderLayout.CENTER);
 
       
@@ -721,10 +721,11 @@ public class SearchForm extends JPanel {
     }
 
     private void handleOk() {
-      Object[] o = mSelectableItemList.getOrder()/*.getSelection()*/;
-      mSelectedTypeArr = new ProgramFieldType[o.length];
-      for (int i=0;i<o.length;i++) {
-        mSelectedTypeArr[i]=(ProgramFieldType)o[i];
+      final List<ProgramFieldType> list = mSelectableItemList.getOrderList();
+      mSelectedTypeArr = new ProgramFieldType[list.size()];
+      
+      for (int i = 0; i < list.size(); i++) {
+        mSelectedTypeArr[i]=(ProgramFieldType)list.get(i);
       }
       
       if(mDefaultSelection != null && mDefaultSelection.isSelected()) {

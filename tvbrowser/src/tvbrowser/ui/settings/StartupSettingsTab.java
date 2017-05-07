@@ -94,10 +94,10 @@ public class StartupSettingsTab implements devplugin.SettingsTab {
   private JRadioButton mStartDownload;
   private JRadioButton mRecurrentDownload;
 
-  private JComboBox mAutoDownloadCombo;
-  private WideComboBox mAutoChannelDownloadPeriod;
+  private JComboBox<String> mAutoDownloadCombo;
+  private WideComboBox<DayPeriod> mAutoChannelDownloadPeriod;
   
-  private JComboBox mAutoDownloadPeriodCB;
+  private JComboBox<PeriodItem> mAutoDownloadPeriodCB;
 
   private JRadioButton mAskBeforeDownloadRadio;
 
@@ -360,7 +360,7 @@ public class StartupSettingsTab implements devplugin.SettingsTab {
     refreshSettings.add(mStartDownload, cc.xyw(3, y++, 4));
     refreshSettings.add(mRecurrentDownload, cc.xyw(3, y, 4));
 
-    mAutoDownloadCombo = new JComboBox(AUTO_DOWNLOAD_MSG_ARR);
+    mAutoDownloadCombo = new JComboBox<>(AUTO_DOWNLOAD_MSG_ARR);
     String dlType = Settings.propAutoDownloadType.getString();
     if (dlType.equals("daily")) {
       mAutoDownloadCombo.setSelectedIndex(0);
@@ -386,7 +386,7 @@ public class StartupSettingsTab implements devplugin.SettingsTab {
     panel.add(mAutoDownloadCombo, cc.xy(4, 1));
 
     mAskBeforeDownloadRadio = new JRadioButton(mLocalizer.msg("autoDownload.ask", "Ask before downloading"));
-    mAutoDownloadPeriodCB = new JComboBox(PeriodItem.getPeriodItems());
+    mAutoDownloadPeriodCB = new JComboBox<>(PeriodItem.getPeriodItems());
 
     int autoDLPeriod = Settings.propAutoDownloadPeriod.getInt();
     PeriodItem pi = new PeriodItem(autoDLPeriod);
@@ -463,7 +463,7 @@ public class StartupSettingsTab implements devplugin.SettingsTab {
     setAutoDownloadEnabled(mAutoDownload.isSelected());
     
     mAutoChannelDownload = new JCheckBox(mLocalizer.msg("autoChannelUpdate","Automatically update available channels"));
-    mAutoChannelDownloadPeriod = new WideComboBox();
+    mAutoChannelDownloadPeriod = new WideComboBox<>();
     
     mAutoChannelDownloadPeriod.addItem(new DayPeriod(1));
     mAutoChannelDownloadPeriod.addItem(new DayPeriod(7));

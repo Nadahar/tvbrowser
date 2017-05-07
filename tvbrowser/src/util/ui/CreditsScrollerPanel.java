@@ -21,7 +21,7 @@ import javax.swing.Timer;
 public class CreditsScrollerPanel extends JScrollPane implements ActionListener {
   private int scrollOffset;
   private Timer timer;
-  private boolean firstTime = true;
+  //private boolean firstTime = true;
   private int locationY;
 
   private CreditsScrollerPanel(JComponent component, int delay, int scrollOffset) {

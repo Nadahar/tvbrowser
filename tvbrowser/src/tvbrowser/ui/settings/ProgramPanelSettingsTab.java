@@ -58,6 +58,7 @@ import util.ui.Localizer;
 import util.ui.OrderChooser;
 import util.ui.TVBrowserIcons;
 import util.ui.UiUtilities;
+import util.ui.customizableitems.SelectableItem;
 import util.ui.customizableitems.SelectableItemRendererCenterComponentIf;
 
 import com.jgoodies.forms.factories.Borders;
@@ -80,8 +81,8 @@ public class ProgramPanelSettingsTab implements SettingsTab {
 
   private static final String PICTURE_ICON_NAME = mLocalizer.msg("hasPicure", "Has picture");
 
-  private OrderChooser mIconPluginOCh;
-  private OrderChooser mInfoTextOCh;
+  private OrderChooser<IconPlugin> mIconPluginOCh;
+  private OrderChooser<Object> mInfoTextOCh;
 
   private ColorLabel mProgramItemOnAirColorLb, mProgramItemProgressColorLb, mProgramItemKeyboardSelectedLb;
 
@@ -109,12 +110,42 @@ public class ProgramPanelSettingsTab implements SettingsTab {
 
     IconPlugin[] allPluginArr = getAvailableIconPlugins();
     IconPlugin[] pluginOrderArr = getSelectedIconPlugins(allPluginArr);
-    mIconPluginOCh = new OrderChooser(pluginOrderArr, allPluginArr, IconPlugin.class,
-        new SelectableItemRendererCenterComponentIf() {
+    mIconPluginOCh = new OrderChooser<>(pluginOrderArr, allPluginArr, IconPlugin.class,
+        new SelectableItemRendererCenterComponentIf<IconPlugin>() {
           private DefaultListCellRenderer mRenderer = new DefaultListCellRenderer();
+          
+          @Override
+          public JPanel createCenterPanel(JList<? extends SelectableItem<IconPlugin>> list, IconPlugin value, int index, boolean isSelected,
+              boolean isEnabled, JScrollPane parentScrollPane, int leftColumnWidth) {
+            DefaultListCellRenderer label = (DefaultListCellRenderer) mRenderer.getListCellRendererComponent(list,
+                value, index, isSelected, false);
+            IconPlugin iconPlugin = (IconPlugin) value;
+            label.setIcon(iconPlugin.getIcon());
+            label.setHorizontalAlignment(SwingConstants.LEADING);
+            label.setVerticalAlignment(SwingConstants.CENTER);
+            label.setOpaque(false);
+
+            JPanel panel = new JPanel(new BorderLayout());
+            if (isSelected && isEnabled) {
+              panel.setOpaque(true);
+              panel.setForeground(list.getSelectionForeground());
+              panel.setBackground(list.getSelectionBackground());
+            } else {
+              panel.setOpaque(false);
+              panel.setForeground(list.getForeground());
+              panel.setBackground(list.getBackground());
+            }
+            panel.add(label, BorderLayout.WEST);
+            return panel;
+          }
 
           @Override
-          public JPanel createCenterPanel(JList list, Object value, int index, boolean isSelected, boolean isEnabled,
+          public void calculateSize(JList<? extends SelectableItem<IconPlugin>> list, int index, JPanel contentPane) {}
+        //public void calculateSize(JList<SelectableItem<IconPlugin>> list, int index, JPanel contentPane) {}
+       /*   private DefaultListCellRenderer mRenderer = new DefaultListCellRenderer();
+
+          @Override
+          public JPanel createCenterPanel(JList<SelectableItem<IconPlugin>> list, IconPlugin value, int index, boolean isSelected, boolean isEnabled,
               JScrollPane parentScrollPane, int leftColumnWidth) {
             DefaultListCellRenderer label = (DefaultListCellRenderer) mRenderer.getListCellRendererComponent(list,
                 value, index, isSelected, false);
@@ -139,8 +170,7 @@ public class ProgramPanelSettingsTab implements SettingsTab {
           }
 
           @Override
-          public void calculateSize(JList list, int index, JPanel contentPane) {
-          }
+          public void calculateSize(JList<SelectableItem<IconPlugin>> list, int index, JPanel contentPane) {}*/
         });
 
     // info text
@@ -151,7 +181,7 @@ public class ProgramPanelSettingsTab implements SettingsTab {
     ProgramFieldType[] typeOrderArr = getSelectedTypes();
     String[] separators = Settings.propProgramInfoFieldsSeparators.getStringArray();
     
-    mInfoTextOCh = new OrderChooser(typeOrderArr, allTypeArr);
+    mInfoTextOCh = new OrderChooser<>(typeOrderArr, allTypeArr);
     
     JButton addLineBreak = new JButton(IconLoader.getInstance().getIconFromTheme("actions", "add-line-break", TVBrowserIcons.SIZE_LARGE));
     addLineBreak.setToolTipText(mLocalizer.msg("addLineBreakTooltip", "Adds line break"));
@@ -304,7 +334,7 @@ public class ProgramPanelSettingsTab implements SettingsTab {
     while (typeIter.hasNext()) {
       ProgramFieldType type = typeIter.next();
 
-      if ((type.getFormat() != ProgramFieldType.BINARY_FORMAT) && (type != ProgramFieldType.INFO_TYPE)
+      if ((type.getFormat() != ProgramFieldType.FORMAT_BINARY) && (type != ProgramFieldType.INFO_TYPE)
           && (type != ProgramFieldType.PICTURE_DESCRIPTION_TYPE) && (type != ProgramFieldType.PICTURE_COPYRIGHT_TYPE)) {
         typeList.add(type);
       }
@@ -322,34 +352,33 @@ public class ProgramPanelSettingsTab implements SettingsTab {
    */
   public void saveSettings() {
     // icons
-    Object[] iconPluginArr = mIconPluginOCh.getOrder();
-    String[] pluginIdArr = new String[iconPluginArr.length];
-    for (int i = 0; i < iconPluginArr.length; i++) {
-      IconPlugin plugin = (IconPlugin) iconPluginArr[i];
-      pluginIdArr[i] = plugin.getId();
+    List<IconPlugin> iconPluginArr = mIconPluginOCh.getOrderList();
+    String[] pluginIdArr = new String[iconPluginArr.size()];
+    for (int i = 0; i < iconPluginArr.size(); i++) {
+      pluginIdArr[i] = iconPluginArr.get(i).getId();
     }
     Settings.propProgramTableIconPlugins.setStringArray(pluginIdArr);
     
     // info text
-    Object[] infoFieldArr = mInfoTextOCh.getOrder();
+    List<Object> infoFieldArr = mInfoTextOCh.getOrderList();
     ArrayList<ProgramFieldType> fieldTypeList = new ArrayList<ProgramFieldType>();
     ArrayList<String> separatorList = new ArrayList<String>();
     
-    for (int i = 0; i < infoFieldArr.length; i++) {
-      if(infoFieldArr[i] instanceof ProgramFieldType) {
-        fieldTypeList.add((ProgramFieldType)infoFieldArr[i]);
+    for (int i = 0; i < infoFieldArr.size(); i++) {
+      if(infoFieldArr.get(i) instanceof ProgramFieldType) {
+        fieldTypeList.add((ProgramFieldType)infoFieldArr.get(i));
         
-        if(i < infoFieldArr.length-1) {
-          if(infoFieldArr[i+1] instanceof String) {
+        if(i < infoFieldArr.size()-1) {
+          if(infoFieldArr.get(i+1) instanceof String) {
             i++;
             
             StringBuilder separator = new StringBuilder();
-            separator.append(infoFieldArr[i]);
+            separator.append(infoFieldArr.get(i));
             
             int j = i+1;
             
-            while(j < infoFieldArr.length && infoFieldArr[j] instanceof String) {
-              separator.append(";#;").append(infoFieldArr[j]);
+            while(j < infoFieldArr.size() && infoFieldArr.get(j) instanceof String) {
+              separator.append(";#;").append(infoFieldArr.get(j));
               j++;
               i++;
             }

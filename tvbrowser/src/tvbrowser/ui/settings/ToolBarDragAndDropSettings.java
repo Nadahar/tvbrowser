@@ -93,7 +93,7 @@ public class ToolBarDragAndDropSettings extends JDialog implements
   private Vector<Action> mCurrentActions = new Vector<Action>();
   /** Actions the user can add to the ToolBar */
   private Vector<Action> mAvailableActions = new Vector<Action>();
-  private JComboBox mShowCB, mLocationCB;
+  private JComboBox<String> mShowCB, mLocationCB;
   private JCheckBox mShowToolbarCb, mUseBigIconsCb, mShowSearchFieldCb;
   private JPanel mButtonPanel;
   private boolean mWest;
@@ -182,7 +182,7 @@ public class ToolBarDragAndDropSettings extends JDialog implements
     JPanel tSetPanel = new JPanel(new FormLayout("default,5dlu,default,0dlu:grow,default,5dlu,default,5dlu,default","default"));
     tSetPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-    mLocationCB = new JComboBox(new String[] { mLocalizer.msg("top", "top"),
+    mLocationCB = new JComboBox<>(new String[] { mLocalizer.msg("top", "top"),
         Localizer.getLocalization(Localizer.I18N_LEFT), });
 
     if ("west".equals(Settings.propToolbarLocation.getString())) {
@@ -192,7 +192,7 @@ public class ToolBarDragAndDropSettings extends JDialog implements
       mWest = false;
     }
 
-    mShowCB = new JComboBox(new String[] {
+    mShowCB = new JComboBox<>(new String[] {
         ContextMenu.mLocalizer.msg("text.and.icon", "text and icon"),
         ContextMenu.mLocalizer.msg("text", "text"),
         ContextMenu.mLocalizer.msg("icon", "icon") });

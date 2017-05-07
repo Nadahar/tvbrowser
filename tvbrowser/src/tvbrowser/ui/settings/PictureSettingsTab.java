@@ -45,6 +45,16 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.factories.CC;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.RowSpec;
+
+import devplugin.Marker;
+import devplugin.Plugin;
+import devplugin.PluginAccess;
+import devplugin.SettingsItem;
 import tvbrowser.TVBrowser;
 import tvbrowser.core.Settings;
 import tvbrowser.core.filters.FilterList;
@@ -60,19 +70,7 @@ import util.ui.CaretPositionCorrector;
 import util.ui.Localizer;
 import util.ui.MarkerChooserDlg;
 import util.ui.PluginsPictureSettingsPanel;
-import util.ui.ScrollableJPanel;
 import util.ui.UiUtilities;
-
-import com.jgoodies.forms.builder.PanelBuilder;
-import com.jgoodies.forms.factories.Borders;
-import com.jgoodies.forms.factories.CC;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.RowSpec;
-
-import devplugin.Marker;
-import devplugin.Plugin;
-import devplugin.PluginAccess;
-import devplugin.SettingsItem;
 
 /**
  * The settings tab for the program panel picture settings.

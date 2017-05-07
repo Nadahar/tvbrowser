@@ -482,10 +482,10 @@ public class MarkedProgramsMap {
       
       return false;
     }
-    
+    /*
     boolean isValid() {
       return mCurrentProgramInstance.getProgramState() == Program.IS_VALID_STATE;
-    }
+    }*/
     
     private MutableProgram checkProgram(MutableProgram programInList, Program[] testProgs) {
       boolean titleWasChangedToMuch = false;

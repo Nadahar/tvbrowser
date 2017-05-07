@@ -254,9 +254,9 @@ public class MouseSettingsTab implements devplugin.SettingsTab {
 	}
 	
 	private class ContextMenuPanel extends JPanel {
-	  private JComboBox mMouseButton;
-	  private JComboBox mModifiersEx;
-	  private JComboBox mClickCount;
+	  private JComboBox<String> mMouseButton;
+	  private JComboBox<String> mModifiersEx;
+	  private JComboBox<String> mClickCount;
 	  private MouseClickSetting mMouseClickSetting;
 	  
 	  private ContextMenuPanel(ContextMenuMouseActionSetting setting, int mouseButton, int clickCount) {
@@ -270,28 +270,28 @@ public class MouseSettingsTab implements devplugin.SettingsTab {
 	    
 	    pb.addRow();
 	    
-	    mMouseButton = new JComboBox(MOUSE_BUTTON_TEXT);
+	    mMouseButton = new JComboBox<>(MOUSE_BUTTON_TEXT);
 	    mMouseButton.setSelectedIndex(mouseButton-1);
-	    mModifiersEx = new JComboBox(mouseButton == 1 ? mLeftModifiersName : mMiddleModifiersName);
+	    mModifiersEx = new JComboBox<>(mouseButton == 1 ? mLeftModifiersName : mMiddleModifiersName);
 	    mModifiersEx.setSelectedIndex(indexOfModifier(mouseButton == 1 ? mLeftModifiersEx : mMiddleModifiersEx, setting.getModifiersEx()));
 	    mMouseClickSetting = new MouseClickSetting(setting.getContextMenuIf(), setting.getContextMenuActionId());
-	    mClickCount = new JComboBox(CLICK_COUNT_TEXT);
+	    mClickCount = new JComboBox<>(CLICK_COUNT_TEXT);
 	    mClickCount.setSelectedIndex(clickCount-1);
 	    
 	    mMouseButton.addItemListener(new ItemListener() {
         @Override
         public void itemStateChanged(ItemEvent e) {
           if(e.getStateChange() == ItemEvent.SELECTED) {
-            ((DefaultComboBoxModel)mModifiersEx.getModel()).removeAllElements();
+            ((DefaultComboBoxModel<String>)mModifiersEx.getModel()).removeAllElements();
             
             if(e.getItem().equals(MOUSE_BUTTON_TEXT[0])) {
               for(String name : mLeftModifiersName) {
-                ((DefaultComboBoxModel)mModifiersEx.getModel()).addElement(name);
+                ((DefaultComboBoxModel<String>)mModifiersEx.getModel()).addElement(name);
               }
             }
             else {
               for(String name : mMiddleModifiersName) {
-                ((DefaultComboBoxModel)mModifiersEx.getModel()).addElement(name);
+                ((DefaultComboBoxModel<String>)mModifiersEx.getModel()).addElement(name);
               }              
             }
           }
@@ -348,15 +348,17 @@ public class MouseSettingsTab implements devplugin.SettingsTab {
 	
 	
 
-	private static class ContextMenuCellRenderer extends CustomComboBoxRenderer {
-		public ContextMenuCellRenderer(ListCellRenderer backendRenderer) {
+	@SuppressWarnings("rawtypes")
+  private static class ContextMenuCellRenderer extends CustomComboBoxRenderer {
+    public ContextMenuCellRenderer(ListCellRenderer backendRenderer) {
 		  super(backendRenderer);
 		}
 
 		public Component getListCellRendererComponent(JList list, Object value,
 				int index, boolean isSelected, boolean cellHasFocus) {
 
-			JLabel label = (JLabel) getBackendRenderer().getListCellRendererComponent(list, value,
+			@SuppressWarnings("unchecked")
+      JLabel label = (JLabel) getBackendRenderer().getListCellRendererComponent(list, value,
 					index, isSelected, cellHasFocus);
 
 			if (value instanceof ContextMenuActionEntry) {
@@ -386,13 +388,12 @@ public class MouseSettingsTab implements devplugin.SettingsTab {
 
 			return label;
 		}
-
 	}
 
 	private static class MouseClickSetting {
 		private ContextMenuIf mClickInterface;
 		private ActionMenu mActionMenu;
-		private JComboBox mComboBox;
+		private JComboBox<ContextMenuActionEntry> mComboBox;
 
 		public MouseClickSetting(ContextMenuIf clickIf, int actionMenuId) {
 			mClickInterface = clickIf;
@@ -413,8 +414,8 @@ public class MouseSettingsTab implements devplugin.SettingsTab {
 		  return (ContextMenuActionEntry) mComboBox.getSelectedItem();
 		}
 
-		public JComboBox createComboxBox() {
-			mComboBox = new JComboBox();
+		public JComboBox<ContextMenuActionEntry> createComboxBox() {
+			mComboBox = new JComboBox<>();
 			mComboBox.setSelectedItem(new ContextMenuActionEntry(mClickInterface,mActionMenu));
 			mComboBox.setMaximumRowCount(15);
 			mComboBox.setRenderer(new ContextMenuCellRenderer(mComboBox.getRenderer()));

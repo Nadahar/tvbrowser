@@ -31,8 +31,8 @@ package util.ui.customizableitems;
  * 
  * @author René Mach
  */
-public class SelectableItem {
-  private Object mItem;
+public class SelectableItem<E> {
+  private E mItem;
   private boolean mSelected;
   private boolean mIsSelectable;
 
@@ -41,7 +41,7 @@ public class SelectableItem {
    * @param item The item.
    * @param selected Item is selected.
    */
-  public SelectableItem(Object item, boolean selected) {
+  public SelectableItem(E item, boolean selected) {
     this(item,selected,true);
   }
   
@@ -53,7 +53,7 @@ public class SelectableItem {
    * but cannot be changed by the user.
    * @since 2.7.2
    */
-  public SelectableItem(Object item, boolean selected, boolean isSelectable) {
+  public SelectableItem(E item, boolean selected, boolean isSelectable) {
     mItem = item;
     mSelected = selected;
     mIsSelectable = isSelectable;
@@ -80,7 +80,7 @@ public class SelectableItem {
   /**
    * @return The item.
    */
-  public Object getItem() {
+  public E getItem() {
     return mItem;
   }
   

@@ -24,7 +24,6 @@
 package util.ui;
 
 import java.awt.Window;
-import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.nio.charset.Charset;
@@ -44,11 +43,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
-import util.paramhandler.ParamHelpDialog;
-import util.paramhandler.ParamLibrary;
-import util.paramhandler.ParamParser;
-import util.program.AbstractPluginProgramFormating;
-
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -56,6 +50,10 @@ import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
 
 import devplugin.Plugin;
+import util.paramhandler.ParamHelpDialog;
+import util.paramhandler.ParamLibrary;
+import util.paramhandler.ParamParser;
+import util.program.AbstractPluginProgramFormating;
 
 /**
  * A settings dialog for the program configuration.
@@ -71,7 +69,7 @@ public class LocalPluginProgramFormatingSettingsDialog extends JDialog implement
   private JLabel mName;
   private JTextField mTitle;
   private JTextArea mContentArea;
-  private JComboBox mEncoding;
+  private JComboBox<String> mEncoding;
 
   /**
    * Creates an instance of this settings dialog.
@@ -126,7 +124,7 @@ public class LocalPluginProgramFormatingSettingsDialog extends JDialog implement
        encodings.add(string);
     }
 
-    mEncoding = new JComboBox(encodings);
+    mEncoding = new JComboBox<>(encodings);
     mEncoding.setSelectedItem(config.getEncodingValue());
     mEncoding.addActionListener(this);
 

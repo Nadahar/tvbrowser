@@ -51,7 +51,7 @@ public class TrayImportantSettingsTab implements SettingsTab {
   
   private JCheckBox mShowSortNumber;
   
-  private JComboBox mPriority;
+  private JComboBox<String> mPriority;
   private JLabel mPriorityText;
   
   private static boolean mTrayIsEnabled = Settings.propTrayIsEnabled.getBoolean();
@@ -112,7 +112,7 @@ public class TrayImportantSettingsTab implements SettingsTab {
     
     mPriorityText = new JLabel(mLocalizer.msg("importantMarkPriority","Mark priority higher or the same like:"));
     
-    mPriority = new JComboBox(colors);
+    mPriority = new JComboBox<>(colors);
     mPriority.setSelectedIndex(Settings.propTrayImportantProgramsPriority.getInt());
     mPriority.setRenderer(new MarkPriorityComboBoxRenderer(mPriority.getRenderer()));
 

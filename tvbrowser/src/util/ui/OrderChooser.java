@@ -34,6 +34,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
@@ -43,17 +44,17 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.event.ListSelectionListener;
 
+import com.jgoodies.forms.layout.Sizes;
+
 import util.ui.customizableitems.SelectableItem;
 import util.ui.customizableitems.SelectableItemRenderer;
 import util.ui.customizableitems.SelectableItemRendererCenterComponentIf;
-
-import com.jgoodies.forms.layout.Sizes;
 
 /**
  *
  * @author Til Schneider, www.murfman.de
  */
-public class OrderChooser extends JPanel implements ListDropAction{
+public class OrderChooser<E> extends JPanel implements ListDropAction<SelectableItem<E>>{
 
   private static final util.ui.Localizer mLocalizer
     = util.ui.Localizer.getLocalizerFor(OrderChooser.class);
@@ -63,9 +64,9 @@ public class OrderChooser extends JPanel implements ListDropAction{
    * Markierung aufgefasst wird.
    * (Wird vom Renderer gesetzt)
    */
-  private JList mList;
-  private DefaultListModel mListModel;
-  private SelectableItemRenderer mItemRenderer;
+  private JList<SelectableItem<E>> mList;
+  private DefaultListModel<SelectableItem<E>> mListModel;
+  private SelectableItemRenderer<E> mItemRenderer;
   private JButton mUpBt;
   private JButton mDownBt;
   private JButton mSelectAllBt;
@@ -81,7 +82,7 @@ public class OrderChooser extends JPanel implements ListDropAction{
    * @param allItems Alle moeglichen Objekte (die Objekte der aktuellen Reihenfolge
    *        eingeschlossen)
    */
-  public OrderChooser(Object[] currOrder, Object[] allItems) {
+  public OrderChooser(E[] currOrder, E[] allItems) {
     this(currOrder, allItems, false);
   }
 
@@ -97,32 +98,32 @@ public class OrderChooser extends JPanel implements ListDropAction{
    *        eingeschlossen)
    * @param showSelectionButtons Shows the selection buttons.
    */
-  public OrderChooser(Object[] currOrder, Object[] allItems, boolean showSelectionButtons) {
+  public OrderChooser(E[] currOrder, E[] allItems, boolean showSelectionButtons) {
     this(currOrder, allItems, showSelectionButtons, null, null);
   }
 
-  public OrderChooser(Object[] currOrder, Object[] allItems, final Class renderClass, final SelectableItemRendererCenterComponentIf renderComponent) {
+  public OrderChooser(E[] currOrder, E[] allItems, final Class<?> renderClass, final SelectableItemRendererCenterComponentIf<E> renderComponent) {
     this(currOrder, allItems, false, renderClass, renderComponent);
   }
   
-  public OrderChooser(Object[] currOrder, Object[] allItems, boolean showSelectionButtons, final Class renderClass, final SelectableItemRendererCenterComponentIf renderComponent) {
+  public OrderChooser(E[] currOrder, E[] allItems, boolean showSelectionButtons, final Class<?> renderClass, final SelectableItemRendererCenterComponentIf<E> renderComponent) {
     super(new BorderLayout());
 
     JPanel p1, p3, main;
     
     main = new JPanel(new BorderLayout(0,3));
 
-    mListModel = new DefaultListModel();
+    mListModel = new DefaultListModel<>();
     setEntries(currOrder,allItems);
-    mList = new JList(mListModel);
-    mList.setCellRenderer(mItemRenderer = new SelectableItemRenderer());
+    mList = new JList<>(mListModel);
+    mList.setCellRenderer(mItemRenderer = new SelectableItemRenderer<>());
     if (renderClass != null && renderComponent != null) {
       mItemRenderer.setCenterRendererComponent(renderClass, renderComponent);
     }
 
     // Register DnD on the List.
     ListDragAndDropHandler dnDHandler = new ListDragAndDropHandler(mList,mList,this);
-    new DragAndDropMouseListener(mList,mList,this,dnDHandler);
+    new DragAndDropMouseListener<SelectableItem<E>>(mList,mList,this,dnDHandler);
     
     // MouseListener hinzufügen, der das Selektieren/Deselektieren übernimmt
     mList.addMouseListener(new MouseAdapter() {
@@ -130,7 +131,7 @@ public class OrderChooser extends JPanel implements ListDropAction{
         if (evt.getX() < mItemRenderer.getSelectionWidth() && mIsEnabled) {
           int index = mList.locationToIndex(evt.getPoint());
           if (index != -1) {
-            SelectableItem item = (SelectableItem) mListModel.elementAt(index);
+            SelectableItem<E> item = mListModel.elementAt(index);
             item.setSelected(! item.isSelected());
             mList.repaint();
           }
@@ -140,12 +141,9 @@ public class OrderChooser extends JPanel implements ListDropAction{
     mList.addKeyListener(new KeyAdapter(){
       public void keyPressed(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-          Object[] objs = mList.getSelectedValues();
-          for (Object obj : objs) {
-            if (obj instanceof SelectableItem) {
-              SelectableItem item = (SelectableItem) obj;
-              item.setSelected(!item.isSelected());
-            }
+          List<SelectableItem<E>> objs = mList.getSelectedValuesList();
+          for (SelectableItem<E> obj : objs) {
+            obj.setSelected(!obj.isSelected());
           }
           mList.repaint();
         }
@@ -205,17 +203,17 @@ public class OrderChooser extends JPanel implements ListDropAction{
     }
   }
 
-  private void setEntries(Object[] currOrder, Object[] allItems) {
+  private void setEntries(E[] currOrder, E[] allItems) {
     mListModel.removeAllElements();
-    for (Object element : currOrder) {
+    for (E element : currOrder) {
       if (contains(allItems, element)) {
-        SelectableItem item = new SelectableItem(element, true);
+        SelectableItem<E> item = new SelectableItem<>(element, true);
         mListModel.addElement(item);
       }
     }
     for (int i = 0; i < allItems.length; i++) {
       if (! contains(currOrder, allItems[i])) {
-        SelectableItem item = new SelectableItem(allItems[i], false);
+        SelectableItem<E> item = new SelectableItem<>(allItems[i], false);
         mListModel.addElement(item);
       }
     }
@@ -239,11 +237,14 @@ public class OrderChooser extends JPanel implements ListDropAction{
     return false;
   }
   
-
+  /**
+   * @return The order of selected items.
+   * @deprecated since 3.4.5 use {@link #getOrderList()} instead
+   */
   public Object[] getOrder() {
-    ArrayList<Object> objList = new ArrayList<Object>();
+    ArrayList<E> objList = new ArrayList<E>();
     for (int i = 0; i < mListModel.size(); i++) {
-      SelectableItem item = (SelectableItem) mListModel.elementAt(i);
+      SelectableItem<E> item = mListModel.elementAt(i);
       if (item.isSelected()) {
         objList.add(item.getItem());
       }
@@ -254,11 +255,27 @@ public class OrderChooser extends JPanel implements ListDropAction{
 
     return asArr;
   }
+  
+  /**
+   * @return A list with the selected items in order.
+   * @since 3.4.5
+   */
+  public List<E> getOrderList() {
+    ArrayList<E> objList = new ArrayList<E>();
+    for (int i = 0; i < mListModel.size(); i++) {
+      SelectableItem<E> item = mListModel.elementAt(i);
+      if (item.isSelected()) {
+        objList.add(item.getItem());
+      }
+    }
+    
+    return objList;
+  }
 
   public void invertSelection() {
     if(mIsEnabled) {
       for (int i = 0; i < mListModel.size(); i++) {
-        SelectableItem item = (SelectableItem) mListModel.elementAt(i);
+        SelectableItem<E> item = mListModel.elementAt(i);
         item.setSelected(!item.isSelected());
       }
       mList.repaint();
@@ -268,14 +285,14 @@ public class OrderChooser extends JPanel implements ListDropAction{
   public void selectAll() {
     if(mIsEnabled) {
       for (int i = 0; i < mListModel.size(); i++) {
-        SelectableItem item = (SelectableItem) mListModel.elementAt(i);
+        SelectableItem<E> item = mListModel.elementAt(i);
         item.setSelected(true);
       }
       mList.repaint();
     }
   }
   
-  public void setOrder(Object[] currOrder, Object[] allItems) {
+  public void setOrder(E[] currOrder, E[] allItems) {
     setEntries(currOrder, allItems);
     
     mList.repaint();
@@ -284,7 +301,7 @@ public class OrderChooser extends JPanel implements ListDropAction{
   public void clearSelection() {
     if(mIsEnabled) {
       for (int i = 0; i < mListModel.size(); i++) {
-        SelectableItem item = (SelectableItem) mListModel.elementAt(i);
+        SelectableItem<E> item = mListModel.elementAt(i);
         item.setSelected(false);
       }
       mList.repaint();
@@ -325,7 +342,7 @@ public class OrderChooser extends JPanel implements ListDropAction{
   }*/
 
 
-  public void drop(JList source, JList target, int rows, boolean move) {
+  public void drop(JList<SelectableItem<E>> source, JList<SelectableItem<E>> target, int rows, boolean move) {
     UiUtilities.moveSelectedItems(target,rows,true);
   }
   
@@ -379,8 +396,8 @@ public class OrderChooser extends JPanel implements ListDropAction{
    * @param value
    * @since 2.5.1
    */
-  public void addElement(Object value) {
-    SelectableItem item = new SelectableItem(value,true);
+  public void addElement(E value) {
+    SelectableItem<E> item = new SelectableItem<>(value,true);
     mListModel.addElement(item);
     mList.repaint();
   }
@@ -414,7 +431,7 @@ public class OrderChooser extends JPanel implements ListDropAction{
    */
   public Object getSelectedValue() {
     if(mList.getSelectedValue() != null) {
-      SelectableItem item = (SelectableItem)mList.getSelectedValue();
+      SelectableItem<E> item = mList.getSelectedValue();
       return item.getItem();
     }
     return null;
@@ -457,8 +474,8 @@ public class OrderChooser extends JPanel implements ListDropAction{
    * @param index The index to insert the element.
    * @param selected If the value should be selected.
    */
-  public void addElement(Object value, int index, boolean selected) {
-    SelectableItem item = new SelectableItem(value,selected);
+  public void addElement(E value, int index, boolean selected) {
+    SelectableItem<E> item = new SelectableItem<>(value,selected);
     
     if(index < mListModel.getSize()) {
       mListModel.add(index, item);
