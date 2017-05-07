@@ -34,7 +34,6 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
@@ -74,21 +73,6 @@ public class ExecuteSettingsDialog extends JDialog implements WindowClosingIf{
     this(parent, execFile, execParam, null);
   }
 
-  /**
-   * Create the Dialog
-   * 
-   * @param parent
-   *          Parent
-   * @param execFile
-   *          File to execute
-   * @param execParam
-   *          parameters for the File
-   * @deprecated since 3.0
-   */
-  @Deprecated
-  public ExecuteSettingsDialog(JDialog parent, String execFile, String execParam) {
-    this((Window) parent, execFile, execParam);
-  }
 
   /**
    * Create the Dialog
@@ -110,56 +94,7 @@ public class ExecuteSettingsDialog extends JDialog implements WindowClosingIf{
     mParamLibrary = library;
     createGui();
   }
-
-  /**
-   * Create the Dialog
-   * 
-   * @param parent
-   *          Parent
-   * @param execFile
-   *          File to execute
-   * @param execParam
-   *          parameters for the File
-   * @deprecated since 3.0
-   */
-  @Deprecated
-  public ExecuteSettingsDialog(JDialog parent, String execFile,
-      String execParam, ParamLibrary library) {
-    this((Window) parent, execFile, execParam, library);
-  }
-
-  /**
-   * Create the Dialog
-   * 
-   * @param parent
-   *          Parent
-   * @param execFile
-   *          File to execute
-   * @param execParam
-   *          parameters for the File
-   * @deprecated since 3.0
-   */
-  @Deprecated
-  public ExecuteSettingsDialog(JFrame parent, String execFile, String execParam) {
-    this((Window) parent, execFile, execParam);
-  }
-
-  /**
-   * Create the Dialog
-   * 
-   * @param parent
-   *          Parent
-   * @param execFile
-   *          File to execute
-   * @param execParam
-   *          parameters for the File
-   * @deprecated since 3.0
-   */
-  @Deprecated
-  public ExecuteSettingsDialog(JFrame parent, String execFile, String execParam, ParamLibrary library) {
-    this((Window) parent, execFile, execParam, library);
-  }
-
+  
   /**
    * Create the GUI
    */

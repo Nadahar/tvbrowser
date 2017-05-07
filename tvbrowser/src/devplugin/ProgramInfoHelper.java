@@ -23,10 +23,8 @@ public class ProgramInfoHelper {
     
     /**
      * The Bit-Array with all possibilities
-     * @deprecated since 3.0, use {@link #getInfoBits()} instead
      */
-    @Deprecated
-    public static final int[] mInfoBitArr = new int[] {
+    private static final int[] mInfoBitArr = new int[] {
             Program.INFO_VISION_BLACK_AND_WHITE, Program.INFO_VISION_4_TO_3,
             Program.INFO_VISION_16_TO_9, Program.INFO_AUDIO_MONO,
             Program.INFO_AUDIO_STEREO, Program.INFO_AUDIO_DOLBY_SURROUND,
@@ -42,27 +40,11 @@ public class ProgramInfoHelper {
             Program.INFO_CATEGORIE_SPORTS, Program.INFO_CATEGORIE_CHILDRENS,
             Program.INFO_CATEGORIE_OTHERS, Program.INFO_SIGN_LANGUAGE
     };
-
-    /**
-     * The Icons for the Bits
-     * @deprecated since 3.0, use {@link #getInfoIcons()} instead
-     */
-    @Deprecated
-    public static final Icon[] mInfoIconArr = InfoThemeLoader.getInstance().getIconThemeForIDOrDefault(Settings.propInfoIconThemeID.getString()).getInfoIcons();
-
-    /**
-     * The Icon URLs for the Bits
-     * @deprecated since 3.0, use {@link #getInfoIconFilenames()} instead
-     */
-    @Deprecated
-    public static final String[] mInfoIconFileName = InfoThemeLoader.getInstance().getIconThemeForIDOrDefault(Settings.propInfoIconThemeID.getString()).getInfoIconURLs();
-
+    
     /**
      * The String representation of the Bits
-     * @deprecated since 3.0, use {@link #getInfoIconMessages()} instead
      */
-    @Deprecated
-    public static final String[] mInfoMsgArr = new String[] {
+    private static final String[] mInfoMsgArr = new String[] {
             mLocalizer.msg("blackAndWhite", "Black and white"),
             // INFO_VISION_BLACK_AND_WHITE
             mLocalizer.msg("4to3", "4:3"),
@@ -123,13 +105,13 @@ public class ProgramInfoHelper {
      * @return the info icon array
      */
     public static final Icon[] getInfoIcons() {
-      return mInfoIconArr.clone();
+      return InfoThemeLoader.getInstance().getIconThemeForIDOrDefault(Settings.propInfoIconThemeID.getString()).getInfoIcons();
     }
     
     /**
      * @since 3.0
      * @return the info icon URLs array
-     * @deprecated since 3.3.4
+     * @deprecated since 3.3.4 use {@link #getInfoIconURLs()} instead.
      */
     public static final String[] getInfoIconFilenames() {
       return getInfoIconURLs();
@@ -140,7 +122,7 @@ public class ProgramInfoHelper {
      * @return The info icon URLs array
      */
     public static final String[] getInfoIconURLs() {
-      return mInfoIconFileName.clone();
+      return InfoThemeLoader.getInstance().getIconThemeForIDOrDefault(Settings.propInfoIconThemeID.getString()).getInfoIconURLs();
     }
     
     /**

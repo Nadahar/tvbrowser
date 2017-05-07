@@ -38,8 +38,6 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListCellRenderer;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 
 import com.jgoodies.forms.layout.Sizes;
 
@@ -129,10 +127,8 @@ public class SortableItemList<E> extends JPanel implements ActionListener, ListD
       }
     }
     
-    mList.addListSelectionListener(new ListSelectionListener(){
-      public void valueChanged(ListSelectionEvent e) {
-        updateBtns();
-      }
+    mList.addListSelectionListener(e -> {
+      updateBtns();
     });
  
     //Register DnD on the List.

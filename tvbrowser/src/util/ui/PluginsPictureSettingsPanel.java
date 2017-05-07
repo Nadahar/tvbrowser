@@ -34,15 +34,13 @@ import javax.swing.JRadioButton;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkListener;
-
-import tvbrowser.ui.settings.SettingsDialog;
-import util.settings.PluginPictureSettings;
 
 import com.jgoodies.forms.factories.CC;
 import com.jgoodies.forms.layout.FormLayout;
 
 import devplugin.SettingsItem;
+import tvbrowser.ui.settings.SettingsDialog;
+import util.settings.PluginPictureSettings;
 
 /**
  * A settings panel for the setup of the plugins picture settings.
@@ -95,11 +93,9 @@ public class PluginsPictureSettingsPanel extends JPanel {
       bg.add(mGlobalSettings);
       add(mGlobalSettings, CC.xyw(1,y++,2));
       
-      JEditorPane helpLabel = UiUtilities.createHtmlHelpTextArea(mLocalizer.msg("help","The default plugin setting can be changed in the <a href=\"#link\">picture settings</a>."), new HyperlinkListener() {
-        public void hyperlinkUpdate(HyperlinkEvent e) {
-          if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-            SettingsDialog.getInstance().showSettingsTab(SettingsItem.PICTURES);
-          }
+      JEditorPane helpLabel = UiUtilities.createHtmlHelpTextArea(mLocalizer.msg("help","The default plugin setting can be changed in the <a href=\"#link\">picture settings</a>."), e -> {
+        if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+          SettingsDialog.getInstance().showSettingsTab(SettingsItem.PICTURES);
         }
       });
       

@@ -84,11 +84,7 @@ public class ProgramFieldType {
    * @deprecated since 3.4.5, use {@link #FORMAT_UNKNOWN}
    */
   public static final int UNKNOWN_FORMAT = FORMAT_UNKNOWN;
-  /**
-   * @deprecated since 3.0, use {@link #UNKNOWN_FORMAT} instead
-   */
-  @Deprecated
-  public static final int UNKOWN_FORMAT = UNKNOWN_FORMAT;
+  
   /**
    * program field format for binary fields (like pictures)
    * @deprecated since 3.4.5, use {@link #FORMAT_BINARY}

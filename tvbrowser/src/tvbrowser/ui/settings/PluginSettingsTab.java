@@ -51,8 +51,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
@@ -318,10 +316,8 @@ public class PluginSettingsTab implements devplugin.SettingsTab, TableModelListe
     
     contentPanel.add(builder.getPanel(), cc.xyw(1,7,2));
     
-    mTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-      public void valueChanged(ListSelectionEvent evt) {
-        updateBtns();
-      }
+    mTable.getSelectionModel().addListSelectionListener(e -> {
+      updateBtns();
     });
     
     updateBtns();

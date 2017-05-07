@@ -350,22 +350,19 @@ public class TvDataUpdater {
         EnhancedPanelBuilder pb = new EnhancedPanelBuilder("5dlu,min:grow,5dlu");
         final JPanel centerPanel = pb.getPanel();
         
-        AfterDataUpdateInfoPanelListener infoPanelListener = new AfterDataUpdateInfoPanelListener() {
-          @Override
-          public void remove(AfterDataUpdateInfoPanel infoPanel) {
-            for(int i = centerPanel.getComponentCount()-1; i >= 0; i--) {
-              Component c = centerPanel.getComponent(i);
-              
-              if(c != null && c.equals(infoPanel)) {
-                centerPanel.remove(i);
-                centerPanel.remove(i-1);
-                break;
-              }
-            }
+        AfterDataUpdateInfoPanelListener infoPanelListener = infoPanel -> {
+          for(int i = centerPanel.getComponentCount()-1; i >= 0; i--) {
+            Component c = centerPanel.getComponent(i);
             
-            infoPanel.closed();
-            centerPanel.updateUI();
+            if(c != null && c.equals(infoPanel)) {
+              centerPanel.remove(i);
+              centerPanel.remove(i-1);
+              break;
+            }
           }
+          
+          infoPanel.closed();
+          centerPanel.updateUI();
         };
 
         CellConstraints cc = new CellConstraints();

@@ -65,8 +65,6 @@ import javax.swing.JToolBar;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.TreePath;
@@ -391,11 +389,9 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction<Favor
       mFavoritesList.setCellRenderer(new FavoriteListCellRenderer());
       ListSelectionModel selModel = mFavoritesList.getSelectionModel();
       selModel.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-      selModel.addListSelectionListener(new ListSelectionListener() {
-        public void valueChanged(ListSelectionEvent evt) {
-          if(!evt.getValueIsAdjusting()) {
-            favoriteSelectionChanged(true);
-          }
+      selModel.addListSelectionListener(evt -> {
+        if(!evt.getValueIsAdjusting()) {
+          favoriteSelectionChanged(true);
         }
       });
 

@@ -27,7 +27,6 @@ import javax.swing.JComboBox;
 import javax.swing.JEditorPane;
 import javax.swing.JPanel;
 import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkListener;
 
 import tvbrowser.ui.settings.SettingsDialog;
 
@@ -61,11 +60,9 @@ public class DefaultProgramImportanceSelectionPanel extends JPanel {
     mProgramImportanceSelection = new JComboBox<>(getProgramImportanceNames(true));
     mProgramImportanceSelection.setSelectedIndex(getIndexForImportance(importance));
     
-    mHelpLabel = UiUtilities.createHtmlHelpTextArea(mLocalizer.msg("help","The selected importance is used to determinate the transparency of a program. It's calculated over all plugins as mean value. Lower importance leads to higher transparency. This works only if the plugins are allowed to set the transparency at <a href=\"#link\">program panel settings</a>."), new HyperlinkListener() {
-      public void hyperlinkUpdate(HyperlinkEvent e) {
-        if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-          SettingsDialog.getInstance().showSettingsTab(SettingsItem.PROGRAMPANELLOOK);
-        }
+    mHelpLabel = UiUtilities.createHtmlHelpTextArea(mLocalizer.msg("help","The selected importance is used to determinate the transparency of a program. It's calculated over all plugins as mean value. Lower importance leads to higher transparency. This works only if the plugins are allowed to set the transparency at <a href=\"#link\">program panel settings</a>."), e -> {
+      if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+        SettingsDialog.getInstance().showSettingsTab(SettingsItem.PROGRAMPANELLOOK);
       }
     });
     

@@ -27,9 +27,7 @@
 package util.ui;
 
 import java.awt.BorderLayout;
-import java.awt.Dialog;
 import java.awt.Dimension;
-import java.awt.Frame;
 import java.awt.Window;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -46,8 +44,6 @@ import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.WindowConstants;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 
 import com.jgoodies.forms.builder.ButtonBarBuilder;
 import com.jgoodies.forms.factories.Borders;
@@ -96,23 +92,6 @@ public class PluginChooserDlg extends JDialog implements WindowClosingIf {
   }
 
   /**
-   * use the same method with the Window type parent instead
-   *
-   * @param parent
-   * @param pluginArr
-   *          The initially selected ProgramReceiveIfs.
-   * @param description
-   *          A description text below the ProgramReceiveIf list.
-   * @param caller
-   *          The caller ProgramReceiveIf.
-   * @deprecated since 3.0
-   */
-  @Deprecated
-  public PluginChooserDlg(Dialog parent, ProgramReceiveIf[] pluginArr, String description, ProgramReceiveIf caller) {
-    this((Window) parent, pluginArr, description, caller);
-  }
-
-  /**
    *
    * @param parent
    * @param pluginArr
@@ -127,24 +106,6 @@ public class PluginChooserDlg extends JDialog implements WindowClosingIf {
       String description, ProgramReceiveIf caller) {
     this(parent, pluginArr,description, caller, null);
  }
-
-  /**
-   * use the same method with the Window type for parent instead
-   *
-   * @param parent
-   * @param pluginArr
-   *          The initially selected ProgramReceiveIfs.
-   * @param description
-   *          A description text below the ProgramReceiveIf list.
-   * @param caller
-   *          The caller ProgramReceiveIf.
-   * @deprecated since 3.0
-   */
-  @Deprecated
-  public PluginChooserDlg(Dialog parent, ProgramReceiveTarget[] pluginArr,
-      String description, ProgramReceiveIf caller) {
-    this((Window) parent, pluginArr, description, caller);
-  }
 
   /**
    *
@@ -169,73 +130,6 @@ public class PluginChooserDlg extends JDialog implements WindowClosingIf {
 
     init(table.keySet().toArray(new ProgramReceiveIf[table.keySet().size()]),
         description, caller, table, disabledTargets, parent);
-  }
-
-  /**
-   *
-   * @param parent
-   * @param pluginArr
-   *          The initially selected ProgramReceiveIfs.
-   * @param description
-   *          A description text below the ProgramReceiveIf list.
-   * @param caller
-   *          The caller ProgramReceiveIf.
-   * @param disabledTargets
-   *          Targets that cannot be selected/deselected
-   * @since 2.7.2
-   * @deprecated since 3.0
-   */
-  @Deprecated
-  public PluginChooserDlg(Dialog parent, ProgramReceiveTarget[] pluginArr, String description, ProgramReceiveIf caller, ProgramReceiveTarget[] disabledTargets) {
-    this((Window) parent, pluginArr, description, caller, disabledTargets);
-  }
-
-  /**
-   * use the same method with the Window type instead
-   *
-   * @param parent
-   * @param pluginArr
-   *          The initially selected ProgramReceiveIfs.
-   * @param description
-   *          A description text below the ProgramReceiveIf list.
-   * @param caller
-   *          The caller ProgramReceiveIf.
-   * @deprecated since 3.0
-   */
-  @Deprecated
-  public PluginChooserDlg(Frame parent, ProgramReceiveIf[] pluginArr, String description, ProgramReceiveIf caller) {
-    this((Window) parent, pluginArr, description, caller);
-  }
-
-  /**
-   * @param parent
-   * @param targets
-   * @param description
-   * @param caller
-   * @deprecated since 3.0
-   */
-  @Deprecated
-  public PluginChooserDlg(Frame parent, ProgramReceiveTarget[] targets, String description, ProgramReceiveIf caller) {
-    this((Window) parent, targets, description, caller);
-  }
-
-  /**
-   *
-   * @param parent
-   * @param targets
-   *          The initially selected ProgramReceiveTargets.
-   * @param description
-   *          A description text below the ProgramReceiveIf list.
-   * @param caller
-   *          The caller ProgramReceiveIf.
-   * @param disabledTargets
-   *          Targets that cannot be selected/deselected
-   * @since 2.7.2
-   * @deprecated since 3.0
-   */
-  @Deprecated
-  public PluginChooserDlg(Frame parent, ProgramReceiveTarget[] targets, String description, ProgramReceiveIf caller, ProgramReceiveTarget[] disabledTargets) {
-    this((Window) parent, targets, description, caller, disabledTargets);
   }
 
   private Hashtable<ProgramReceiveIf,ArrayList<ProgramReceiveTarget>> createReceiveTable(ProgramReceiveTarget[] targets) {
@@ -325,63 +219,57 @@ public class PluginChooserDlg extends JDialog implements WindowClosingIf {
       // JScrollPane targetScrollPane = new JScrollPane(mTargetPanel);
       // targetScrollPane.getVerticalScrollBar().setUnitIncrement(10);
 
-      mPluginItemList.addListSelectionListener(new ListSelectionListener() {
-        public void valueChanged(ListSelectionEvent e) {
-          try {
-            if (!e.getValueIsAdjusting()) {
-              targetPanel.removeAll();
-              SelectableItem<ProgramReceiveIf> pluginItem = mPluginItemList.getSelectedValue();
+      mPluginItemList.addListSelectionListener(e -> {
+        try {
+          if (!e.getValueIsAdjusting()) {
+            targetPanel.removeAll();
+            SelectableItem<ProgramReceiveIf> pluginItem = mPluginItemList.getSelectedValue();
 
-              final ProgramReceiveIf plugin = (ProgramReceiveIf) pluginItem
-                  .getItem();
-              ProgramReceiveTarget[] pluginTargets = plugin.getProgramReceiveTargets();
-              
-              mCurrentTargets = Arrays.copyOf(pluginTargets,pluginTargets.length);
-              
-              if (mCurrentTargets != null) {
-                Arrays.sort(mCurrentTargets);
-                ArrayList<ProgramReceiveTarget> targets = mReceiveTargetTable
-                    .get(plugin);
-                if (targets == null || !pluginItem.isSelected()) {
-                  targets = new ArrayList<ProgramReceiveTarget>();
-                }
-                if (pluginItem.isSelected() && targets.isEmpty()) {
-                  targets.add(mCurrentTargets[0]);
-                }
-                mReceiveTargetTable.put(plugin, targets);
-                final SelectableItemList<ProgramReceiveTarget> targetList = new SelectableItemList<>(
-                    targets.toArray(new ProgramReceiveTarget[targets.size()]), mCurrentTargets, disabledReceiveTargets);
-                targetPanel.add(targetList, BorderLayout.CENTER);
-                targetList
-                    .addListSelectionListener(new ListSelectionListener() {
-
-                      @Override
-                      public void valueChanged(ListSelectionEvent listEvent) {
-                        if (!listEvent.getValueIsAdjusting()) {
-                          SelectableItem<ProgramReceiveIf> currPluginItem = mPluginItemList.getSelectedValue();
-                          ProgramReceiveIf currPlugin = (ProgramReceiveIf) currPluginItem
-                              .getItem();
-                          List<ProgramReceiveTarget> sel = targetList.getSelectionList();
-                          ArrayList<ProgramReceiveTarget> selTargets = new ArrayList<ProgramReceiveTarget>(
-                              sel.size());
-                          for (ProgramReceiveTarget obj : sel) {
-                            selTargets.add(obj);
-                          }
-                          if (currPluginItem.isSelected() != (sel.size() > 0)) {
-                            currPluginItem.setSelected(sel.size() > 0);
-                            mPluginItemList.updateUI();
-                          }
-                          mReceiveTargetTable.put(currPlugin, selTargets);
-                        }
-                      }
-                    });
+            final ProgramReceiveIf plugin = (ProgramReceiveIf) pluginItem
+                .getItem();
+            ProgramReceiveTarget[] pluginTargets = plugin.getProgramReceiveTargets();
+            
+            mCurrentTargets = Arrays.copyOf(pluginTargets,pluginTargets.length);
+            
+            if (mCurrentTargets != null) {
+              Arrays.sort(mCurrentTargets);
+              ArrayList<ProgramReceiveTarget> targets = mReceiveTargetTable
+                  .get(plugin);
+              if (targets == null || !pluginItem.isSelected()) {
+                targets = new ArrayList<ProgramReceiveTarget>();
               }
-              targetPanel.updateUI();
-
+              if (pluginItem.isSelected() && targets.isEmpty()) {
+                targets.add(mCurrentTargets[0]);
+              }
+              mReceiveTargetTable.put(plugin, targets);
+              final SelectableItemList<ProgramReceiveTarget> targetList = new SelectableItemList<>(
+                  targets.toArray(new ProgramReceiveTarget[targets.size()]), mCurrentTargets, disabledReceiveTargets);
+              targetPanel.add(targetList, BorderLayout.CENTER);
+              targetList
+                  .addListSelectionListener(listEvent -> {
+                    if (!listEvent.getValueIsAdjusting()) {
+                      SelectableItem<ProgramReceiveIf> currPluginItem = mPluginItemList.getSelectedValue();
+                      ProgramReceiveIf currPlugin = (ProgramReceiveIf) currPluginItem
+                          .getItem();
+                      List<ProgramReceiveTarget> sel = targetList.getSelectionList();
+                      ArrayList<ProgramReceiveTarget> selTargets = new ArrayList<ProgramReceiveTarget>(
+                          sel.size());
+                      for (ProgramReceiveTarget obj : sel) {
+                        selTargets.add(obj);
+                      }
+                      if (currPluginItem.isSelected() != (sel.size() > 0)) {
+                        currPluginItem.setSelected(sel.size() > 0);
+                        mPluginItemList.updateUI();
+                      }
+                      mReceiveTargetTable.put(currPlugin, selTargets);
+                    }
+                  });
             }
-          } catch (Exception e1) {
-            e1.printStackTrace();
+            targetPanel.updateUI();
+
           }
+        } catch (Exception e1) {
+          e1.printStackTrace();
         }
       });
 

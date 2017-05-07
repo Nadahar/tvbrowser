@@ -91,15 +91,6 @@ public class StreamReaderThread extends Thread {
     } catch (IOException e) {}
   }
 
-  /**
-   * @return The output of the stream.
-   * @deprecated since 3.0, use {@link ExecutionHandler#getOutput()} instead
-   */
-  @Deprecated
-  public String getOutput() {
-    return mOutput.toString();
-  }
-
   protected String getOutputString() {
     return mOutput.toString();
   }

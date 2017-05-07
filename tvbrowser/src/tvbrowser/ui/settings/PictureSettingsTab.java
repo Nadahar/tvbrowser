@@ -37,10 +37,7 @@ import javax.swing.JSpinner;
 import javax.swing.JTextArea;
 import javax.swing.SpinnerDateModel;
 import javax.swing.SpinnerNumberModel;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkListener;
 
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.factories.Borders;
@@ -153,11 +150,9 @@ public class PictureSettingsTab extends AbstractSettingsTab {
         mShowPictureBorderProgramTable.setEnabled(e.getStateChange() == ItemEvent.DESELECTED);
       });
       
-      JEditorPane helpLabel = UiUtilities.createHtmlHelpTextArea(mLocalizer.msg("help", "These settings affect only the showing of the pictures. The pictures can only be shown if the download of pictures in enabled. To enable the picture download look at the <a href=\"#link\">settings of the TV dataservices</a>."), new HyperlinkListener() {
-        public void hyperlinkUpdate(HyperlinkEvent e) {
-          if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-            SettingsDialog.getInstance().showSettingsTab(SettingsItem.PLUGINS);
-          }
+      JEditorPane helpLabel = UiUtilities.createHtmlHelpTextArea(mLocalizer.msg("help", "These settings affect only the showing of the pictures. The pictures can only be shown if the download of pictures in enabled. To enable the picture download look at the <a href=\"#link\">settings of the TV dataservices</a>."), e -> {
+        if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+          SettingsDialog.getInstance().showSettingsTab(SettingsItem.PLUGINS);
         }
       });
       
@@ -313,12 +308,9 @@ public class PictureSettingsTab extends AbstractSettingsTab {
         MainFrame.getInstance().quit();
       });
       
-      mPluginsPictureSettings.addChangeListener(new ChangeListener() {
-        @Override
-        public void stateChanged(ChangeEvent e) {
-          mRestartMessage.setVisible(PLUGIN_PICTURE_SELECTION_ORIGINAL != mPluginsPictureSettings.getSettings().getType());
-          mRestartButton.setVisible(PLUGIN_PICTURE_SELECTION_ORIGINAL != mPluginsPictureSettings.getSettings().getType());
-        }
+      mPluginsPictureSettings.addChangeListener(e -> {
+        mRestartMessage.setVisible(PLUGIN_PICTURE_SELECTION_ORIGINAL != mPluginsPictureSettings.getSettings().getType());
+        mRestartButton.setVisible(PLUGIN_PICTURE_SELECTION_ORIGINAL != mPluginsPictureSettings.getSettings().getType());
       });
       
       y+=3;

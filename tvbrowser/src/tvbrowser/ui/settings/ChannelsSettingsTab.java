@@ -84,8 +84,6 @@ import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -272,17 +270,7 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction<Object> 
     mAllChannels.setCellRenderer(new ChannelListCellRenderer(true, true, true, true, false, true));
 
     listBoxPnLeft.add(new JScrollPane(mAllChannels), BorderLayout.CENTER);
-/*
-    mAllChannels.addListSelectionListener(new ListSelectionListener() {
-      public void valueChanged(ListSelectionEvent e) {
-        if ((mAllChannels.getModel().getSize() == 1)
-            && (mAllChannels.getSelectedIndex() >= 0)
-            && (mAllChannels.getSelectedValue() instanceof String)) {
-          mAllChannels.setSelectedIndices(new int[] {});
-        }
-      }
-    });
-*/
+    
     centerPn.add(listBoxPnLeft);
 
     mRightButton = new JButton(TVBrowserIcons.right(TVBrowserIcons.SIZE_LARGE));
@@ -389,19 +377,17 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction<Object> 
       configChannels();
     });
     
-    mSubscribedChannels.addListSelectionListener(new ListSelectionListener() {
-      public void valueChanged(ListSelectionEvent e) {
-        if (mSubscribedChannels.getSelectedValuesList().size() > 0 && !(mSubscribedChannels.getSelectedValue() instanceof DummyChannel) && !(mSubscribedChannels.getSelectedValue() instanceof String)) {
-          configureChannels.setEnabled(true);
-          setSortNumbers.setEnabled(true);
-          mButtonDeleteSeparator.setEnabled(false);
-        } else {
-          configureChannels.setEnabled(false);
-          setSortNumbers.setEnabled(false);
-          
-          if(mSubscribedChannels.getSelectedValue() instanceof String) {
-            mButtonDeleteSeparator.setEnabled(true);
-          }
+    mSubscribedChannels.addListSelectionListener(e -> {
+      if (mSubscribedChannels.getSelectedValuesList().size() > 0 && !(mSubscribedChannels.getSelectedValue() instanceof DummyChannel) && !(mSubscribedChannels.getSelectedValue() instanceof String)) {
+        configureChannels.setEnabled(true);
+        setSortNumbers.setEnabled(true);
+        mButtonDeleteSeparator.setEnabled(false);
+      } else {
+        configureChannels.setEnabled(false);
+        setSortNumbers.setEnabled(false);
+        
+        if(mSubscribedChannels.getSelectedValue() instanceof String) {
+          mButtonDeleteSeparator.setEnabled(true);
         }
       }
     });

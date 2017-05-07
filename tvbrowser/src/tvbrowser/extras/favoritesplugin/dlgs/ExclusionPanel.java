@@ -35,8 +35,6 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
@@ -94,11 +92,9 @@ public class ExclusionPanel extends JPanel{
     }
    // mExclusionsList.setCellRenderer(new ExclusionListCellRenderer());
     
-    mExclusionsList.addListSelectionListener(new ListSelectionListener() {
-      public void valueChanged(ListSelectionEvent e) {
-        if (!e.getValueIsAdjusting()) {
-          updateExclusionListButtons();
-        }
+    mExclusionsList.addListSelectionListener(e -> {
+      if (!e.getValueIsAdjusting()) {
+        updateExclusionListButtons();
       }
     });
 

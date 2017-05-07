@@ -24,9 +24,6 @@ package devplugin;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.RandomAccessFile;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -144,86 +141,7 @@ public class Date implements Comparable<Date>
     mMonth = d.mMonth;
     mDay = d.mDay;
   }
-
-  /**
-   * Creates a new instance from a RandomAccessFile.
-   *
-   * IMPORTANT: This is needed for loading Date from the
-   *            tv data files and cannot be replaced with serialisation.
-   *
-   * @param in the input to read from
-   * @throws IOException if the stream could not be read
-   * @throws ClassNotFoundException if the date could not be restored
-   * @since 2.2
-   * @deprecated since 3.0. use readData instead.
-   */
-  @Deprecated
-  public Date(final DataInput in) throws IOException, ClassNotFoundException {
-    int version = in.readInt();
-    if (version == 1) { // currently, version==3 is used
-      int date = in.readInt();
-      long l = (long) date * 24 * 60 * 60 * 1000;
-      java.util.Date d = new java.util.Date(l);
-      Calendar mCalendar = Calendar.getInstance();
-      mCalendar.setTime(d);
-      mYear = (short) mCalendar.get(Calendar.YEAR);
-      mMonth = (byte) (mCalendar.get(Calendar.MONTH) + 1);
-      mDay = (byte) mCalendar.get(Calendar.DAY_OF_MONTH);
-    }
-    else if (version == 2)
-    {
-      mYear = (short) in.readInt();
-      mMonth = (byte) in.readInt();
-      mDay = (byte) in.readInt();
-    }
-    else
-    {
-      mYear = in.readShort();
-      mMonth = in.readByte();
-      mDay = in.readByte();
-    }
-  }
-
-  /**
-   * Creates a new instance from a stream.
-   *
-   * @param in the input to read from
-   * @throws IOException if the stream could not be read
-   * @throws ClassNotFoundException if the date could not be restored
-   * @deprecated since 3.0, use readData instead
-   */
-  @Deprecated
-  public Date(final ObjectInputStream in) throws IOException, ClassNotFoundException {
-    int version = in.readInt();
-    if (version == 1) { // currently, version==3 is used
-      int date = in.readInt();
-      long l = (long) date * 24 * 60 * 60 * 1000;
-      java.util.Date d = new java.util.Date(l);
-      Calendar mCalendar = Calendar.getInstance();
-      mCalendar.setTime(d);
-      mYear = (short) mCalendar.get(Calendar.YEAR);
-      mMonth = (byte) (mCalendar.get(Calendar.MONTH) + 1);
-      mDay = (byte) mCalendar.get(Calendar.DAY_OF_MONTH);
-    }
-    else if (version == 2)
-    {
-      mYear = (short) in.readInt();
-      mMonth = (byte) in.readInt();
-      mDay = (byte) in.readInt();
-    }
-    else
-    {
-      mYear = in.readShort();
-      mMonth = in.readByte();
-      mDay = in.readByte();
-    }
-  }
-
-
-
-
-
-
+  
   /**
    * do not call this method repeatedly! always cache this value because this is
    * a very slow function!
@@ -398,42 +316,6 @@ public class Date implements Comparable<Date>
   public int getWeekOfYear(Locale locale) {
     Calendar cal = getCalendar(locale);
     return cal.get(Calendar.WEEK_OF_YEAR);
-  }
-
-
-  /**
-   * Writes this instance to a RandomAccessFile.
-   *
-   * IMPORTANT: This is needed for writing Date to the
-   *            tv data files and cannot be replaced with serialisation.
-   *
-   * @param out the file to write to
-   * @throws IOException if something went wrong
-   *
-   * @since 2.2
-   * @deprecated since 3.0, use writeData instead
-   */
-  @Deprecated
-  public void writeToDataFile(final RandomAccessFile out) throws IOException {
-    out.writeInt(3); // version
-    out.writeShort(mYear);
-    out.writeByte(mMonth);
-    out.writeByte(mDay);
-  }
-
-  /**
-   * Writes this instance to a stream.
-   *
-   * @param out the stream to write to
-   * @throws IOException if something went wrong
-   * @deprecated since 3.0
-   */
-  @Deprecated
-  public void writeData(final ObjectOutputStream out) throws IOException {
-    out.writeInt(3); // version
-    out.writeShort(mYear);
-    out.writeByte(mMonth);
-    out.writeByte(mDay);
   }
 
   /**

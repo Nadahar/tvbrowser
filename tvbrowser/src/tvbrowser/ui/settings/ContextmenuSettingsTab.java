@@ -41,7 +41,6 @@ import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
-import javax.swing.event.ListSelectionListener;
 
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.factories.Borders;
@@ -157,22 +156,20 @@ public class ContextmenuSettingsTab implements devplugin.SettingsTab {
       }
     });
 
-    mList.getList().addListSelectionListener(new ListSelectionListener() {
-      public void valueChanged(javax.swing.event.ListSelectionEvent e) {
-        List<ContextMenuIf> items = mList.getList().getSelectedValuesList();
-        if (items.size() == 0) {
+    mList.getList().addListSelectionListener(e -> {
+      List<ContextMenuIf> items = mList.getList().getSelectedValuesList();
+      if (items.size() == 0) {
+        garbage.setEnabled(false);
+        return;
+      }
+      for (int i=0;i<items.size();i++) {
+        if (!(items.get(i) instanceof SeparatorMenuItem)) {
           garbage.setEnabled(false);
           return;
         }
-        for (int i=0;i<items.size();i++) {
-          if (!(items.get(i) instanceof SeparatorMenuItem)) {
-            garbage.setEnabled(false);
-            return;
-          }
-        }
+      }
 
-        garbage.setEnabled(true);
-      };
+      garbage.setEnabled(true);
     });
 
     garbage.setEnabled(false);

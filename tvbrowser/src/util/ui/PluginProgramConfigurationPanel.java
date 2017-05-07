@@ -13,9 +13,6 @@ import javax.swing.JPanel;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -112,12 +109,10 @@ public class PluginProgramConfigurationPanel extends JPanel implements ActionLis
     
     mOrder = new OrderChooser<>(selectedValues == null ? allArr : selectedValues, allArr);
     mOrder.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-    mOrder.addListSelectionListener(new ListSelectionListener() {
-      public void valueChanged(ListSelectionEvent e) {
-        if(!e.getValueIsAdjusting()) {
-          mEdit.setEnabled(mOrder.getSelectedValue() instanceof LocalPluginProgramFormating);
-          mDelete.setEnabled(mOrder.getSelectedValue() instanceof LocalPluginProgramFormating);
-        }
+    mOrder.addListSelectionListener(e -> {
+      if(!e.getValueIsAdjusting()) {
+        mEdit.setEnabled(mOrder.getSelectedValue() instanceof LocalPluginProgramFormating);
+        mDelete.setEnabled(mOrder.getSelectedValue() instanceof LocalPluginProgramFormating);
       }
     });
     
@@ -132,11 +127,9 @@ public class PluginProgramConfigurationPanel extends JPanel implements ActionLis
       }
     });
     
-    mHelpLabel = UiUtilities.createHtmlHelpTextArea(mLocalizer.msg("help","This list contains formattings that are provided by the plugin itself and formating available for all plugins. You can configure formatings, that are provided by the plugin itself, direct here. The formatings that are available for all plugins can be configured in <a href=\"#link\">{0}</a>.",GlobalPluginProgramFormatingSettings.mLocalizer.msg("title","Plugin program formating")), new HyperlinkListener() {
-      public void hyperlinkUpdate(HyperlinkEvent e) {
-        if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-          SettingsDialog.getInstance().showSettingsTab(SettingsItem.PLUGINPROGRAMFORMAT);
-        }
+    mHelpLabel = UiUtilities.createHtmlHelpTextArea(mLocalizer.msg("help","This list contains formattings that are provided by the plugin itself and formating available for all plugins. You can configure formatings, that are provided by the plugin itself, direct here. The formatings that are available for all plugins can be configured in <a href=\"#link\">{0}</a>.",GlobalPluginProgramFormatingSettings.mLocalizer.msg("title","Plugin program formating")), e -> {
+      if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+        SettingsDialog.getInstance().showSettingsTab(SettingsItem.PLUGINPROGRAMFORMAT);
       }
     });
     

@@ -28,7 +28,6 @@ import java.awt.Window;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -75,19 +74,6 @@ public class ParamCheckDialog extends JDialog implements WindowClosingIf {
     setLocationRelativeTo(parent);
   }
 
-  /**
-   * Create the Dialog with a default ParamLibrary
-   * 
-   * @param dialog
-   *          Parent
-   * @param check
-   *          Check this String
-   * @deprecated since 3.0
-   */
-	@Deprecated
-  public ParamCheckDialog(JDialog dialog, String check) {
-	  this((Window) dialog, check);
-	}
 
   /**
    * Create the Dialog with a specific ParamLibrary
@@ -108,52 +94,6 @@ public class ParamCheckDialog extends JDialog implements WindowClosingIf {
     createGui();
     setLocationRelativeTo(parent);
   }
-
-  /**
-   * Create the Dialog with a specific ParamLibrary
-   * 
-   * @param dialog
-   *          Parent
-   * @param lib
-   *          ParamLibrary to use
-   * @param check
-   *          Check this String
-   * @deprecated since 3.0
-   */
-  @Deprecated
-  public ParamCheckDialog(JDialog dialog, ParamLibrary lib, String check) {
-    this((Window) dialog, lib, check);
-	}
-
-  /**
-   * Create the Dialog with a default ParamLibrary
-   * 
-   * @param frame
-   *          Parent
-   * @param check
-   *          Check this String
-   * @deprecated since 3.0
-   */
-	@Deprecated
-  public ParamCheckDialog(JFrame frame, String check) {
-	  this((Window) frame, check);
-	}
-
-  /**
-   * Create the Dialog with a specific ParamLibrary
-   * 
-   * @param frame
-   *          Parent
-   * @param lib
-   *          ParamLibrary to use
-   * @param check
-   *          Check this String
-   * @deprecated since 3.0
-   */
-	@Deprecated
-  public ParamCheckDialog(JFrame frame, ParamLibrary lib, String check) {
-	  this((Window) frame, lib, check);
-	}
 	
   /**
    * Creates the GUI

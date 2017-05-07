@@ -59,8 +59,6 @@ import javax.swing.JRadioButton;
 import javax.swing.JRootPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.factories.Borders;
@@ -477,12 +475,9 @@ public class LocaleSettingsTab implements devplugin.SettingsTab {
       }
     };
     
-    list.addListSelectionListener(new ListSelectionListener() {
-      @Override
-      public void valueChanged(ListSelectionEvent e) {
-        if(!e.getValueIsAdjusting()) {
-          download.setEnabled(!list.getSelectionList().isEmpty());
-        }
+    list.addListSelectionListener(e -> {
+      if(!e.getValueIsAdjusting()) {
+        download.setEnabled(!list.getSelectionList().isEmpty());
       }
     });
     

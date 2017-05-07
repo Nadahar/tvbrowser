@@ -34,8 +34,6 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.factories.Borders;
@@ -103,19 +101,16 @@ public class GenericPluginFilterSettingsTab implements SettingsTab {
     });
     edit.setEnabled(false);
     
-    mGenericPluginFilterList.addListSelectionListener(new ListSelectionListener() {
-      @Override
-      public void valueChanged(ListSelectionEvent e) {
-        if(!e.getValueIsAdjusting()) {
-          edit.setEnabled(e.getFirstIndex() >= 0);
+    mGenericPluginFilterList.addListSelectionListener(e -> {
+      if(!e.getValueIsAdjusting()) {
+        edit.setEnabled(e.getFirstIndex() >= 0);
+        
+        if(edit.isEnabled()) {
+          SelectableItem<PluginProxy> item = mGenericPluginFilterList.getSelectedValue();
+          PluginProxy proxy = (PluginProxy)item.getItem();
           
-          if(edit.isEnabled()) {
-            SelectableItem<PluginProxy> item = mGenericPluginFilterList.getSelectedValue();
-            PluginProxy proxy = (PluginProxy)item.getItem();
-            
-            if(!mCurrentlySelecteedList.contains(proxy)) {
-              mCurrentlySelecteedList.add(proxy);
-            }
+          if(!mCurrentlySelecteedList.contains(proxy)) {
+            mCurrentlySelecteedList.add(proxy);
           }
         }
       }

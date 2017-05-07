@@ -33,15 +33,13 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.UIManager;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.table.DefaultTableCellRenderer;
 
+import devplugin.Date;
+import devplugin.Program;
 import tvbrowser.core.Settings;
 import util.settings.PluginPictureSettings;
 import util.settings.ProgramPanelSettings;
-import devplugin.Date;
-import devplugin.Program;
 
 /**
  * CellRenderer for Program in Table<p>
@@ -110,10 +108,8 @@ public class ProgramTableCellRenderer extends DefaultTableCellRenderer {
             mProgramPanel.setWidth(table.getCellRect(row, column, false).width - borderInsets.left - borderInsets.right);
             mProgramPanel.setProgram(program);
             
-            program.addChangeListener(new ChangeListener() {
-              public void stateChanged(ChangeEvent e) {
-                table.repaint();
-              }
+            program.addChangeListener(e -> {
+              table.repaint();
             });
             
             mProgramPanel.setPaintExpiredProgramsPale(!isSelected);
