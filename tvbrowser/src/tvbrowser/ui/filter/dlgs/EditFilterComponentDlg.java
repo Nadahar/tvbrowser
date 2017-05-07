@@ -99,7 +99,7 @@ public class EditFilterComponentDlg extends JDialog implements ActionListener, D
 
   private tvbrowser.core.filters.FilterComponent mSelectedFilterComponent;
 
-  private JComboBox mRuleCb;
+  private JComboBox<Object> mRuleCb;
 
   private JPanel mCenterPanel, mRulePanel = null, mContentPane;
 
@@ -156,7 +156,7 @@ public class EditFilterComponentDlg extends JDialog implements ActionListener, D
     
     mDescTF = new JTextField(20);
     
-    mRuleCb = new JComboBox();
+    mRuleCb = new JComboBox<>();
     mRuleCb.addActionListener(this);
     mRuleCb.addItem(mLocalizer.msg("hint", "must choose one"));
     
@@ -220,10 +220,8 @@ public class EditFilterComponentDlg extends JDialog implements ActionListener, D
             try {
               set.add(clazz.newInstance());
             } catch (InstantiationException e) {
-              // TODO Automatisch erstellter Catch-Block
               e.printStackTrace();
             } catch (IllegalAccessException e) {
-              // TODO Automatisch erstellter Catch-Block
               e.printStackTrace();
             }
           }
@@ -234,10 +232,8 @@ public class EditFilterComponentDlg extends JDialog implements ActionListener, D
       try {
         set.add(filterComponentClass.newInstance());
       } catch (InstantiationException e) {
-        // TODO Auto-generated catch block
         e.printStackTrace();
       } catch (IllegalAccessException e) {
-        // TODO Auto-generated catch block
         e.printStackTrace();
       }
     }
@@ -284,7 +280,7 @@ public class EditFilterComponentDlg extends JDialog implements ActionListener, D
     i < mRuleCb.getItemCount(); i++) {
       FilterComponent c = (FilterComponent) mRuleCb.getItemAt(i);
       if (c.toString().equals(comp.toString())) {
-        DefaultComboBoxModel model = (DefaultComboBoxModel) mRuleCb.getModel();
+        DefaultComboBoxModel<Object> model = (DefaultComboBoxModel<Object>) mRuleCb.getModel();
         model.removeElementAt(i);
         model.insertElementAt(comp, i);
         mRuleCb.setSelectedIndex(i);

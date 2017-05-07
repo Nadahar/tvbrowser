@@ -50,6 +50,12 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.factories.CC;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.Sizes;
+
+import devplugin.Channel;
 import tvbrowser.core.ChannelList;
 import tvbrowser.core.DummyChannel;
 import tvbrowser.core.Settings;
@@ -57,14 +63,6 @@ import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
-
-import com.jgoodies.forms.builder.PanelBuilder;
-import com.jgoodies.forms.factories.CC;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.RowSpec;
-import com.jgoodies.forms.layout.Sizes;
-
-import devplugin.Channel;
 
 /**
  * TV-Browser
@@ -80,8 +78,8 @@ public class UpdateDlg extends JDialog implements ActionListener, WindowClosingI
 
   private JButton mCancelBtn, mUpdateBtn;
   private int mResult = 0;
-  private JComboBox mManuelDownloadPeriodSelection;
-  private JComboBox mAutoDownloadPeriodSelection;
+  private JComboBox<PeriodItem> mManuelDownloadPeriodSelection;
+  private JComboBox<PeriodItem> mAutoDownloadPeriodSelection;
   private TvDataServiceCheckBox[] mDataServiceCbArr;
   private TvDataServiceProxy[] mSelectedTvDataServiceArr;
 
@@ -137,7 +135,7 @@ public class UpdateDlg extends JDialog implements ActionListener, WindowClosingI
     final PanelBuilder panel1 = new PanelBuilder(new FormLayout("10dlu,default,5dlu:grow,5dlu","default,5dlu,default,default"));
     panel1.addSeparator(mLocalizer.msg("period", "Update program for"), CC.xyw(1,1,4));
     
-    mManuelDownloadPeriodSelection = new JComboBox(PeriodItem.getPeriodItems());
+    mManuelDownloadPeriodSelection = new JComboBox<>(PeriodItem.getPeriodItems());
     mSaveAsDefaultPeriod = new JCheckBox(mLocalizer.msg("saveDefault", "Save as default"), Settings.propSaveDefaultDataUpdateValuesDefault.getBoolean());
     
     panel1.add(mManuelDownloadPeriodSelection, CC.xyw(2,3,2));
@@ -209,7 +207,7 @@ public class UpdateDlg extends JDialog implements ActionListener, WindowClosingI
     mStartUpdate = new JRadioButton(mLocalizer.msg("onStartUp", "Only on TV-Browser startup"), !Settings.propAutoDataDownloadEnabled.getBoolean() && mAutoUpdate.isSelected());
     mRecurrentUpdate = new JRadioButton(mLocalizer.msg("recurrent", "Recurrent"), Settings.propAutoDataDownloadEnabled.getBoolean());
     
-    mAutoDownloadPeriodSelection = new JComboBox(PeriodItem.getPeriodItems());
+    mAutoDownloadPeriodSelection = new JComboBox<>(PeriodItem.getPeriodItems());
     
     period = Settings.propAutoDownloadPeriod.getInt();
     pi = new PeriodItem(period);

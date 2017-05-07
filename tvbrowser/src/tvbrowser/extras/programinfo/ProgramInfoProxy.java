@@ -101,7 +101,7 @@ public class ProgramInfoProxy extends AbstractInternalPluginProxy implements Con
 
   @Override
   public String getPluginCategory() {
-    return Plugin.OTHER_CATEGORY;
+    return Plugin.CATEGORY_OTHER;
   }
 
   @Override

@@ -155,14 +155,14 @@ public class SearchPlugin {
         settings.setCaseSensitive(caseSensitive);
         switch (option) {
         case 1:
-          settings.setSearcherType(PluginManager.SEARCHER_TYPE_KEYWORD);
+          settings.setSearcherType(PluginManager.TYPE_SEARCHER_KEYWORD);
           break;
         case 2:
           settings
-              .setSearcherType(PluginManager.SEARCHER_TYPE_REGULAR_EXPRESSION);
+              .setSearcherType(PluginManager.TYPE_SEARCHER_REGULAR_EXPRESSION);
           break;
         default:
-          settings.setSearcherType(PluginManager.SEARCHER_TYPE_EXACTLY);
+          settings.setSearcherType(PluginManager.TYPE_SEARCHER_EXACTLY);
           break;
         }
       }

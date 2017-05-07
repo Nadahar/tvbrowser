@@ -72,7 +72,6 @@ import tvbrowser.core.Settings;
 import tvbrowser.core.filters.FilterList;
 import tvbrowser.core.filters.ShowAllFilter;
 import tvbrowser.core.filters.UserFilter;
-import tvbrowser.core.filters.filtercomponents.AcceptNoneFilterComponent;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.ui.Localizer;
@@ -401,10 +400,7 @@ public class FilterTree extends JTree implements DragGestureListener, DropTarget
   }
 
   @Override
-  public void dropActionChanged(DropTargetDragEvent dtde) {
-    // TODO Auto-generated method stub
-
-  }
+  public void dropActionChanged(DropTargetDragEvent dtde) {}
   
   /**
    * Gets the root node of this tree.
@@ -882,6 +878,7 @@ public class FilterTree extends JTree implements DragGestureListener, DropTarget
 
   private FilterNode findFilter(final ProgramFilter filter, final FilterNode root) {
     if (root.isDirectoryNode()) {
+      @SuppressWarnings("unchecked")
       Enumeration<FilterNode> e = root.children();
 
       while(e.hasMoreElements()) {

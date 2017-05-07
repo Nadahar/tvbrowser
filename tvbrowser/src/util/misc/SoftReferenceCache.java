@@ -27,7 +27,7 @@ public class SoftReferenceCache<T,K> {
   /**
    * This queue gets notified if an element gets removed by the garbage collector
    */
-  private ReferenceQueue mRefQueue = new ReferenceQueue();
+  private ReferenceQueue<? super K> mRefQueue = new ReferenceQueue<>();
 
   /**
    * Get the value from the Cache
@@ -83,7 +83,7 @@ public class SoftReferenceCache<T,K> {
    * Cleanup the cache. Every garbage collected item must be removed
    */
   public void cleanUp(){
-    Reference ref = mRefQueue.poll();
+    Reference<?> ref = mRefQueue.poll();
     while (ref != null) {
       ref = mRefQueue.poll();
       mRefHashMap.remove(ref);

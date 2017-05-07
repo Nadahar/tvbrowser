@@ -479,7 +479,7 @@ public class SelectableItemList<E> extends JPanel implements ListSelectionListen
    * @param filterBox The combo box with the ItemFilters.
    * @since 2.7
    */
-  public void setFilterComboBox(JComboBox<ItemFilter> filterBox) {
+  public void setFilterComboBox(JComboBox<? extends ItemFilter> filterBox) {
     mListModel.setComboBox(filterBox);
   }
 
@@ -548,12 +548,12 @@ public class SelectableItemList<E> extends JPanel implements ListSelectionListen
   }
   
   private class SelectableItemListModel extends AbstractListModel<SelectableItem<E>> {
-    private JComboBox<ItemFilter> mFilterBox;
+    private JComboBox<? extends ItemFilter> mFilterBox;
     
     private ArrayList<SelectableItem<E>> mFullList = new ArrayList<SelectableItem<E>>();
     private ArrayList<SelectableItem<E>> mFilteredList = new ArrayList<SelectableItem<E>>();
     
-    protected void setComboBox(JComboBox<ItemFilter> filterBox) {
+    protected void setComboBox(JComboBox<? extends ItemFilter> filterBox) {
       mFilterBox = filterBox;
       
       mFilterBox.addItemListener(new ItemListener() {

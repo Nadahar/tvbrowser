@@ -47,11 +47,11 @@ class FinderItem extends JComponent implements ProgressMonitor {
   private devplugin.Date mDate;
   private JProgressBar mProgressBar;
   private JLabel mLabel;
-  private JList mList;
+  private JList<FinderItem> mList;
   
   private static Color mColorSelected= new Color(236,236,212);
   
-  public FinderItem(JList list, Date date, Date today) {
+  public FinderItem(JList<FinderItem> list, Date date, Date today) {
     mDate=date;
     mList=list;
     

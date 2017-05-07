@@ -39,28 +39,10 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
-
-import org.apache.commons.lang3.StringUtils;
-
-import tvbrowser.core.ChannelList;
-import tvbrowser.core.filters.FilterManagerImpl;
-import tvbrowser.extras.common.DayListCellRenderer;
-import tvbrowser.extras.common.LimitationConfiguration;
-import tvbrowser.extras.favoritesplugin.core.Exclusion;
-import tvbrowser.extras.favoritesplugin.core.Exclusion.ProgramFieldExclusion;
-import tvbrowser.extras.favoritesplugin.core.Favorite;
-import tvbrowser.extras.favoritesplugin.core.FavoriteFilter;
-import tvbrowser.ui.filter.dlgs.SelectFilterDlg;
-import tvbrowser.ui.mainframe.MainFrame;
-import tvbrowser.ui.mainframe.toolbar.MoreButton;
-import util.ui.TimePeriodChooser;
-import util.ui.UiUtilities;
-import util.ui.WrapperFilter;
 
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.factories.CC;
@@ -73,6 +55,19 @@ import devplugin.Program;
 import devplugin.ProgramFieldType;
 import devplugin.ProgramFilter;
 import devplugin.ProgramInfoHelper;
+import tvbrowser.core.ChannelList;
+import tvbrowser.core.filters.FilterManagerImpl;
+import tvbrowser.extras.common.DayListCellRenderer;
+import tvbrowser.extras.common.LimitationConfiguration;
+import tvbrowser.extras.favoritesplugin.core.Exclusion;
+import tvbrowser.extras.favoritesplugin.core.Exclusion.ProgramFieldExclusion;
+import tvbrowser.extras.favoritesplugin.core.Favorite;
+import tvbrowser.extras.favoritesplugin.core.FavoriteFilter;
+import tvbrowser.ui.filter.dlgs.SelectFilterDlg;
+import tvbrowser.ui.mainframe.MainFrame;
+import util.ui.TimePeriodChooser;
+import util.ui.UiUtilities;
+import util.ui.WrapperFilter;
 
 public class ExcludeWizardStep extends AbstractWizardStep {
 
@@ -105,11 +100,11 @@ public class ExcludeWizardStep extends AbstractWizardStep {
   private JTextField mEpisodeTitleTf;
   private JTextField mProgramFieldTextTf;
 
-  private JComboBox mFilterChooser;
-  private JComboBox mChannelCB;
-  private JComboBox mDayChooser;
-  private JComboBox mCategoryChooser;
-  private JComboBox mProgramFieldChooser;
+  private JComboBox<WrapperFilter> mFilterChooser;
+  private JComboBox<Channel> mChannelCB;
+  private JComboBox<Object> mDayChooser;
+  private JComboBox<String> mCategoryChooser;
+  private JComboBox<ProgramFieldType> mProgramFieldChooser;
 
   private TimePeriodChooser mTimePeriodChooser;
 
@@ -236,9 +231,9 @@ public class ExcludeWizardStep extends AbstractWizardStep {
       }
     }
     
-    mFilterChooser = new JComboBox(useableFilter.toArray(new WrapperFilter[useableFilter.size()]));
+    mFilterChooser = new JComboBox<>(useableFilter.toArray(new WrapperFilter[useableFilter.size()]));
 
-    mDayChooser = new JComboBox(new Object[] {
+    mDayChooser = new JComboBox<>(new Object[] {
         LimitationConfiguration.DAYLIMIT_WEEKDAY,
         LimitationConfiguration.DAYLIMIT_WEEKEND,
         LimitationConfiguration.DAYLIMIT_MONDAY,
@@ -254,9 +249,9 @@ public class ExcludeWizardStep extends AbstractWizardStep {
     "default, 5dlu, default, 5dlu, default, 5dlu, default, 5dlu, default, 5dlu, default, 5dlu, default, 5dlu, default, 5dlu, default");
     PanelBuilder panelBuilder = new PanelBuilder(layout);
 
-    mCategoryChooser = new JComboBox(ProgramInfoHelper.getInfoIconMessages());
+    mCategoryChooser = new JComboBox<>(ProgramInfoHelper.getInfoIconMessages());
     
-    mChannelCB = new JComboBox(ChannelList.getSubscribedChannels());
+    mChannelCB = new JComboBox<>(ChannelList.getSubscribedChannels());
 
     int rowInx = 3;
     panelBuilder.add(new JLabel(mMainQuestion), CC.xyw(1, 1, 6));
@@ -295,7 +290,7 @@ public class ExcludeWizardStep extends AbstractWizardStep {
     
     rowInx += 2;
     panelBuilder.add(mProgramFieldCb = new JCheckBox(mProgramFieldQuestion), CC.xy(2, rowInx));
-    panelBuilder.add(mProgramFieldChooser = new JComboBox(), CC.xy(3, rowInx));
+    panelBuilder.add(mProgramFieldChooser = new JComboBox<>(), CC.xy(3, rowInx));
     panelBuilder.add(mProgramFieldTextTf, CC.xyw(4, rowInx, 3));
     
     final ArrayList<ProgramFieldType> listProgramFields = new ArrayList<ProgramFieldType>();
@@ -334,10 +329,10 @@ public class ExcludeWizardStep extends AbstractWizardStep {
           
           Object selected = mFilterChooser.getSelectedItem();
           
-          ((DefaultComboBoxModel)mFilterChooser.getModel()).removeAllElements();
+          ((DefaultComboBoxModel<WrapperFilter>)mFilterChooser.getModel()).removeAllElements();
           
           for(ProgramFilter filter :Plugin.getPluginManager().getFilterManager().getAvailableFilters()) {
-            ((DefaultComboBoxModel)mFilterChooser.getModel()).addElement(filter);
+            ((DefaultComboBoxModel<WrapperFilter>)mFilterChooser.getModel()).addElement(new WrapperFilter(filter));
           }
           
           mFilterChooser.setSelectedItem(selected);

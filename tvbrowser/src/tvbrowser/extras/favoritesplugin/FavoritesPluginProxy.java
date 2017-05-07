@@ -199,7 +199,7 @@ public class FavoritesPluginProxy extends AbstractInternalPluginProxy implements
 
   @Override
   public String getPluginCategory() {
-    return Plugin.OTHER_CATEGORY;
+    return Plugin.CATEGORY_OTHER;
   }
 
   @Override

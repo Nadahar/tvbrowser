@@ -538,6 +538,7 @@ public class FavoriteTreeModel extends DefaultTreeModel {
    */
   private void sortNodeInternal(FavoriteNode node,
       Comparator<FavoriteNode> comp) {
+    @SuppressWarnings("unchecked")
     ArrayList<FavoriteNode> childNodes = Collections.list(node.children());
     Collections.sort(childNodes, comp);
 

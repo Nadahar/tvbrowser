@@ -74,7 +74,7 @@ public class TypeWizardStep extends AbstractWizardStep {
 
   private JTextField mTopicTf;
 
-  private JComboBox mActorsCb;
+  private JComboBox<String> mActorsCb;
 
   private JRadioButton mTitleRb;
 
@@ -92,8 +92,6 @@ public class TypeWizardStep extends AbstractWizardStep {
    * preselected actor in type step
    */
   private String mActor;
-
-  private FavoriteNode mParentNode;
   
   private boolean mAdvancedSelected;
 
@@ -115,7 +113,6 @@ public class TypeWizardStep extends AbstractWizardStep {
   public TypeWizardStep(Program program, FavoriteNode parent) {
     mAdvancedSelected = false;
     mProgram = program;
-    mParentNode = parent;
 
     if (mProgram == null) {
       mMainQuestion = mLocalizer.msg("mainQuestion.create",
@@ -147,7 +144,7 @@ public class TypeWizardStep extends AbstractWizardStep {
     panelBuilder.add(mTopicTf = new JTextField(), cc.xy(3, 5));
 
     panelBuilder.add(mActorsRb = new JRadioButton(mLocalizer.msg("option.actors","I like these actors:")), cc.xy(2,7));
-    mActorsCb = new JComboBox();
+    mActorsCb = new JComboBox<>();
     mActorsCb.setEditable(true);
     panelBuilder.add(mActorsCb, cc.xy(3,7));
     panelBuilder.border(Borders.DLU4);

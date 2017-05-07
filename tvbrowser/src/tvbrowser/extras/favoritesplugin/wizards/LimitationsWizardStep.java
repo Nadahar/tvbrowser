@@ -66,7 +66,7 @@ public class LimitationsWizardStep extends AbstractWizardStep {
 
   private JButton mChooseChannelsBtn;
 
-  private JComboBox mDayOfWeekCombo;
+  private JComboBox<Object> mDayOfWeekCombo;
 
   private TimePeriodChooser mTimePeriodChooser;
 
@@ -96,7 +96,7 @@ public class LimitationsWizardStep extends AbstractWizardStep {
       mChannelArr = new Channel[]{};
     }
 
-    mDayOfWeekCombo = new JComboBox(new Object[] {
+    mDayOfWeekCombo = new JComboBox<>(new Object[] {
         LimitationConfiguration.DAYLIMIT_DAILY,
         LimitationConfiguration.DAYLIMIT_WEEKDAY,
         LimitationConfiguration.DAYLIMIT_WEEKEND,

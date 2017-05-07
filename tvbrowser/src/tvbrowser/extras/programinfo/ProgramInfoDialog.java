@@ -27,12 +27,12 @@ package tvbrowser.extras.programinfo;
 
 import java.awt.BorderLayout;
 import java.awt.Cursor;
+import java.awt.Dialog.ModalityType;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Window;
-import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
@@ -72,16 +72,25 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
-import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Caret;
-import javax.swing.text.Document;
-import javax.swing.text.Element;
-import javax.swing.text.Highlighter;
 import javax.swing.text.DefaultHighlighter.DefaultHighlightPainter;
+import javax.swing.text.Highlighter;
 import javax.swing.text.html.HTML;
 import javax.swing.text.html.HTMLDocument;
 
+import com.jgoodies.forms.builder.ButtonBarBuilder;
+import com.l2fprod.common.swing.JTaskPane;
+import com.l2fprod.common.swing.JTaskPaneGroup;
+
+import devplugin.ActionMenu;
+import devplugin.ContextMenuIf;
+import devplugin.PluginAccess;
+import devplugin.PluginManager;
+import devplugin.Program;
+import devplugin.ProgramReceiveTarget;
+import devplugin.ProgramSearcher;
+import devplugin.SettingsItem;
 import tvbrowser.core.Settings;
 import tvbrowser.core.contextmenu.ConfigMenuItem;
 import tvbrowser.core.contextmenu.ContextMenuManager;
@@ -113,19 +122,6 @@ import util.ui.html.ExtendedHTMLEditorKit;
 import util.ui.html.HTMLTextHelper;
 import util.ui.textcomponentpopup.TextComponentPopupEventQueue;
 
-import com.jgoodies.forms.builder.ButtonBarBuilder;
-import com.l2fprod.common.swing.JTaskPane;
-import com.l2fprod.common.swing.JTaskPaneGroup;
-
-import devplugin.ActionMenu;
-import devplugin.ContextMenuIf;
-import devplugin.PluginAccess;
-import devplugin.PluginManager;
-import devplugin.Program;
-import devplugin.ProgramReceiveTarget;
-import devplugin.ProgramSearcher;
-import devplugin.SettingsItem;
-
 /**
  * TV-Browser
  *
@@ -133,8 +129,6 @@ import devplugin.SettingsItem;
  */
 
 class ProgramInfoDialog {
-  private static final long serialVersionUID = 1L;
-
   protected static final util.ui.Localizer mLocalizer = util.ui.Localizer
       .getLocalizerFor(ProgramInfoDialog.class);
 
@@ -236,7 +230,6 @@ class ProgramInfoDialog {
       try {
         searcher = favorite.getSearcher();
       } catch (TvBrowserException e) {
-        // TODO Auto-generated catch block
         e.printStackTrace();
       }
       Pattern pattern = null;
@@ -559,25 +552,10 @@ class ProgramInfoDialog {
         desc = desc.replaceAll("  ", " ").replaceAll(" ", " AND ");
         SearchFormSettings settings = new SearchFormSettings(desc);
         settings.setSearchIn(SearchFormSettings.SEARCH_IN_ALL);
-        settings.setSearcherType(PluginManager.SEARCHER_TYPE_BOOLEAN);
+        settings.setSearcherType(PluginManager.TYPE_SEARCHER_BOOLEAN);
         settings.setNrDays(-1);
         SearchHelper.search(mInfoEP, settings, null, true);
       }
-
-    /*  private String getLink(int pos, JEditorPane html) {
-        Document doc = html.getDocument();
-        if (doc instanceof HTMLDocument) {
-          HTMLDocument hdoc = (HTMLDocument) doc;
-          Element e = hdoc.getCharacterElement(pos);
-          AttributeSet a = e.getAttributes();
-          AttributeSet anchor = (AttributeSet) a.getAttribute(HTML.Tag.A);
-
-          if (anchor != null) {
-            return (String) anchor.getAttribute(HTML.Attribute.HREF);
-          }
-        }
-        return null;
-      }*/
 
       private String getSelection(int pos, JEditorPane html) {
         Caret caret = html.getCaret();
@@ -587,7 +565,6 @@ class ProgramInfoDialog {
             int length = Math.abs(caret.getDot() - caret.getMark());
             return html.getDocument().getText(start, length);
           } catch (BadLocationException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
           }
         }
@@ -993,10 +970,8 @@ class ProgramInfoDialog {
         }
       });
     } catch (InterruptedException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     } catch (InvocationTargetException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
   }

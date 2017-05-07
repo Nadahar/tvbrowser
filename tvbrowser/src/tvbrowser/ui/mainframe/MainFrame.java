@@ -31,6 +31,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
+import java.awt.Dialog.ModalityType;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
@@ -44,7 +45,6 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.Window;
-import java.awt.Dialog.ModalityType;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
@@ -55,8 +55,6 @@ import java.awt.dnd.DropTargetEvent;
 import java.awt.dnd.DropTargetListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ContainerEvent;
-import java.awt.event.ContainerListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -117,12 +115,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import javax.swing.UIManager;
 import javax.swing.WindowConstants;
-import javax.swing.event.AncestorEvent;
-import javax.swing.event.AncestorListener;
-import javax.swing.event.MenuEvent;
-import javax.swing.event.MenuListener;
-import javax.swing.event.PopupMenuEvent;
-import javax.swing.event.PopupMenuListener;
 import javax.swing.plaf.TabbedPaneUI;
 import javax.swing.plaf.basic.BasicTabbedPaneUI;
 
@@ -2087,10 +2079,8 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
             }
           });
         } catch (InterruptedException e) {
-          // TODO Auto-generated catch block
           e.printStackTrace();
         } catch (InvocationTargetException e) {
-          // TODO Auto-generated catch block
           e.printStackTrace();
         }
       }
@@ -2634,10 +2624,8 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
         }
       });
     } catch (InterruptedException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     } catch (InvocationTargetException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
   }
@@ -2724,10 +2712,8 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
                 }
               });
             } catch (InterruptedException e) {
-              // TODO Auto-generated catch block
               e.printStackTrace();
             } catch (InvocationTargetException e) {
-              // TODO Auto-generated catch block
               e.printStackTrace();
             }
 
@@ -3087,7 +3073,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
         Object data = transferable.getTransferData(flavor);
         
         if(data instanceof List) {
-          for(Object o : ((List)data)) {
+          for(Object o : ((List<?>)data)) {
             if(o instanceof File) {
               addPluginFile((File)o, files);
             }
@@ -3131,8 +3117,10 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
         files.add(file);
       }
       else if(file.getName().toLowerCase().endsWith(".zip")) {
+        ZipFile test = null;
+        
         try {
-          ZipFile test = new ZipFile(file);
+          test = new ZipFile(file);
           Enumeration<? extends ZipEntry> entries = test.entries();
           
           File tempDir = new File(System.getProperty("java.io.tmpdir"),"tvbinstplugin");
@@ -3169,7 +3157,15 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
             }
           }
           
-        } catch (Exception e) {}
+        } catch (Exception e) {
+          
+        } finally {
+          if(test != null) {
+            try {
+              test.close();
+            } catch (IOException e) {}
+          }
+        }
       }
     }
   }
@@ -3295,19 +3291,14 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
         tmpFile.deleteOnExit();
       }
     } catch (MalformedURLException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     } catch (IOException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
   }
 
   @Override
-  public void dropActionChanged(DropTargetDragEvent dtde) {
-    // TODO Auto-generated method stub
-
-  }
+  public void dropActionChanged(DropTargetDragEvent dtde) {}
 
   private void showInfoTextMessage(String header, String infoText, int width) {
     JTextArea textArea = new JTextArea(infoText);

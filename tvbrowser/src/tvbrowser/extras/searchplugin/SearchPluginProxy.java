@@ -24,11 +24,7 @@
 package tvbrowser.extras.searchplugin;
 
 import javax.swing.Icon;
-import javax.swing.JPanel;
 
-import tvbrowser.core.plugin.ButtonActionIf;
-import tvbrowser.extras.common.AbstractInternalPluginProxy;
-import util.ui.TVBrowserIcons;
 import devplugin.ActionMenu;
 import devplugin.AfterDataUpdateInfoPanel;
 import devplugin.ContextMenuIf;
@@ -37,6 +33,9 @@ import devplugin.PluginCenterPanelWrapper;
 import devplugin.Program;
 import devplugin.SettingsItem;
 import devplugin.SettingsTab;
+import tvbrowser.core.plugin.ButtonActionIf;
+import tvbrowser.extras.common.AbstractInternalPluginProxy;
+import util.ui.TVBrowserIcons;
 
 /**
  * Encapsulates the SearchPlugin and manages the access to it.
@@ -105,7 +104,7 @@ public class SearchPluginProxy extends AbstractInternalPluginProxy implements Bu
 
   @Override
   public String getPluginCategory() {
-    return Plugin.OTHER_CATEGORY;
+    return Plugin.CATEGORY_OTHER;
   }
 
   @Override

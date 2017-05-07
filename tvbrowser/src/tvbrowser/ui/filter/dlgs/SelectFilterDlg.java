@@ -38,13 +38,19 @@ import java.awt.event.WindowEvent;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JDialog;
-import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
 import javax.swing.tree.TreePath;
 
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.factories.CC;
+import com.jgoodies.forms.layout.FormLayout;
+
+import devplugin.PluginsProgramFilter;
+import devplugin.ProgramFilter;
 import tvbrowser.core.Settings;
 import tvbrowser.core.filters.FilterList;
 import tvbrowser.core.filters.InfoBitFilter;
@@ -56,21 +62,12 @@ import tvbrowser.core.filters.UserFilter;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.extras.favoritesplugin.core.FavoriteFilter;
 import tvbrowser.ui.mainframe.MainFrame;
-import util.ui.ListDropAction;
 import util.ui.Localizer;
 import util.ui.TVBrowserIcons;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 
-import com.jgoodies.forms.builder.PanelBuilder;
-import com.jgoodies.forms.factories.Borders;
-import com.jgoodies.forms.factories.CC;
-import com.jgoodies.forms.layout.FormLayout;
-
-import devplugin.PluginsProgramFilter;
-import devplugin.ProgramFilter;
-
-public class SelectFilterDlg extends JDialog implements ActionListener, WindowClosingIf, ListDropAction {
+public class SelectFilterDlg extends JDialog implements ActionListener, WindowClosingIf {
 
   public static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(SelectFilterDlg.class);
 
@@ -273,13 +270,9 @@ public class SelectFilterDlg extends JDialog implements ActionListener, WindowCl
   public void close() {
     MainFrame.updateFilterPanelLabel();
     mFilterList.store();
-    //FilterManagerImpl.getInstance().setCurrentFilter(FilterManagerImpl.getInstance().getCurrentFilter());
+    
     setVisible(false);
     mInstance = null;
-  }
-
-  public void drop(JList source, JList target, int rows, boolean move) {
-    UiUtilities.moveSelectedItems(target,rows,true);
   }
   
   void editSelectedFilter(FilterNode node) {

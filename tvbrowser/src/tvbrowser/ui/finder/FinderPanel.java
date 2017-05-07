@@ -63,8 +63,8 @@ class FinderItemRenderer extends DefaultListCellRenderer {
   public void setSelectedItem(FinderItem item) {
     mCurSelectedItem = item;
   }
-
-  public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
+  
+  public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
       boolean cellHasFocus) {
 
     FinderItem comp = (FinderItem) value;
@@ -89,17 +89,12 @@ class FinderItemRenderer extends DefaultListCellRenderer {
 
 }
 
-public class FinderPanel extends AbstractDateSelector implements DateSelector,
-    MouseMotionListener, KeyListener {
-
-  private static final util.ui.Localizer mLocalizer
-  = util.ui.Localizer.getLocalizerFor(FinderPanel.class);
-  
+public class FinderPanel extends AbstractDateSelector implements DateSelector, MouseMotionListener, KeyListener {
   private DateListener mDateChangedListener;
 
-  private JList mList;
+  private JList<FinderItem> mList;
 
-  private DefaultListModel mModel;
+  private DefaultListModel<FinderItem> mModel;
 
   private FinderItemRenderer mRenderer;
 
@@ -117,8 +112,8 @@ public class FinderPanel extends AbstractDateSelector implements DateSelector,
     setLayout(new BorderLayout());
     add(mScrollPane, BorderLayout.CENTER);
     mScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-    mModel = new DefaultListModel();
-    mList = new JList(mModel);
+    mModel = new DefaultListModel<>();
+    mList = new JList<>(mModel);
     mList.setOpaque(false);
     mList.addKeyListener(keyListener);
 

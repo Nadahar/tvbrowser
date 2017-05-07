@@ -41,6 +41,11 @@ import javax.swing.tree.TreePath;
 
 import org.apache.commons.lang3.StringUtils;
 
+import devplugin.Channel;
+import devplugin.FilterChangeListenerV2;
+import devplugin.PluginAccess;
+import devplugin.PluginsProgramFilter;
+import devplugin.ProgramFilter;
 import tvbrowser.core.Settings;
 import tvbrowser.core.filters.FilterManagerImpl;
 import tvbrowser.core.filters.ShowAllFilter;
@@ -50,24 +55,16 @@ import tvbrowser.core.plugin.PluginManagerImpl;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
-import devplugin.Channel;
-import devplugin.FilterChangeListener;
-import devplugin.FilterChangeListenerV2;
-import devplugin.PluginAccess;
-import devplugin.PluginsProgramFilter;
-import devplugin.ProgramFilter;
 
 public class FilterTreeModel extends DefaultTreeModel {
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(FilterTreeModel.class);
   private static FilterTreeModel mInstance;
   
-  private static ArrayList<FilterChangeListener> CHANGE_LISTENER_LIST;
   private static ArrayList<FilterChangeListenerV2> CHANGE_LISTENER_LISTV2;
   
   public FilterTreeModel(TreeNode root) {
     super(root,true);
     
-    CHANGE_LISTENER_LIST = new ArrayList<FilterChangeListener>(0);
     CHANGE_LISTENER_LISTV2 = new ArrayList<FilterChangeListenerV2>(0);
   }
 
@@ -350,9 +347,6 @@ public class FilterTreeModel extends DefaultTreeModel {
   }
   
   void fireFilterAdded(ProgramFilter filter) {
-    for(FilterChangeListener listener : CHANGE_LISTENER_LIST) {
-      listener.filterAdded(filter);
-    }
     for(FilterChangeListenerV2 listener : CHANGE_LISTENER_LISTV2) {
       listener.filterAdded(filter);
     }
@@ -363,9 +357,6 @@ public class FilterTreeModel extends DefaultTreeModel {
   }
 
   void fireFilterRemoved(ProgramFilter filter) {
-    for(FilterChangeListener listener : CHANGE_LISTENER_LIST) {
-      listener.filterRemoved(filter);
-    }
     for(FilterChangeListenerV2 listener : CHANGE_LISTENER_LISTV2) {
       listener.filterRemoved(filter);
     }
@@ -377,9 +368,6 @@ public class FilterTreeModel extends DefaultTreeModel {
   }
   
   void fireFilterTouched(ProgramFilter filter) {
-    for(FilterChangeListener listener : CHANGE_LISTENER_LIST) {
-      listener.filterTouched(filter);
-    }
     for(FilterChangeListenerV2 listener : CHANGE_LISTENER_LISTV2) {
       listener.filterTouched(filter);
     }
@@ -391,18 +379,6 @@ public class FilterTreeModel extends DefaultTreeModel {
     }
   }
   
-  /** @deprecated since 3.3.4 use {@link #registerFilterChangeListener(FilterChangeListenerV2)} instead */
-  public void registerFilterChangeListener(FilterChangeListener listener) {
-    CHANGE_LISTENER_LIST.add(listener);
-  }
-  
-  /**
-   * 
-   * @deprecated since 3.3.4 use {@link #unregisterFilterChangeListener(FilterChangeListenerV2)} instead */
-  public void unregisterFilterChangeListener(FilterChangeListener listener) {
-    CHANGE_LISTENER_LIST.remove(listener);
-  }
-
   public void registerFilterChangeListener(FilterChangeListenerV2 listener) {
     CHANGE_LISTENER_LISTV2.add(listener);
   }
@@ -458,6 +434,7 @@ public class FilterTreeModel extends DefaultTreeModel {
    * @param comp
    */
   private void sortNodeInternal(FilterNode node, Comparator<FilterNode> comp) {
+    @SuppressWarnings("unchecked")
     ArrayList<FilterNode> childNodes = Collections.list(node.children());
     Collections.sort(childNodes, comp);
 
