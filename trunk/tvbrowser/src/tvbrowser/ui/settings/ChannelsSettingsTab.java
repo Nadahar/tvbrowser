@@ -356,7 +356,7 @@ public class ChannelsSettingsTab implements SettingsTab, ListDropAction<Object> 
 
     // right list box
     JPanel listBoxPnRight = new JPanel(new BorderLayout());
-    SortableItemList channelList = new SortableItemList(new ChannelJList());
+    SortableItemList<Object> channelList = new SortableItemList<>(new ChannelJList());
 
     mSubscribedChannels = channelList.getList();
     mFilter = new ChannelFilter();

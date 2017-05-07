@@ -47,7 +47,7 @@ import devplugin.SettingsItem;
  */
 public class DefaultProgramImportanceSelectionPanel extends JPanel {
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(DefaultProgramImportanceSelectionPanel.class);
-  private JComboBox mProgramImportanceSelection;
+  private JComboBox<String> mProgramImportanceSelection;
   private JEditorPane mHelpLabel;
   
   private DefaultProgramImportanceSelectionPanel(byte importance, boolean showTitle, boolean withDefaultDialogBorder) {
@@ -58,7 +58,7 @@ public class DefaultProgramImportanceSelectionPanel extends JPanel {
       pb.border(Borders.DIALOG);
     }
     
-    mProgramImportanceSelection = new JComboBox(getProgramImportanceNames(true));
+    mProgramImportanceSelection = new JComboBox<>(getProgramImportanceNames(true));
     mProgramImportanceSelection.setSelectedIndex(getIndexForImportance(importance));
     
     mHelpLabel = UiUtilities.createHtmlHelpTextArea(mLocalizer.msg("help","The selected importance is used to determinate the transparency of a program. It's calculated over all plugins as mean value. Lower importance leads to higher transparency. This works only if the plugins are allowed to set the transparency at <a href=\"#link\">program panel settings</a>."), new HyperlinkListener() {

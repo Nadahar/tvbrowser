@@ -417,7 +417,7 @@ public class FavoriteTree extends JTree implements DragGestureListener, DropTarg
       }
 
       final FavoriteNode sortNode = parentSort == null ? last : parentSort;
-System.out.println(last + " " + last.getParent());
+      
       if(last.getChildCount() > 1 || (mRootNode.equals(last.getParent()) && mRootNode.getChildCount() > 1 )) {
         menu.addSeparator();
 

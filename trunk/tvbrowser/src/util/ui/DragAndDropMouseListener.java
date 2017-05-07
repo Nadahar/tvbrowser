@@ -45,10 +45,10 @@ import javax.swing.ToolTipManager;
  * @author René Mach
  * 
  */
-public class DragAndDropMouseListener extends MouseAdapter {
+public class DragAndDropMouseListener<E> extends MouseAdapter {
   private int mLastSelectedIndex = 0;
-  private JList mSource, mTarget;
-  private ListDropAction mAction;
+  private JList<E> mSource, mTarget;
+  private ListDropAction<E> mAction;
   private DragGestureListener mListener;
   private boolean mMoveWithDoubleClick;
 
@@ -63,8 +63,8 @@ public class DragAndDropMouseListener extends MouseAdapter {
    * @param listener
    *          The GestureListener of DnD.
    */
-  public DragAndDropMouseListener(JList source, JList target,
-      ListDropAction action, DragGestureListener listener) {
+  public DragAndDropMouseListener(JList<E> source, JList<E> target,
+      ListDropAction<E> action, DragGestureListener listener) {
     this(source,target,action,listener,true);
   }
   
@@ -81,8 +81,8 @@ public class DragAndDropMouseListener extends MouseAdapter {
    * @param moveWithDoubleClick
    *          If the items should be moved on double click.           
    */
-  public DragAndDropMouseListener(JList source, JList target,
-      ListDropAction action, DragGestureListener listener, boolean moveWithDoubleClick) {
+  public DragAndDropMouseListener(JList<E> source, JList<E> target,
+      ListDropAction<E> action, DragGestureListener listener, boolean moveWithDoubleClick) {
     mSource = source;
     mTarget = target;
     mAction = action;

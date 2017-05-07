@@ -167,7 +167,7 @@ public class MultipleFieldReader extends Reader {
         ProgramFieldType fieldType = mInfoFieldArr[mCurrentField];
         
         String fieldValue = null;
-        if (fieldType.getFormat() == ProgramFieldType.TEXT_FORMAT) {
+        if (fieldType.getFormat() == ProgramFieldType.FORMAT_TEXT) {
           fieldValue = mProgram.getTextField(fieldType);
           
           if (fieldType == ProgramFieldType.SHORT_DESCRIPTION_TYPE) {
@@ -184,10 +184,10 @@ public class MultipleFieldReader extends Reader {
             }
           }
         }
-        else if (fieldType.getFormat() == ProgramFieldType.TIME_FORMAT) {
+        else if (fieldType.getFormat() == ProgramFieldType.FORMAT_TIME) {
           fieldValue = mProgram.getTimeFieldAsString(fieldType);
         }
-        else if (fieldType.getFormat() == ProgramFieldType.INT_FORMAT) {
+        else if (fieldType.getFormat() == ProgramFieldType.FORMAT_INT) {
           if(fieldType.equals(ProgramFieldType.EPISODE_NUMBER_TYPE) && mProgram.hasFieldValue(ProgramFieldType.EPISODE_NUMBER_TYPE)) {
             fieldValue = IOUtilities.decodeSingleFieldValueToMultipleEpisodeString(mProgram.getIntField(fieldType));
           }

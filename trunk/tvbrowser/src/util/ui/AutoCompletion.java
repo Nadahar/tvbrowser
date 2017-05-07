@@ -21,27 +21,27 @@ import javax.swing.text.PlainDocument;
 
 import org.apache.commons.lang3.StringUtils;
 
-public class AutoCompletion extends PlainDocument {
-  JComboBox comboBox;
-  ComboBoxModel model;
-  JTextComponent editor;
+public class AutoCompletion<E> extends PlainDocument {
+  private JComboBox<E> comboBox;
+  private ComboBoxModel<E> model;
+  private JTextComponent editor;
   // flag to indicate if setSelectedItem has been called
   // subsequent calls to remove/insertString should be ignored
-  boolean selecting = false;
-  boolean hidePopupOnFocusLoss;
-  boolean hitBackspace = false;
-  boolean hitBackspaceOnSelection;
+  private boolean selecting = false;
+  private boolean hidePopupOnFocusLoss;
+  private boolean hitBackspace = false;
+  private boolean hitBackspaceOnSelection;
 
-  boolean firstUpper = false;
+  private boolean firstUpper = false;
 
-  transient KeyListener editorKeyListener;
-  transient FocusListener editorFocusListener;
+  private transient KeyListener editorKeyListener;
+  private transient FocusListener editorFocusListener;
 
-  public AutoCompletion(final JComboBox comboBox) {
+  public AutoCompletion(final JComboBox<E> comboBox) {
     this(comboBox, false);
   }
 
-  public AutoCompletion(final JComboBox comboBox, boolean firstLetterUppercase) {
+  public AutoCompletion(final JComboBox<E> comboBox, boolean firstLetterUppercase) {
     this.comboBox = comboBox;
     this.firstUpper = firstLetterUppercase;
     model = comboBox.getModel();
@@ -53,12 +53,13 @@ public class AutoCompletion extends PlainDocument {
       }
     });
     comboBox.addPropertyChangeListener(new PropertyChangeListener() {
+      @SuppressWarnings("unchecked")
       public void propertyChange(PropertyChangeEvent e) {
         if (e.getPropertyName().equals("editor")) {
           configureEditor((ComboBoxEditor) e.getNewValue());
         }
         if (e.getPropertyName().equals("model")) {
-          model = (ComboBoxModel) e.getNewValue();
+          model = (ComboBoxModel<E>) e.getNewValue();
         }
       }
     });

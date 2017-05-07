@@ -75,21 +75,21 @@ public final class LookAndFeelSettingsTab implements SettingsTab {
 
   static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(LookAndFeelSettingsTab.class);
 
-  private JComboBox mLfComboBox;
+  private JComboBox<LookAndFeelObj> mLfComboBox;
 
   private JPanel mSettingsPn;
 
   private JButton mConfigBtn;
 
-  private JComboBox mIconThemes;
+  private JComboBox<IconTheme> mIconThemes;
 
-  private JComboBox mPluginViewPosition;
+  private JComboBox<String> mPluginViewPosition;
 
-  private JComboBox mDateLayout;
+  private JComboBox<String> mDateLayout;
   
-  private JComboBox mPersonaSelection;
+  private JComboBox<PersonaInfo> mPersonaSelection;
   
-  private JComboBox mInfoIconThemes;
+  private JComboBox<InfoIconTheme> mInfoIconThemes;
 
   private JTextArea mRestartMessage;
   
@@ -158,7 +158,7 @@ public final class LookAndFeelSettingsTab implements SettingsTab {
 
     mSettingsPn.add(new JLabel(mLocalizer.msg("channelPosition", "Channel list position") +":"), CC.xy(2, 3));
 
-    mPluginViewPosition = new JComboBox(new String[] {Localizer.getLocalization(Localizer.I18N_LEFT),Localizer.getLocalization(Localizer.I18N_RIGHT)});
+    mPluginViewPosition = new JComboBox<>(new String[] {Localizer.getLocalization(Localizer.I18N_LEFT),Localizer.getLocalization(Localizer.I18N_RIGHT)});
 
     if(Settings.propPluginViewIsLeft.getBoolean()) {
       mPluginViewPosition.setSelectedIndex(1);
@@ -180,7 +180,7 @@ public final class LookAndFeelSettingsTab implements SettingsTab {
 
     mSettingsPn.add(new JLabel(mLocalizer.msg("dateFormat", "Layout of Datelist")+":"), CC.xy(2, 5));
 
-    mDateLayout = new JComboBox(new String[] {
+    mDateLayout = new JComboBox<>(new String[] {
             mLocalizer.msg("dateFormat.datelist", "List"),
             mLocalizer.msg("dateFormat.calendarTable", "Calendar (Table)"),
             mLocalizer.msg("dateFormat.calendarButtons", "Calendar (Buttons)")
@@ -203,7 +203,7 @@ public final class LookAndFeelSettingsTab implements SettingsTab {
 
     LookAndFeelObj[] lfObjects = getLookAndFeelObjs();
     Arrays.sort(lfObjects);
-    mLfComboBox = new JComboBox(lfObjects);
+    mLfComboBox = new JComboBox<>(lfObjects);
 
     String lfName = Settings.propLookAndFeel.getString();
     for (LookAndFeelObj lfObject : lfObjects) {
@@ -236,7 +236,7 @@ public final class LookAndFeelSettingsTab implements SettingsTab {
     
     PersonaInfo[] installedPersonas = Persona.getInstance().getInstalledPersonas();
     
-    mPersonaSelection = new JComboBox(installedPersonas);
+    mPersonaSelection = new JComboBox<>(installedPersonas);
     
     final LinkButton personaDetails = new LinkButton(mLocalizer.msg("personaDetails","Persona details"),
     "http://www.tvbrowser.org/");
@@ -257,7 +257,8 @@ public final class LookAndFeelSettingsTab implements SettingsTab {
     }
     
     mPersonaSelection.setRenderer(new CustomComboBoxRenderer(mPersonaSelection.getRenderer()) {
-      public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+      public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+        @SuppressWarnings("unchecked")
         JLabel label = (JLabel)getBackendRenderer().getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
         if (value != null) {
           label.setText(((PersonaInfo)value).getName());
@@ -286,10 +287,11 @@ public final class LookAndFeelSettingsTab implements SettingsTab {
 
     mSettingsPn.add(new JLabel(mLocalizer.msg("icons", "Icons") + ":"), CC.xy(2, 11));
 
-    mIconThemes = new JComboBox();
+    mIconThemes = new JComboBox<>();
     mIconThemes.setRenderer(new CustomComboBoxRenderer(mIconThemes.getRenderer()) {
       @Override
-      public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+      public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+        @SuppressWarnings("unchecked")
         JLabel label = (JLabel)getBackendRenderer().getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
         if (value != null) {
           label.setText(((IconTheme)value).getName());
@@ -302,11 +304,8 @@ public final class LookAndFeelSettingsTab implements SettingsTab {
     fillThemeBox();
 
     JButton downloadThemes = new JButton(mLocalizer.msg("downloadMore", "Download more"));
-    downloadThemes.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        downloadIcons(ThemeDownloadDlg.THEME_ICON_TYPE);
-      }
+    downloadThemes.addActionListener(e -> {
+      downloadIcons(ThemeDownloadDlg.THEME_ICON_TYPE);
     });
     
     mSettingsPn.add(mIconThemes, CC.xy(4, 11));
@@ -317,15 +316,12 @@ public final class LookAndFeelSettingsTab implements SettingsTab {
     
     mSettingsPn.add(new JLabel(mLocalizer.msg("infoIcons", "Program info icons") + ":"), CC.xy(2, 13));
         
-    mInfoIconThemes = new JComboBox();
+    mInfoIconThemes = new JComboBox<>();
     fillInfoThemeBox();
     
     JButton downloadInfoThemes = new JButton(mLocalizer.msg("downloadMore", "Download more"));
-    downloadInfoThemes.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        downloadIcons(ThemeDownloadDlg.INFO_ICON_TYPE);
-      }
+    downloadInfoThemes.addActionListener(e -> {
+      downloadIcons(ThemeDownloadDlg.INFO_ICON_TYPE);
     });
     
     mSettingsPn.add(mInfoIconThemes, CC.xy(4, 13));
@@ -396,7 +392,6 @@ public final class LookAndFeelSettingsTab implements SettingsTab {
           
           for(ThemeDownloadItem success : successItems) {
             File theme = new File(InfoThemeLoader.USER_ICON_DIR, success.toString());
-            System.out.println(" ttt " + theme.getAbsolutePath() + " " + theme.isFile());
             InfoThemeLoader.getInstance().addIconTheme(theme);
           }
           

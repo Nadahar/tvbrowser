@@ -55,7 +55,7 @@ public class NetworkSettingsTab implements SettingsTab {
     pb.add(new JLabel(mLocalizer.msg("sites", "Websites used for checking")), cc.xyw(2, pb.getRowCount(), 3));
     
     pb.addRow();
-    final JList urlList = new JList(NetworkUtilities.getConnectionCheckUrls());
+    final JList<String> urlList = new JList<>(NetworkUtilities.getConnectionCheckUrls());
     urlList.setEnabled(false);
     pb.add(new JScrollPane(urlList), cc.xyw(2, pb.getRowCount(), 3));
     

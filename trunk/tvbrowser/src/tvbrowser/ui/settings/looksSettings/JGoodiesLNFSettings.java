@@ -64,7 +64,7 @@ public class JGoodiesLNFSettings extends JDialog implements WindowClosingIf {
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(JGoodiesLNFSettings.class);
 
   /** Color-Schema */
-  private JComboBox mColorScheme;
+  private JComboBox<PlasticTheme> mColorScheme;
   /** Drop-Shadow */
   private JCheckBox mShadow;
   
@@ -82,7 +82,9 @@ public class JGoodiesLNFSettings extends JDialog implements WindowClosingIf {
   /**
    * Create the GUI
    */
+  @SuppressWarnings("unchecked")
   private void createGui() {
+    @SuppressWarnings("rawtypes")
     List themesList = PlasticLookAndFeel.getInstalledThemes();
     themesList.add(2,new DarkStarDark(true));
     themesList.add(1,new BrownSugarDark(true));
@@ -98,9 +100,9 @@ public class JGoodiesLNFSettings extends JDialog implements WindowClosingIf {
     
     content.add(new JLabel(mLocalizer.msg("colorTheme", "Color-Theme") +  ":"), cc.xy(1,1));
     
-    mColorScheme = new JComboBox(themes);
+    mColorScheme = new JComboBox<>(themes);
     mColorScheme.setRenderer(new DefaultListCellRenderer() {
-      public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+      public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
         JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
         label.setText(((PlasticTheme)value).getName());
         return label;

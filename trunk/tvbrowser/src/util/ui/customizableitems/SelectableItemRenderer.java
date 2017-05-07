@@ -47,20 +47,20 @@ import devplugin.Channel;
  * 
  * @author René Mach
  */
-public class SelectableItemRenderer implements ListCellRenderer {
+public class SelectableItemRenderer<E> implements ListCellRenderer<SelectableItem<E>> {
   private static final Localizer LOCALIZER = Localizer.getLocalizerFor(SelectableItemRenderer.class);
   
   private int mSelectionWidth;
   private boolean mIsEnabled = true;
   
-  private HashMap<Class<?>,SelectableItemRendererCenterComponentIf> mCenterComponentMap = new HashMap<Class<?>,SelectableItemRendererCenterComponentIf>();
+  private HashMap<Class<?>,SelectableItemRendererCenterComponentIf<E>> mCenterComponentMap = new HashMap<Class<?>,SelectableItemRendererCenterComponentIf<E>>();
   
   private JScrollPane mParentScrollPane;
   
-  public JPanel getListCellComponent(JList list, Object value,
+  public JPanel getListCellComponent(JList<? extends SelectableItem<E>> list, SelectableItem<E> value,
   int index, boolean isSelected, boolean cellHasFocus) {
 
-    SelectableItem selectableItem = (SelectableItem) value;
+    SelectableItem<E> selectableItem = value;
     JCheckBox cb = new JCheckBox("",selectableItem.isSelected());
     
     JPanel p = new JPanel(new BorderLayout(2,0));
@@ -69,7 +69,7 @@ public class SelectableItemRenderer implements ListCellRenderer {
     
     p.add(cb, BorderLayout.WEST);
     
-    SelectableItemRendererCenterComponentIf renderIf = mCenterComponentMap.get(selectableItem.getItem().getClass());
+    SelectableItemRendererCenterComponentIf<E> renderIf = mCenterComponentMap.get(selectableItem.getItem().getClass());
     
     if(renderIf == null) {
       renderIf = mCenterComponentMap.get(selectableItem.getItem().getClass().getSuperclass());
@@ -148,7 +148,7 @@ public class SelectableItemRenderer implements ListCellRenderer {
    * @param component The render component.
    * @since 2.7
    */
-  public void setCenterRendererComponent(Class<?> clazz, SelectableItemRendererCenterComponentIf component) {
+  public void setCenterRendererComponent(Class<?> clazz, SelectableItemRendererCenterComponentIf<E> component) {
     mCenterComponentMap.put(clazz,component);
   }
 
@@ -156,7 +156,7 @@ public class SelectableItemRenderer implements ListCellRenderer {
     mParentScrollPane = parentScrollPane;
   }
 
-  public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected,
+  public Component getListCellRendererComponent(JList<? extends SelectableItem<E>> list, SelectableItem<E> value, int index, boolean isSelected,
       boolean cellHasFocus) {
       return getListCellComponent( list, value, index, isSelected, cellHasFocus);
   }

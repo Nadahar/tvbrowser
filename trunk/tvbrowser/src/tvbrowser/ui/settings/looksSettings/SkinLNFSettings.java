@@ -62,7 +62,7 @@ import com.jgoodies.forms.layout.Sizes;
 public class SkinLNFSettings extends JDialog implements WindowClosingIf {
   /** Translation */
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(SkinLNFSettings.class);
-  private JComboBox mThemePack;
+  private JComboBox<String> mThemePack;
 
   /**
    * Create the Dialog
@@ -94,7 +94,7 @@ public class SkinLNFSettings extends JDialog implements WindowClosingIf {
 
     String[] skins = getThemePacks();
 
-    mThemePack = new JComboBox(skins);
+    mThemePack = new JComboBox<>(skins);
     mThemePack.setSelectedItem(temp);
 
     content.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg("chooseThemepack", "Choose Themepack")), cc.xyw(1,5,3));

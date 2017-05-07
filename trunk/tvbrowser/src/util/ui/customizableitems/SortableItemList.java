@@ -41,7 +41,8 @@ import javax.swing.ListCellRenderer;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import tvbrowser.ui.settings.channel.ChannelJList;
+import com.jgoodies.forms.layout.Sizes;
+
 import util.ui.DragAndDropMouseListener;
 import util.ui.ListDragAndDropHandler;
 import util.ui.ListDropAction;
@@ -49,20 +50,18 @@ import util.ui.TVBrowserIcons;
 import util.ui.TabLayout;
 import util.ui.UiUtilities;
 
-import com.jgoodies.forms.layout.Sizes;
-
 /**
  * A sortable List
  */
-public class SortableItemList extends JPanel implements ActionListener, ListDropAction {
+public class SortableItemList<E> extends JPanel implements ActionListener, ListDropAction<E> {
   
   protected JButton mUpBt;
   protected JButton mDownBt;
   protected JButton mTopBtn;
   protected JButton mBottomBtn;
-  protected JList mList;
+  protected JList<E> mList;
   protected JLabel mTitleLb;
-  protected DefaultListModel mListModel;
+  protected DefaultListModel<E> mListModel;
   protected JPanel mBtnPanel;
   
   public static final util.ui.Localizer mLocalizer
@@ -74,11 +73,11 @@ public class SortableItemList extends JPanel implements ActionListener, ListDrop
   }
   
   public SortableItemList(String title) {
-    this(title, new Object[]{});
+    this(title, null);
   }
 
-  public SortableItemList(String title, Object[] objects) {
-    this(title, objects, new JList());
+  public SortableItemList(String title, E[] objects) {
+    this(title, objects, new JList<E>());
   }
 
   /**
@@ -87,8 +86,8 @@ public class SortableItemList extends JPanel implements ActionListener, ListDrop
    * @param list List to use
    * @since 2.2
    */
-  public SortableItemList(ChannelJList list) {
-    this("", new Object[]{}, list);
+  public SortableItemList(JList<E> list) {
+    this("", null, list);
   }
   
   /**
@@ -99,7 +98,7 @@ public class SortableItemList extends JPanel implements ActionListener, ListDrop
    * 
    * @since 2.2
    */
-  public SortableItemList(String title, Object[] objects, JList list) {
+  public SortableItemList(String title, E[] objects, JList<E> list) {
     mUpBt = new JButton(TVBrowserIcons.up(TVBrowserIcons.SIZE_LARGE));
     String msg = mLocalizer.msg("tooltip.up", "Move selected rows up");
     mUpBt.setToolTipText(msg);
@@ -121,11 +120,13 @@ public class SortableItemList extends JPanel implements ActionListener, ListDrop
     mBottomBtn.addActionListener(this);
 
     mList = list;
-    mListModel = new DefaultListModel();
+    mListModel = new DefaultListModel<E>();
     mList.setModel(mListModel);
     
-    for (Object object : objects) {
-      mListModel.addElement(object);
+    if(objects != null) {
+      for (E object : objects) {
+        mListModel.addElement(object);
+      }
     }
     
     mList.addListSelectionListener(new ListSelectionListener(){
@@ -175,19 +176,20 @@ public class SortableItemList extends JPanel implements ActionListener, ListDrop
     mTitleLb.setText(title);
   }
   
+  @SuppressWarnings({ "rawtypes", "unchecked" })
   public void setCellRenderer(ListCellRenderer renderer) {
     mList.setCellRenderer(renderer);
   }
   
-  public JList getList() {
+  public JList<E> getList() {
     return mList;
   }
   
-  public void addElement(Object o) {
+  public void addElement(E o) {
     mListModel.addElement(o);
   }
   
-  public void addElement(int inx, Object o) {
+  public void addElement(int inx, E o) {
     mListModel.add(inx,o);
   }
   
@@ -271,7 +273,7 @@ public class SortableItemList extends JPanel implements ActionListener, ListDrop
     return mBottomBtn;
   }
 
-  public void drop(JList source, JList target, int rows, boolean move) {
+  public void drop(JList<E> source, JList<E> target, int rows, boolean move) {
     UiUtilities.moveSelectedItems(target,rows,true);
   }
   

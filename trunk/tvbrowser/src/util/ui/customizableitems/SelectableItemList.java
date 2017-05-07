@@ -39,6 +39,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.AbstractListModel;
 import javax.swing.JButton;
@@ -51,10 +52,10 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.plaf.ListUI;
 
-import util.ui.Localizer;
-
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
+
+import util.ui.Localizer;
 
 /**
  * A class that provides a list that contains selectable items.
@@ -62,19 +63,19 @@ import com.jgoodies.forms.layout.FormLayout;
  * @author René Mach
  * 
  */
-public class SelectableItemList extends JPanel implements ListSelectionListener{
+public class SelectableItemList<E> extends JPanel implements ListSelectionListener{
   
   private static final long serialVersionUID = 1L;
 
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(SelectableItemList.class);
   
   private SelectableItemListModel mListModel;
-  private SelectableItemRenderer mItemRenderer;
+  private SelectableItemRenderer<E> mItemRenderer;
   
   private JButton mSelectAllBt;
   private JButton mDeSelectAllBt;
   
-  private JList mList;
+  private JList<SelectableItem<E>> mList;
   private Component[] mComponents;
   private boolean mIsEnabled = true;
   private JScrollPane mScrollPane;
@@ -89,7 +90,7 @@ public class SelectableItemList extends JPanel implements ListSelectionListener{
    * @param currSelection The currently selected Objects.
    * @param allItems All Objects of the list.
    */
-  public SelectableItemList(Object[] currSelection, Object[] allItems) {
+  public SelectableItemList(E[] currSelection, E[] allItems) {
     this(currSelection,allItems,null);
   }
 
@@ -103,7 +104,7 @@ public class SelectableItemList extends JPanel implements ListSelectionListener{
    * 
    * @since 2.7.2
    */
-  public SelectableItemList(Object[] currSelection, Object[] allItems, Object[] notSelectableItems) {
+  public SelectableItemList(E[] currSelection, E[] allItems, E[] notSelectableItems) {
     this(currSelection, allItems, false, notSelectableItems);
   }
   
@@ -114,7 +115,7 @@ public class SelectableItemList extends JPanel implements ListSelectionListener{
    * @param allItems All Objects of the list.
    * @param showSelectionButtons If the selection buttons should be shown.
    */
-  public SelectableItemList(Object[] currSelection, Object[] allItems, boolean showSelectionButtons) {
+  public SelectableItemList(E[] currSelection, E[] allItems, boolean showSelectionButtons) {
     this(currSelection,allItems,showSelectionButtons,null);
   }
   
@@ -128,14 +129,14 @@ public class SelectableItemList extends JPanel implements ListSelectionListener{
    * 
    * @since 2.7.2
    */
-  public SelectableItemList(Object[] currSelection, Object[] allItems, boolean showSelectionButtons, Object[] notSelectableItems) {
+  public SelectableItemList(E[] currSelection, E[] allItems, boolean showSelectionButtons, E[] notSelectableItems) {
     setLayout(new BorderLayout(0,3));
     
     mListModel = new SelectableItemListModel();
     setEntries(currSelection,allItems,notSelectableItems);
     
-    mList = new JList(mListModel);
-    mList.setCellRenderer(mItemRenderer = new SelectableItemRenderer());
+    mList = new JList<>(mListModel);
+    mList.setCellRenderer(mItemRenderer = new SelectableItemRenderer<E>());
     
     mScrollPane = new JScrollPane(mList);
     
@@ -160,7 +161,7 @@ public class SelectableItemList extends JPanel implements ListSelectionListener{
           
           if (evt.getX() <= mItemRenderer.getSelectionWidth() && mIsEnabled) {
             if(oldCellBounds.contains(evt.getPoint())) {
-              SelectableItem item = (SelectableItem) mListModel.getElementAt(index);
+              SelectableItem<E> item = mListModel.getElementAt(index);
               if(item.isSelectable()) {
                 item.setSelected(! item.isSelected());
                 handleItemSelectionChanged();
@@ -176,12 +177,10 @@ public class SelectableItemList extends JPanel implements ListSelectionListener{
         if (e.getKeyCode() == KeyEvent.VK_SPACE) {
           addEditor(mList.getSelectedIndex());
           
-          Object[] objs = mList.getSelectedValues();
-          for (Object obj : objs) {
-            if (obj instanceof SelectableItem) {
-              SelectableItem item = (SelectableItem) obj;
-              item.setSelected(!item.isSelected());
-            }
+          List<SelectableItem<E>> objs = mList.getSelectedValuesList();
+          
+          for (SelectableItem<E> item : objs) {
+            item.setSelected(!item.isSelected());
           }
           handleItemSelectionChanged();
           mList.repaint();
@@ -227,7 +226,7 @@ public class SelectableItemList extends JPanel implements ListSelectionListener{
   private void handleItemSelectionChanged() {
     if(mEditorComp != null) {
       JCheckBox cb = ((JCheckBox) mEditorComp.getComponent(0));
-      cb.setSelected(((SelectableItem) mListModel.getElementAt(mEditingIndex)).isSelected());
+      cb.setSelected(((SelectableItem<E>) mListModel.getElementAt(mEditingIndex)).isSelected());
       mEditorComp.repaint();
       
       ListSelectionListener[] listeners = mList.getListSelectionListeners();
@@ -273,32 +272,52 @@ public class SelectableItemList extends JPanel implements ListSelectionListener{
    * 
    * @since 2.5
    * @return Current selected Items in the List
+   * @deprecated since 3.4.5 use {@link #getListSelectionList()} instead
    */
   public Object[] getListSelection() {
-    Object[] values = mList.getSelectedValues();
+    final List<SelectableItem<E>> list = mList.getSelectedValuesList();
     
-    Object[] items = new Object[values.length];
+    Object[] items = new Object[list.size()];
     
-    int max = values.length;
+    int max = list.size();
     for (int i=0;i< max;i++) {
-      items[i] = ((SelectableItem)values[0]).getItem();
+      items[i] = list.get(i).getItem();
     }
     
     return items;
   }
   
-  private void setEntries(Object[] currSelection, Object[] allItems, Object[] disabledItems) {
+  /**
+   * Current selected Items in the List.
+   * 
+   * Attention: This is not a List with all activated Items.
+   * 
+   * @since 3.4.5
+   * @return Current selected Items in the List
+   */
+  public List<E> getListSelectionList() {
+    final List<SelectableItem<E>> list = mList.getSelectedValuesList();
+    final ArrayList<E> items = new ArrayList<>(list.size());
+    
+    for(SelectableItem<E> item : list) {
+      items.add(item.getItem());
+    }
+    
+    return items;
+  }
+  
+  private void setEntries(E[] currSelection, E[] allItems, E[] disabledItems) {
     mListModel.removeAllElements();
     mComponents = new Component[allItems.length];
     
-    ArrayList<Object> selectionList = new ArrayList<Object>();
+    ArrayList<E> selectionList = new ArrayList<>();
     
-    for (Object element : currSelection) {
+    for (E element : currSelection) {
       selectionList.add(element);
     }
     
     for (int i = 0; i < allItems.length; i++) {
-      SelectableItem item = new SelectableItem(allItems[i], selectionList.remove(allItems[i]),!arrayContainsItem(disabledItems,allItems[i]));
+      SelectableItem<E> item = new SelectableItem<>(allItems[i], selectionList.remove(allItems[i]),!arrayContainsItem(disabledItems,allItems[i]));
       mListModel.addElement(item);
     }
   }
@@ -320,16 +339,30 @@ public class SelectableItemList extends JPanel implements ListSelectionListener{
    * is a List with all checked Items
    * 
    * @return The selected Objects
+   * @deprecated since 3.4.5 use {@link #getSelectionList()} instead.
    */
   public Object[] getSelection() {
-    return mListModel.getSelection();
+    final List<E> selection = mListModel.getSelectionList();
+    return selection.toArray();
   }
+  
+  /**
+   * Attention: This is not a List with all selected Items in the List. This List
+   * is a List with all checked Items
+   * 
+   * @return The selected Objects
+   * @since 3.4.5
+   */
+  public List<E> getSelectionList() {
+    return mListModel.getSelectionList();
+  }
+  
   
   /**
    * @return The current selected value (value that has focus)
    * @since 2.5
    */
-  public Object getSelectedValue() {
+  public SelectableItem<E> getSelectedValue() {
     return mList.getSelectedValue();
   }
 
@@ -405,7 +438,7 @@ public class SelectableItemList extends JPanel implements ListSelectionListener{
    * @since 2.7
    */
 
-  public void addCenterRendererComponent(Class<?> clazz, SelectableItemRendererCenterComponentIf component) {
+  public void addCenterRendererComponent(Class<?> clazz, SelectableItemRendererCenterComponentIf<E> component) {
     mItemRenderer.setCenterRendererComponent(clazz,component);
   }
   
@@ -446,7 +479,7 @@ public class SelectableItemList extends JPanel implements ListSelectionListener{
    * @param filterBox The combo box with the ItemFilters.
    * @since 2.7
    */
-  public void setFilterComboBox(JComboBox filterBox) {
+  public void setFilterComboBox(JComboBox<ItemFilter> filterBox) {
     mListModel.setComboBox(filterBox);
   }
 
@@ -504,7 +537,7 @@ public class SelectableItemList extends JPanel implements ListSelectionListener{
     ((JCheckBox) mEditorComp.getComponent(0)).addItemListener(new ItemListener(){
       public void itemStateChanged(ItemEvent arg0) {
         JCheckBox cb = ((JCheckBox) mEditorComp.getComponent(0));
-        ((SelectableItem) mListModel.getElementAt(mEditingIndex)).setSelected(cb.isSelected());
+        ((SelectableItem<E>) mListModel.getElementAt(mEditingIndex)).setSelected(cb.isSelected());
         handleItemSelectionChanged();
       }
       
@@ -514,13 +547,13 @@ public class SelectableItemList extends JPanel implements ListSelectionListener{
     return true;
   }
   
-  private class SelectableItemListModel extends AbstractListModel {
-    private JComboBox mFilterBox;
+  private class SelectableItemListModel extends AbstractListModel<SelectableItem<E>> {
+    private JComboBox<ItemFilter> mFilterBox;
     
-    private ArrayList<SelectableItem> mFullList = new ArrayList<SelectableItem>();
-    private ArrayList<SelectableItem> mFilteredList = new ArrayList<SelectableItem>();
+    private ArrayList<SelectableItem<E>> mFullList = new ArrayList<SelectableItem<E>>();
+    private ArrayList<SelectableItem<E>> mFilteredList = new ArrayList<SelectableItem<E>>();
     
-    protected void setComboBox(JComboBox filterBox) {
+    protected void setComboBox(JComboBox<ItemFilter> filterBox) {
       mFilterBox = filterBox;
       
       mFilterBox.addItemListener(new ItemListener() {
@@ -531,7 +564,7 @@ public class SelectableItemList extends JPanel implements ListSelectionListener{
             
             Object filter = mFilterBox.getSelectedItem();
             
-            for(SelectableItem o : mFullList) {
+            for(SelectableItem<E> o : mFullList) {
               if(filter instanceof ItemFilter) {
                 if((((ItemFilter)filter).accept(o.getItem()))) {
                   mFilteredList.add(o);
@@ -550,7 +583,7 @@ public class SelectableItemList extends JPanel implements ListSelectionListener{
       });
     }
 
-    protected void addElement(SelectableItem o) {
+    protected void addElement(SelectableItem<E> o) {
       mFullList.add(o);
       
       if(mFilterBox != null) {
@@ -570,7 +603,7 @@ public class SelectableItemList extends JPanel implements ListSelectionListener{
       }
     }
 
-    public SelectableItem getElementAt(int index) {
+    public SelectableItem<E> getElementAt(int index) {
       return mFilteredList.get(index);
     }
 
@@ -588,38 +621,36 @@ public class SelectableItemList extends JPanel implements ListSelectionListener{
       mFilteredList.clear();
     }
     
-    protected Object[] getSelection() {
-      ArrayList<Object> objList = new ArrayList<Object>();
+    protected List<E> getSelectionList() {
+      ArrayList<E> objList = new ArrayList<>();
+      
       for (int i = 0; i < mFullList.size(); i++) {
-        SelectableItem item = mFullList.get(i);
+        SelectableItem<E> item = mFullList.get(i);
         if (item.isSelected()) {
           objList.add(item.getItem());
         }
       }
-
-      Object[] asArr = new Object[objList.size()];
-      objList.toArray(asArr);
-
-      return asArr;
+      
+      return objList;
     }
     
     protected void selectAll() {
       for (int i = 0; i < mFullList.size(); i++) {
-        SelectableItem item = (SelectableItem) mFullList.get(i);
+        SelectableItem<E> item = mFullList.get(i);
         item.setSelected(true);
       }
     }
     
     protected void clearSelection() {
       for (int i = 0; i < mFullList.size(); i++) {
-        SelectableItem item = (SelectableItem) mFullList.get(i);
+        SelectableItem<E> item = mFullList.get(i);
         item.setSelected(false);
       }
     }
     
     protected void invertSelection() {
       for (int i = 0; i < mFullList.size(); i++) {
-        SelectableItem item = (SelectableItem) mFullList.get(i);
+        SelectableItem<E> item = mFullList.get(i);
         item.setSelected(!item.isSelected());
       }
     }

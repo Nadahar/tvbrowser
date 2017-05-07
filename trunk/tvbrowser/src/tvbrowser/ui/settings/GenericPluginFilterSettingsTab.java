@@ -28,6 +28,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
@@ -38,6 +39,12 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.factories.CC;
+import com.jgoodies.forms.layout.FormLayout;
+
+import devplugin.SettingsTab;
 import tvbrowser.core.filters.FilterList;
 import tvbrowser.core.filters.GenericFilterMap;
 import tvbrowser.core.filters.UserFilter;
@@ -52,17 +59,10 @@ import util.ui.UiUtilities;
 import util.ui.customizableitems.SelectableItem;
 import util.ui.customizableitems.SelectableItemList;
 
-import com.jgoodies.forms.builder.PanelBuilder;
-import com.jgoodies.forms.factories.Borders;
-import com.jgoodies.forms.factories.CC;
-import com.jgoodies.forms.layout.FormLayout;
-
-import devplugin.SettingsTab;
-
 public class GenericPluginFilterSettingsTab implements SettingsTab {
   private static final Localizer LOCALIZER = Localizer.getLocalizerFor(GenericPluginFilterSettingsTab.class); 
 
-  private SelectableItemList mGenericPluginFilterList;
+  private SelectableItemList<PluginProxy> mGenericPluginFilterList;
   private ArrayList<PluginProxy> mCurrentlySelecteedList; 
   
   @Override
@@ -80,7 +80,7 @@ public class GenericPluginFilterSettingsTab implements SettingsTab {
     mCurrentlySelecteedList = new ArrayList<PluginProxy>();
     mCurrentlySelecteedList.addAll(Arrays.asList(currentlySelected));
     
-    mGenericPluginFilterList = new SelectableItemList(currentlySelected, allPlugins);
+    mGenericPluginFilterList = new SelectableItemList<>(currentlySelected, allPlugins);
     mGenericPluginFilterList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     
     JScrollPane scrollPane = new JScrollPane(mGenericPluginFilterList);
@@ -90,7 +90,7 @@ public class GenericPluginFilterSettingsTab implements SettingsTab {
     edit.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        SelectableItem item = (SelectableItem)mGenericPluginFilterList.getSelectedValue();
+        SelectableItem<PluginProxy> item = mGenericPluginFilterList.getSelectedValue();
         PluginProxy proxy = (PluginProxy)item.getItem();
         
         UserFilter filter = GenericFilterMap.getInstance().getGenericPluginFilter(proxy, false);
@@ -115,7 +115,7 @@ public class GenericPluginFilterSettingsTab implements SettingsTab {
           edit.setEnabled(e.getFirstIndex() >= 0);
           
           if(edit.isEnabled()) {
-            SelectableItem item = (SelectableItem)mGenericPluginFilterList.getSelectedValue();
+            SelectableItem<PluginProxy> item = mGenericPluginFilterList.getSelectedValue();
             PluginProxy proxy = (PluginProxy)item.getItem();
             
             if(!mCurrentlySelecteedList.contains(proxy)) {
@@ -142,13 +142,13 @@ public class GenericPluginFilterSettingsTab implements SettingsTab {
 
   @Override
   public void saveSettings() {
-    Object[] selectedPlugins = mGenericPluginFilterList.getSelection();
+    List<PluginProxy> selectedPlugins = mGenericPluginFilterList.getSelectionList();
     ArrayList<PluginProxy> newSelection = new ArrayList<PluginProxy>();
     
-    for(Object o : selectedPlugins) {
-      GenericFilterMap.getInstance().updateGenericPluginFilterActivated((PluginProxy)o, true);
-      mCurrentlySelecteedList.remove(o);
-      newSelection.add((PluginProxy)o);
+    for(PluginProxy pluginProxy : selectedPlugins) {
+      GenericFilterMap.getInstance().updateGenericPluginFilterActivated(pluginProxy, true);
+      mCurrentlySelecteedList.remove(pluginProxy);
+      newSelection.add((PluginProxy)pluginProxy);
     }
     
     for(PluginProxy unselected : mCurrentlySelecteedList) {

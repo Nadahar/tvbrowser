@@ -31,7 +31,6 @@ import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.Window;
-import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -40,6 +39,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -51,10 +51,6 @@ import javax.swing.WindowConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import tvbrowser.core.Settings;
-import util.ui.customizableitems.SelectableItem;
-import util.ui.customizableitems.SelectableItemList;
-
 import com.jgoodies.forms.builder.ButtonBarBuilder;
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -64,6 +60,9 @@ import com.jgoodies.forms.layout.RowSpec;
 import devplugin.Plugin;
 import devplugin.ProgramReceiveIf;
 import devplugin.ProgramReceiveTarget;
+import tvbrowser.core.Settings;
+import util.ui.customizableitems.SelectableItem;
+import util.ui.customizableitems.SelectableItemList;
 
 /**
  * The PluginChooserDlg class provides a Dialog for choosing plugins. The user
@@ -72,9 +71,8 @@ import devplugin.ProgramReceiveTarget;
 public class PluginChooserDlg extends JDialog implements WindowClosingIf {
 
   private ProgramReceiveIf[] mResultPluginArr;
-  private ProgramReceiveIf[] mPluginArr;
   private Hashtable<ProgramReceiveIf,ArrayList<ProgramReceiveTarget>> mReceiveTargetTable;
-  private SelectableItemList mPluginItemList;
+  private SelectableItemList<ProgramReceiveIf> mPluginItemList;
   private ProgramReceiveTarget[] mCurrentTargets;
   private boolean mOkWasPressed;
 
@@ -272,12 +270,10 @@ public class PluginChooserDlg extends JDialog implements WindowClosingIf {
     UiUtilities.registerForClosing(this);
 
     if (pluginArr == null) {
-      mPluginArr = new ProgramReceiveIf[]{};
       mResultPluginArr = new ProgramReceiveIf[]{};
       mReceiveTargetTable = new Hashtable<ProgramReceiveIf,ArrayList<ProgramReceiveTarget>>();
     }
     else {
-      mPluginArr = pluginArr;
       mResultPluginArr = pluginArr;
       mReceiveTargetTable = targetTable;
     }
@@ -307,11 +303,11 @@ public class PluginChooserDlg extends JDialog implements WindowClosingIf {
         }
       }
 
-      mPluginItemList = new SelectableItemList(mResultPluginArr,
-          list.toArray(), disabledList.toArray());
+      mPluginItemList = new SelectableItemList<>(mResultPluginArr,
+          list.toArray(new ProgramReceiveIf[list.size()]), disabledList.toArray(new ProgramReceiveIf[disabledList.size()]));
     } else {
-      mPluginItemList = new SelectableItemList(mResultPluginArr,
-          tempProgramReceiveIf, disabledList.toArray());
+      mPluginItemList = new SelectableItemList<>(mResultPluginArr,
+          tempProgramReceiveIf, disabledList.toArray(new ProgramReceiveIf[disabledList.size()]));
     }
 
     mPluginItemList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -336,8 +332,7 @@ public class PluginChooserDlg extends JDialog implements WindowClosingIf {
           try {
             if (!e.getValueIsAdjusting()) {
               targetPanel.removeAll();
-              SelectableItem pluginItem = (SelectableItem) mPluginItemList
-                  .getSelectedValue();
+              SelectableItem<ProgramReceiveIf> pluginItem = mPluginItemList.getSelectedValue();
 
               final ProgramReceiveIf plugin = (ProgramReceiveIf) pluginItem
                   .getItem();
@@ -356,8 +351,8 @@ public class PluginChooserDlg extends JDialog implements WindowClosingIf {
                   targets.add(mCurrentTargets[0]);
                 }
                 mReceiveTargetTable.put(plugin, targets);
-                final SelectableItemList targetList = new SelectableItemList(
-                    targets.toArray(), mCurrentTargets, disabledReceiveTargets);
+                final SelectableItemList<ProgramReceiveTarget> targetList = new SelectableItemList<>(
+                    targets.toArray(new ProgramReceiveTarget[targets.size()]), mCurrentTargets, disabledReceiveTargets);
                 targetPanel.add(targetList, BorderLayout.CENTER);
                 targetList
                     .addListSelectionListener(new ListSelectionListener() {
@@ -365,18 +360,17 @@ public class PluginChooserDlg extends JDialog implements WindowClosingIf {
                       @Override
                       public void valueChanged(ListSelectionEvent listEvent) {
                         if (!listEvent.getValueIsAdjusting()) {
-                          SelectableItem currPluginItem = (SelectableItem) mPluginItemList
-                              .getSelectedValue();
+                          SelectableItem<ProgramReceiveIf> currPluginItem = mPluginItemList.getSelectedValue();
                           ProgramReceiveIf currPlugin = (ProgramReceiveIf) currPluginItem
                               .getItem();
-                          Object[] sel = targetList.getSelection();
+                          List<ProgramReceiveTarget> sel = targetList.getSelectionList();
                           ArrayList<ProgramReceiveTarget> selTargets = new ArrayList<ProgramReceiveTarget>(
-                              sel.length);
-                          for (Object obj : sel) {
-                            selTargets.add((ProgramReceiveTarget) obj);
+                              sel.size());
+                          for (ProgramReceiveTarget obj : sel) {
+                            selTargets.add(obj);
                           }
-                          if (currPluginItem.isSelected() != (sel.length > 0)) {
-                            currPluginItem.setSelected(sel.length > 0);
+                          if (currPluginItem.isSelected() != (sel.size() > 0)) {
+                            currPluginItem.setSelected(sel.size() > 0);
                             mPluginItemList.updateUI();
                           }
                           mReceiveTargetTable.put(currPlugin, selTargets);
@@ -417,10 +411,10 @@ public class PluginChooserDlg extends JDialog implements WindowClosingIf {
     okBt.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent event) {
         mOkWasPressed = true;
-        Object[] o = mPluginItemList.getSelection();
-        mResultPluginArr = new ProgramReceiveIf[o.length];
-        for (int i=0;i<o.length;i++) {
-          mResultPluginArr[i]=(ProgramReceiveIf)o[i];
+        List<ProgramReceiveIf> list = mPluginItemList.getSelectionList();
+        mResultPluginArr = new ProgramReceiveIf[list.size()];
+        for (int i=0;i<list.size();i++) {
+          mResultPluginArr[i]=list.get(i);
         }
         close();
       }

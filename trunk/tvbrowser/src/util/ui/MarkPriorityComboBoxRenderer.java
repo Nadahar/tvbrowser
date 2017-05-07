@@ -26,7 +26,6 @@ package util.ui;
 import java.awt.Color;
 import java.awt.Component;
 
-import javax.swing.DefaultListCellRenderer;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -52,7 +51,7 @@ public class MarkPriorityComboBoxRenderer extends CustomComboBoxRenderer {
     super(backendRenderer);
   }
 
-  public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+  public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
     Component c = getBackendRenderer() == null ? getSuperListCellRendererComponent(list,value,index,isSelected,cellHasFocus) : getBackendRenderer().getListCellRendererComponent(list,value,index,isSelected,cellHasFocus);
     
     if(!isSelected) {

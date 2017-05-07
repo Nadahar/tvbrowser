@@ -24,6 +24,7 @@
 package tvbrowser.ui.settings;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.Icon;
 import javax.swing.JCheckBox;
@@ -35,6 +36,9 @@ import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
+import devplugin.PluginCenterPanel;
+import devplugin.PluginCenterPanelWrapper;
+import devplugin.SettingsTab;
 import tvbrowser.core.Settings;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
@@ -42,21 +46,14 @@ import tvbrowser.extras.common.InternalPluginProxyIf;
 import tvbrowser.extras.common.InternalPluginProxyList;
 import tvbrowser.ui.DontShowAgainOptionBox;
 import tvbrowser.ui.mainframe.MainFrame;
-import util.ui.DontShowAgainMessageBox;
 import util.ui.Localizer;
 import util.ui.OrderChooser;
 import util.ui.UiUtilities;
-import util.ui.customizableitems.SelectableItemList;
-import util.ui.customizableitems.SortableItemList;
-
-import devplugin.PluginCenterPanel;
-import devplugin.PluginCenterPanelWrapper;
-import devplugin.SettingsTab;
 
 public class CenterPanelSettingsTab implements SettingsTab {
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(CenterPanelSettingsTab.class);
 
-  private OrderChooser mPanelChooser;
+  private OrderChooser<PluginCenterPanel> mPanelChooser;
   private JCheckBox mTabBarAlwaysVisible;
   private ArrayList<PluginCenterPanel> mAllPanelList;
   
@@ -113,7 +110,7 @@ public class CenterPanelSettingsTab implements SettingsTab {
       }
     }
     
-    mPanelChooser = new OrderChooser(currentOrderList.toArray(), mAllPanelList.toArray());
+    mPanelChooser = new OrderChooser<>(currentOrderList.toArray(new PluginCenterPanel[currentOrderList.size()]), mAllPanelList.toArray(new PluginCenterPanel[mAllPanelList.size()]));
     mTabBarAlwaysVisible = new JCheckBox(mLocalizer.msg("alwaysShowTabs", "Always show tabs"), Settings.propAlwaysShowTabBarForCenterPanel.getBoolean());
     
     CellConstraints cc = new CellConstraints();
@@ -131,13 +128,13 @@ public class CenterPanelSettingsTab implements SettingsTab {
 
   @Override
   public void saveSettings() {
-    Object[] order = mPanelChooser.getOrder();
-    ArrayList<String> idList = new ArrayList<String>(order.length);
+    List<PluginCenterPanel> order = mPanelChooser.getOrderList();
+    ArrayList<String> idList = new ArrayList<String>(order.size());
     
-    for(Object o : order) {
-      if(o != null) {
-        mAllPanelList.remove(o);
-        idList.add(((PluginCenterPanel)o).getId());
+    for(PluginCenterPanel panel : order) {
+      if(panel != null) {
+        mAllPanelList.remove(panel);
+        idList.add(panel.getId());
       }
     }
     
@@ -166,7 +163,6 @@ public class CenterPanelSettingsTab implements SettingsTab {
 
   @Override
   public Icon getIcon() {
-    // TODO Auto-generated method stub
     return null;
   }
 

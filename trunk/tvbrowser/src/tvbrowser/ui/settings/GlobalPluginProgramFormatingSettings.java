@@ -62,7 +62,7 @@ public class GlobalPluginProgramFormatingSettings implements SettingsTab, Action
   /** The localizer for this class */
   public static final Localizer mLocalizer = Localizer.getLocalizerFor(GlobalPluginProgramFormatingSettings.class);
 
-  private SortableItemList mConfigurations;
+  private SortableItemList<GlobalPluginProgramFormating> mConfigurations;
   private JButton mAdd, mEdit, mDelete;
 
   public JPanel createSettingsPanel() {
@@ -71,7 +71,7 @@ public class GlobalPluginProgramFormatingSettings implements SettingsTab, Action
       PanelBuilder pb = new PanelBuilder(new FormLayout("5dlu,default:grow,5dlu","pref,5dlu,fill:default:grow,5dlu,pref,10dlu,pref"));
       pb.border(Borders.DIALOG);
 
-      mConfigurations = new SortableItemList("",GlobalPluginProgramFormatingManager.getInstance().getAvailableGlobalPluginProgramFormatings());
+      mConfigurations = new SortableItemList<>("",GlobalPluginProgramFormatingManager.getInstance().getAvailableGlobalPluginProgramFormatings());
       mConfigurations.getList().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
       mConfigurations.getList().addMouseListener(new MouseAdapter() {

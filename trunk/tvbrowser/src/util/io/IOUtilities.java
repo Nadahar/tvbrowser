@@ -106,6 +106,7 @@ public class IOUtilities {
    * @see #loadFileFromHttpServer(URL)
    * @return <code>true</code> the file was successfully downloaded, <code>false</code> otherwise.
    */
+  @SuppressWarnings("unused")
   public static boolean download(URL url, File targetFile, int timeout) throws IOException {
     mLog.info("Downloading '" + url + "' to '"
       + targetFile.getAbsolutePath() + "' timeout: " + timeout);
@@ -664,7 +665,7 @@ public class IOUtilities {
    *
    * @throws IOException Wenn ein Fehler beim Laden der Datei auftrat.
    */
-  public static byte[] loadFileFromJar(String fileName, Class srcClass) throws IOException {
+  public static byte[] loadFileFromJar(String fileName, Class<?> srcClass) throws IOException {
     if (fileName == null) {
       throw new IllegalArgumentException("fileName == null");
     }
@@ -728,14 +729,23 @@ public class IOUtilities {
     InputStream stream = null;
     try {
       ZipFile zipFile = new ZipFile(srcFile);
-      ZipEntry entry = new ZipEntry(entryName);
-
-      stream = zipFile.getInputStream(entry);
-      if (stream == null) {
-        throw new IOException("Can't unzip '" + entryName + "' from '"
-          + srcFile.getAbsolutePath() + "'!");
+      
+      try {
+        ZipEntry entry = new ZipEntry(entryName);
+  
+        stream = zipFile.getInputStream(entry);
+        if (stream == null) {
+          throw new IOException("Can't unzip '" + entryName + "' from '"
+            + srcFile.getAbsolutePath() + "'!");
+        }
+        saveStream(stream, targetFile);
+      } finally {
+        try {
+          if(zipFile != null) {
+            zipFile.close();
+          }
+        } catch (IOException exc1) {}
       }
-      saveStream(stream, targetFile);
     }
     finally {
       try {
@@ -966,36 +976,42 @@ public class IOUtilities {
      */
     public static byte[] getBytesFromFile(File file) throws IOException {
         InputStream is = new FileInputStream(file);
-
-        // Get the size of the file
-        long length = file.length();
-
-        // You cannot create an array using a long type.
-        // It needs to be an int type.
-        // Before converting to an int type, check
-        // to ensure that file is not larger than Integer.MAX_VALUE.
-        if (length > Integer.MAX_VALUE) {
-            return null;
+        byte[] bytes = null;
+        
+        try {
+          // Get the size of the file
+          long length = file.length();
+  
+          // You cannot create an array using a long type.
+          // It needs to be an int type.
+          // Before converting to an int type, check
+          // to ensure that file is not larger than Integer.MAX_VALUE.
+          if (length < Integer.MAX_VALUE) {
+            // Create the byte array to hold the data
+            bytes = new byte[(int) length];
+    
+            // Read in the bytes
+            int offset = 0;
+            int numRead = 0;
+            while (offset < bytes.length
+                    && (numRead = is.read(bytes, offset, bytes.length - offset)) >= 0) {
+                offset += numRead;
+            }
+    
+            // Ensure all the bytes have been read in
+            if (offset < bytes.length) {
+                throw new IOException("Could not completely read file " + file.getName());
+            }
+          }
         }
-
-        // Create the byte array to hold the data
-        byte[] bytes = new byte[(int) length];
-
-        // Read in the bytes
-        int offset = 0;
-        int numRead = 0;
-        while (offset < bytes.length
-                && (numRead = is.read(bytes, offset, bytes.length - offset)) >= 0) {
-            offset += numRead;
+        finally {
+          if(is != null) {
+            // Close the input stream
+            is.close();
+          }
         }
-
-        // Ensure all the bytes have been read in
-        if (offset < bytes.length) {
-            throw new IOException("Could not completely read file " + file.getName());
-        }
-
-        // Close the input stream and return bytes
-        is.close();
+        
+        //return bytes
         return bytes;
     }
 

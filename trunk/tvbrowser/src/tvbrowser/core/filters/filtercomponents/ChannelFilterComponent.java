@@ -30,24 +30,24 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JPanel;
-
-import util.ui.Localizer;
-import util.ui.OrderChooser;
 
 import com.jgoodies.forms.factories.CC;
 import com.jgoodies.forms.layout.FormLayout;
 
 import devplugin.Channel;
 import devplugin.Program;
+import util.ui.Localizer;
+import util.ui.OrderChooser;
 
 public class ChannelFilterComponent extends AbstractFilterComponent {
 
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer
       .getLocalizerFor(ChannelFilterComponent.class);
 
-  private OrderChooser mList;
+  private OrderChooser<Channel> mList;
   private Channel[] mSelectedChannels;
   private ArrayList<String> mSelectedChannelsIdList;
 
@@ -130,12 +130,12 @@ public class ChannelFilterComponent extends AbstractFilterComponent {
   }
 
   public void saveSettings() {
-    Object[] o = mList.getOrder();
-    mSelectedChannels = new Channel[o.length];
+    List<Channel> list = mList.getOrderList();
+    mSelectedChannels = list.toArray(new Channel[list.size()]);
     mSelectedChannelsIdList.clear();
     
-    for (int i = 0; i < o.length; i++) {
-      mSelectedChannels[i] = (Channel) o[i];
+    for (int i = 0; i < list.size(); i++) {
+      mSelectedChannels[i] = (Channel) list.get(i);
       mSelectedChannelsIdList.add(mSelectedChannels[i].getUniqueId());
     }
   }
@@ -149,7 +149,7 @@ public class ChannelFilterComponent extends AbstractFilterComponent {
     JPanel content = new JPanel(new FormLayout("50dlu:grow","fill:default:grow"));
 
     Channel[] channels = tvbrowser.core.ChannelList.getSubscribedChannels(false);
-    mList = new OrderChooser(mSelectedChannels, channels);
+    mList = new OrderChooser<Channel>(mSelectedChannels, channels);
 
     mList.getUpButton().setVisible(false);
     mList.getDownButton().setVisible(false);

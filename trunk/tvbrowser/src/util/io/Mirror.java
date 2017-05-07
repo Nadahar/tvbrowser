@@ -348,7 +348,7 @@ public class Mirror {
     return url;
   }
 
-  private static Mirror chooseMirror(Mirror[] mirrorArr, Mirror oldMirror, String name, Class caller) throws TvBrowserException {
+  private static Mirror chooseMirror(Mirror[] mirrorArr, Mirror oldMirror, String name, Class<?> caller) throws TvBrowserException {
     Mirror[] oldMirrorArr = mirrorArr;
 
     /* remove the old mirror from the mirrorlist */
@@ -433,7 +433,7 @@ public class Mirror {
    * @since 3.4.1 
    * @throws TvBrowserException
    */
-  public static Mirror chooseWorkingMirror(Mirror[] mirrorArr, ProgressMonitor monitor, String name, String id, Class caller, String additionalErrorMsg, int timeout) throws TvBrowserException {
+  public static Mirror chooseWorkingMirror(Mirror[] mirrorArr, ProgressMonitor monitor, String name, String id, Class<?> caller, String additionalErrorMsg, int timeout) throws TvBrowserException {
     Mirror mirror = null;
     
     for(int i = 0; i < mirrorArr.length; i++) {
@@ -479,7 +479,7 @@ public class Mirror {
    * @return The choosen mirror or <code>null</code>, if no up to date mirror was found or something went wrong.
    * @throws TvBrowserException
    */
-  public static Mirror chooseUpToDateMirror(Mirror[] mirrorArr, ProgressMonitor monitor, String name, String id, Class caller, String additionalErrorMsg) throws TvBrowserException {
+  public static Mirror chooseUpToDateMirror(Mirror[] mirrorArr, ProgressMonitor monitor, String name, String id, Class<?> caller, String additionalErrorMsg) throws TvBrowserException {
 
     Mirror chosenMirror = null;
     int chosenLastUpdate = Integer.MAX_VALUE;

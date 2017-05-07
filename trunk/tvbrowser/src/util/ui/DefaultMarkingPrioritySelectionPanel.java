@@ -14,6 +14,8 @@
  */
 package util.ui;
 
+import java.util.ArrayList;
+
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JEditorPane;
@@ -21,14 +23,13 @@ import javax.swing.JPanel;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
-import tvbrowser.ui.settings.MarkingsSettingsTab;
-import tvbrowser.ui.settings.SettingsDialog;
-
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
 import devplugin.SettingsItem;
+import tvbrowser.ui.settings.MarkingsSettingsTab;
+import tvbrowser.ui.settings.SettingsDialog;
 
 
 
@@ -52,7 +53,7 @@ public final class DefaultMarkingPrioritySelectionPanel extends JPanel {
   /**
    * the dropdowns for the mark priority selection.
    */
-  private JComboBox[] mPrioritySelection;
+  private ArrayList<JComboBox<String>> mPrioritySelection;
 
   /**
    * a comment/help text shown below the drop down for the
@@ -120,7 +121,7 @@ public final class DefaultMarkingPrioritySelectionPanel extends JPanel {
 
     //init the components
     mLabel = new JComponent[choosersToDraw];
-    mPrioritySelection = new JComboBox[choosersToDraw];
+    mPrioritySelection = new ArrayList<>();// JComboBox[choosersToDraw];
 
     //add all the sub components to this panel
     if (showTitle) {
@@ -132,11 +133,16 @@ public final class DefaultMarkingPrioritySelectionPanel extends JPanel {
       pb.addRow();
       mLabel[i] = pb.addLabel(label[i], cc.xy(2, pb.getRowCount()));
 
+      mPrioritySelection.add(new JComboBox<>(getMarkingColorNames(true)));
+      mPrioritySelection.get(i).setSelectedIndex(priority[i] + 1);
+      mPrioritySelection.get(i).setRenderer(new MarkPriorityComboBoxRenderer(mPrioritySelection.get(i).getRenderer()));
+      /*
       mPrioritySelection[i] = new JComboBox(getMarkingColorNames(true));
       mPrioritySelection[i].setSelectedIndex(priority[i] + 1);
       mPrioritySelection[i].setRenderer(new MarkPriorityComboBoxRenderer(mPrioritySelection[i].getRenderer()));
 
-      pb.add(mPrioritySelection[i], cc.xy(4, pb.getRowCount()));
+      pb.add(mPrioritySelection[i], cc.xy(4, pb.getRowCount()));*/
+      pb.add(mPrioritySelection.get(i), cc.xy(4, pb.getRowCount()));
     }
 
     if (showHelpLabel) {
@@ -205,7 +211,7 @@ public final class DefaultMarkingPrioritySelectionPanel extends JPanel {
    * @return The selected marking priority of the first dropdown
    */
   public int getSelectedPriority() {
-    return mPrioritySelection[0].getSelectedIndex() - 1;
+    return mPrioritySelection.get(0).getSelectedIndex() - 1;
   }
 
   /**
@@ -213,15 +219,15 @@ public final class DefaultMarkingPrioritySelectionPanel extends JPanel {
    * @return The selected marking priority of the dropdown with the given index
    */
   public int getSelectedPriority(final int index) {
-    return mPrioritySelection[index].getSelectedIndex() - 1;
+    return mPrioritySelection.get(index).getSelectedIndex() - 1;
   }
 
   /**
    * @return The selected marking priorities of all dropdowns
    */
   public int[] getSelectedPriorities() {
-    int[] prios = new int[mPrioritySelection.length];
-    for (int i = 0; i < mPrioritySelection.length; i++)
+    int[] prios = new int[mPrioritySelection.size()];
+    for (int i = 0; i < mPrioritySelection.size(); i++)
     {
       prios[i] = getSelectedPriority(i);
     }
@@ -270,7 +276,7 @@ public final class DefaultMarkingPrioritySelectionPanel extends JPanel {
     for (int i = 0; i < mLabel.length; i++)
     {
       mLabel[i].setEnabled(enabled);
-      mPrioritySelection[i].setEnabled(enabled);
+      mPrioritySelection.get(i).setEnabled(enabled);
     }
   }
 }

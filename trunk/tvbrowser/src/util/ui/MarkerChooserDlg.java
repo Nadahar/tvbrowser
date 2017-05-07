@@ -28,23 +28,18 @@ package util.ui;
 import java.awt.Dialog;
 import java.awt.Frame;
 import java.awt.Window;
-import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-
-import tvbrowser.core.plugin.PluginManagerImpl;
-import tvbrowser.extras.favoritesplugin.FavoritesPluginProxy;
-import tvbrowser.extras.reminderplugin.ReminderPluginProxy;
-import util.ui.customizableitems.SelectableItemList;
 
 import com.jgoodies.forms.builder.ButtonBarBuilder;
 import com.jgoodies.forms.factories.Borders;
@@ -55,6 +50,10 @@ import com.jgoodies.forms.layout.RowSpec;
 import devplugin.Marker;
 import devplugin.Plugin;
 import devplugin.PluginAccess;
+import tvbrowser.core.plugin.PluginManagerImpl;
+import tvbrowser.extras.favoritesplugin.FavoritesPluginProxy;
+import tvbrowser.extras.reminderplugin.ReminderPluginProxy;
+import util.ui.customizableitems.SelectableItemList;
 
 /**
  * The PluginChooserDlg class provides a Dialog for choosing plugins. The user
@@ -65,7 +64,7 @@ public class MarkerChooserDlg extends JDialog implements WindowClosingIf {
   private static final long serialVersionUID = 1L;
   private Marker[] mResultPluginArr;
   private Marker[] mPluginArr;
-  private SelectableItemList mPluginItemList;
+  private SelectableItemList<Marker> mPluginItemList;
   
   private static final util.ui.Localizer mLocalizer
      = util.ui.Localizer.getLocalizerFor(MarkerChooserDlg.class);
@@ -150,7 +149,7 @@ public class MarkerChooserDlg extends JDialog implements WindowClosingIf {
         return (arg0.toString().compareTo(arg1.toString()));
       }});
 
-    mPluginItemList = new SelectableItemList(mResultPluginArr, list.toArray());
+    mPluginItemList = new SelectableItemList<>(mResultPluginArr, list.toArray(new Marker[list.size()]));
 
     int pos = 1;
     layout.appendRow(RowSpec.decode("fill:default:grow"));
@@ -172,10 +171,10 @@ public class MarkerChooserDlg extends JDialog implements WindowClosingIf {
 
     okBt.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent event) {
-        Object[] o = mPluginItemList.getSelection();
-        mResultPluginArr = new Marker[o.length];
-        for (int i=0;i<o.length;i++) {
-          mResultPluginArr[i]=(Marker)o[i];
+        List<Marker> list = mPluginItemList.getSelectionList();
+        mResultPluginArr = new Marker[list.size()];
+        for (int i = 0; i < list.size(); i++) {
+          mResultPluginArr[i]=list.get(i);
         }
         setVisible(false);
       }

@@ -28,11 +28,11 @@ import util.misc.StringPool;
  */
 public class PooledLocalizer extends Localizer {
   
-  private PooledLocalizer(Class clazz) {
+  private PooledLocalizer(Class<?> clazz) {
     super(clazz);
   }
 
-  public static Localizer getLocalizerFor(Class clazz) {
+  public static Localizer getLocalizerFor(Class<?> clazz) {
     Localizer localizer = getCachedLocalizerFor(clazz);
     
     if (localizer == null) {

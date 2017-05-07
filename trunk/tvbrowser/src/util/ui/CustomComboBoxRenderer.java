@@ -17,9 +17,9 @@ public abstract class CustomComboBoxRenderer extends DefaultListCellRenderer {
     return mBackendRenderer;
   }
   
-  abstract public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus);
+  abstract public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus);
   
-  protected Component getSuperListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+  protected Component getSuperListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
     return super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
   }
 }

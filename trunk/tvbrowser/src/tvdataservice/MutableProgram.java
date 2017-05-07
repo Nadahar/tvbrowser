@@ -419,13 +419,13 @@ public class MutableProgram implements Program {
 
   // FieldHash
   public byte[] getBinaryField(ProgramFieldType type) {
-    checkFormat(type, ProgramFieldType.BINARY_FORMAT);
+    checkFormat(type, ProgramFieldType.FORMAT_BINARY);
     return (byte[]) getObjectValueField(type);
   }
 
 
   public String getTextField(ProgramFieldType type) {
-    checkFormat(type, ProgramFieldType.TEXT_FORMAT);
+    checkFormat(type, ProgramFieldType.FORMAT_TEXT);
     if(type == ProgramFieldType.TITLE_TYPE && mTitle != null && mTitle.trim().length() > 0) {
       return mTitle;
     }
@@ -450,7 +450,7 @@ public class MutableProgram implements Program {
   }
 
   public int getIntField(final ProgramFieldType type) {
-    checkFormat(type, ProgramFieldType.INT_FORMAT);
+    checkFormat(type, ProgramFieldType.FORMAT_INT);
     return mIntValues[type.getStorageIndex()];
   }
 
@@ -474,7 +474,7 @@ public class MutableProgram implements Program {
 
 
   public int getTimeField(final ProgramFieldType type) {
-    checkFormat(type, ProgramFieldType.TIME_FORMAT);
+    checkFormat(type, ProgramFieldType.FORMAT_TIME);
     return mIntValues[type.getStorageIndex()];
   }
 
@@ -526,22 +526,22 @@ public class MutableProgram implements Program {
       for (Iterator<ProgramFieldType> iterator = ProgramFieldType.getTypeIterator(); iterator.hasNext();) {
         ProgramFieldType fieldType = iterator.next();
         int format = fieldType.getFormat();
-        if (format == ProgramFieldType.INT_FORMAT) {
+        if (format == ProgramFieldType.FORMAT_INT) {
           if (program.getIntField(fieldType) != -1) {
             mFieldTypes.add(fieldType);
           }
         }
-        else if (format == ProgramFieldType.TIME_FORMAT) {
+        else if (format == ProgramFieldType.FORMAT_TIME) {
           if (program.getTimeField(fieldType) != -1) {
             mFieldTypes.add(fieldType);
           }
         }
-        else if (format == ProgramFieldType.TEXT_FORMAT) {
+        else if (format == ProgramFieldType.FORMAT_TEXT) {
           if (program.getTextField(fieldType) != null) {
             mFieldTypes.add(fieldType);
           }
         }
-        else if (format == ProgramFieldType.BINARY_FORMAT) {
+        else if (format == ProgramFieldType.FORMAT_BINARY) {
           if (program.getBinaryField(fieldType) != null) {
             mFieldTypes.add(fieldType);
           }
@@ -584,7 +584,7 @@ public class MutableProgram implements Program {
    * @param value The binary value to set.
    */
   public void setBinaryField(ProgramFieldType type, byte[] value) {
-    checkFormat(type, ProgramFieldType.BINARY_FORMAT);
+    checkFormat(type, ProgramFieldType.FORMAT_BINARY);
     setObjectValueField(type, value);
     notifyChangedStatus();
   }
@@ -612,7 +612,7 @@ public class MutableProgram implements Program {
    * @param inValue The text value to set.
    */
   public void setTextField(final ProgramFieldType type, String inValue) {
-    checkFormat(type, ProgramFieldType.TEXT_FORMAT);
+    checkFormat(type, ProgramFieldType.FORMAT_TEXT);
 
     // Special field treating
     if (type == ProgramFieldType.SHORT_DESCRIPTION_TYPE) {
@@ -655,7 +655,7 @@ public class MutableProgram implements Program {
    * @param value The int value to set.
    */
   public void setIntField(ProgramFieldType type, int value) {
-    checkFormat(type, ProgramFieldType.INT_FORMAT);
+    checkFormat(type, ProgramFieldType.FORMAT_INT);
 
     if (type == ProgramFieldType.RATING_TYPE && (value < 0 || (value > 100))) {
       mLog.warning("The value for field " + type.getName()
@@ -678,7 +678,7 @@ public class MutableProgram implements Program {
    * @param value The time value to set.
    */
   public void setTimeField(ProgramFieldType type, int value) {
-    checkFormat(type, ProgramFieldType.TIME_FORMAT);
+    checkFormat(type, ProgramFieldType.FORMAT_TIME);
 
     if ((value < 0) || (value >= (24 * 60))) {
       mLog.warning("The time value for field " + type.getName()
@@ -994,7 +994,7 @@ public class MutableProgram implements Program {
     for (Iterator<ProgramFieldType> iterator = ProgramFieldType.getTypeIterator(); iterator.hasNext();) {
       ProgramFieldType fieldType = iterator.next();
       int format = fieldType.getFormat();
-      if (format == ProgramFieldType.TEXT_FORMAT || format == ProgramFieldType.BINARY_FORMAT) {
+      if (format == ProgramFieldType.FORMAT_TEXT || format == ProgramFieldType.FORMAT_BINARY) {
         Object thisValue = getObjectValueField(fieldType);
         Object otherValue = program.getObjectValueField(fieldType);
         if (thisValue!= null && !thisValue.equals(otherValue)) {
@@ -1074,12 +1074,12 @@ public class MutableProgram implements Program {
 
   public boolean hasFieldValue(final ProgramFieldType type) {
     int format = type.getFormat();
-    if (format == ProgramFieldType.INT_FORMAT || format == ProgramFieldType.TIME_FORMAT) {
+    if (format == ProgramFieldType.FORMAT_INT || format == ProgramFieldType.FORMAT_TIME) {
       synchronized (mIntValues) {
         return mIntValues[type.getStorageIndex()] != -1;
       }
     }
-    else if (format == ProgramFieldType.TEXT_FORMAT || format == ProgramFieldType.BINARY_FORMAT) {
+    else if (format == ProgramFieldType.FORMAT_TEXT || format == ProgramFieldType.FORMAT_BINARY) {
       synchronized (mObjectValues) {
         return mObjectValues[type.getStorageIndex()] != null;
       }

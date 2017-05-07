@@ -61,7 +61,7 @@ public class MarkingsSettingsTab implements SettingsTab {
 
   private ColorLabel mProgramItemMinMarkedColorLb, mProgramItemLowerMediumMarkedColorLb, mProgramItemMediumMarkedColorLb, mProgramItemHigherMediumMarkedColorLb, mProgramItemMaxMarkedColorLb;
   private JCheckBox mProgramItemWithMarkingsIsShowingBorder, mProgramPanelUsesExtraSpaceForMarkIcons;
-  private JComboBox mDefaultColor;
+  private JComboBox<String> mDefaultColor;
   private JEditorPane mHelpLabel;
   
   public JPanel createSettingsPanel() {
@@ -77,7 +77,7 @@ public class MarkingsSettingsTab implements SettingsTab {
     defaultMarkings.add(mProgramPanelUsesExtraSpaceForMarkIcons = new JCheckBox(mLocalizer.msg("panel.extraSpace","Use additional space for the mark icons"), Settings.propProgramPanelUsesExtraSpaceForMarkIcons.getBoolean()), cc.xyw(1,1,3));
     defaultMarkings.add(mProgramItemWithMarkingsIsShowingBorder = new JCheckBox(mLocalizer.msg("color.showBorder","Show border for highlighted programs"), Settings.propProgramPanelWithMarkingsShowingBoder.getBoolean()), cc.xyw(1,3,3));
     defaultMarkings.add(new JLabel(mLocalizer.msg("color.showColor","Highlight with color (default color):")), cc.xy(1,5));
-    defaultMarkings.add(mDefaultColor = new JComboBox(colors), cc.xy(3,5));
+    defaultMarkings.add(mDefaultColor = new JComboBox<>(colors), cc.xy(3,5));
     mDefaultColor.setSelectedIndex(Settings.propProgramPanelUsedDefaultMarkPriority.getInt()+1);
     
     mDefaultColor.setRenderer(new MarkPriorityComboBoxRenderer(mDefaultColor.getRenderer()));

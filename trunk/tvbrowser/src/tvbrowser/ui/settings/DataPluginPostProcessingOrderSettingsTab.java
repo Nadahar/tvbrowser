@@ -22,7 +22,7 @@ import devplugin.SettingsTab;
 public class DataPluginPostProcessingOrderSettingsTab implements SettingsTab {
   private static final Localizer LOCALIZER = Localizer.getLocalizerFor(DataPluginPostProcessingOrderSettingsTab.class);
   
-  private SortableItemList mSortablePluginList;
+  private SortableItemList<PluginProxy> mSortablePluginList;
   
   @Override
   public JPanel createSettingsPanel() {
@@ -70,7 +70,7 @@ public class DataPluginPostProcessingOrderSettingsTab implements SettingsTab {
       }
     });
     
-    mSortablePluginList = new SortableItemList("", available);
+    mSortablePluginList = new SortableItemList<>("", available);
     
     final EnhancedPanelBuilder pb = new EnhancedPanelBuilder("0dlu,5dlu,default:grow,0dlu");
     pb.border(Borders.DIALOG);

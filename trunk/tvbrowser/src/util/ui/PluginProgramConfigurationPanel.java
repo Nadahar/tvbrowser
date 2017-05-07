@@ -5,6 +5,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JEditorPane;
@@ -16,18 +17,17 @@ import javax.swing.event.HyperlinkListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import tvbrowser.ui.mainframe.MainFrame;
-import tvbrowser.ui.settings.GlobalPluginProgramFormatingSettings;
-import tvbrowser.ui.settings.SettingsDialog;
-import util.program.AbstractPluginProgramFormating;
-import util.program.LocalPluginProgramFormating;
-
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
 import devplugin.Plugin;
 import devplugin.SettingsItem;
+import tvbrowser.ui.mainframe.MainFrame;
+import tvbrowser.ui.settings.GlobalPluginProgramFormatingSettings;
+import tvbrowser.ui.settings.SettingsDialog;
+import util.program.AbstractPluginProgramFormating;
+import util.program.LocalPluginProgramFormating;
 
 /**
  * A class that provides a panel for configuration of the
@@ -39,7 +39,7 @@ import devplugin.SettingsItem;
 public class PluginProgramConfigurationPanel extends JPanel implements ActionListener {
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(PluginProgramConfigurationPanel.class);
   
-  private OrderChooser mOrder;
+  private OrderChooser<AbstractPluginProgramFormating> mOrder;
   private JButton mAdd, mEdit, mDelete;
   
   private LocalPluginProgramFormating mDefaultLocalFormating;
@@ -110,7 +110,7 @@ public class PluginProgramConfigurationPanel extends JPanel implements ActionLis
     buttonPanel.add(mEdit, cc.xy(3,1));
     buttonPanel.add(mDelete, cc.xy(5,1));
     
-    mOrder = new OrderChooser(selectedValues == null ? allArr : selectedValues, allArr);
+    mOrder = new OrderChooser<>(selectedValues == null ? allArr : selectedValues, allArr);
     mOrder.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     mOrder.addListSelectionListener(new ListSelectionListener() {
       public void valueChanged(ListSelectionEvent e) {
@@ -152,12 +152,12 @@ public class PluginProgramConfigurationPanel extends JPanel implements ActionLis
    * @return The selected program formatings.
    */
   public AbstractPluginProgramFormating[] getSelectedPluginProgramFormatings() {
-    Object[] o = mOrder.getOrder();
+    List<AbstractPluginProgramFormating> list = mOrder.getOrderList();
     
-    AbstractPluginProgramFormating[] configs = new AbstractPluginProgramFormating[o.length];
+    AbstractPluginProgramFormating[] configs = new AbstractPluginProgramFormating[list.size()];
     
-    for(int i = 0; i < o.length; i++) {
-      configs[i] = (AbstractPluginProgramFormating)o[i];
+    for(int i = 0; i < list.size(); i++) {
+      configs[i] = list.get(i);
     }
     
     return configs;
@@ -169,11 +169,11 @@ public class PluginProgramConfigurationPanel extends JPanel implements ActionLis
    * @return The available program formatings provided by the plugin itself.
    */
   public LocalPluginProgramFormating[] getAvailableLocalPluginProgramFormatings() {
-    Object[] order = mOrder.getOrder();
+    List<AbstractPluginProgramFormating> listOrder = mOrder.getOrderList();
     
     ArrayList<LocalPluginProgramFormating> list = new ArrayList<LocalPluginProgramFormating>();
     
-    for(Object value : order) {
+    for(AbstractPluginProgramFormating value : listOrder) {
       if(value instanceof LocalPluginProgramFormating) {
         list.add((LocalPluginProgramFormating)value);
       }

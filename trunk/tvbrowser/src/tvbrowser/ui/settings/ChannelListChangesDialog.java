@@ -43,14 +43,13 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 
+import devplugin.Channel;
+import devplugin.SettingsItem;
 import tvbrowser.core.Settings;
 import tvbrowser.core.plugin.PluginManagerImpl;
 import tvbrowser.ui.settings.channel.ChannelJList;
 import util.ui.ChannelListCellRenderer;
 import util.ui.Localizer;
-import util.ui.UiUtilities;
-import devplugin.Channel;
-import devplugin.SettingsItem;
 
 public class ChannelListChangesDialog extends JDialog {
   /** The localizer for this class. */
@@ -90,7 +89,7 @@ public class ChannelListChangesDialog extends JDialog {
     JPanel panelAdded = new JPanel(new BorderLayout());
     panelAdded.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("added", "New channels: {0}", mAddedList.size())));
 
-    DefaultListModel listModel = new DefaultListModel();
+    DefaultListModel<Object> listModel = new DefaultListModel<>();
     for (int i = 0; i < mAddedList.size(); i++) {
       listModel.addElement(mAddedList.get(i));
     }
@@ -102,7 +101,7 @@ public class ChannelListChangesDialog extends JDialog {
     JPanel panelDeleted = new JPanel(new BorderLayout());
     panelDeleted.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg("deleted", "Removed channels: {0}", mDeletedList.size())));
 
-    listModel = new DefaultListModel();
+    listModel = new DefaultListModel<>();
     for (int i = 0; i < mDeletedList.size(); i++) {
       listModel.addElement(mDeletedList.get(i));
     }

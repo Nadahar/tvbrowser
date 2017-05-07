@@ -75,6 +75,7 @@ import util.ui.CustomComboBoxRenderer;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
+import util.ui.customizableitems.SelectableItem;
 import util.ui.customizableitems.SelectableItemList;
 import util.ui.customizableitems.SelectableItemRendererCenterComponentIf;
 
@@ -95,7 +96,9 @@ public class LocaleSettingsTab implements devplugin.SettingsTab {
   
   private JPanel mSettingsPn;
 
-  private JComboBox mLanguageCB, mTimezoneCB, mFirstDayOfWeek;
+  private JComboBox<Locale> mLanguageCB;
+  private JComboBox<String> mTimezoneCB;
+  private JComboBox<Integer> mFirstDayOfWeek;
 
   private JLabel mTimezoneLB;
 
@@ -134,11 +137,12 @@ public class LocaleSettingsTab implements devplugin.SettingsTab {
     mSettingsPn.add(new JLabel(mLocalizer.msg("language", "Language:")), CC.xy(2,3));
     Locale[] allLocales = mLocalizer.getAllAvailableLocales();
     ArrayList<Locale> localesList = new ArrayList<Locale>(Arrays.asList(allLocales));
-    mSettingsPn.add(mLanguageCB = new JComboBox(allLocales), CC.xy(4,3));
+    mSettingsPn.add(mLanguageCB = new JComboBox<>(allLocales), CC.xy(4,3));
 
     mLanguageCB.setRenderer(new CustomComboBoxRenderer(mLanguageCB.getRenderer()) {
+      @SuppressWarnings("unchecked")
       @Override
-      public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+      public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
         String name = ((Locale)value).getDisplayName((Locale)value);
         name = String.valueOf(name.charAt(0)).toUpperCase() + name.substring(1);
         
@@ -197,7 +201,7 @@ public class LocaleSettingsTab implements devplugin.SettingsTab {
       mLog.log(Level.INFO, "TimeZone IDs not available, use default values", e);
     }
     
-    mTimezoneCB = new JComboBox(zoneIds);
+    mTimezoneCB = new JComboBox<>(zoneIds);
     String zone = Settings.propTimezone.getString();
     if (zone == null) {
       try {
@@ -239,7 +243,7 @@ public class LocaleSettingsTab implements devplugin.SettingsTab {
       mTwentyfourHourFormat.setSelected(true);
     }
     
-    mFirstDayOfWeek = new JComboBox();
+    mFirstDayOfWeek = new JComboBox<>();
     mFirstDayOfWeek.addItem(Calendar.MONDAY);
     mFirstDayOfWeek.addItem(Calendar.TUESDAY);
     mFirstDayOfWeek.addItem(Calendar.WEDNESDAY);
@@ -249,8 +253,9 @@ public class LocaleSettingsTab implements devplugin.SettingsTab {
     mFirstDayOfWeek.addItem(Calendar.SUNDAY);
     
     mFirstDayOfWeek.setRenderer(new CustomComboBoxRenderer(mFirstDayOfWeek.getRenderer()) {
+      @SuppressWarnings("unchecked")
       @Override
-      public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+      public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
         Calendar cal = Calendar.getInstance();
         cal.set(Calendar.DAY_OF_WEEK,(Integer)value);
         
@@ -420,10 +425,11 @@ public class LocaleSettingsTab implements devplugin.SettingsTab {
     
     CellConstraints cc = new CellConstraints();
     
-    final SelectableItemList list = new SelectableItemList(new LocaleLink[0], availableLocales.toArray(new LocaleLink[availableLocales.size()]));
-    list.addCenterRendererComponent(LocaleLink.class, new SelectableItemRendererCenterComponentIf() {
+    final SelectableItemList<LocaleLink> list = new SelectableItemList<>(new LocaleLink[0], availableLocales.toArray(new LocaleLink[availableLocales.size()]));
+    list.addCenterRendererComponent(LocaleLink.class, new SelectableItemRendererCenterComponentIf<LocaleLink>() {
+
       @Override
-      public JPanel createCenterPanel(JList list, Object value, int index, boolean isSelected, boolean isEnabled,
+      public JPanel createCenterPanel(JList<? extends SelectableItem<LocaleLink>> list, LocaleLink value, int index, boolean isSelected, boolean isEnabled,
           JScrollPane parentScrollPane, int leftColumnWidth) {
         JLabel label = new JLabel(value.toString());
         
@@ -444,9 +450,9 @@ public class LocaleSettingsTab implements devplugin.SettingsTab {
         
         return panel;
       }
-      
+
       @Override
-      public void calculateSize(JList list, int index, JPanel contentPane) {}
+      public void calculateSize(JList<? extends SelectableItem<LocaleLink>> list, int index, JPanel contentPane) {}
     });
     
     pb.addLabel(mLocalizer.msg("additionalLanguagesFound", "The following languages were found:"), cc.xyw(1,1,4));
@@ -458,9 +464,7 @@ public class LocaleSettingsTab implements devplugin.SettingsTab {
     download.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        for(Object o : list.getSelection()) {
-          LocaleLink localeLink = (LocaleLink)o;
-          
+        for(LocaleLink localeLink : list.getSelectionList()) {
           if(localeLink.download()) {
             mLanguageCB.addItem(localeLink.getLocale());
           }
@@ -496,7 +500,7 @@ public class LocaleSettingsTab implements devplugin.SettingsTab {
       @Override
       public void valueChanged(ListSelectionEvent e) {
         if(!e.getValueIsAdjusting()) {
-          download.setEnabled(list.getSelection().length > 0);
+          download.setEnabled(!list.getSelectionList().isEmpty());
         }
       }
     });

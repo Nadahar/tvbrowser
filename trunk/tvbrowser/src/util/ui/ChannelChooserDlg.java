@@ -29,16 +29,14 @@ package util.ui;
 import java.awt.Dialog;
 import java.awt.Frame;
 import java.awt.Window;
-import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-
-import util.ui.customizableitems.SelectableItemList;
 
 import com.jgoodies.forms.builder.ButtonBarBuilder;
 import com.jgoodies.forms.factories.Borders;
@@ -48,6 +46,7 @@ import com.jgoodies.forms.layout.RowSpec;
 
 import devplugin.Channel;
 import devplugin.Plugin;
+import util.ui.customizableitems.SelectableItemList;
 
 /**
  * The ChannelChooserDlg class provides a Dialog for choosing channels. The user
@@ -57,8 +56,8 @@ public class ChannelChooserDlg extends JDialog implements WindowClosingIf {
 
   private Channel[] mResultChannelArr;
   private Channel[] mChannelArr;
-  private OrderChooser mChannelOrderChooser;
-  private SelectableItemList mChannelItemList;
+  private OrderChooser<Channel> mChannelOrderChooser;
+  private SelectableItemList<Channel> mChannelItemList;
   
   /**
    * If this Dialog should contain an OrderChooser use this type.
@@ -187,11 +186,11 @@ public ChannelChooserDlg(Frame parent, Channel[] channelArr, String description,
     CellConstraints cc = new CellConstraints();
     
     if(type == ORDER_CHOOSER) {
-      mChannelOrderChooser = new OrderChooser(mResultChannelArr, Plugin.getPluginManager().getSubscribedChannels());
+      mChannelOrderChooser = new OrderChooser<>(mResultChannelArr, Plugin.getPluginManager().getSubscribedChannels());
       mChannelItemList = null;
     }
     else {
-      mChannelItemList = new SelectableItemList(mResultChannelArr, Plugin.getPluginManager().getSubscribedChannels());
+      mChannelItemList = new SelectableItemList<>(mResultChannelArr, Plugin.getPluginManager().getSubscribedChannels());
       mChannelOrderChooser = null;
     }
 
@@ -220,14 +219,14 @@ public ChannelChooserDlg(Frame parent, Channel[] channelArr, String description,
 
     okBt.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent event) {
-        Object[] o = mChannelOrderChooser != null ? mChannelOrderChooser.getOrder() : mChannelItemList.getSelection();
-        mResultChannelArr = new Channel[o.length];
-        for (int i=0;i<o.length;i++) {
-          mResultChannelArr[i]=(Channel)o[i];
+        List<Channel> listChannel = mChannelOrderChooser != null ? mChannelOrderChooser.getOrderList() : mChannelItemList.getSelectionList();
+        mResultChannelArr = new Channel[listChannel.size()];
+        for (int i = 0; i < listChannel.size(); i++) {
+          mResultChannelArr[i] = listChannel.get(i);
         }
         setVisible(false);
       }
-      });
+    });
 
     cancelBt.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent event) {
