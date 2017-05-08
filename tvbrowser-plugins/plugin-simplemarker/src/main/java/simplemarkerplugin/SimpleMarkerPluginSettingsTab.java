@@ -55,6 +55,14 @@ import javax.swing.event.HyperlinkListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import com.jgoodies.forms.factories.CC;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.RowSpec;
+
+import devplugin.Plugin;
+import devplugin.SettingsItem;
+import devplugin.SettingsTab;
+import devplugin.Version;
 import simplemarkerplugin.table.DeleteShowSelectionRenderer;
 import simplemarkerplugin.table.MarkListPriorityCellEditor;
 import simplemarkerplugin.table.MarkListProgramImportanceCellEditor;
@@ -70,13 +78,6 @@ import util.ui.ExtensionFileFilter;
 import util.ui.Localizer;
 import util.ui.TVBrowserIcons;
 import util.ui.UiUtilities;
-
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
-
-import devplugin.Plugin;
-import devplugin.SettingsItem;
-import devplugin.SettingsTab;
 
 /**
  * SimpleMarkerPlugin 1.4 Plugin for TV-Browser since version 2.3 to only mark
@@ -98,11 +99,13 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
   private JEditorPane mHelpLabel;
   private JCheckBox mShowDateSeparators;
   private ArrayList<MarkList> mMarkLists;
+  private JCheckBox mShowInContextMenu;
 
   public JPanel createSettingsPanel() {try {
-    JPanel panel = new JPanel(new FormLayout("5dlu,default:grow,5dlu",
-        "default,3dlu,fill:default:grow,default,3dlu,pref,10dlu,pref,5dlu"));
-    CellConstraints cc = new CellConstraints();
+    final FormLayout layout = new FormLayout("5dlu,default:grow,5dlu",
+        "default,3dlu,fill:default:grow,default,3dlu,pref,10dlu,pref,5dlu");
+    
+    final JPanel panel = new JPanel(layout);
     
     mShowDateSeparators = new JCheckBox(SimpleMarkerPlugin.getLocalizer().msg(
         "settings.showDateSeparator",
@@ -111,8 +114,19 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
     
     int y = 1;
     
-    panel.add(mShowDateSeparators, cc.xy(2,y));
+    panel.add(mShowDateSeparators, CC.xy(2,y));
 
+    if(Plugin.getPluginManager().getTVBrowserVersion().compareTo(new Version(3,44,50,false)) >= 0) {
+      layout.insertRow(3, RowSpec.decode("3dlu"));
+      layout.insertRow(3, RowSpec.decode("default"));
+      
+      mShowInContextMenu = new JCheckBox(SimpleMarkerPlugin.getLocalizer().msg("showInContext", "For more than one list, show actions in submenu of TV-Browser context menu"), !SimpleMarkerPlugin.getInstance().getSettings().isShowingInContextMenu());
+      
+      y += 2;
+      
+      panel.add(mShowInContextMenu, CC.xy(2, y));
+    }
+    
     mMarkLists = new ArrayList<MarkList>();
     MarkList[] lists = SimpleMarkerPlugin.getInstance().getMarkLists();
     for (MarkList m:lists) {
@@ -175,11 +189,11 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
     
     y += 2;
     
-    panel.add(pane, cc.xy(2, y));
+    panel.add(pane, CC.xy(2, y));
     
     y++;
     
-    panel.add(UiUtilities.createHtmlHelpTextArea(SimpleMarkerPlugin.getLocalizer().msg("settings.informAboutDeletedPrograms","*Inform about programs of that list that were deleted during a data update")), cc.xy(2, y));
+    panel.add(UiUtilities.createHtmlHelpTextArea(SimpleMarkerPlugin.getLocalizer().msg("settings.informAboutDeletedPrograms","*Inform about programs of that list that were deleted during a data update")), CC.xy(2, y));
 
     JPanel south = new JPanel();
     south.setLayout(new BoxLayout(south, BoxLayout.X_AXIS));
@@ -202,7 +216,7 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
 
     y += 2;
     
-    panel.add(south, cc.xy(2, y));
+    panel.add(south, CC.xy(2, y));
     
     mHelpLabel = UiUtilities.createHtmlHelpTextArea(SimpleMarkerPlugin.getLocalizer().msg("settings.prioHelp","The mark priority is used for selecting the marking color. The marking colors of the priorities can be change in the <a href=\"#link\">program panel settings</a>. If a program is marked by more than one plugin/list the color with the highest priority given by the marking plugins/lists is used."), new HyperlinkListener() {
       public void hyperlinkUpdate(HyperlinkEvent e) {
@@ -221,11 +235,11 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
 
     y += 2;
     
-    panel.add(mHelpLabel, cc.xy(2,y));
+    panel.add(mHelpLabel, CC.xy(2,y));
 
 
     JPanel p = new JPanel(new FormLayout("450dlu:grow","5dlu,fill:default:grow"));
-    p.add(panel, cc.xy(1,2));
+    p.add(panel, CC.xy(1,2));
 
     return p;
   }catch(Throwable t) {
@@ -243,6 +257,10 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
       mListTable.getCellEditor().stopCellEditing();
     }
 
+    if(mShowInContextMenu != null) {
+      SimpleMarkerPlugin.getInstance().getSettings().setShowingInContextMenu(!mShowInContextMenu.isSelected());
+    }
+    
     SimpleMarkerPlugin.getInstance().setMarkLists(mMarkLists.toArray(new MarkList[mMarkLists.size()]));
     SimpleMarkerPlugin.getInstance().save(true);
   }

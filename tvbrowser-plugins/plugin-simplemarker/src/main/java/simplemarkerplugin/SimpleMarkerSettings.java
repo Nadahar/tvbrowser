@@ -32,6 +32,8 @@ import util.settings.PropertyBasedSettings;
 public final class SimpleMarkerSettings extends PropertyBasedSettings{
   private static final String KEY_SPLIT_POSITION = "splitPosition";
   private static final String KEY_SHOW_DATE_SEPARATORS = "showDateSeparator";
+  private static final String KEY_SHOW_ALL_IN_CONTEXT_MENU = "showInContextMenu";
+  
   /**
    * show plugin nodes by title and date
    */
@@ -127,5 +129,12 @@ public final class SimpleMarkerSettings extends PropertyBasedSettings{
   public boolean isShowingDateSeperators() {
     return get(KEY_SHOW_DATE_SEPARATORS, true);
   }
-
+  
+  void setShowingInContextMenu(boolean show) {
+    set(KEY_SHOW_ALL_IN_CONTEXT_MENU, show);
+  }
+  
+  public boolean isShowingInContextMenu() {
+    return get(KEY_SHOW_ALL_IN_CONTEXT_MENU, false);
+  }
 }
