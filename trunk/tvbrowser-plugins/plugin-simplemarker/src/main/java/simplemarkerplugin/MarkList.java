@@ -334,13 +334,13 @@ public class MarkList extends Vector<Program> {
       action.putValue(Program.MARK_PRIORITY, getMarkPriority());
     }
 
-    ActionMenu result = new ActionMenu(action);
+    ActionMenu result = null;
     
     try {
       Constructor<ActionMenu> c = ActionMenu.class.getConstructor(int.class, Action.class);
       result = c.newInstance(mActionId, action);
     } catch (Exception e1) {
-      // Ignore
+      result = new ActionMenu(action);
     }
     
     return result;
