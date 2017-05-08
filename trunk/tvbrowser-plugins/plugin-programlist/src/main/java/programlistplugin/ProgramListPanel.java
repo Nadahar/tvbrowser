@@ -918,7 +918,7 @@ public class ProgramListPanel extends JPanel implements PersonaListener, FilterC
   }
   
   void dateSelected(Date date) {
-    if(mDateBox.getSelectedItem() == null || !mDateBox.getSelectedItem().equals(date)) {
+    if(mUpdateList && (mDateBox.getSelectedItem() == null || !mDateBox.getSelectedItem().equals(date))) {
       mDateBox.setSelectedItem(date);
     }
   }
@@ -969,7 +969,7 @@ public class ProgramListPanel extends JPanel implements PersonaListener, FilterC
   }
   
   void selectChannel(Channel ch) {
-    if(mChannelBox.getSelectedItem() == null || !mChannelBox.getSelectedItem().equals(ch)) {
+    if(mUpdateList && (mChannelBox.getSelectedItem() == null || !mChannelBox.getSelectedItem().equals(ch))) {
       mChannelBox.setSelectedItem(ch);
     }
   }
