@@ -14,6 +14,7 @@ import java.awt.dnd.DropTargetDropEvent;
 import java.awt.dnd.DropTargetEvent;
 import java.awt.dnd.DropTargetListener;
 import java.awt.geom.Rectangle2D;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
@@ -110,6 +111,7 @@ public class ListDragAndDropHandler implements DropTargetListener,
   }
   
   private Thread mScrollThread;
+  private AtomicBoolean mScrolling = new AtomicBoolean(false);
   
   public void dragOver(final DropTargetDragEvent e) {
     DataFlavor[] flavors = e.getCurrentDataFlavors();
@@ -191,48 +193,64 @@ public class ListDragAndDropHandler implements DropTargetListener,
           mCue.paintImmediately(mCueLine.getBounds());
         }
         
-        if(p.y + 30 > rect.y + rect.height && rect.y + rect.height != mCue.getHeight()) {
-          mCue.scrollRectToVisible(new Rectangle(p.x,p.y + 15,1,1));
+        if(p.y + 40 > rect.y + rect.height && rect.y + rect.height != mCue.getHeight()) {
+          mCue.scrollRectToVisible(new Rectangle(p.x,p.y + 20,1,1));
           
           if((mScrollThread == null || !mScrollThread.isAlive())) {
+            mScrolling.set(true);
             mScrollThread = new Thread() {
               @Override
               public void run() {
-                try {
-                  sleep(5);
-                } catch (InterruptedException e1) {
-                  e1.printStackTrace();
+                if(mScrolling.get()) {
+                  try {
+                    sleep(5);
+                  } catch (InterruptedException e1) {
+                    e1.printStackTrace();
+                  }
                 }
                 Point p = e.getLocation();
                 p.y = p.y + 15;
                 
-                dragOver(new DropTargetDragEvent(e.getDropTargetContext(), p, e.getDropAction(), e.getSourceActions()));
+                if(mScrolling.get()) {
+                  dragOver(new DropTargetDragEvent(e.getDropTargetContext(), p, e.getDropAction(), e.getSourceActions()));
+                }
               }
             };
             SwingUtilities.invokeLater(mScrollThread);
           }
         }
+        else {
+          mScrolling.set(false);
+        }
         
-        if(p.y - 30 < rect.y && rect.y != 0) {
-          mCue.scrollRectToVisible(new Rectangle(p.x,p.y - 15,1,1));
+        if(p.y - 40 < rect.y && rect.y != 0) {
+          mCue.scrollRectToVisible(new Rectangle(p.x,p.y - 20,1,1));
           
           if((mScrollThread == null || !mScrollThread.isAlive())) {
+            mScrolling.set(true);
             mScrollThread = new Thread() {
               @Override
               public void run() {
-                try {
-                  sleep(5);
-                } catch (InterruptedException e1) {
-                  e1.printStackTrace();
+                if(mScrolling.get()) {
+                  try {
+                    sleep(5);
+                  } catch (InterruptedException e1) {
+                    e1.printStackTrace();
+                  }
                 }
                 Point p = e.getLocation();
                 p.y = p.y - 15;
                 
-                dragOver(new DropTargetDragEvent(e.getDropTargetContext(), p, e.getDropAction(), e.getSourceActions()));
+                if(mScrolling.get()) {
+                  dragOver(new DropTargetDragEvent(e.getDropTargetContext(), p, e.getDropAction(), e.getSourceActions()));
+                }
               }
             };
             SwingUtilities.invokeLater(mScrollThread);
           }
+        }
+        else {
+          mScrolling.set(false);
         }
       }
     }

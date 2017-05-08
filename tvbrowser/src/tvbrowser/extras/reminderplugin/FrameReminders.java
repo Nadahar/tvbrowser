@@ -92,7 +92,7 @@ public class FrameReminders extends JFrame implements InterfaceClose<PanelRemind
       }
     });
     
-    Settings.layoutWindow("reminderFrameReminders", this, new Dimension(Sizes.dialogUnitXAsPixel(300, this), Sizes.dialogUnitYAsPixel(300, this)));
+    Settings.layoutWindow("reminderFrameReminders", this, new Dimension(Sizes.dialogUnitXAsPixel(400, this), Sizes.dialogUnitYAsPixel(300, this)));
   }
   
   public static synchronized FrameReminders getInstance() {

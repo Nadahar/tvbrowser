@@ -349,7 +349,7 @@ public class ProgramInfoSettingsTab implements SettingsTab {
     });
     mPersonSearchCB.setSelected(settings.getEnableSearch());
     mPersonSearchCB.getActionListeners()[0].actionPerformed(null);
-
+    
     mTabbedPane = new JTabbedPane();
     mTabbedPane.add(ProgramInfo.mLocalizer.msg("look","Look"), formatPanel.getPanel());
     mTabbedPane.add(ProgramInfo.mLocalizer.msg("fields","Fields"), orderPanel.getPanel());
@@ -357,6 +357,11 @@ public class ProgramInfoSettingsTab implements SettingsTab {
     mTabbedPane.add(ProgramInfo.mLocalizer.msg("actorSearch","Actor search"), actorPanel.getPanel());
     mTabbedPane.setSelectedIndex(mCurrentTab);
 
+    formatPanel.getPanel().setOpaque(true);
+    orderPanel.getPanel().setOpaque(true);
+    picturePanel.getPanel().setOpaque(true);
+    actorPanel.getPanel().setOpaque(true);
+    
     FormLayout layout = new FormLayout("default,default:grow,default","pref");
     layout.setColumnGroups(new int[][] {{1,3}});
     JPanel buttonPn = new JPanel(layout);
