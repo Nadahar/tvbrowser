@@ -76,6 +76,7 @@
     <dependency>
       <groupId>org.tvbrowser</groupId>
       <artifactId>tvbrowser</artifactId>
+      <version>3.4.4.50</version>
     </dependency>
     <dependency>
     	<groupId>org.apache.httpcomponents</groupId>
