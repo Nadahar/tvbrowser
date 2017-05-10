@@ -40,12 +40,12 @@ import javax.swing.UIManager;
 import javax.swing.plaf.basic.BasicMenuItemUI;
 import javax.swing.plaf.basic.BasicMenuUI;
 
-import util.ui.ScrollableMenu;
-import util.ui.UiUtilities;
 import devplugin.ActionMenu;
 import devplugin.ContextMenuSeparatorAction;
 import devplugin.Plugin;
 import devplugin.Program;
+import util.ui.ScrollableMenu;
+import util.ui.UiUtilities;
 
 /**
  * Created by: Martin Oberhauser (martin@tvbrowser.org)
@@ -103,6 +103,7 @@ public class MenuUtil {
     }
     if (result != null && setFont) {
       result.setFont(CONTEXT_MENU_PLAINFONT);
+      checkAndSetBackgroundColor(result);
     }
     return result;
   }
