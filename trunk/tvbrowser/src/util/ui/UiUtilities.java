@@ -608,7 +608,7 @@ public class UiUtilities {
       
       if(typeRemoveOnly != null) {
         for(Class exclude : typeRemoveOnly) {
-          if(exclude.equals(value.getClass())) {
+          if(exclude != null && exclude.equals(value.getClass())) {
             move = false;
             break;
           }
