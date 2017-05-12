@@ -104,6 +104,7 @@ public class FrameReminders extends JFrame implements InterfaceClose<PanelRemind
   }
   
   public void addReminders(final ReminderList list, final ArrayList<ReminderListItem> items) {
+    
     try {
       mGlobalReminderList = list;
       
@@ -177,6 +178,58 @@ public class FrameReminders extends JFrame implements InterfaceClose<PanelRemind
     }
     
     if(mListReminders.getComponentCount() < 1 && closeFrameIfEmptry) {
+      close();
+    }
+  }
+  
+  public void updateReminder(ReminderListItem item) {
+    boolean repaint = false;
+    
+    for(int i = 0; i < mListReminders.getComponentCount(); i++) {
+      PanelReminder panel = (PanelReminder)mListReminders.getComponent(i);
+      
+      if(panel.containsItem(item) && panel.update()) {
+        panel.stopTimer();
+        mListReminders.remove(panel);
+        
+        mGlobalReminderList.removeWithoutChecking(item.getProgramItem());
+        if (item.getMinutes() != ReminderConstants.DONT_REMIND_AGAIN) {
+          Program program = item.getProgram();
+          mGlobalReminderList.add(program, new ReminderContent(item.getMinutes(), item
+              .getComment()));
+          mGlobalReminderList.unblockProgram(program);
+        }
+        
+        repaint = true;
+      }
+    }
+    
+    if(repaint && isVisible()) {
+      mListReminders.repaint();
+      mListReminders.revalidate();
+    }
+    
+    if(mListReminders.getComponentCount() < 1 && ReminderPlugin.getInstance().getSettings().getProperty(ReminderPropertyDefaults.KEY_AUTO_CLOSE_FRAME_REMINDERS_IF_EMTPY, "true").equals("true")) {
+      close();
+    }
+  }
+  
+  public void removeReminder(ReminderListItem item) {
+    for(int i = 0; i < mListReminders.getComponentCount(); i++) {
+      PanelReminder panel = (PanelReminder)mListReminders.getComponent(i);
+      
+      if(panel.containsItem(item)) {
+        panel.stopTimer();
+        mListReminders.remove(panel);
+      }
+    }
+    
+    if(isVisible()) {
+      mListReminders.repaint();
+      mListReminders.revalidate();
+    }
+    
+    if(mListReminders.getComponentCount() < 1 && ReminderPlugin.getInstance().getSettings().getProperty(ReminderPropertyDefaults.KEY_AUTO_CLOSE_FRAME_REMINDERS_IF_EMTPY, "true").equals("true")) {
       close();
     }
   }

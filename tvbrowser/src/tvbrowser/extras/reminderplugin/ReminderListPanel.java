@@ -338,7 +338,6 @@ public class ReminderListPanel extends JPanel implements PersonaListener, Progra
       final Method initialize = renderer.getClass().getDeclaredMethod("initialize");
       initialize.invoke(renderer);
     } catch (Exception e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     } 
     
@@ -363,6 +362,8 @@ public class ReminderListPanel extends JPanel implements PersonaListener, Progra
       mTable.getSelectionModel().setSelectionInterval(0, mTable.getRowCount() - 1);
       selected = mTable.getSelectedRows();
     }
+    
+    final boolean frameReminders = ReminderPropertyDefaults.getPropertyDefaults().getValueFromProperties(ReminderPropertyDefaults.KEY_FRAME_REMINDERS_SHOW,ReminderPlugin.getInstance().getSettings()).equalsIgnoreCase("true");
 
     if (selected.length > 0) {
       Arrays.sort(selected);
@@ -373,6 +374,10 @@ public class ReminderListPanel extends JPanel implements PersonaListener, Progra
         Program prog = (Program) mTable.getValueAt(element, 0);
 
         ReminderListItem item = mReminderList.removeWithoutChecking(prog);
+        
+        if(frameReminders) {
+          FrameReminders.getInstance().removeReminder(item);
+        }
         
         if(item != null) {
           itemList.add(item);
