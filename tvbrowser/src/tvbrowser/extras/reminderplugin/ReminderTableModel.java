@@ -165,6 +165,12 @@ public class ReminderTableModel extends AbstractTableModel {
   public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
     if (columnIndex == 1) {
       mProgramItems[rowIndex].setMinutes(((Integer) aValue).intValue());
+      
+      if(ReminderPropertyDefaults.getPropertyDefaults().getValueFromProperties(ReminderPropertyDefaults.KEY_FRAME_REMINDERS_SHOW,ReminderPlugin.getInstance().getSettings()).equalsIgnoreCase("true")) {
+        FrameReminders.getInstance().updateReminder(mProgramItems[rowIndex]);
+      }
+      
+      ReminderPlugin.getInstance().store();
     }
   }
 
