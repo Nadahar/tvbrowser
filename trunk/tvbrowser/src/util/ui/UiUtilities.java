@@ -56,6 +56,7 @@ import java.awt.image.BufferedImage;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.concurrent.atomic.AtomicReference;
 
 import javax.swing.AbstractAction;
@@ -1218,4 +1219,35 @@ public class UiUtilities {
     return lnf;
   }
 
+  /**
+   * Creates an JOptionPane that shows an input dialog
+   * with a document modality for the given parentComponent.
+   * 
+   * @param parentComponent The parent of the dialog
+   * @param message The message to show
+   * @param initialSelectionValue The initial input value.
+   * @return The user input or <code>null</code>
+   * @since 3.4.5
+   */
+  public static final String showInputDialog(Component parentComponent, Object message, Object initialSelectionValue) {
+    JOptionPane pane = new JOptionPane(message, JOptionPane.QUESTION_MESSAGE, JOptionPane.OK_CANCEL_OPTION, null, null);
+    pane.setInitialSelectionValue(initialSelectionValue);
+    pane.setWantsInput(true);
+    pane.selectInitialValue();
+    
+    Locale l = (parentComponent == null) ? Locale.getDefault() : parentComponent.getLocale();
+    String title = UIManager.getString("OptionPane.inputDialogTitle",l);
+    
+    JDialog dialog = pane.createDialog(parentComponent, title);
+    dialog.setModalityType(ModalityType.DOCUMENT_MODAL);
+    dialog.setVisible(true);
+    
+    Object value = pane.getInputValue();
+
+    if (value == JOptionPane.UNINITIALIZED_VALUE) {
+        return null;
+    }
+    
+    return (String)value;
+  }
 }

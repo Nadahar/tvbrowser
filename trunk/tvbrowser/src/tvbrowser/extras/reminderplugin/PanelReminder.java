@@ -13,6 +13,7 @@ import javax.swing.Timer;
 
 import com.jgoodies.forms.factories.CC;
 import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.RowSpec;
 
 import devplugin.Date;
 import devplugin.Program;
@@ -33,6 +34,7 @@ public class PanelReminder extends ScrollableJPanel {
    */
 
   private JLabel mHeader;
+  private JLabel mCommentLabel;
   private ProgramPanel mProgramPanel;
   private JComboBox<RemindValue> mReminderCB;
   private JButton mCloseBt;
@@ -45,6 +47,11 @@ public class PanelReminder extends ScrollableJPanel {
   private InterfaceClose<PanelReminder> mCloseInterface;
   private int mRunningMinutes;
 
+  private int mOriginalMinutes;
+  
+  private final FormLayout mLayout;
+  private final JPanel mContentPanel;
+  
   /**
    * automatically close when current time is larger than this point in time
    */
@@ -55,10 +62,13 @@ public class PanelReminder extends ScrollableJPanel {
     mCloseInterface = closeInterface;
     mRemainingMinutes = 0;
     mCloseBtText = Localizer.getLocalization(Localizer.I18N_CLOSE);
+    mOriginalMinutes = reminderListItem.getMinutes();
     
     final Program program = mItem.getProgram();
+
+    mLayout = new FormLayout("5dlu,default:grow,20dlu,default,5dlu","5dlu,default,default,5dlu,default,5dlu,default");
     
-    JPanel content = new JPanel(new FormLayout("5dlu,default:grow,20dlu,default,5dlu","5dlu,default,default,5dlu,default,5dlu,default")) {
+    mContentPanel = new JPanel(mLayout) {
       @Override
       protected void paintComponent(Graphics g) {
         Color c = g.getColor();
@@ -74,19 +84,19 @@ public class PanelReminder extends ScrollableJPanel {
     };
     
     setLayout(new FormLayout("default:grow","default"));
-    add(content, CC.xy(1, 1));
+    add(mContentPanel, CC.xy(1, 1));
     setOpaque(true);
-    content.setOpaque(false);
+    mContentPanel.setOpaque(false);
     
     new Thread("SHOW NEW REMINDER THREAD") {
       @Override
       public void run() {
         int opacity = 200;
         int count = 0;
-        Color background = content.getBackground();
+        Color background = mContentPanel.getBackground();
         
         while(opacity >= 0) {
-          content.setBackground(new Color(238, 118, 0, Math.max(0, opacity)));
+          mContentPanel.setBackground(new Color(238, 118, 0, Math.max(0, opacity)));
           
           if(count > 166) {
             opacity--;
@@ -102,7 +112,7 @@ public class PanelReminder extends ScrollableJPanel {
           }
         }
         
-        content.setBackground(background);
+        mContentPanel.setBackground(background);
       };
     }.start();
     
@@ -191,12 +201,14 @@ public class PanelReminder extends ScrollableJPanel {
     channelLabel = new JLabel(channelName);
     channelPanel.add(channelLabel, CC.xy(3, 4));
     
-    content.add(mHeader, CC.xyw(2, 2, 3));
-    content.add(channelPanel, CC.xyw(2, 3, 3));
-    content.add(mReminderCB, CC.xy(2, 5));
-    content.add(mCloseBt, CC.xy(4, 5));
-    content.add(new JSeparator(JSeparator.HORIZONTAL), CC.xyw(1, 7, 5));
+    mContentPanel.add(mHeader, CC.xyw(2, 2, 3));
+    mContentPanel.add(channelPanel, CC.xyw(2, 3, 3));
     
+    int y = addComment(5);
+    
+    mContentPanel.add(mReminderCB, CC.xy(2, y));
+    mContentPanel.add(mCloseBt, CC.xy(4, y++));
+    mContentPanel.add(new JSeparator(JSeparator.HORIZONTAL), CC.xyw(1, ++y, 5));
     
     int i=0;
     
@@ -224,6 +236,34 @@ public class PanelReminder extends ScrollableJPanel {
     updateRunningTime();
   }
   
+  private int addComment(int y) {
+    String comment = mItem.getComment();
+    
+    if (comment != null && comment.length() > 0) {
+      if(mCommentLabel == null) {
+        mLayout.insertRow(y-1, RowSpec.decode("default"));
+        mLayout.insertRow(y-1, RowSpec.decode("2dlu"));
+        
+        mCommentLabel = new JLabel(comment);
+        
+        mContentPanel.add(mCommentLabel, CC.xyw(2, y, 3));
+        
+        y += 2;
+      }
+      else {
+        mCommentLabel.setText(comment);
+      }
+    }
+    else if(mCommentLabel != null) {
+      mContentPanel.remove(mCommentLabel);
+      mLayout.removeRow(5);
+      mLayout.removeRow(4);
+      mCommentLabel = null;
+    }
+    
+    return y;
+  }
+  
   private int mLastUpdateMinute;
   
   /**
@@ -245,8 +285,8 @@ public class PanelReminder extends ScrollableJPanel {
     if(mReminderCB.getItemCount() > 1 && mLastUpdateMinute != IOUtilities.getMinutesAfterMidnight()) {
       mLastUpdateMinute = IOUtilities.getMinutesAfterMidnight();
       
-      final int diff = mLastUpdateMinute  + 1440
-          * (mItem.getProgram().getDate().getNumberOfDaysSince(Date.getCurrentDate())) - mItem.getProgram().getStartTime();
+      final int diff = mLastUpdateMinute  - (mItem.getProgram().getStartTime() + 1440
+          * (mItem.getProgram().getDate().getNumberOfDaysSince(Date.getCurrentDate())));
       
       if(!mItem.getProgram().isOnAir() && !mItem.getProgram().isExpired()) {
         mRemainingMinutes = ReminderPlugin.getTimeToProgramStart(mItem.getProgram());
@@ -366,5 +406,34 @@ public class PanelReminder extends ScrollableJPanel {
     if(mAutoCloseTimer != null && mAutoCloseTimer.isRunning()) {
       mAutoCloseTimer.stop();
     }
+  }
+  
+  public boolean update() {
+    boolean result = false;
+    
+    if(mOriginalMinutes != mItem.getMinutes()) {
+      for(int i = 0; i < mReminderCB.getItemCount(); i++) {
+        final RemindValue value = mReminderCB.getItemAt(i);
+        
+        if(value.getMinutes() == mItem.getMinutes()) {
+          mReminderCB.setSelectedItem(value);
+          break;
+        }
+      }
+      
+      result = true;
+    }
+    else {
+      addComment(5);
+      
+      repaint();
+      revalidate();
+    }
+    
+    return result;
+  }
+  
+  public boolean containsItem(ReminderListItem item) {
+    return mItem.equals(item);
   }
 }

@@ -27,14 +27,13 @@
 package tvbrowser.extras.reminderplugin;
 
 
-import java.awt.Frame;
+import java.awt.Window;
 
-import javax.swing.JOptionPane;
-
-import tvbrowser.core.plugin.PluginManagerImpl;
-import util.program.ProgramUtilities;
 import devplugin.Program;
 import devplugin.ProgramItem;
+import tvbrowser.core.plugin.PluginManagerImpl;
+import util.program.ProgramUtilities;
+import util.ui.UiUtilities;
 
 /**
  * A class that contains the program for
@@ -209,12 +208,13 @@ public class ReminderListItem implements Comparable<ReminderListItem> {
     return ProgramUtilities.getProgramComparator().compare(getProgram(), other.getProgram());
   }
 
-  public void changeComment(final Frame parentFrame) {
+  public void changeComment(final Window parentFrame) {
     String comment = getComment();
     if (comment == null) {
       comment = "";
     }
-    comment = JOptionPane.showInputDialog(parentFrame, mLocalizer.msg(
+    
+    comment = UiUtilities.showInputDialog(parentFrame, mLocalizer.msg(
         "comment.message", "Enter new comment"), comment);
     if (comment != null) {
       setComment(comment);

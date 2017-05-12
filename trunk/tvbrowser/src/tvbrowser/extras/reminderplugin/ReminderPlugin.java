@@ -29,7 +29,6 @@ package tvbrowser.extras.reminderplugin;
 import java.applet.Applet;
 import java.applet.AudioClip;
 import java.awt.BorderLayout;
-import java.awt.Frame;
 import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
@@ -621,7 +620,7 @@ public class ReminderPlugin {
     }
   }
 
-  protected ActionMenu getContextMenuActions(final Frame parentFrame, final Program program) {
+  protected ActionMenu getContextMenuActions(final Window parentFrame, final Program program) {
     final ReminderListItem item = mReminderList.getReminderItem(program);
     RemindValue[] values = calculatePossibleReminders(program);
     
@@ -630,6 +629,10 @@ public class ReminderPlugin {
     if(item != null || program.equals(PluginManagerImpl.getInstance().getExampleProgram())) {
       actions.add(new ActionMenu(ReminderConstants.DONT_REMIND_AGAIN_VALUE.getMinutes(),new AbstractAction(ReminderConstants.DONT_REMIND_AGAIN_VALUE.toString()) {
         public void actionPerformed(ActionEvent e) {
+          if(ReminderPropertyDefaults.getPropertyDefaults().getValueFromProperties(ReminderPropertyDefaults.KEY_FRAME_REMINDERS_SHOW,ReminderPlugin.getInstance().getSettings()).equalsIgnoreCase("true")) {
+            FrameReminders.getInstance().removeReminder(item);
+          }
+          
           mReminderList.removeWithoutChecking(program);
           updateRootNode(true);
         }
@@ -644,11 +647,20 @@ public class ReminderPlugin {
           if(item != null) {
             if(item.getMinutes() == value.getMinutes()) {
               mReminderList.removeWithoutChecking(program);
+              
+              if(ReminderPropertyDefaults.getPropertyDefaults().getValueFromProperties(ReminderPropertyDefaults.KEY_FRAME_REMINDERS_SHOW,ReminderPlugin.getInstance().getSettings()).equalsIgnoreCase("true")) {
+                FrameReminders.getInstance().removeReminder(item);
+              }
+              
               updateRootNode(true);
             }
             else {
               item.setMinutes(value.getMinutes());
               saveReminders();
+              
+              if(ReminderPropertyDefaults.getPropertyDefaults().getValueFromProperties(ReminderPropertyDefaults.KEY_FRAME_REMINDERS_SHOW,ReminderPlugin.getInstance().getSettings()).equalsIgnoreCase("true")) {
+                FrameReminders.getInstance().updateReminder(item);
+              }
             }
           }
           else {
@@ -667,6 +679,12 @@ public class ReminderPlugin {
         @Override
         public void actionPerformed(ActionEvent e) {
           item.changeComment(parentFrame);
+          
+          if(ReminderPropertyDefaults.getPropertyDefaults().getValueFromProperties(ReminderPropertyDefaults.KEY_FRAME_REMINDERS_SHOW,ReminderPlugin.getInstance().getSettings()).equalsIgnoreCase("true")) {
+            FrameReminders.getInstance().updateReminder(item);
+          }
+          
+          saveReminders();
         }
       }));
     }
@@ -1097,7 +1115,7 @@ public class ReminderPlugin {
   }
 
   protected ActionMenu getContextMenuActions(Program program) {
-    return getContextMenuActions(null, program);
+    return getContextMenuActions(UiUtilities.getLastModalChildOf(MainFrame.getInstance()), program);
   }
 
   /**
