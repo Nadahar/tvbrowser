@@ -21,7 +21,7 @@ JAVA_JDK_ROOT="/Library/Java/JavaVirtualMachines"
 #MSG1="Starting TV-Browser..."
 #MSG2="Java exec found in "
 #MSG3="OOPS, your java version is too old"
-#MSG4="You need to upgrade to jre 7 or newer from https://www.java.com"
+#MSG4="You need to upgrade to jre 8 or newer from https://www.java.com"
 #MSG5="Suitable java version found"
 #MSG6="Configuring environment ..."
 #MSG7="OOPS, you don't seem to have a valid jre"
@@ -45,9 +45,9 @@ looking_for_java()
   echo "java implementation is" ${JAVA_IMPL}
   if [ "$JAVA_IMPL" = "java" ] ; then
     VERSION=`echo ${JAVA_HEADER} | sed "s/java version \"\(.*\)\"/\1/"`
-    if echo $VERSION | grep "^1.[0-5]" ; then
+    if echo $VERSION | grep "^1.[0-7]" ; then
       echo "Oops, this java version is too old" "[${JAVA_PLUGIN_DIR}/java = ${VERSION}]"
-      echo "You need to upgrade to JRE 7 or newer from https://www.java.com/"
+      echo "You need to upgrade to JRE 8 or newer from https://www.java.com/"
       JAVA_DIR=
       return 1
     else
