@@ -109,12 +109,12 @@ public class ProgramFieldType {
   /**
    * number of Object fields (TEXT and BINARY format)
    */
-  private static final int OBJECT_FIELDS_COUNT = 33;
+  private static final int OBJECT_FIELDS_COUNT = 34;
 
   /**
    * number of int fields (INT and TIME format)
    */
-  private static final int INT_FIELDS_COUNT = 14;
+  private static final int INT_FIELDS_COUNT = 15;
 
   /**
    * sanity check to control that no int storage index is used twice
@@ -235,7 +235,7 @@ public class ProgramFieldType {
 
   public static final ProgramFieldType MUSIC_TYPE
     = new ProgramFieldType(22, TEXT_FORMAT, true, "music",
-                           "music", "Music", 14);
+                           "music", "Music", 33);
 
   public static final ProgramFieldType MODERATION_TYPE
     = new ProgramFieldType(23, TEXT_FORMAT, true, "moderation",
@@ -365,14 +365,14 @@ public class ProgramFieldType {
 
   /**
    * Last production year if a program was produced over several years.
-   * First production year has then to be added to PRODUCTION_YEAR_TYPE.
+   * First production year has then to be added to #{@link #FIRST_PRODUCTION_YEAR}.
    *
    * @since 3.0
-   * @see #PRODUCTION_YEAR_TYPE
+   * @see {@link #FIRST_PRODUCTION_YEAR} and {@link #PRODUCTION_YEAR_TYPE}
    */
   public static final ProgramFieldType LAST_PRODUCTION_YEAR_TYPE
-  = new ProgramFieldType(39, INT_FORMAT, true, "last production year",
-                         "lastProductionYear", "Last production year", 11);
+  = new ProgramFieldType(39, FORMAT_INT, true, "last production year",
+                         "lastProductionYear", "Last year of production", 11);
 
   /**
    * Background information that does not belong into the description of
@@ -446,6 +446,17 @@ public class ProgramFieldType {
   public static final ProgramFieldType GENRE_SUB_LIST
   = new ProgramFieldType(47, FORMAT_TEXT, true, "subgenre",
                        "subgenre", "Subgenres", 32);
+  
+  /**
+   * First production year if a program was produced over several years.
+   * Last production year has then to be added to {@link #LAST_PRODUCTION_YEAR_TYPE}.
+   *
+   * @since 3.4.5
+   * @see {@link #LAST_PRODUCTION_YEAR_TYPE} and {@link #PRODUCTION_YEAR_TYPE}
+   */
+  public static final ProgramFieldType FIRST_PRODUCTION_YEAR
+  = new ProgramFieldType(48, FORMAT_INT, true, "first production year",
+                         "firstProductionYear", "First Year of Production", 14);
   
   private int mTypeId;
 
