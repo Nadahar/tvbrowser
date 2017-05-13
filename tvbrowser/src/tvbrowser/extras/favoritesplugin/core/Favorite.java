@@ -171,9 +171,11 @@ public abstract class Favorite {
     
     if(version > 6) {
       size = in.readInt();
+      
       if (size > 0) {
         mNewPrograms = new ArrayList<Program>(size);
         readProgramsToList(mNewPrograms, size, in, version);
+        mNewProgramsWasRequested = true;
       }
     }
   }
