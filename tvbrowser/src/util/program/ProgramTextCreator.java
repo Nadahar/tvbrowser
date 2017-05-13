@@ -1057,7 +1057,7 @@ public class ProgramTextCreator {
         }
       }
 
-      if (fieldType == ProgramFieldType.ORIGIN_TYPE) {
+      if (fieldType == ProgramFieldType.ORIGIN_TYPE && prog.getTextField(fieldType) != null) {
         String temp = prog
             .getIntFieldAsString(ProgramFieldType.PRODUCTION_YEAR_TYPE);
         if (temp != null && temp.trim().length() > 0) {
