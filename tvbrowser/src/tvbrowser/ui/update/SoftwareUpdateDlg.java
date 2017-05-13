@@ -31,7 +31,10 @@ import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Insets;
+import java.awt.RenderingHints;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -65,6 +68,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 import javax.swing.WindowConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -345,9 +349,20 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
           width = Settings.propColumnWidth.getInt();
         }
 
-        TextAreaIcon icon = new TextAreaIcon(HTMLTextHelper.convertHtmlToText(item.getDescription()), new JLabel().getFont(), width, 2);
+        TextAreaIcon icon = new TextAreaIcon(HTMLTextHelper.convertHtmlToText(item.getDescription()), UIManager.getFont("Label.font"), width, 2);
 
-        JLabel iconLabel = new JLabel("");
+        JLabel iconLabel = new JLabel("") {
+          @Override
+          protected void paintComponent(Graphics g) {
+            Graphics2D g2 = (Graphics2D)g;
+            RenderingHints rh = new RenderingHints(
+                     RenderingHints.KEY_TEXT_ANTIALIASING,
+                     RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+            g2.setRenderingHints(rh);
+            
+            super.paintComponent(g);
+          }
+        };
         iconLabel.setIcon(icon);
 
         pb.add(iconLabel, cc.xyw(2,4,3));
