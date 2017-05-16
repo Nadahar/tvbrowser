@@ -38,6 +38,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import devplugin.Date;
 import devplugin.Program;
 import tvbrowser.core.Settings;
+import tvbrowser.core.plugin.PluginManagerImpl;
 import util.settings.PluginPictureSettings;
 import util.settings.ProgramPanelSettings;
 
@@ -152,7 +153,7 @@ public class ProgramTableCellRenderer extends DefaultTableCellRenderer {
             mMainPanel.setEnabled(label.isEnabled());
             mMainPanel.setBorder(label.getBorder());
 
-            if (table.getRowHeight(row) != mMainPanel.getPreferredSize().height) {
+            if (table.getRowHeight(row) != mMainPanel.getPreferredSize().height && !PluginManagerImpl.getInstance().getExampleProgram().equals((Program)value)) {
               table.setRowHeight(row, mMainPanel.getPreferredSize().height);
             }
             
