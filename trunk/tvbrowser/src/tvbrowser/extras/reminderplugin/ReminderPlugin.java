@@ -108,7 +108,7 @@ import util.ui.persona.Persona;
 public class ReminderPlugin {
 
   /** The localizer for this class. */
-  static Localizer mLocalizer = util.ui.Localizer
+  static Localizer LOCALIZER = util.ui.Localizer
       .getLocalizerFor(ReminderPlugin.class);
 
   private static KeyStroke STROKE_FRAME_REMINDERS_SHOW = null;
@@ -125,7 +125,7 @@ public class ReminderPlugin {
 
   private ConfigurationHandler mConfigurationHandler;
 
-  private static final PluginTreeNode mRootNode = new PluginTreeNode(mLocalizer.msg("pluginName","Reminders"));
+  private static final PluginTreeNode mRootNode = new PluginTreeNode(LOCALIZER.msg("pluginName","Reminders"));
 
   private boolean mHasRightToStartTimer = false;
 
@@ -164,13 +164,13 @@ public class ReminderPlugin {
           mReminderList.toggleTimer();
           
           if(mReminderList.isActive()) {
-            putValue(Action.NAME, mLocalizer.msg("stopTimer", "Pause Reminder"));
-            toggleTimer.putValue(Action.SHORT_DESCRIPTION, mLocalizer.msg("stopTimerDesc", "Pause Reminder until reactivation"));
+            putValue(Action.NAME, LOCALIZER.msg("stopTimer", "Pause Reminder"));
+            toggleTimer.putValue(Action.SHORT_DESCRIPTION, LOCALIZER.msg("stopTimerDesc", "Pause Reminder until reactivation"));
             putValue(ToolBar.ACTION_IS_SELECTED, Boolean.valueOf(false));
           }
           else {
-            putValue(Action.NAME, mLocalizer.msg("continueTimer", "Continue Reminder"));
-            toggleTimer.putValue(Action.SHORT_DESCRIPTION, mLocalizer.msg("continueTimer", "Continue Reminder"));
+            putValue(Action.NAME, LOCALIZER.msg("continueTimer", "Continue Reminder"));
+            toggleTimer.putValue(Action.SHORT_DESCRIPTION, LOCALIZER.msg("continueTimer", "Continue Reminder"));
             putValue(ToolBar.ACTION_IS_SELECTED, Boolean.valueOf(true));
           }
           
@@ -179,9 +179,9 @@ public class ReminderPlugin {
       }
     };
     
-    toggleTimer.putValue(Action.NAME, mLocalizer.msg("stopTimer", "Pause Reminder"));
+    toggleTimer.putValue(Action.NAME, LOCALIZER.msg("stopTimer", "Pause Reminder"));
     toggleTimer.putValue(Plugin.ACTION_ID_KEY, TOGGLE_ACTION_ID);
-    toggleTimer.putValue(Action.SHORT_DESCRIPTION, mLocalizer.msg("stopTimerDesc", "Pause Reminder until reactivation"));
+    toggleTimer.putValue(Action.SHORT_DESCRIPTION, LOCALIZER.msg("stopTimerDesc", "Pause Reminder until reactivation"));
     toggleTimer.putValue(Action.SMALL_ICON, IconLoader.getInstance().getIconFromTheme("actions", "reminder-stop", 16));
     toggleTimer.putValue(Plugin.BIG_ICON, IconLoader.getInstance().getIconFromTheme("actions", "reminder-stop", 22));
     toggleTimer.putValue(ToolBar.ACTION_TYPE_KEY, ToolBar.TOOGLE_BUTTON_ACTION);
@@ -298,7 +298,7 @@ public class ReminderPlugin {
   }
 
   static String getName() {
-    return mLocalizer.msg("pluginName","Reminder");
+    return LOCALIZER.msg("pluginName","Reminder");
   }
 
   /**
@@ -674,7 +674,7 @@ public class ReminderPlugin {
     
     if(item != null || program.equals(PluginManagerImpl.getInstance().getExampleProgram())) {
       actions.add(new ActionMenu(ContextMenuSeparatorAction.getInstance()));
-      actions.add(new ActionMenu(Integer.MAX_VALUE, new AbstractAction(mLocalizer.msg("comment",
+      actions.add(new ActionMenu(Integer.MAX_VALUE, new AbstractAction(LOCALIZER.msg("comment",
           "Change comment"), TVBrowserIcons.edit(TVBrowserIcons.SIZE_SMALL)) {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -690,7 +690,7 @@ public class ReminderPlugin {
     }
  
     ContextMenuAction action = new ContextMenuAction();
-    action.setText(mLocalizer.msg("contextMenuText", "Remind me"));
+    action.setText(LOCALIZER.msg("contextMenuText", "Remind me"));
     action.setSmallIcon(IconLoader.getInstance().getIconFromTheme("actions",
         "appointment-new", 16));
     action.setActionListener(event -> {
@@ -886,7 +886,7 @@ public class ReminderPlugin {
       }
     };
     editReminders.putValue(Action.SMALL_ICON, IconLoader.getInstance().getIconFromTheme("apps", "appointment", 16));
-    editReminders.putValue(Action.NAME, mLocalizer.ellipsisMsg("buttonText", "Edit reminder list"));
+    editReminders.putValue(Action.NAME, LOCALIZER.ellipsisMsg("buttonText", "Edit reminder list"));
 
     Action openSettings = new AbstractAction() {
       public void actionPerformed(ActionEvent e) {
@@ -945,11 +945,11 @@ public class ReminderPlugin {
       }
     };
 
-    action.putValue(Action.NAME, mLocalizer.msg("showReminderList", "Show Edit Reminder list"));
+    action.putValue(Action.NAME, LOCALIZER.msg("showReminderList", "Show Edit Reminder list"));
     action.putValue(Action.SMALL_ICON, IconLoader.getInstance()
         .getIconFromTheme("apps", "appointment", 16));
     action.putValue(Plugin.BIG_ICON, IconLoader.getInstance().getIconFromTheme("apps", "appointment", 22));
-    action.putValue(Action.SHORT_DESCRIPTION, mLocalizer.msg("description",
+    action.putValue(Action.SHORT_DESCRIPTION, LOCALIZER.msg("description",
         "Reminds you of programs to not miss them."));
     action.putValue(Plugin.ACTION_ID_KEY, REMINDER_LIST_ACTION_ID);
     
@@ -959,16 +959,16 @@ public class ReminderPlugin {
           FrameReminders.getInstance().openShow();
         }
         else {
-          JOptionPane.showMessageDialog(UiUtilities.getLastModalChildOf(MainFrame.getInstance()), mLocalizer.msg("info.noCollectedReminders.message", "The window with the collected Reminders is\nnot acitvated, therefor it cannot be shown."), mLocalizer.msg("info.noCollectedReminders.title", "Collected Reminders not activated"), JOptionPane.INFORMATION_MESSAGE);
+          JOptionPane.showMessageDialog(UiUtilities.getLastModalChildOf(MainFrame.getInstance()), LOCALIZER.msg("info.noCollectedReminders.message", "The window with the collected Reminders is\nnot acitvated, therefor it cannot be shown."), LOCALIZER.msg("info.noCollectedReminders.title", "Collected Reminders not activated"), JOptionPane.INFORMATION_MESSAGE);
         }
       }
     };
 
-    actionShowCurrentReminders.putValue(Action.NAME, mLocalizer.msg("showCurrentReminderList", "Show current Reminder list"));
+    actionShowCurrentReminders.putValue(Action.NAME, LOCALIZER.msg("showCurrentReminderList", "Show current Reminder list"));
     actionShowCurrentReminders.putValue(Action.SMALL_ICON, IconLoader.getInstance()
         .getIconFromTheme("apps", "appointment", 16));
     actionShowCurrentReminders.putValue(Plugin.BIG_ICON, IconLoader.getInstance().getIconFromTheme("apps", "appointment", 22));
-    actionShowCurrentReminders.putValue(Action.SHORT_DESCRIPTION, mLocalizer.msg("description",
+    actionShowCurrentReminders.putValue(Action.SHORT_DESCRIPTION, LOCALIZER.msg("description",
         "Reminds you of programs to not miss them."));
     actionShowCurrentReminders.putValue(Plugin.ACTION_ID_KEY, REMINDER_LIST_ACTION_ID);
     actionShowCurrentReminders.putValue(InternalPluginProxyIf.KEYBOARD_ACCELERATOR, getKeyStrokeFrameReminders());
@@ -1106,7 +1106,7 @@ public class ReminderPlugin {
         }
       }
       else {
-        String msg = mLocalizer.msg( "error.1",
+        String msg = LOCALIZER.msg( "error.1",
           "Error loading reminder sound file!\n({0})" , fileName);
         JOptionPane.showMessageDialog(UiUtilities.getBestDialogParent(MainFrame.getInstance()),msg,Localizer.getLocalization(Localizer.I18N_ERROR),JOptionPane.ERROR_MESSAGE);
       }
@@ -1212,7 +1212,7 @@ public class ReminderPlugin {
   }
 
   public static void resetLocalizer() {
-    mLocalizer = Localizer.getLocalizerFor(ReminderPlugin.class);
+    LOCALIZER = Localizer.getLocalizerFor(ReminderPlugin.class);
   }
 
   public PluginCenterPanelWrapper getPluginCenterPanelWrapper() {

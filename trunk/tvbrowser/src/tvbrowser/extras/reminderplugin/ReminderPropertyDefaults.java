@@ -11,6 +11,7 @@ public final class ReminderPropertyDefaults {
   static final String KEY_SHOW_TIME_COUNTER = "showTimeCounter";
   static final String KEY_FRAME_REMINDERS_TO_FRONT_WHEN_REMINDER_ADDED = "frameRemindersToFrontOnAdd";
   
+  static final String VALUE_AUTO_CLOSE_BEHAVIOUR_ON_NEVER = "never";
   static final String VALUE_AUTO_CLOSE_BEHAVIOUR_ON_END = "onEnd";
   static final String VALUE_AUTO_CLOSE_BEHAVIOUR_ON_TIME = "onTime";
   
