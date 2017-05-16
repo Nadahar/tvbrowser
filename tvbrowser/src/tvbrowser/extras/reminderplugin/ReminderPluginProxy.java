@@ -115,7 +115,7 @@ public class ReminderPluginProxy extends AbstractInternalPluginProxy implements 
   }
 
   public String getButtonActionDescription() {
-    return ReminderPlugin.mLocalizer.msg("description","The reminder function of TV-Browser.");
+    return ReminderPlugin.LOCALIZER.msg("description","The reminder function of TV-Browser.");
   }
 
   public Icon getIcon() {

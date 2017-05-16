@@ -165,15 +165,13 @@ public class PanelReminder extends ScrollableJPanel {
     if(msg != null) {
       mHeader.setText(msg);
     }
-    
-    if (mRemainingSecs > 0) {
-      updateCloseBtText();
-      mAutoCloseTimer = new Timer(1000, e -> {
-          handleTimerEvent();
-        }
-      );
-      mAutoCloseTimer.start();
-    }
+
+    updateCloseBtText();
+    mAutoCloseTimer = new Timer(1000, e -> {
+        handleTimerEvent();
+      }
+    );
+    mAutoCloseTimer.start();
     
     final JPanel channelPanel = new JPanel(new FormLayout("50dlu:grow,5dlu,default","fill:0dlu:grow,default,default,default,fill:0dlu:grow"));
     channelPanel.add(mProgramPanel, CC.xywh(1, 1, 1, 5));
@@ -276,7 +274,13 @@ public class PanelReminder extends ScrollableJPanel {
     mRemainingSecs = Math.max(0, (int)(mAutoCloseAtMillis - System.currentTimeMillis()) / 1000);
 
     if (mRemainingSecs <= 0) {
-      mCloseInterface.close(this);
+      if(!ReminderPlugin.getInstance().getSettings().getProperty(ReminderPropertyDefaults.KEY_AUTO_CLOSE_BEHAVIOUR,ReminderPropertyDefaults.VALUE_AUTO_CLOSE_BEHAVIOUR_ON_END).equals(ReminderPropertyDefaults.VALUE_AUTO_CLOSE_BEHAVIOUR_ON_NEVER)) {
+        mCloseInterface.close(this);
+      }
+      else {
+        stopTimer();
+        updateRunningTime();
+      }
     } else {
       updateCloseBtText();
       updateRunningTime();
@@ -329,28 +333,33 @@ public class PanelReminder extends ScrollableJPanel {
   
   private String getCloseButtonText(int seconds) {
     final StringBuilder builder = new StringBuilder(mCloseBtText);
-    builder.append(" (");
-    if (seconds <= 60) {
-      builder.append(seconds);
+    
+    if(!ReminderPlugin.getInstance().getSettings().getProperty(ReminderPropertyDefaults.KEY_AUTO_CLOSE_BEHAVIOUR,ReminderPropertyDefaults.VALUE_AUTO_CLOSE_BEHAVIOUR_ON_END).equals(ReminderPropertyDefaults.VALUE_AUTO_CLOSE_BEHAVIOUR_ON_NEVER) && (mRemainingSecs <= 10 || ReminderPlugin.getInstance().getSettings().getProperty("showTimeCounter","false").compareTo("true") == 0)) {
+      builder.append(" (");
+      if (seconds <= 60) {
+        builder.append(seconds);
+      }
+      else {
+        if (seconds >= 3600) {
+          final int hours = seconds / 3600;
+          builder.append(hours).append(":");
+          seconds = seconds - 3600 * hours;
+        }
+        final int minutes = seconds / 60;
+        if (minutes < 10 && minutes > -10) {
+          builder.append("0");
+        }
+        builder.append(minutes).append(":");
+        seconds = seconds - 60 * minutes;
+        if (seconds < 10 && seconds > -10) {
+          builder.append("0");
+        }
+        builder.append(seconds);
+      }
+      builder.append(")");
     }
-    else {
-      if (seconds >= 3600) {
-        final int hours = seconds / 3600;
-        builder.append(hours).append(":");
-        seconds = seconds - 3600 * hours;
-      }
-      final int minutes = seconds / 60;
-      if (minutes < 10 && minutes > -10) {
-        builder.append("0");
-      }
-      builder.append(minutes).append(":");
-      seconds = seconds - 60 * minutes;
-      if (seconds < 10 && seconds > -10) {
-        builder.append("0");
-      }
-      builder.append(seconds);
-    }
-    return builder.append(")").toString();
+    
+    return builder.toString();
   }
   
   private String updateRunningTime() {
@@ -398,8 +407,19 @@ public class PanelReminder extends ScrollableJPanel {
     return mItem;
   }
   
-  public int getNextReminderTime() {
-    return ((RemindValue)mReminderCB.getSelectedItem()).getMinutes();
+  public int getNextReminderTime(boolean ignoreNoReminderIfSelected) {
+    int minutes = ((RemindValue)mReminderCB.getSelectedItem()).getMinutes();
+    
+    if(ignoreNoReminderIfSelected && minutes == ReminderConstants.DONT_REMIND_AGAIN) {
+      for(int i = mReminderCB.getItemCount()-1; i >= 0; i--) {
+        if(mReminderCB.getItemAt(i).getMinutes() != ReminderConstants.DONT_REMIND_AGAIN) {
+          minutes = mReminderCB.getItemAt(i).getMinutes();
+          break;
+        }
+      }
+    }
+    
+    return minutes;
   }
   
   public void stopTimer() {

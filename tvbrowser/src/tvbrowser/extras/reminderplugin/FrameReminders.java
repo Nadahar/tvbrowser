@@ -24,6 +24,7 @@ import com.jgoodies.forms.layout.Sizes;
 import devplugin.Program;
 import tvbrowser.TVBrowser;
 import tvbrowser.core.Settings;
+import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.extras.reminderplugin.PanelReminder.InterfaceClose;
 import util.ui.Localizer;
 import util.ui.ScrollableJPanel;
@@ -38,6 +39,9 @@ public class FrameReminders extends JFrame implements InterfaceClose<PanelRemind
   private final ScrollableJPanel mListReminders;
   private final JScrollPane mScrollPane;
   
+  private final JButton mReschedule;
+  private final JButton mDelete;
+  
   private FrameReminders() {
     mListReminders = new ScrollableJPanel();
     mListReminders.setLayout(new BoxLayout(mListReminders, BoxLayout.Y_AXIS));
@@ -48,19 +52,38 @@ public class FrameReminders extends JFrame implements InterfaceClose<PanelRemind
       close();
     });
     
-    final JButton delete = new JButton(TVBrowserIcons.delete(TVBrowserIcons.SIZE_SMALL));
-    delete.setToolTipText(Localizer.getLocalization(Localizer.I18N_DELETE));
-    delete.addActionListener(e -> {
+    mReschedule = new JButton(IconLoader.getInstance().getIconFromTheme("actions", "appointment-new", 16));
+    mReschedule.setEnabled(false);
+    mReschedule.setToolTipText(ReminderPlugin.LOCALIZER.msg("reschedule", "Close current Reminders and reschedule possible Reminders."));
+    mReschedule.addActionListener(e -> {
       for(int i = mListReminders.getComponentCount()-1; i >= 0; i--) {
-        close((PanelReminder)mListReminders.getComponent(i), false);
+        close((PanelReminder)mListReminders.getComponent(i), false, true);
+      }
+      
+      if(ReminderPlugin.getInstance().getSettings().getProperty(ReminderPropertyDefaults.KEY_AUTO_CLOSE_FRAME_REMINDERS_IF_EMTPY, "true").equals("true")) {
+        close();
       }
     });
     
-    final JPanel content = new JPanel(new FormLayout("default,100dlu:grow,default","fill:100dlu:grow,5dlu,default"));
+    mDelete = new JButton(TVBrowserIcons.delete(TVBrowserIcons.SIZE_SMALL));
+    mDelete.setEnabled(false);
+    mDelete.setToolTipText(Localizer.getLocalization(Localizer.I18N_DELETE));
+    mDelete.addActionListener(e -> {
+      for(int i = mListReminders.getComponentCount()-1; i >= 0; i--) {
+        close((PanelReminder)mListReminders.getComponent(i), false, false);
+      }
+      
+      if(ReminderPlugin.getInstance().getSettings().getProperty(ReminderPropertyDefaults.KEY_AUTO_CLOSE_FRAME_REMINDERS_IF_EMTPY, "true").equals("true")) {
+        close();
+      }
+    });
+    
+    final JPanel content = new JPanel(new FormLayout("default,100dlu:grow,default,5dlu,default","fill:100dlu:grow,5dlu,default"));
     content.setBorder(Borders.DIALOG);
-    content.add(delete, CC.xy(1, 3));
-    content.add(mScrollPane, CC.xyw(1, 1, 3));
-    content.add(close, CC.xy(3, 3));
+    content.add(mDelete, CC.xy(1, 3));
+    content.add(mScrollPane, CC.xyw(1, 1, 5));
+    content.add(mReschedule, CC.xy(3, 3));
+    content.add(close, CC.xy(5, 3));
     
     setContentPane(content);
     getRootPane().setDefaultButton(close);
@@ -93,6 +116,11 @@ public class FrameReminders extends JFrame implements InterfaceClose<PanelRemind
     });
     
     Settings.layoutWindow("reminderFrameReminders", this, new Dimension(Sizes.dialogUnitXAsPixel(400, this), Sizes.dialogUnitYAsPixel(300, this)));
+  }
+  
+  private void updateButtons() {
+    mReschedule.setEnabled(mListReminders.getComponentCount() > 0);
+    mDelete.setEnabled(mListReminders.getComponentCount() > 0);
   }
   
   public static synchronized FrameReminders getInstance() {
@@ -142,17 +170,19 @@ public class FrameReminders extends JFrame implements InterfaceClose<PanelRemind
     }catch(Throwable t) {
       t.printStackTrace();
     }
+    
+    updateButtons();
   }
 
   @Override
   public void close(final PanelReminder item) {
-    close(item, ReminderPlugin.getInstance().getSettings().getProperty(ReminderPropertyDefaults.KEY_AUTO_CLOSE_FRAME_REMINDERS_IF_EMTPY, "true").equals("true"));
+    close(item, ReminderPlugin.getInstance().getSettings().getProperty(ReminderPropertyDefaults.KEY_AUTO_CLOSE_FRAME_REMINDERS_IF_EMTPY, "true").equals("true"), false);
   }
   
-  public void close(final PanelReminder item, boolean closeFrameIfEmptry) {
+  public void close(final PanelReminder item, boolean closeFrameIfEmptry, boolean reschedule) {
     if(item != null) {
       final ReminderListItem reminder = item.getItem();
-      final int minutes = item.getNextReminderTime();
+      final int minutes = item.getNextReminderTime(reschedule);
       item.stopTimer();
       
       mListReminders.remove(item);
@@ -176,6 +206,8 @@ public class FrameReminders extends JFrame implements InterfaceClose<PanelRemind
       
       ReminderListDialog.updateReminderList();
     }
+    
+    updateButtons();
     
     if(mListReminders.getComponentCount() < 1 && closeFrameIfEmptry) {
       close();
@@ -229,6 +261,8 @@ public class FrameReminders extends JFrame implements InterfaceClose<PanelRemind
       mListReminders.revalidate();
     }
     
+    updateButtons();
+    
     if(mListReminders.getComponentCount() < 1 && ReminderPlugin.getInstance().getSettings().getProperty(ReminderPropertyDefaults.KEY_AUTO_CLOSE_FRAME_REMINDERS_IF_EMTPY, "true").equals("true")) {
       close();
     }
@@ -240,6 +274,8 @@ public class FrameReminders extends JFrame implements InterfaceClose<PanelRemind
   }
   
   public void openShow() {
+    updateButtons();
+    
     if(!isVisible()) {
   	  setVisible(true);
   	}
