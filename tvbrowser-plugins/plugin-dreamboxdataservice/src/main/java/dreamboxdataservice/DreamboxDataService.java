@@ -73,7 +73,7 @@ public class DreamboxDataService extends AbstractTvDataService {
      */
     private static final Localizer mLocalizer = Localizer.getLocalizerFor(DreamboxDataService.class);
 
-    private static final Version VERSION = new Version(0, 7, 0);
+    private static final Version VERSION = new Version(0, 8, 0);
 
     private ChannelGroup mChannelGroup = new ChannelGroupImpl("Dreambox", "Dreambox", "Dreambox", "Dreambox");
 
@@ -119,7 +119,7 @@ public class DreamboxDataService extends AbstractTvDataService {
 
         mChannels = new ArrayList<Channel>();
 
-        TimeZone timeZone = TimeZone.getTimeZone("GMT+1:00");
+        TimeZone timeZone = TimeZone.getTimeZone("CET");
         for (int i = 0; i < numChannels; i++) {
             Channel ch = new Channel(this, settings.getProperty("ChannelTitle-" + i, ""), settings.getProperty("ChannelId-"
                     + i, ""), timeZone, "de", "Imported from Dreambox", "", mChannelGroup, null, Channel.CATEGORY_TV);
