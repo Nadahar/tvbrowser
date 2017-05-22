@@ -2134,6 +2134,22 @@ public class Settings {
   public static final BooleanProperty propAlwaysShowTabBarForCenterPanel = new BooleanProperty(
       mProp, "alwaysShowTabBarForCenterPanel", true);
   
+  /** Value for name only settings */
+  public static final int VALUE_NAME_ONLY = 0;
+  
+  /** Value for icon only settings */
+  public static final int VALUE_ICON_ONLY = 1;
+  
+  /** Value for name and icon settings */
+  public static final int VALUE_NAME_AND_ICON = 2;
+  
+  /**
+   * Property of name and icon showing of tab bar in center panel.
+   * @since 3.4.5
+   */
+  public static final IntProperty propTabBarCenterPanelNameIconConfig = new IntProperty(
+      mProp, "pbBarCenterPanelNameIconConfig", 2);
+  
   /**
    * Array with the panel IDs shown in the center panel of TV-Browser main window.
    * @since 3.2

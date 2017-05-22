@@ -23,6 +23,7 @@
  */
 package devplugin;
 
+import javax.swing.Icon;
 import javax.swing.JPanel;
 
 /**
@@ -38,6 +39,42 @@ import javax.swing.JPanel;
  * @since 3.2
  */
 public abstract class PluginCenterPanel {
+  private String mSettingsId;
+  private Icon mIcon;
+  
+  /**
+   * @param settingsId The settings ID of the plugin of this center panel.
+   * @since 3.4.5
+   */
+  public final void setSettingsId(String settingsId) {
+    mSettingsId = settingsId;
+  }
+  
+  /**
+   * @return The settings ID of this center panels plugin or <code>null</code>
+   * if there are no settings.
+   * @since 3.4.5 
+   */
+  public final String getSettingsId() {
+    return mSettingsId;
+  }
+  
+  /**
+   * @param icon The icon to use for tab
+   * @since 3.4.5
+   */
+  public final void setIcon(Icon icon) {
+    mIcon = icon;
+  }
+  
+  /**
+   * @return The icon for this panel or <code>null</code>
+   * @since 3.4.5
+   */
+  public final Icon getIcon() {
+    return mIcon;
+  }
+  
   /**
    * Gets the name of this PluginCenterPanel
    * that is used to show in the tab bar of
