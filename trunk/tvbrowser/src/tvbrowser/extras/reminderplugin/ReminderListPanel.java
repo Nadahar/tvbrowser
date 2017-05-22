@@ -1,7 +1,6 @@
 package tvbrowser.extras.reminderplugin;
 
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Rectangle;
 import java.awt.Window;

@@ -1432,15 +1432,13 @@ private static Font getDynamicFontSize(Font font, int offset) {
   }
   
   private int getLineGap(Font f) {
-    int result = 0;
+    int result = 1;
     
-    if(!Settings.propUseDefaultFonts.getBoolean()) {
-      switch(Settings.propProgramTextLineGap.getInt()) {
-        case 1: result = f.getSize()/4;break;
-        case 2: result = f.getSize()/2;break;
-        case 3: result = (int)(f.getSize()*3/4.);break;
-        case 4: result = f.getSize();break;
-      }
+    switch(Settings.propProgramTextLineGap.getInt()) {
+      case 1: result = f.getSize()/4;break;
+      case 2: result = f.getSize()/2;break;
+      case 3: result = (int)(f.getSize()*3/4.);break;
+      case 4: result = f.getSize();break;
     }
     
     return result;
