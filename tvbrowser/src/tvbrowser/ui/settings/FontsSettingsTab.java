@@ -65,7 +65,7 @@ public class FontsSettingsTab implements devplugin.SettingsTab {
   public JPanel createSettingsPanel() {
     PanelBuilder mainPanel = new PanelBuilder(new FormLayout("5dlu, 10dlu, default, 3dlu, default, fill:3dlu:grow",
         "default, 5dlu, default, default, 3dlu, default, 13dlu, default, 3dlu, default," +
-        " 3dlu, default, 3dlu, default"));
+        " 3dlu, default, 10dlu, default"));
     mainPanel.border(Borders.DIALOG);
     
     int y = 1;
@@ -113,7 +113,7 @@ public class FontsSettingsTab implements devplugin.SettingsTab {
     y += 2;
         
     mTextLineGapLabel = new JLabel(mLocalizer.msg("lineSpacing", "Line spacing:"));
-    mainPanel.add(mTextLineGapLabel, CC.xy(3,y));
+    mainPanel.add(mTextLineGapLabel, CC.xyw(2,y,2));
     mTextLineGap = new JComboBox<>(new String[] {
         mLocalizer.msg("lineSpacing.singleLine", "Single line"),
         mLocalizer.msg("lineSpacing.oneAndAQuaterLine", "1.25 line"),
@@ -141,8 +141,6 @@ public class FontsSettingsTab implements devplugin.SettingsTab {
     mChannelNameFontPanel.setEnabled(enable);
     mTimeFontLabel.setEnabled(enable);
     mTimeFontPanel.setEnabled(enable);
-    mTextLineGapLabel.setEnabled(enable);
-    mTextLineGap.setEnabled(enable);
   }
   
   /**
