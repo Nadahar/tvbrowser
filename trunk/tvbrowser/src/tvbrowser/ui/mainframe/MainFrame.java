@@ -95,6 +95,7 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ActionMap;
 import javax.swing.BorderFactory;
+import javax.swing.Icon;
 import javax.swing.InputMap;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
@@ -193,6 +194,7 @@ import util.misc.OperatingSystem;
 import util.programkeyevent.ProgramKeyEventHandler;
 import util.settings.ContextMenuMouseActionSetting;
 import util.ui.Localizer;
+import util.ui.TVBrowserIcons;
 import util.ui.UIThreadRunner;
 import util.ui.UiUtilities;
 import util.ui.persona.Persona;
@@ -431,6 +433,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     mCenterPluginView = new PluginView();
     
     mScrollPaneWrapper = new ProgramTableScrollPaneWrapper(mProgramTableScrollPane);
+    mScrollPaneWrapper.setSettingsId(SettingsItem.PROGRAMTABLELOOK);
     mPluginViewWrapper = new PluginViewWrapper(mCenterPluginView);
     
     if(channelArr.length == 0) {
@@ -506,13 +509,35 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
       }
       
       private void showContextMenu(MouseEvent e) {
-        JMenuItem settings = new JMenuItem(mLocalizer.msg("configTabs", "Configure tabs..."));
+        final JMenuItem settings = new JMenuItem(mLocalizer.msg("configTabs", "Configure tabs..."), TVBrowserIcons.preferences(TVBrowserIcons.SIZE_SMALL));
         settings.addActionListener(evt -> {
           showSettingsDialog(SettingsItem.CENTERPANELSETUP);
         });
         
-        JPopupMenu popup = new JPopupMenu();
+        final JPopupMenu popup = new JPopupMenu();
         popup.add(settings);
+        
+        try {
+        int index = mCenterTabPane.indexAtLocation(e.getX(), e.getY());
+        
+        if(index >= 0) {
+          final String settingsId = ((JComponent)mCenterTabPane.getComponentAt(index)).getName();
+          
+          if(settingsId != null) {
+            final String name = SettingsItem.PROGRAMTABLELOOK.equals(settingsId) ? mLocalizer.msg("configProgramTable","Configure program table...") : mLocalizer.msg("configPlugins","Configure plugin..."); 
+            
+            JMenuItem settingsPlugin = new JMenuItem(name);
+            settingsPlugin.addActionListener(evt -> {
+              showSettingsDialog(settingsId);
+            });
+            
+            popup.addSeparator();
+            popup.add(settingsPlugin);
+          }
+        }
+        }catch(Throwable t) {t.printStackTrace();}
+        
+        
         
         popup.show(e.getComponent(), e.getPoint().x, e.getPoint().y);
       }
@@ -3318,6 +3343,12 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
             
             for(PluginCenterPanel panel : panels) {
               if(panel != null && panel.getPanel() != null && panel.getName() != null && panel.getId() != null) {
+                panel.setSettingsId(plugin.getId());
+                
+                if(panel.getIcon() == null) {
+                  panel.setIcon(plugin.getPluginIcon());
+                }
+                
                 centerPanelList.add(panel);
               }
             }
@@ -3331,11 +3362,18 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
         
         if(wrapper != null) {
           mCenterPanelWrapperList.add(wrapper);
+          
           try {
             PluginCenterPanel[] panels = wrapper.getCenterPanels();
             
             for(PluginCenterPanel panel : panels) {
               if(panel != null && panel.getPanel() != null && panel.getName() != null && panel.getId() != null) {
+                panel.setSettingsId(internalPlugin.getSettingsId());
+                
+                if(panel.getIcon() == null) {
+                  panel.setIcon(internalPlugin.getIcon());
+                }
+                
                 centerPanelList.add(panel);
               }
             }
@@ -3394,7 +3432,25 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
         }
         
         for(PluginCenterPanel panel : usedCenterPanelList) {
-          mCenterTabPane.addTab(panel.getName(), panel.getPanel());
+          final JPanel jPanel = panel.getPanel();
+          jPanel.setName(panel.getSettingsId());
+          
+          String name = panel.getName();
+          Icon icon = panel.getIcon();
+          
+          if(Settings.propTabBarCenterPanelNameIconConfig.getInt() == Settings.VALUE_NAME_ONLY) {
+            icon = null;
+          }
+          else if(Settings.propTabBarCenterPanelNameIconConfig.getInt() == Settings.VALUE_ICON_ONLY
+              && icon != null) {
+            name = null;
+          }
+          
+          if(name != null && icon != null) {
+            name += " ";
+          }
+          
+          mCenterTabPane.addTab(name, icon, jPanel);
           
           if(addNew) {
             usedIdList.add(panel.getId());

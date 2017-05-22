@@ -26,14 +26,16 @@ package tvbrowser.ui.settings;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.ButtonGroup;
 import javax.swing.Icon;
 import javax.swing.JCheckBox;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.factories.Borders;
-import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.factories.CC;
 import com.jgoodies.forms.layout.FormLayout;
 
 import devplugin.PluginCenterPanel;
@@ -56,6 +58,8 @@ public class CenterPanelSettingsTab implements SettingsTab {
   private OrderChooser<PluginCenterPanel> mPanelChooser;
   private JCheckBox mTabBarAlwaysVisible;
   private ArrayList<PluginCenterPanel> mAllPanelList;
+  
+  private JRadioButton mNameOnly, mIconOnly, mNameAndIcon;
   
   @Override
   public JPanel createSettingsPanel() {
@@ -113,15 +117,29 @@ public class CenterPanelSettingsTab implements SettingsTab {
     mPanelChooser = new OrderChooser<>(currentOrderList.toArray(new PluginCenterPanel[currentOrderList.size()]), mAllPanelList.toArray(new PluginCenterPanel[mAllPanelList.size()]));
     mTabBarAlwaysVisible = new JCheckBox(mLocalizer.msg("alwaysShowTabs", "Always show tabs"), Settings.propAlwaysShowTabBarForCenterPanel.getBoolean());
     
-    CellConstraints cc = new CellConstraints();
+    mNameOnly = new JRadioButton(mLocalizer.msg("nameOnly", "Name only"), Settings.propTabBarCenterPanelNameIconConfig.getInt() == Settings.VALUE_NAME_ONLY);
+    mIconOnly = new JRadioButton(mLocalizer.msg("iconOnly", "Icon only (if available)"), Settings.propTabBarCenterPanelNameIconConfig.getInt() == Settings.VALUE_ICON_ONLY);
+    mNameAndIcon = new JRadioButton(mLocalizer.msg("nameAndIcon", "Name and icon"), Settings.propTabBarCenterPanelNameIconConfig.getInt() == Settings.VALUE_NAME_AND_ICON);
     
-    PanelBuilder pb = new PanelBuilder(new FormLayout("5dlu,default:grow,5dlu","default,5dlu,fill:default:grow,5dlu,default"));
+    final ButtonGroup bg = new ButtonGroup();
+    
+    bg.add(mNameOnly);
+    bg.add(mIconOnly);
+    bg.add(mNameAndIcon);
+    
+    PanelBuilder pb = new PanelBuilder(new FormLayout("5dlu,default:grow,5dlu",
+        "default,5dlu,fill:default:grow,5dlu,default,10dlu,default,5dlu,default,1dlu,default,1dlu,default"));
     
     pb.border(Borders.DIALOG);
     
-    pb.addSeparator(mLocalizer.msg("info", "Shown tabs in the main window"), cc.xyw(1, 1, 3));
-    pb.add(mPanelChooser, cc.xy(2,3));
-    pb.add(mTabBarAlwaysVisible, cc.xy(2, 5));
+    pb.addSeparator(mLocalizer.msg("info", "Shown tabs in the main window"), CC.xyw(1, 1, 3));
+    pb.add(mPanelChooser, CC.xy(2,3));
+    pb.add(mTabBarAlwaysVisible, CC.xy(2, 5));
+    
+    pb.addSeparator(mLocalizer.msg("nameAndIconSep", "Name and icon display"), CC.xyw(1, 7, 3));
+    pb.add(mNameOnly, CC.xy(2, 9));
+    pb.add(mIconOnly, CC.xy(2, 11));
+    pb.add(mNameAndIcon, CC.xy(2, 13));
     
     return pb.getPanel();
   }
@@ -159,6 +177,17 @@ public class CenterPanelSettingsTab implements SettingsTab {
     Settings.propCenterPanelArr.setStringArray(idList.toArray(new String[idList.size()]));
     Settings.propAlwaysShowTabBarForCenterPanel.setBoolean(mTabBarAlwaysVisible.isSelected());
     Settings.propDisabledCenterPanelArr.setStringArray(disabledIdList.toArray(new String[disabledIdList.size()]));
+    
+    int selection = Settings.VALUE_NAME_AND_ICON;
+    
+    if(mNameOnly.isSelected()) {
+      selection = Settings.VALUE_NAME_ONLY;
+    }
+    else if(mIconOnly.isSelected()) {
+      selection = Settings.VALUE_ICON_ONLY;
+    }
+    
+    Settings.propTabBarCenterPanelNameIconConfig.setInt(selection);
   }
 
   @Override

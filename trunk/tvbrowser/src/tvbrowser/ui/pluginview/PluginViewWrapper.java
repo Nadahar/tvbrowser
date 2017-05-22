@@ -26,7 +26,7 @@ package tvbrowser.ui.pluginview;
 import javax.swing.JPanel;
 
 import tvbrowser.ui.mainframe.MenuBar;
-
+import tvbrowser.ui.mainframe.actions.TVBrowserActions;
 import devplugin.PluginCenterPanel;
 
 /**
@@ -41,6 +41,7 @@ public class PluginViewWrapper extends PluginCenterPanel {
   
   public PluginViewWrapper(PluginView view) {
     mPluginView = view;
+    setIcon(TVBrowserActions.pluginView.getIcon());
   }
   
   @Override
