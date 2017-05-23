@@ -24,6 +24,7 @@
 package idontwant2see;
 
 import java.awt.AWTEvent;
+import java.awt.Dialog.ModalityType;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.Window;
@@ -106,7 +107,7 @@ public final class IDontWant2See extends Plugin implements AWTEventListener {
   private static final String DONT_WANT_TO_SEE_IMPORT_SYNC_ADDRESS = "http://android.tvbrowser.org/data/scripts/syncDown.php?type=dontWantToSee";
   
   private static final boolean PLUGIN_IS_STABLE = true;
-  private static final Version PLUGIN_VERSION = new Version(0, 15, 8, PLUGIN_IS_STABLE);
+  private static final Version PLUGIN_VERSION = new Version(0, 15, 9, PLUGIN_IS_STABLE);
 
   private static final String RECEIVE_TARGET_EXCLUDE_EXACT = "target_exclude_exact";
 
@@ -698,10 +699,10 @@ public final class IDontWant2See extends Plugin implements AWTEventListener {
         }
         final JComboBox input = new JComboBox(items.toArray(new String[items.size()]));
         input.setEditable(true);
-
+        
         input.addAncestorListener(new AncestorListener() {
           public void ancestorAdded(final AncestorEvent event) {
-            event.getComponent().requestFocus();
+            event.getComponent().requestFocusInWindow();
           }
 
           public void ancestorMoved(final AncestorEvent event) {
@@ -710,13 +711,17 @@ public final class IDontWant2See extends Plugin implements AWTEventListener {
           public void ancestorRemoved(final AncestorEvent event) {
           }
         });
-
-        if (JOptionPane.showConfirmDialog(UiUtilities
-            .getLastModalChildOf(getParentFrame()), new Object[] {
+        
+        JOptionPane pane = new JOptionPane(new Object[] {
             mLocalizer.msg("exclusionText",
                 "What should be excluded? (You can use the wildcard *)"),
-            input, caseSensitive }, mLocalizer.msg("exclusionTitle",
-            "Exclusion value entering"), JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
+            input, caseSensitive }, JOptionPane.QUESTION_MESSAGE, JOptionPane.OK_CANCEL_OPTION);
+        JDialog d = pane.createDialog(UiUtilities.getLastModalChildOf(getParentFrame()), mLocalizer.msg("exclusionTitle",
+            "Exclusion value entering"));
+        d.setModalityType(ModalityType.DOCUMENT_MODAL);
+        d.setVisible(true);
+        
+        if (pane.getValue() != null && (pane.getValue() instanceof Integer && ((Integer)pane.getValue()).intValue() == JOptionPane.OK_OPTION)) {
           String test = "";
 
           String result = (String) input.getSelectedItem();
