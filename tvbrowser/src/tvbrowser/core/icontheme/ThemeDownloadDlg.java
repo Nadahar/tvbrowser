@@ -30,6 +30,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Rectangle;
 import java.awt.Window;
+import java.awt.Dialog.ModalityType;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
@@ -89,7 +90,7 @@ public class ThemeDownloadDlg extends JDialog implements WindowClosingIf {
   private File mDownloadDirectory;
     
   public ThemeDownloadDlg(Window parent, int type) {
-    super(parent, ModalityType.APPLICATION_MODAL);
+    super(parent, ModalityType.DOCUMENT_MODAL);
     
     mDownloadDirectory = null;
     mSuccessDownloads = new ArrayList<ThemeDownloadItem>();

@@ -24,19 +24,21 @@
 package tvbrowser.core.filters.filtercomponents;
 
 import java.awt.BorderLayout;
-import java.awt.GridLayout;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Calendar;
 import java.util.Date;
 
-import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerDateModel;
+
+import com.jgoodies.forms.factories.CC;
+import com.jgoodies.forms.factories.DefaultComponentFactory;
+import com.jgoodies.forms.layout.FormLayout;
 
 import devplugin.Program;
 import tvbrowser.core.Settings;
@@ -106,7 +108,8 @@ public class TimeFilterComponent extends AbstractFilterComponent {
   }
 
   public JPanel getSettingsPanel() {
-    JPanel content = new JPanel(new BorderLayout());
+    JPanel content = new JPanel(new FormLayout("5dlu,default,3dlu,default:grow",
+        "5dlu,default,5dlu,default,1dlu,default,5dlu,default"));
 
     mFromTimeSp = new JSpinner(new SpinnerDateModel());
     JSpinner.DateEditor dateEditor = new JSpinner.DateEditor(mFromTimeSp,
@@ -122,20 +125,19 @@ public class TimeFilterComponent extends AbstractFilterComponent {
     mToTimeSp.setValue(setTimeToDate(mToTime));
     CaretPositionCorrector.createCorrector(dateEditor.getTextField(),
         new char[] { ':' }, -1);
-
-    JPanel timePn = new JPanel(new GridLayout(2, 2));
-    timePn.setBorder(BorderFactory.createTitledBorder(mLocalizer.msg(
-        "TimeOfDay", "Uhrzeit")));
-    timePn.add(new JLabel(mLocalizer.msg("from", "from")));
-    timePn.add(mFromTimeSp);
-    timePn.add(new JLabel(mLocalizer.msg("till", "till")));
-    timePn.add(mToTimeSp);
-
+    
     mIncludeBtn = new JCheckBox(mLocalizer.msg("includeRunning",
         "Include programs running at start time"));
     mIncludeBtn.setSelected(mShowRunning);
-    content.add(timePn, BorderLayout.CENTER);
-    content.add(mIncludeBtn, BorderLayout.SOUTH);
+    
+    content.add(DefaultComponentFactory.getInstance().createSeparator(mLocalizer.msg(
+        "TimeOfDay", "Time of day")), CC.xyw(1, 2, 4));
+    
+    content.add(new JLabel(mLocalizer.msg("from", "from")), CC.xy(2, 4));
+    content.add(mFromTimeSp, CC.xy(4, 4));
+    content.add(new JLabel(mLocalizer.msg("till", "till")), CC.xy(2, 6));
+    content.add(mToTimeSp, CC.xy(4, 6));
+    content.add(mIncludeBtn, CC.xyw(2, 8, 3));
 
     JPanel centerPanel = new JPanel(new BorderLayout());
     centerPanel.add(content, BorderLayout.NORTH);

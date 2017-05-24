@@ -115,7 +115,7 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
   private boolean mOkWasPressed;
 
   public EditFilterDlg(Window parent, FilterList filterList, UserFilter filter, boolean fromFilterList) {
-    super(parent, ModalityType.APPLICATION_MODAL);
+    super(parent, ModalityType.DOCUMENT_MODAL);
     init(parent,filterList,filter, fromFilterList);
   }
   
