@@ -43,6 +43,7 @@ import com.jgoodies.forms.factories.CC;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
+import compat.VersionCompat;
 import devplugin.SettingsTab;
 
 /**
@@ -80,19 +81,29 @@ public class IDontWant2SeeSettingsTab implements SettingsTab {
             "default,2dlu,default,10dlu,default,5dlu,default,1dlu,default,7dlu,default,10dlu,default,5dlu,default,5dlu,default,5dlu,fill:default:grow,10dlu,fill:default:grow"),
             new ScrollableJPanel());
 
-    final PanelBuilder pb2 = new PanelBuilder(new FormLayout(
-        "default,2dlu,0dlu:grow", "default,1dlu,default,default"));
+    final FormLayout layout = new FormLayout("default,2dlu,0dlu:grow", "default,1dlu,default,default");
+    
+    final PanelBuilder pb2 = new PanelBuilder(layout);
 
     mUserName = new JTextField(mSettings.getUserName());
     mUserPassword = new JPasswordField(mSettings.getPassword());
         
-    mSimpleContextMenu = new JRadioButton(mLocalizer.msg(
-        "settings.menu.simple", "Direct in the context menu:"), mSettings
-        .isSimpleMenu());
+    String msg = mLocalizer.msg("settings.menu.simple", "Direct in the context menu:");
+    
+    if(VersionCompat.isAtLeastTvBrowser4()) {
+      msg = IDontWant2See.removeEnd(msg, ":");
+    }
+    
+    mSimpleContextMenu = new JRadioButton(msg, mSettings.isSimpleMenu());
     mSimpleContextMenu.setHorizontalTextPosition(JRadioButton.RIGHT);
 
-    mCascadedContextMenu = new JRadioButton(mLocalizer.msg(
-        "settings.menu.cascaded", "In a sub menu:"), !mSettings.isSimpleMenu());
+    msg = mLocalizer.msg("settings.menu.cascaded", "In a sub menu:");
+    
+    if(VersionCompat.isAtLeastTvBrowser4()) {
+      msg = IDontWant2See.removeEnd(msg, ":");
+    }
+    
+    mCascadedContextMenu = new JRadioButton(msg, !mSettings.isSimpleMenu());
     mCascadedContextMenu.setHorizontalTextPosition(JRadioButton.RIGHT);
     mCascadedContextMenu.setVerticalAlignment(JRadioButton.TOP);
 
@@ -104,21 +115,30 @@ public class IDontWant2SeeSettingsTab implements SettingsTab {
     int y = 1;
     
     pb2.add(mSimpleContextMenu, cc.xy(1, y));
-    pb2.addLabel("-"
-        + mLocalizer.msg("name", "I don't want to see!")
-        + " ("
-        + mLocalizer.msg("menu.completeCaseSensitive",
-            "Instant exclusion with title") + ")", cc.xy(3, y));
-
+    
+    if(!VersionCompat.isAtLeastTvBrowser4()) {
+      pb2.addLabel("-"
+          + mLocalizer.msg("name", "I don't want to see!")
+          + " ("
+          + mLocalizer.msg("menu.completeCaseSensitive",
+              "Instant exclusion with title") + ")", cc.xy(3, y));
+    }
+    
     y += 2;
     
     pb2.add(mCascadedContextMenu, cc.xy(1, y));
-    pb2.addLabel("-"
-        + mLocalizer.msg("menu.completeCaseSensitive",
-            "Instant exclusion with title"), cc.xy(3, y++));
-    pb2.addLabel(
-        "-" + mLocalizer.msg("menu.userEntered", "User entered value"), cc.xy(
-            3, y));
+    
+    if(!VersionCompat.isAtLeastTvBrowser4()) {
+      pb2.addLabel("-"
+          + mLocalizer.msg("menu.completeCaseSensitive",
+              "Instant exclusion with title"), cc.xy(3, y++));
+      pb2.addLabel(
+          "-" + mLocalizer.msg("menu.userEntered", "User entered value"), cc.xy(
+              3, y));
+    }
+    else {
+      layout.removeRow(y+1);
+    }
 
     mAutoSwitchToMyFilter = new JCheckBox(mLocalizer.msg("settings.autoFilter",
         "Automatically activate filter on adding/removing"), mSettings
