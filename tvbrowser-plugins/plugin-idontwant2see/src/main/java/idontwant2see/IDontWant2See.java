@@ -70,19 +70,15 @@ import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.lang3.StringUtils;
-
-import util.io.IOUtilities;
-import util.ui.Localizer;
-import util.ui.TVBrowserIcons;
-import util.ui.UiUtilities;
-import util.ui.WindowClosingIf;
+//import org.apache.commons.lang3.StringUtils;
 
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.factories.CC;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
+import compat.MenuCompat;
+import compat.VersionCompat;
 import devplugin.ActionMenu;
 import devplugin.ContextMenuAction;
 import devplugin.Date;
@@ -95,6 +91,11 @@ import devplugin.Program;
 import devplugin.ProgramReceiveTarget;
 import devplugin.SettingsTab;
 import devplugin.Version;
+import util.io.IOUtilities;
+import util.ui.Localizer;
+import util.ui.TVBrowserIcons;
+import util.ui.UiUtilities;
+import util.ui.WindowClosingIf;
 
 /**
  * A very simple filter plugin to easily get rid of stupid programs in the
@@ -107,7 +108,7 @@ public final class IDontWant2See extends Plugin implements AWTEventListener {
   private static final String DONT_WANT_TO_SEE_IMPORT_SYNC_ADDRESS = "http://android.tvbrowser.org/data/scripts/syncDown.php?type=dontWantToSee";
   
   private static final boolean PLUGIN_IS_STABLE = true;
-  private static final Version PLUGIN_VERSION = new Version(0, 15, 9, PLUGIN_IS_STABLE);
+  private static final Version PLUGIN_VERSION = new Version(0, 16, 0, PLUGIN_IS_STABLE);
 
   private static final String RECEIVE_TARGET_EXCLUDE_EXACT = "target_exclude_exact";
 
@@ -278,10 +279,10 @@ public final class IDontWant2See extends Plugin implements AWTEventListener {
         JDialog temDlg = null;
 
         if(w instanceof JDialog) {
-          temDlg = new JDialog((JDialog)w,true);
+          temDlg = new JDialog((JDialog)w, ModalityType.DOCUMENT_MODAL);
         }
         else {
-          temDlg = new JDialog((JFrame)w,true);
+          temDlg = new JDialog((JFrame)w, ModalityType.DOCUMENT_MODAL);
         }
 
         final JDialog exclusionListDlg = temDlg;
@@ -321,7 +322,7 @@ public final class IDontWant2See extends Plugin implements AWTEventListener {
 
         final FormLayout layout = new FormLayout(
             "0dlu:grow,default,3dlu,default",
-            "fill:500px:grow,2dlu,default,5dlu,default");
+            "fill:350px:grow,2dlu,default,5dlu,default");
         layout.setColumnGroups(new int[][] {{2,4}});
 
         final CellConstraints cc = new CellConstraints();
@@ -638,28 +639,34 @@ public final class IDontWant2See extends Plugin implements AWTEventListener {
     // return menu to hide the program
     if (index == -1 || p.equals(getPluginManager().getExampleProgram())) {
       AbstractAction actionDontWant = getActionDontWantToSee(p);
-
-      if (mSettings.isSimpleMenu() && !mCtrlPressed) {
+      
+      if (mSettings.isSimpleMenu() && !VersionCompat.isAtLeastTvBrowser4() && !mCtrlPressed && !p.equals(getPluginManager().getExampleProgram())) {
         final Matcher matcher = PATTERN_TITLE_PART.matcher(p.getTitle());
         if (matcher.matches()) {
           actionDontWant = getActionInputTitle(p, matcher.group(2));
         }
         actionDontWant.putValue(Action.NAME,mLocalizer.msg("name","I don't want to see!"));
         actionDontWant.putValue(Action.SMALL_ICON,createImageIcon("apps","idontwant2see",16));
-
-        return new ActionMenu(actionDontWant);
+  
+        return MenuCompat.createActionMenu(1, actionDontWant);
       }
       else {
+        actionDontWant.putValue(Action.SMALL_ICON,createImageIcon("apps","idontwant2see",16));
+        
         final AbstractAction actionInput = getActionInputTitle(p, null);
+        actionInput.putValue(Action.SMALL_ICON,createImageIcon("apps","idontwant2see",16));
 
-        return new ActionMenu(mLocalizer
-            .msg("name", "I don't want to see!"),
-            createImageIcon("apps","idontwant2see",16), new Action[] {actionDontWant,actionInput});
+        final ActionMenu action1 = MenuCompat.createActionMenu(1, actionDontWant);
+        final ActionMenu action2 = MenuCompat.createActionMenu(2, actionInput);
+        
+        return MenuCompat.createActionMenu(MenuCompat.ID_ACTION_NONE, mLocalizer
+            .msg("name", "I don't want to see!"), createImageIcon("apps","idontwant2see",16),
+            new ActionMenu[] {action1,action2}, mSettings.isSimpleMenu());
       }
     }
 
     // return menu to show the program
-    return new ActionMenu(getActionShowAgain(p));
+    return MenuCompat.createActionMenu(1, getActionShowAgain(p));
   }
 
   private ContextMenuAction getActionShowAgain(final Program p) {
@@ -682,10 +689,10 @@ public final class IDontWant2See extends Plugin implements AWTEventListener {
             "case sensitive"), mSettings.isDefaultCaseSensitive());
         String title = p.getTitle();
         ArrayList<String> items = new ArrayList<String>();
-        if (!StringUtils.isEmpty(part)) {
+        if (part != null && !part.isEmpty()) {
           String shortTitle = title.trim().substring(0, title.length() - part.length()).trim();
-          shortTitle = StringUtils.removeEnd(shortTitle, "-").trim();
-          shortTitle = StringUtils.removeEnd(shortTitle, "(").trim();
+          shortTitle = removeEnd(shortTitle, "-").trim();
+          shortTitle = removeEnd(shortTitle, "(").trim();
           items.add(shortTitle + "*");
         }
         int index = title.indexOf(" - ");
@@ -994,5 +1001,13 @@ public final class IDontWant2See extends Plugin implements AWTEventListener {
     }
     
     return value.toString();
+  }
+  
+  static String removeEnd(String haystack, final String needle) {
+    if(haystack != null && needle != null && needle.length() > 0 && haystack.endsWith(needle)) {
+      haystack = haystack.substring(0, haystack.length()-needle.length());
+    }
+    
+    return haystack;
   }
 }
