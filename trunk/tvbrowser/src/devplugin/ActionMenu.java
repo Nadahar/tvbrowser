@@ -36,6 +36,9 @@ import javax.swing.Icon;
  * This class represents a structure for context menus.
  */
 public class ActionMenu {
+  /**
+   * ID for menu action which shouldn't be available for mouse actions.
+   */
   public static final int ID_ACTION_NONE = -1;
   
   /**
@@ -87,7 +90,7 @@ public class ActionMenu {
    *
    * @see ContextMenuAction
    *
-   * @param actionId an id to identify this action menu
+   * @param actionId an ID to identify this action menu for mouse action
    * @param menuTitle title of the sub menu
    * @param menuIcon icon of the sub menu
    * @param subItems sub menu items
@@ -96,6 +99,18 @@ public class ActionMenu {
     this(actionId, menuTitle, menuIcon, subItems, false);
   }
   
+  /**
+   * Creates a menu item having sub menu items. These items can have
+   * further sub menu items.
+   *
+   * @see ContextMenuAction
+   *
+   * @param actionId an ID to identify this action menu for mouse actions
+   * @param menuTitle title of the sub menu
+   * @param menuIcon icon of the sub menu
+   * @param subItems sub menu items
+   * @param showOnlySubMenus if the sub items of this menu should be shown directly in TV-Browser context menu
+   */
   public ActionMenu(final int actionId, final String menuTitle, final Icon menuIcon, final ActionMenu[] subItems, final boolean showOnlySubMenus) {
     this(new ContextMenuAction(menuTitle, menuIcon), subItems);
     mId = actionId;
@@ -190,8 +205,9 @@ public class ActionMenu {
 
   /**
    * Creates a new single checkbox menu entry.
-   * @param action
-   * @param isSelected state of the check box (checked/unchecked)
+   * @param actionId The ID for the action for mouse functions.
+   * @param action The action for the context menu.
+   * @param isSelected state of the check box (checked/unchecked).
    */
   public ActionMenu(int actionId, Action action, boolean isSelected) {
     this(action,(ActionMenu[])null);

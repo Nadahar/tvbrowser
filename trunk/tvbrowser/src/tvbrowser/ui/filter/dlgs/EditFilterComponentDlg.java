@@ -110,7 +110,7 @@ public class EditFilterComponentDlg extends JDialog implements ActionListener, D
   private JPanel mTypeDescriptionPanel;
 
   public EditFilterComponentDlg(Window parent, FilterComponent comp) {
-    super(parent, ModalityType.APPLICATION_MODAL);
+    super(parent, ModalityType.DOCUMENT_MODAL);
     init(parent,comp,null);
   }
   
@@ -123,7 +123,7 @@ public class EditFilterComponentDlg extends JDialog implements ActionListener, D
   }
 
   public EditFilterComponentDlg(JDialog parent, FilterComponent comp, Class<? extends FilterComponent> filterComponentClass) {
-    super(parent, true);
+    super(parent, ModalityType.DOCUMENT_MODAL);
     init(parent,comp,filterComponentClass);
   }
 
@@ -137,7 +137,7 @@ public class EditFilterComponentDlg extends JDialog implements ActionListener, D
   }
 
   public EditFilterComponentDlg(JFrame parent, FilterComponent comp, Class<? extends FilterComponent> filterComponentClass) {
-    super(parent, true);
+    super(parent, ModalityType.DOCUMENT_MODAL);
     init(parent,comp,filterComponentClass);
   }
   

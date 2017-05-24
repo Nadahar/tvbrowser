@@ -91,7 +91,7 @@ public class SelectFilterDlg extends JDialog implements ActionListener, WindowCl
   }
   
   private SelectFilterDlg(Window parent) {
-    super(parent, mLocalizer.msg("title", "Edit Filters"),Dialog.ModalityType.APPLICATION_MODAL);
+    super(parent, mLocalizer.msg("title", "Edit Filters"), Dialog.ModalityType.DOCUMENT_MODAL);
     mInstance = this;
     
     FormLayout layout = new FormLayout("default,default:grow,default","default,4dlu,fill:default:grow,5dlu,default");
