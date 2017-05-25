@@ -61,97 +61,102 @@ public class IDontWant2SeeSettingsTableRenderer extends
   public Component getTableCellRendererComponent(final JTable table,
       final Object value, final boolean isSelected, final boolean hasFocus,
       final int row, final int column) {
-    if(column == 0) {
-      final JPanel background = new JPanel(new FormLayout("fill:0dlu:grow",
-          "fill:default:grow")) {
-        protected void paintComponent(Graphics g) {
-          if(getBackground().equals(NOT_VALID_COLOR) || getBackground().equals(LAST_CHANGED_COLOR) ||
-              getBackground().equals(LAST_USAGE_7_COLOR) || getBackground().equals(LAST_USAGE_30_COLOR)) {
-            g.setColor(Color.white);
+    if(value != null) {
+      if(column == 0) {
+        final JPanel background = new JPanel(new FormLayout("fill:0dlu:grow",
+            "fill:default:grow")) {
+          protected void paintComponent(Graphics g) {
+            if(getBackground().equals(NOT_VALID_COLOR) || getBackground().equals(LAST_CHANGED_COLOR) ||
+                getBackground().equals(LAST_USAGE_7_COLOR) || getBackground().equals(LAST_USAGE_30_COLOR)) {
+              g.setColor(Color.white);
+              g.fillRect(0, 0, getWidth(), getHeight());
+            }
+            
+            g.setColor(getBackground());
             g.fillRect(0, 0, getWidth(), getHeight());
           }
-          
-          g.setColor(getBackground());
-          g.fillRect(0, 0, getWidth(), getHeight());
+        };
+        background.setOpaque(true);
+        
+        final JLabel label = new JLabel((String) value);
+        
+        if(!((IDontWant2SeeSettingsTableModel)table.getModel()).rowIsValid(row) && !isSelected) {
+          background.setBackground(NOT_VALID_COLOR);
+          label.setForeground(Color.black);
         }
-      };
-      background.setOpaque(true);
-      
-      final JLabel label = new JLabel((String) value);
-      
-      if(!((IDontWant2SeeSettingsTableModel)table.getModel()).rowIsValid(row) && !isSelected) {
-        background.setBackground(NOT_VALID_COLOR);
-        label.setForeground(Color.black);
+        else if(((IDontWant2SeeSettingsTableModel)table.getModel()).isLastChangedRow(row) && !isSelected) {
+          background.setBackground(LAST_CHANGED_COLOR);
+          label.setForeground(Color.black);
+        }
+        else if(((IDontWant2SeeSettingsTableModel)table.getModel()).isRowOutdated(row,mLastUsedDate,OUTDATED_30_DAY_COUNT) && !isSelected) {
+          background.setBackground(LAST_USAGE_30_COLOR);
+          label.setForeground(Color.black);
+        }
+        else if(((IDontWant2SeeSettingsTableModel)table.getModel()).isRowOutdated(row,mLastUsedDate,OUTDATED_7_DAY_COUNT) && !isSelected) {
+          background.setBackground(LAST_USAGE_7_COLOR);
+          label.setForeground(Color.black);
+        }
+        else if(!isSelected) {
+          background.setBackground(table.getBackground());
+          label.setForeground(table.getForeground());
+        }
+        else {
+          background.setBackground(table.getSelectionBackground());
+          label.setForeground(table.getSelectionForeground());
+        }
+        
+        background.add(label, new CellConstraints().xy(1,1));
+        
+        return background;
       }
-      else if(((IDontWant2SeeSettingsTableModel)table.getModel()).isLastChangedRow(row) && !isSelected) {
-        background.setBackground(LAST_CHANGED_COLOR);
-        label.setForeground(Color.black);
-      }
-      else if(((IDontWant2SeeSettingsTableModel)table.getModel()).isRowOutdated(row,mLastUsedDate,OUTDATED_30_DAY_COUNT) && !isSelected) {
-        background.setBackground(LAST_USAGE_30_COLOR);
-        label.setForeground(Color.black);
-      }
-      else if(((IDontWant2SeeSettingsTableModel)table.getModel()).isRowOutdated(row,mLastUsedDate,OUTDATED_7_DAY_COUNT) && !isSelected) {
-        background.setBackground(LAST_USAGE_7_COLOR);
-        label.setForeground(Color.black);
-      }
-      else if(!isSelected) {
-        background.setBackground(table.getBackground());
-        label.setForeground(table.getForeground());
-      }
-      else {
-        background.setBackground(table.getSelectionBackground());
-        label.setForeground(table.getSelectionForeground());
-      }
-      
-      background.add(label, new CellConstraints().xy(1,1));
-      
-      return background;
-    }
-    else {
-      final JPanel background = new JPanel(new FormLayout(
-          "0dlu:grow,default,0dlu:grow", "0dlu:grow,default,0dlu:grow")){
-        protected void paintComponent(Graphics g) {
-          if(getBackground().equals(NOT_VALID_COLOR) || getBackground().equals(LAST_CHANGED_COLOR) ||
-              getBackground().equals(LAST_USAGE_7_COLOR) || getBackground().equals(LAST_USAGE_30_COLOR)) {
-            g.setColor(Color.white);
+      else if(column == 1) {
+        final JPanel background = new JPanel(new FormLayout(
+            "0dlu:grow,default,0dlu:grow", "0dlu:grow,default,0dlu:grow")){
+          protected void paintComponent(Graphics g) {
+            if(getBackground().equals(NOT_VALID_COLOR) || getBackground().equals(LAST_CHANGED_COLOR) ||
+                getBackground().equals(LAST_USAGE_7_COLOR) || getBackground().equals(LAST_USAGE_30_COLOR)) {
+              g.setColor(Color.white);
+              g.fillRect(0, 0, getWidth(), getHeight());
+            }
+            
+            g.setColor(getBackground());
             g.fillRect(0, 0, getWidth(), getHeight());
           }
-          
-          g.setColor(getBackground());
-          g.fillRect(0, 0, getWidth(), getHeight());
+        };
+        background.setOpaque(true);
+        
+        if(!isSelected) {
+          background.setBackground(table.getBackground());
         }
-      };
-      background.setOpaque(true);
-      
-      if(!isSelected) {
-        background.setBackground(table.getBackground());
+        else {
+          background.setBackground(table.getSelectionBackground());
+        }
+        
+        final JCheckBox checkBox = new JCheckBox();
+        
+        checkBox.setSelected((Boolean)value);
+        checkBox.setOpaque(false);
+        checkBox.setContentAreaFilled(false); 
+  
+        if(!((IDontWant2SeeSettingsTableModel)table.getModel()).rowIsValid(row) && !isSelected) {
+          background.setBackground(NOT_VALID_COLOR);
+        }
+        else if(((IDontWant2SeeSettingsTableModel)table.getModel()).isLastChangedRow(row) && !isSelected) {
+          background.setBackground(LAST_CHANGED_COLOR);
+        }
+        else if(((IDontWant2SeeSettingsTableModel)table.getModel()).isRowOutdated(row,mLastUsedDate,OUTDATED_30_DAY_COUNT) && !isSelected) {
+          background.setBackground(LAST_USAGE_30_COLOR);
+        }
+        else if(((IDontWant2SeeSettingsTableModel)table.getModel()).isRowOutdated(row,mLastUsedDate,OUTDATED_7_DAY_COUNT) && !isSelected) {
+          background.setBackground(LAST_USAGE_7_COLOR);
+        }
+        
+        background.add(checkBox, new CellConstraints().xy(2,2));
+        
+        return background;
       }
-      else {
-        background.setBackground(table.getSelectionBackground());
-      }
-      
-      final JCheckBox checkBox = new JCheckBox();
-      checkBox.setSelected((Boolean)value);
-      checkBox.setOpaque(false);
-      checkBox.setContentAreaFilled(false); 
-
-      if(!((IDontWant2SeeSettingsTableModel)table.getModel()).rowIsValid(row) && !isSelected) {
-        background.setBackground(NOT_VALID_COLOR);
-      }
-      else if(((IDontWant2SeeSettingsTableModel)table.getModel()).isLastChangedRow(row) && !isSelected) {
-        background.setBackground(LAST_CHANGED_COLOR);
-      }
-      else if(((IDontWant2SeeSettingsTableModel)table.getModel()).isRowOutdated(row,mLastUsedDate,OUTDATED_30_DAY_COUNT) && !isSelected) {
-        background.setBackground(LAST_USAGE_30_COLOR);
-      }
-      else if(((IDontWant2SeeSettingsTableModel)table.getModel()).isRowOutdated(row,mLastUsedDate,OUTDATED_7_DAY_COUNT) && !isSelected) {
-        background.setBackground(LAST_USAGE_7_COLOR);
-      }
-      
-      background.add(checkBox, new CellConstraints().xy(2,2));
-      
-      return background;
     }
+    
+    return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
   }
 }
