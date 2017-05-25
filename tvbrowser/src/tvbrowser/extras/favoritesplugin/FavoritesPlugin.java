@@ -439,6 +439,12 @@ public class FavoritesPlugin {
       mPendingFavorites.clear();
       mPendingFavorites = null;
     }
+    
+    final Favorite[] favs = FavoriteTreeModel.getInstance().getFavoriteArr();
+    
+    for(Favorite fav : favs) {
+      fav.initializeFilterExclusions();
+    }
 
     mHasRightToUpdate = true;
 
@@ -450,36 +456,59 @@ public class FavoritesPlugin {
       @Override
       public void filterTouched(ProgramFilter filter) {
         Favorite[] favorites = FavoriteTreeModel.getInstance().getFavoriteArr();
+        boolean reload = false;
         
         for(Favorite fav : favorites) {
           if(fav instanceof FilterFavorite) {
-            ((FilterFavorite)fav).updateFilter(filter);
+            reload = ((FilterFavorite)fav).updateFilter(filter) || reload;
+          }
+          else if(fav instanceof AdvancedFavorite) {
+            reload = ((AdvancedFavorite)fav).updateFilter(filter) || reload;
+          }
+          else {
+            reload = fav.updateFilterExclusion(filter,true) || reload;
           }
         }
         
-        if(mMangePanel != null) {
-          mMangePanel.repaint();
-        }
-        if(ManageFavoritesDialog.getInstance() != null) {
-          ManageFavoritesDialog.getInstance().repaint();
+        if(reload) {
+          if(mMangePanel != null) {
+            mMangePanel.reload(true);
+          }
+          
+          if(ManageFavoritesDialog.getInstance() != null) {
+            ManageFavoritesDialog.getInstance().reload(true);
+          }
+          
+          store();
         }
       }
       
       @Override
       public void filterRemoved(ProgramFilter filter) {
         Favorite[] favorites = FavoriteTreeModel.getInstance().getFavoriteArr();
+        boolean reload = false;
         
         for(Favorite fav : favorites) {
           if(fav instanceof FilterFavorite) {
-            ((FilterFavorite)fav).deleteFilter(filter);
+            reload = ((FilterFavorite)fav).deleteFilter(filter) || reload;
+          }
+          else if(fav instanceof AdvancedFavorite) {
+            reload = ((AdvancedFavorite)fav).deleteFilter(filter) || reload;
+          }
+          else {
+            reload = fav.deleteFilterExclusion(filter,true) || reload;
           }
         }
         
-        if(mMangePanel != null) {
-          mMangePanel.repaint();
-        }
-        if(ManageFavoritesDialog.getInstance() != null) {
-          ManageFavoritesDialog.getInstance().repaint();
+        if(reload) {
+          if(mMangePanel != null) {
+            mMangePanel.reload(true);
+          }
+          if(ManageFavoritesDialog.getInstance() != null) {
+            ManageFavoritesDialog.getInstance().reload(true);
+          }
+          
+          store();
         }
       }
       

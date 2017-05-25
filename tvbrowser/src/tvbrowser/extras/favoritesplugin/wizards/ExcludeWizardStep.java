@@ -229,7 +229,7 @@ public class ExcludeWizardStep extends AbstractWizardStep {
     }
     
     mFilterChooser = new JComboBox<>(useableFilter.toArray(new WrapperFilter[useableFilter.size()]));
-
+    
     mDayChooser = new JComboBox<>(new Object[] {
         LimitationConfiguration.DAYLIMIT_WEEKDAY,
         LimitationConfiguration.DAYLIMIT_WEEKEND,
@@ -388,7 +388,7 @@ public class ExcludeWizardStep extends AbstractWizardStep {
       }
       if (filter != null) {
         mFilterCb.setSelected(true);
-        mFilterChooser.setSelectedItem(filter);
+        mFilterChooser.setSelectedItem(new WrapperFilter(filter));
       }
       if (channel != null) {
         mChannelCb.setSelected(true);

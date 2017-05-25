@@ -155,5 +155,9 @@ public class ManageFavoritesDialog extends JDialog implements WindowClosingIf{
   public void newFolder(FavoriteNode parent, Window partenWindow) {
     mManagePanel.newFolder(parent,partenWindow);
   }
+  
+  public void reload(boolean keepPath) {
+    mManagePanel.reload(keepPath);
+  }
 }
 

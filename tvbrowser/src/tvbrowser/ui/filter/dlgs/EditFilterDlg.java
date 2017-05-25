@@ -241,8 +241,18 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
           }
           
           JPanel panel = new JPanel(layout);
-          panel.setOpaque(false);
-
+          panel.setOpaque(isSelected);
+          
+          if(isSelected) {
+            panel.setBackground(list.getSelectionBackground());
+            label.setForeground(list.getSelectionForeground());
+          }
+          else {
+            panel.setBackground(list.getBackground());
+            label.setForeground(list.getForeground());
+          }
+          
+          label.setOpaque(false);
           
           if(item.isAndItem() || item.isOrItem() || item.isNotItem()) {
             label.setFont(label.getFont().deriveFont(Font.BOLD));
@@ -494,6 +504,7 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
         }
       }
     } else if (o == mCancelBtn) {
+      FilterComponentList.getInstance().store();
       setVisible(false);
     }
 
@@ -814,7 +825,8 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
     }
 
     FilterComponent rule = ((FilterItem)mFilterComponentListModel.getElementAt(inx)).getComponent();
-    FilterComponentList.getInstance().remove(rule.getName());
+    final String oldName = rule.getName();
+    FilterComponentList.getInstance().remove(oldName);
     mFilterComponentListModel.removeElementAt(inx);
     EditFilterComponentDlg dlg = null;
     
@@ -830,6 +842,29 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
       newRule = rule;
     }
     FilterComponentList.getInstance().add(newRule);
+    FilterTreeModel.getInstance().updateFilterComponent(oldName, newRule);
+    
+    if(!oldName.equalsIgnoreCase(newRule.getName())) {
+      FilterComponentList.getInstance().remove(oldName);
+      
+      final String[] parts = mFilterRuleTF.getText().split("\\s+");
+      final StringBuilder newRuleText = new StringBuilder();
+      
+      for(int i = 0; i < parts.length; i++) {
+        if(parts[i].equals(oldName)) {
+          parts[i] = newRule.getName();
+        }
+        
+        if(newRuleText.length() > 0) {
+          newRuleText.append(" ");
+        }
+        
+        newRuleText.append(parts[i]);
+      }
+      
+      mFilterRuleTF.setText(newRuleText.toString());
+    }
+    
     mFilterComponentListModel.addElement(new FilterItem(newRule,0));
     mFilterConstruction.repaint();
     

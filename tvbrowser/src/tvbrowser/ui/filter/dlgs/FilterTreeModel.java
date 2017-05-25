@@ -47,7 +47,10 @@ import devplugin.PluginAccess;
 import devplugin.PluginsProgramFilter;
 import devplugin.ProgramFilter;
 import tvbrowser.core.Settings;
+import tvbrowser.core.filters.FilterComponent;
+import tvbrowser.core.filters.FilterList;
 import tvbrowser.core.filters.FilterManagerImpl;
+import tvbrowser.core.filters.ParserException;
 import tvbrowser.core.filters.ShowAllFilter;
 import tvbrowser.core.filters.SingleChannelFilter;
 import tvbrowser.core.filters.UserFilter;
@@ -346,7 +349,7 @@ public class FilterTreeModel extends DefaultTreeModel {
     }
   }
   
-  void fireFilterAdded(ProgramFilter filter) {
+  void fireFilterAdded(final ProgramFilter filter) {
     for(FilterChangeListenerV2 listener : CHANGE_LISTENER_LISTV2) {
       listener.filterAdded(filter);
     }
@@ -356,7 +359,7 @@ public class FilterTreeModel extends DefaultTreeModel {
     }
   }
 
-  void fireFilterRemoved(ProgramFilter filter) {
+  void fireFilterRemoved(final ProgramFilter filter) {
     for(FilterChangeListenerV2 listener : CHANGE_LISTENER_LISTV2) {
       listener.filterRemoved(filter);
     }
@@ -367,27 +370,62 @@ public class FilterTreeModel extends DefaultTreeModel {
     }
   }
   
-  void fireFilterTouched(ProgramFilter filter) {
+  void fireFilterTouched(final ProgramFilter filter) {
     for(FilterChangeListenerV2 listener : CHANGE_LISTENER_LISTV2) {
       listener.filterTouched(filter);
     }
   }
   
-  void fireFilterDefaultChanged(ProgramFilter filter) {
+  void fireFilterDefaultChanged(final ProgramFilter filter) {
     for(FilterChangeListenerV2 listener : CHANGE_LISTENER_LISTV2) {
       listener.filterDefaultChanged(filter);
     }
   }
   
-  public void registerFilterChangeListener(FilterChangeListenerV2 listener) {
+  public void updateFilterComponent(final String oldName, final FilterComponent filterComponent) {
+    final UserFilter[] userFilters = FilterList.getInstance().getUserFilterArr();
+    
+    for(UserFilter filter : userFilters) {
+      if(filter.containsRuleComponent(filterComponent.getName()) || filter.containsRuleComponent(oldName)) {
+        fireFilterTouched(filter);
+        
+        if(!oldName.equals(filterComponent.getName())) {
+          final String[] parts = filter.getRule().split("\\s+");
+          final StringBuilder newRule = new StringBuilder();
+          
+          for(int i = 0; i < parts.length; i++) {
+            if(parts[i].equals(oldName)) {
+              parts[i] = filterComponent.getName();
+            }
+            
+            if(newRule.length() > 0) {
+              newRule.append(" ");
+            }
+            
+            newRule.append(parts[i]);
+          }
+          
+          try {
+            filter.setRule(newRule.toString());
+          } catch (ParserException e) {
+            // Ignore
+          }
+        }
+        
+        filter.store();
+      }
+    }
+  }
+  
+  public void registerFilterChangeListener(final FilterChangeListenerV2 listener) {
     CHANGE_LISTENER_LISTV2.add(listener);
   }
   
-  public void unregisterFilterChangeListener(FilterChangeListenerV2 listener) {
+  public void unregisterFilterChangeListener(final FilterChangeListenerV2 listener) {
     CHANGE_LISTENER_LISTV2.remove(listener);
   }
   
-  private boolean isDefaultFilter(ProgramFilter filter) {
+  private boolean isDefaultFilter(final ProgramFilter filter) {
     String filterId = Settings.propDefaultFilter.getString();
     String filterName = null;
   

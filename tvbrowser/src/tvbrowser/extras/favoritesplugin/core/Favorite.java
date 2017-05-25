@@ -41,6 +41,7 @@ import devplugin.Date;
 import devplugin.Plugin;
 import devplugin.Program;
 import devplugin.ProgramFieldType;
+import devplugin.ProgramFilter;
 import devplugin.ProgramReceiveTarget;
 import devplugin.ProgramSearcher;
 import tvbrowser.core.plugin.PluginManagerImpl;
@@ -1158,5 +1159,68 @@ public abstract class Favorite {
     return mFilterKey;
   }
   
-  public abstract boolean isValidSearch(); 
+  public abstract boolean isValidSearch();
+  
+  public boolean updateFilterExclusion(final ProgramFilter filter, final boolean updatePrograms) {
+    final Exclusion[] exclusions = getExclusions();
+    boolean result = false;
+    
+    for(Exclusion ex : exclusions) {
+      if(ex.getFilter() != null && (ex.getFilter().equals(filter))
+          || ex.getFilter().getName().equals(filter.getName())) {
+        result = true;
+        ex.setFilter(filter);
+        break;
+      }
+    }
+    
+    if(result && updatePrograms) {
+      try {
+        updatePrograms();
+      } catch (TvBrowserException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+    }
+    
+    return result;
+  }
+  
+  public boolean deleteFilterExclusion(final ProgramFilter filter, final boolean updatePrograms) {
+    boolean result = false;
+    
+    if(mExclusionList != null) {
+      final int size = mExclusionList.size();
+      
+      for(int i = size-1; i >= 0; i--) {
+        final Exclusion ex = mExclusionList.get(i);
+        
+        if(ex.getFilter() != null && (ex.getFilter().equals(filter) 
+            || ex.getFilter().getName().equals(filter.getName()))) {
+          mExclusionList.remove(i);
+        }
+      }
+      
+      result = size > mExclusionList.size();
+      
+      if(result && updatePrograms) {
+        try {
+          updatePrograms();
+        } catch (TvBrowserException e) {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        }
+      }
+    }
+    
+    return result;
+  }
+  
+  public void initializeFilterExclusions() {
+    if(mExclusionList != null) {
+      for(Exclusion ex : mExclusionList) {
+        ex.getFilter();
+      }
+    }
+  }
 }
