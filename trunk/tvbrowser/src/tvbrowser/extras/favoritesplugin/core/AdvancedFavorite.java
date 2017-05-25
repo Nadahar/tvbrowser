@@ -48,7 +48,6 @@ import devplugin.Plugin;
 import devplugin.PluginManager;
 import devplugin.Program;
 import devplugin.ProgramFilter;
-import tvbrowser.core.filters.ShowAllFilter;
 import tvbrowser.extras.favoritesplugin.FavoriteConfigurator;
 import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
 import tvbrowser.ui.filter.dlgs.SelectFilterDlg;
@@ -68,6 +67,7 @@ public class AdvancedFavorite extends Favorite implements PendingFilterLoader {
   public static final String TYPE_ID = "advanced";
 
   private ProgramFilter mFilter;
+  private String mFilterName;
 
   private String mPendingFilterName = null;
 
@@ -246,7 +246,7 @@ public class AdvancedFavorite extends Favorite implements PendingFilterLoader {
 
     if (version >= 4) {
       boolean useFilter = in.readBoolean();  // useFilter
-      mPendingFilterName = (String) in.readObject();
+      mFilterName = mPendingFilterName = (String) in.readObject();
 
       if (useFilter) {
         FavoritesPlugin.getInstance().addPendingFavorite(this);
@@ -256,6 +256,7 @@ public class AdvancedFavorite extends Favorite implements PendingFilterLoader {
     }
     else {
       mFilter = null;
+      mFilterName = null;
     }
 
     if (version >= 7) {
@@ -343,7 +344,7 @@ public class AdvancedFavorite extends Favorite implements PendingFilterLoader {
       ProgramFilter[] availableFilter = Plugin.getPluginManager().getFilterManager().getAvailableFilters();
       
       for(ProgramFilter filter : availableFilter) {
-        if(!(filter instanceof FavoriteFilter)) {
+        if(!FilterFavorite.filterIsAcceptable(filter)) {
           ((DefaultComboBoxModel<WrapperFilter>)mFilterCombo.getModel()).addElement(new WrapperFilter(filter));
         }
       }
@@ -400,12 +401,16 @@ public class AdvancedFavorite extends Favorite implements PendingFilterLoader {
       
       if (mFilterCheckbox.isSelected()) {
         mFilter = ((WrapperFilter)mFilterCombo.getSelectedItem()).getFilter();
-        if (mFilter instanceof ShowAllFilter) {
+        mFilterName = mFilter.getName();
+        
+        if (FilterFavorite.filterIsAcceptable(mFilter)) {
           mFilter = null;
+          mFilterName = null;
         }
       }
       else {
         mFilter = null;
+        mFilterName = null;
       }
     }
 
@@ -433,6 +438,10 @@ public class AdvancedFavorite extends Favorite implements PendingFilterLoader {
 
         if(mFilter != null) {
           mPendingFilterName = null;
+          
+          if(!FilterFavorite.filterIsAcceptable(mFilter)) {
+            mFilter = null;
+          }
         }
         else {
           FavoritesPlugin.mLog.severe("Error on loading pending filter '" + mPendingFilterName + "' for Favorite: '" + getName() + "'. Filter was not found.");
@@ -446,5 +455,49 @@ public class AdvancedFavorite extends Favorite implements PendingFilterLoader {
   @Override
   public boolean isValidSearch() {
     return true;
+  }
+  
+  public boolean updateFilter(ProgramFilter filter) {
+    boolean result = (mFilter != null && mFilterName != null && (mFilter.equals(filter)) || mFilterName.equals(filter.getName()));
+    
+    if(result) {
+      mFilterName = filter.getName();
+      
+      if(FilterFavorite.filterIsAcceptable(filter)) {
+        mFilter = filter;
+      }
+      else {
+        mFilter = null;
+      }
+    }
+    
+    result = updateFilterExclusion(filter,false) || result;
+    
+    if(result) {
+      try {
+        updatePrograms();
+      } catch (TvBrowserException e) {}
+    }
+    
+    return result;
+  }
+  
+  public boolean deleteFilter(ProgramFilter filter) {
+    boolean result = (mFilter != null && mFilterName != null && (mFilter.equals(filter)) || mFilterName.equals(filter.getName())); 
+    
+    if(result) {
+      mFilter = null;
+      mFilterName = null;
+    }
+    
+    result = deleteFilterExclusion(filter,false) || result;
+    
+    if(result) {
+      try {
+        updatePrograms();
+      } catch (TvBrowserException e) {}
+    }
+    
+    return result;
   }
 }

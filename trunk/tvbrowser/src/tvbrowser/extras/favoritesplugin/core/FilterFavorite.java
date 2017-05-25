@@ -115,7 +115,7 @@ public class FilterFavorite extends Favorite implements PendingFilterLoader {
     return mFilterName;
   }
   
-  private boolean filterIsAcceptable(ProgramFilter filter) {
+  public static boolean filterIsAcceptable(ProgramFilter filter) {
     return (!(filter instanceof FavoriteFilter) && (!(filter instanceof ShowAllFilter || filter instanceof SeparatorFilter || filter instanceof PluginFilter)) && (!(filter instanceof UserFilter) || ((UserFilter)filter).acceptableForFilterFavorite()));      
   }
   
@@ -281,8 +281,10 @@ public class FilterFavorite extends Favorite implements PendingFilterLoader {
     return mFilterIsAcceptable;
   }
   
-  public void updateFilter(ProgramFilter filter) {
-    if((mFilterInstance != null && (mFilterInstance.equals(filter)) || mFilterName.equals(filter.getName()))) {
+  public boolean updateFilter(ProgramFilter filter) {
+    boolean result = (mFilterInstance != null && (mFilterInstance.equals(filter)) || mFilterName.equals(filter.getName())); 
+    
+    if(result) {
       mFilterName = filter.getName();
       mFilterIsAcceptable = filterIsAcceptable(filter);
       
@@ -292,21 +294,35 @@ public class FilterFavorite extends Favorite implements PendingFilterLoader {
       else {
         mFilterInstance = null;
       }
-      
+    }
+    
+    result = updateFilterExclusion(filter,false) || result;
+    
+    if(result) {
       try {
         updatePrograms();
       } catch (TvBrowserException e) {}
     }
+    
+    return result;
   }
   
-  public void deleteFilter(ProgramFilter filter) {
-    if((mFilterInstance != null && (mFilterInstance.equals(filter)) || mFilterName.equals(filter.getName()))) {
+  public boolean deleteFilter(ProgramFilter filter) {
+    boolean result = (mFilterInstance != null && (mFilterInstance.equals(filter)) || mFilterName.equals(filter.getName())); 
+    
+    if(result) {
       mFilterIsAcceptable = false;
       mFilterInstance = null;
-      
+    }
+    
+    result = deleteFilterExclusion(filter,false) || result;
+    
+    if(result) {
       try {
         updatePrograms();
       } catch (TvBrowserException e) {}
     }
+    
+    return result;
   }
 }

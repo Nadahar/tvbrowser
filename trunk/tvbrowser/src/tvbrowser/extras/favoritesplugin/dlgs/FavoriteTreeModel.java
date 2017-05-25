@@ -108,7 +108,7 @@ public class FavoriteTreeModel extends DefaultTreeModel {
   }
 
   /**
-   * change the label of the root node after it has been red from disk
+   * change the label of the root node after it has been read from disk
    * @param rootNode
    */
   private static void fixRootNode(final FavoriteNode rootNode) {

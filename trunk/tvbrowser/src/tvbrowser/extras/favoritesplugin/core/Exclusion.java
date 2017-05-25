@@ -58,6 +58,7 @@ public class Exclusion implements Comparable<Exclusion> {
   private int mTimeFrom;
   private int mTimeTo;
   private int mDayOfWeek;
+  private ProgramFilter mFilter;
   private String mFilterName;
   private int mCategory;
   
@@ -221,15 +222,23 @@ public class Exclusion implements Comparable<Exclusion> {
   }
   
   public ProgramFilter getFilter() {
-    ProgramFilter[] filters = FilterManagerImpl.getInstance().getAvailableFilters();
-    
-    for(ProgramFilter filter : filters) {
-      if(filter.getName().equals(mFilterName)) {
-        return filter;
+    if(mFilter == null) {
+      ProgramFilter[] filters = FilterManagerImpl.getInstance().getAvailableFilters();
+      
+      for(ProgramFilter filter : filters) {
+        if(filter.getName().equals(mFilterName)) {
+          mFilter = filter;
+          break;
+        }
       }
     }
     
-    return null;
+    return mFilter;
+  }
+  
+  public void setFilter(final ProgramFilter filter) {
+    mFilter = filter;
+    mFilterName = filter.getName();
   }
 
   public Channel getChannel() {

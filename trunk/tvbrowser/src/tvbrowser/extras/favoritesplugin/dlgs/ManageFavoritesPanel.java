@@ -889,8 +889,17 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction<Favor
   }
   
   public void reload() {
+    reload(false);
+  }
+  
+  public void reload(boolean keepPath) {
     if(mFavoriteTree != null) {
+      final TreePath path = mFavoriteTree.getSelectionPath();
       mFavoriteTree.reload(mFavoriteTree.getRoot());
+      
+      if(path != null && keepPath) {
+        mFavoriteTree.setSelectionPath(path);
+      }
     }
   }
   
