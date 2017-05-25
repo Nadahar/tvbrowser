@@ -284,7 +284,7 @@ public class ExclusionTablePanel extends JPanel {
     }
   }
   
-  protected void saveSettings(IDontWant2SeeSettings settings) {
+  protected void saveSettings(IDontWant2SeeSettings settings) {try {
     if(mTable.isEditing()) {
       mTable.getCellEditor().stopCellEditing();
     }
@@ -295,7 +295,7 @@ public class ExclusionTablePanel extends JPanel {
       settings.setLastEnteredExclusionString(mTableModel.getLastChangedValue());
     }
     
-    IDontWant2See.getInstance().updateFilter(true);
+    IDontWant2See.getInstance().updateFilter(true);}catch(Throwable t) {t.printStackTrace();}
   }
 }
 
