@@ -1020,7 +1020,7 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
    * @since 3.0.2
    */
   public String getPluginCategory() {
-    return ALL_CATEGORY;
+    return CATEGORY_ALL;
   }
   
   /**
