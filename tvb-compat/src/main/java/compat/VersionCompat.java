@@ -23,6 +23,8 @@
  */
 package compat;
 
+import java.awt.Dialog.ModalityType;
+
 import devplugin.Version;
 import tvbrowser.TVBrowser;
 
@@ -40,5 +42,31 @@ public final class VersionCompat {
    */
   public static boolean isAtLeastTvBrowser4() {
     return TVBrowser.VERSION.compareTo(new Version(3,44,95,false)) >= 0;
+  }
+  
+  public static boolean isCenterPanelSupported() {
+    return TVBrowser.VERSION.compareTo(new Version(3,20,true)) >= 0;
+  }
+  
+  public static boolean isJointChannelSupported() {
+    return TVBrowser.VERSION.compareTo(new Version(3,21,true)) >= 0;
+  }
+  
+  public static boolean isSortNumberSupported() {
+    return TVBrowser.VERSION.compareTo(new Version(3,34,true)) >= 0;
+  }
+  
+  public static boolean isExtendedMouseActionSupported() {
+    return TVBrowser.VERSION.compareTo(new Version(3, 31, true)) >= 0;
+  }
+  
+  public static ModalityType getSuggestedModalityType() {
+    ModalityType result = ModalityType.APPLICATION_MODAL;
+    
+    if(isAtLeastTvBrowser4()) {
+      result = ModalityType.DOCUMENT_MODAL;
+    }
+    
+    return result;
   }
 }
