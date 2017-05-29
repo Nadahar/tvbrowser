@@ -142,7 +142,7 @@ public class ThemeIcon {
    * Gets the address of this icon or <code>null</code> if no address is set.
    * <p>
    * @return The full address or <code>null</code>
-   * @since 3.4.2 
+   * @since 3.4.2
    */
   public String getAddress() {
     return mAddress;

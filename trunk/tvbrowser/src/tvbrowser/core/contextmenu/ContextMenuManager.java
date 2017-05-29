@@ -129,7 +129,8 @@ public class ContextMenuManager {
    * @param e The MouseEvent to get the ContextMenuIf for.
    * @return The ContextMenuAction for a single mouse click that matches the mouse event
    * or <code>null</code> if there is no single mouse click ContextMenuIf for the mouse event.
-   * @since 3.3.1
+   * since 3.3.1 with return type ContextMenuIf
+   * @since 3.4.5 with return type ContextMenuActionS
    */
   public ContextMenuAction getContextMenuForSingleClick(MouseEvent e) {
     int cleanModifierEx = e.getModifiersEx() & ~(MouseEvent.BUTTON1_DOWN_MASK | MouseEvent.BUTTON2_DOWN_MASK | MouseEvent.BUTTON3_DOWN_MASK);
@@ -499,6 +500,7 @@ public class ContextMenuManager {
     return menu;
   }
   
+  /** @since 3.4.5 */
   public static final class ContextMenuAction {
     private ContextMenuIf mContextMenuIf;
     private int mContextMenuActionId;

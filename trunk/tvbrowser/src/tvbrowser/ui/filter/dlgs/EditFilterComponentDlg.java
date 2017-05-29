@@ -240,6 +240,10 @@ public class EditFilterComponentDlg extends JDialog implements ActionListener, D
 
     Iterator<FilterComponent> it = set.iterator();
 
+    if(set.size() == 1) {
+      mRuleCb.removeItemAt(0);
+    }
+    
     while (it.hasNext()) {
       mRuleCb.addItem(it.next());
     }
