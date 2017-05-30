@@ -4,10 +4,13 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 
 import javax.swing.JEditorPane;
+import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
 
@@ -147,5 +150,31 @@ public final class UiCompat {
     }
     
     return result;
+  }
+  
+  /**
+   * Adds support for rotating through list with up and down keys.
+   * <p>
+   * @param list The list to add the rotation to
+   * @since 3.4.5
+   */
+  public static void addKeyRotation(final JList<?> list) {
+    list.addKeyListener(new KeyAdapter() {
+      @Override
+      public void keyPressed(KeyEvent e) {
+        if(list.getModel().getSize() > 1) {
+          if(e.getKeyCode() == KeyEvent.VK_DOWN && e.getModifiersEx() == 0 && list.getSelectedIndex() == list.getModel().getSize()-1) {
+            list.setSelectedIndex(0);
+            list.ensureIndexIsVisible(0);
+            e.consume();
+          }
+          else if(e.getKeyCode() == KeyEvent.VK_UP && e.getModifiersEx() == 0 && list.getSelectedIndex() == 0) {
+            list.setSelectedIndex(list.getModel().getSize()-1);
+            list.ensureIndexIsVisible(list.getModel().getSize()-1);
+            e.consume();
+          }
+        }
+      }
+    });
   }
 }

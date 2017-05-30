@@ -41,7 +41,7 @@ public final class VersionCompat {
    * TV-Browser 4, <code>false</code> otherwise.
    */
   public static boolean isAtLeastTvBrowser4() {
-    return TVBrowser.VERSION.compareTo(new Version(3,44,95,false)) >= 0;
+    return TVBrowser.VERSION.compareTo(new Version(3,44,96,false)) >= 0;
   }
   
   public static boolean isCenterPanelSupported() {
