@@ -48,6 +48,7 @@ import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -1249,5 +1250,31 @@ public class UiUtilities {
     }
     
     return (String)value;
+  }
+  
+  /**
+   * Adds support for rotating through list with up and down keys.
+   * <p>
+   * @param list The list to add the rotation to
+   * @since 3.4.5
+   */
+  public static void addKeyRotation(final JList<?> list) {
+    list.addKeyListener(new KeyAdapter() {
+      @Override
+      public void keyPressed(KeyEvent e) {
+        if(list.getModel().getSize() > 1) {
+          if(e.getKeyCode() == KeyEvent.VK_DOWN && e.getModifiersEx() == 0 && list.getSelectedIndex() == list.getModel().getSize()-1) {
+            list.setSelectedIndex(0);
+            list.ensureIndexIsVisible(0);
+            e.consume();
+          }
+          else if(e.getKeyCode() == KeyEvent.VK_UP && e.getModifiersEx() == 0 && list.getSelectedIndex() == 0) {
+            list.setSelectedIndex(list.getModel().getSize()-1);
+            list.ensureIndexIsVisible(list.getModel().getSize()-1);
+            e.consume();
+          }
+        }
+      }
+    });
   }
 }

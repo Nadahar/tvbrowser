@@ -1447,4 +1447,8 @@ private static Font getDynamicFontSize(Font font, int offset) {
   public ProgramPanelSettings getSettings() {
     return mSettings;
   }
+  
+  public void setSelected(boolean isSelected) {
+    mIsSelected = isSelected;
+  }
 }

@@ -98,6 +98,7 @@ import util.ui.Localizer;
 import util.ui.ProgramList;
 import util.ui.SendToPluginDialog;
 import util.ui.TVBrowserIcons;
+import util.ui.TabListenerPanel;
 import util.ui.UiUtilities;
 import util.ui.persona.Persona;
 import util.ui.persona.PersonaListener;
@@ -107,7 +108,7 @@ import util.ui.persona.PersonaListener;
  * 
  * @author René Mach
  */
-public class ManageFavoritesPanel extends JPanel implements ListDropAction<Favorite>, TreeSelectionListener, PersonaListener {
+public class ManageFavoritesPanel extends TabListenerPanel implements ListDropAction<Favorite>, TreeSelectionListener, PersonaListener {
   public static final int FILTER_START_LAST_TYPE = -1;
   
   private static final int MAX_SHOWN_PROGRAMS = 6000;
@@ -470,6 +471,7 @@ public class ManageFavoritesPanel extends JPanel implements ListDropAction<Favor
     mProgramListPanel.setBorder(Borders.DLU2);
     
     mProgramList = mProgramListPanel.getProgramList();
+    setDefaultFocusOwner(mProgramList);
     mProgramList.addMouseAndKeyListeners(null);
 
     mProgramList.addKeyListener(new KeyAdapter() {

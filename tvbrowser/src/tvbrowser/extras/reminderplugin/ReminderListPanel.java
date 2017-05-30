@@ -48,10 +48,11 @@ import util.ui.ProgramList;
 import util.ui.ProgramTableCellRenderer;
 import util.ui.SendToPluginDialog;
 import util.ui.TVBrowserIcons;
+import util.ui.TabListenerPanel;
 import util.ui.persona.Persona;
 import util.ui.persona.PersonaListener;
 
-public class ReminderListPanel extends JPanel implements PersonaListener, ProgramMouseAndContextMenuListener {
+public class ReminderListPanel extends TabListenerPanel implements PersonaListener, ProgramMouseAndContextMenuListener {
   private static final util.ui.Localizer mLocalizer = ReminderListDialog.mLocalizer; 
   
   private JButton mUndo, mDelete, mSend, mScrollToPreviousDay, mScrollToNextDay;
@@ -86,6 +87,7 @@ public class ReminderListPanel extends JPanel implements PersonaListener, Progra
     mModel = new ReminderTableModel(mReminderList, mTitleSelection = new JComboBox<>());
 
     mTable = new JTable();
+    setDefaultFocusOwner(mTable);
     mTable.getTableHeader().setResizingAllowed(false);
     mTable.getTableHeader().setReorderingAllowed(false);
     mTable.addKeyListener(new KeyAdapter() {
