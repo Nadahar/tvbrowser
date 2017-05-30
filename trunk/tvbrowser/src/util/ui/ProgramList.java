@@ -135,6 +135,7 @@ public class ProgramList extends JList<Object> implements ChangeListener,
   private void initialize(ProgramPanelSettings settings) {
     setCellRenderer(new ProgramListCellRenderer(settings));
     setToolTipText("");
+    UiUtilities.addKeyRotation(this);
   }
 
   /**
@@ -844,6 +845,36 @@ public class ProgramList extends JList<Object> implements ChangeListener,
 
   @Override
   public void showContextMenu(Program program) {
-    showPopup(indexToLocation(getSelectedIndex()), mCaller);
+    Point p = indexToLocation(getSelectedIndex());
+    Rectangle r = getCellBounds(getSelectedIndex(), getSelectedIndex());
+    p.x += (int)(r.width*0.2f);
+    p.y += (int)(r.height*2/3f);
+    showPopup(p, mCaller);
+  }
+  
+  @Override
+  public void setSelectedIndex(int row) {
+    if(getModel().getSize() > 0) {
+      if(row < 0) {
+        row = getModel().getSize()-1;
+      }
+      else if(row > getModel().getSize()-1) {
+        row = 0;
+      }
+      
+      int index = getSelectedIndex();
+      
+      if(row == 0 && index == getModel().getSize()-1) {
+        index = -1;
+      }
+      
+      if(!(getModel().getElementAt(row) instanceof Program)) {
+        setSelectedIndex(row + row-index);
+      }
+      else {
+        super.setSelectedIndex(row);
+        ensureIndexIsVisible(row);
+      }
+    }
   }
 }

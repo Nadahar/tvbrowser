@@ -199,8 +199,8 @@ public class ProgramListCellRenderer extends DefaultListCellRenderer {
       mProgramPanel.setWidth(list.getWidth() - borderInsets.left - borderInsets.right);
       mProgramPanel.setProgram(program);
       mProgramPanel.setPaintExpiredProgramsPale(!isSelected);
-      mProgramPanel.setTextColor(label.getForeground());
       mProgramPanel.setBackground(label.getBackground());
+      mProgramPanel.setSelected(isSelected);
       
       if (!mProgramSet.contains(program)) {
         mProgramSet.add(program);

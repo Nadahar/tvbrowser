@@ -134,6 +134,7 @@ import devplugin.Program;
 import devplugin.ProgramFilter;
 import devplugin.ProgressMonitor;
 import devplugin.SettingsItem;
+import devplugin.TabListener;
 import devplugin.Version;
 import tvbrowser.TVBrowser;
 import tvbrowser.core.ChannelList;
@@ -317,6 +318,8 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
   
   private PluginViewWrapper mPluginViewWrapper;
   
+  private Component mSelectedTab;
+  
   private MainFrame() {
     super(TVBrowser.MAINWINDOW_TITLE);
     
@@ -441,6 +444,35 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     }
     
     mCenterTabPane = new JTabbedPane();
+    mCenterTabPane.addChangeListener(e -> {
+      final Component focusOwner = getMostRecentFocusOwner();
+      
+      SwingUtilities.invokeLater(() -> {
+        if(mSelectedTab != null) {
+          ((TabListener)mSelectedTab).tabHidden(focusOwner);
+        }
+        
+        if(mCenterTabPane.getSelectedIndex() != -1) {
+          mSelectedTab = mCenterTabPane.getComponent(mCenterTabPane.getSelectedIndex());
+          
+          if(mSelectedTab instanceof JPanel && !(mSelectedTab instanceof TabListener)) {
+            if(((JPanel) mSelectedTab).getComponentCount() == 1) {
+              mSelectedTab = ((JPanel) mSelectedTab).getComponent(0);
+            }
+          }
+          
+          if(mSelectedTab instanceof TabListener) {
+            ((TabListener) mSelectedTab).tabShown();
+          }
+          else {
+            mSelectedTab = null;
+          }
+        }
+        else {
+          mSelectedTab = null;
+        }  
+      });
+    });
     mDefaultUI = mCenterTabPane.getUI();
     mPersonaUI = new BasicTabbedPaneUI() {
       protected  void  paintText(Graphics g, int tabPlacement, Font font, FontMetrics metrics, int tabIndex, String title, Rectangle textRect, boolean isSelected) {
@@ -1187,6 +1219,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
         }
       });
     }
+    
     
     // also used for restore view!
    /* addKeyAction(KeyEvent.VK_NUMPAD0, InputEvent.CTRL_DOWN_MASK, new AbstractAction() {
