@@ -725,7 +725,7 @@ public class ReminderPlugin {
     
     ActionMenu result = null;
     
-    if(!program.isExpired()) {
+    if(!program.isExpired() || program.equals(PluginManagerImpl.getInstance().getExampleProgram())) {
       if(mReminderList.contains(program)) {
         result = new ActionMenu(getName(), IconLoader.getInstance().getIconFromTheme("apps",
             "appointment", 16), actions.toArray(new ActionMenu[actions
@@ -1178,6 +1178,11 @@ public class ReminderPlugin {
     if (remainingMinutes < 0) {
       remainingMinutes += 24 * 60;
     }
+    
+    if(program.equals(PluginManagerImpl.getInstance().getExampleProgram())) {
+      remainingMinutes = 24 * 60 * 7 + 1;
+    }
+    
     return remainingMinutes;
   }
 
@@ -1258,10 +1263,10 @@ public class ReminderPlugin {
   public static int getStartIndexForBeforeReminders(Program program) {
     int remainingMinutes = ReminderPlugin.getTimeToProgramStart(program);
     
-    if(program.isExpired()) {
+    if(program.isExpired() && !program.equals(PluginManagerImpl.getInstance().getExampleProgram())) {
       remainingMinutes = ReminderConstants.DONT_REMIND_AGAIN;
     }
-    else if(program.isOnAir()) {
+    else if(program.isOnAir() && !program.equals(PluginManagerImpl.getInstance().getExampleProgram())) {
       if(program.getStartTime() > IOUtilities.getMinutesAfterMidnight()) {
         remainingMinutes = program.getStartTime() - 1440 - IOUtilities.getMinutesAfterMidnight();
       }
@@ -1284,10 +1289,10 @@ public class ReminderPlugin {
   public static RemindValue[] calculatePossibleReminders(Program program) {
     int remainingMinutes = ReminderPlugin.getTimeToProgramStart(program);
     
-    if(program.isExpired()) {
+    if(program.isExpired() && !program.equals(PluginManagerImpl.getInstance().getExampleProgram())) {
       remainingMinutes = ReminderConstants.DONT_REMIND_AGAIN;
     }
-    else if(program.isOnAir()) {
+    else if(program.isOnAir() && !program.equals(PluginManagerImpl.getInstance().getExampleProgram())) {
       if(program.getStartTime() > IOUtilities.getMinutesAfterMidnight()) {
         remainingMinutes = program.getStartTime() - 1440 - IOUtilities.getMinutesAfterMidnight();
       }
