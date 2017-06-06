@@ -520,20 +520,24 @@ public class ContextMenuManager {
   }
   
   public static ActionMenu loadActionMenu(final ActionMenu actionMenu, final int actionMenuId) {
-    final ActionMenu[] subItems = actionMenu.getSubItems();
-    ActionMenu menu = actionMenu.getActionId() == actionMenuId ? actionMenu : null;
+    ActionMenu menu = null;
     
-    if(subItems != null && menu == null) {
-      for(ActionMenu item : subItems) {
-        if(menu != null) {
-          break;
-        }
-        else if(item.hasSubItems()) {
-          menu = loadActionMenu(item, actionMenuId);
-        }
-        else if(item.getActionId() == actionMenuId) {
-          menu = item;
-          break;
+    if(actionMenu != null) {
+      final ActionMenu[] subItems = actionMenu.getSubItems();
+      menu = actionMenu.getActionId() == actionMenuId ? actionMenu : null;
+      
+      if(subItems != null && menu == null) {
+        for(ActionMenu item : subItems) {
+          if(menu != null) {
+            break;
+          }
+          else if(item.hasSubItems()) {
+            menu = loadActionMenu(item, actionMenuId);
+          }
+          else if(item.getActionId() == actionMenuId) {
+            menu = item;
+            break;
+          }
         }
       }
     }
