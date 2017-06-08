@@ -625,19 +625,19 @@ public class ReminderPlugin {
     RemindValue[] values = calculatePossibleReminders(program);
     
     ArrayList<ActionMenu> actions = new ArrayList<ActionMenu>(values.length + 3);
-
-    if(item != null || program.equals(PluginManagerImpl.getInstance().getExampleProgram())) {
-      actions.add(new ActionMenu(ReminderConstants.DONT_REMIND_AGAIN_VALUE.getMinutes(),new AbstractAction(ReminderConstants.DONT_REMIND_AGAIN_VALUE.toString()) {
-        public void actionPerformed(ActionEvent e) {
-          if(ReminderPropertyDefaults.getPropertyDefaults().getValueFromProperties(ReminderPropertyDefaults.KEY_FRAME_REMINDERS_SHOW,ReminderPlugin.getInstance().getSettings()).equalsIgnoreCase("true")) {
-            FrameReminders.getInstance().removeReminder(item);
-          }
-          
-          mReminderList.removeWithoutChecking(program);
-          updateRootNode(true);
+    ContextMenuAction dontRemind = null;
+    
+    if(item != null && !program.equals(PluginManagerImpl.getInstance().getExampleProgram())) {
+      dontRemind = new ContextMenuAction(ReminderConstants.DONT_REMIND_AGAIN_VALUE.toString());
+      dontRemind.setSmallIcon(IconLoader.getInstance().getIconFromTheme("actions", "appointment-new", 16));
+      dontRemind.setActionListener(e -> {
+        if(ReminderPropertyDefaults.getPropertyDefaults().getValueFromProperties(ReminderPropertyDefaults.KEY_FRAME_REMINDERS_SHOW,ReminderPlugin.getInstance().getSettings()).equalsIgnoreCase("true")) {
+          FrameReminders.getInstance().removeReminder(item);
         }
-      }));
-      actions.add(new ActionMenu(ContextMenuSeparatorAction.getInstance()));
+        
+        mReminderList.removeWithoutChecking(program);
+        updateRootNode(true);
+      });
     }
 
     for(final RemindValue value : values) {
@@ -673,7 +673,10 @@ public class ReminderPlugin {
     }
     
     if(item != null || program.equals(PluginManagerImpl.getInstance().getExampleProgram())) {
-      actions.add(new ActionMenu(ContextMenuSeparatorAction.getInstance()));
+      if(!actions.isEmpty()) {
+        actions.add(new ActionMenu(ContextMenuSeparatorAction.getInstance()));
+      }
+      
       actions.add(new ActionMenu(Integer.MAX_VALUE, new AbstractAction(LOCALIZER.msg("comment",
           "Change comment"), TVBrowserIcons.edit(TVBrowserIcons.SIZE_SMALL)) {
         @Override
@@ -690,7 +693,7 @@ public class ReminderPlugin {
     }
  
     ContextMenuAction action = new ContextMenuAction();
-    action.setText(LOCALIZER.msg("contextMenuText", "Remind me"));
+    action.setText(LOCALIZER.msg("contextMenuText", "Remind me") + (program.equals(PluginManagerImpl.getInstance().getExampleProgram()) ? "/"+ReminderConstants.DONT_REMIND_AGAIN_VALUE.toString() : ""));
     action.setSmallIcon(IconLoader.getInstance().getIconFromTheme("actions",
         "appointment-new", 16));
     action.setActionListener(event -> {
@@ -727,9 +730,17 @@ public class ReminderPlugin {
     
     if(!program.isExpired() || program.equals(PluginManagerImpl.getInstance().getExampleProgram())) {
       if(mReminderList.contains(program)) {
-        result = new ActionMenu(getName(), IconLoader.getInstance().getIconFromTheme("apps",
-            "appointment", 16), actions.toArray(new ActionMenu[actions
-                                                               .size()]));
+        if(!actions.isEmpty()) {
+          result = new ActionMenu(ActionMenu.ID_ACTION_NONE, getName(), IconLoader.getInstance().getIconFromTheme("apps",
+              "appointment", 16), new ActionMenu[] {
+              new ActionMenu(Integer.MIN_VALUE, dontRemind),
+              new ActionMenu(getName(), IconLoader.getInstance().getIconFromTheme("apps",
+              "appointment", 16), actions.toArray(new ActionMenu[actions.size()]))
+          }, true);
+        }
+        else {
+          result = new ActionMenu(Integer.MIN_VALUE, dontRemind);
+        }
       }
       else if(!actions.isEmpty()) {
         result = new ActionMenu(ActionMenu.ID_ACTION_NONE, getName(), IconLoader.getInstance().getIconFromTheme("apps",
@@ -739,10 +750,6 @@ public class ReminderPlugin {
                     "appointment", 16), actions.toArray(new ActionMenu[actions
                                                                        .size()]))
             }, true);
-        
-        new ActionMenu(getName(), IconLoader.getInstance().getIconFromTheme("apps",
-            "appointment", 16), actions.toArray(new ActionMenu[actions
-            .size()]));
       }
     }
     
