@@ -226,7 +226,7 @@ public class Exclusion implements Comparable<Exclusion> {
       ProgramFilter[] filters = FilterManagerImpl.getInstance().getAvailableFilters();
       
       for(ProgramFilter filter : filters) {
-        if(filter.getName().equals(mFilterName)) {
+        if(filter.getName().equals(mFilterName) && !(filter instanceof FavoriteFilter)) {
           mFilter = filter;
           break;
         }

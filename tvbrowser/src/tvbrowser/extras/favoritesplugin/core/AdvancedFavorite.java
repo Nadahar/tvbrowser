@@ -439,7 +439,7 @@ public class AdvancedFavorite extends Favorite implements PendingFilterLoader {
         if(mFilter != null) {
           mPendingFilterName = null;
           
-          if(!FilterFavorite.filterIsAcceptable(mFilter)) {
+          if(FilterFavorite.filterIsAcceptable(mFilter)) {
             mFilter = null;
           }
         }
