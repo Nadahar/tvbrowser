@@ -734,7 +734,7 @@ public class ReminderPlugin {
           result = new ActionMenu(ActionMenu.ID_ACTION_NONE, getName(), IconLoader.getInstance().getIconFromTheme("apps",
               "appointment", 16), new ActionMenu[] {
               new ActionMenu(Integer.MIN_VALUE, dontRemind),
-              new ActionMenu(getName(), IconLoader.getInstance().getIconFromTheme("apps",
+              new ActionMenu(Integer.MIN_VALUE+1, getName(), IconLoader.getInstance().getIconFromTheme("apps",
               "appointment", 16), actions.toArray(new ActionMenu[actions.size()]))
           }, true);
         }
@@ -746,7 +746,7 @@ public class ReminderPlugin {
         result = new ActionMenu(ActionMenu.ID_ACTION_NONE, getName(), IconLoader.getInstance().getIconFromTheme("apps",
             "appointment", 16), new ActionMenu[] {
                 new ActionMenu(Integer.MIN_VALUE, action),
-                new ActionMenu(getName(), IconLoader.getInstance().getIconFromTheme("apps",
+                new ActionMenu(Integer.MIN_VALUE+1, getName(), IconLoader.getInstance().getIconFromTheme("apps",
                     "appointment", 16), actions.toArray(new ActionMenu[actions
                                                                        .size()]))
             }, true);

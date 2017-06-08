@@ -29,6 +29,8 @@ package tvbrowser.core.contextmenu;
 
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -54,6 +56,7 @@ import tvbrowser.extras.common.InternalPluginProxyIf;
 import tvbrowser.extras.common.InternalPluginProxyList;
 import tvbrowser.extras.searchplugin.SearchPluginProxy;
 import tvbrowser.ui.mainframe.MainFrame;
+import tvbrowser.ui.settings.ContextmenuSettingsTab;
 import util.settings.ContextMenuMouseActionSetting;
 //import util.settings.StringProperty;
 import util.ui.Localizer;
@@ -198,7 +201,7 @@ public class ContextMenuManager {
    * @param id The id to get the ContextMenuIf for.
    * @return The ContextMenuIf for the id or null if id wasn't found.
    */
-  public ContextMenuIf getContextMenuIfForId(String id) {
+  public static ContextMenuIf getContextMenuIfForId(String id) {
   	if (id == null) {
   		return null;
   	}
@@ -351,18 +354,18 @@ public class ContextMenuManager {
    * 
    * @param callerIf The caller Context menu interface.
    * @param program The program to show the context menu for.
-   * @param markDefaultIf True if the default context menu interfaces should be highlighted.
    * @return The menu items of the context menu.
    */
-  public JMenu createContextMenuItems(ContextMenuIf callerIf, Program program, boolean markDefaultIf) {
+  public JMenu createContextMenuItems(ContextMenuIf callerIf, Program program) {
     try {
     ContextMenuIf[] menuIfArr = getInstance().getAvailableContextMenuIfs(false, true);
-
+    HashMap<ContextMenuIf, HashSet<Integer>> disabledSubMenus = getDisabledSubMenuMap();
+    
     JMenu rootMenu = new JMenu();
     
-    for (ContextMenuIf element : menuIfArr) {
-      ContextMenuIf menuIf = element;
-
+    for (ContextMenuIf menuIf : menuIfArr) {
+      final HashSet<Integer> disabledItems = disabledSubMenus.get(menuIf);
+      
       boolean equalsPlugin = false;
 
       if ((callerIf != null) && (callerIf.getId().equals(menuIf.getId()))) {
@@ -406,7 +409,7 @@ public class ContextMenuManager {
               rootMenu.addSeparator();
               
               for(ActionMenu item : subItems) {
-                if(item != null) {
+                if(item != null && (item.getActionId() == ActionMenu.ID_ACTION_NONE || disabledItems == null || !disabledItems.contains(item.getActionId()))) {
                   if(item.getAction().getValue(Action.SMALL_ICON) == null && ic != null) {
                     item.getAction().putValue(Action.SMALL_ICON, ic);
                   }
@@ -428,9 +431,30 @@ public class ContextMenuManager {
             }
           }
           else {
-            JMenuItem menuItem = MenuUtil.createMenuItem(actionMenu);
+            final ActionMenu[] subItems = actionMenu.getSubItems();
             
-            rootMenu.add(menuItem);
+            if(subItems != null) {
+              final ArrayList<ActionMenu> result = new ArrayList<>();
+              
+              for(ActionMenu item : subItems) {
+                if(item != null && (item.getActionId() == ActionMenu.ID_ACTION_NONE || disabledItems == null || !disabledItems.contains(item.getActionId()))) {
+                  result.add(item);
+                }
+              }
+              
+              if(!result.isEmpty()) {
+                actionMenu = new ActionMenu(actionMenu.getActionId(), actionMenu.getTitle(), (Icon)actionMenu.getAction().getValue(Action.SMALL_ICON), result.toArray(new ActionMenu[result.size()]));
+              }
+              else {
+                actionMenu = null;
+              }
+            }
+            
+            if(actionMenu != null) {
+              JMenuItem menuItem = MenuUtil.createMenuItem(actionMenu);
+              
+              rootMenu.add(menuItem);
+            }
           }
         }
       }
@@ -459,7 +483,7 @@ public class ContextMenuManager {
    * Returns a List with all disabled ContextMenuIfs
    * @return disabled ContextMenuIfs
    */
-  public List<ContextMenuIf> getDisabledContextMenuIfs() {
+  public static List<ContextMenuIf> getDisabledContextMenuIfs() {
     String[] disabled = Settings.propContextMenuDisabledItems.getStringArray();
     
     ArrayList<ContextMenuIf> list = new ArrayList<ContextMenuIf>();
@@ -475,6 +499,46 @@ public class ContextMenuManager {
     }
     
     return list;
+  }
+  
+  /**
+   * @return A map with the disabled context menu action ids for each ContextMenuIf
+   * @since 3.4.5
+   */
+  public static HashMap<ContextMenuIf, HashSet<Integer>> getDisabledSubMenuMap() {
+    final HashMap<ContextMenuIf, HashSet<Integer>> disabledSubMenusMap = new HashMap<>();
+    
+    final String[] disabledSubMenus = Settings.propContextMenuDisabledSubItems.getStringArray();
+    
+    if(disabledSubMenus != null) {
+      for(String menuInfo : disabledSubMenus) {
+        final String[] parts = menuInfo.split(ContextmenuSettingsTab.SEPARATOR_SUB_MENUS_DISABLED);
+        
+        if(parts.length == 2) {
+          final ContextMenuIf menuIf = ContextMenuManager.getContextMenuIfForId(parts[0]);
+          
+          if(menuIf != null) {
+            final String[] ids = parts[1].split(ContextmenuSettingsTab.SEPARATOR_SUB_MENUS_DISABLED_IDS);
+            
+            if(ids.length > 0) {
+              final HashSet<Integer> setIds = new HashSet<>();
+              
+              for(String id : ids) {
+                try {
+                  setIds.add(Integer.parseInt(id));
+                }catch(NumberFormatException nfe) {}
+              }
+              
+              if(!setIds.isEmpty()) {
+                disabledSubMenusMap.put(menuIf, setIds);
+              }
+            }
+          }
+        }
+      }
+    }
+    
+    return disabledSubMenusMap;
   }
   
   public JPopupMenu createRemovedProgramContextMenu(final Program program) {

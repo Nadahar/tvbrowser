@@ -1086,7 +1086,7 @@ public class PluginProxyManager {
 
   public static JPopupMenu createPluginContextMenu(Program program, ContextMenuIf menuIf) {
     JPopupMenu menu = new JPopupMenu();
-    JMenu menus = ContextMenuManager.getInstance().createContextMenuItems(menuIf, program, true);
+    JMenu menus = ContextMenuManager.getInstance().createContextMenuItems(menuIf, program);
 
     Component[] comps = menus.getMenuComponents();
     for (Component component : comps) {

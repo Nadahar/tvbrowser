@@ -1572,12 +1572,21 @@ public class Settings {
       new String[] { "programinfo.ProgramInfo", "searchplugin.SearchPlugin", "reminderplugin.ReminderPlugin",
           "favoritesplugin.FavoritesPlugin", SeparatorMenuItem.SEPARATOR, "java.webplugin.WebPlugin",
           "java.simplemarkerplugin.SimpleMarkerPlugin", "java.captureplugin.CapturePlugin" });
+  
+  
 
   /**
    * All disabled Items of the ContextMenu
    */
   public static final StringArrayProperty propContextMenuDisabledItems = new StringArrayProperty(
       mProp, "contextMenuDisabledItems", null);
+  
+  /**
+   * All sub actions of plugins that are disabled
+   * @since 3.4.5
+   */
+  public static final StringArrayProperty propContextMenuDisabledSubItems = new StringArrayProperty(
+      mProp, "propContextMenuDisabledSubItems", null);
 
   /**
    * some plugins are installed by default, but not activated
