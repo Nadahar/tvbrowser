@@ -499,7 +499,6 @@ public class ScrollableMenu extends JMenu {
     }
 
     while(super.getMenuComponentCount() > maxItemsToDisplay + 4) {
-      System.out.println(super.getMenuComponentCount() + " " + maxItemsToDisplay);
       super.remove(super.getMenuComponentCount() - 3);
     }
 

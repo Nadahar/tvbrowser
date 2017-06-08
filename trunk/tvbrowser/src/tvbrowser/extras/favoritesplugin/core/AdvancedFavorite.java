@@ -344,7 +344,7 @@ public class AdvancedFavorite extends Favorite implements PendingFilterLoader {
       ProgramFilter[] availableFilter = Plugin.getPluginManager().getFilterManager().getAvailableFilters();
       
       for(ProgramFilter filter : availableFilter) {
-        if(!FilterFavorite.filterIsAcceptable(filter)) {
+        if(FilterFavorite.filterIsAcceptable(filter)) {
           ((DefaultComboBoxModel<WrapperFilter>)mFilterCombo.getModel()).addElement(new WrapperFilter(filter));
         }
       }
@@ -361,7 +361,7 @@ public class AdvancedFavorite extends Favorite implements PendingFilterLoader {
         ProgramFilter[] availableFilter1 = Plugin.getPluginManager().getFilterManager().getAvailableFilters();
         
         for(ProgramFilter filter : availableFilter1) {
-          if(!(filter instanceof FavoriteFilter)) {
+          if(FilterFavorite.filterIsAcceptable(filter)) {
             ((DefaultComboBoxModel<WrapperFilter>)mFilterCombo.getModel()).addElement(new WrapperFilter(filter));
           }
         }
