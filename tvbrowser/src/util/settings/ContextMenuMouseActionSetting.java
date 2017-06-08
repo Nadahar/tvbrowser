@@ -23,9 +23,9 @@
  */
 package util.settings;
 
-import tvbrowser.core.contextmenu.ContextMenuManager;
 import devplugin.ActionMenu;
 import devplugin.ContextMenuIf;
+import tvbrowser.core.contextmenu.ContextMenuManager;
 
 /**
  * A setting for storing information about a context menu mouse action.
@@ -100,6 +100,6 @@ public class ContextMenuMouseActionSetting {
    * @return The ContextMenuIf for this settings or <code>null</code> if there is no ContextMenuIf.
    */
   public ContextMenuIf getContextMenuIf() {
-    return ContextMenuManager.getInstance().getContextMenuIfForId(mContextMenuId);
+    return ContextMenuManager.getContextMenuIfForId(mContextMenuId);
   }
 }

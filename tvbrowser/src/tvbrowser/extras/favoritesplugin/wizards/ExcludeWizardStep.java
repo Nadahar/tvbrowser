@@ -326,8 +326,10 @@ public class ExcludeWizardStep extends AbstractWizardStep {
         
         ((DefaultComboBoxModel<WrapperFilter>)mFilterChooser.getModel()).removeAllElements();
         
-        for(ProgramFilter filter :Plugin.getPluginManager().getFilterManager().getAvailableFilters()) {
-          ((DefaultComboBoxModel<WrapperFilter>)mFilterChooser.getModel()).addElement(new WrapperFilter(filter));
+        for(ProgramFilter filter : Plugin.getPluginManager().getFilterManager().getAvailableFilters()) {
+          if(!(filter instanceof FavoriteFilter)) {
+            ((DefaultComboBoxModel<WrapperFilter>)mFilterChooser.getModel()).addElement(new WrapperFilter(filter));
+          }
         }
         
         mFilterChooser.setSelectedItem(selected);
