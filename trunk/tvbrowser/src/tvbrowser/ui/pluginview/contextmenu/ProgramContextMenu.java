@@ -90,7 +90,7 @@ public class ProgramContextMenu extends AbstractContextMenu {
 
     menu.addSeparator();
 
-    JMenu menus = ContextMenuManager.getInstance().createContextMenuItems(null, mPrograms[0], false);
+    JMenu menus = ContextMenuManager.getInstance().createContextMenuItems(null, mPrograms[0]);
 
     Component[] comps = menus.getMenuComponents();
     for (Component comp : comps) {

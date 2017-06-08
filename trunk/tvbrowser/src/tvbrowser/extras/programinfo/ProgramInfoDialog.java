@@ -411,9 +411,7 @@ class ProgramInfoDialog {
           popupMenu.add(addFavoriteMenuItem(searchText, actorFavorite));
           popupMenu.addSeparator();
         }
-        JMenu subMenu = ContextMenuManager.getInstance()
-            .createContextMenuItems(ProgramInfoProxy.getInstance(), mProgram,
-                true);
+        JMenu subMenu = ContextMenuManager.getInstance().createContextMenuItems(ProgramInfoProxy.getInstance(), mProgram);
         subMenu.setText(Localizer.getLocalization(Localizer.I18N_PROGRAM));
         popupMenu.add(subMenu);
         TextComponentPopupEventQueue.addStandardContextMenu(mInfoEP, popupMenu, link);
