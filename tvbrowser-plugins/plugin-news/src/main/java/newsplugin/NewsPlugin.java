@@ -42,6 +42,7 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.SwingUtilities;
 
+import compat.PluginCompat;
 import util.exc.ErrorHandler;
 import util.io.IOUtilities;
 import devplugin.ActionMenu;
@@ -56,7 +57,7 @@ import devplugin.Version;
  * @author Til Schneider, www.murfman.de
  */
 public class NewsPlugin extends Plugin {
-  private static final Version mVersion = new Version(3,12,1);
+  private static final Version mVersion = new Version(3,13);
 
   /** The localizer used by this class. */
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer
@@ -392,5 +393,9 @@ public class NewsPlugin extends Plugin {
     }
     
     return super.saveMe();
+  }
+
+  public String getPluginCategory() {
+    return PluginCompat.CATEGORY_OTHER;
   }
 }
