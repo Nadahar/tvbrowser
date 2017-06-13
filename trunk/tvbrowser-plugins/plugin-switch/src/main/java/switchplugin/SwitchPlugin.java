@@ -14,6 +14,7 @@ import java.util.logging.Logger;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 
+import compat.PluginCompat;
 import util.paramhandler.ParamParser;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
@@ -44,7 +45,7 @@ public class SwitchPlugin extends Plugin {
   private static SwitchPlugin instance;
   private Properties mProp;
   private Hashtable mChannels = new Hashtable();
-  private static Version mVersion = new Version(0,57,0);
+  private static Version mVersion = new Version(0,58,0);
   private ProgramReceiveTarget[] mReceiveTarget;
   
   public static Version getVersion() {
@@ -139,7 +140,7 @@ public class SwitchPlugin extends Plugin {
             JOptionPane.QUESTION_MESSAGE, p.getChannel().getIcon());
       else {
         String[] msg = {
-            p.getChannel().getName() + " " + p.getTimeString(),
+            p.getChannel().getDefaultName() + " " + p.getTimeString(),
             p.getTitle(),
             " ",
             getProperty("question", mLocalizer.msg("qmsg",
@@ -341,7 +342,6 @@ public class SwitchPlugin extends Plugin {
   }
   
   public String getPluginCategory() {
-    //Plugin.REMOTE_CONTROL_SOFTWARE_CATEGORY
-    return "remote_soft";
+    return PluginCompat.CATEGORY_REMOTE_CONTROL_SOFTWARE;
   }
 }

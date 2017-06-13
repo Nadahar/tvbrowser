@@ -26,10 +26,10 @@ public class SwitchParamLibrary extends ParamLibrary {
 
   public String getStringForKey(Program p, String key) {
 
-    if (key.compareToIgnoreCase("channel_name_external") == 0)
-      return SwitchPlugin.getInstance().getExternalNameFor(
-          p.getChannel().getName());
-
+    if (key.compareToIgnoreCase("channel_name_external") == 0) {
+      return SwitchPlugin.getInstance().getExternalNameFor(p.getChannel().getDefaultName());
+    }
+    
     return super.getStringForKey(p, key);
   }
 
