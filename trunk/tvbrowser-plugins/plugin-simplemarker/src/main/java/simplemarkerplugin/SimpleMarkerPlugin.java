@@ -25,8 +25,11 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -38,23 +41,24 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.JRootPane;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 
-import util.settings.PluginPictureSettings;
-import util.settings.ProgramPanelSettings;
-import util.ui.Localizer;
-import util.ui.ProgramList;
-import util.ui.TVBrowserIcons;
-import util.ui.UiUtilities;
-import util.ui.persona.Persona;
-
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.factories.CC;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
+import compat.PersonaCompat;
+import compat.PluginCompat;
+import compat.UiCompat;
+import compat.VersionCompat;
 import devplugin.ActionMenu;
 import devplugin.AfterDataUpdateInfoPanel;
 import devplugin.ContextMenuAction;
@@ -70,6 +74,13 @@ import devplugin.Program;
 import devplugin.ProgramReceiveTarget;
 import devplugin.SettingsTab;
 import devplugin.Version;
+import util.settings.PluginPictureSettings;
+import util.settings.ProgramPanelSettings;
+import util.ui.Localizer;
+import util.ui.ProgramList;
+import util.ui.TVBrowserIcons;
+import util.ui.UiUtilities;
+import util.ui.WindowClosingIf;
 
 /**
  * SimpleMarkerPlugin 1.4 Plugin for TV-Browser since version 2.3 to only mark
@@ -82,7 +93,7 @@ import devplugin.Version;
  * @author René Mach
  */
 public class SimpleMarkerPlugin extends Plugin {
-  private static final Version mVersion = new Version(3,25,0,true);
+  private static final Version mVersion = new Version(3,26,0,true);
 
   /** The localizer for this class. */
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(SimpleMarkerPlugin.class);
@@ -105,7 +116,7 @@ public class SimpleMarkerPlugin extends Plugin {
 
   private SimpleMarkerSettings mSettings;
   
-  private PluginCenterPanelWrapper mWrapper;
+  private Object mWrapper;
   
   private JPanel mCenterPanelWrapper;
   
@@ -142,15 +153,16 @@ public class SimpleMarkerPlugin extends Plugin {
     /*SwingUtilities.invokeLater(new Runnable() {
       @Override
       public void run() {*/
-        mCenterPanelWrapper = UiUtilities.createPersonaBackgroundPanel();
+        mCenterPanelWrapper = UiCompat.createPersonaBackgroundPanel();
         
-        mWrapper = new PluginCenterPanelWrapper() {
-          @Override
-          public PluginCenterPanel[] getCenterPanels() {
-            return new PluginCenterPanel[] {new SimpleMarkerPanel()};
-          }
-        };
-        
+        if(VersionCompat.isCenterPanelSupported()) {
+          mWrapper = new PluginCenterPanelWrapper() {
+            @Override
+            public PluginCenterPanel[] getCenterPanels() {
+              return new PluginCenterPanel[] {new SimpleMarkerPanel()};
+            }
+          };
+        }
         
      /* }
     });*/
@@ -160,7 +172,7 @@ public class SimpleMarkerPlugin extends Plugin {
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
         mMangePanel = new ManagePanel(mMarkListVector, null);
-        Persona.getInstance().registerPersonaListener(mMangePanel);
+        PersonaCompat.getInstance().registerPersonaListener(mMangePanel);
         
         mCenterPanelWrapper.add(mMangePanel,BorderLayout.CENTER);
         mCenterPanelWrapper.updateUI();
@@ -171,7 +183,7 @@ public class SimpleMarkerPlugin extends Plugin {
   private void updateCenterPanel() {
     if(mMangePanel != null && mCenterPanelWrapper != null) {
       mCenterPanelWrapper.remove(mMangePanel);
-      Persona.getInstance().removePersonaListerner(mMangePanel);
+      PersonaCompat.getInstance().removePersonaListener(mMangePanel);
       mMangePanel = null;
       
       addCenterPanel();
@@ -179,7 +191,7 @@ public class SimpleMarkerPlugin extends Plugin {
   }
   
   public void onDeactivation() {
-    Persona.getInstance().registerPersonaListener(mMangePanel);
+    PersonaCompat.getInstance().registerPersonaListener(mMangePanel);
     mCenterPanelWrapper.remove(mMangePanel);
     mMangePanel = null;
   }
@@ -345,7 +357,10 @@ public class SimpleMarkerPlugin extends Plugin {
     return priority;
   }
   
-  @Override
+  public void handleTvDataUpdateStarted() {
+    handleTvDataUpdateStarted(null);
+  }
+  
   public void handleTvDataUpdateStarted(Date until) {
     mInfoPanel = null;
   }
@@ -375,6 +390,61 @@ public class SimpleMarkerPlugin extends Plugin {
     
     if(mMangePanel != null) {
       mMangePanel.selectPrograms(false);
+    }
+    
+    if(!VersionCompat.isCenterPanelSupported() && mInfoPanel != null) {
+      final JDialog d = UiUtilities.createDialog(UiUtilities.getLastModalChildOf(getParentFrame()), true);
+      d.setTitle(getInfo().getName());
+      d.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+      
+      
+      final JButton close = new JButton(Localizer.getLocalization(Localizer.I18N_CLOSE));
+      close.addActionListener(new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+          if(mInfoPanel != null) {
+            mInfoPanel.closed();
+          }
+          
+          d.dispose();
+        }
+      });
+      
+      UiUtilities.registerForClosing(new WindowClosingIf() {
+        @Override
+        public JRootPane getRootPane() {
+          return d.getRootPane();
+        }
+        
+        @Override
+        public void close() {
+          if(mInfoPanel != null) {
+            mInfoPanel.closed();
+          }
+          
+          d.dispose();
+        }
+      });
+      
+      d.addWindowListener(new WindowAdapter() {
+        @Override
+        public void windowClosing(WindowEvent e) {
+          if(mInfoPanel != null) {
+            mInfoPanel.closed();
+          }
+           
+          d.dispose();
+        }
+      });
+      
+      final JPanel content = new JPanel(new FormLayout("100dlu:grow,default","fill:100dlu:grow,5dlu,default"));
+      content.setBorder(Borders.DIALOG_BORDER);
+      content.add(mInfoPanel, CC.xyw(1, 1, 2));
+      content.add(close, CC.xy(2, 3));
+      
+      d.setContentPane(content);
+      layoutWindow("simpleMarkerRemoved", d, new Dimension(400,400));
+      d.setVisible(true);
     }
   }
 
@@ -657,11 +727,11 @@ public class SimpleMarkerPlugin extends Plugin {
   }
   
   public String getPluginCategory() {
-    return Plugin.OTHER_CATEGORY;
+    return PluginCompat.CATEGORY_OTHER;
   }
 
   public PluginCenterPanelWrapper getPluginCenterPanelWrapper() {
-    return mWrapper;
+    return (PluginCenterPanelWrapper)mWrapper;
   }
 
   private class SimpleMarkerPanel extends PluginCenterPanel {
@@ -746,7 +816,7 @@ public class SimpleMarkerPlugin extends Plugin {
 
       Program p = (Program) mDeletedProgramList.getSelectedValue();
       
-      JPopupMenu menu = Plugin.getPluginManager().createRemovedProgramContextMenu(p);
+      JPopupMenu menu = PluginCompat.createRemovedProgramContextMenu(p);
       menu.show(mDeletedProgramList, e.getX(), e.getY());
     }
     

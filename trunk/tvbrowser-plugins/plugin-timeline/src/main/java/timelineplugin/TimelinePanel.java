@@ -30,8 +30,6 @@ import java.util.TimerTask;
 import java.util.Vector;
 
 import javax.swing.AbstractAction;
-import javax.swing.ActionMap;
-import javax.swing.InputMap;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -45,21 +43,20 @@ import javax.swing.UIManager;
 import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
 
-import util.ui.TimeFormatter;
-import util.ui.persona.Persona;
-import util.ui.persona.PersonaListener;
-
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
+import compat.PersonaCompat;
+import compat.PersonaCompatListener;
 import devplugin.Channel;
 import devplugin.Date;
 import devplugin.Plugin;
 import devplugin.Program;
 import devplugin.ProgramFilter;
+import util.ui.TimeFormatter;
 
-public class TimelinePanel extends JPanel implements PersonaListener {
+public class TimelinePanel extends JPanel implements PersonaCompatListener {
   static final util.ui.Localizer mLocalizer = util.ui.Localizer
       .getLocalizerFor(TimelinePlugin.class);
   
@@ -549,11 +546,11 @@ public class TimelinePanel extends JPanel implements PersonaListener {
 
 
   public void updatePersona() {
-    if(Persona.getInstance().getHeaderImage() != null) {
+    if(PersonaCompat.getInstance().getHeaderImage() != null) {
       if(mDateLabel != null) {
-        mDateLabel.setForeground(Persona.getInstance().getTextColor());
-        mFilterLabel.setForeground(Persona.getInstance().getTextColor());
-        mMainPane.setDateLabelColor(Persona.getInstance().getTextColor());
+        mDateLabel.setForeground(PersonaCompat.getInstance().getTextColor());
+        mFilterLabel.setForeground(PersonaCompat.getInstance().getTextColor());
+        mMainPane.setDateLabelColor(PersonaCompat.getInstance().getTextColor());
       }
     }
     else {

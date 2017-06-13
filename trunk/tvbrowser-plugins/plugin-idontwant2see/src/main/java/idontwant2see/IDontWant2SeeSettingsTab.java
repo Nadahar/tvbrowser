@@ -192,7 +192,7 @@ public class IDontWant2SeeSettingsTab implements SettingsTab {
 
     y += 2;
     
-    pb.add(mProgramImportancePanel, cc.xyw(2,y,3));
+    pb.add(mProgramImportancePanel, cc.xyw(1,y,5));
     
     final JPanel p = new JPanel(new FormLayout("0dlu,0dlu:grow",
         "5dlu,fill:default:grow"));

@@ -25,17 +25,16 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import util.ui.Localizer;
-import util.ui.UiUtilities;
-import util.ui.WindowClosingIf;
-
-import com.jgoodies.forms.builder.ButtonBarBuilder;
+import com.jgoodies.forms.builder.ButtonBarBuilder2;
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
 import devplugin.Program;
 import devplugin.ProgramFieldType;
+import util.ui.Localizer;
+import util.ui.UiUtilities;
+import util.ui.WindowClosingIf;
 
 /**
  * the dialog to enter the abstract for omdb. after the ok-button was pressed
@@ -152,17 +151,14 @@ public class CreateOmdbAbstractDialog extends JDialog implements WindowClosingIf
         close();
       }
     });
-    final ButtonBarBuilder builder = new ButtonBarBuilder();
+    final ButtonBarBuilder2 builder = new ButtonBarBuilder2();
     builder.addGlue();
     builder.addButton(new JButton[]{okButton, cancelButton});
     contentPane.add(builder.getPanel(), cellConstraints.xyw(1, 11, 4));
 
     pack();
   }
-
-
-
-
+  
   /**
    * called when the user closes the dialog by pressing esc, using the
    * window control or pushing the cancel button. closes the dialog and

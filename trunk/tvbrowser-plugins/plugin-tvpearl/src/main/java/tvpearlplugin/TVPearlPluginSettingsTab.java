@@ -53,8 +53,8 @@ import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.factories.CC;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.FormSpecs;
 
+import compat.BordersCompat;
 import devplugin.ProgramReceiveIf;
 import devplugin.ProgramReceiveTarget;
 import devplugin.SettingsTab;
@@ -198,7 +198,7 @@ public final class TVPearlPluginSettingsTab implements SettingsTab
     });
 		updateFilterEnabled();
 
-		builder.appendRow(FormSpecs.PREF_ROWSPEC);
+		builder.appendRow("default");
 		builder.setRow(2);
 		builder.addLabel(mLocalizer.msg("view", "View"), cc.xy(2, builder.getRow()));
 		builder.add(mViewOption, cc.xy(4, builder.getRow()));
@@ -248,7 +248,7 @@ public final class TVPearlPluginSettingsTab implements SettingsTab
 	builder.nextRow(2);
 
 	final JScrollPane scrollPane = new JScrollPane(builder.getPanel());
-	scrollPane.setBorder(Borders.DIALOG);
+	scrollPane.setBorder(BordersCompat.getDialogBorder());
 	scrollPane.setViewportBorder(null);
 		
 	mTabbedPane.addTab(mLocalizer.msg("tabPearlDisplay", "TV Pearl Display"), scrollPane);
@@ -292,7 +292,7 @@ public final class TVPearlPluginSettingsTab implements SettingsTab
     creationPanel.add(countPanel, cc.xy(4, y));
     
     final JScrollPane scrollPane2 = new JScrollPane(creationPanel.getPanel());
-    scrollPane2.setBorder(Borders.DIALOG);
+    scrollPane2.setBorder(BordersCompat.getDialogBorder());
     scrollPane2.setViewportBorder(null);
     scrollPane2.setPreferredSize(new Dimension(200, 200));
     
@@ -303,15 +303,15 @@ public final class TVPearlPluginSettingsTab implements SettingsTab
   }
 
   private void addSeparator(final PanelBuilder builder, final String label) {
-    builder.appendRow(FormSpecs.PARAGRAPH_GAP_ROWSPEC);
-    builder.appendRow(FormSpecs.PREF_ROWSPEC);
+    builder.appendRow("1dlu");
+    builder.appendRow("default");
 		builder.nextRow(2);
     builder.addSeparator(label);
   }
 
   private PanelBuilder newLine(final PanelBuilder builder) {
-    builder.appendRow(FormSpecs.LINE_GAP_ROWSPEC);
-    builder.appendRow(FormSpecs.PREF_ROWSPEC);
+    builder.appendRow("1dlu");
+    builder.appendRow("default");
 	builder.nextRow(2);
 	
 	return builder;

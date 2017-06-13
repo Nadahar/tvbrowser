@@ -30,19 +30,19 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 
+import compat.UiCompat;
+import devplugin.Channel;
+import devplugin.Program;
 import util.settings.PluginPictureSettings;
 import util.settings.ProgramPanelSettings;
 import util.ui.ChannelLabel;
 import util.ui.ProgramPanel;
-import devplugin.Channel;
-import devplugin.Program;
 
 /**
  * The CellRenderer for the Table
@@ -144,7 +144,7 @@ public class ListTableCellRenderer extends DefaultTableCellRenderer {
       boolean showLogo = channelLogoNameType == ListViewSettings.SHOW_CHANNEL_LOGO_AND_NAME || channelLogoNameType == ListViewSettings.SHOW_CHANNEL_LOGO;
       boolean showName = channelLogoNameType == ListViewSettings.SHOW_CHANNEL_LOGO_AND_NAME || channelLogoNameType == ListViewSettings.SHOW_CHANNEL_NAME;
       
-      ChannelLabel channelLabel = new ChannelLabel(showLogo,showName,false,false,true);
+      ChannelLabel channelLabel = UiCompat.createChannelLabel(showLogo,showName,false,false,true);
       
       channelLabel.setChannel(channel);
       channelLabel.setOpaque(label.isOpaque());

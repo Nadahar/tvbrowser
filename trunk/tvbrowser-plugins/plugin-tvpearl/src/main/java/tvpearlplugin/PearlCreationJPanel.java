@@ -28,7 +28,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -55,7 +54,6 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -63,20 +61,19 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
+import com.jgoodies.forms.builder.ButtonBarBuilder2;
+import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.factories.CC;
+import com.jgoodies.forms.layout.FormLayout;
+
+import compat.BordersCompat;
+import devplugin.Program;
 import util.paramhandler.ParamParser;
 import util.program.AbstractPluginProgramFormating;
 import util.ui.Localizer;
 import util.ui.TVBrowserIcons;
 import util.ui.UiUtilities;
 import util.ui.html.HTMLTextHelper;
-
-import com.jgoodies.forms.builder.ButtonBarBuilder;
-import com.jgoodies.forms.builder.PanelBuilder;
-import com.jgoodies.forms.factories.Borders;
-import com.jgoodies.forms.factories.CC;
-import com.jgoodies.forms.layout.FormLayout;
-
-import devplugin.Program;
 
 public class PearlCreationJPanel extends JPanel {
   static final Localizer mLocalizer = Localizer.getLocalizerFor(PearlCreationJPanel.class);
@@ -96,7 +93,7 @@ public class PearlCreationJPanel extends JPanel {
     setOpaque(false);
     
     PanelBuilder pb = new PanelBuilder(new FormLayout("default,default:grow,default","fill:default:grow,3dlu,default"),this);
-    pb.getPanel().setBorder(Borders.DIALOG);
+    pb.getPanel().setBorder(BordersCompat.getDialogBorder());
     
     PearlCreationTableCellRenderer renderer = new PearlCreationTableCellRenderer();
     
@@ -159,7 +156,7 @@ public class PearlCreationJPanel extends JPanel {
     FormLayout layout = new FormLayout("default,3dlu,default:grow","default,3dlu,default,5dlu,default");
     
     PanelBuilder pb = new PanelBuilder(layout);
-    pb.getPanel().setBorder(Borders.DIALOG);
+    pb.getPanel().setBorder(BordersCompat.getDialogBorder());
     
     dialog.setContentPane(pb.getPanel());
     
@@ -267,7 +264,7 @@ public class PearlCreationJPanel extends JPanel {
       }
     });
     
-    ButtonBarBuilder buttons = new ButtonBarBuilder();
+    ButtonBarBuilder2 buttons = new ButtonBarBuilder2();
     
     buttons.addGlue();
     buttons.addButton(cancel);
@@ -591,5 +588,10 @@ public class PearlCreationJPanel extends JPanel {
     public boolean wasSuccessfull() {
       return mSuccess;
     }
+  }
+  
+  @Override
+  public void requestFocus() {
+    mTable.requestFocus();
   }
 }

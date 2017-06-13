@@ -40,10 +40,6 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.Icon;
 
-import util.io.IOUtilities;
-import util.program.ProgramUtilities;
-import util.ui.Localizer;
-import util.ui.UIThreadRunner;
 import devplugin.ActionMenu;
 import devplugin.Date;
 import devplugin.NodeFormatter;
@@ -52,6 +48,10 @@ import devplugin.PluginTreeNode;
 import devplugin.Program;
 import devplugin.ProgramItem;
 import devplugin.ProgramReceiveTarget;
+import util.io.IOUtilities;
+import util.program.ProgramUtilities;
+import util.ui.Localizer;
+import util.ui.UIThreadRunner;
 
 /**
  * SimpleMarkerPlugin 1.4 Plugin for TV-Browser since version 2.3 to only mark

@@ -58,6 +58,12 @@ import javax.swing.table.TableColumn;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
+import compat.ChannelCompat;
+import compat.FilterCompat;
+import compat.PersonaCompat;
+import compat.PersonaCompatListener;
+import compat.TvBrowserSettingsCompat;
+import compat.UiCompat;
 import devplugin.Channel;
 import devplugin.ChannelFilter;
 import devplugin.Date;
@@ -65,7 +71,6 @@ import devplugin.Plugin;
 import devplugin.Program;
 import devplugin.ProgramFilter;
 import devplugin.SettingsItem;
-
 import util.io.IOUtilities;
 import util.program.ProgramUtilities;
 import util.programmouseevent.ProgramMouseAndContextMenuListener;
@@ -75,10 +80,8 @@ import util.ui.ChannelLabel;
 import util.ui.Localizer;
 import util.ui.TimeFormatter;
 import util.ui.UiUtilities;
-import util.ui.persona.Persona;
-import util.ui.persona.PersonaListener;
 
-public class ListViewPanel extends JPanel implements PersonaListener, ProgramMouseAndContextMenuListener {
+public class ListViewPanel extends JPanel implements PersonaCompatListener, ProgramMouseAndContextMenuListener {
   private static final Localizer mLocalizer = ListViewDialog.mLocalizer;
   
 
@@ -208,7 +211,7 @@ public class ListViewPanel extends JPanel implements PersonaListener, ProgramMou
 
     datetimeselect.add(mAtLabel = new JLabel(" " + mLocalizer.msg("at", "at") + " "));
 
-    JSpinner.DateEditor dateEditor = new JSpinner.DateEditor(mTimeSpinner, Plugin.getPluginManager().getTvBrowserSettings().getTimePattern());
+    JSpinner.DateEditor dateEditor = new JSpinner.DateEditor(mTimeSpinner, TvBrowserSettingsCompat.getTimePattern());
 
     mTimeSpinner.setEditor(dateEditor);
 
@@ -218,7 +221,7 @@ public class ListViewPanel extends JPanel implements PersonaListener, ProgramMou
 
     Vector<String> filters = new Vector<String>();
     filters.add(mLocalizer.msg("filterAll", "all channels"));
-    for (String filterName : Plugin.getPluginManager().getFilterManager().getChannelFilterComponentNames()) {
+    for (String filterName : FilterCompat.getChannelFilterComponentNames()) {
       filters.add(filterName);
     }
     filters.add(mLocalizer.ellipsisMsg("filterDefine", "define filter"));
@@ -269,13 +272,13 @@ public class ListViewPanel extends JPanel implements PersonaListener, ProgramMou
       public void actionPerformed(ActionEvent e) {
         // user defined selection
         if (mChannels.getSelectedIndex() == mChannels.getItemCount()-1) {
-          String filterName = Plugin.getPluginManager().getFilterManager().addNewChannelFilterComponent();
+          String filterName = FilterCompat.addNewChannelFilterComponent();
           
           if(filterName != null) {
             mChannels.removeAllItems();
             mChannels.addItem(mLocalizer.msg("filterAll", "all channels"));
   
-            for (String channel : Plugin.getPluginManager().getFilterManager().getChannelFilterComponentNames()) {
+            for (String channel : FilterCompat.getChannelFilterComponentNames()) {
               mChannels.addItem(channel);
             }
             
@@ -427,8 +430,8 @@ public class ListViewPanel extends JPanel implements PersonaListener, ProgramMou
         ArrayList<Channel> channelList = new ArrayList<Channel>();
         
         for(Channel ch : channels) {
-          if(ch.getBaseChannel() != null) {
-            channelList.add(ch.getBaseChannel());
+          if(ChannelCompat.getBaseChannel(ch) != null) {
+            channelList.add(ChannelCompat.getBaseChannel(ch));
           }
           else {
             channelList.add(ch);
@@ -440,7 +443,7 @@ public class ListViewPanel extends JPanel implements PersonaListener, ProgramMou
     }
 
     for (Channel channel : channels) {
-      if(channel.getBaseChannel() != null) {
+      if(ChannelCompat.getBaseChannel(channel) != null) {
         continue;
       }
       
@@ -540,7 +543,7 @@ public class ListViewPanel extends JPanel implements PersonaListener, ProgramMou
    * @return added a Program
    */
   private Program findProgram(Date date, int time, Channel channel, boolean next) {
-    if(channel.getBaseChannel() == null) {
+    if(ChannelCompat.getBaseChannel(channel) == null) {
       Iterator<Program> it = getIteratorFor(date,channel);
       
       if(it != null) {
@@ -604,7 +607,7 @@ public class ListViewPanel extends JPanel implements PersonaListener, ProgramMou
           boolean showLogo = channelLogoNameType == ListViewSettings.SHOW_CHANNEL_LOGO_AND_NAME || channelLogoNameType == ListViewSettings.SHOW_CHANNEL_LOGO;
           boolean showName = channelLogoNameType == ListViewSettings.SHOW_CHANNEL_LOGO_AND_NAME || channelLogoNameType == ListViewSettings.SHOW_CHANNEL_NAME;
           
-          ChannelLabel label = new ChannelLabel(showLogo,showName,false,false,true);
+          ChannelLabel label = UiCompat.createChannelLabel(showLogo,showName,false,false,true);
           label.setChannel(channel);
           label.validate();
           width = Math.max(width, (int)label.getPreferredSize().getWidth()+5);
@@ -821,14 +824,14 @@ public class ListViewPanel extends JPanel implements PersonaListener, ProgramMou
   
   @Override
   public void updatePersona() {
-    if(Persona.getInstance().getHeaderImage() != null) {
+    if(PersonaCompat.getInstance().getHeaderImage() != null) {
       setOpaque(false);
       mOn.setOpaque(false);
       mRuns.setOpaque(false);
-      mOn.setForeground(Persona.getInstance().getTextColor());
-      mRuns.setForeground(Persona.getInstance().getTextColor());
-      mFilterLabel.setForeground(Persona.getInstance().getTextColor());
-      mAtLabel.setForeground(Persona.getInstance().getTextColor());
+      mOn.setForeground(PersonaCompat.getInstance().getTextColor());
+      mRuns.setForeground(PersonaCompat.getInstance().getTextColor());
+      mFilterLabel.setForeground(PersonaCompat.getInstance().getTextColor());
+      mAtLabel.setForeground(PersonaCompat.getInstance().getTextColor());
     }
     else {
       setOpaque(true);
@@ -844,7 +847,7 @@ public class ListViewPanel extends JPanel implements PersonaListener, ProgramMou
   private Iterator<Program> getIteratorFor(Date date, Channel channel) {
     Iterator<Program> it = Plugin.getPluginManager().getChannelDayProgram(date, channel);
     
-    if(channel.getJointChannel() != null || channel.getBaseChannel() != null) {      
+    if(ChannelCompat.getJointChannel(channel) != null || ChannelCompat.getBaseChannel(channel) != null) {      
       ArrayList<Program> progList = new ArrayList<Program>();
       
       if(it != null) {
@@ -853,7 +856,7 @@ public class ListViewPanel extends JPanel implements PersonaListener, ProgramMou
         }
       }
       
-      it = Plugin.getPluginManager().getChannelDayProgram(date, (channel.getJointChannel() != null ? channel.getJointChannel() : channel.getBaseChannel()));
+      it = Plugin.getPluginManager().getChannelDayProgram(date, (ChannelCompat.getJointChannel(channel) != null ? ChannelCompat.getJointChannel(channel) : ChannelCompat.getBaseChannel(channel)));
 
       if(it != null) {
         while(it.hasNext()) {

@@ -18,15 +18,14 @@
 package tvpearlplugin;
 
 import java.awt.BorderLayout;
+import java.awt.Dialog.ModalityType;
 import java.awt.Dimension;
 import java.awt.Frame;
-import java.awt.Point;
 import java.awt.Window;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ComponentEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
@@ -48,12 +47,9 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
-import util.misc.StringPool;
-import util.paramhandler.ParamParser;
-import util.program.AbstractPluginProgramFormating;
-import util.program.LocalPluginProgramFormating;
-import util.ui.Localizer;
-import util.ui.UiUtilities;
+import compat.MenuCompat;
+import compat.UiCompat;
+import compat.VersionCompat;
 import devplugin.ActionMenu;
 import devplugin.ContextMenuAction;
 import devplugin.Plugin;
@@ -69,12 +65,18 @@ import devplugin.ProgramReceiveIf;
 import devplugin.ProgramReceiveTarget;
 import devplugin.SettingsTab;
 import devplugin.Version;
+import util.misc.StringPool;
+import util.paramhandler.ParamParser;
+import util.program.AbstractPluginProgramFormating;
+import util.program.LocalPluginProgramFormating;
+import util.ui.Localizer;
+import util.ui.UiUtilities;
 
 public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
 {
 
 	private static final boolean PLUGIN_IS_STABLE = true;
-  private static final Version PLUGIN_VERSION = new Version(0, 26, 6, PLUGIN_IS_STABLE);
+  private static final Version PLUGIN_VERSION = new Version(0, 27, 0, PLUGIN_IS_STABLE);
 
   private static final String TARGET_PEARL_COPY = "pearlCopy";
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer
@@ -85,11 +87,8 @@ public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
 	private Thread mThread;
 	private TVPearl mTVPearls;
 	private boolean mHasRightToDownload = false;
-	private Point mPearlDialogLocation = null;
-	private Dimension mPearlDialogSize = null;
-	private Point mPearlInfoDialogLocation = null;
-	private Dimension mPearlInfoDialogSize = null;
 	private PearlDialog mDialog = null;
+	private PearlDialog mDialogCreation = null;
 	private PearlInfoDialog mInfoDialog = null;
 	private Vector<String> mComposerFilter;
 	private ProgramReceiveTarget[] mClientPluginTargets;
@@ -160,13 +159,19 @@ public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
 		mTVPearls = new TVPearl();
 		mComposerFilter = new Vector<String>();
 		
-    mCenterPanelDisplayWrapper = UiUtilities.createPersonaBackgroundPanel();
-    mCenterPanelCreationWrappper = UiUtilities.createPersonaBackgroundPanel();
+    mCenterPanelDisplayWrapper = UiCompat.createPersonaBackgroundPanel();
+    mCenterPanelCreationWrappper = UiCompat.createPersonaBackgroundPanel();
     
     mDisplayWrapper = new PluginCenterPanelWrapper() {
       @Override
       public PluginCenterPanel[] getCenterPanels() {
-        return new PluginCenterPanel[] {new PearlCenterPanel(),new PearlCreationPanel()};
+        final PearlCreationPanel p = new PearlCreationPanel();
+        
+        if(VersionCompat.isAtLeastTvBrowser4()) {
+          p.setIcon(getNewPearlIcon());
+        }
+        
+        return new PluginCenterPanel[] {new PearlCenterPanel(),p};
       }
     };
 	}
@@ -196,7 +201,7 @@ public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
 
 			public void actionPerformed(final ActionEvent evt)
 			{
-				showDialog();
+				showDialog(PearlDialog.TYPE_PEARL_DISPLAY);
 			}
 		};
 
@@ -204,25 +209,35 @@ public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
 		action.putValue(Action.SMALL_ICON, createImageIcon("actions", "pearl", 16));
 		action.putValue(BIG_ICON, createImageIcon("actions", "pearl", 22));
 
-		return new ActionMenu(action);
+		ActionMenu result = new ActionMenu(action);
+	  
+		if(!VersionCompat.isCenterPanelSupported()) {
+		  result.getAction().putValue(Action.NAME, TVPearlPluginSettingsTab.mLocalizer.msg("tabPearlDisplay", "TV Pearl Display"));
+		  
+		  final ContextMenuAction create = new ContextMenuAction(TVPearlPluginSettingsTab.mLocalizer.msg("tabPearlCreation", "TV Pearl Creation"), getNewPearlIcon()) {
+		    @Override
+		    public void actionPerformed(ActionEvent event) {
+		      showDialog(PearlDialog.TYPE_PEARL_CREATION);
+		    }
+		  };
+		  
+		  result = MenuCompat.createActionMenu(MenuCompat.ID_ACTION_NONE, mLocalizer.msg("name", "TV Pearl"), createImageIcon("actions", "pearl", 16), new ActionMenu[] {result, new ActionMenu(create)});
+		}
+		
+		return result;
 	}
 
-	void showDialog()
+	void showDialog(int type)
 	{
-		if (mDialog == null)
+	  PearlDialog d = type == PearlDialog.TYPE_PEARL_DISPLAY ? mDialog : mDialogCreation;
+	  
+		if (d == null)
 		{
 		  final Window w = UiUtilities.getBestDialogParent(getParentFrame());
-
-			if (w instanceof JDialog)
-			{
-				mDialog = new PearlDialog((JDialog) w);
-			}
-			else
-			{
-				mDialog = new PearlDialog((JFrame) w);
-			}
-
-			mDialog.addWindowListener(new WindowAdapter()
+			
+			d = new PearlDialog(w, type);
+			
+			d.addWindowListener(new WindowAdapter()
 			{
 				public void windowClosed(final WindowEvent e)
 				{
@@ -235,44 +250,27 @@ public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
 				}
 			});
 
-			mDialog.pack();
-			mDialog.setModal(false);
-			mDialog.addComponentListener(new java.awt.event.ComponentAdapter()
-			{
+			d.pack();
 
-				public void componentResized(final ComponentEvent e)
-				{
-					mPearlDialogSize = e.getComponent().getSize();
-				}
+      layoutWindow(type == PearlDialog.TYPE_PEARL_DISPLAY ? "pearlDialog" : "pearlDialogCreation", d, new Dimension(500, 350));
 
-				public void componentMoved(final ComponentEvent e)
-				{
-					e.getComponent().getLocation(mPearlDialogLocation);
-				}
-			});
-
-			if ((mPearlDialogLocation != null) && (mPearlDialogSize != null))
-			{
-				mDialog.setLocation(mPearlDialogLocation);
-				mDialog.setSize(mPearlDialogSize);
-				mDialog.setVisible(true);
+			if(type == PearlDialog.TYPE_PEARL_DISPLAY) {
+			  mDialog = d;
 			}
-			else
-			{
-				mDialog.setSize(500, 350);
-				UiUtilities.centerAndShow(mDialog);
-				mPearlDialogLocation = mDialog.getLocation();
-				mPearlDialogSize = mDialog.getSize();
+			else {
+			  mDialogCreation = d;
 			}
+			
+			d.setVisible(true);
+			d.requestFocus();
 		}
-		else
-		{
-			mDialog.setVisible(true);
-			mDialog.updateProgramList();
-			mDialog.requestFocus();
+		else {
+			d.setVisible(true);
+			d.updateProgramList();
+			d.requestFocus();
 		}
 	}
-
+	
 	public ActionMenu getContextMenuActions(final Program program)
 	{
 	  final TVPProgram p = getPearl(program);
@@ -320,9 +318,7 @@ public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
       final AbstractPluginProgramFormating[] selected = getSelectedPluginProgramFormatings();
       
       if(selected.length == 1) {
-        final ContextMenuAction menu = new ContextMenuAction();
-        menu.setText(mLocalizer.msg("context.single", "Create new TV pearl as '{0}'", selected[0].getName()));
-        menu.setSmallIcon(getSmallIcon());
+        final ContextMenuAction menu = new ContextMenuAction(mLocalizer.msg("context.single", "Create new TV pearl as '{0}'", selected[0].getName()), getNewPearlIcon());
         menu.setActionListener(new ActionListener() {
           @Override
           public void actionPerformed(ActionEvent e) {
@@ -338,10 +334,6 @@ public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
         }
       }
       else {
-        final ContextMenuAction menu = new ContextMenuAction();
-        menu.setText(mLocalizer.msg("context.multiple", "Create new TV pearl"));
-        menu.setSmallIcon(getSmallIcon());
-       
         int offset = show == null ? 0 : 1;
         
         Action[] subMenu = new Action[selected.length + offset];
@@ -399,29 +391,15 @@ public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
     // settings are handled in another class, so do not store a reference to the
     // properties parameter!
     mSettings = new TVPearlSettings(prop);
-    setDialogBounds();
     mTVPearls.setUrl(mSettings.getUrl());
   }
 
 	public Properties storeSettings()
 	{
 		mSettings.setUrl(mTVPearls.getUrl());
-
-		mSettings.storeDialog("Dialog", mPearlDialogLocation, mPearlDialogSize);
-    mSettings.storeDialog("InfoDialog", mPearlInfoDialogLocation,
-        mPearlInfoDialogSize);
-
 		return mSettings.storeSettings();
 	}
-
-	private void setDialogBounds()
-	{
-	  mPearlDialogSize = mSettings.getDialogSize("Dialog");
-    mPearlDialogLocation = mSettings.getDialogDimension("Dialog");
-    mPearlInfoDialogSize = mSettings.getDialogSize("InfoDialog");
-    mPearlInfoDialogLocation = mSettings.getDialogDimension("InfoDialog");
-	}
-
+	
 	public void readData(final ObjectInputStream in) throws IOException,
       ClassNotFoundException
 	{
@@ -707,34 +685,10 @@ public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
 			}
 
 			mInfoDialog.pack();
-			mInfoDialog.setModal(mSettings.getShowInfoModal());
-			mInfoDialog.addComponentListener(new java.awt.event.ComponentAdapter()
-			{
-
-				public void componentResized(final ComponentEvent e)
-				{
-					mPearlInfoDialogSize = e.getComponent().getSize();
-				}
-
-				public void componentMoved(final ComponentEvent e)
-				{
-					e.getComponent().getLocation(mPearlInfoDialogLocation);
-				}
-			});
-
-			if ((mPearlInfoDialogLocation != null) && (mPearlInfoDialogSize != null))
-			{
-				mInfoDialog.setLocation(mPearlInfoDialogLocation);
-				mInfoDialog.setSize(mPearlInfoDialogSize);
-				mInfoDialog.setVisible(true);
-			}
-			else
-			{
-				mInfoDialog.setSize(450, 400);
-				UiUtilities.centerAndShow(mInfoDialog);
-				mPearlInfoDialogLocation = mInfoDialog.getLocation();
-				mPearlInfoDialogSize = mInfoDialog.getSize();
-			}
+			mInfoDialog.setModalityType(mSettings.getShowInfoModal() ? VersionCompat.getSuggestedModalityType() : ModalityType.MODELESS);
+			
+			layoutWindow("infoDialog", mInfoDialog);
+			mInfoDialog.setVisible(true);
 		}
 	}
 
@@ -977,5 +931,9 @@ public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
     public JPanel getPanel() {
       return mCenterPanelCreationWrappper;
     }
+  }
+  
+  public PearlCreationTableModel getCreationTableModel() {
+    return mCreationTableModel;
   }
 }

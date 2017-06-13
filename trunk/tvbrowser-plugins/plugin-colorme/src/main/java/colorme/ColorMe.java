@@ -25,6 +25,8 @@ import java.io.ObjectOutputStream;
 import java.util.HashSet;
 import java.util.Iterator;
 
+import compat.PluginCompat;
+import compat.ProgramCompat;
 import util.ui.Localizer;
 import util.ui.TVBrowserIcons;
 
@@ -42,7 +44,7 @@ import devplugin.Version;
  * @author René Mach
  */
 public class ColorMe extends Plugin {
-  private static final Version VERSION = new Version(0,11,3,false);
+  private static final Version VERSION = new Version(0,12,0,false);
   private static final Localizer LOCALIZER = Localizer.getLocalizerFor(ColorMe.class);
   
   private HashSet<Program> mLowestPrograms;
@@ -236,7 +238,7 @@ public class ColorMe extends Plugin {
     for(int i = 0; i < size; i++) {
       String progID = in.readUTF();
       
-      Program[] progs = getPluginManager().getPrograms(progID);
+      Program[] progs = ProgramCompat.getPrograms(progID);
       
       if(progs != null) {
         for(Program p : progs) {
@@ -272,5 +274,9 @@ public class ColorMe extends Plugin {
     
   public boolean isAllowingArtificialPluginTree() {
     return false;
+  }
+  
+  public String getPluginCategory() {
+    return PluginCompat.CATEGORY_OTHER;
   }
 }
