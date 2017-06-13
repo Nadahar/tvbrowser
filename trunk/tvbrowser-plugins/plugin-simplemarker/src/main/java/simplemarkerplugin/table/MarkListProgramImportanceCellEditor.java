@@ -30,9 +30,9 @@ import javax.swing.JComboBox;
 import javax.swing.JTable;
 import javax.swing.table.TableCellEditor;
 
+import devplugin.Program;
 import simplemarkerplugin.MarkList;
 import simplemarkerplugin.SimpleMarkerPlugin;
-import devplugin.Program;
 
 /**
  * The cell editor for the program importance column

@@ -28,8 +28,8 @@ import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
 
-import simplemarkerplugin.MarkList;
 import devplugin.Program;
+import simplemarkerplugin.MarkList;
 
 /**
  * The cell renderer for the importance column
