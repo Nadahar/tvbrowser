@@ -46,16 +46,19 @@ public final class ImdbIcon implements Icon {
   }
 
   public int getIconHeight() {
-    return 16;
+    return 13;
   }
 
-  public void paintIcon(final Component c, final Graphics g, final int x,
-      final int y) {
+  public void paintIcon(final Component c, final Graphics g, final int x, final int y) {
+    final Color oc = g.getColor();
+    g.setColor(Color.white);
+    g.fillRect(x, y, getIconWidth(), getIconHeight());
+    
     if (mEmptyImdbIcon == null) {
       mEmptyImdbIcon = new ImageIcon(getClass().getResource("rating.png"));
     }
     mEmptyImdbIcon.paintIcon(c, g, x, y);
-    final Color oc = g.getColor();
+    
     g.setColor(mColor);
     g.fillRect(x, y+7, mLength, 5);
     g.setColor(Color.black);
