@@ -57,6 +57,7 @@ import com.jgoodies.forms.layout.FormLayout;
 
 import compat.PersonaCompat;
 import compat.PluginCompat;
+import compat.ProgramCompat;
 import compat.UiCompat;
 import compat.VersionCompat;
 import devplugin.ActionMenu;
@@ -816,7 +817,7 @@ public class SimpleMarkerPlugin extends Plugin {
 
       Program p = (Program) mDeletedProgramList.getSelectedValue();
       
-      JPopupMenu menu = PluginCompat.createRemovedProgramContextMenu(p);
+      JPopupMenu menu = ProgramCompat.createRemovedProgramContextMenu(p);
       menu.show(mDeletedProgramList, e.getX(), e.getY());
     }
     
