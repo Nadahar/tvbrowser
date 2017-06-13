@@ -239,7 +239,7 @@ public final class UiCompat {
    * <p>
    * @param list The list to add the rotation to
    */
-  public static void addKeyRotation(final JList<?> list) {
+  public static void addKeyRotation(final JList list) {
     list.addKeyListener(new KeyAdapter() {
       @Override
       public void keyPressed(KeyEvent e) {
