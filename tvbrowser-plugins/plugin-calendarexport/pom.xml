@@ -81,5 +81,10 @@
   		<artifactId>guava</artifactId>
   		<version>r09</version>
   	</dependency>
+    <dependency>
+      <groupId>org.tvbrowser</groupId>
+      <artifactId>tvbrowser</artifactId>
+      <version>3.3.2</version>
+    </dependency>
   </dependencies>
 </project>

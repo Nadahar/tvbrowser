@@ -24,8 +24,15 @@ import java.util.logging.Logger;
 
 import javax.swing.Icon;
 
-import org.apache.commons.lang3.StringUtils;
-
+import compat.PluginCompat;
+import compat.StringUtils;
+import devplugin.Channel;
+import devplugin.ChannelGroup;
+import devplugin.Date;
+import devplugin.Plugin;
+import devplugin.PluginInfo;
+import devplugin.ProgressMonitor;
+import devplugin.Version;
 import tvdataservice.SettingsPanel;
 import tvdataservice.TvDataUpdateManager;
 import util.exc.TvBrowserException;
@@ -34,13 +41,6 @@ import util.io.Mirror;
 import util.misc.SoftReferenceCache;
 import util.tvdataservice.IconLoader;
 import util.ui.Localizer;
-import devplugin.Channel;
-import devplugin.ChannelGroup;
-import devplugin.Date;
-import devplugin.Plugin;
-import devplugin.PluginInfo;
-import devplugin.ProgressMonitor;
-import devplugin.Version;
 
 public class SweDBTvDataService extends devplugin.AbstractTvDataService {
   /** The default plugins download URL */
@@ -50,7 +50,7 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
 
   private static final Logger mLog = Logger.getLogger(SweDBTvDataService.class.getName());
 
-  private static final Version VERSION = new Version(3,03,1);
+  private static final Version VERSION = new Version(3,03,2);
 
   private File mWorkingDirectory;
 
@@ -418,7 +418,7 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
               container.getId(), TimeZone.getTimeZone("UTC"), group.getCountry(),
               group.getCopyright(), group.getUrl(), group, null, category);
 
-      if (StringUtils.isNotEmpty(container.getIconUrl())) {
+      if (!StringUtils.isEmpty(container.getIconUrl())) {
         try {
           Icon icon = iconLoader.getIcon(container.getId(), container.getIconUrl());
           channel.setDefaultIcon(icon);
@@ -494,7 +494,7 @@ public class SweDBTvDataService extends devplugin.AbstractTvDataService {
   }
   
   public String getPluginCategory() {
-    return Plugin.ADDITONAL_DATA_SERVICE_SOFTWARE_CATEGORY;
+    return PluginCompat.CATEGORY_ADDITONAL_DATA_SERVICE_SOFTWARE;
   }
 
 

@@ -11,8 +11,9 @@ import java.util.Vector;
 
 import javax.xml.parsers.SAXParserFactory;
 
-import org.apache.commons.lang3.StringUtils;
 import org.xml.sax.Attributes;
+
+import compat.StringUtils;
 
 /**
  * @author pumpkin
@@ -98,7 +99,7 @@ class DataHydraChannelParser extends org.xml.sax.helpers.DefaultHandler {
       }
       case (STATUS_CONSTRUCTION): {
         if ("channel".equals(qName)) {
-          if (StringUtils.isNotEmpty(id) && StringUtils.isNotEmpty(name) && StringUtils.isNotEmpty(url)) {
+          if (!StringUtils.isEmpty(id) && !StringUtils.isEmpty(name) && !StringUtils.isEmpty(url)) {
             DataHydraChannelContainer cc = new DataHydraChannelContainer(id, name, url, iconUrl, "");
             saveIn.add(cc);
           }

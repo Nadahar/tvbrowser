@@ -36,6 +36,18 @@ import java.util.Properties;
 import java.util.TimeZone;
 import java.util.logging.Logger;
 
+import compat.PluginCompat;
+import compat.StringUtils;
+import devplugin.AbstractTvDataService;
+import devplugin.Channel;
+import devplugin.ChannelGroup;
+import devplugin.ChannelGroupImpl;
+import devplugin.Date;
+import devplugin.PluginInfo;
+import devplugin.Program;
+import devplugin.ProgramFieldType;
+import devplugin.ProgressMonitor;
+import devplugin.Version;
 import net.sf.xtvdclient.xtvd.DataDirectException;
 import net.sf.xtvdclient.xtvd.SOAPRequest;
 import net.sf.xtvdclient.xtvd.datatypes.Crew;
@@ -48,9 +60,6 @@ import net.sf.xtvdclient.xtvd.datatypes.Schedule;
 import net.sf.xtvdclient.xtvd.datatypes.StarRating;
 import net.sf.xtvdclient.xtvd.datatypes.Station;
 import net.sf.xtvdclient.xtvd.datatypes.Xtvd;
-
-import org.apache.commons.lang3.StringUtils;
-
 import tvdataservice.MutableChannelDayProgram;
 import tvdataservice.MutableProgram;
 import tvdataservice.SettingsPanel;
@@ -60,17 +69,6 @@ import util.exc.TvBrowserException;
 import util.io.IOUtilities;
 import util.program.ProgramUtilities;
 import util.ui.Localizer;
-import devplugin.AbstractTvDataService;
-import devplugin.Channel;
-import devplugin.ChannelGroup;
-import devplugin.ChannelGroupImpl;
-import devplugin.Date;
-import devplugin.Plugin;
-import devplugin.PluginInfo;
-import devplugin.Program;
-import devplugin.ProgramFieldType;
-import devplugin.ProgressMonitor;
-import devplugin.Version;
 
 
 public class SchedulesDirectDataService extends AbstractTvDataService {
@@ -83,7 +81,7 @@ public class SchedulesDirectDataService extends AbstractTvDataService {
   private static final Logger mLog
     = Logger.getLogger(SchedulesDirectDataService.class.getName());
 
-  private static final Version VERSION = new Version(3,13,2);
+  private static final Version VERSION = new Version(3,13,3);
 
   private ChannelGroup mChannelGroup = new ChannelGroupImpl("SchedulesDirect", "SchedulesDirect", "SchedulesDirect", "SchedulesDirect");
 
@@ -564,7 +562,7 @@ public class SchedulesDirectDataService extends AbstractTvDataService {
 
   public Channel[] checkForAvailableChannels(ChannelGroup group, ProgressMonitor monitor) throws TvBrowserException {
     String username = mProperties.getProperty("username", "").trim();
-    if (StringUtils.isNotEmpty(username)) {
+    if (!StringUtils.isEmpty(username)) {
       monitor.setMessage(mLocalizer.msg("loadingChannels","Loading SchedulesDirect-Channels"));
       mChannels = getChannels();
       monitor.setMessage(mLocalizer.msg("loadingChannelsDone","Done loading SchedulesDirect-Channels"));
@@ -631,7 +629,7 @@ public class SchedulesDirectDataService extends AbstractTvDataService {
   }
 
   public String getPluginCategory() {
-    return Plugin.ADDITONAL_DATA_SERVICE_SOFTWARE_CATEGORY;
+    return PluginCompat.CATEGORY_ADDITONAL_DATA_SERVICE_SOFTWARE;
   }
   
   public SettingsPanel getAuthenticationPanel() {

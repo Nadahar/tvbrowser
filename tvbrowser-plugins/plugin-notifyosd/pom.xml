@@ -46,5 +46,11 @@
       <groupId>org.tvbrowser</groupId>
       <artifactId>tvbrowser</artifactId>
     </dependency>
+    <dependency>
+  		<groupId>org.tvbrowser</groupId>
+  		<artifactId>TvBrowserCompat</artifactId>
+  		<version>0.2</version>
+  		<scope>compile</scope>
+  	</dependency>
   </dependencies>
 </project>

@@ -39,6 +39,7 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
+import compat.PluginCompat;
 import tvbrowser.ui.pluginview.Node;
 import util.io.IOUtilities;
 import util.ui.ImageUtilities;
@@ -66,7 +67,7 @@ import devplugin.Version;
  * @author Bodo Tasche
  */
 public class TVRaterPlugin extends devplugin.Plugin {
-  private static final Version mVersion = new Version(3,03);
+  private static final Version mVersion = new Version(3,04);
 
   protected final static int MINLENGTH = 15;
 
@@ -705,6 +706,6 @@ public class TVRaterPlugin extends devplugin.Plugin {
   }
   
   public String getPluginCategory() {
-    return Plugin.RATINGS_CATEGORY;
+    return PluginCompat.CATEGORY_RATINGS;
   }
 }

@@ -36,6 +36,7 @@ import javax.swing.Action;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
+import compat.PluginCompat;
 import util.browserlauncher.Launch;
 import util.paramhandler.ParamParser;
 import util.program.AbstractPluginProgramFormating;
@@ -56,7 +57,7 @@ import devplugin.Version;
  * @author bodum
  */
 public class BlogThisPlugin extends Plugin {
-  private static final Version mVersion = new Version(3,03);
+  private static final Version mVersion = new Version(3,04);
 
   /** Translator */
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(BlogThisPlugin.class);
@@ -371,6 +372,6 @@ public class BlogThisPlugin extends Plugin {
   }
   
   public String getPluginCategory() {
-    return Plugin.OTHER_CATEGORY;
+    return PluginCompat.CATEGORY_OTHER;
   }
 }

@@ -31,14 +31,13 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import com.jgoodies.forms.layout.CellConstraints;
+
+import compat.FormSpecsCompat;
+import devplugin.SettingsTab;
 import util.ui.EnhancedPanelBuilder;
 import util.ui.Localizer;
 import util.ui.PluginProgramConfigurationPanel;
-
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormSpecs;
-
-import devplugin.SettingsTab;
 
 /**
  * Settings for the BlogSettings
@@ -83,9 +82,9 @@ public class BlogSettingsTab implements SettingsTab {
    * Create the SettingsPanel
    */
   public JPanel createSettingsPanel() {
-    final EnhancedPanelBuilder settingsPanel = new EnhancedPanelBuilder(FormSpecs.RELATED_GAP_COLSPEC.encode() + ","
-        + FormSpecs.PREF_COLSPEC.encode() + "," + FormSpecs.RELATED_GAP_COLSPEC.encode() + ","
-        + FormSpecs.PREF_COLSPEC.encode() + ", fill:pref:grow");
+    final EnhancedPanelBuilder settingsPanel = new EnhancedPanelBuilder(FormSpecsCompat.getRelatedGapColspecEncoded() + ","
+        + FormSpecsCompat.getPreferredColspecEncoded() + "," + FormSpecsCompat.getRelatedGapColspecEncoded() + ","
+        + FormSpecsCompat.getPreferredColspecEncoded() + ", fill:pref:grow");
 
     String[] services = { "", "Blogger.com", "Wordpress", "b2evolution" };
 

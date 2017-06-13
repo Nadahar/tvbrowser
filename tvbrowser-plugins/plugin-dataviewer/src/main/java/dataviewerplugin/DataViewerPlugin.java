@@ -37,11 +37,13 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.table.TableColumn;
 
+import compat.PersonaCompat;
+import compat.PersonaCompatListener;
+import compat.PluginCompat;
+import compat.UiCompat;
 import util.io.IOUtilities;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
-import util.ui.persona.Persona;
-import util.ui.persona.PersonaListener;
 import devplugin.ActionMenu;
 import devplugin.Channel;
 import devplugin.Date;
@@ -81,7 +83,7 @@ public final class DataViewerPlugin extends Plugin implements Runnable {
   private int mMinRowHeight = 10;
   private int mMinColumnWidth = 20;
 
-  private static final Version mVersion = new Version(1,20,2,true);
+  private static final Version mVersion = new Version(1,21,0,true);
 
   private static DataViewerPlugin mInstance;
 
@@ -89,7 +91,7 @@ public final class DataViewerPlugin extends Plugin implements Runnable {
   
   private PluginCenterPanelWrapper mWrapper;
   private JPanel mCenterPanelWrapper;
-  private PersonaListener mPersonaListener;
+  private PersonaCompatListener mPersonaListener;
   /**
    * Creates an instance of this class.
    */
@@ -129,7 +131,7 @@ public final class DataViewerPlugin extends Plugin implements Runnable {
     
     SwingUtilities.invokeLater(new Runnable() {      
       public void run() {
-        mCenterPanelWrapper = UiUtilities.createPersonaBackgroundPanel();
+        mCenterPanelWrapper = UiCompat.createPersonaBackgroundPanel();
         mCenterPanelWrapper.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
         mCenterPanelWrapper.setLayout(new BorderLayout());
         mWrapper = new PluginCenterPanelWrapper() {
@@ -369,17 +371,17 @@ public final class DataViewerPlugin extends Plugin implements Runnable {
       table.setOpaque(false);
       pane.setOpaque(false);      
       
-      mPersonaListener = new PersonaListener() {
+      mPersonaListener = new PersonaCompatListener() {
         public void updatePersona() {
-          if(Persona.getInstance().getHeaderImage() != null) {
-            lastDownload.setForeground(Persona.getInstance().getTextColor());
-            green1.setForeground(Persona.getInstance().getTextColor());
-            orange1.setForeground(Persona.getInstance().getTextColor());
-            red1.setForeground(Persona.getInstance().getTextColor());
+          if(PersonaCompat.getInstance().getHeaderImage() != null) {
+            lastDownload.setForeground(PersonaCompat.getInstance().getTextColor());
+            green1.setForeground(PersonaCompat.getInstance().getTextColor());
+            orange1.setForeground(PersonaCompat.getInstance().getTextColor());
+            red1.setForeground(PersonaCompat.getInstance().getTextColor());
           }
         }
       };
-      Persona.getInstance().registerPersonaListener(mPersonaListener);
+      PersonaCompat.getInstance().registerPersonaListener(mPersonaListener);
     }
     
     return l;
@@ -740,7 +742,7 @@ public final class DataViewerPlugin extends Plugin implements Runnable {
   }
   
   public String getPluginCategory() {
-    return Plugin.OTHER_CATEGORY;
+    return PluginCompat.CATEGORY_OTHER;
   }
   
   public PluginCenterPanelWrapper getPluginCenterPanelWrapper() {
