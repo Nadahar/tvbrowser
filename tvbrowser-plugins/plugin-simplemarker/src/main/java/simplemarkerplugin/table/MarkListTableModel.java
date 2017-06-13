@@ -28,9 +28,9 @@ import java.util.Collection;
 import javax.swing.event.TableModelEvent;
 import javax.swing.table.DefaultTableModel;
 
+import devplugin.ProgramReceiveTarget;
 import simplemarkerplugin.MarkList;
 import simplemarkerplugin.SimpleMarkerPlugin;
-import devplugin.ProgramReceiveTarget;
 
 /**
  * The table model for the mark list settings table.

@@ -28,10 +28,10 @@ import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 
-import simplemarkerplugin.MarkList;
-
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
+
+import simplemarkerplugin.MarkList;
 
 /**
  * Renderer class for the selection of show deleted state of a mark list.

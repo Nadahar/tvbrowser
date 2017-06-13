@@ -35,12 +35,12 @@ import javax.swing.JButton;
 import javax.swing.JTable;
 import javax.swing.table.TableCellEditor;
 
+import devplugin.ProgramReceiveTarget;
 import simplemarkerplugin.MarkList;
 import simplemarkerplugin.SimpleMarkerPlugin;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.ui.PluginChooserDlg;
 import util.ui.UiUtilities;
-import devplugin.ProgramReceiveTarget;
 
 /**
  * The cell editor for the send to plugins column
