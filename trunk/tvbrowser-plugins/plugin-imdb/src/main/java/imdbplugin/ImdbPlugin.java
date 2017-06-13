@@ -20,6 +20,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.URL;
+import java.security.CodeSource;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -38,11 +40,6 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
-import tvbrowser.core.icontheme.IconLoader;
-import util.io.IOUtilities;
-import util.misc.SoftReferenceCache;
-import util.ui.Localizer;
-import util.ui.UiUtilities;
 import devplugin.ActionMenu;
 import devplugin.Channel;
 import devplugin.Date;
@@ -55,7 +52,13 @@ import devplugin.ProgramFieldType;
 import devplugin.ProgramFilter;
 import devplugin.ProgramRatingIf;
 import devplugin.SettingsTab;
+import devplugin.ToolTipIcon;
 import devplugin.Version;
+import tvbrowser.core.icontheme.IconLoader;
+import util.io.IOUtilities;
+import util.misc.SoftReferenceCache;
+import util.ui.Localizer;
+import util.ui.UiUtilities;
 
 public final class ImdbPlugin extends Plugin {
 
@@ -66,7 +69,7 @@ public final class ImdbPlugin extends Plugin {
 
   private static final boolean IS_STABLE = true;
 
-  private static final Version mVersion = new Version(1, 7, IS_STABLE);
+  private static final Version mVersion = new Version(1, 8, IS_STABLE);
 
   // Empty Rating for Cache
   private static final ImdbRating DUMMY_RATING = new ImdbRating(0, 0, "", "");
@@ -84,7 +87,33 @@ public final class ImdbPlugin extends Plugin {
   private PluginTreeNode mRootNode = new PluginTreeNode(this, false);
 
   private ImdbHistogram mHistogram;
-
+  
+  private String mDefaultIconAddress;
+  
+  public ImdbPlugin() {
+    super();
+    StringBuilder b = new StringBuilder(getClass().getPackage().getName()).append("/rating.png");
+    
+    CodeSource src = ImdbPlugin.class.getProtectionDomain().getCodeSource();
+    
+    if (src != null) {
+        final URL jar = src.getLocation();
+        
+        if(jar.toString().endsWith(".jar")) {
+          b.insert(0, "!/");
+          b.insert(0, jar.toString());
+          b.insert(0, "jar:");
+        }
+        else {
+          b.insert(0, jar.toString().replace("file:/", "file:///"));
+        }
+    }
+    
+    mDefaultIconAddress = b.toString();
+    
+    instance = this;
+  }
+  
   @Override
   public PluginInfo getInfo() {
     if (mPluginInfo == null) {
@@ -96,12 +125,22 @@ public final class ImdbPlugin extends Plugin {
       mPluginInfo = new PluginInfo(ImdbPlugin.class, name, desc, author,
           "GPL 3");
     }
-
+    
     return mPluginInfo;
   }
 
   public static Version getVersion() {
     return mVersion;
+  }
+  
+  @Override
+  public ToolTipIcon[] getProgramTableToolTipIcons(Program program) {
+    final ImdbRating rating = getRatingFor(program);
+    if (rating == null) {
+      return null;
+    }
+    
+    return new ToolTipIcon[] {new ToolTipIcon(mDefaultIconAddress, mLocalizer.msg("rating", "Rating: {0}",rating.getRatingText()))};
   }
 
   @Override
@@ -216,7 +255,7 @@ public final class ImdbPlugin extends Plugin {
 		}
     UiUtilities.centerAndShow(dialog);
   }
-
+  
   @Override
   public String getProgramTableIconText() {
     return mLocalizer.msg("iconText", "Imdb Rating");
@@ -505,11 +544,6 @@ public final class ImdbPlugin extends Plugin {
 
   public static ImdbPlugin getInstance() {
     return instance;
-  }
-
-  public ImdbPlugin() {
-    super();
-    instance = this;
   }
 
   public void setCurrentDatabaseVersion(int ratingCount) {
