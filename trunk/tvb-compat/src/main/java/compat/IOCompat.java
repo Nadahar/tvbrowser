@@ -1,15 +1,45 @@
+/*
+ * TV-Browser Compat
+ * Copyright (C) 2017 TV-Browser team (dev@tvbrowser.org)
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * SVN information:
+ *     $Date: 2014-06-17 15:59:09 +0200 (Di, 17 Jun 2014) $
+ *   $Author: ds10 $
+ * $Revision: 8152 $
+ */
 package compat;
 
 import java.io.File;
 
 import devplugin.Plugin;
 
+/**
+ * Compatibility class for TV-Browser util.io.IOUtilities class.
+ * 
+ * @author René Mach
+ * @since 0.2
+ */
 public final class IOCompat {
   /**
    * Check given path if it is a relative path of the TV-Browser settings home directory.
    * <p>
    * @param path The path to check.
-   * @return A relative path if given path is in subdirectory of TV-Browser settings or the given path if not. 
+   * @return A relative path if given path is in subdirectory of TV-Browser settings or the given path if not.
+   * @since 3.3.4 
    */
   public static String checkForRelativePath(String path) {
     if(path != null && (path.contains("\\") || path.contains("/"))) {

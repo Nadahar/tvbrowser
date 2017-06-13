@@ -1,3 +1,26 @@
+/*
+ * TV-Browser Compat
+ * Copyright (C) 2017 TV-Browser team (dev@tvbrowser.org)
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * SVN information:
+ *     $Date: 2014-06-17 15:59:09 +0200 (Di, 17 Jun 2014) $
+ *   $Author: ds10 $
+ * $Revision: 8152 $
+ */
 package compat;
 
 import java.awt.Color;
@@ -9,7 +32,12 @@ import java.util.ArrayList;
 
 import devplugin.Version;
 import tvbrowser.TVBrowser;
-
+/**
+ * Compatibility class for TV-Browser util.persona.Persona class.
+ * 
+ * @author René Mach
+ * @since 0.2
+ */
 public final class PersonaCompat {
   private static PersonaCompat INSTANCE;
   private static Object PERSONA_OBJECT;
@@ -38,6 +66,9 @@ public final class PersonaCompat {
     }
   }
   
+  /**
+   * @return The one instance of this class.
+   */
   public static synchronized PersonaCompat getInstance() {
     if(INSTANCE == null) {
       new PersonaCompat();
@@ -46,16 +77,31 @@ public final class PersonaCompat {
     return INSTANCE;
   }
   
+  /**
+   * Checks if Personas are supported by the used TV-Browser version.
+   * 
+   * @return <code>true</code> for TV-Browser version since 3.1, <code>false</code> otherwise.
+   */
   public boolean isSupported() {
     return TVBrowser.VERSION.compareTo(new Version(3,10,true)) >= 0;
   }
   
+  /**
+   * Register a listener to listen for Persona change events.
+   * 
+   * @param listener The listener to register.
+   */
   public void registerPersonaListener(final PersonaCompatListener listener) {
     if(mListPersonaListeners.contains(listener)) {
       mListPersonaListeners.add(listener);
     }
   }
   
+  /**
+   * Unregister a listener for Persona change events.
+   * 
+   * @param listener The listener to unregister.
+   */
   public void removePersonaListener(final PersonaCompatListener listener) {
     mListPersonaListeners.remove(listener);
   }

@@ -22,42 +22,26 @@
  * $Revision: 8152 $
  */
 package compat;
-
-import java.lang.reflect.Field;
-
-import javax.swing.border.Border;
-
-import com.jgoodies.forms.factories.Borders;
-
-import devplugin.Version;
-import tvbrowser.TVBrowser;
-
 /**
- * Compatibility class for JGoodies Borders class.
+ * Compatibility class for JGoodies FormSpecs class.
  * 
  * @author René Mach
  * @since 0.2
  */
-public final class BordersCompat {
-  /**
-   * @return The default border for a dialog.
-   */
-  public static Border getDialogBorder() {
-    Border result = null;
-    String name = "DIALOG";
-    
-    if(TVBrowser.VERSION.compareTo(new Version(3,30,true)) < 0) {
-      name = "DIALOG_BORDER";
-    }
-    
-    try {
-      Class<?> borders = Borders.class;
-      Field border = borders.getDeclaredField(name);
-      result = (Border)border.get(borders);
-    } catch (Exception e) {
-      // ignore
-    }
-    
-    return result;
+public final class FormSpecsCompat {
+  public static String getRelatedGapColspecEncoded() {
+    return "4dlu";
+  }
+  
+  public static String getUnrelatedGapColspecEncoded() {
+    return "7dlu";
+  }
+  
+  public static String getDefaultColspecEncoded() {
+    return "d";
+  }
+  
+  public static String getPreferredColspecEncoded() {
+    return "p";
   }
 }
