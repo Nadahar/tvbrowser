@@ -66,7 +66,7 @@ import util.ui.WindowClosingIf;
  */
 public class FilterInfoIcon extends Plugin implements FilterCompat.FilterChangeListener {
   static final Localizer LOCALIZER = Localizer.getLocalizerFor(FilterInfoIcon.class);
-  private static final Version VERSION = new Version(0,13,0,false);
+  private static final Version VERSION = new Version(0,14,0,false);
   private static ImageIcon DEFAULT_ICON;
   private HashSet<FilterEntry> mFilterSet;
   private static String LAST_USED_ICON_PATH;
