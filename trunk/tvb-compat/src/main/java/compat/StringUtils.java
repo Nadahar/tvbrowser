@@ -34,7 +34,7 @@ public final class StringUtils {
   }
   
   public static boolean isBlank(final String value) {
-    return value != null && !value.trim().equals("");
+    return value != null && value.trim().equals("");
   }
   
   public static String removeEnd(String haystack, final String needle) {

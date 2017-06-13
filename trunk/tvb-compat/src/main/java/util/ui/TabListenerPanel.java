@@ -46,7 +46,7 @@ public class TabListenerPanel extends JPanel implements TabListener {
     mDefaultFocusOwner = defaultFocusOwner;
   }
   
-  public void tabShown() {System.out.println("tabShown " + mDefaultFocusOwner);
+  public void tabShown() {
     if(mFocusOwner == null) {
       if(mDefaultFocusOwner != null) {
         SwingUtilities.invokeLater(new Runnable() {
@@ -54,10 +54,10 @@ public class TabListenerPanel extends JPanel implements TabListener {
           public void run() {
             mDefaultFocusOwner.requestFocusInWindow();
             
-            if(mDefaultFocusOwner instanceof JList && ((JList<?>) mDefaultFocusOwner).getModel().getSize() > 0
-                && ((JList<?>) mDefaultFocusOwner).getSelectedIndex() == -1) {
-              ((JList<?>)mDefaultFocusOwner).setSelectedIndex(0);
-              ((JList<?>)mDefaultFocusOwner).ensureIndexIsVisible(0);
+            if(mDefaultFocusOwner instanceof JList && ((JList) mDefaultFocusOwner).getModel().getSize() > 0
+                && ((JList) mDefaultFocusOwner).getSelectedIndex() == -1) {
+              ((JList)mDefaultFocusOwner).setSelectedIndex(0);
+              ((JList)mDefaultFocusOwner).ensureIndexIsVisible(0);
             }
           }
         });
@@ -69,10 +69,10 @@ public class TabListenerPanel extends JPanel implements TabListener {
         public void run() {
           mFocusOwner.requestFocusInWindow();
           
-          if(mFocusOwner instanceof JList && ((JList<?>) mFocusOwner).getModel().getSize() > 0
-              && ((JList<?>) mFocusOwner).getSelectedIndex() == -1) {
-            ((JList<?>)mFocusOwner).setSelectedIndex(0);
-            ((JList<?>)mFocusOwner).ensureIndexIsVisible(0);
+          if(mFocusOwner instanceof JList && ((JList) mFocusOwner).getModel().getSize() > 0
+              && ((JList) mFocusOwner).getSelectedIndex() == -1) {
+            ((JList)mFocusOwner).setSelectedIndex(0);
+            ((JList)mFocusOwner).ensureIndexIsVisible(0);
           }
         }
       });
