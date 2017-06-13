@@ -19,23 +19,31 @@
 package rememberme;
 
 import java.awt.BorderLayout;
+import java.awt.Dialog.ModalityType;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JPanel;
+import javax.swing.JRootPane;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
 
-import util.ui.Localizer;
-import util.ui.UiUtilities;
-import util.ui.persona.Persona;
+import compat.PersonaCompat;
+import compat.PluginCompat;
+import compat.UiCompat;
+import compat.VersionCompat;
 import devplugin.ActionMenu;
 import devplugin.ContextMenuAction;
 import devplugin.Plugin;
@@ -46,12 +54,15 @@ import devplugin.Program;
 import devplugin.ProgramReceiveTarget;
 import devplugin.SettingsTab;
 import devplugin.ThemeIcon;
-
 import devplugin.Version;
+import util.ui.Localizer;
+import util.ui.TVBrowserIcons;
+import util.ui.UiUtilities;
+import util.ui.WindowClosingIf;
 
 public class RememberMe extends Plugin {
   public static final int DEFAULT_DAY_COUNT = 14; 
-  private static final Version mVersion = new Version(0,18,4,true);
+  private static final Version mVersion = new Version(0,19,0,true);
   static final Localizer mLocalizer = Localizer.getLocalizerFor(RememberMe.class);
   private static final String TARGET_ID = "###REMEMBERME###";
   
@@ -116,6 +127,56 @@ public class RememberMe extends Plugin {
     for(ProgramReceiveTarget target : mReceiveTargets) {
       target.writeData(out);
     }
+  }
+  
+  public ActionMenu getButtonAction() {
+    ActionMenu result = null;
+    
+    if(!VersionCompat.isCenterPanelSupported()) {
+      
+      ContextMenuAction action = new ContextMenuAction(getInfo().getName(),getPluginManager().getIconFromTheme(RememberMe.this, getMarkIconFromTheme())) {
+        @Override
+        public void actionPerformed(ActionEvent event) {
+          final JDialog d = new JDialog(UiUtilities.getLastModalChildOf(getParentFrame()), ModalityType.APPLICATION_MODAL);
+          
+          d.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+              d.dispose();
+            }
+          });
+          d.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+          
+          UiUtilities.registerForClosing(new WindowClosingIf() {
+            @Override
+            public JRootPane getRootPane() {
+              return d.getRootPane();
+            }
+            
+            @Override
+            public void close() {
+              d.dispose();
+            }
+          });
+          
+          final JButton close = new JButton(Localizer.getLocalization(Localizer.I18N_CLOSE));
+          close.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+              d.dispose();
+            }
+          });
+          d.setContentPane(new RememberMeManagePanel(mRememberedPrograms, RememberMe.this, close));
+          layoutWindow("rememberMeDialog", d, new Dimension(600, 400));
+          d.setVisible(true);
+        };
+      };
+      action.putValue(Plugin.BIG_ICON, createImageIcon("status", "dialog-information", TVBrowserIcons.SIZE_LARGE));
+      
+      result = new ActionMenu(action);
+    }
+    
+    return result;
   }
   
   @Override
@@ -246,7 +307,7 @@ public class RememberMe extends Plugin {
   
   @Override
   public ThemeIcon getMarkIconFromTheme() {
-    return new ThemeIcon("status", "dialog-information", 16);
+    return new ThemeIcon("status", "dialog-information", TVBrowserIcons.SIZE_SMALL);
   }
   
   public void onActivation() {
@@ -263,7 +324,7 @@ public class RememberMe extends Plugin {
     SwingUtilities.invokeLater(new Runnable() {
       @Override
       public void run() {
-        mCenterPanelWrapper = UiUtilities.createPersonaBackgroundPanel();
+        mCenterPanelWrapper = UiCompat.createPersonaBackgroundPanel();
         
         mCenterPanelWrapper.addAncestorListener(new AncestorListener() {
           
@@ -304,15 +365,14 @@ public class RememberMe extends Plugin {
     
     if(mMangePanel != null) {
       mCenterPanelWrapper.remove(mMangePanel);
-      Persona.getInstance().registerPersonaListener(mMangePanel);
+      PersonaCompat.getInstance().registerPersonaListener(mMangePanel);
     }
     
     mMangePanel = null;
   }
-    
-  @Override
+  
   public String getPluginCategory() {
-    return Plugin.OTHER_CATEGORY;
+    return PluginCompat.CATEGORY_OTHER;
   }
   
   private void addCenterPanel() {
@@ -320,10 +380,10 @@ public class RememberMe extends Plugin {
       public void run() {
         if(!mAddingPanel) {
           mAddingPanel = true;
-          mMangePanel = new RememberMeManagePanel(mRememberedPrograms, RememberMe.this);
-          Persona.getInstance().registerPersonaListener(mMangePanel);
+          mMangePanel = new RememberMeManagePanel(mRememberedPrograms, RememberMe.this, null);
+          PersonaCompat.getInstance().registerPersonaListener(mMangePanel);
           mCenterPanelWrapper.add(mMangePanel,BorderLayout.CENTER);
-          mCenterPanelWrapper.updateUI();
+          mCenterPanelWrapper.repaint();//.updateUI();
           mAddingPanel = false;
         }
       }

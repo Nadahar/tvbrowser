@@ -38,8 +38,7 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
 
-import org.apache.commons.lang3.StringUtils;
-
+import compat.PluginCompat;
 import util.paramhandler.ParamParser;
 import util.program.AbstractPluginProgramFormating;
 import util.program.LocalPluginProgramFormating;
@@ -106,7 +105,7 @@ public class ClipboardPlugin extends Plugin {
             }
           };
           String text = getTextForConfig(programs, config);
-          copyAction.setEnabled(text == null || StringUtils.isNotEmpty(text));
+          copyAction.setEnabled(text == null || text.trim().length() != 0);
           list.add(copyAction);
         }
       }
@@ -381,6 +380,6 @@ public class ClipboardPlugin extends Plugin {
   }
   
   public String getPluginCategory() {
-    return Plugin.OTHER_CATEGORY;
+    return PluginCompat.CATEGORY_OTHER;
   }
 }

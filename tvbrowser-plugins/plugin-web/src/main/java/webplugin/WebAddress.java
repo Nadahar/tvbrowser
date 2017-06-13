@@ -33,8 +33,7 @@ import java.io.ObjectOutputStream;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
-import org.apache.commons.lang3.StringUtils;
-
+import compat.StringUtils;
 import util.ui.ImageUtilities;
 import devplugin.Plugin;
 

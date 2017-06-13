@@ -3,6 +3,7 @@ package jumptoprogramplugin;
 import java.awt.event.ActionEvent;
 import java.lang.reflect.Method;
 
+import compat.PluginCompat;
 import util.ui.Localizer;
 
 import devplugin.ActionMenu;
@@ -49,7 +50,7 @@ public class JumpToProgramPlugin extends Plugin {
   }
   
   public String getPluginCategory() {
-    return Plugin.OTHER_CATEGORY;
+    return PluginCompat.CATEGORY_OTHER;
   }
   
   public boolean canReceiveProgramsWithTarget() {

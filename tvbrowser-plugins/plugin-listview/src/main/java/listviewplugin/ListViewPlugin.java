@@ -36,9 +36,9 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
 
-import util.settings.PluginPictureSettings;
-import util.ui.UiUtilities;
-import util.ui.persona.Persona;
+import compat.PersonaCompat;
+import compat.PluginCompat;
+import compat.UiCompat;
 import devplugin.ActionMenu;
 import devplugin.Channel;
 import devplugin.Date;
@@ -49,6 +49,7 @@ import devplugin.PluginInfo;
 import devplugin.ProgramFilter;
 import devplugin.SettingsTab;
 import devplugin.Version;
+import util.settings.PluginPictureSettings;
 
 /**
  * This Plugin shows a List of current running Programs
@@ -56,7 +57,7 @@ import devplugin.Version;
  * @author bodo
  */
 public class ListViewPlugin extends Plugin {
-  private static final Version mVersion = new Version(3,27,true);
+  private static final Version mVersion = new Version(3,28,true);
 
     protected static final int PROGRAMTABLEWIDTH = 200;
   
@@ -114,7 +115,7 @@ public class ListViewPlugin extends Plugin {
           // TODO Auto-generated method stub
           
       if(mCenterPanelWrapper == null) {
-        mCenterPanelWrapper = UiUtilities.createPersonaBackgroundPanel();
+        mCenterPanelWrapper = UiCompat.createPersonaBackgroundPanel();
         mCenterWrapper = new PluginCenterPanelWrapper() {
           
           @Override
@@ -191,7 +192,7 @@ public class ListViewPlugin extends Plugin {
           }
           else if(!provideTab() && mListPanel != null) {
             mCenterPanelWrapper.remove(mListPanel);
-            Persona.getInstance().removePersonaListerner(mListPanel);
+            PersonaCompat.getInstance().removePersonaListener(mListPanel);
             mListPanel = null;
           }
         }
@@ -200,7 +201,7 @@ public class ListViewPlugin extends Plugin {
     
     public void onDeactivation() {
       if(mListPanel != null) {
-        Persona.getInstance().removePersonaListerner(mListPanel);
+        PersonaCompat.getInstance().removePersonaListener(mListPanel);
       }
       
       mListPanel = null;
@@ -211,7 +212,7 @@ public class ListViewPlugin extends Plugin {
         @Override
         public void run() {
           if(mListPanel != null) {
-            Persona.getInstance().removePersonaListerner(mListPanel);
+            PersonaCompat.getInstance().removePersonaListener(mListPanel);
             mCenterPanelWrapper.remove(mListPanel);
           }
           
@@ -224,7 +225,7 @@ public class ListViewPlugin extends Plugin {
           mAncestorListener = new AncestorListener() {
             @Override
             public void ancestorRemoved(AncestorEvent event) {
-              Persona.getInstance().removePersonaListerner(mListPanel);
+              PersonaCompat.getInstance().removePersonaListener(mListPanel);
               mCenterPanelWrapper.remove(mListPanel);
             }
             
@@ -233,7 +234,7 @@ public class ListViewPlugin extends Plugin {
             
             @Override
             public void ancestorAdded(AncestorEvent event) {
-              Persona.getInstance().registerPersonaListener(mListPanel);
+              PersonaCompat.getInstance().registerPersonaListener(mListPanel);
               mCenterPanelWrapper.add(mListPanel, BorderLayout.CENTER);
               mCenterPanelWrapper.repaint();
               mListPanel.updatePersona();
@@ -308,7 +309,7 @@ public class ListViewPlugin extends Plugin {
       SwingUtilities.invokeLater(new Runnable() {
         public void run() {
           mListPanel = new ListViewPanel(ListViewPlugin.this);
-          Persona.getInstance().registerPersonaListener(mListPanel);
+          PersonaCompat.getInstance().registerPersonaListener(mListPanel);
           mListPanel.updatePersona();
           mCenterPanelWrapper.add(mListPanel, BorderLayout.CENTER);
 
@@ -362,7 +363,7 @@ public class ListViewPlugin extends Plugin {
     }
     
     public String getPluginCategory() {
-      return Plugin.OTHER_CATEGORY;
+      return PluginCompat.CATEGORY_OTHER;
     }
     
     public PluginCenterPanelWrapper getPluginCenterPanelWrapper() {

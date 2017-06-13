@@ -44,18 +44,18 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.plaf.basic.BasicComboBoxRenderer;
 
-import timelineplugin.format.TextFormatter;
-import tvbrowser.extras.programinfo.ProgramInfo;
-import util.paramhandler.ParamLibrary;
-import util.ui.FontChooserPanel;
-import util.ui.Localizer;
-
 import com.jgoodies.forms.builder.PanelBuilder;
+import com.jgoodies.forms.factories.CC;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
+import compat.VersionCompat;
 import devplugin.Plugin;
 import devplugin.SettingsTab;
+import timelineplugin.format.TextFormatter;
+import util.paramhandler.ParamLibrary;
+import util.ui.FontChooserPanel;
+import util.ui.Localizer;
 
 public final class TimelinePluginSettingsTab implements SettingsTab {
 	static final util.ui.Localizer mLocalizer = util.ui.Localizer
@@ -119,9 +119,7 @@ public final class TimelinePluginSettingsTab implements SettingsTab {
 
 		final PanelBuilder builder = new PanelBuilder(layout);
 		builder.setBorder(null);
-
-		final CellConstraints cc = new CellConstraints();
-
+		
 		mProgressBar = new JComboBox(getProgressBarOption());
 		if (TimelinePlugin.getSettings().showBar()) {
 			mProgressBar.setSelectedIndex(1);
@@ -198,45 +196,60 @@ public final class TimelinePluginSettingsTab implements SettingsTab {
 
 		int row = 2;
 		builder.addLabel(mLocalizer.msg("progressView", "Progress view"),
-				cc.xy(3, row));
-		builder.add(mProgressBar, cc.xyw(5, row, 3));
+				CC.xy(3, row));
+		builder.add(mProgressBar, CC.xyw(5, row, 3));
 		row += 2;
-    builder.add(mAutoUpdate, cc.xyw(3, row, 5));
-    row += 2;
+		
+		if(VersionCompat.isCenterPanelSupported()) {
+		  builder.add(mAutoUpdate, CC.xyw(3, row, 5));
+		  row += 2;
+		}
+		else {
+		  layout.removeRow(row-1);
+		  layout.removeRow(row-1);
+		}
 		// builder.addLabel("Focus", cc.xy(3, row));
 		// builder.add(mFocusDelta, cc.xy(5, row));
 		// builder.add(mFocusDeltaLabel, cc.xy(7, row));
 		row += 2;
-		builder.addSeparator(mLocalizer.msg("start", "Start"), cc.xyw(2, row, 6));
+		builder.addSeparator(mLocalizer.msg("start", "Start"), CC.xyw(2, row, 6));
 		row += 2;
-		builder.add(mAutoStart, cc.xyw(3, row, 5));
+		builder.add(mAutoStart, CC.xyw(3, row, 5));
 		row += 2;
-		builder.add(mStartWithNow, cc.xyw(3, row, 5));
+		builder.add(mStartWithNow, CC.xyw(3, row, 5));
 		row += 2;
-		builder.add(mShowHeaderPanel, cc.xyw(3, row, 5));
-    row += 2;
-		builder.addSeparator(mLocalizer.msg("format", "Format"), cc.xyw(2, row, 6));
+		
+		if(VersionCompat.isCenterPanelSupported()) {
+		  builder.add(mShowHeaderPanel, CC.xyw(3, row, 5));
+		  row += 2;
+		}
+		else {
+		  layout.removeRow(row-1);
+		  layout.removeRow(row-1);
+		}
+		
+		builder.addSeparator(mLocalizer.msg("format", "Format"), CC.xyw(2, row, 6));
 		row += 2;
-		builder.add(mResizeWithMouse, cc.xyw(3, row, 5));
+		builder.add(mResizeWithMouse, CC.xyw(3, row, 5));
 		row += 2;
-		builder.addLabel(mLocalizer.msg("hourWidth", "Hour width"), cc.xy(3, row));
-		builder.add(mHourWidth, cc.xy(5, row));
-		builder.add(resetHour, cc.xy(7, row));
+		builder.addLabel(mLocalizer.msg("hourWidth", "Hour width"), CC.xy(3, row));
+		builder.add(mHourWidth, CC.xy(5, row));
+		builder.add(resetHour, CC.xy(7, row));
 		row += 2;
 		builder.addLabel(mLocalizer.msg("channelHeight", "Channel height"),
-				cc.xy(3, row));
-		builder.add(mChannelHeight, cc.xy(5, row));
-		builder.add(resetChannel, cc.xy(7, row));
+				CC.xy(3, row));
+		builder.add(mChannelHeight, CC.xy(5, row));
+		builder.add(resetChannel, CC.xy(7, row));
 		row += 2;
 		builder.addSeparator(
 				mLocalizer.msg("iconNameSeparator", "Channel icons/channel name"),
-				cc.xyw(2, row, 6));
+				CC.xyw(2, row, 6));
 		row += 2;
-		builder.add(mShowIconAndName, cc.xyw(3, row, 5));
+		builder.add(mShowIconAndName, CC.xyw(3, row, 5));
 		row += 2;
-		builder.add(mShowIcon, cc.xyw(3, row, 5));
+		builder.add(mShowIcon, CC.xyw(3, row, 5));
 		row += 2;
-		builder.add(mShowName, cc.xyw(3, row, 5));
+		builder.add(mShowName, CC.xyw(3, row, 5));
 
 		return builder.getPanel();
 	}

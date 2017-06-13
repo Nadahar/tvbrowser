@@ -28,17 +28,16 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import util.ui.Localizer;
-import util.ui.UiUtilities;
-import util.ui.WindowClosingIf;
-
-import com.jgoodies.forms.builder.ButtonBarBuilder;
+import com.jgoodies.forms.builder.ButtonBarBuilder2;
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
 import devplugin.Program;
 import devplugin.ProgramFieldType;
+import util.ui.Localizer;
+import util.ui.UiUtilities;
+import util.ui.WindowClosingIf;
 
 /**
  * the dialog to enter data for wirschauen. after the ok-button was pressed
@@ -179,7 +178,7 @@ public class CreateWirSchauenDataDialog extends JDialog implements WindowClosing
         close();
       }
     });
-    final ButtonBarBuilder builder = new ButtonBarBuilder();
+    final ButtonBarBuilder2 builder = new ButtonBarBuilder2();
     builder.addGlue();
     builder.addButton(new JButton[]{okButton, cancelButton});
 

@@ -42,6 +42,7 @@ import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.JFrame;
 
+import compat.PluginCompat;
 import devplugin.ActionMenu;
 import devplugin.Channel;
 import devplugin.ContextMenuAction;
@@ -601,6 +602,6 @@ public class WebPlugin extends Plugin {
   }
   
   public String getPluginCategory() {
-    return Plugin.REMOTE_CONTROL_SOFTWARE_CATEGORY;
+    return PluginCompat.CATEGORY_REMOTE_CONTROL_SOFTWARE;
   }
 }

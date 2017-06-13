@@ -24,27 +24,50 @@ package tvpearlplugin;
 
 import java.awt.Component;
 
+import javax.swing.JPanel;
 import javax.swing.JTable;
+import javax.swing.UIManager;
 import javax.swing.table.DefaultTableCellRenderer;
 
+import com.jgoodies.forms.factories.CC;
+import com.jgoodies.forms.layout.FormLayout;
+
+import devplugin.Program;
 import util.settings.PluginPictureSettings;
 import util.settings.ProgramPanelSettings;
 import util.ui.ProgramPanel;
-
-import devplugin.Program;
+import util.ui.UiUtilities;
 
 public class PearlCreationTableCellRenderer extends DefaultTableCellRenderer {
   private static final ProgramPanelSettings PANEL_SETTINGS = new ProgramPanelSettings(new PluginPictureSettings(PluginPictureSettings.NO_PICTURE_TYPE), true, true);
+  
+  private ProgramPanel mPanel;
+  private JPanel mSelection;
+  
+  public PearlCreationTableCellRenderer() {
+    mPanel = new ProgramPanel(PANEL_SETTINGS);
+    mSelection = new JPanel(new FormLayout("0dlu:grow","fill:0dlu:grow"));
+    mSelection.setOpaque(true);
+    mSelection.setBackground(UIManager.getColor("Table.selectionBackground"));
+  }
   
   @Override
   public Component getTableCellRendererComponent(JTable table, Object value,
       boolean isSelected, boolean hasFocus, int row, int column) {
     if(value instanceof Program) {
-      ProgramPanel panel = new ProgramPanel((Program)value,PANEL_SETTINGS);
+      Component result = mPanel;
       
-      table.setRowHeight(row, panel.getPreferredHeight());
+      mPanel.setProgram((Program)value);
       
-      return panel;
+      if(isSelected) {
+        mSelection.removeAll();
+        mSelection.add(mPanel, CC.xy(1, 1));
+        result = mSelection;
+      }
+      
+      table.setRowHeight(row, mPanel.getPreferredHeight());
+      
+      return result;
     }
     
     return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);

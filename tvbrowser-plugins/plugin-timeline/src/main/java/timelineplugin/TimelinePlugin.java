@@ -46,9 +46,9 @@ import javax.swing.UIManager;
 import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
 
-import timelineplugin.format.TextFormatter;
-import util.ui.UiUtilities;
-import util.ui.persona.Persona;
+import compat.PersonaCompat;
+import compat.PluginCompat;
+import compat.UiCompat;
 import devplugin.ActionMenu;
 import devplugin.Channel;
 import devplugin.Date;
@@ -61,12 +61,13 @@ import devplugin.ProgramFilter;
 import devplugin.SettingsTab;
 import devplugin.TvBrowserSettings;
 import devplugin.Version;
+import timelineplugin.format.TextFormatter;
 
 public final class TimelinePlugin extends devplugin.Plugin {
 	static final util.ui.Localizer mLocalizer = util.ui.Localizer
 			.getLocalizerFor(TimelinePlugin.class);
 
-	private static final Version VERSION = new Version(1, 14, 0, false);
+	private static final Version VERSION = new Version(1, 15, 0, false);
 	
 	private static TimelinePlugin mInstance;
 
@@ -132,7 +133,7 @@ public final class TimelinePlugin extends devplugin.Plugin {
     SwingUtilities.invokeLater(new Runnable() {
       @Override
       public void run() {
-        mCenterPanelWrapper = UiUtilities.createPersonaBackgroundPanel();
+        mCenterPanelWrapper = UiCompat.createPersonaBackgroundPanel();
       }
     });
     
@@ -259,7 +260,7 @@ public final class TimelinePlugin extends devplugin.Plugin {
               }
             });
             
-            Persona.getInstance().registerPersonaListener(mTimelinePanel);
+            PersonaCompat.getInstance().registerPersonaListener(mTimelinePanel);
 
             mCenterPanelWrapper.add(mTimelinePanel,BorderLayout.CENTER);
             
@@ -434,7 +435,7 @@ public final class TimelinePlugin extends devplugin.Plugin {
 	}
 	
 	public String getPluginCategory() {
-	  return Plugin.OTHER_CATEGORY;
+	  return PluginCompat.CATEGORY_OTHER;
 	}
 
 	public PluginCenterPanelWrapper getPluginCenterPanelWrapper() {
@@ -455,14 +456,14 @@ public final class TimelinePlugin extends devplugin.Plugin {
 	}
 	
   public static void paintComponentInternal(Graphics g,JComponent component) {
-    Color c = Persona.getInstance().getAccentColor().darker().darker().darker();
+    Color c = PersonaCompat.getInstance().getAccentColor().darker().darker().darker();
 
     g.setColor(new Color(c.getRed(),c.getGreen(),c.getBlue(),110));
     g.fillRect(0,0,component.getWidth(),component.getHeight());
     
-    c = Persona.getInstance().getAccentColor();
+    c = PersonaCompat.getInstance().getAccentColor();
     
-    double test = (0.2126 * Persona.getInstance().getTextColor().getRed()) + (0.7152 * Persona.getInstance().getTextColor().getGreen()) + (0.0722 * Persona.getInstance().getTextColor().getBlue());
+    double test = (0.2126 * PersonaCompat.getInstance().getTextColor().getRed()) + (0.7152 * PersonaCompat.getInstance().getTextColor().getGreen()) + (0.0722 * PersonaCompat.getInstance().getTextColor().getBlue());
     int alpha = 100;
     
     if(test <= 30) {

@@ -36,8 +36,9 @@ import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 
+import compat.ChannelCompat;
+import compat.PersonaCompat;
 import util.program.ProgramUtilities;
-import util.ui.persona.Persona;
 
 import devplugin.Channel;
 import devplugin.Date;
@@ -79,7 +80,7 @@ public class ProgramScrollPanel extends JScrollPane implements
 
     JPanel leftUpper = new JPanel(new BorderLayout()) {
       protected void paintComponent(Graphics g) {
-        if(Persona.getInstance().getAccentColor() != null && Persona.getInstance().getHeaderImage() != null) {
+        if(PersonaCompat.getInstance().getAccentColor() != null && PersonaCompat.getInstance().getHeaderImage() != null) {
           TimelinePlugin.paintComponentInternal(g,this);
         }
         else {
@@ -95,7 +96,7 @@ public class ProgramScrollPanel extends JScrollPane implements
     
     JPanel rightUpper = new JPanel() {
       protected void paintComponent(Graphics g) {
-        if(Persona.getInstance().getAccentColor() != null && Persona.getInstance().getHeaderImage() != null) {
+        if(PersonaCompat.getInstance().getAccentColor() != null && PersonaCompat.getInstance().getHeaderImage() != null) {
           TimelinePlugin.paintComponentInternal(g,this);
         }
         else {
@@ -132,7 +133,7 @@ public class ProgramScrollPanel extends JScrollPane implements
 		final ArrayList<Channel> channelList = new ArrayList<Channel>();
 		
 		for(Channel ch : Plugin.getPluginManager().getSubscribedChannels()) {
-		  if(ch.getBaseChannel() == null) {
+		  if(ChannelCompat.getBaseChannel(ch) == null) {
 		    channelList.add(ch);
 		  }
 		}
@@ -189,7 +190,7 @@ public class ProgramScrollPanel extends JScrollPane implements
     Iterator<Program> it = Plugin.getPluginManager().getChannelDayProgram(
         selectedDay, channel);
     
-    if(channel.getJointChannel() != null) {
+    if(ChannelCompat.getJointChannel(channel) != null) {
       ArrayList<Program> jointProgramList = new ArrayList<Program>();
       
       if(it != null) {
@@ -198,7 +199,7 @@ public class ProgramScrollPanel extends JScrollPane implements
         }
       }
 
-      it = Plugin.getPluginManager().getChannelDayProgram(selectedDay, channel.getJointChannel());
+      it = Plugin.getPluginManager().getChannelDayProgram(selectedDay, ChannelCompat.getJointChannel(channel));
     
       if(it != null) {
         while(it.hasNext()) {

@@ -55,16 +55,6 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
-import javax.xml.ws.handler.MessageContext.Scope;
-
-import util.settings.PluginPictureSettings;
-import util.settings.ProgramPanelSettings;
-import util.ui.ProgramList;
-import util.ui.SendToPluginDialog;
-import util.ui.TVBrowserIcons;
-import util.ui.UiUtilities;
-import util.ui.persona.Persona;
-import util.ui.persona.PersonaListener;
 
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.factories.CC;
@@ -72,9 +62,18 @@ import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.Sizes;
 
+import compat.PersonaCompat;
+import compat.PersonaCompatListener;
+import compat.ProgramListCompat;
 import devplugin.Plugin;
 import devplugin.Program;
 import devplugin.ProgramFilter;
+import util.settings.PluginPictureSettings;
+import util.settings.ProgramPanelSettings;
+import util.ui.ProgramList;
+import util.ui.SendToPluginDialog;
+import util.ui.TVBrowserIcons;
+import util.ui.UiUtilities;
 
 /**
  * SimpleMarkerPlugin 1.4 Plugin for TV-Browser since version 2.3 to only mark
@@ -86,7 +85,7 @@ import devplugin.ProgramFilter;
  *
  * @author René Mach
  */
-public class ManagePanel extends JPanel implements PersonaListener {
+public class ManagePanel extends JPanel implements PersonaCompatListener {
   private static final long serialVersionUID = 1L;
 
   private JList mMarkListsList;
@@ -138,7 +137,7 @@ public class ManagePanel extends JPanel implements PersonaListener {
     mMarkListsList.setCellRenderer(new MarkListCellRenderer());
 
     mProgramsList = new ProgramList(mProgramListModel,new ProgramPanelSettings(new PluginPictureSettings(PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE), false, ProgramPanelSettings.X_AXIS));
-    mProgramsList.addMouseAndKeyListeners(null);
+    ProgramListCompat.addMouseAndKeyListeners(mProgramsList, null);
 
     mMarkListsScrolPane = new JScrollPane(mMarkListsList);
     mProgramsScrollPane = new JScrollPane(mProgramsList);
@@ -427,7 +426,7 @@ public class ManagePanel extends JPanel implements PersonaListener {
       
       if(!mProgramListModel.isEmpty() && SimpleMarkerPlugin.getInstance().getSettings().isShowingDateSeperators()) {
         try {
-          mProgramsList.addDateSeparators();
+          ProgramListCompat.addDateSeparators(mProgramsList);
         } catch (Throwable e) {
           e.printStackTrace();
         }
@@ -444,7 +443,7 @@ public class ManagePanel extends JPanel implements PersonaListener {
     }
     
     if(scroll) {
-      scroll(mProgramsList.getNewIndexForOldIndex(index));
+      scroll(ProgramListCompat.getNewIndexForOldIndex(mProgramsList,index));
     }
 
     mSend.setEnabled(mProgramListModel.size() > 0);
@@ -544,20 +543,20 @@ public class ManagePanel extends JPanel implements PersonaListener {
     }
     
     JButton scrollToPreviousDay = new JButton(TVBrowserIcons.left(TVBrowserIcons.SIZE_SMALL));
-    scrollToPreviousDay.setToolTipText(ProgramList.getPreviousActionTooltip());
+    scrollToPreviousDay.setToolTipText(ProgramListCompat.getPreviousActionTooltip());
     scrollToPreviousDay.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        mProgramsList.scrollToPreviousDayIfAvailable();
+        ProgramListCompat.scrollToPreviousDayIfAvailable(mProgramsList);
       }
     });
     
     JButton scrollToNextDay = new JButton(TVBrowserIcons.right(TVBrowserIcons.SIZE_SMALL));
-    scrollToNextDay.setToolTipText(ProgramList.getNextActionTooltip());
+    scrollToNextDay.setToolTipText(ProgramListCompat.getNextActionTooltip());
     scrollToNextDay.addActionListener(new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent e) {
-        mProgramsList.scrollToNextDayIfAvailable();
+        ProgramListCompat.scrollToNextDayIfAvailable(mProgramsList);
       }
     });
     
@@ -569,7 +568,7 @@ public class ManagePanel extends JPanel implements PersonaListener {
         for(int i = 0; i < mProgramListModel.getSize(); i++) {
           if(mProgramListModel.getElementAt(i) instanceof Program && 
               !((Program)mProgramListModel.getElementAt(i)).isExpired()) {
-            scroll(mProgramsList.getNewIndexForOldIndex(i));
+            scroll(ProgramListCompat.getNewIndexForOldIndex(mProgramsList,i));
             break;
           }
         }
@@ -623,9 +622,9 @@ public class ManagePanel extends JPanel implements PersonaListener {
 
   @Override
   public void updatePersona() {
-    if(Persona.getInstance().getHeaderImage() != null) {
-      mFilterLabel.setForeground(Persona.getInstance().getTextColor());
-      mShowPrograms.setForeground(Persona.getInstance().getTextColor());    
+    if(PersonaCompat.getInstance().getHeaderImage() != null) {
+      mFilterLabel.setForeground(PersonaCompat.getInstance().getTextColor());
+      mShowPrograms.setForeground(PersonaCompat.getInstance().getTextColor());    
     }
     else {
       mShowPrograms.setForeground(UIManager.getColor("Label.foreground"));

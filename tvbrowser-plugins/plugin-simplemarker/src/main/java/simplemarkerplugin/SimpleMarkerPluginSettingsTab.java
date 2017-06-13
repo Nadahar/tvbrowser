@@ -59,6 +59,7 @@ import com.jgoodies.forms.factories.CC;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
 
+import compat.ProgramListCompat;
 import devplugin.Plugin;
 import devplugin.SettingsItem;
 import devplugin.SettingsTab;
@@ -114,7 +115,14 @@ public class SimpleMarkerPluginSettingsTab implements SettingsTab,
     
     int y = 1;
     
-    panel.add(mShowDateSeparators, CC.xy(2,y));
+    if(ProgramListCompat.isDateSeparatorSupported()) {
+      panel.add(mShowDateSeparators, CC.xy(2,y));
+    }
+    else {
+      y = -1;
+      layout.removeRow(1);
+      layout.removeRow(1);
+    }
 
     if(Plugin.getPluginManager().getTVBrowserVersion().compareTo(new Version(3,44,50,false)) >= 0) {
       layout.insertRow(3, RowSpec.decode("3dlu"));

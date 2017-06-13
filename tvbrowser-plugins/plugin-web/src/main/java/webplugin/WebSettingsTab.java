@@ -50,6 +50,10 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import com.jgoodies.forms.layout.CellConstraints;
+
+import devplugin.PluginInfo;
+import devplugin.SettingsTab;
 import util.ui.DragAndDropMouseListener;
 import util.ui.EnhancedPanelBuilder;
 import util.ui.LinkButton;
@@ -58,12 +62,6 @@ import util.ui.ListDropAction;
 import util.ui.Localizer;
 import util.ui.TVBrowserIcons;
 import util.ui.UiUtilities;
-
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormSpecs;
-
-import devplugin.PluginInfo;
-import devplugin.SettingsTab;
 
 /**
  * The Settings-Tab
@@ -134,8 +132,7 @@ public class WebSettingsTab implements SettingsTab,  ListDropAction {
   }
 
   public JPanel createSettingsPanel() {
-
-    EnhancedPanelBuilder pb = new EnhancedPanelBuilder(FormSpecs.RELATED_GAP_COLSPEC.encode() + ",fill:default:grow");
+    EnhancedPanelBuilder pb = new EnhancedPanelBuilder(/*FormSpecs.RELATED_GAP_COLSPEC.encode() + */"5dlu,fill:default:grow");
     CellConstraints cc = new CellConstraints();
 
     mRbShowDetails = new JRadioButton(mLocalizer.msg("showDetails","Show search menu for title, actors, and other fields"), webPlugin.getShowDetailMenus());

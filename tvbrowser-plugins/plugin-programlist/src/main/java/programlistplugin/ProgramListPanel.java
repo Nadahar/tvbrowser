@@ -57,6 +57,19 @@ import javax.swing.UIManager;
 import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
 
+import com.jgoodies.forms.factories.Borders;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
+
+import compat.FilterCompat;
+import compat.PersonaCompat;
+import compat.PersonaCompatListener;
+import compat.ProgramListCompat;
+import devplugin.Channel;
+import devplugin.Date;
+import devplugin.Plugin;
+import devplugin.Program;
+import devplugin.ProgramFilter;
 import util.program.ProgramUtilities;
 import util.settings.PluginPictureSettings;
 import util.settings.ProgramPanelSettings;
@@ -64,27 +77,15 @@ import util.ui.Localizer;
 import util.ui.ProgramList;
 import util.ui.SendToPluginDialog;
 import util.ui.TVBrowserIcons;
+import util.ui.TabListenerPanel;
 import util.ui.UiUtilities;
-import util.ui.persona.Persona;
-import util.ui.persona.PersonaListener;
-
-import com.jgoodies.forms.factories.Borders;
-import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormLayout;
-
-import devplugin.Channel;
-import devplugin.Date;
-import devplugin.FilterChangeListenerV2;
-import devplugin.Plugin;
-import devplugin.Program;
-import devplugin.ProgramFilter;
 
 /**
  * The panel with the program list.
  * 
  * @author René Mach
  */
-public class ProgramListPanel extends JPanel implements PersonaListener, FilterChangeListenerV2 {
+public class ProgramListPanel extends TabListenerPanel implements PersonaCompatListener, FilterCompat.FilterChangeListener {
   private static final Localizer mLocalizer = ProgramListPlugin.mLocalizer;
   private static final String DATE_SEPARATOR = "DATE_SEPRATOR";
   private static final int ANCHESTOR_UPDATE_TIMEOUT = 250;
@@ -122,6 +123,8 @@ public class ProgramListPanel extends JPanel implements PersonaListener, FilterC
   
   private static Class<?> mWrapperFilter;
   
+  private Component mFocusOwner;
+  
   static {
     try {
       mWrapperFilter = Class.forName("util.ui.WrapperFilter");
@@ -140,7 +143,7 @@ public class ProgramListPanel extends JPanel implements PersonaListener, FilterC
     final ProgramListSettings mSettings = ProgramListPlugin.getInstance().getSettings();
     
     setLayout(new BorderLayout(0,10));
-    setBorder(Borders.DIALOG);
+    setBorder(Borders.DIALOG_BORDER);
     setOpaque(false);
     
     
@@ -149,6 +152,9 @@ public class ProgramListPanel extends JPanel implements PersonaListener, FilterC
     mProgramPanelSettings = new ProgramPanelSettings(new PluginPictureSettings(
         PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE), !showDescription, ProgramPanelSettings.X_AXIS);
     mList = new ProgramList(mModel, mProgramPanelSettings);
+    
+    setDefaultFocusOwner(mList);
+    
     final ListCellRenderer backend = mList.getCellRenderer();
     
     mList.setCellRenderer(new DefaultListCellRenderer() {
@@ -825,8 +831,8 @@ public class ProgramListPanel extends JPanel implements PersonaListener, FilterC
 
   @Override
   public void updatePersona() {
-    if(Persona.getInstance().getHeaderImage() != null) {
-      mShowDescription.setForeground(Persona.getInstance().getTextColor());    }
+    if(PersonaCompat.getInstance().getHeaderImage() != null) {
+      mShowDescription.setForeground(PersonaCompat.getInstance().getTextColor());    }
     else {
       mShowDescription.setForeground(UIManager.getColor("Label.foreground"));
     }
@@ -951,10 +957,10 @@ public class ProgramListPanel extends JPanel implements PersonaListener, FilterC
               @Override
               public void run() {
                 if(ProgramListPlugin.getInstance().getSettings().getBooleanValue(ProgramListSettings.KEY_TAB_TIME_SCROLL_AROUND)) {
-                  mList.scrollToTimeFromCurrentViewIfAvailable(time);
+                  ProgramListCompat.scrollToTimeFromCurrentViewIfAvailable(mList, time);
                 }
                 else {
-                  mList.scrollToFirstOccurrenceOfTimeFromCurrentViewOnwardIfAvailable(time);
+                  ProgramListCompat.scrollToFirstOccurrenceOfTimeFromCurrentViewOnwardIfAvailable(mList, time);
                 }
               }
             });
@@ -989,5 +995,25 @@ public class ProgramListPanel extends JPanel implements PersonaListener, FilterC
     }
     
     return result;
+  }
+  
+
+  public void tabShown() {
+    if(mFocusOwner == null) {
+      mList.requestFocusInWindow();
+    }
+    else {
+      mFocusOwner.requestFocusInWindow();
+    }
+  }
+  
+  public void tabHidden(Component mostRecent) {
+    mFocusOwner = null;
+    
+    for(int i = 0; i < getComponentCount(); i++) {
+      if(getComponent(i).equals(mostRecent)) {
+        mFocusOwner = mostRecent;
+      }
+    }
   }
 }

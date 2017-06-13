@@ -33,6 +33,7 @@ import javax.swing.JPanel;
 import javax.swing.JViewport;
 import javax.swing.UIManager;
 
+import compat.ChannelCompat;
 import devplugin.Channel;
 import devplugin.Date;
 import devplugin.Plugin;
@@ -92,7 +93,7 @@ public class ProgramPanel extends JPanel {
 		mChannelCount = 0;
 		
 		for(Channel ch : Plugin.getPluginManager().getSubscribedChannels()) {
-		  if(ch.getBaseChannel() == null) {
+		  if(ChannelCompat.getBaseChannel(ch) == null) {
 		    mChannelCount++;
 		  }
 		}

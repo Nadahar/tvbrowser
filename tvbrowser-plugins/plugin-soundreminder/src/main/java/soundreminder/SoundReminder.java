@@ -76,13 +76,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.text.BadLocationException;
 
-import soundreminder.SoundEntry.SoundPlay;
-import util.ui.ExtensionFileFilter;
-import util.ui.Localizer;
-import util.ui.UiUtilities;
-import util.ui.WindowClosingIf;
-
-import com.jgoodies.forms.builder.ButtonBarBuilder;
+import com.jgoodies.forms.builder.ButtonBarBuilder2;
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.factories.CC;
@@ -100,6 +94,11 @@ import devplugin.ProgramReceiveTarget;
 import devplugin.SettingsTab;
 import devplugin.ThemeIcon;
 import devplugin.Version;
+import soundreminder.SoundEntry.SoundPlay;
+import util.ui.ExtensionFileFilter;
+import util.ui.Localizer;
+import util.ui.UiUtilities;
+import util.ui.WindowClosingIf;
 
 /**
  * A plugin to remind with different sound per title.
@@ -107,7 +106,7 @@ import devplugin.Version;
  * @author René Mach
  */
 public class SoundReminder extends Plugin {
-  private static final Version VERSION = new Version(0,12,2,true);
+  private static final Version VERSION = new Version(0,12,3,true);
   
   protected static final Localizer mLocalizer = Localizer
       .getLocalizerFor(SoundReminder.class);
@@ -256,7 +255,7 @@ public class SoundReminder extends Plugin {
         
         final CellConstraints cc = new CellConstraints();
         final PanelBuilder pb = new PanelBuilder(layout);
-        pb.border(Borders.DIALOG);
+        pb.setBorder(Borders.DIALOG_BORDER);
         
         JPanel settingsPanel = mSettings.createSettingsPanel();
         settingsPanel.setMinimumSize(new Dimension(560,420));
@@ -852,7 +851,7 @@ public class SoundReminder extends Plugin {
       final PanelBuilder pb = new PanelBuilder(layout, this);
       final CellConstraints cc = new CellConstraints();
       
-      ButtonBarBuilder buttonPanel = new ButtonBarBuilder();
+      ButtonBarBuilder2 buttonPanel = new ButtonBarBuilder2();
       buttonPanel.addButton(add);
       buttonPanel.addRelatedGap();
       buttonPanel.addButton(delete);

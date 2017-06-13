@@ -37,6 +37,7 @@ import javax.swing.UIManager;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
+import compat.UiCompat;
 import util.browserlauncher.Launch;
 import util.ui.Localizer;
 import util.ui.UiUtilities;
@@ -141,7 +142,7 @@ public final class PearlInfoDialog extends JDialog implements WindowClosingIf
 		  final ExtendedHTMLDocument doc = (ExtendedHTMLDocument) mInfoPane
           .getDocument();
 			//mInfoPane.setText(createHtmlText(doc, mProgram));
-			UiUtilities.updateHtmlHelpTextArea(mInfoPane, createHtmlText(doc, mProgram), UIManager.getDefaults().getColor("List.background"));
+			UiCompat.updateHtmlHelpTextArea(mInfoPane, createHtmlText(doc, mProgram), UIManager.getDefaults().getColor("List.background"));
 			mScrollPane.getVerticalScrollBar().setValue(0);
 		}
 		toFront();

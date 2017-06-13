@@ -25,6 +25,7 @@ package tvpearlplugin;
 import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -44,7 +45,14 @@ import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.event.PopupMenuEvent;
+import javax.swing.event.PopupMenuListener;
 
+import com.jgoodies.forms.builder.ButtonBarBuilder2;
+
+import devplugin.Plugin;
+import devplugin.PluginManager;
+import devplugin.Program;
 import tvbrowser.core.icontheme.IconLoader;
 import util.programkeyevent.ProgramKeyAndContextMenuListener;
 import util.programkeyevent.ProgramKeyEventHandler;
@@ -56,12 +64,6 @@ import util.ui.SearchHelper;
 import util.ui.SendToPluginDialog;
 import util.ui.UiUtilities;
 import util.ui.menu.MenuUtil;
-
-import com.jgoodies.forms.builder.ButtonBarBuilder;
-
-import devplugin.Plugin;
-import devplugin.PluginManager;
-import devplugin.Program;
 
 /**
  * A panel with a list of TV pearls.
@@ -77,6 +79,8 @@ public class PearlDisplayPanel extends JPanel {
   private JButton mCloseBn;
   private JButton mUpdateBn;
   private DefaultListModel mProgramList;
+  private PopupMenuListener mListenerPopup;
+  private JPopupMenu mPopupCurrent;
   
   public PearlDisplayPanel(PearlDialog dialog) {
     createGUI(dialog);
@@ -87,6 +91,22 @@ public class PearlDisplayPanel extends JPanel {
     setOpaque(false);
     setLayout(new BorderLayout());
     setBorder(UiUtilities.DIALOG_BORDER);
+    
+    mListenerPopup = new PopupMenuListener() {
+      @Override
+      public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
+        ((JPopupMenu)e.getSource()).requestFocus();
+      }
+      
+      @Override
+      public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
+        ((JPopupMenu)e.getSource()).removePopupMenuListener(this);
+        mPopupCurrent = null;
+      }
+      
+      @Override
+      public void popupMenuCanceled(PopupMenuEvent e) {}
+    };
     
     mProgramList = new DefaultListModel();
     mDataList = new JList(mProgramList)
@@ -158,12 +178,13 @@ public class PearlDisplayPanel extends JPanel {
     ProgramKeyEventHandler keyHandler = new ProgramKeyEventHandler(new ProgramKeyAndContextMenuListener() {
       @Override
       public void showContextMenu(Program prog) {
-        JPopupMenu popup = Plugin.getPluginManager().createPluginContextMenu(prog,
-            null);
+        JPopupMenu popup = Plugin.getPluginManager().createPluginContextMenu(prog, null);
+        popup.addPopupMenuListener(mListenerPopup);
         
         Point p = mDataList.indexToLocation(mDataList.getSelectedIndex());
-        
-        popup.show(mDataList, p.x, p.y);
+        Rectangle r = mDataList.getCellBounds(mDataList.getSelectedIndex(), mDataList.getSelectedIndex());
+        mPopupCurrent = popup;
+        popup.show(mDataList, p.x+(int)(r.width*1/3f), p.y+(int)(r.height*2/3f));
       }
       
       @Override
@@ -184,8 +205,9 @@ public class PearlDisplayPanel extends JPanel {
           }
           else if(e.getKeyCode() == KeyEvent.VK_CONTEXT_MENU) {
             Point p = mDataList.indexToLocation(index);
+            Rectangle r = mDataList.getCellBounds(mDataList.getSelectedIndex(), mDataList.getSelectedIndex());
             
-            createNoProgramInstanceMenu(pearl).show(mDataList, p.x, p.y);
+            createNoProgramInstanceMenu(pearl).show(mDataList, p.x+(int)(r.width*0.2), p.y+(int)(r.height*2/3f));
           }
           else if(e.getKeyCode() == KeyEvent.VK_D) {
             TVPearlPlugin.getInstance().showPearlInfo(pearl);
@@ -222,7 +244,7 @@ public class PearlDisplayPanel extends JPanel {
     mScrollPane = new JScrollPane(mDataList);
     add(mScrollPane, BorderLayout.CENTER);
 
-    final ButtonBarBuilder builderButton = new ButtonBarBuilder();
+    final ButtonBarBuilder2 builderButton = new ButtonBarBuilder2();
     builderButton.setLeftToRight(true);
     builderButton.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
     builderButton.getPanel().setOpaque(false);
@@ -310,6 +332,8 @@ public class PearlDisplayPanel extends JPanel {
   
   private JPopupMenu createNoProgramInstanceMenu(final TVPProgram popupProgram) {
     JPopupMenu popup = new JPopupMenu();
+    popup.addPopupMenuListener(mListenerPopup);
+    mPopupCurrent = popup;
     JMenuItem item = new JMenuItem(mLocalizer.msg("comment", "TV Pearl comment"));
     item.setIcon(TVPearlPlugin.getInstance().getSmallIcon());
     item.setFont(MenuUtil.CONTEXT_MENU_BOLDFONT);
@@ -343,6 +367,17 @@ public class PearlDisplayPanel extends JPanel {
     return popup;
   }
   
+  public boolean popupCanceled() {
+    boolean result = false;
+    
+    if(mPopupCurrent != null && mPopupCurrent.isVisible()) {
+      mPopupCurrent.setVisible(false);
+      result = true;
+    }
+    
+    return result;
+  }
+  
   private void checkPopup(final MouseEvent e)
   {
     if (e.isPopupTrigger())
@@ -367,11 +402,14 @@ public class PearlDisplayPanel extends JPanel {
         }
 
         final JPopupMenu openPopup = popup;
+        
+        openPopup.addPopupMenuListener(mListenerPopup);
+        mPopupCurrent = openPopup;
         SwingUtilities.invokeLater(new Runnable()
         {
           public void run()
           {
-            openPopup.show(mDataList, e.getX() - 15, e.getY() - 15);
+            openPopup.show(mDataList, e.getX(), e.getY());
           }
         });
       }
@@ -443,5 +481,10 @@ public class PearlDisplayPanel extends JPanel {
   public void update()
   {
     mDataList.repaint();
+  }
+  
+  @Override
+  public void requestFocus() {
+    mDataList.requestFocus();
   }
 }

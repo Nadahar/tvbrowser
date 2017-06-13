@@ -35,10 +35,11 @@ import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
 
+import compat.ChannelCompat;
+import compat.PersonaCompat;
 import util.browserlauncher.Launch;
 import util.ui.ChannelContextMenu;
 import util.ui.UiUtilities;
-import util.ui.persona.Persona;
 import devplugin.Channel;
 import devplugin.Plugin;
 
@@ -80,7 +81,7 @@ public class ChannelHeader extends JComponent {
 		ArrayList<Channel> channelList = new ArrayList<Channel>();
 		
 		for(Channel ch : Plugin.getPluginManager().getSubscribedChannels()) {
-		  if(ch.getBaseChannel() == null) {
+		  if(ChannelCompat.getBaseChannel(ch) == null) {
 		    channelList.add(ch);
 		  }
 		}
@@ -166,12 +167,12 @@ public class ChannelHeader extends JComponent {
 	}
 
 	public void paintComponent(final Graphics g) {
-   if(Persona.getInstance().getHeaderImage() != null) {
+   if(PersonaCompat.getInstance().getHeaderImage() != null) {
       TimelinePlugin.paintComponentInternal(g,this);
     }
 
 		g.setFont(TimelinePlugin.getFont());
-    final Color c = Persona.getInstance().getHeaderImage() != null ? Persona.getInstance().getTextColor() : UIManager.getColor("List.foreground");
+    final Color c = PersonaCompat.getInstance().getHeaderImage() != null ? PersonaCompat.getInstance().getTextColor() : UIManager.getColor("List.foreground");
 		
 		int delta = 0;
 		int h = g.getFontMetrics().getHeight();
@@ -181,7 +182,7 @@ public class ChannelHeader extends JComponent {
 		}
 		final int w = this.getSize().width;
 		
-		int transparency = Persona.getInstance().getHeaderImage() != null ? 60 : 35;
+		int transparency = PersonaCompat.getInstance().getHeaderImage() != null ? 60 : 35;
 		
     Color c1 = UIManager.getColor("List.background");
     
@@ -246,8 +247,8 @@ public class ChannelHeader extends JComponent {
 	}
 
 	private String getName(final Channel channel) {
-	  if(channel.getJointChannel() != null) {
-	    return channel.getJointChannelName();
+	  if(ChannelCompat.getJointChannel(channel) != null) {
+	    return ChannelCompat.getJointChannelName(channel);
 	  }
 	  
 	  return channel.getName();
@@ -258,7 +259,7 @@ public class ChannelHeader extends JComponent {
 			return mIcons.get(channel);
 		}
 		
-		final ImageIcon icon = UiUtilities.createChannelIcon(channel.getJointChannel() != null ? channel.getJointChannelIcon() : channel.getIcon());
+		final ImageIcon icon = UiUtilities.createChannelIcon(ChannelCompat.getJointChannel(channel) != null ? ChannelCompat.getJointChannelIcon(channel) : channel.getIcon());
 		
 		mIcons.put(channel, icon);
 		return icon;

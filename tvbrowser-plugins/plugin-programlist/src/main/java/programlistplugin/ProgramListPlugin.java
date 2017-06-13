@@ -45,14 +45,14 @@ import javax.swing.JRadioButton;
 import javax.swing.JRootPane;
 import javax.swing.SwingUtilities;
 
-import util.ui.Localizer;
-import util.ui.UiUtilities;
-import util.ui.WindowClosingIf;
-import util.ui.persona.Persona;
-
 import com.jgoodies.forms.factories.CC;
 import com.jgoodies.forms.layout.FormLayout;
 
+import compat.FilterCompat;
+import compat.PersonaCompat;
+import compat.PluginCompat;
+import compat.UiCompat;
+import compat.VersionCompat;
 import devplugin.ActionMenu;
 import devplugin.Channel;
 import devplugin.Date;
@@ -65,6 +65,9 @@ import devplugin.ProgramFilter;
 import devplugin.ProgramReceiveTarget;
 import devplugin.SettingsTab;
 import devplugin.Version;
+import util.ui.Localizer;
+import util.ui.UiUtilities;
+import util.ui.WindowClosingIf;
 
 /**
  * Shows all important programs in a time sorted list.
@@ -75,7 +78,7 @@ import devplugin.Version;
 public class ProgramListPlugin extends Plugin {
   static final Localizer mLocalizer = Localizer.getLocalizerFor(ProgramListPlugin.class);
 
-  private static Version mVersion = new Version(3, 29, 0, true);
+  private static Version mVersion = new Version(3, 30, 0, true);
   
   private static final int MAX_DIALOG_LIST_SIZE = 5000;
   static final int MAX_PANEL_LIST_SIZE = 2500;
@@ -108,7 +111,7 @@ public class ProgramListPlugin extends Plugin {
       
       @Override
       public void run() {
-        mCenterPanelWrapper = UiUtilities.createPersonaBackgroundPanel();
+        mCenterPanelWrapper = UiCompat.createPersonaBackgroundPanel();
         mCenterPanel = new ProgramListCenterPanel();
         
         mWrapper = new PluginCenterPanelWrapper() {
@@ -189,23 +192,23 @@ public class ProgramListPlugin extends Plugin {
       public void run() {
         if(getSettings().getBooleanValue(ProgramListSettings.KEY_PROVIDE_TAB)) {
           mCenterPanelEntry = new ProgramListPanel(null, false, MAX_PANEL_LIST_SIZE);
-          Persona.getInstance().registerPersonaListener(mCenterPanelEntry);
-          getPluginManager().getFilterManager().registerFilterChangeListener(mCenterPanelEntry);
+          PersonaCompat.getInstance().registerPersonaListener(mCenterPanelEntry);
+          FilterCompat.getInstance().registerFilterChangeListener(mCenterPanelEntry);
           
           SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
               mCenterPanelWrapper.add(mCenterPanelEntry, BorderLayout.CENTER);
               
-              if(Persona.getInstance().getHeaderImage() != null) {
+              if(PersonaCompat.getInstance().getHeaderImage() != null) {
                 mCenterPanelEntry.updatePersona();
               }
             }
           });
         } else {
           if(mCenterPanelEntry != null) {
-            Persona.getInstance().removePersonaListener(mCenterPanelEntry);
-            getPluginManager().getFilterManager().unregisterFilterChangeListener(mCenterPanelEntry);
+            PersonaCompat.getInstance().removePersonaListener(mCenterPanelEntry);
+            FilterCompat.getInstance().unregisterFilterChangeListener(mCenterPanelEntry);
           }
           
           mCenterPanelEntry = null;
@@ -376,7 +379,7 @@ public class ProgramListPlugin extends Plugin {
   }
   
   public String getPluginCategory() {
-    return Plugin.OTHER_CATEGORY;
+    return PluginCompat.CATEGORY_OTHER;
   }
   
   ProgramFilter getReceiveFilter() {
@@ -439,17 +442,20 @@ public class ProgramListPlugin extends Plugin {
         bg.add(mTabTimeScrollDay);
         
         panel.add(mShowDateSeparator, CC.xyw(2, 2, 3));
-        panel.add(mProvideTab, CC.xyw(2, 3, 3));
         
-        panel.add(tabReactOnLabel, CC.xyw(3, 5, 2));
-        panel.add(mReactOnTime, CC.xy(4, 7));
-        panel.add(mReactOnDate, CC.xy(4, 8));
-        panel.add(mReactOnChannel, CC.xy(4, 9));
-        panel.add(mReactOnFilterChange, CC.xy(4, 10));
-        
-        panel.add(tabTimeScrollLabel, CC.xyw(3, 12, 2));
-        panel.add(mTabTimeScrollNext, CC.xy(4, 14));
-        panel.add(mTabTimeScrollDay, CC.xy(4, 15));
+        if(VersionCompat.isCenterPanelSupported()) {
+          panel.add(mProvideTab, CC.xyw(2, 3, 3));
+          
+          panel.add(tabReactOnLabel, CC.xyw(3, 5, 2));
+          panel.add(mReactOnTime, CC.xy(4, 7));
+          panel.add(mReactOnDate, CC.xy(4, 8));
+          panel.add(mReactOnChannel, CC.xy(4, 9));
+          panel.add(mReactOnFilterChange, CC.xy(4, 10));
+          
+          panel.add(tabTimeScrollLabel, CC.xyw(3, 12, 2));
+          panel.add(mTabTimeScrollNext, CC.xy(4, 14));
+          panel.add(mTabTimeScrollDay, CC.xy(4, 15));
+        }
         
         mReactOnFilterChange.setEnabled(mProvideTab.isSelected());
         tabTimeScrollLabel.setEnabled(mProvideTab.isSelected() && mReactOnTime.isSelected());

@@ -29,7 +29,7 @@ import javax.swing.JComponent;
 import javax.swing.UIManager;
 import javax.swing.event.MouseInputListener;
 
-import util.ui.persona.Persona;
+import compat.PersonaCompat;
 
 public class TimeHeader extends JComponent implements MouseListener,
 		MouseInputListener {
@@ -69,11 +69,11 @@ public class TimeHeader extends JComponent implements MouseListener,
 	}
 	
 	public void paintComponent(final Graphics g) {	
-		if(Persona.getInstance().getHeaderImage() != null) {
+		if(PersonaCompat.getInstance().getHeaderImage() != null) {
 		  TimelinePlugin.paintComponentInternal(g,this);
 		}
 
-		final Color c = Persona.getInstance().getHeaderImage() != null ? Persona.getInstance().getTextColor() : UIManager.getColor("List.foreground");
+		final Color c = PersonaCompat.getInstance().getHeaderImage() != null ? PersonaCompat.getInstance().getTextColor() : UIManager.getColor("List.foreground");
 		
 		g.setColor(!mResizing ? c : Color.LIGHT_GRAY);
 		g.setFont(TimelinePlugin.getFont());

@@ -37,12 +37,12 @@ import javax.swing.border.AbstractBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import timelineplugin.format.TextFormatter;
-import util.program.ProgramUtilities;
-import util.programmouseevent.ProgramMouseAndContextMenuListener;
-import util.programmouseevent.ProgramMouseEventHandler;
+import compat.ProgramCompat;
 import devplugin.Plugin;
 import devplugin.Program;
+import timelineplugin.format.TextFormatter;
+import util.programmouseevent.ProgramMouseAndContextMenuListener;
+import util.programmouseevent.ProgramMouseEventHandler;
 
 public class ProgramLabel extends JComponent implements ChangeListener,
 		ProgramMouseAndContextMenuListener {
@@ -144,7 +144,7 @@ public class ProgramLabel extends JComponent implements ChangeListener,
     Color programPanelSelectionColor = TimelinePlugin.getProgramPanelSelectionColor();
     Color foregroundColor = TimelinePlugin.getForegroundColor();
 		
-		byte programImportance = ProgramUtilities.getProgramImportance(mProgram);
+		byte programImportance = ProgramCompat.getProgramImportance(mProgram);
 		
     Color backColor = Plugin.getPluginManager().getTvBrowserSettings().getColorForMarkingPriority(mProgram.getMarkPriority());
     backColor = new Color(backColor.getRed(), backColor.getGreen(), backColor.getBlue(), (int)(backColor.getAlpha()*programImportance/10.));

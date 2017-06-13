@@ -38,8 +38,8 @@ import util.ui.PluginsPictureSettingsPanel;
 
 import com.jgoodies.forms.factories.CC;
 import com.jgoodies.forms.layout.CellConstraints;
-import com.jgoodies.forms.layout.FormSpecs;
 
+import compat.VersionCompat;
 import devplugin.SettingsTab;
 
 /**
@@ -85,7 +85,7 @@ public class ListViewSettings implements SettingsTab {
    * Create the Panel
    */
   public JPanel createSettingsPanel() {
-    EnhancedPanelBuilder panel = new EnhancedPanelBuilder(FormSpecs.RELATED_GAP_COLSPEC.encode() + ",default:grow");
+    EnhancedPanelBuilder panel = new EnhancedPanelBuilder("5dlu,default:grow");
     
     CellConstraints cc = new CellConstraints();
     
@@ -99,8 +99,11 @@ public class ListViewSettings implements SettingsTab {
     
     panel.addRow();
     panel.add(mShowAtStart, cc.xy(2,panel.getRow()));
-    panel.addRow();
-    panel.add(mProvideTab, cc.xy(2,panel.getRow()));
+    
+    if(VersionCompat.isCenterPanelSupported()) {
+      panel.addRow();
+      panel.add(mProvideTab, cc.xy(2,panel.getRow()));
+    }
     
     mShowChannelLogoAndName = new JRadioButton(mLocalizer.msg("showIconAndName","Show channel icon and channel name"));
     mShowChannelLogo = new JRadioButton(mLocalizer.msg("showOnlyIcon","Show channel icon"));

@@ -29,17 +29,16 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import util.ui.Localizer;
-import util.ui.UiUtilities;
-import util.ui.WindowClosingIf;
-
-import com.jgoodies.forms.builder.ButtonBarBuilder;
+import com.jgoodies.forms.builder.ButtonBarBuilder2;
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
 import devplugin.Program;
 import devplugin.ProgramFieldType;
+import util.ui.Localizer;
+import util.ui.UiUtilities;
+import util.ui.WindowClosingIf;
 
 /**
  * the dialog to connect the program with omdb via wirschauen, i.e. to input
@@ -151,7 +150,7 @@ public class CreateOmdbLinkDialog extends JDialog implements WindowClosingIf
         close();
       }
     });
-    final ButtonBarBuilder builder = new ButtonBarBuilder();
+    final ButtonBarBuilder2 builder = new ButtonBarBuilder2();
     builder.addGlue();
     builder.addButton(new JButton[]{okButton, cancelButton});
     contentPane.add(builder.getPanel(), cellConstraints.xyw(1, 9, 6));
@@ -161,9 +160,7 @@ public class CreateOmdbLinkDialog extends JDialog implements WindowClosingIf
     //set the focus in the id-input. must be done _after_ pack().
     omdbIdInput.requestFocusInWindow();
   }
-
-
-
+  
   /**
    * helper method to create a omdb-search-url.
    *

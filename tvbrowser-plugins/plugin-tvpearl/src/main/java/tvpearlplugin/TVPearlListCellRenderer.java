@@ -64,8 +64,18 @@ public class TVPearlListCellRenderer extends DefaultListCellRenderer {
       final TVPProgram program = (TVPProgram) value;
 
       final TVPearlProgramPanel panel = new TVPearlProgramPanel(program);
-      panel.setBackground(label.getBackground());
-      panel.setForeground(label.getForeground());
+      
+      panel.setOpaque(isSelected || index % 2 != 0);
+      
+      if(isSelected) {
+        panel.setBackground(UIManager.getColor("List.selectionBackground"));
+        panel.setForeground(UIManager.getColor("List.selectionForeground"));
+      }
+      else {
+        panel.setBackground(list.getBackground());
+        panel.setForeground(list.getForeground());
+      }
+      
       if ((index % 2 != 0) && (!isSelected)) {
         panel.setBackground(SECOND_ROW_COLOR);
       }

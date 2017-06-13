@@ -19,6 +19,9 @@
 package rememberme;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
@@ -26,37 +29,41 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 
+import javax.swing.AbstractAction;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
+import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.event.ChangeListener;
-import javax.swing.plaf.SliderUI;
+import javax.swing.event.PopupMenuEvent;
+import javax.swing.event.PopupMenuListener;
 
-import tvbrowser.extras.searchplugin.SearchPluginProxy;
-import util.ui.TVBrowserIcons;
-import util.ui.menu.MenuUtil;
-import util.ui.persona.Persona;
-import util.ui.persona.PersonaListener;
-
-import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.factories.CC;
 import com.jgoodies.forms.layout.FormLayout;
 
+import compat.BordersCompat;
+import compat.PersonaCompat;
+import compat.PersonaCompatListener;
+import compat.UiCompat;
+import compat.VersionCompat;
 import devplugin.ActionMenu;
 import devplugin.Channel;
 import devplugin.Date;
@@ -66,8 +73,13 @@ import devplugin.PluginAccess;
 import devplugin.Program;
 import devplugin.ProgramFieldType;
 import devplugin.ProgramReceiveTarget;
+import devplugin.TabListener;
+import tvbrowser.extras.searchplugin.SearchPluginProxy;
+import util.ui.TVBrowserIcons;
+import util.ui.TabListenerPanel;
+import util.ui.menu.MenuUtil;
 
-public class RememberMeManagePanel extends JPanel implements PersonaListener {
+public class RememberMeManagePanel extends TabListenerPanel implements PersonaCompatListener, TabListener {
   private static final int TYPE_ACTION_REMOVE = 1;
   private static final int TYPE_ACTION_UPDATE = 2;
   
@@ -84,7 +96,7 @@ public class RememberMeManagePanel extends JPanel implements PersonaListener {
   private RememberedProgramsList<RememberedProgram> mUndoPrograms;
   private DefaultComboBoxModel mFilterModel;
   
-  public RememberMeManagePanel(RememberedProgramsList<RememberedProgram> programs, final RememberMe rMe) {
+  public RememberMeManagePanel(RememberedProgramsList<RememberedProgram> programs, final RememberMe rMe, final JButton close) {
     mPrograms = programs;
     mUndoPrograms = new RememberedProgramsList<RememberedProgram>();
     mModel = new DefaultListModel();
@@ -126,6 +138,24 @@ public class RememberMeManagePanel extends JPanel implements PersonaListener {
     updateFilters(rMe.getDayCount());
     
     mList = new JList(mModel);
+    setDefaultFocusOwner(mList);
+    UiCompat.addKeyRotation(mList);
+    
+    mList.addKeyListener(new KeyAdapter() {
+      @Override
+      public void keyPressed(KeyEvent e) {
+        if(e.getKeyCode() == KeyEvent.VK_CONTEXT_MENU && e.getModifiersEx() == 0
+            || e.getKeyCode() == KeyEvent.VK_R && e.getModifiersEx() == 0) {
+          Point p = mList.indexToLocation(mList.getSelectedIndex());
+          Rectangle r = mList.getCellBounds(mList.getSelectedIndex(), mList.getSelectedIndex());
+          p.x += (int)(r.width * 0.2f);
+          p.y += (int)(r.height * 2/3f);
+          showContextMenu(e.getComponent(), p, rMe);
+          e.consume();
+        }
+      }
+    });
+    
     mList.addMouseListener(new MouseAdapter() {
       @Override
       public void mouseReleased(MouseEvent e) {
@@ -171,7 +201,7 @@ public class RememberMeManagePanel extends JPanel implements PersonaListener {
     setLayout(new BorderLayout(0,5));
     add(filterPanel, BorderLayout.NORTH);
     add(new JScrollPane(mList), BorderLayout.CENTER);
-    setBorder(Borders.DIALOG);
+    setBorder(BordersCompat.getDialogBorder());
     setOpaque(false);
     
     JButton remove = new JButton(TVBrowserIcons.delete(TVBrowserIcons.SIZE_SMALL));
@@ -208,84 +238,129 @@ public class RememberMeManagePanel extends JPanel implements PersonaListener {
       }
     });
     
-    JPanel buttons = new JPanel(new FormLayout("default,5dlu,default","default"));
+    JPanel buttons = new JPanel(new FormLayout("default,5dlu,default,5dlu:grow,default","default"));
     buttons.setOpaque(false);
     buttons.add(remove, CC.xy(1, 1));
     buttons.add(mUndo, CC.xy(3, 1));
     
+    if(close != null) {
+      buttons.add(close, CC.xy(5, 1));
+    }
+    
     add(buttons, BorderLayout.SOUTH);
     
     updatePanel(rMe);
-    updatePersona();
+    
+    if(VersionCompat.isCenterPanelSupported()) {
+      updatePersona();
+    }
+    
+    
   }
   
-  public void showContextMenu(MouseEvent e, final RememberMe rMe) {
-    if(e.isPopupTrigger()) {
-      JPopupMenu popup = new JPopupMenu();
+  private void showContextMenu(final Component c, final Point p, final RememberMe rMe) {
+    final JPopupMenu popupMenu = new JPopupMenu();
+    
+    JMenuItem remove = new JMenuItem(RememberMe.mLocalizer.msg("remove", "Remove from list (cannot be undone)"),TVBrowserIcons.delete(TVBrowserIcons.SIZE_SMALL));
+    remove.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        handleAction(TYPE_ACTION_REMOVE,rMe);
+      }
+    });
+    
+    popupMenu.add(remove);
+    
+    if(mList.getSelectedIndices().length == 1) {
+      popupMenu.addSeparator();
       
-      JMenuItem remove = new JMenuItem(RememberMe.mLocalizer.msg("remove", "Remove from list (cannot be undone)"),TVBrowserIcons.delete(TVBrowserIcons.SIZE_SMALL));
-      remove.addActionListener(new ActionListener() {
+      JMenuItem copy = new JMenuItem(RememberMe.mLocalizer.msg("copyTitle", "Copy title to clipboard"),TVBrowserIcons.copy(TVBrowserIcons.SIZE_SMALL));
+      copy.addActionListener(new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
-          handleAction(TYPE_ACTION_REMOVE,rMe);
+          Toolkit toolkit = Toolkit.getDefaultToolkit();
+          Clipboard clipboard = toolkit.getSystemClipboard();
+          StringSelection strSel = new StringSelection(((RememberedProgram)mList.getSelectedValue()).getTitle());
+          clipboard.setContents(strSel, null);
         }
       });
       
-      popup.add(remove);
+      popupMenu.add(copy);
       
-      if(mList.getSelectedIndices().length == 1) {
-        popup.addSeparator();
-        
-        JMenuItem copy = new JMenuItem(RememberMe.mLocalizer.msg("copyTitle", "Copy title to clipboard"),TVBrowserIcons.copy(TVBrowserIcons.SIZE_SMALL));
-        copy.addActionListener(new ActionListener() {
+      final String episodeTitle = ((RememberedProgram)mList.getSelectedValue()).getEpisodeTitle();
+      
+      if(episodeTitle != null) {
+        JMenuItem copyEpisode = new JMenuItem(RememberMe.mLocalizer.msg("copyEpisodeTitle", "Copy episode title to clipboard"),TVBrowserIcons.copy(TVBrowserIcons.SIZE_SMALL));
+        copyEpisode.addActionListener(new ActionListener() {
           @Override
           public void actionPerformed(ActionEvent e) {
             Toolkit toolkit = Toolkit.getDefaultToolkit();
             Clipboard clipboard = toolkit.getSystemClipboard();
-            StringSelection strSel = new StringSelection(((RememberedProgram)mList.getSelectedValue()).getTitle());
+            StringSelection strSel = new StringSelection(episodeTitle);
             clipboard.setContents(strSel, null);
           }
         });
         
-        popup.add(copy);
-        
-        final String episodeTitle = ((RememberedProgram)mList.getSelectedValue()).getEpisodeTitle();
-        
-        if(episodeTitle != null) {
-          JMenuItem copyEpisode = new JMenuItem(RememberMe.mLocalizer.msg("copyEpisodeTitle", "Copy episode title to clipboard"),TVBrowserIcons.copy(TVBrowserIcons.SIZE_SMALL));
-          copyEpisode.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-              Toolkit toolkit = Toolkit.getDefaultToolkit();
-              Clipboard clipboard = toolkit.getSystemClipboard();
-              StringSelection strSel = new StringSelection(episodeTitle);
-              clipboard.setContents(strSel, null);
-            }
-          });
-          
-          popup.add(copyEpisode);
-        }
-        
-        DummyProgram dummy = new DummyProgram((RememberedProgram)mList.getSelectedValue());
-        
-        ActionMenu search = SearchPluginProxy.getInstance().getContextMenuActions(dummy);
-        
-        if(search != null) {
-          popup.add(MenuUtil.createMenuItem(search));
-        }
-        
-        PluginAccess access = Plugin.getPluginManager().getActivatedPluginForId("java.webplugin.WebPlugin");
-        
-        if(access != null) {
-          ActionMenu iSearch = access.getContextMenuActions(dummy);
-          
-          if(iSearch != null) {
-            popup.add(MenuUtil.createMenuItem(iSearch));
-          }
-        }
+        popupMenu.add(copyEpisode);
       }
       
-      popup.show(e.getComponent(), e.getX(), e.getY());
+      DummyProgram dummy = new DummyProgram((RememberedProgram)mList.getSelectedValue());
+      
+      ActionMenu search = SearchPluginProxy.getInstance().getContextMenuActions(dummy);
+      
+      if(search != null) {
+        popupMenu.add(MenuUtil.createMenuItem(search));
+      }
+      
+      PluginAccess access = Plugin.getPluginManager().getActivatedPluginForId("java.webplugin.WebPlugin");
+      
+      if(access != null) {
+        ActionMenu iSearch = access.getContextMenuActions(dummy);
+        
+        if(iSearch != null) {
+          popupMenu.add(MenuUtil.createMenuItem(iSearch));
+        }
+      }
+    }
+    
+    final KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+    final KeyStroke stroke1 = KeyStroke.getKeyStroke(KeyEvent.VK_R, 0);
+    final KeyStroke stroke2 = KeyStroke.getKeyStroke(KeyEvent.VK_CONTEXT_MENU, 0);
+    
+    popupMenu.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(stroke, "CLOSE_ON_ESCAPE_POPUP");
+    popupMenu.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(stroke1, "CLOSE_ON_ESCAPE_POPUP");
+    popupMenu.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(stroke2, "CLOSE_ON_ESCAPE_POPUP");
+    popupMenu.getActionMap().put("CLOSE_ON_ESCAPE_POPUP", new AbstractAction() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        if(popupMenu != null && popupMenu.isVisible()) {
+          popupMenu.setVisible(false);
+        }
+      }
+    });
+    
+    popupMenu.addPopupMenuListener(new PopupMenuListener() {
+      @Override
+      public void popupMenuWillBecomeVisible(PopupMenuEvent e) {}
+      
+      @Override
+      public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
+        popupMenu.getInputMap().remove(stroke);
+        popupMenu.getInputMap().remove(stroke1);
+        popupMenu.getInputMap().remove(stroke2);
+        popupMenu.getActionMap().remove("CLOSE_ON_ESCAPE_POPUP");
+      }
+      
+      @Override
+      public void popupMenuCanceled(PopupMenuEvent e) {}
+    });
+    
+    popupMenu.show(c, p.x, p.y);
+  }
+  
+  public void showContextMenu(MouseEvent e, final RememberMe rMe) {
+    if(e.isPopupTrigger()) {
+      showContextMenu(e.getComponent(), e.getPoint(), rMe);
     }
   }
   
@@ -668,9 +743,9 @@ public class RememberMeManagePanel extends JPanel implements PersonaListener {
   @Override
   public void updatePersona() {
     if(mFilterLabel != null) {
-      if(Persona.getInstance().getHeaderImage() != null) {
-        mFilterLabel.setForeground(Persona.getInstance().getTextColor());
-        mTagLabel.setForeground(Persona.getInstance().getTextColor());
+      if(PersonaCompat.getInstance().getHeaderImage() != null) {
+        mFilterLabel.setForeground(PersonaCompat.getInstance().getTextColor());
+        mTagLabel.setForeground(PersonaCompat.getInstance().getTextColor());
       }
       else {
         mFilterLabel.setForeground(UIManager.getDefaults().getColor("Label.foreground"));
