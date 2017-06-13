@@ -66,7 +66,7 @@ import util.ui.UiUtilities;
  * A User can configure his favorite Search-Engines and search for the given Movie
  */
 public class WebPlugin extends Plugin {
-  private static final Version VERSION = new Version(3,14);
+  private static final Version VERSION = new Version(3,15);
 
   private static final Logger LOGGER = java.util.logging.Logger
   .getLogger(WebPlugin.class.getName());
@@ -257,7 +257,6 @@ public class WebPlugin extends Plugin {
    * Creates the Context-Menu-Entries
    */
   public ActionMenu getContextMenuActions(final Program program) {
-
     if (mAddresses == null) {
       createDefaultSettings();
     }
@@ -271,8 +270,8 @@ public class WebPlugin extends Plugin {
     listActors = null;
 
     for (int i = 0; i < mAddresses.size(); i++) {
-    	try {
-        WebAddress address = mAddresses.get(i);
+     try {
+    	  WebAddress address = mAddresses.get(i);
         String actionName = LOCALIZER.msg("SearchOn", "Search on ") + " " + address.getName();
 
         if (address.getUrl().equals(PROGRAM_SITE)) {
@@ -375,7 +374,7 @@ public class WebPlugin extends Plugin {
         e.printStackTrace();
       }
     }
-
+    
     if (actionList.size() == 1) {
       final Object action = actionList.get(0);
       if (action instanceof ActionMenu) {
