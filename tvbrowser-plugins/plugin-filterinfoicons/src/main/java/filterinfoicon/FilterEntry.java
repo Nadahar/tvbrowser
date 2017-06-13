@@ -30,6 +30,7 @@ import javax.imageio.ImageIO;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
+import compat.IOCompat;
 import tvdataservice.MutableChannelDayProgram;
 import util.exc.TvBrowserException;
 import util.io.IOUtilities;
@@ -74,7 +75,7 @@ public class FilterEntry implements Comparable<FilterEntry> {
     mFilterName = in.readUTF();
     
     if(in.readBoolean()) {
-      setIconFilePath(IOUtilities.translateRelativePath(in.readUTF()));
+      setIconFilePath(IOCompat.translateRelativePath(in.readUTF()));
     }
     
     if(in.readBoolean()) {
@@ -278,7 +279,7 @@ public class FilterEntry implements Comparable<FilterEntry> {
     out.writeBoolean(mIconFilePath != null);
     
     if(mIconFilePath != null) {
-      out.writeUTF(IOUtilities.checkForRelativePath(mIconFilePath));
+      out.writeUTF(IOCompat.checkForRelativePath(mIconFilePath));
     }
     
     out.writeBoolean(mReceiveTargets != null);

@@ -26,7 +26,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -39,25 +38,25 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JRootPane;
 
-import tvdataservice.MutableChannelDayProgram;
-import util.io.IOUtilities;
-import util.ui.Localizer;
-import util.ui.TVBrowserIcons;
-import util.ui.UiUtilities;
-import util.ui.WindowClosingIf;
-
 import com.jgoodies.forms.factories.Borders;
 
+import compat.FilterCompat;
+import compat.IOCompat;
+import compat.PluginCompat;
 import devplugin.ActionMenu;
 import devplugin.ContextMenuAction;
 import devplugin.Date;
-import devplugin.FilterChangeListenerV2;
 import devplugin.Plugin;
 import devplugin.PluginInfo;
 import devplugin.Program;
 import devplugin.ProgramFilter;
 import devplugin.ThemeIcon;
 import devplugin.Version;
+import tvdataservice.MutableChannelDayProgram;
+import util.ui.Localizer;
+import util.ui.TVBrowserIcons;
+import util.ui.UiUtilities;
+import util.ui.WindowClosingIf;
 
 /**
  * A TV-Browser plugin that uses filters to search for programs to
@@ -65,7 +64,7 @@ import devplugin.Version;
  * 
  * @author René Mach
  */
-public class FilterInfoIcon extends Plugin implements FilterChangeListenerV2 {
+public class FilterInfoIcon extends Plugin implements FilterCompat.FilterChangeListener {
   static final Localizer LOCALIZER = Localizer.getLocalizerFor(FilterInfoIcon.class);
   private static final Version VERSION = new Version(0,13,0,false);
   private static ImageIcon DEFAULT_ICON;
@@ -93,21 +92,8 @@ public class FilterInfoIcon extends Plugin implements FilterChangeListenerV2 {
           DEFAULT_ICON.setDescription("jar:file:///"+address.replace("\\", "/").replace("#", "%23"));
         }
       }
-    } catch (NoSuchMethodException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    } catch (SecurityException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    } catch (IllegalAccessException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    } catch (IllegalArgumentException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    } catch (InvocationTargetException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+    } catch (Exception e) {
+      // ignore
     }
     
     mFilterSet = new HashSet<FilterEntry>();
@@ -147,7 +133,7 @@ public class FilterInfoIcon extends Plugin implements FilterChangeListenerV2 {
         });
         
         FilterInfoIconManagePanel manage = new FilterInfoIconManagePanel(mFilterSet,edit,ok);
-        manage.setBorder(Borders.DIALOG);
+        manage.setBorder(Borders.DIALOG_BORDER);
         
         edit.setContentPane(manage);
         
@@ -172,7 +158,10 @@ public class FilterInfoIcon extends Plugin implements FilterChangeListenerV2 {
     return new ActionMenu(action);
   }
   
-  @Override
+  public void handleTvDataUpdateStarted() {
+    handleTvDataUpdateStarted(null);
+  }
+  
   public void handleTvDataUpdateStarted(Date until) {
     for(Iterator<FilterEntry> it = mFilterSet.iterator(); it.hasNext();) {
       FilterEntry entry = it.next();
@@ -210,7 +199,6 @@ public class FilterInfoIcon extends Plugin implements FilterChangeListenerV2 {
     mLastUpdate = System.currentTimeMillis();
   }
   
-  @Override
   public devplugin.ToolTipIcon[] getProgramTableToolTipIcons(Program program) {
     if(getPluginManager().getExampleProgram().equals(program)) {
       return null;
@@ -276,10 +264,8 @@ public class FilterInfoIcon extends Plugin implements FilterChangeListenerV2 {
     return null;
   }
   
-  
-  @Override
   public String getPluginCategory() {
-    return Plugin.OTHER_CATEGORY;
+    return PluginCompat.CATEGORY_OTHER;
   }
   
   @Override
@@ -295,7 +281,7 @@ public class FilterInfoIcon extends Plugin implements FilterChangeListenerV2 {
     out.writeBoolean(LAST_USED_ICON_PATH != null);
     
     if(LAST_USED_ICON_PATH != null) {
-      out.writeUTF(IOUtilities.checkForRelativePath(LAST_USED_ICON_PATH));
+      out.writeUTF(IOCompat.checkForRelativePath(LAST_USED_ICON_PATH));
     }
     
     out.writeLong(mLastUpdate);
@@ -303,7 +289,7 @@ public class FilterInfoIcon extends Plugin implements FilterChangeListenerV2 {
   
   @Override
   public void handleTvBrowserStartFinished() {
-    getPluginManager().getFilterManager().registerFilterChangeListener(this);
+    FilterCompat.getInstance().registerFilterChangeListener(this);
     
     Calendar test = Calendar.getInstance();
     test.setTimeInMillis(mLastUpdate);
@@ -323,7 +309,7 @@ public class FilterInfoIcon extends Plugin implements FilterChangeListenerV2 {
   
   @Override
   public void onDeactivation() {
-    getPluginManager().getFilterManager().unregisterFilterChangeListener(this);
+    FilterCompat.getInstance().unregisterFilterChangeListener(this);
   }
   
   @Override
@@ -337,7 +323,7 @@ public class FilterInfoIcon extends Plugin implements FilterChangeListenerV2 {
     }
     
     if(in.readBoolean()) {
-      LAST_USED_ICON_PATH = IOUtilities.translateRelativePath(in.readUTF());
+      LAST_USED_ICON_PATH = IOCompat.translateRelativePath(in.readUTF());
     }
     
     if(version >= 2) {
