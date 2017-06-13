@@ -45,6 +45,7 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
 
+import compat.PluginCompat;
 import printplugin.dlgs.DialogContent;
 import printplugin.dlgs.MainPrintDialog;
 import printplugin.dlgs.ProgramInfoPrintDialog;
@@ -77,7 +78,7 @@ import devplugin.Version;
 
 
 public class PrintPlugin extends Plugin {
-  private static final Version mVersion = new Version(3,02,1);
+  private static final Version mVersion = new Version(3,02,2);
 
   /** The localizer for this class. */
   private static final util.ui.Localizer mLocalizer
@@ -458,6 +459,6 @@ public class PrintPlugin extends Plugin {
   }
   
   public String getPluginCategory() {
-    return Plugin.OTHER_CATEGORY;
+    return PluginCompat.CATEGORY_OTHER;
   }
 }

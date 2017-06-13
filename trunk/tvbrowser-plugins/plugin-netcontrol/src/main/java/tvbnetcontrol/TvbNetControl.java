@@ -29,6 +29,7 @@ import util.ui.UiUtilities;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
+import compat.ProgramCompat;
 import devplugin.Channel;
 import devplugin.Date;
 import devplugin.Plugin;
@@ -44,7 +45,7 @@ public class TvbNetControl extends Plugin {
   private static final String ANSWER_NETWORK_KEY = "answerNetwork";
   private static final String PAKET_SIZE_KEY = "packetSize";
   
-  private static final Version VERSION = new Version(0, 8, 0, false);
+  private static final Version VERSION = new Version(0, 9, 0, false);
   private static TvbNetControl INSTANCE;
   
   private Properties mSettings;
@@ -244,7 +245,7 @@ public class TvbNetControl extends Plugin {
             public void run() {
               UiUtilities.getLastModalChildOf(getParentFrame()).toFront();
               UiUtilities.getLastModalChildOf(getParentFrame()).requestFocus();
-              getPluginManager().selectProgram(prog);
+              ProgramCompat.selectProgram(prog);
             }
           });
           

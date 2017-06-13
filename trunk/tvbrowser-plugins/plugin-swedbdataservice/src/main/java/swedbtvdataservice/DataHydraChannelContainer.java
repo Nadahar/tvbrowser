@@ -10,8 +10,7 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
 
-import org.apache.commons.lang3.StringUtils;
-
+import compat.StringUtils;
 import util.misc.StringPool;
 
 class DataHydraChannelContainer {
@@ -34,7 +33,7 @@ class DataHydraChannelContainer {
     this.baseUrl = baseUrl;
     this.iconUrl = StringPool.getString(iconUrl);
     this.id = id;
-    if (StringUtils.isNotEmpty(timeString)) {
+    if (!StringUtils.isEmpty(timeString)) {
       try {
         devplugin.Date now = new devplugin.Date();
         StringTokenizer ST = new StringTokenizer(timeString, "_");

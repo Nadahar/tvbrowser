@@ -34,21 +34,21 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
+import compat.StringUtils;
+import devplugin.Channel;
+import devplugin.Date;
+import devplugin.Plugin;
+import devplugin.Program;
 import util.exc.ErrorHandler;
 import util.io.IOUtilities;
 import util.io.NetworkUtilities;
 import util.io.XMLWriter;
 import util.ui.Localizer;
 import util.ui.progress.Progress;
-import devplugin.Channel;
-import devplugin.Date;
-import devplugin.Plugin;
-import devplugin.Program;
 
 /**
  * This class contains the communication with the server
