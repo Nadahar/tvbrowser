@@ -44,7 +44,7 @@ import devplugin.Version;
 public class NotifyOSDPlugin extends Plugin {
   private static final String COMMAND_NOTIFY_SEND = "notify-send";
   private static final boolean IS_STABLE = true;
-  private static final Version mVersion = new Version(2, 71, IS_STABLE);
+  private static final Version mVersion = new Version(2, 72, IS_STABLE);
 
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(NotifyOSDPlugin.class);
 
@@ -215,7 +215,7 @@ public class NotifyOSDPlugin extends Plugin {
         // TODO Auto-generated catch block
         e.printStackTrace();
       }
-      String location = executionHandler.getInputStreamReaderThread().getOutput();
+      String location = executionHandler.getOutput();
       if (location != null) {
         location = location.trim();
         if (location.length() > 0) {
