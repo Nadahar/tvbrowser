@@ -685,7 +685,7 @@ public final class TVPearlPlugin extends devplugin.Plugin implements Runnable
 			}
 
 			mInfoDialog.pack();
-			mInfoDialog.setModalityType(mSettings.getShowInfoModal() ? VersionCompat.getSuggestedModalityType() : ModalityType.MODELESS);
+			mInfoDialog.setModalityType(mSettings.getShowInfoModal() ? UiCompat.getSuggestedModalityType() : ModalityType.MODELESS);
 			
 			layoutWindow("infoDialog", mInfoDialog);
 			mInfoDialog.setVisible(true);
