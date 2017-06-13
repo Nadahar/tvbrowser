@@ -1,3 +1,26 @@
+/*
+ * TV-Browser Compat
+ * Copyright (C) 2017 TV-Browser team (dev@tvbrowser.org)
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * SVN information:
+ *     $Date: 2014-06-17 15:59:09 +0200 (Di, 17 Jun 2014) $
+ *   $Author: ds10 $
+ * $Revision: 8152 $
+ */
 package compat;
 
 import java.lang.reflect.InvocationHandler;
@@ -15,7 +38,12 @@ import tvbrowser.core.filters.FilterComponentList;
 import tvbrowser.core.filters.FilterManagerImpl;
 import tvbrowser.core.filters.filtercomponents.ChannelFilterComponent;
 import tvbrowser.ui.filter.dlgs.EditFilterComponentDlg;
-
+/**
+ * Compatibility class for TV-Browser devplugin.FilterManager class.
+ * 
+ * @author René Mach
+ * @since 0.2
+ */
 public final class FilterCompat {
   private static FilterCompat INSTANCE;
   private ArrayList<FilterChangeListener> mListListeners;
@@ -47,6 +75,9 @@ public final class FilterCompat {
     }
   }
   
+  /**
+   * @return The one instance of this class.
+   */
   public static synchronized final FilterCompat getInstance() {
     if(INSTANCE == null) {
       new FilterCompat();
@@ -55,8 +86,12 @@ public final class FilterCompat {
     return INSTANCE;
   }
   
+  /**
+   * @return An array with names of all channel filter components
+   * or an empty array if there are no channel filter components.
+   */
   public static String[] getChannelFilterComponentNames() {
-    String[] result = null;
+    String[] result = new String[0];
     if(TVBrowser.VERSION.compareTo(new Version(3,21,true)) >= 0) {
       try {
         Method m = FilterManagerImpl.class.getDeclaredMethod("getChannelFilterComponentNames");
@@ -70,6 +105,12 @@ public final class FilterCompat {
     return result;
   }
   
+  /**
+   * Creates a new channel filter component.
+   * <p>
+   * @return The name of the created channel filter component or <code>null</code>
+   * if there was no channel filter component created.
+   */
   public static String addNewChannelFilterComponent() {
     String result = null;
     
@@ -86,31 +127,22 @@ public final class FilterCompat {
     return result;
   }
   
-  private static String[] getChannelFilterComponentNamesCompat() {
-    return FilterComponentList.getInstance().getChannelFilterNames();
-  }
-  
-  private static String addNewChannelFilterComponentCompat() {
-    EditFilterComponentDlg dlg = new EditFilterComponentDlg((JFrame)null, null, ChannelFilterComponent.class);
-    FilterComponent rule = dlg.getFilterComponent();
-    if (rule == null) {
-      return null;
-    }
-    if (! (rule instanceof ChannelFilterComponent)) {
-      return null;
-    }
-    FilterComponentList.getInstance().add(rule);
-    FilterComponentList.getInstance().store();
-    
-    return rule.getName();
-  }
-  
+  /**
+   * Registers the given listener to listen to filter change events.
+   * <p>
+   * @param listener The (compat) filter change listener to register.
+   */
   public void registerFilterChangeListener(final FilterChangeListener listener) {
     if(!mListListeners.contains(listener)) {
       mListListeners.add(listener);
     }
   }
   
+  /**
+   * Unregisters the given listener from listening to filter change events.
+   * <p>
+   * @param listener The (compat) filter change listener to unregister.
+   */
   public void unregisterFilterChangeListener(final FilterChangeListener listener) {
     mListListeners.remove(listener);
   }
@@ -138,6 +170,32 @@ public final class FilterCompat {
     }
   }
   
+  private static String[] getChannelFilterComponentNamesCompat() {
+    return FilterComponentList.getInstance().getChannelFilterNames();
+  }
+  
+  private static String addNewChannelFilterComponentCompat() {
+    EditFilterComponentDlg dlg = new EditFilterComponentDlg((JFrame)null, null, ChannelFilterComponent.class);
+    FilterComponent rule = dlg.getFilterComponent();
+    if (rule == null) {
+      return null;
+    }
+    if (! (rule instanceof ChannelFilterComponent)) {
+      return null;
+    }
+    FilterComponentList.getInstance().add(rule);
+    FilterComponentList.getInstance().store();
+    
+    return rule.getName();
+  }
+  
+  
+  /**
+   * A listener for filter change events.
+   * <p>
+   * @author René Mach
+   * @since 0.2
+   */
   public static interface FilterChangeListener {
     /**
      * Called when a filter is added.

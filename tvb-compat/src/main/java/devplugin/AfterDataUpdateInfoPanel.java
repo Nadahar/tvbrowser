@@ -58,7 +58,6 @@ public abstract class AfterDataUpdateInfoPanel extends JPanel {
    * <p>
    * @author René Mach
    */
-  @FunctionalInterface
   public interface AfterDataUpdateInfoPanelListener {
     public void remove(AfterDataUpdateInfoPanel infoPanel);
   }

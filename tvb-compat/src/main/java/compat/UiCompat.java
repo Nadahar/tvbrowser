@@ -1,9 +1,33 @@
+/*
+ * TV-Browser Compat
+ * Copyright (C) 2017 TV-Browser team (dev@tvbrowser.org)
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * SVN information:
+ *     $Date: 2014-06-17 15:59:09 +0200 (Di, 17 Jun 2014) $
+ *   $Author: ds10 $
+ * $Revision: 8152 $
+ */
 package compat;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Dialog.ModalityType;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.lang.reflect.Constructor;
@@ -19,12 +43,17 @@ import tvbrowser.TVBrowser;
 import util.ui.ChannelLabel;
 import util.ui.UiUtilities;
 
+/**
+ * A compatiblility class for TV-Browser util.ui.UiUtilities.
+ * 
+ * @author René Mach
+ * @since 0.2
+ */
 public final class UiCompat {
   /**
    * @param helpTextArea
    * @param html
    * @param background
-   * @since 3.0.2
    */
   public static void updateHtmlHelpTextArea(final JEditorPane helpTextArea, String html, Color background) {
     updateHtmlHelpTextArea(helpTextArea, html, UIManager.getColor("Label.foreground"), background);
@@ -35,7 +64,6 @@ public final class UiCompat {
    * @param html The text for the editor pane.
    * @param foreground The foreground color. 
    * @param background The background color.
-   * @since 3.3.4
    */
   public static void updateHtmlHelpTextArea(final JEditorPane helpTextArea, String html, Color foreground, Color background) {
     if(TVBrowser.VERSION.compareTo(new Version(3,34,true)) >= 0) {
@@ -97,10 +125,35 @@ public final class UiCompat {
     return panel;
   }
   
+  /**
+   * Creates a channel label.
+   * NOTE: Not all functions are supported by older TV-Browser version,
+   * so the user will see only the supported ones. 
+   * 
+   * @param channelIconsVisible If the channel icon should be shown.
+   * @param textIsVisible If the channel name should be shown.
+   * @param showDefaultValues If the default values should be shown.
+   * @param showCountry If the country should be shown.
+   * @param showJoinedChannelInfo The the joint channel info should be shown.
+   * @return The created channel label.
+   */
   public static ChannelLabel createChannelLabel(boolean channelIconsVisible, boolean textIsVisible, boolean showDefaultValues, boolean showCountry, boolean showJoinedChannelInfo) {
     return createChannelLabel(channelIconsVisible, textIsVisible, showDefaultValues, showCountry, showJoinedChannelInfo, false);
   }
   
+  /**
+   * Creates a channel label.
+   * NOTE: Not all functions are supported by older TV-Browser version,
+   * so the user will see only the supported ones. 
+   * 
+   * @param channelIconsVisible If the channel icon should be shown.
+   * @param textIsVisible If the channel name should be shown.
+   * @param showDefaultValues If the default values should be shown.
+   * @param showCountry If the country should be shown.
+   * @param showJoinedChannelInfo The the joint channel info should be shown.
+   * @param showTimeLimitation The time limitation should be shown
+   * @return The created channel label.
+   */
   public static ChannelLabel createChannelLabel(final boolean channelIconsVisible, final boolean textIsVisible, final boolean showDefaultValues, final boolean showCountry, final boolean showJoinedChannelInfo, final boolean showTimeLimitation) {
     ChannelLabel result = null;
     
@@ -117,7 +170,21 @@ public final class UiCompat {
     
     return result;
   }
-  
+
+  /**
+   * Creates a channel label.
+   * NOTE: Not all functions are supported by older TV-Browser version,
+   * so the user will see only the supported ones. 
+   * 
+   * @param channelIconsVisible If the channel icon should be shown.
+   * @param textIsVisible If the channel name should be shown.
+   * @param showDefaultValues If the default values should be shown.
+   * @param showCountry If the country should be shown.
+   * @param showJoinedChannelInfo The the joint channel info should be shown.
+   * @param showTimeLimitation The time limitation should be shown
+   * @param showSortNumber The sort number should be shown.
+   * @return The created channel label.
+   */
   public static ChannelLabel createChannelLabel(boolean channelIconsVisible, boolean textIsVisible, boolean showDefaultValues, boolean showCountry, boolean showJoinedChannelInfo, boolean showTimeLimitation, boolean showSortNumber) {
     ChannelLabel result = null;
     
@@ -135,6 +202,21 @@ public final class UiCompat {
     return result;
   }
   
+  /**
+   * Creates a channel label.
+   * NOTE: Not all functions are supported by older TV-Browser version,
+   * so the user will see only the supported ones. 
+   * 
+   * @param channelIconsVisible If the channel icon should be shown.
+   * @param textIsVisible If the channel name should be shown.
+   * @param showDefaultValues If the default values should be shown.
+   * @param showCountry If the country should be shown.
+   * @param showJoinedChannelInfo The the joint channel info should be shown.
+   * @param showTimeLimitation The time limitation should be shown
+   * @param showSortNumber The sort number should be shown.
+   * @param paintBackground The user set background color should be used.
+   * @return The created channel label.
+   */  
   public static ChannelLabel createChannelLabel(boolean channelIconsVisible, boolean textIsVisible, boolean showDefaultValues, boolean showCountry, boolean showJoinedChannelInfo, boolean showTimeLimitation, boolean showSortNumber, boolean paintBackground) {
     ChannelLabel result = null;
     
@@ -156,7 +238,6 @@ public final class UiCompat {
    * Adds support for rotating through list with up and down keys.
    * <p>
    * @param list The list to add the rotation to
-   * @since 3.4.5
    */
   public static void addKeyRotation(final JList<?> list) {
     list.addKeyListener(new KeyAdapter() {
@@ -176,5 +257,18 @@ public final class UiCompat {
         }
       }
     });
+  }
+  
+  /**
+   * @return The best modality type for the used TV-Browser version.
+   */
+  public static ModalityType getSuggestedModalityType() {
+    ModalityType result = ModalityType.APPLICATION_MODAL;
+    
+    if(VersionCompat.isAtLeastTvBrowser4()) {
+      result = ModalityType.DOCUMENT_MODAL;
+    }
+    
+    return result;
   }
 }

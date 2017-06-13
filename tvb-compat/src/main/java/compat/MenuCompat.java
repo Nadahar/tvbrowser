@@ -1,5 +1,5 @@
 /*
- * TV-Browser
+ * TV-Browser Compat
  * Copyright (C) 2017 TV-Browser team (dev@tvbrowser.org)
  *
  * This program is free software; you can redistribute it and/or

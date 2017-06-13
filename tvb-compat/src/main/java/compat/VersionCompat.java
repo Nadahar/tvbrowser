@@ -1,5 +1,5 @@
 /*
- * TV-Browser
+ * TV-Browser Compat
  * Copyright (C) 2017 TV-Browser team (dev@tvbrowser.org)
  *
  * This program is free software; you can redistribute it and/or
@@ -23,8 +23,6 @@
  */
 package compat;
 
-import java.awt.Dialog.ModalityType;
-
 import devplugin.Version;
 import tvbrowser.TVBrowser;
 
@@ -44,29 +42,31 @@ public final class VersionCompat {
     return TVBrowser.VERSION.compareTo(new Version(3,44,96,false)) >= 0;
   }
   
+  /**
+   * @return <code>true</code> since TV-Browser 3.2, <code>false</code> otherwise.
+   */
   public static boolean isCenterPanelSupported() {
     return TVBrowser.VERSION.compareTo(new Version(3,20,true)) >= 0;
   }
-  
+
+  /**
+   * @return <code>true</code> since TV-Browser 3.2.1, <code>false</code> otherwise.
+   */
   public static boolean isJointChannelSupported() {
     return TVBrowser.VERSION.compareTo(new Version(3,21,true)) >= 0;
   }
   
+  /**
+   * @return <code>true</code> since TV-Browser 3.3.4, <code>false</code> otherwise.
+   */
   public static boolean isSortNumberSupported() {
     return TVBrowser.VERSION.compareTo(new Version(3,34,true)) >= 0;
   }
   
+  /**
+   * @return <code>true</code> since TV-Browser 3.3.1, <code>false</code> otherwise.
+   */
   public static boolean isExtendedMouseActionSupported() {
     return TVBrowser.VERSION.compareTo(new Version(3, 31, true)) >= 0;
-  }
-  
-  public static ModalityType getSuggestedModalityType() {
-    ModalityType result = ModalityType.APPLICATION_MODAL;
-    
-    if(isAtLeastTvBrowser4()) {
-      result = ModalityType.DOCUMENT_MODAL;
-    }
-    
-    return result;
   }
 }

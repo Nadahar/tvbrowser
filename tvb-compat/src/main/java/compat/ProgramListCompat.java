@@ -1,3 +1,26 @@
+/*
+ * TV-Browser Compat
+ * Copyright (C) 2017 TV-Browser team (dev@tvbrowser.org)
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ *
+ * SVN information:
+ *     $Date: 2014-06-17 15:59:09 +0200 (Di, 17 Jun 2014) $
+ *   $Author: ds10 $
+ * $Revision: 8152 $
+ */
 package compat;
 
 import java.awt.Point;
@@ -9,12 +32,28 @@ import devplugin.Date;
 import devplugin.Program;
 import devplugin.Version;
 import tvbrowser.TVBrowser;
+import util.exc.TvBrowserException;
 import util.ui.Localizer;
 import util.ui.ProgramList;
 
+/**
+ * A compatibility class for TV-Browser util.ui.ProgramList 
+ * 
+ * @author René Mach
+ * @since 0.2
+ */
 public final class ProgramListCompat {
   private static final Localizer LOCALIZER = Localizer.getLocalizerFor(ProgramListCompat.class);
   
+  /**
+   * Add a Mouse-Listener for the Popup-Box
+   * 
+   * The caller ContextMenuIfs menus are not shown, if you want to have all
+   * available menus just use <code>null</code> for caller.
+   * 
+   * @param list The ProgramList to use.
+   * @param caller The ContextMenuIf that called this.
+   */
   public static void addMouseAndKeyListeners(final ProgramList list, final ContextMenuIf caller) {
     if(TVBrowser.VERSION.compareTo(new Version(3,31)) >= 0) {
       try {
@@ -29,6 +68,14 @@ public final class ProgramListCompat {
     }
   }
   
+  /**
+   * Adds date separators to this list.
+   * This needs to be called every time the list elements are changed.
+   * <p>
+   * @param list The ProgramList to use.
+   * @throws TvBrowserException Thrown if used ListModel is not {@link #javax.swing.DefaultListModel} or a child class of it.
+   * @since 3.2.2
+   */
   public static void addDateSeparators(final ProgramList list) {
     if(TVBrowser.VERSION.compareTo(new Version(3,22)) >= 0) {
       try {
@@ -40,6 +87,14 @@ public final class ProgramListCompat {
     }
   }
   
+  /**
+   * Gets the new index of a row after adding of date separators.
+   * <p>
+   * @param list The ProgramList to use.
+   * @param index The old index of the row.
+   * @return The new index or the given index if no separators were added.
+   * @since 3.2.2
+   */
   public static int getNewIndexForOldIndex(final ProgramList list, int index) {
     if(TVBrowser.VERSION.compareTo(new Version(3,22)) >= 0) {
       try {
@@ -89,7 +144,13 @@ public final class ProgramListCompat {
     return result;
   }
 
-  
+  /**
+   * Scrolls the list to previous day from
+   * the current view position (if previous
+   * day is available)
+   * <p>
+   * @param list The ProgramList to use.
+   */
   public static void scrollToPreviousDayIfAvailable(final ProgramList list) {
     if(TVBrowser.VERSION.compareTo(new Version(3,22)) >= 0) {
       try {
@@ -104,6 +165,13 @@ public final class ProgramListCompat {
     }
   }
   
+  /**
+   * Scrolls the list to next day from
+   * the current view position (if next
+   * day is available)
+   * <p>
+   * @param list The ProgramList to use.
+   */
   public static void scrollToNextDayIfAvailable(final ProgramList list) {
     if(TVBrowser.VERSION.compareTo(new Version(3,22)) >= 0) {
       try {
@@ -121,6 +189,7 @@ public final class ProgramListCompat {
   /**
    * Scrolls the list to given date (if date is available)
    * <p>
+   * @param list The ProgramList to use.
    * @param date The date to scroll to.
    */
   public static void scrollToNextDateIfAvailable(final ProgramList list, final Date date) {
@@ -142,6 +211,7 @@ public final class ProgramListCompat {
    * backward if time is smaller than the current views first time, forward if time is
    * bigger than the current views first time. 
    * <p>
+   * @param list The ProgramList to use.
    * @param time The time in minutes from midnight to scroll to.
    */
   public static void scrollToTimeFromCurrentViewIfAvailable(final ProgramList list, final int time) {
@@ -161,6 +231,7 @@ public final class ProgramListCompat {
   /**
    * Scrolls the list to the first occurrence of the given time from the current view onward (if time is available)
    * <p>
+   * @param list The ProgramList to use.
    * @param time The time in minutes from midnight.
    */
   public static void scrollToFirstOccurrenceOfTimeFromCurrentViewOnwardIfAvailable(final ProgramList list, final int time) {
@@ -177,12 +248,6 @@ public final class ProgramListCompat {
     }
   }
   
-  /**
-   * Scrolls the list to given date (if date is available)
-   * <p>
-   * @param date The date to scroll to.
-   * @since 3.3.4
-   */
   private static void scrollToNextDateIfAvailableCompat(final ProgramList list, final Date date) {
     for(int i = 0; i < list.getModel().getSize(); i++) {
       Object test = list.getModel().getElementAt(i);
@@ -199,15 +264,6 @@ public final class ProgramListCompat {
     }
   }
   
-
-  /**
-   * Scrolls the list to the first occurrence of the given time from the current view
-   * backward if time is smaller than the current views first time, forward if time is
-   * bigger than the current views first time. 
-   * <p>
-   * @param time The time in minutes from midnight to scroll to.
-   * @since 3.3.4
-   */
   private static void scrollToTimeFromCurrentViewIfAvailableCompat(final ProgramList list, final int time) {
     int index = list.locationToIndex(list.getVisibleRect().getLocation());
     
@@ -324,12 +380,6 @@ public final class ProgramListCompat {
     }
   }
   
-  /**
-   * Scrolls the list to the first occurrence of the given time from the current view onward (if time is available)
-   * <p>
-   * @param time The time in minutes from midnight.
-   * @since 3.3.4
-   */
   private static void scrollToFirstOccurrenceOfTimeFromCurrentViewOnwardIfAvailableCompat(final ProgramList list, int time) {
     int index = list.locationToIndex(list.getVisibleRect().getLocation());
     
@@ -440,6 +490,12 @@ public final class ProgramListCompat {
     }
   }
   
+  /**
+   * Checks if date separators are supported by the used TV-Browser version.
+   * 
+   * @return <code>true</code> if date separators are supported by the
+   * used TV-Browser version, <code>false</code> otherwise.
+   */
   public static boolean isDateSeparatorSupported() {
     return TVBrowser.VERSION.compareTo(new Version(3,22,true)) >= 0;
   }
