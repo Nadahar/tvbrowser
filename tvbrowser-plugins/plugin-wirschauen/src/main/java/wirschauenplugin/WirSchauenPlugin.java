@@ -32,9 +32,6 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.Icon;
 
-import tvbrowser.core.Settings;
-import util.ui.Localizer;
-import util.ui.UiUtilities;
 import devplugin.ActionMenu;
 import devplugin.ChannelDayProgram;
 import devplugin.Plugin;
@@ -47,6 +44,9 @@ import devplugin.ProgramFieldType;
 import devplugin.SettingsTab;
 import devplugin.ThemeIcon;
 import devplugin.Version;
+import tvbrowser.core.Settings;
+import util.ui.Localizer;
+import util.ui.UiUtilities;
 
 /**
  * With this plugin it is possible to add information about a program and send it to wirschauen.de.
@@ -71,7 +71,7 @@ public final class WirSchauenPlugin extends Plugin
   /**
    * the version of this plugin.
    */
-  private static final Version VERSION = new Version(0, 22, 8, IS_STABLE);
+  private static final Version VERSION = new Version(0, 23, 0, IS_STABLE);
 
   /**
    * this class is a singleton. kind of. the constructor is not restricted so
@@ -758,6 +758,10 @@ public final class WirSchauenPlugin extends Plugin
 
   WirSchauenSettings getSettings() {
     return mSettings;
+  }
+  
+  public String getPluginCategory() {
+    return "misc";
   }
 }
 
