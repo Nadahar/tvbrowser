@@ -44,7 +44,7 @@ import devplugin.Version;
  * @author René Mach
  */
 public class ColorMe extends Plugin {
-  private static final Version VERSION = new Version(0,12,0,false);
+  private static final Version VERSION = new Version(0,12,0,true);
   private static final Localizer LOCALIZER = Localizer.getLocalizerFor(ColorMe.class);
   
   private HashSet<Program> mLowestPrograms;
