@@ -14,6 +14,7 @@
  */
 package wirschauenplugin;
 
+import java.io.DataOutput;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -125,7 +126,7 @@ public class ProgramId implements Serializable
     //version for future compatibility issues
     out.writeInt(1);
     //date and id
-    mDate.writeData(out);
+    mDate.writeData((DataOutput)out);
     out.writeObject(mId);
   }
 
