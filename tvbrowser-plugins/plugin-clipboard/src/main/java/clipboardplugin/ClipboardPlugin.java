@@ -59,7 +59,7 @@ import devplugin.Version;
  * @author bodo
  */
 public class ClipboardPlugin extends Plugin {
-  private static final Version mVersion = new Version(3,03);
+  private static final Version mVersion = new Version(3,04);
 
   /** Translator */
   private static final Localizer mLocalizer = Localizer.getLocalizerFor(ClipboardPlugin.class);
