@@ -371,7 +371,7 @@ public class AdvancedFavorite extends Favorite implements PendingFilterLoader {
       );
       
       panelBuilder.add(mEditFilter, cc.xy(5, 3));
-            
+      
       if (mFilter != null) {
         mFilterCheckbox.setSelected(true);
         mFilterCombo.setSelectedItem(new WrapperFilter(mFilter));
@@ -403,7 +403,7 @@ public class AdvancedFavorite extends Favorite implements PendingFilterLoader {
         mFilter = ((WrapperFilter)mFilterCombo.getSelectedItem()).getFilter();
         mFilterName = mFilter.getName();
         
-        if (FilterFavorite.filterIsAcceptable(mFilter)) {
+        if(!FilterFavorite.filterIsAcceptable(mFilter)) {
           mFilter = null;
           mFilterName = null;
         }
@@ -439,7 +439,7 @@ public class AdvancedFavorite extends Favorite implements PendingFilterLoader {
         if(mFilter != null) {
           mPendingFilterName = null;
           
-          if(FilterFavorite.filterIsAcceptable(mFilter)) {
+          if(!FilterFavorite.filterIsAcceptable(mFilter)) {
             mFilter = null;
           }
         }
