@@ -32,7 +32,7 @@
           <descriptorRefs>
             <descriptorRef>jar-with-dependencies</descriptorRef>
           </descriptorRefs>
-          <finalName>FitlerShortcuts</finalName>
+          <finalName>FilterShortcuts</finalName>
           <appendAssemblyId>false</appendAssemblyId>
           <attach>false</attach>
         </configuration>
