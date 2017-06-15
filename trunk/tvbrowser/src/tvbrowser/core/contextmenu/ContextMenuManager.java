@@ -403,7 +403,7 @@ public class ContextMenuManager {
           if(actionMenu.showOnlySubMenus()) {
             final ActionMenu[] subItems = actionMenu.getSubItems();
             
-            if(subItems != null) {
+            if(subItems != null && subItems.length > 0) {
               Icon ic = (Icon)actionMenu.getAction().getValue(Action.SMALL_ICON);
               
               rootMenu.addSeparator();
@@ -433,7 +433,7 @@ public class ContextMenuManager {
           else {
             final ActionMenu[] subItems = actionMenu.getSubItems();
             
-            if(subItems != null) {
+            if(subItems != null && subItems.length > 0) {
               final ArrayList<ActionMenu> result = new ArrayList<>();
               
               for(ActionMenu item : subItems) {
@@ -457,8 +457,7 @@ public class ContextMenuManager {
             }
           }
         }
-      }
-    
+      }    
     }
 
     // Remove last Item if it's a Separator
