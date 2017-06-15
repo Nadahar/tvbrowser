@@ -254,7 +254,7 @@ public class FilterShortcuts extends Plugin {
           @Override
           public void keyPressed(KeyEvent e) {
             if(e.getKeyCode() != KeyEvent.VK_UNDEFINED &&
-                !((e.getModifiers() & Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()) == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() &&
+                !(e.getModifiers() == Toolkit.getDefaultToolkit().getMenuShortcutKeyMask() &&
                 (e.getKeyCode() == KeyEvent.VK_V || e.getKeyCode() == KeyEvent.VK_C ||
                 e.getKeyCode() == KeyEvent.VK_X || e.getKeyCode() == KeyEvent.VK_A))) {
               FilterShortcut s = (FilterShortcut)mList.getSelectedValue();
