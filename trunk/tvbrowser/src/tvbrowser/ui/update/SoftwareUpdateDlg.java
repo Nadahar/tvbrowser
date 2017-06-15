@@ -141,8 +141,7 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
    */
   public SoftwareUpdateDlg(Window parent, String downloadUrl,
       int dialogType, SoftwareUpdateItem[] itemArr, boolean isVersionChange, Version oldTvbVersion) {
-    super(parent);
-    setModalityType(ModalityType.DOCUMENT_MODAL);
+    super(parent,ModalityType.DOCUMENT_MODAL);
     mDialogType = dialogType;
     mIsVersionChange = isVersionChange;
     mOldTvbVersion = oldTvbVersion;
