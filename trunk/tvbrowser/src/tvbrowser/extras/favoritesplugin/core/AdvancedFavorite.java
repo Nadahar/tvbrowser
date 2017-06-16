@@ -458,7 +458,7 @@ public class AdvancedFavorite extends Favorite implements PendingFilterLoader {
   }
   
   public boolean updateFilter(ProgramFilter filter) {
-    boolean result = mFilter != null && mFilterName != null && ((mFilter.equals(filter)) || mFilterName.equals(filter.getName()));
+    boolean result = (filter != null) && ((mFilter != null && mFilter.equals(filter)) || (mFilterName != null && mFilterName.equals(filter.getName()))); 
     
     if(result) {
       mFilterName = filter.getName();
@@ -483,7 +483,7 @@ public class AdvancedFavorite extends Favorite implements PendingFilterLoader {
   }
   
   public boolean deleteFilter(ProgramFilter filter) {
-    boolean result = (mFilter != null && mFilterName != null && (mFilter.equals(filter)) || mFilterName.equals(filter.getName())); 
+    boolean result = (filter != null) && ((mFilter != null && mFilter.equals(filter)) || (mFilterName != null && mFilterName.equals(filter.getName()))); 
     
     if(result) {
       mFilter = null;
