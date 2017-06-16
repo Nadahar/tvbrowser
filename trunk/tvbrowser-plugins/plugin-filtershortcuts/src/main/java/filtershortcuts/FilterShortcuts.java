@@ -21,6 +21,7 @@ package filtershortcuts;
 import java.awt.Component;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
@@ -47,12 +48,18 @@ import javax.swing.ListSelectionModel;
 import com.jgoodies.forms.factories.CC;
 import com.jgoodies.forms.layout.FormLayout;
 
+import compat.FilterCompat;
+import compat.MenuCompat;
+import devplugin.ActionMenu;
+import devplugin.ContextMenuAction;
 import devplugin.Plugin;
 import devplugin.PluginInfo;
 import devplugin.ProgramFilter;
 import devplugin.SettingsTab;
+import devplugin.ThemeIcon;
 import devplugin.Version;
 import util.ui.Localizer;
+import util.ui.TVBrowserIcons;
 import util.ui.UiUtilities;
 
 /**
@@ -63,8 +70,9 @@ import util.ui.UiUtilities;
  */
 public class FilterShortcuts extends Plugin {
   private static final Localizer LOCALIZER = Localizer.getLocalizerFor(FilterShortcuts.class);
-  private static final Version VERSION = new Version(0, 10, false);
+  private static final Version VERSION = new Version(0, 20, false);
   private HashSet<FilterShortcut> mShortcutSet;
+  private FilterCompat.FilterChangeListener mFilterListener;
   
   public FilterShortcuts() {
     mShortcutSet = new HashSet<FilterShortcut>();
@@ -77,6 +85,25 @@ public class FilterShortcuts extends Plugin {
   @Override
   public PluginInfo getInfo() {
     return new PluginInfo(FilterShortcuts.class, LOCALIZER.msg("name", "Filter shortcuts"), LOCALIZER.msg("desc", "Allows to create shortcuts for filter activation."), "Ren\u00E9 Mach", "GPL v3");
+  }
+  
+  @Override
+  public ThemeIcon getMarkIconFromTheme() {
+    return new ThemeIcon("apps", "filter-shortcut");
+  }
+  
+  @Override
+  public ActionMenu getButtonAction() {
+    final ActionMenu a = MenuCompat.createActionMenu(MenuCompat.ID_ACTION_NONE, LOCALIZER.msg("openSettings", "Edit Filter shortcuts"), createImageIcon("apps", "filter-shortcut", TVBrowserIcons.SIZE_SMALL));
+    a.getAction().putValue(Plugin.BIG_ICON, createImageIcon("apps", "filter-shortcut", TVBrowserIcons.SIZE_LARGE));
+    ((ContextMenuAction)a.getAction()).setActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        getPluginManager().showSettings(FilterShortcuts.this);
+      }
+    });
+    
+    return a;
   }
   
   @Override
@@ -108,10 +135,66 @@ public class FilterShortcuts extends Plugin {
   public void handleTvBrowserStartFinished() {
     removeShortcuts();
     addShortcuts();
+    
+    if(mFilterListener == null) {
+      mFilterListener = new FilterCompat.FilterChangeListener() {
+        @Override
+        public void filterTouched(ProgramFilter filter) {
+          boolean found = false;
+          
+          for(FilterShortcut test : mShortcutSet) {
+            if(test.isFilter(filter) && !test.mFilterName.equals(filter.getName())) {
+              test.mFilterName = filter.getName();
+              found = true;
+            }
+          }
+          
+          if(found) {
+            saveMe();
+          }
+        }
+        
+        @Override
+        public void filterRemoved(ProgramFilter filter) {
+          FilterShortcut found = null;
+          
+          for(FilterShortcut test : mShortcutSet) {
+            if(test.isFilter(filter)) {
+              found = test;
+              break;
+            }
+          }
+          
+          if(found != null) {
+            final InputMap inputMap = ((JFrame)getParentFrame()).getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).getParent();
+            final ActionMap actionMap = ((JFrame)getParentFrame()).getRootPane().getActionMap().getParent();
+            
+            final Object o = inputMap.get(found.getKeyStroke());
+            
+            if(o != null) {
+              actionMap.remove(o);
+            }
+            
+            mShortcutSet.remove(found);
+            saveMe();
+          }
+        }
+        
+        @Override
+        public void filterDefaultChanged(ProgramFilter filter) {}
+        
+        @Override
+        public void filterAdded(ProgramFilter filter) {}
+      };
+    }
+    
+    FilterCompat.getInstance().registerFilterChangeListener(mFilterListener);
   }
+  
   
   @Override
   public void onDeactivation() {
+    FilterCompat.getInstance().unregisterFilterChangeListener(mFilterListener);
     removeShortcuts();
   }
   
@@ -133,15 +216,19 @@ public class FilterShortcuts extends Plugin {
     final ActionMap actionMap = ((JFrame)getParentFrame()).getRootPane().getActionMap().getParent();
 
     for(final FilterShortcut s : mShortcutSet) {
-      final String key = FilterShortcuts.class.getCanonicalName()+"_"+s.mFilterName;
+      ProgramFilter f = s.getFilter();
       
-      inputMap.put(s.getKeyStroke(), key);
-      actionMap.put(key, new AbstractAction() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-          s.handleAction();
-        }
-      });
+      if(f != null) {
+        final String key = FilterShortcuts.class.getCanonicalName()+"_"+s.mFilterName;
+        
+        inputMap.put(s.getKeyStroke(), key);
+        actionMap.put(key, new AbstractAction() {
+          @Override
+          public void actionPerformed(ActionEvent e) {
+            s.handleAction();
+          }
+        });
+      }
     }
   }
   @Override
@@ -419,7 +506,7 @@ public class FilterShortcuts extends Plugin {
     }
     
     private boolean isFilter(ProgramFilter filter) {
-      return (filter != null && mFilterName.equals(filter.getName()));
+      return (filter != null && ((mFilter != null && filter.equals(mFilter)) ||mFilterName.equals(filter.getName())));
     }
   }
   
