@@ -900,10 +900,14 @@ public class ProgramListPanel extends TabListenerPanel implements PersonaCompatL
   public void filterDefaultChanged(ProgramFilter filter) {}
 
   @Override
-  public void filterRemoved(ProgramFilter filter) {
+  public synchronized void filterRemoved(ProgramFilter filter) {
     final Object selectedFilter = mFilterBox.getSelectedItem();
     
-    mFilterBox.removeItem(getItemForFilter(filter));
+    Object o = getItemForFilter(filter);
+    
+    if(o != null) {
+      mFilterBox.removeItem(o);
+    }
     
     if(selectedFilter != null && selectedFilter.equals(filter)) {
       fillProgramList();
@@ -911,7 +915,7 @@ public class ProgramListPanel extends TabListenerPanel implements PersonaCompatL
   }
 
   @Override
-  public void filterTouched(ProgramFilter filter) {
+  public synchronized void filterTouched(ProgramFilter filter) {
     final Object selected = mFilterBox.getSelectedItem();
     
     if(selected != null && selected.equals(filter)) {

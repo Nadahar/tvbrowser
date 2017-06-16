@@ -57,7 +57,7 @@ import util.settings.PluginPictureSettings;
  * @author bodo
  */
 public class ListViewPlugin extends Plugin {
-  private static final Version mVersion = new Version(3,28,true);
+  private static final Version mVersion = new Version(3,28,1,true);
 
     protected static final int PROGRAMTABLEWIDTH = 200;
   

@@ -83,7 +83,7 @@ public final class DataViewerPlugin extends Plugin implements Runnable {
   private int mMinRowHeight = 10;
   private int mMinColumnWidth = 20;
 
-  private static final Version mVersion = new Version(1,21,0,true);
+  private static final Version mVersion = new Version(1,21,1,true);
 
   private static DataViewerPlugin mInstance;
 
