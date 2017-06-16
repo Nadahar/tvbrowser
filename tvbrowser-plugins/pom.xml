@@ -74,6 +74,7 @@
     <module>plugin-feeds</module>
     <module>plugin-filterfiltercomponent</module>
     <module>plugin-filterinfoicons</module>
+    <module>plugin-filtershortcuts</module>
     <module>plugin-filterview</module>
     <module>plugin-fixprogramdudation</module>
     <module>plugin-freetuxtv</module>

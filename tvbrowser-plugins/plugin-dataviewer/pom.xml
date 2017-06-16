@@ -58,7 +58,7 @@
   	<dependency>
   		<groupId>org.tvbrowser</groupId>
   		<artifactId>TvBrowserCompat</artifactId>
-  		<version>0.2</version>
+  		<version>0.4</version>
   	</dependency>
   </dependencies>
 </project>
