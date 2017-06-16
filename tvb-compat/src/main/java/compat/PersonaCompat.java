@@ -92,7 +92,7 @@ public final class PersonaCompat {
    * @param listener The listener to register.
    */
   public void registerPersonaListener(final PersonaCompatListener listener) {
-    if(mListPersonaListeners.contains(listener)) {
+    if(!mListPersonaListeners.contains(listener)) {
       mListPersonaListeners.add(listener);
     }
   }
