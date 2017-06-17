@@ -150,6 +150,7 @@ public class PanelReminder extends ScrollableJPanel {
     }
     
     mCloseBt = new JButton(getCloseButtonText(seconds));
+    mCloseBt.setToolTipText(ReminderPlugin.LOCALIZER.msg("closeHint", "<html><b>Ctrl+Esc:</b> Close first Reminder and use selected value<br><b>Shift+Esc:</b> Close first Reminder and reschedule at next possible time<html>"));
     mCloseBt.addActionListener(e -> {
       closeInterface.close(this);
     });
