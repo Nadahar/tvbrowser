@@ -386,7 +386,7 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
 
     boolean validRule = true;
     try {
-      UserFilter.testTokenTree(mFilterRuleTF.getText());
+      UserFilter.testTokenTree(mFilterRuleTF.getText(),false);
       mFilterRuleErrorLb.setForeground(UIManager.getColor("Label.foreground"));
       mFilterRuleErrorLb.setText(mLocalizer.msg("ruleExample",
       "example: component1 or (component2 and not component3)"));
