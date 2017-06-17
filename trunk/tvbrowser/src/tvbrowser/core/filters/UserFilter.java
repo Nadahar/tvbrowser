@@ -135,7 +135,7 @@ public class UserFilter implements devplugin.ProgramFilter {
       ErrorHandler.handle("Could not read filter from file", e);
     }
 
-    createTokenTree();
+    createTokenTree(true);
   }
   
   public void store() {
@@ -184,12 +184,12 @@ public class UserFilter implements devplugin.ProgramFilter {
     }
   }
 
-  private void createTokenTree() throws ParserException {
+  private void createTokenTree(boolean add) throws ParserException {
     mTokenList = createTokenList(mRule);
     curTokenInx = -1;
     mCurToken = getNextToken();
     if (mCurToken != null) {
-      Node rule = rule();
+      Node rule = rule(add);
       if (mCurToken != null) {
         // throw new
         // ParserException(curToken.pos,mLocalizer.msg("EOLExpected","end of rule expected"));
@@ -207,11 +207,15 @@ public class UserFilter implements devplugin.ProgramFilter {
   }
 
   public static void testTokenTree(String rule) throws ParserException {
+    testTokenTree(rule, true);
+  }
+  
+  public static void testTokenTree(String rule, boolean add) throws ParserException {
     mTokenList = createTokenList(rule);
     curTokenInx = -1;
     mCurToken = getNextToken();
     if (mCurToken != null) {
-      rule();
+      rule(add);
       if (mCurToken != null) {
         throw new ParserException(mCurToken.pos, mLocalizer.msg("EOLExpected",
             "end of rule expected"));
@@ -328,9 +332,9 @@ public class UserFilter implements devplugin.ProgramFilter {
     throw new ParserException(foundToken.pos, msg.toString());
   }
 
-  private static Node rule() throws ParserException {
+  private static Node rule(boolean add) throws ParserException {
     Node result = new OrNode();
-    result.addNode(condTerm());
+    result.addNode(condTerm(add));
 
     while (mCurToken != null && mCurToken.type == Token.OR) {
       mCurToken = getNextToken();
@@ -338,28 +342,28 @@ public class UserFilter implements devplugin.ProgramFilter {
         // throw new
         // ParserException(mLocalizer.msg("unexpectedEOL","unexpected end of rule"));
       }
-      result.addNode(condTerm());
+      result.addNode(condTerm(add));
     }
 
     return result.optimize();
   }
 
-  private static Node condTerm() throws ParserException {
+  private static Node condTerm(boolean add) throws ParserException {
     Node result = new AndNode();
 
-    result.addNode(condFact());
+    result.addNode(condFact(add));
     while (mCurToken != null && mCurToken.type == Token.AND) {
       mCurToken = getNextToken();
       if (mCurToken == null) {
         // throw new
         // ParserException(mLocalizer.msg("unexpectedEOL","unexpected end of rule"));
       }
-      result.addNode(condFact());
+      result.addNode(condFact(add));
     }
     return result;
   }
 
-  private static Node condFact() throws ParserException {
+  private static Node condFact(boolean add) throws ParserException {
     Node result, notNode = null;
 
     if (mCurToken == null) {
@@ -379,13 +383,13 @@ public class UserFilter implements devplugin.ProgramFilter {
 
     if (mCurToken.type == Token.LEFT_BRACKET) {
       mCurToken = getNextToken();
-      result = rule();
+      result = rule(add);
       expectToken(new int[] { Token.RIGHT_BRACKET }, mCurToken);
       mCurToken = getNextToken();
     }
 
     else {
-      result = item();
+      result = item(add);
       mCurToken = getNextToken();
     }
 
@@ -397,7 +401,7 @@ public class UserFilter implements devplugin.ProgramFilter {
     return result;
   }
 
-  private static Node item() throws ParserException {
+  private static Node item(boolean add) throws ParserException {
     Token tk = mCurToken;
     if (tk.type != Token.ITEM) {
       throw new ParserException(mLocalizer.msg("compExpected",
@@ -426,7 +430,10 @@ public class UserFilter implements devplugin.ProgramFilter {
     if(result == null) {
       AcceptNoneFilterComponent acceptNone = new AcceptNoneFilterComponent(tk.value);
       
-      FilterComponentList.getInstance().add(acceptNone);
+      if(add) {
+        FilterComponentList.getInstance().add(acceptNone);
+      }
+      
       result = new ItemNode(acceptNone);
     }
     
@@ -457,7 +464,7 @@ public class UserFilter implements devplugin.ProgramFilter {
 
   public void setRule(String rule) throws ParserException {
     mRule = rule;
-    createTokenTree();
+    createTokenTree(true);
   }
 
   public String getRule() {
