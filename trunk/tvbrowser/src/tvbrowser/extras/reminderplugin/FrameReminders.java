@@ -2,6 +2,7 @@ package tvbrowser.extras.reminderplugin;
 
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
@@ -54,7 +55,7 @@ public class FrameReminders extends JFrame implements InterfaceClose<PanelRemind
     
     mReschedule = new JButton(IconLoader.getInstance().getIconFromTheme("actions", "appointment-new", 16));
     mReschedule.setEnabled(false);
-    mReschedule.setToolTipText(ReminderPlugin.LOCALIZER.msg("reschedule", "Close current Reminders and reschedule possible Reminders."));
+    mReschedule.setToolTipText(ReminderPlugin.LOCALIZER.msg("reschedule", "Close current Reminders and reschedule possible Reminders. (Ctrl+Enter)"));
     mReschedule.addActionListener(e -> {
       for(int i = mListReminders.getComponentCount()-1; i >= 0; i--) {
         close((PanelReminder)mListReminders.getComponent(i), false, true);
@@ -112,6 +113,40 @@ public class FrameReminders extends JFrame implements InterfaceClose<PanelRemind
       @Override
       public void actionPerformed(ActionEvent e) {
         close();
+      }
+    });
+    
+    final KeyStroke closeReminderInOrder = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, KeyEvent.CTRL_DOWN_MASK);
+    
+    rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(closeReminderInOrder, "close_reminder_in_order");
+    rootPane.getActionMap().put("close_reminder_in_order", new AbstractAction() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        if(mListReminders.getComponentCount() > 0) {
+          close((PanelReminder)mListReminders.getComponent(0));
+        }
+      }
+    });
+    
+    final KeyStroke closeReminderInOrderAndReschedule = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, KeyEvent.SHIFT_DOWN_MASK);
+    
+    rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(closeReminderInOrderAndReschedule, "close_reminder_in_order_and_reschedule");
+    rootPane.getActionMap().put("close_reminder_in_order_and_reschedule", new AbstractAction() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        if(mListReminders.getComponentCount() > 0) {
+          close((PanelReminder)mListReminders.getComponent(0),true,true);
+        }
+      }
+    });
+    
+    final KeyStroke closeAndReschedule = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, KeyEvent.CTRL_DOWN_MASK);
+    
+    rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(closeAndReschedule, "close_reminder_and_reschedule");
+    rootPane.getActionMap().put("close_reminder_and_reschedule", new AbstractAction() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        mReschedule.doClick();
       }
     });
     
