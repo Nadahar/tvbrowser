@@ -272,16 +272,16 @@ public class PluginManagerImpl implements PluginManager {
           StringBuilder newId = new StringBuilder(progID.substring(0, index + 1));
           newId.append(hourMinute[0]).append(":").append(hourMinute[1]).append(":").append(hourMinute[2]);
           
-          progID = newId.toString();
+        //  progID = newId.toString();
         }
       }
-      else {
+      /*else {
         String[] hourMinute = timeString.split(":");
         StringBuilder newId = new StringBuilder(progID.substring(0, index + 1));
         newId.append(hourMinute[0]).append(":").append(hourMinute[1]).append(":").append(TimeZone.getDefault().getRawOffset()/60000);
         
         progID = newId.toString();
-      }
+      }*/
       
       if(ch.getTimeZone().getRawOffset() != TimeZone.getDefault().getRawOffset()) {
         String[] hourMinute = timeString.split(":");
@@ -351,8 +351,18 @@ public class PluginManagerImpl implements PluginManager {
   private Object[] getDateAndProgIDforUniqueID(String uniqueID) {
     String[] id = uniqueID.split("_");
     Date progDate;
+    StringBuilder channelName = new StringBuilder();
+    
     try {
-      java.util.Date date = new SimpleDateFormat(MutableProgram.ID_DATE_FORMAT).parse(id[4]);
+      for(int i = 3; i < (3+id.length-5); i++) {
+        channelName.append(id[i]).append("_");
+      }
+      
+      if(channelName.length() > 0) {
+        channelName.delete(channelName.length()-1, channelName.length());
+      }
+      
+      java.util.Date date = new SimpleDateFormat(MutableProgram.ID_DATE_FORMAT).parse(id[id.length-2]);
       Calendar cal = Calendar.getInstance();
       cal.setTimeInMillis(date.getTime());
       progDate = new Date(cal);
@@ -361,7 +371,7 @@ public class PluginManagerImpl implements PluginManager {
       return null;
     }
     
-    return new Object[] { progDate,new StringBuilder(id[0]).append('_').append(id[1]).append('_').append(id[2]).append('_').append(id[3]).append('_').append(id[5]).toString()};    
+    return new Object[] { progDate,new StringBuilder(id[0]).append('_').append(id[1]).append('_').append(id[2]).append('_').append(channelName.toString()).append('_').append(id[id.length-1]).toString()};    
   }
 
   @Override
