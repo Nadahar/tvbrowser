@@ -519,6 +519,8 @@ private static Font getDynamicFontSize(Font font, int offset) {
     boolean programChanged = oldProgram == null || !oldProgram.equals(program);
     
     if (programChanged) {
+      mTextColor = (!Settings.propTableBackgroundStyle.getString().equals("uiColor") && !Settings.propTableBackgroundStyle.getString().equals("uiTimeBlock")) ? Settings.propProgramPanelForegroundColor.getColor() : UIManager.getColor("List.foreground");
+      setForeground(mTextColor);
       // Get the start time, filter duplicate strings
       mProgramTimeAsString = StringPool.getString(program.getTimeString());
       
@@ -739,7 +741,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
     if(mSettings.isIgnoringProgramImportance() || mProgram.getProgramState() == Program.WAS_DELETED_STATE) {
       mProgramImportance = Program.MAX_PROGRAM_IMPORTANCE;
     }
-
+    
     /* This is for debugging of the marking problem after an data update */
     if(mProgram.getProgramState() == Program.WAS_DELETED_STATE) {
       setForeground(Color.red);
@@ -748,7 +750,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
       setForeground(Color.blue);
       mTextColor = Color.blue;
     }
-
+    
     int width = getWidth();
     if (getTextIconWidth(width) != mDescriptionIcon.getIconWidth()) {
       recreateTextIcons(width);
