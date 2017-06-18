@@ -257,14 +257,14 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
           if(item.isAndItem() || item.isOrItem() || item.isNotItem()) {
             label.setFont(label.getFont().deriveFont(Font.BOLD));
             layout.insertColumn(1,ColumnSpec.decode("3dlu"));
-            panel.add(label,CC.xy(item.getLevel()+2,1));
+            panel.add(label,CC.xy(Math.max(1,item.getLevel()+2),1));
           }
           else if(item.isOpenBracketItem() || item.isCloseBracketItem()) {
             label.setFont(label.getFont().deriveFont(Font.BOLD));
-            panel.add(label,CC.xy(item.getLevel()+1,1));
+            panel.add(label,CC.xy(Math.max(1, item.getLevel()+1),1));
           }
           else {
-            panel.add(label,CC.xy(item.getLevel()+1,1));
+            panel.add(label,CC.xy(Math.max(1,item.getLevel()+1),1));
 
             label.setText(FilterComponentList.getLabelForComponent(item.getComponent(), label.getText()));
           }
@@ -385,19 +385,19 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
     }
 
     boolean validRule = true;
+    
     try {
       UserFilter.testTokenTree(mFilterRuleTF.getText(),false);
       mFilterRuleErrorLb.setForeground(UIManager.getColor("Label.foreground"));
       mFilterRuleErrorLb.setText(mLocalizer.msg("ruleExample",
       "example: component1 or (component2 and not component3)"));
-      
     } catch (ParserException e) {
       mFilterRuleErrorLb.setForeground(Color.red);
       mFilterRuleErrorLb.setText(e.getMessage());
       validRule = false;
     }
 
-    if(mFilterRuleTF.hasFocus() && validRule) {
+    if(mFilterRuleTF.hasFocus()) {
       fillFilterConstruction();
     }
     
@@ -756,7 +756,7 @@ public class EditFilterDlg extends JDialog implements ActionListener, DocumentLi
     
     String rule = mFilterRuleTF.getText();
     
-    for(int i = rule.length()-1; i > 0; i--) {
+    for(int i = rule.length()-1; i >= 0; i--) {
       
       if(rule.charAt(i) == ' ') {
         
