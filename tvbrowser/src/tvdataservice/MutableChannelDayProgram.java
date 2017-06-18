@@ -117,7 +117,8 @@ public class MutableChannelDayProgram implements ChannelDayProgram {
    * Returns the program object having the specified ID.
    *
    * @param progID The ID of the wanted program.
-   * @return  the program object having the specified ID.
+   * @param onlyFirst <code>true</code> if only the first program with the ID should be returned.
+   * @return  the program objects having the specified ID.
    */
   private Program[] getPrograms(String progID, boolean onlyFirst) {
     progID = ProgramUtilities.getTimeZoneCorrectedProgramId(progID);
