@@ -342,7 +342,7 @@ public class PluginManagerImpl implements PluginManager {
     if(uniqueID != null && uniqueID.trim().length() > 0) {
       Object[] values = getDateAndProgIDforUniqueID(uniqueID);
       
-      return getProgram((Date)values[0], (String)values[1]);
+      return values != null ? getProgram((Date)values[0], (String)values[1]) : null;
     }
     
     return null;
@@ -368,7 +368,7 @@ public class PluginManagerImpl implements PluginManager {
   public Program[] getPrograms(String uniqueID) {
     Object[] values = getDateAndProgIDforUniqueID(uniqueID);
     
-    return getPrograms((Date)values[0], (String)values[1]);
+    return values != null ? getPrograms((Date)values[0], (String)values[1]) : null;
   }
 
   private Channel getChannelFromProgId(String progId) {
