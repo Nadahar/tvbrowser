@@ -39,6 +39,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListCellRenderer;
@@ -496,8 +497,10 @@ public class ProgramListPanel extends TabListenerPanel implements PersonaCompatL
       southPanel.add(close, cc.xy(11, 1));
     }
 
+    final JScrollPane pane = new JScrollPane(mList);
+    
     add(panel, BorderLayout.NORTH);
-    add(new JScrollPane(mList), BorderLayout.CENTER);
+    add(pane, BorderLayout.CENTER);
     add(southPanel, BorderLayout.SOUTH);
     
     mUpdateList = false;
@@ -650,133 +653,134 @@ public class ProgramListPanel extends TabListenerPanel implements PersonaCompatL
           mUpdateListThread = new Thread() {
             @Override
             public void run() {
-              DefaultListModel model = new DefaultListModel();
-              /*mFilterBox.setEnabled(false);
-              mChannelBox.setEnabled(false);
-              mRefreshBtn.setEnabled(false);
-              mSendBtn.setEnabled(false);*/
-              
-              try {
-                setPriority(MIN_PRIORITY);
-                setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-                mModel.clear();
-                mPrograms.clear();
+              synchronized (mPrograms) {
+                DefaultListModel model = new DefaultListModel();
+                /*mFilterBox.setEnabled(false);
+                mChannelBox.setEnabled(false);
+                mRefreshBtn.setEnabled(false);
+                mSendBtn.setEnabled(false);*/
                 
-                Channel[] channels = mChannelBox.getSelectedItem() instanceof String ? Plugin.getPluginManager()
-                    .getSubscribedChannels() : new Channel[] { (Channel) mChannelBox.getSelectedItem() };
-                
-                boolean dateSelected = mDateBox.getSelectedItem() instanceof Date;
-                    
-                Date date = dateSelected ? (Date)mDateBox.getSelectedItem() : Date.getCurrentDate();
-      
-                int startTime = Plugin.getPluginManager().getTvBrowserSettings().getProgramTableStartOfDay();
-                int endTime = Plugin.getPluginManager().getTvBrowserSettings().getProgramTableEndOfDay();
-      
-                int maxDays = dateSelected ? 2 : 28;
-                
-                //boolean showExpired = date.compareTo(Date.getCurrentDate()) != 0;
-                
-                for (int d = 0; d < maxDays; d++) {
-                  if(!mKeepListing.get()) {
-                    break;
-                  }
+                try {
+                  setPriority(MIN_PRIORITY);
+                  setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+                  mModel.clear();
+                  mPrograms.clear();
                   
-                  if (Plugin.getPluginManager().isDataAvailable(date)) {
-                    for (Channel channel : channels) {
-                      if(!mKeepListing.get()) {
-                        break;
-                      }
+                  Channel[] channels = mChannelBox.getSelectedItem() instanceof String ? Plugin.getPluginManager()
+                      .getSubscribedChannels() : new Channel[] { (Channel) mChannelBox.getSelectedItem() };
+                  
+                  boolean dateSelected = mDateBox.getSelectedItem() instanceof Date;
                       
-                      for (Iterator<Program> it = Plugin.getPluginManager().getChannelDayProgram(date, channel); it.hasNext();) {
+                  Date date = dateSelected ? (Date)mDateBox.getSelectedItem() : Date.getCurrentDate();
+        
+                  int startTime = Plugin.getPluginManager().getTvBrowserSettings().getProgramTableStartOfDay();
+                  int endTime = Plugin.getPluginManager().getTvBrowserSettings().getProgramTableEndOfDay();
+        
+                  int maxDays = dateSelected ? 2 : 28;
+                  
+                  //boolean showExpired = date.compareTo(Date.getCurrentDate()) != 0;
+                  
+                  for (int d = 0; d < maxDays; d++) {
+                    if(!mKeepListing.get()) {
+                      break;
+                    }
+                    
+                    if (Plugin.getPluginManager().isDataAvailable(date)) {
+                      for (Channel channel : channels) {
                         if(!mKeepListing.get()) {
                           break;
                         }
                         
-                        Program program = it.next();
-                        if ((dateSelected || !program.isExpired()) && mFilter.accept(program)) {
-                          if (dateSelected) {
-                            if ((d == 0 && program.getStartTime() >= startTime)
-                                || (d == 1 && program.getStartTime() <= endTime)) {
+                        for (Iterator<Program> it = Plugin.getPluginManager().getChannelDayProgram(date, channel); it.hasNext();) {
+                          if(!mKeepListing.get()) {
+                            break;
+                          }
+                          
+                          Program program = it.next();
+                          if ((dateSelected || !program.isExpired()) && mFilter.accept(program)) {
+                            if (dateSelected) {
+                              if ((d == 0 && program.getStartTime() >= startTime)
+                                  || (d == 1 && program.getStartTime() <= endTime)) {
+                                mPrograms.add(program);
+                              }
+                            } else {
                               mPrograms.add(program);
                             }
-                          } else {
-                            mPrograms.add(program);
                           }
                         }
                       }
                     }
+                    date = date.addDays(1);
                   }
-                  date = date.addDays(1);
-                }
-      
-                if (channels.length > 1) {
-                  Collections.sort(mPrograms, ProgramUtilities.getProgramComparator());
-                }
-      
-                int index = -1;
-                
-                Program lastProgram = null;
-                
-                int currentSelectionNewIndex = -1;
-                
-                for (Program program : mPrograms) {
-                  if(!mKeepListing.get()) {
-                    break;
+        
+                  if (channels.length > 1) {
+                    Collections.sort(mPrograms, ProgramUtilities.getProgramComparator());
+                  }
+        
+                  int index = -1;
+                  
+                  Program lastProgram = null;
+                  
+                  int currentSelectionNewIndex = -1;
+                  
+                  for (Program program : mPrograms) {
+                    if(!mKeepListing.get()) {
+                      break;
+                    }
+                    
+                    if (model.size() < mMaxListSize) {
+                      if(ProgramListPlugin.getInstance().getSettings().getBooleanValue(ProgramListSettings.KEY_SHOW_DATE_SEPARATOR) && 
+                          (lastProgram == null || program.getDate().compareTo(lastProgram.getDate()) > 0)) {
+                        model.addElement(DATE_SEPARATOR);
+                      }
+                      
+                      model.addElement(program);
+                      
+                      if(mCurrentSelection != null && mCurrentSelection.equals(program)) {
+                        currentSelectionNewIndex = model.getSize()-1;
+                      }
+                      
+                      if (!program.isExpired() && index == -1) {
+                        index = model.getSize() - (ProgramListPlugin.getInstance().getSettings().getBooleanValue(ProgramListSettings.KEY_SHOW_DATE_SEPARATOR) ? 2 : 1);
+                      }
+                      
+                      lastProgram = program;
+                    }
+                  }
+                  int forceScrollingIndex = model.size() - 1;
+                  if (forceScrollingIndex > 1000) {
+                    forceScrollingIndex = 1000;
                   }
                   
-                  if (model.size() < mMaxListSize) {
-                    if(ProgramListPlugin.getInstance().getSettings().getBooleanValue(ProgramListSettings.KEY_SHOW_DATE_SEPARATOR) && 
-                        (lastProgram == null || program.getDate().compareTo(lastProgram.getDate()) > 0)) {
-                      model.addElement(DATE_SEPARATOR);
-                    }
-                    
-                    model.addElement(program);
-                    
-                    if(mCurrentSelection != null && mCurrentSelection.equals(program)) {
-                      currentSelectionNewIndex = model.getSize()-1;
-                    }
-                    
-                    if (!program.isExpired() && index == -1) {
-                      index = model.getSize() - (ProgramListPlugin.getInstance().getSettings().getBooleanValue(ProgramListSettings.KEY_SHOW_DATE_SEPARATOR) ? 2 : 1);
-                    }
-                    
-                    lastProgram = program;
+                  mCurrentSelection = null;
+                  
+                  if(currentSelectionNewIndex != -1) {
+                    index = currentSelectionNewIndex;
                   }
+                  
+                  if(index == -1 && dateSelected) {
+                    index = 0;
+                  }
+                  
+                  if(mKeepListing.get()) {
+                    updateList(model, forceScrollingIndex, index, currentSelectionNewIndex != -1);
+                  }
+                  //mList.updateUI();
+                } catch (Exception e) {
+                  e.printStackTrace();
                 }
-                int forceScrollingIndex = model.size() - 1;
-                if (forceScrollingIndex > 1000) {
-                  forceScrollingIndex = 1000;
-                }
-                
-                mCurrentSelection = null;
-                
-                if(currentSelectionNewIndex != -1) {
-                  index = currentSelectionNewIndex;
-                }
-                
-                if(index == -1 && dateSelected) {
-                  index = 0;
-                }
-                
-                if(mKeepListing.get()) {
-                  updateList(model, forceScrollingIndex, index, currentSelectionNewIndex != -1);
-                }
-                //mList.updateUI();
-              } catch (Exception e) {
-                e.printStackTrace();
-              }
               /*
               mFilterBox.setEnabled(true);
               mChannelBox.setEnabled(true);
               mRefreshBtn.setEnabled(true);
               mSendBtn.setEnabled(true);*/
+              }
             }
           };
           
           SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-              // TODO Auto-generated method stub
               if(mUpdateListThread != null && !mUpdateListThread.isAlive()) {
                 mUpdateListThread.start();
               }
@@ -868,19 +872,61 @@ public class ProgramListPanel extends TabListenerPanel implements PersonaCompatL
     SwingUtilities.invokeLater(new Runnable() {
       public void run() {
         mUpdateCounter--;
+        
         if(mUpdateCounter < 0) {
           mUpdateCounter = 5;
           
-          if((mListThread == null || !mListThread.isAlive()) && (mUpdateThread == null || !mUpdateThread.isAlive())) {
+          if(mDateBox.getSelectedIndex() == 0 && (mListThread == null || !mListThread.isAlive()) && (mUpdateThread == null || !mUpdateThread.isAlive())) {
             mUpdateThread = new Thread() {
               public void run() {
+                final DefaultListModel model = new DefaultListModel();
+                final AtomicInteger first = new AtomicInteger(mList.getFirstVisibleIndex());
+                final AtomicInteger selected = new AtomicInteger(mList.getSelectedIndex());
+                final int firstVisible = first.get();
+                final int selectedIndex = selected.get();
+                
                 synchronized (mModel) {
-                  for(int i = mModel.getSize() - 1; i >= 0; i--) {
+                  for(int i = 0; i < mModel.getSize(); i++) {
                     Object value = mModel.get(i);
-                    if(value instanceof Program && ((Program)value).isExpired()) {
-                      mModel.remove(i);
+                    
+                    if(!(value instanceof Program && ((Program)value).isExpired())) {
+                      model.addElement(value);
                     }
-                  }                  
+                    else {
+                      if(firstVisible > i) {
+                        first.decrementAndGet();
+                      }
+                      if(selectedIndex > i) {
+                        selected.decrementAndGet();
+                      }
+                    }
+                  }
+                }
+                
+                if(model.getSize() != mModel.getSize()) {
+                  DefaultListModel old = mModel;
+                  mModel = model;
+                  mList.setModel(mModel);
+                  old.clear();
+                  
+                  if(selected.get() > 0 && selected.get() < mModel.getSize()) {
+                    SwingUtilities.invokeLater(new Runnable() {
+                      @Override
+                      public void run() {
+                        mList.setSelectedIndex(selected.get());
+                      }
+                    });
+                  }
+                  
+                  if(first.get() > 0 && first.get() < mModel.getSize()) {
+                    SwingUtilities.invokeLater(new Runnable() {
+                      @Override
+                      public void run() {
+                        mList.ensureIndexIsVisible(first.get());
+                      }
+                    });
+                    
+                  }
                 }
               }
             };
@@ -951,6 +997,10 @@ public class ProgramListPanel extends TabListenerPanel implements PersonaCompatL
   
   void scrollToTime(final int time) {
     if(mUpdateList) {
+      if(mTimeScrollWaitingThread != null && mTimeScrollWaitingThread.isAlive()) {
+        mTimeScrollWaitingThread.interrupt();
+      }
+      
       mTimeScrollWaitingThread = new Thread("PROGRAM LIST SCROLL TO TIME THREAD") {
         @Override
         public void run() {
@@ -993,7 +1043,6 @@ public class ProgramListPanel extends TabListenerPanel implements PersonaCompatL
         result = constructor.newInstance(filter);
         
       } catch (Exception e) {
-        // TODO Auto-generated catch block
         e.printStackTrace();
       }
     }
