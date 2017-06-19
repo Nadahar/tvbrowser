@@ -72,6 +72,7 @@ public class ProgramList extends JList<Object> implements ChangeListener,
     ListDataListener, PluginStateListener, ProgramMouseAndContextMenuListener, 
     ProgramKeyAndContextMenuListener {
   private final static Localizer mLocalizer = Localizer.getLocalizerFor(ProgramList.class);
+  
   /** Key for separator list entry */
   public final static String DATE_SEPARATOR = "DATE_SEPARATOR";
 
@@ -851,10 +852,23 @@ public class ProgramList extends JList<Object> implements ChangeListener,
     p.y += (int)(r.height*2/3f);
     showPopup(p, mCaller);
   }
-  
+    
   @Override
   public void setSelectedIndex(int row) {
     if(getModel().getSize() > 0) {
+      int index = getSelectedIndex();
+      
+      if(index-1 == row) {
+        index = -1;
+      }
+      else {
+        index = 1;
+      }
+      
+      if(row == 0 && getSelectedIndex() == getModel().getSize()-1) {
+        index = 1;
+      }
+      
       if(row < 0) {
         row = getModel().getSize()-1;
       }
@@ -862,14 +876,8 @@ public class ProgramList extends JList<Object> implements ChangeListener,
         row = 0;
       }
       
-      int index = getSelectedIndex();
-      
-      if(row == 0 && index == getModel().getSize()-1) {
-        index = -1;
-      }
-      
       if(!(getModel().getElementAt(row) instanceof Program)) {
-        setSelectedIndex(row + row-index);
+        setSelectedIndex(row + index);
       }
       else {
         super.setSelectedIndex(row);
