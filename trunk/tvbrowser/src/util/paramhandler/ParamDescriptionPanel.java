@@ -54,7 +54,7 @@ public class ParamDescriptionPanel extends JPanel {
 
   /**
    * Constructor
-   * 
+   * @param lib The param library.
    */
   public ParamDescriptionPanel(ParamLibrary lib) {
     createGui(lib);
@@ -62,6 +62,7 @@ public class ParamDescriptionPanel extends JPanel {
 
   /**
    * Creates the GUI
+   * @param lib The param library.
    */
   private void createGui(ParamLibrary lib) {
     setLayout(new BorderLayout());

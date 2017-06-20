@@ -49,7 +49,7 @@ public class ZipUtil {
    *          compress this directory
    * @param fileFilter The filter to use for accepting files to be zipped or
    *          <code>null</code> if all files should be accepted.
-   * @throws IOException
+   * @throws IOException Thrown if an IO operation went wrong.
    */
   public void zipDirectory(File zipfile, File directory, FileFilter fileFilter) throws IOException {
     zipfile.delete();
@@ -72,7 +72,7 @@ public class ZipUtil {
    *          compress to this file
    * @param directory
    *          compress this directory
-   * @throws IOException
+   * @throws IOException Thrown if an IO operation went wrong.
    */
   public void zipDirectory(File zipfile, File directory) throws IOException {
     zipDirectory(zipfile, directory, null);

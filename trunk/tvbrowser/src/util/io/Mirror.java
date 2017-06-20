@@ -83,8 +83,8 @@ public class Mirror {
   private static byte[] mMirrorDownloadData = null;
 
   /**
-   * @param url
-   * @param weight
+   * @param url The URL.
+   * @param weight The weight.
    */
   public Mirror(String url, int weight) {
     // Escape spaces in the URL
@@ -431,7 +431,7 @@ public class Mirror {
    * @param timeout The timeout of the check in milliseconds.
    * @return The choosen mirror or <code>null</code>, if no up to date mirror was found or something went wrong.
    * @since 3.4.1 
-   * @throws TvBrowserException
+   * @throws TvBrowserException Thrown if something went wrong.
    */
   public static Mirror chooseWorkingMirror(Mirror[] mirrorArr, ProgressMonitor monitor, String name, String id, Class<?> caller, String additionalErrorMsg, int timeout) throws TvBrowserException {
     Mirror mirror = null;
@@ -477,7 +477,7 @@ public class Mirror {
    * @param caller The caller class.
    * @param additionalErrorMsg An additional error message value.
    * @return The choosen mirror or <code>null</code>, if no up to date mirror was found or something went wrong.
-   * @throws TvBrowserException
+   * @throws TvBrowserException Thrown if something went wrong.
    */
   public static Mirror chooseUpToDateMirror(Mirror[] mirrorArr, ProgressMonitor monitor, String name, String id, Class<?> caller, String additionalErrorMsg) throws TvBrowserException {
 

@@ -65,7 +65,7 @@ public class AppleScriptRunner {
    *
    * @param script Script to execute
    * @return Output if exec was successful, null if Error occurred
-   * @throws IOException
+   * @throws IOException Thrown if an IO operation went wrong.
    */
   public String executeScript(String script) throws IOException {
     mLog.info("Applescript start:");

@@ -104,9 +104,9 @@ public class StreamUtilities {
    * underlying stream is closed, even if IOExceptions occur (which are still
    * thrown further to the caller of this method)
    *
-   * @param file
-   * @param processor
-   * @throws IOException
+   * @param file The file
+   * @param processor The processor
+   * @throws IOException Thrown if an IO operation went wrong.
    * @since 3.0
    */
   public static void inputStream(final File file,
@@ -126,9 +126,9 @@ public class StreamUtilities {
    * underlying stream is closed, even if IOExceptions occur (which are still
    * thrown further to the caller of this method)
    *
-   * @param urlConnection
-   * @param processor
-   * @throws IOException
+   * @param urlConnection The url connection.
+   * @param processor The processor.
+   * @throws IOException Thrown if an IO operation went wrong.
    * @since 3.0
    */
   public static void inputStream(final URLConnection urlConnection,
@@ -148,9 +148,9 @@ public class StreamUtilities {
    * stream is closed after the method, even if IOExceptions occur (which are still
    * thrown further to the caller of this method)
    *
-   * @param inputStream
-   * @param processor
-   * @throws IOException
+   * @param inputStream The input stream.
+   * @param processor The processor.
+   * @throws IOException Thrown if an IO operation went wrong.
    * @since 3.0
    */
   public static void inputStream(final InputStream inputStream,
@@ -170,8 +170,8 @@ public class StreamUtilities {
    * the underlying stream is closed, even if IOExceptions occur (which are not
    * thrown)
    *
-   * @param fileName
-   * @param processor
+   * @param fileName The file name.
+   * @param processor The processor.
    * @since 3.0
    */
   public static void inputStreamIgnoringExceptions(final String fileName,
@@ -200,8 +200,8 @@ public class StreamUtilities {
    * thrown further to the caller of this method)
    *
    * @param url URL to open
-   * @param processor
-   * @throws IOException
+   * @param processor The processor.
+   * @throws IOException Thrown if an IO operation went wrong.
    * @since 3.0
    */
   public static void inputStream(final URL url,
@@ -452,9 +452,9 @@ public class StreamUtilities {
    * underlying stream is closed, even if IOExceptions occur (which are still
    * thrown further to the caller of this method)
    *
-   * @param file
-   * @param processor
-   * @throws IOException
+   * @param file The file.
+   * @param processor The processor.
+   * @throws IOException Thrown if an IO operation went wrong.
    * @since 3.0
    */
   public static void objectInputStream(final File file,
@@ -467,9 +467,10 @@ public class StreamUtilities {
    * underlying stream is closed, even if IOExceptions occur (which are still
    * thrown further to the caller of this method)
    *
-   * @param file
-   * @param processor
-   * @throws IOException
+   * @param file The file.
+   * @param processor The processor.
+   * @param bufferSize The buffer size.
+   * @throws IOException Thrown if an IO operation went wrong.
    * @since 3.0
    */
   public static void objectInputStream(final File file, final int bufferSize,

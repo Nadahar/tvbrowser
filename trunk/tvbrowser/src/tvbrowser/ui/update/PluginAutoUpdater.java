@@ -75,7 +75,7 @@ public class PluginAutoUpdater {
   /**
    * Gets the the update items for plugins on TV-Browser version change.
    * @return The update items.
-   * @throws IOException
+   * @throws IOException Thrown if an IO operation went wrong.
    */
   public static SoftwareUpdateItem[] getUpdateItemsForVersionChange() throws IOException {
     final String baseUrl = getPluginUpdatesMirror().getUrl();
@@ -91,7 +91,7 @@ public class PluginAutoUpdater {
   /**
    * Gets the the data services on first TV-Browser start.
    * @return The data services.
-   * @throws IOException
+   * @throws IOException Thrown if an IO operation went wrong.
    */
   public static SoftwareUpdateItem[] getDataServicesForFirstStartup() throws IOException {
     Mirror mirr = getPluginUpdatesMirror();

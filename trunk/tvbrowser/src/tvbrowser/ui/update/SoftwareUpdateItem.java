@@ -335,7 +335,7 @@ public abstract class SoftwareUpdateItem {
 	 *
 	 * @return <code>True</code> if the download was successfull,
    *         <code>false</code> otherwise.
-	 * @throws TvBrowserException
+	 * @throws TvBrowserException Thrown if something went wrong.
 	 */
 	public boolean download(String downloadUrl) throws TvBrowserException {
     String url = getProperty(DOWNLOAD_TYPE_KEY) == null

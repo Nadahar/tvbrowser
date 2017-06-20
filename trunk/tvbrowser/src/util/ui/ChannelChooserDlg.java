@@ -70,7 +70,7 @@ public class ChannelChooserDlg extends JDialog implements WindowClosingIf {
 
   /**
    * 
-   * @param parent
+   * @param parent The parent window.
    * @param channelArr
    *          The initially selected channels
    * @param description
@@ -86,7 +86,7 @@ public class ChannelChooserDlg extends JDialog implements WindowClosingIf {
 
   /**
    * 
-   * @param parent
+   * @param parent The parent window.
    * @param channelArr
    *          The initially selected channels
    * @param description

@@ -182,7 +182,7 @@ public class TextLineBreakerStringWidth {
    * @param textReader Text to separate
    * @param width Max-Width of each Line
    * @return Text split in separate Lines
-   * @throws IOException
+   * @throws IOException Thrown if an IO operation went wrong.
    */
   public String[] breakLines(Reader textReader, int width) throws IOException {
     return breakLines(textReader, width, Integer.MAX_VALUE);
@@ -194,7 +194,7 @@ public class TextLineBreakerStringWidth {
    * @param width Max-Width of each Line
    * @param maxLines Max. amount of Lines
    * @return Text split in separate Lines
-   * @throws IOException
+   * @throws IOException Thrown if an IO operation went wrong.
    */
   public String[] breakLines(Reader textReader, int width,
     int maxLines)

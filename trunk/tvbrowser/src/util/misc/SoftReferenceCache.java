@@ -32,6 +32,7 @@ public class SoftReferenceCache<T,K> {
   /**
    * Get the value from the Cache
    * @param key get value for this key
+   * @return The referenced Object.
    */
   public K get(T key) {
     cleanUp();

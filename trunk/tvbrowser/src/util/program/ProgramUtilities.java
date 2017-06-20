@@ -543,7 +543,7 @@ public class ProgramUtilities {
   /**
    * extract a list of person names out of the given string
    *
-   * @param field
+   * @param field The field.
    * @return list of person names
    */
   public static String[] splitPersons(final String field) {
@@ -576,7 +576,7 @@ public class ProgramUtilities {
   /**
    * get the age limit for a given textual rating
    *
-   * @param rating
+   * @param rating The rating.
    * @return age limit or -1
    * @since 3.0
    */

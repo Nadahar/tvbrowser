@@ -102,7 +102,7 @@ public final class WindowSetting {
    * Saves the values in the given stream.
    *
    * @param out The stream to save the values in.
-   * @throws IOException
+   * @throws IOException Thrown if an IO operation went wrong.
    */
   public void saveSettings(ObjectOutputStream out) throws IOException {
     out.writeInt(2); // write version

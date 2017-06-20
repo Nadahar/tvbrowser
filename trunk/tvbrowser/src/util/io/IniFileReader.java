@@ -53,7 +53,7 @@ public class IniFileReader {
    * Loads the Ini-File
    *
    * @param iniFile File to load
-   * @throws IOException
+   * @throws IOException Thrown if an IO operation went wrong.
    */
   public IniFileReader(File iniFile) throws IOException{
     readIni(new BufferedInputStream(new FileInputStream(iniFile)));
@@ -63,7 +63,7 @@ public class IniFileReader {
    * Loads the Ini from a InputStream
    *
    * @param stream Stream with Ini-File
-   * @throws IOException
+   * @throws IOException Thrown if an IO operation went wrong.
    */
   public IniFileReader(InputStream stream) throws IOException {
     readIni(stream);
