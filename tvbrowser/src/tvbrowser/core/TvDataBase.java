@@ -316,28 +316,6 @@ public class TvDataBase {
       return null;
     }
   }
-
-  /**
-   * Checks all TV-Data for missing length.
-   *
-   * @param days The number of days to recalculate
-   * @param progressMonitor display status of the recalculation
-   */
- /* public synchronized void reCalculateTvData(int days, ProgressMonitor progressMonitor) {
-    Channel[] channels = ChannelList.getSubscribedChannels();
-
-    progressMonitor.setMaximum(channels.length + 1);
-
-    int value = 0;
-    Date currentDate = Date.getCurrentDate();
-    for (Channel channel : channels) {
-      progressMonitor.setValue(value++);
-      for (int i = -1; i < days; i++) {
-        correctDayProgramFile(currentDate.addDays(i), channel);
-      }
-    }
-    mNewDayProgramsAfterUpdate.clear();
-  }*/
   
   public synchronized void reCalculateTvData(Channel channel, Date date) {
     correctDayProgramFile(date, channel);

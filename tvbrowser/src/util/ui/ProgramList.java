@@ -443,7 +443,7 @@ public class ProgramList extends JList<Object> implements ChangeListener,
    * Adds date separators to this list.
    * This needs to be called every time the list elements are changed.
    * <p>
-   * @throws TvBrowserException Thrown if used ListModel is not {@link #javax.swing.DefaultListModel} or a child class of it.
+   * @throws TvBrowserException Thrown if used ListModel is not {@link javax.swing.DefaultListModel} or a child class of it.
    * @since 3.2.2
    */
   public void addDateSeparators() throws TvBrowserException {

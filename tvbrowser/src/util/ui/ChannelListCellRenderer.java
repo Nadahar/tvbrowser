@@ -139,7 +139,7 @@ public class ChannelListCellRenderer extends DefaultListCellRenderer {
    *          show Country Information if channel name is a duplicate?
    * @param channels 
    * @param showJointChannelInfo Show the joint channel name and icon if there is joint channel.
-   * @param showChannelBackgroundColor If the background color of a channel should be painted. 
+   * @param paintChannelBackgroundColor If the background color of a channel should be painted. 
    *          
    * @since 3.4.5
    */

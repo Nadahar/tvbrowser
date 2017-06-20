@@ -196,7 +196,7 @@ public interface PluginManager {
    * @param program The program to pass to the single left click context menu function.
    *
    * @since 2.7
-   * @deprecated since 3.3.1 Use {@link #ProgramMouseEventHandler} and/or {@link #ProgramKeyEventHandler} instead.
+   * @deprecated since 3.3.1 Use {@link util.programmouseevent#ProgramMouseEventHandler} and/or {@link util.programkeyevent#ProgramKeyEventHandler} instead.
    */
   public void handleProgramSingleClick(Program program);
 
@@ -211,7 +211,7 @@ public interface PluginManager {
    *        to be activated twice
    *
    * @since 2.7
-   * @deprecated since 3.3.1 Use {@link #ProgramMouseEventHandler} and/or {@link #ProgramKeyEventHandler} instead.
+   * @deprecated since 3.3.1 Use {@link util.programmouseevent#ProgramMouseEventHandler} and/or {@link util.programkeyevent#ProgramKeyEventHandler} instead.
    */
   public void handleProgramSingleClick(Program program, ContextMenuIf caller);
   
@@ -225,7 +225,7 @@ public interface PluginManager {
    *        to be activated twice
    *
    * @since 3.0
-   * @deprecated since 3.3.1 Use {@link #ProgramMouseEventHandler} and/or {@link #ProgramKeyEventHandler} instead.
+   * @deprecated since 3.3.1 Use {@link util.programmouseevent#ProgramMouseEventHandler} and/or {@link util.programkeyevent#ProgramKeyEventHandler} instead.
    */
   public void handleProgramSingleCtrlClick(Program program, ContextMenuIf caller);
   
@@ -239,7 +239,7 @@ public interface PluginManager {
    * @param program The program to pass to the default context menu plugin.
    *
    * @since 1.1
-   * @deprecated since 3.3.1 Use {@link #ProgramMouseEventHandler} and/or {@link #ProgramKeyEventHandler} instead.
+   * @deprecated since 3.3.1 Use {@link util.programmouseevent#ProgramMouseEventHandler} and/or {@link util.programkeyevent#ProgramKeyEventHandler} instead.
    */
   public void handleProgramDoubleClick(Program program);
 
@@ -254,7 +254,7 @@ public interface PluginManager {
    *        to be activated twice
    *
    * @since 1.1
-   * @deprecated since 3.3.1 Use {@link #ProgramMouseEventHandler} and/or {@link #ProgramKeyEventHandler} instead.
+   * @deprecated since 3.3.1 Use {@link util.programmouseevent#ProgramMouseEventHandler} and/or {@link util.programkeyevent#ProgramKeyEventHandler} instead.
    */
   public void handleProgramDoubleClick(Program program, ContextMenuIf caller);
 
@@ -269,7 +269,7 @@ public interface PluginManager {
    * @param program The program to pass to the middle click context menu plugin.
    *
    * @since 1.1
-   * @deprecated since 3.3.1 Use {@link #ProgramMouseEventHandler} and/or {@link #ProgramKeyEventHandler} instead.
+   * @deprecated since 3.3.1 Use {@link util.programmouseevent#ProgramMouseEventHandler} and/or {@link util.programkeyevent#ProgramKeyEventHandler} instead.
    */
   public void handleProgramMiddleClick(Program program);
 
@@ -284,7 +284,7 @@ public interface PluginManager {
    *        to be activated twice.
    *
    * @since 1.1
-   * @deprecated since 3.3.1 Use {@link #ProgramMouseEventHandler} and/or {@link #ProgramKeyEventHandler} instead.
+   * @deprecated since 3.3.1 Use {@link util.programmouseevent#ProgramMouseEventHandler} and/or {@link util.programkeyevent#ProgramKeyEventHandler} instead.
    */
   public void handleProgramMiddleClick(Program program, ContextMenuIf caller);
   
@@ -298,7 +298,7 @@ public interface PluginManager {
    * @param program The program to pass to the middle click context menu action.
    *
    * @since 3.0
-   * @deprecated since 3.3.1 Use {@link #ProgramMouseEventHandler} and/or {@link #ProgramKeyEventHandler} instead.
+   * @deprecated since 3.3.1 Use {@link util.programmouseevent#ProgramMouseEventHandler} and/or {@link util.programkeyevent#ProgramKeyEventHandler} instead.
    */
   public void handleProgramMiddleDoubleClick(Program program);
   
@@ -311,7 +311,7 @@ public interface PluginManager {
    * @param caller ContextMenuIf that calls this. Prevents the ContextMenuIf to be activated twice.
    *
    * @since 3.0
-   * @deprecated since 3.3.1 Use {@link #ProgramMouseEventHandler} and/or {@link #ProgramKeyEventHandler} instead.
+   * @deprecated since 3.3.1 Use {@link util.programmouseevent#ProgramMouseEventHandler} and/or {@link util.programkeyevent#ProgramKeyEventHandler} instead.
    */
   public void handleProgramMiddleDoubleClick(Program program, ContextMenuIf caller);
   

@@ -368,7 +368,8 @@ public class ProgramFieldType {
    * First production year has then to be added to #{@link #FIRST_PRODUCTION_YEAR}.
    *
    * @since 3.0
-   * @see {@link #FIRST_PRODUCTION_YEAR} and {@link #PRODUCTION_YEAR_TYPE}
+   * @see #FIRST_PRODUCTION_YEAR
+   * @see #PRODUCTION_YEAR_TYPE
    */
   public static final ProgramFieldType LAST_PRODUCTION_YEAR_TYPE
   = new ProgramFieldType(39, FORMAT_INT, true, "last production year",
@@ -452,7 +453,8 @@ public class ProgramFieldType {
    * Last production year has then to be added to {@link #LAST_PRODUCTION_YEAR_TYPE}.
    *
    * @since 3.4.5
-   * @see {@link #LAST_PRODUCTION_YEAR_TYPE} and {@link #PRODUCTION_YEAR_TYPE}
+   * @see #LAST_PRODUCTION_YEAR_TYPE
+   * @see #PRODUCTION_YEAR_TYPE
    */
   public static final ProgramFieldType FIRST_PRODUCTION_YEAR
   = new ProgramFieldType(48, FORMAT_INT, true, "first production year",

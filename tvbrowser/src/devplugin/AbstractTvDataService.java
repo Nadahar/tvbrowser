@@ -297,15 +297,15 @@ public abstract class AbstractTvDataService {
    * Gets the category of this plugin.
    * <p>
    * The category can be one of this values.
-   * Note: Don't use the NO_CATEGORY it's only for backward compatibility.
+   * Note: Don't use the CATEGORY_ALL it's only for backward compatibility.
    * <ul>
-   * <li>{@link #ALL_CATEGORY}</li>
-   * <li>{@link #REMOTE_CONTROL_SOFTWARE_CATEGORY}</li>
-   * <li>{@link #REMOTE_CONTROL_HARDWARE_CATEGORY}</li>
-   * <li>{@link #ADDITONAL_DATA_SERVICE_SOFTWARE_CATEGORY}</li>
-   * <li>{@link #ADDITONAL_DATA_SERVICE_HARDWARE_CATEGORY}</li>
-   * <li>{@link #RATINGS_CATEGORY}</li>
-   * <li>{@link #OTHER_CATEGORY}</li>
+   * <li>{@link Plugin#CATEGORY_ALL}</li>
+   * <li>{@link Plugin#CATEGORY_REMOTE_CONTROL_SOFTWARE}</li>
+   * <li>{@link Plugin#CATEGORY_REMOTE_CONTROL_HARDWARE}</li>
+   * <li>{@link Plugin#CATEGORY_ADDITONAL_DATA_SERVICE_SOFTWARE}</li>
+   * <li>{@link Plugin#CATEGORY_ADDITONAL_DATA_SERVICE_HARDWARE}</li>
+   * <li>{@link Plugin#CATEGORY_RATINGS}</li>
+   * <li>{@link Plugin#CATEGORY_OTHER}</li>
    * </ul>
    * <p>
    * @return The category of this plugin.
