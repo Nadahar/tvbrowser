@@ -205,6 +205,7 @@ public class ProgramTextCreator {
   *          The zoom value for the picture.
   * @param showPluginIcons
   *          If the plugin icons should be shown.
+  * @param showPersonLinks If person links should be shown.
   * @return The HTML String.
   * @since 3.0
    * @deprecated since 3.4.5 use {@link #createInfoText(Program, ExtendedHTMLDocument, Configuration)} instead.
@@ -236,6 +237,8 @@ public class ProgramTextCreator {
    *          The zoom value for the picture.
    * @param showPluginIcons
    *          If the plugin icons should be shown.
+   * @param showPersonLinks If person links should be shown.
+   * @param useThemeColors If theme colors should be used.
    * @return The HTML String.
    * @since 3.1
    * @deprecated since 3.4.5 use {@link #createInfoText(Program, ExtendedHTMLDocument, Configuration)} instead.

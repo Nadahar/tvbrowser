@@ -227,6 +227,7 @@ public class NtpMessage
 	
 	/**
 	 * Constructs a new NtpMessage from an array of bytes.
+	 * @param array An byte array.
 	 */
 	public NtpMessage(byte[] array)
 	{
@@ -277,6 +278,7 @@ public class NtpMessage
 	
 	/**
 	 * This method constructs the data bytes of a raw NTP packet.
+	 * @return Message as byte array.
 	 */
 	public byte[] toByteArray()
 	{
@@ -346,6 +348,8 @@ public class NtpMessage
 	/**
 	 * Converts an unsigned byte to a short.  By default, Java assumes that
 	 * a byte is signed.
+	 * @param b The byte.
+	 * @return unsingned byte.
 	 */
 	public static short unsignedByteToShort(byte b)
 	{
@@ -362,6 +366,9 @@ public class NtpMessage
 	 * Will read 8 bytes of a message beginning at <code>pointer</code>
 	 * and return it as a double, according to the NTP 64-bit timestamp
 	 * format.
+	 * @param array The byte array.
+	 * @param pointer The pointer
+	 * @return A double.
 	 */
 	public static double decodeTimestamp(byte[] array, int pointer)
 	{
@@ -379,6 +386,9 @@ public class NtpMessage
 	
 	/**
 	 * Encodes a timestamp in the specified position in the message
+   * @param array The byte array.
+   * @param pointer The pointer
+   * @param timestamp The timestamp.
 	 */
 	public static void encodeTimestamp(byte[] array, int pointer, double timestamp)
 	{
@@ -407,6 +417,8 @@ public class NtpMessage
 	/**
 	 * Returns a timestamp (number of seconds since 00:00 1-Jan-1900) as a
 	 * formatted date/time string.
+	 * @param timestamp The timestamp
+	 * @return A String.
 	 */
 	public static String timestampToString(double timestamp)
 	{
@@ -436,6 +448,10 @@ public class NtpMessage
 	/**
 	 * Returns a string representation of a reference identifier according
 	 * to the rules set out in RFC 2030.
+	 * @param ref Byte array.
+	 * @param stratum Short value.
+	 * @param version Version
+	 * @return A String.
 	 */
 	public static String referenceIdentifierToString(byte[] ref, short stratum, byte version)
 	{

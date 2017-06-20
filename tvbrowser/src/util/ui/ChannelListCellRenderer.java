@@ -99,7 +99,7 @@ public class ChannelListCellRenderer extends DefaultListCellRenderer {
    *          show Default Channel Name?
    * @param showCountry
    *          show Country Information if channel name is a duplicate?
-   * @param channels 
+   * @param channels The channels.
    * @since 2.6
    */
   public ChannelListCellRenderer(boolean channelIconsVisible, boolean textVisible, boolean defaultValues, boolean showCountry, Channel[] channels) {

@@ -320,7 +320,7 @@ public class MutableChannelDayProgram implements ChannelDayProgram {
   /**
    * Compare with the given dayProgram
    * 
-   * @param dayProgram
+   * @param dayProgram The day program.
    * @return <code>true</code>, if all programs of the day match (with each field)
    * @since 2.6
    */

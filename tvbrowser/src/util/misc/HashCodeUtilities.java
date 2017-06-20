@@ -26,9 +26,6 @@ public final class HashCodeUtilities {
    */
   private static final int SEED = 23;
 
-  /**
-   * booleans.
-   */
   public static int hash(int aSeed, boolean aBoolean) {
     return firstTerm(aSeed) + (aBoolean ? 1 : 0);
   }
@@ -37,9 +34,6 @@ public final class HashCodeUtilities {
     return hash(SEED, value);
   }
 
-  /**
-   * chars.
-   */
   public static int hash(int aSeed, char aChar) {
     return firstTerm(aSeed) + aChar;
   }
@@ -63,9 +57,6 @@ public final class HashCodeUtilities {
     return hash(SEED, value);
   }
 
-  /**
-   * longs.
-   */
   public static int hash(int aSeed, long aLong) {
     return firstTerm(aSeed) + (int) (aLong ^ (aLong >>> 32));
   }
@@ -73,10 +64,7 @@ public final class HashCodeUtilities {
   public static int hash(final long value) {
     return hash(SEED, value);
   }
-
-  /**
-   * floats.
-   */
+  
   public static int hash(int aSeed, float aFloat) {
     return hash(aSeed, Float.floatToIntBits(aFloat));
   }
@@ -84,10 +72,7 @@ public final class HashCodeUtilities {
   public static int hash(final float value) {
     return hash(SEED, value);
   }
-
-  /**
-   * doubles.
-   */
+  
   public static int hash(int aSeed, double aDouble) {
     return hash(aSeed, Double.doubleToLongBits(aDouble));
   }
@@ -102,6 +87,9 @@ public final class HashCodeUtilities {
    *
    * If <code>aObject</code> is an array, then each element may be a primitive
    * or a possibly-null object.
+   * @param seed The seed
+   * @param object The object
+   * @return The hash.
    */
   public static int hash(final int seed, final Object object) {
     int result = seed;

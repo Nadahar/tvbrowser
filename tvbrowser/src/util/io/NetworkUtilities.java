@@ -80,7 +80,7 @@ public class NetworkUtilities {
   /**
    * get the time difference from a NTP server
    *
-   * @param serverName
+   * @param serverName The server name
    * @return time difference in seconds
    * @since 2.6
    */

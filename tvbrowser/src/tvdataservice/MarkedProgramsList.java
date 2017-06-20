@@ -82,7 +82,7 @@ public class MarkedProgramsList {
    * @param numberOfPrograms The number of programs to show. Use a value of 0 or below for all important programs.
    * @param includeOnAirPrograms If the marked programs array should contain running programs.If the tray filter settings should be used for filtering.
    * @param useTrayFilterSettings If the tray filter settings should be used for filtering.
-   * @param excludePrograms
+   * @param excludePrograms The list with excluded programs.
    * @return The time sorted programs for the tray.
    * @deprecated since 3.3.4 use {@link MarkedProgramsMap#getTimeSortedProgramsForTray(ProgramFilter, int, int, boolean, boolean, ArrayList)} instead.
    */
