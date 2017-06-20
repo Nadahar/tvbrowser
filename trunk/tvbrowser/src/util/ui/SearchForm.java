@@ -448,7 +448,7 @@ public class SearchForm extends JPanel {
    * Sets the history. The first item of the history will automatically be
    * assigned
    *
-   * @param history
+   * @param history The history to use.
    */
   public void setHistory(SearchFormSettings[] history) {
     if (mPatternCB != null) {

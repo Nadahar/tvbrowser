@@ -64,7 +64,7 @@ public class ColorButton extends JButton implements ActionListener{
 
     /**
      * Creates the Button with a certain color
-     * @param color
+     * @param color The color to use.
      */
     public ColorButton(Color color) {
         super();
@@ -125,7 +125,7 @@ public class ColorButton extends JButton implements ActionListener{
     }
     
     /**
-     * Returns the current selected Color
+     * @return The current selected Color
      */
     public Color getColor() {
         return mColor;

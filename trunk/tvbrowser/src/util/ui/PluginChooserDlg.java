@@ -75,7 +75,7 @@ public class PluginChooserDlg extends JDialog implements WindowClosingIf {
 
   /**
    *
-   * @param parent
+   * @param parent The parent window.
    * @param pluginArr
    *          The initially selected ProgramReceiveIfs.
    * @param description
@@ -93,7 +93,7 @@ public class PluginChooserDlg extends JDialog implements WindowClosingIf {
 
   /**
    *
-   * @param parent
+   * @param parent The parent window
    * @param pluginArr
    *          The initially selected ProgramReceiveIfs.
    * @param description
@@ -109,7 +109,7 @@ public class PluginChooserDlg extends JDialog implements WindowClosingIf {
 
   /**
    *
-   * @param parent
+   * @param parent The parent window
    * @param pluginArr
    *          The initially selected ProgramReceiveIfs.
    * @param description

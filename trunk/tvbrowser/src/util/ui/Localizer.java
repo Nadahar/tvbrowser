@@ -637,7 +637,7 @@ public class Localizer {
 
   /**
    * check if a given message key exists
-   * @param key
+   * @param key The key
    * @return true if the given key exists
    * @since 3.0
    */
@@ -651,7 +651,7 @@ public class Localizer {
 
   /**
    * return the given String with an ellipsis appended
-   * @param someString
+   * @param someString The string.
    * @return ellipsis appended String or <code>null</code>
    * @since 3.0
    */

@@ -349,7 +349,7 @@ public final class Persona {
   
   /**
    * Update the persona 
-   * @param id
+   * @param id The id.
    */
   public void updatePersona(String id) {
     if(id != null) {

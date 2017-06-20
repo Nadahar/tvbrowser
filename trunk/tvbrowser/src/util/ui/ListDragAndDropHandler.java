@@ -64,6 +64,8 @@ public class ListDragAndDropHandler implements DropTargetListener,
    * @param list1 The first list.
    * @param list2 The second list (can be the same like the first).
    * @param action The Interface for the drop action.
+   * @param acceptStringFlavourList1 If Strings should be dropable for list 1.
+   * @param acceptStringFlavourList2 If Strings should be dropable for list 2.
    * @since 3.4.4
    */
   public ListDragAndDropHandler(JList list1, JList list2, ListDropAction action, boolean acceptStringFlavourList1, boolean acceptStringFlavourList2) {

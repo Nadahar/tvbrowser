@@ -383,7 +383,7 @@ public class OrderChooser<E> extends JPanel implements ListDropAction<Selectable
   /**
    * Add a value to the end of the list.
    * 
-   * @param value
+   * @param value The value to add.
    * @since 2.5.1
    */
   public void addElement(E value) {

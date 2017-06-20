@@ -117,7 +117,7 @@ public class FontChooserPanel extends JPanel {
   /**
    * create a font chooser with style selection
    * @param title title or <code>null</code>
-   * @param font
+   * @param font The font.
    */
   public FontChooserPanel(String title, Font font) {
     this(title, font, true);
@@ -126,7 +126,7 @@ public class FontChooserPanel extends JPanel {
   /**
    * Creates a Font-Chooser without Title-Bar, but with style selection
    *
-   * @param font
+   * @param font The font.
    * @since 2.2
    */
   public FontChooserPanel(Font font) {
@@ -135,7 +135,7 @@ public class FontChooserPanel extends JPanel {
 
   /**
    * create a font chooser without title bar
-   * @param font
+   * @param font The font.
    * @param enableStyleSelection show style selection or not
    * @since 3.0
    */

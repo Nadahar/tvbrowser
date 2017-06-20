@@ -493,7 +493,7 @@ public abstract class AbstractXmlTvDataHandler extends DefaultHandler {
   /**
    * Adds a binary field to the current program
    * @param fieldType The field type.
-   * @param The byte array.
+   * @param value The byte array.
    */
   protected abstract void addField(final ProgramFieldType fieldType, final byte[] value);
 

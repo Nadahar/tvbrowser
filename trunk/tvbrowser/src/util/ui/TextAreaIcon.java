@@ -58,6 +58,10 @@ public class TextAreaIcon implements Icon {
 
   /**
    * Creates a TextAreaIcon with the specified text, font and width.
+   * @param text The text.
+   * @param font The font.
+   * @param width The width.
+   * @param lineSpace The line space.
    */
   public TextAreaIcon(String text, Font font, int width, int lineSpace) {
     if (width <= 0) {
@@ -71,6 +75,9 @@ public class TextAreaIcon implements Icon {
 
   /**
    * Creates a TextAreaIcon with the specified text, font and width.
+   * @param text The text.
+   * @param font The font.
+   * @param width The width.
    */
   public TextAreaIcon(String text, Font font, int width) {
     this(text, font, width, 0);
@@ -124,7 +131,7 @@ public class TextAreaIcon implements Icon {
   /**
    * Set the Text of this Icon
    * @param textReader Text in this Icon
-   * @throws IOException
+   * @throws IOException Thrown if an IO operation went wrong.
    */
   public void setText(Reader textReader) throws IOException {
     if (textReader == null) {

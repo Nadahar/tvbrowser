@@ -304,6 +304,7 @@ public class ProgramPanel extends JComponent implements ChangeListener, PluginSt
    * Reloads the font settings and sets a dynamic font size
    * @param newOffset increase or decrease compared to standard font size
    * @since 2.6
+   * @return <code>true</code> if fonts were update, <code>false</code> if not.
    */
   public static boolean updateFonts(int newOffset) {
     Font oldTitleFont = mTitleFont;
@@ -423,7 +424,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
   /**
    * Sets the height of this panel
    *
-   * @param height
+   * @param height The height to use.
    */
   public void setHeight(int height) {
     if (mHeight != height) {
@@ -1254,8 +1255,8 @@ private static Font getDynamicFontSize(Font font, int offset) {
   /**
    * get the tooltip text for the local mouse coordinates x and y
    *
-   * @param x
-   * @param y
+   * @param x The x position.
+   * @param y The y position.
    * @return tooltip text or null, if there is nothing "special" at the coordinates
    */
   public String getToolTipText(int x, int y) {

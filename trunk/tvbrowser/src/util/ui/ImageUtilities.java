@@ -63,9 +63,11 @@ public class ImageUtilities {
   }
 
   /**
-   * Returns the image in the specified file.
+   * @return the image in the specified file.
    * <p>
    * If the file does not exist null is returned.
+   * @param fileName The file name.
+   * @param waitUntilLoaded <code>true</code> if waiting until loaded, <code>false</code> if not.
    */
   public static Image createImage(String fileName, boolean waitUntilLoaded) {
     if (! new File(fileName).exists()) {
@@ -81,11 +83,12 @@ public class ImageUtilities {
   }
   
   /**
-   * Returns the image in the specified file.
+   * @return the image in the specified file.
    * <p>
    * If the file does not exist <code>null</code> is returned.
    * </p>
    * <p>Do NOT use this method for images used with ImageIcons! Always use {@link #createImageAsynchronous(String)} with ImageIcons!</p>
+   * @param fileName The file name.
    */
   public static Image createImage(String fileName) {
     return createImage(fileName, true);
@@ -105,6 +108,7 @@ public class ImageUtilities {
    *
    * @param fileName Der Name der ImageIcon-Datei.
    * @param srcClass Eine Klasse, aus deren Jar-File das ImageIcon geladen werden soll.
+   * @return The loaded image icon.
    */
   public static ImageIcon createImageIconFromJar(String fileName, Class<?> srcClass) {
     Image img = createImageFromJar(fileName, srcClass);
@@ -128,6 +132,7 @@ public class ImageUtilities {
    *
    * @param fileName Der Name der Image-Datei.
    * @param srcClass Eine Klasse, aus deren Jar-File das Image geladen werden soll.
+   * @return The loaded image.
    */
   public static Image createImageFromJar(String fileName, Class<?> srcClass) {
     Image image = null;
@@ -162,8 +167,8 @@ public class ImageUtilities {
    * </p>
    * <p>You should not use this method when creating an ImageIcon. ImageIcons already use a MediaTracker internally.</p>
    *
-   * @param image
-   * @param comp
+   * @param image The image.
+   * @param comp The component.
    */
   public static void waitForImageData(Image image, Component comp) {
     if (comp == null) {

@@ -297,6 +297,7 @@ public class HelpDialog implements ActionListener, HyperlinkListener {
    * vorhanden, so wird null zurückgegeben.
    *
    * @param dateiname Der Dateiname.
+   * @return A String.
    */
   protected static String extractPath(String dateiname) {
     int lastSlashPos = Math.max(dateiname.lastIndexOf('/'), dateiname.lastIndexOf('\\'));
