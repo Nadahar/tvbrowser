@@ -1127,21 +1127,24 @@ public class ProgramTextCreator {
               text = text.replaceAll(",\\s*,", ",");
               continue;
             }
+            
             // a name shall not have more name parts
             if (persons[i].trim().split(" ").length <= 3) {
-              String link;
-              if (persons[i].contains("(")) {
-                int index = persons[i].indexOf('(');
-                String topic = persons[i].substring(0, index).trim();
-                link = addSearchLink(topic,foreground) + " " + persons[i].substring(index).trim();
+              String person = persons[i].replace("\t", " ");
+              
+              String link = null;
+              if (person.contains("(")) {
+                int index = person.indexOf('(');
+                String topic = person.substring(0, index).trim();
+                link = addSearchLink(topic,foreground) + " " + person.substring(index).trim();
+              }
+              if (person.contains(":")) {
+                int index = person.indexOf(':')+1;
+                String label = person.substring(0, index).trim();
+                link = label + " " + addSearchLink(person.substring(index).trim(),foreground);
               } 
-              if (persons[i].contains(":")) {
-                int index = persons[i].indexOf(':')+1;
-                String label = persons[i].substring(0, index).trim();
-                link = label + " " + addSearchLink(persons[i].substring(index).trim(),foreground);
-              } 
-              else {
-                link = addSearchLink(persons[i],foreground);
+              else if(link == null) {
+                link = addSearchLink(person,foreground);
               }
               text = text.replace(persons[i], link);
             }
