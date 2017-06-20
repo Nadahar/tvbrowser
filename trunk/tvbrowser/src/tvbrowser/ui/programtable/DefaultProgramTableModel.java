@@ -86,6 +86,9 @@ public class DefaultProgramTableModel implements ProgramTableModel, ChangeListen
 
   /**
    * Creates a new instance of DefaultProgramTableModel.
+   * @param channelArr The array with the channels to show.
+   * @param todayEarliestTime The start of the day.
+   * @param tomorrowLatestTime THe end of the day.
    */
   public DefaultProgramTableModel(Channel[] channelArr,
     int todayEarliestTime, int tomorrowLatestTime)

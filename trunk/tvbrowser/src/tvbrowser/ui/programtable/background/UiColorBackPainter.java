@@ -41,14 +41,15 @@ import util.ui.ProgramPanel;
  * @author René Mach
  */
 public class UiColorBackPainter extends AbstractBackPainter {
-
   /**
    * Paints the background.
    * 
-   * @param grp
-   * @param columnWidth
-   * @param tableHeight
-   * @param clipBounds
+   * @param grp The graphics.
+   * @param columnWidth The columm width.
+   * @param tableHeight The table height.
+   * @param clipBounds The clip bound for painting.
+   * @param minCol The minimum column
+   * @param maxCol The maximum column
    * @param layout The table's layout
    * @param model The table model
    */

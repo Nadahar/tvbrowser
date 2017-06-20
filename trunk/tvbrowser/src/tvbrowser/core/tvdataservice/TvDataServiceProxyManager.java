@@ -126,7 +126,7 @@ public class TvDataServiceProxyManager {
 
   /**
    * Changes the TvDataService working directory to the specified folder.
-   * @param dir
+   * @param dir The tv data directory to use.
    */
   public void setTvDataDir(File dir) {
     for (TvDataServiceProxy proxy : getDataServices()) {

@@ -620,6 +620,7 @@ public class ManageFavoritesPanel extends TabListenerPanel implements ListDropAc
 
   /**
    * Refresh the program list.
+   * @param scrollToFirst <code>true</code> if it should be scrolled to first index, <code>false</code> if not.
    */
   public synchronized void favoriteSelectionChanged(final boolean scrollToFirst) {
     if(mFavoritesList != null) {

@@ -74,7 +74,7 @@ public final class SoftwareUpdater {
    *
    * @param url The url to download the informations from.
    * @param baseInfos The base infos for all available plugins.
-   * @throws IOException
+   * @throws IOException Thrown if an IO operation went wrong.
    */
   public SoftwareUpdater(URL url, PluginBaseInfo[] baseInfos) throws IOException {
     BufferedReader reader = new BufferedReader(new InputStreamReader(
@@ -91,7 +91,7 @@ public final class SoftwareUpdater {
    * @param url The url to download the informations from.
    * @param dialogType The type of this update dialog.
    * @param baseInfos The base infos for all available plugins.
-   * @throws IOException
+   * @throws IOException Thrown if an IO operation went wrong.
    */
   public SoftwareUpdater(URL url, int dialogType, PluginBaseInfo[] baseInfos) throws IOException {
     File pluginsGZ = new File(Settings.getUserSettingsDirName(),"plugins.gz");
@@ -120,7 +120,7 @@ public final class SoftwareUpdater {
 	 * @param url The url to download the informations from.
 	 * @param dialogType The type of this update dialog.
 	 * @param dragNdrop If the plugin was dropped.
-	 * @throws IOException
+	 * @throws IOException Thrown if an IO operation went wrong.
 	 */
 	SoftwareUpdater(URL url, int dialogType, boolean dragNdrop) throws IOException {
 		BufferedReader reader = new BufferedReader(new InputStreamReader(

@@ -980,7 +980,7 @@ public abstract class Favorite {
    * get the program searcher used by this favorite
    *
    * @return the program searcher
-   * @throws TvBrowserException
+   * @throws TvBrowserException Thrown if something went wrong.
    * @since 3.0
    */
   public ProgramSearcher getSearcher() throws TvBrowserException {

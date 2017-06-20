@@ -202,6 +202,7 @@ public class ReminderList implements ActionListener {
    *
    * @param programs Programs to add
    * @param minutes  remind x Minutes before start
+   * @param oldMinutesValue The old value for reminding.
    */
   public void update(Program[] programs, int minutes, int oldMinutesValue) {
     for (Program program : programs) {

@@ -42,16 +42,20 @@ public interface BackgroundPainter {
 
   /**
    * Is called when the table's layout has changed.
+   * @param layout The program table layout
+   * @param model The program table model.
    */
   public void layoutChanged(ProgramTableLayout layout, ProgramTableModel model);
   
   /**
    * Paints the background.
    * 
-   * @param grp
-   * @param columnWidth
-   * @param tableHeight
-   * @param clipBounds
+   * @param grp The graphics.
+   * @param columnWidth The columm width.
+   * @param tableHeight The table height.
+   * @param clipBounds The clip bound for painting.
+   * @param minCol The minimum column
+   * @param maxCol The maximum column
    * @param layout The table's layout
    * @param model The table model
    */

@@ -50,7 +50,7 @@ public interface TvDataServiceProxy extends ContextMenuIf, ButtonActionIf, InfoI
    * This method is called by the host application to set the working folder.
    * If required, TvDataService implementations should store their data
    * within this 'dataDir' directory
-   * @param dataDir
+   * @param dataDir The data dir.
    */
   public void setWorkingDirectory(File dataDir);
 
@@ -63,7 +63,12 @@ public interface TvDataServiceProxy extends ContextMenuIf, ButtonActionIf, InfoI
   /**
    * Updates the TV listings provided by this data service.
    *
-   * @throws util.exc.TvBrowserException
+   * @param updateManager The update manager to use.
+   * @param channelArr The channels to update.
+   * @param startDate The first date to update.
+   * @param dateCount The number of days to update.
+   * @param monitor The progress monitor to use.
+   * @throws util.exc.TvBrowserException Thrown if something went wrong.
    */
   public void updateTvData(TvDataUpdateManager updateManager,
                            Channel[] channelArr, Date startDate, int dateCount, ProgressMonitor monitor)
@@ -72,12 +77,14 @@ public interface TvDataServiceProxy extends ContextMenuIf, ButtonActionIf, InfoI
   /**
    * Called by the host-application during start-up. Implement this method to
    * load your dataservices settings from the file system.
+   * @param settings The properties that contains the settings.
    */
   public void loadSettings(Properties settings);
 
   /**
    * Called by the host-application during shut-down. Implements this method to
    * store your dataservices settings to the file system.
+   * @return The properties with the settings.
    */
   public Properties storeSettings();
 
@@ -97,6 +104,7 @@ public interface TvDataServiceProxy extends ContextMenuIf, ButtonActionIf, InfoI
 
   /**
    * Gets the list of the channels that are available for the given channel group.
+   * @return The array with the available channels.
    */
   public Channel[] getAvailableChannels();
 
@@ -104,9 +112,9 @@ public interface TvDataServiceProxy extends ContextMenuIf, ButtonActionIf, InfoI
    * Some TvDataServices may need to connect to the Internet to know their
    * channels. If {@link #supportsDynamicChannelList()} returns true, this method is
    * called to check for available channels.
-   * @param monitor
+   * @param monitor The progress monitor to use
    * @return the list of available channels
-   * @throws TvBrowserException
+   * @throws TvBrowserException Thrown if something went wrong.
    */
   public Channel[] checkForAvailableChannels(ProgressMonitor monitor) throws TvBrowserException;
 

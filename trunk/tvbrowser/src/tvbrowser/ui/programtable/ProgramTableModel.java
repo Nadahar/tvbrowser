@@ -52,7 +52,7 @@ public interface ProgramTableModel {
   
   /**
    * set the active channel filter
-   * @param channelFilter
+   * @param channelFilter The channel filter to use.
    * @since 3.4.1
    */
   public void setChannelFilter(ChannelFilter channelFilter);

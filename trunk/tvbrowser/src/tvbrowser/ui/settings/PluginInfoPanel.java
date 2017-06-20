@@ -57,9 +57,7 @@ class PluginInfoPanel extends JPanel {
 
   /**
    * Creates the default instance of this panel.
-   * <p>
-   *
-   * @param showSettingsSeparator
+   * @param showSettingsSeparator <code>true</code> if settings separator should be shown, <code>false</code> if not.
    */
   public PluginInfoPanel(boolean showSettingsSeparator) {
     this(null, showSettingsSeparator);

@@ -1522,7 +1522,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
 
   /**
    * Set the active channel group
-   * @param channelFilter
+   * @param channelFilter The channel filter.
    * @since 3.4.1
    */
   public void setChannelFilter(ChannelFilter channelFilter) {
@@ -2483,7 +2483,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
   /**
    * Starts the TV listings update with the given reason shown in the dialog
    *
-   * @param numberOfDays
+   * @param numberOfDays The number of days.
    * @param reason The reason for initiating the download
    */
   synchronized public void updateTvData(final int numberOfDays, final String reason) {

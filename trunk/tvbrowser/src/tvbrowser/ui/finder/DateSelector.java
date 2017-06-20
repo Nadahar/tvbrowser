@@ -17,10 +17,14 @@ public interface DateSelector {
 
   void markNextDate();
   
-  /** @since 3.3.2 */
+  /** 
+   * @param callback A callback to call.
+   * @since 3.3.2 */
   void markPreviousDate(Runnable callback);
 
-  /** @since 3.3.2 */
+  /** 
+   * @param callback A callback to call.
+   * @since 3.3.2 */
   void markNextDate(Runnable callback);
 
   void markNextWeek();
