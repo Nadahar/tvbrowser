@@ -174,7 +174,13 @@ public class ReminderListPanel extends TabListenerPanel implements PersonaListen
       @Override
       public Program getProgramForKeyEvent(KeyEvent e) {
         int row = mTable.getSelectedRow();
-        return (Program) mTable.getModel().getValueAt(row, 0);
+        final Program p = (Program) mTable.getModel().getValueAt(row, 0);
+        
+        if(p != null && !p.equals(PluginManagerImpl.getInstance().getExampleProgram())) {
+          return p;
+        }
+        
+        return null;
       }
     }, ReminderPluginProxy.getInstance()));
     
@@ -584,9 +590,11 @@ public class ReminderListPanel extends TabListenerPanel implements PersonaListen
     if(column == 0 && mLastEditorClosing + Plugin.SINGLE_CLICK_WAITING_TIME + 50 < System.currentTimeMillis()) {
       int row = mTable.rowAtPoint(e.getPoint());
       
-      Program p = (Program) mTable.getModel().getValueAt(row, 0);
-      
-      return p;
+      final Program p = (Program) mTable.getModel().getValueAt(row, 0);
+      System.out.println(p);
+      if(p != null && !p.equals(PluginManagerImpl.getInstance().getExampleProgram())) {
+        return p;
+      }
     }
     
     return null;
@@ -607,11 +615,13 @@ public class ReminderListPanel extends TabListenerPanel implements PersonaListen
 
     mTable.changeSelection(row, 0, false, false);
 
-    Program p = (Program) mTable.getModel().getValueAt(row, 0);
+    final Program p = (Program) mTable.getModel().getValueAt(row, 0);
 
-    JPopupMenu menu = PluginManagerImpl.getInstance().createPluginContextMenu(p, ReminderPluginProxy.getInstance());
-    UiUtilities.registerForClosing(menu);
-    menu.show(mTable, point.x - 15, point.y - 15);    
+    if(p != null && !p.equals(PluginManagerImpl.getInstance().getExampleProgram())) {
+      JPopupMenu menu = PluginManagerImpl.getInstance().createPluginContextMenu(p, ReminderPluginProxy.getInstance());
+      UiUtilities.registerForClosing(menu);
+      menu.show(mTable, point.x - 15, point.y - 15);
+    }
   }
   
   public static final int SCROLL_TO_DATE_TYPE = 0;
