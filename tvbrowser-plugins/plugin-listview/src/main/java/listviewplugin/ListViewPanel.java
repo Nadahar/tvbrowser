@@ -78,10 +78,11 @@ import util.programmouseevent.ProgramMouseEventHandler;
 import util.ui.CaretPositionCorrector;
 import util.ui.ChannelLabel;
 import util.ui.Localizer;
+import util.ui.TabListenerPanel;
 import util.ui.TimeFormatter;
 import util.ui.UiUtilities;
 
-public class ListViewPanel extends JPanel implements PersonaCompatListener, ProgramMouseAndContextMenuListener {
+public class ListViewPanel extends TabListenerPanel implements PersonaCompatListener, ProgramMouseAndContextMenuListener {
   private static final Localizer mLocalizer = ListViewDialog.mLocalizer;
   
 
@@ -358,6 +359,7 @@ public class ListViewPanel extends JPanel implements PersonaCompatListener, Prog
     mProgramTable.getTableHeader().setReorderingAllowed(false);
     mProgramTable.getTableHeader().setResizingAllowed(false);
     mProgramTable.setToolTipText("");
+    setDefaultFocusOwner(mProgramTable);
     
     ProgramMouseEventHandler handler = new ProgramMouseEventHandler(this, null);
     mProgramTable.addMouseListener(handler);

@@ -73,6 +73,7 @@ import util.settings.ProgramPanelSettings;
 import util.ui.ProgramList;
 import util.ui.SendToPluginDialog;
 import util.ui.TVBrowserIcons;
+import util.ui.TabListenerPanel;
 import util.ui.UiUtilities;
 
 /**
@@ -85,7 +86,7 @@ import util.ui.UiUtilities;
  *
  * @author René Mach
  */
-public class ManagePanel extends JPanel implements PersonaCompatListener {
+public class ManagePanel extends TabListenerPanel implements PersonaCompatListener {
   private static final long serialVersionUID = 1L;
 
   private JList mMarkListsList;
@@ -135,10 +136,11 @@ public class ManagePanel extends JPanel implements PersonaCompatListener {
     mMarkListsList = new JList(mMarkListVector/*.getMarkListNames()*/);
     mMarkListsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     mMarkListsList.setCellRenderer(new MarkListCellRenderer());
-
+    
     mProgramsList = new ProgramList(mProgramListModel,new ProgramPanelSettings(new PluginPictureSettings(PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE), false, ProgramPanelSettings.X_AXIS));
     ProgramListCompat.addMouseAndKeyListeners(mProgramsList, null);
-
+    setDefaultFocusOwner(mProgramsList);
+    
     mMarkListsScrolPane = new JScrollPane(mMarkListsList);
     mProgramsScrollPane = new JScrollPane(mProgramsList);
     mMarkListsScrolPane.setBorder(null);
