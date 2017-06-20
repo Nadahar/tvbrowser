@@ -797,9 +797,12 @@ public class ProgramList extends JList<Object> implements ChangeListener,
     if (inx >= 0) {
       final Object element = ProgramList.this.getModel()
       .getElementAt(inx);
-
+      
       if(element instanceof Program) {
         return (Program) element;
+      }
+      else if (element instanceof String && getSelectedIndices().length == 1) {
+        setSelectedIndex(inx);
       }
     }
     return null;
