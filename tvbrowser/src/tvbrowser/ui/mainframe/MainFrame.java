@@ -476,6 +476,15 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
         }  
       });
     });
+    mCenterTabPane.addMouseWheelListener(e -> {
+      if(e.getWheelRotation() > 0) {
+        scrollThroughTabs(DIRECTION_RIGHT);
+      }
+      else {
+        scrollThroughTabs(DIRECTION_LEFT);
+      }
+    });
+    
     mDefaultUI = mCenterTabPane.getUI();
     mPersonaUI = new BasicTabbedPaneUI() {
       protected  void  paintText(Graphics g, int tabPlacement, Font font, FontMetrics metrics, int tabIndex, String title, Rectangle textRect, boolean isSelected) {
@@ -3574,7 +3583,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     }
   }
   
-  private void scrollThroughTabs(int direction) {System.out.println(direction);
+  private void scrollThroughTabs(int direction) {
     if(mCenterTabPane != null && mScrollPaneWrapper != null) {
       int index = mCenterTabPane.getSelectedIndex();
       
