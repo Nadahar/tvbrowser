@@ -219,6 +219,9 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
   public static final util.ui.Localizer mLocalizer = util.ui.Localizer
       .getLocalizerFor(MainFrame.class);
 
+  private static final int DIRECTION_LEFT = 1;
+  private static final int DIRECTION_RIGHT = 2;
+  
   private Node mTimebuttonsNode, mDateNode, mRootNode, mChannelNode;
 
   private Node mPluginsNode;
@@ -1198,6 +1201,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
       });
     }
     
+    
     //also used for restore view!
     //TODO: Decide if Necessary - take care about collisions of shortcuts
   /*  addKeyAction(KeyEvent.VK_0, InputEvent.CTRL_DOWN_MASK, new AbstractAction() {
@@ -1220,6 +1224,33 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
       });
     }
     
+    addKeyAction(KeyEvent.VK_MINUS, InputEvent.SHIFT_DOWN_MASK, new AbstractAction() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        scrollThroughTabs(DIRECTION_LEFT);
+      }
+    });
+
+    addKeyAction(KeyEvent.VK_SUBTRACT, InputEvent.SHIFT_DOWN_MASK, new AbstractAction() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        scrollThroughTabs(DIRECTION_LEFT);
+      }
+    });
+    
+    addKeyAction(KeyEvent.VK_PLUS, InputEvent.SHIFT_DOWN_MASK, new AbstractAction() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        scrollThroughTabs(DIRECTION_RIGHT);
+      }
+    });
+
+    addKeyAction(KeyEvent.VK_ADD, InputEvent.SHIFT_DOWN_MASK, new AbstractAction() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        scrollThroughTabs(DIRECTION_RIGHT);
+      }
+    });
     
     // also used for restore view!
    /* addKeyAction(KeyEvent.VK_NUMPAD0, InputEvent.CTRL_DOWN_MASK, new AbstractAction() {
@@ -3539,6 +3570,30 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
       }
       else if(mCenterTabPane.getTabCount() > 0){
         mCenterTabPane.setSelectedIndex(0);
+      }
+    }
+  }
+  
+  private void scrollThroughTabs(int direction) {System.out.println(direction);
+    if(mCenterTabPane != null && mScrollPaneWrapper != null) {
+      int index = mCenterTabPane.getSelectedIndex();
+      
+      if(direction == DIRECTION_LEFT) {
+        index--;
+        
+        if(index < 0) {
+          index = mCenterTabPane.getTabCount()-1;
+        }
+      } else if(direction == DIRECTION_RIGHT) {
+        index++;
+        
+        if(index >= mCenterTabPane.getTabCount()) {
+          index = 0;
+        }
+      }
+      
+      if(index != mCenterTabPane.getSelectedIndex()) {
+        mCenterTabPane.setSelectedIndex(index);
       }
     }
   }
