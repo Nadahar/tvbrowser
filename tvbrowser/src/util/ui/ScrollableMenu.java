@@ -299,7 +299,7 @@ public class ScrollableMenu extends JMenu {
    * @param pos an integer specifying the position at which to add the new
    *          <code>JMenuitem</code>
    * @return the new menu item
-   * @exception IllegalArgumentException if the value of <code>pos</code> < 0
+   * @exception IllegalArgumentException if the value of <code>pos</code> &lt; 0
    */
   public JMenuItem insert(JMenuItem menuItem, int pos) {
     if (pos < 0) {
@@ -317,7 +317,7 @@ public class ScrollableMenu extends JMenu {
    * @param a the <code>Action</code> object for the menu item to add
    * @param pos an integer specifying the position at which to add the new menu
    *          item
-   * @exception IllegalArgumentException if the value of <code>pos</code> < 0
+   * @exception IllegalArgumentException if the value of <code>pos</code> &lt; 0
    */
   public JMenuItem insert(Action a, int pos) {
     if (pos < 0) {
@@ -340,7 +340,7 @@ public class ScrollableMenu extends JMenu {
    * returned. This method is included for AWT compatibility.
    *
    * @param pos an integer specifying the position
-   * @exception IllegalArgumentException if the value of <code>pos</code> < 0
+   * @exception IllegalArgumentException if the value of <code>pos</code> &lt; 0
    * @return the menu item at the specified position; or <code>null</code> if
    *         the item as the specified position is not a menu item
    */
@@ -384,7 +384,7 @@ public class ScrollableMenu extends JMenu {
    * Removes the menu item at the specified index from this menu.
    *
    * @param pos the position of the item to be removed
-   * @exception IllegalArgumentException if the value of <code>pos</code> < 0,
+   * @exception IllegalArgumentException if the value of <code>pos</code> &lt; 0,
    *              or if <code>pos</code> is greater than the number of menu
    *              items
    */

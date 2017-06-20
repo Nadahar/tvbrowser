@@ -166,6 +166,9 @@ public class TvDataUpdater {
    *
    * @param daysToDownload The number of days until today to download the
    *        program for.
+   * @param services The services to use for data update.
+   * @param progressBar The progress bar to show the data update progress.
+   * @param label The label to print status message to.
    */
   public void downloadTvData(int daysToDownload, TvDataServiceProxy[] services, final JProgressBar progressBar, final JLabel label) {
     if (! TvDataServiceProxyManager.getInstance().licensesAccepted(services)) {

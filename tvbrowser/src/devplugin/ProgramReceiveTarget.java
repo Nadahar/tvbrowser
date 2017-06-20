@@ -148,8 +148,8 @@ public final class ProgramReceiveTarget implements Comparable<ProgramReceiveTarg
    * Use this to load an target previously saved with {@link #writeData(ObjectOutputStream)}.
    *
    * @param in The input stream.
-   * @throws IOException
-   * @throws ClassNotFoundException
+   * @throws IOException Thrown if an IO operation went wrong.
+   * @throws ClassNotFoundException Thrown if a class could not be found.
    */
   public ProgramReceiveTarget(ObjectInputStream in) throws IOException, ClassNotFoundException {
     in.readInt(); // version
@@ -161,8 +161,8 @@ public final class ProgramReceiveTarget implements Comparable<ProgramReceiveTarg
   /**
    * Use this to save a target.
    *
-   * @param out
-   * @throws IOException
+   * @param out The stream to write to.
+   * @throws IOException Thrown if an IO operation went wrong.
    */
   public void writeData(ObjectOutputStream out) throws IOException {
     out.writeInt(1); //version

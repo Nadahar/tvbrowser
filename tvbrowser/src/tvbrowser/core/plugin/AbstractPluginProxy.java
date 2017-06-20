@@ -33,11 +33,6 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.SwingUtilities;
 
-import tvbrowser.core.Settings;
-import tvdataservice.MutableChannelDayProgram;
-import tvdataservice.MutableProgram;
-import util.exc.ErrorHandler;
-import util.exc.TvBrowserException;
 import devplugin.ActionMenu;
 import devplugin.Channel;
 import devplugin.ChannelDayProgram;
@@ -54,6 +49,11 @@ import devplugin.ProgramInfo;
 import devplugin.ProgramReceiveIf;
 import devplugin.ProgramReceiveTarget;
 import devplugin.ToolTipIcon;
+import tvbrowser.core.Settings;
+import tvdataservice.MutableChannelDayProgram;
+import tvdataservice.MutableProgram;
+import util.exc.ErrorHandler;
+import util.exc.TvBrowserException;
 
 /**
  * An abstract implementation of a plugin proxy. Encapsulates all calls to the
@@ -154,6 +154,7 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
    * Saves the settings for this plugin.
    *
    * @param userDirectory The directory where the user data is stored.
+   * @param log If log entries should be written.
    * @throws TvBrowserException If saving failed.
    */
   final synchronized void saveSettings(File userDirectory, boolean log) throws TvBrowserException {
@@ -176,6 +177,7 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
    * Really saves the settings for this plugin.
    *
    * @param userDirectory The directory where the user data is stored.
+   * @param log If log entries should be written.
    * @throws TvBrowserException If saving failed.
    */
   protected abstract void doSaveSettings(File userDirectory, boolean log) throws TvBrowserException;
@@ -358,6 +360,7 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
   /**
    * Really gets the icon to use for marking programs in the program table.
    *
+   * @param p The program to get the mark icons for.
    * @return the icon to use for marking programs in the program table.
    */
   protected abstract Icon[] doGetMarkIcons(Program p);
@@ -767,6 +770,7 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
    * @param programArr The programs passed from the other plugin with target.
    * @param receiveTarget The target of the programs.
    * @see #canReceiveProgramsWithTarget()
+   * @return <code>true</code> If the received programs were successfully processed.
    * @since 2.5
    */
   protected abstract boolean doReceivePrograms(Program[] programArr, ProgramReceiveTarget receiveTarget);
@@ -777,7 +781,7 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
    * @param values The value array passed from the other plugin.
    * @param receiveTarget The receive target of the programs.
    * @return <code>true</code> if the value array was handled correct,
-   * </code>false</code> otherwise.
+   * <code>false</code> otherwise.
    *
    * @see #canReceiveProgramsWithTarget()
    * @since 2.7
@@ -799,7 +803,7 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
    * @param values The value array passed from the other plugin.
    * @param receiveTarget The receive target of the programs.
    * @return <code>true</code> if the value array was handled correct,
-   * </code>false</code> otherwise.
+   * <code>false</code> otherwise.
    *
    * @see #canReceiveProgramsWithTarget()
    * @since 2.7
@@ -891,7 +895,7 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
   /**
    * Returns the available plugins filter component classes.
    * <br>
-   * ATTENTON: Use return <code>(Class<? extends PluginsFilterComponent>[]) new Class[] {MyFilterComponent1.class,MyFilterComponent2.class};</code>
+   * ATTENTON: Use return <code>(Class&lt;? extends PluginsFilterComponent&gt;[]) new Class[] {MyFilterComponent1.class,MyFilterComponent2.class};</code>
    * because the creation of a class array with generic type didn't work.
    *
    * @return The available plugins filter components classes or <code>null</code> if no plugins filter components are supported.
@@ -935,7 +939,7 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
       handlePluginException(exc);
     }
 
-    return Program.MIN_MARK_PRIORITY;
+    return Program.PRIORITY_MARK_MIN;
   }
 
   /**
@@ -1055,7 +1059,7 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
       handlePluginException(exc);
     }
 
-    return new ImportanceValue((byte)1,Program.MAX_PROGRAM_IMPORTANCE);
+    return new ImportanceValue((byte)1,Program.IMPORTANCE_PROGRAM_MAX);
   }
 
   /**
@@ -1064,12 +1068,12 @@ public abstract class AbstractPluginProxy implements PluginProxy, ContextMenuIf 
    * <p>
    * The importance value can be created as a weighted total of the following values.
    * <ul>
-   * <li>{@link Program#DEFAULT_PROGRAM_IMPORTANCE},</li>
-   * <li>{@link Program#MIN_PROGRAM_IMPORTANCE},</li>
-   * <li>{@link Program#LOWER_MEDIUM_PROGRAM_IMPORTANCE},</li>
-   * <li>{@link Program#MEDIUM_PROGRAM_IMPORTANCE},</li>
-   * <li>{@link Program#HIGHER_MEDIUM_PROGRAM_IMPORTANCE} or</li>
-   * <li>{@link Program#MAX_PROGRAM_IMPORTANCE}.</li>
+   * <li>{@link Program#IMPORTANCE_PROGRAM_DEFAULT},</li>
+   * <li>{@link Program#IMPORTANCE_PROGRAM_DEFAULT},</li>
+   * <li>{@link Program#IMPORTANCE_PROGRAM_MEDIUM_LOWER},</li>
+   * <li>{@link Program#IMPORTANCE_PROGRAM_MEDIUM},</li>
+   * <li>{@link Program#IMPORTANCE_PROGRAM_MEDIUM_HIGHER} or</li>
+   * <li>{@link Program#IMPORTANCE_PROGRAM_MAX}.</li>
    * </ul>
    * <p>
    * @param p The program to get the importance value for.

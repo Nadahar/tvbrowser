@@ -60,8 +60,8 @@ public class ActionMenu {
    *
    * @see ContextMenuAction
    *
-   * @param action
-   * @param subItems
+   * @param action The action to use for this ActionMenu
+   * @param subItems The actions for the sub items of this ActionMenu
    * @deprecated since 3.0, use {@link #ActionMenu(String, Icon, ActionMenu[])} instead
    */
   public ActionMenu(Action action, ActionMenu[] subItems) {
@@ -132,8 +132,8 @@ public class ActionMenu {
 
   /**
    * Creates a menu item having sub menu items.
-   * @param action
-   * @param subItems
+   * @param action The action to use for this ActionMenu
+   * @param subItems The actions for the sub items of this ActionMenu
    * @deprecated since 3.0, use {@link #ActionMenu(String, Icon, Action[])} instead
    */
   public ActionMenu(Action action, Action[] subItems) {
@@ -148,7 +148,7 @@ public class ActionMenu {
    * Creates a menu item having sub menu items.
    * @param menuTitle title of the sub menu
    * @param menuIcon icon of the sub menu
-   * @param subItems
+   * @param subItems The actions for the sub items of this ActionMenu
    */
   public ActionMenu(final String menuTitle, final Icon menuIcon, Action[] subItems) {
     this (new ContextMenuAction(menuTitle, menuIcon), subItems);
@@ -157,7 +157,7 @@ public class ActionMenu {
   /**
    * Creates a menu item having sub menu items.
    * @param menuTitle title of the sub menu
-   * @param subItems
+   * @param subItems The actions for the sub items of this ActionMenu
    */
   public ActionMenu(final String menuTitle, Action[] subItems) {
     this (menuTitle, null, subItems);
@@ -165,7 +165,7 @@ public class ActionMenu {
 
   /**
    * Creates a menu item having sub menu items.
-   * @param action
+   * @param action The action to use for this ActionMenu.
    * @param subItems sub menu items, can be Actions or ActionMenus in mixed order
    * @deprecated since 3.0, use {@link #ActionMenu(String, Icon, Object[])} instead
    */
@@ -217,7 +217,7 @@ public class ActionMenu {
   
   /**
    * Creates a new single checkbox menu entry.
-   * @param action
+   * @param action The action to use for this ActionMenu.
    * @param isSelected state of the check box (checked/unchecked)
    */
   public ActionMenu(Action action, boolean isSelected) {
@@ -226,7 +226,7 @@ public class ActionMenu {
 
   /**
    * Creates a new single menu entry
-   * @param action
+   * @param action The action to use for this ActionMenu.
    */
   public ActionMenu(Action action) {
     this(action, false);
@@ -236,7 +236,7 @@ public class ActionMenu {
    * Creates a new single menu entry
    * 
    * @param actionId an id to identify this action menu
-   * @param action
+   * @param action The action to use for this ActionMenu.
    */
   public ActionMenu(int actionId, Action action) {
     this(action, false);

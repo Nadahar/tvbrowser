@@ -97,23 +97,23 @@ public class DefaultProgramImportanceSelectionPanel extends JPanel {
    */
   public byte getSelectedImportance() {
     switch(mProgramImportanceSelection.getSelectedIndex()) {
-      case 1: return Program.MIN_PROGRAM_IMPORTANCE;
-      case 2: return Program.LOWER_MEDIUM_PROGRAM_IMPORTANCE;
-      case 3: return Program.MEDIUM_PROGRAM_IMPORTANCE;
-      case 4: return Program.HIGHER_MEDIUM_PROGRAM_IMPORTANCE;
-      case 5: return Program.MAX_PROGRAM_IMPORTANCE;
+      case 1: return Program.IMPORTANCE_PROGRAM_MIN;
+      case 2: return Program.IMPORTANCE_PROGRAM_MEDIUM_LOWER;
+      case 3: return Program.IMPORTANCE_PROGRAM_MEDIUM;
+      case 4: return Program.IMPORTANCE_PROGRAM_MEDIUM_HIGHER;
+      case 5: return Program.IMPORTANCE_PROGRAM_MAX;
       
-      default: return Program.DEFAULT_PROGRAM_IMPORTANCE;
+      default: return Program.IMPORTANCE_PROGRAM_DEFAULT;
     }
   }
   
   private int getIndexForImportance(byte importance) {
     switch(importance) {
-    case Program.MIN_PROGRAM_IMPORTANCE: return 1;
-    case Program.LOWER_MEDIUM_PROGRAM_IMPORTANCE: return 2;
-    case Program.MEDIUM_PROGRAM_IMPORTANCE: return 3;
-    case Program.HIGHER_MEDIUM_PROGRAM_IMPORTANCE: return 4;
-    case Program.MAX_PROGRAM_IMPORTANCE: return 5;
+    case Program.IMPORTANCE_PROGRAM_MIN: return 1;
+    case Program.IMPORTANCE_PROGRAM_MEDIUM_LOWER: return 2;
+    case Program.IMPORTANCE_PROGRAM_MEDIUM: return 3;
+    case Program.IMPORTANCE_PROGRAM_MEDIUM_HIGHER: return 4;
+    case Program.IMPORTANCE_PROGRAM_MAX: return 5;
     
     default: return 0;
   }

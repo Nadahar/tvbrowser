@@ -179,23 +179,56 @@ public interface Program {
    */
   public static final int INFO_SIGN_LANGUAGE = 1 << 25;
 
-  public static final int IS_VALID_STATE = 0;
-  public static final int WAS_UPDATED_STATE = 1;
-  public static final int WAS_DELETED_STATE = 2;
+  public static final int STATE_IS_VALID = 0;
+  public static final int STATE_WAS_UPDATED = 1;
+  public static final int STATE_WAS_DELETED = 2;
 
-  public static final int NO_MARK_PRIORITY = -1;
-  public static final int MIN_MARK_PRIORITY = 0;
-  public static final int LOWER_MEDIUM_MARK_PRIORITY = 1;
-  public static final int MEDIUM_MARK_PRIORITY = 2;
-  public static final int HIGHER_MEDIUM_MARK_PRIORITY = 3;
-  public static final int MAX_MARK_PRIORITY = 4;
+  /** @deprecated since 3.4.5 use {@link #STATE_IS_VALID} instead */
+  public static final int IS_VALID_STATE = STATE_IS_VALID;
+  /** @deprecated since 3.4.5 use {@link #STATE_WAS_UPDATED} instead */
+  public static final int WAS_UPDATED_STATE = STATE_WAS_UPDATED;
+  /** @deprecated since 3.4.5 use {@link #STATE_WAS_DELETED} instead */
+  public static final int WAS_DELETED_STATE = STATE_WAS_DELETED;
+
+  public static final int PRIORITY_MARK_NONE = -1;
+  public static final int PRIORITY_MARK_MIN = 0;
+  public static final int PRIORITY_MARK_MEDIUM_LOWER = 1;
+  public static final int PRIORITY_MARK_MEDIUM = 2;
+  public static final int PRIORITY_MARK_MEDIUM_HIGHER = 3;
+  public static final int PRIORITY_MARK_MAX = 4;
   
-  public static final byte DEFAULT_PROGRAM_IMPORTANCE = -1;
-  public static final byte MIN_PROGRAM_IMPORTANCE = 1;
-  public static final byte LOWER_MEDIUM_PROGRAM_IMPORTANCE = 3;
-  public static final byte MEDIUM_PROGRAM_IMPORTANCE = 5;
-  public static final byte HIGHER_MEDIUM_PROGRAM_IMPORTANCE = 7;
-  public static final byte MAX_PROGRAM_IMPORTANCE = 10;
+  /** @deprecated since 3.4.5 use {@link #PRIORITY_MARK_NONE} instead */
+  public static final int NO_MARK_PRIORITY = PRIORITY_MARK_NONE;
+  /** @deprecated since 3.4.5 use {@link #PRIORITY_MARK_MIN} instead */
+  public static final int MIN_MARK_PRIORITY = PRIORITY_MARK_MIN;
+  /** @deprecated since 3.4.5 use {@link #PRIORITY_MARK_MEDIUM_LOWER} instead */
+  public static final int LOWER_MEDIUM_MARK_PRIORITY = PRIORITY_MARK_MEDIUM_LOWER;
+  /** @deprecated since 3.4.5 use {@link #PRIORITY_MARK_MEDIUM} instead */
+  public static final int MEDIUM_MARK_PRIORITY = PRIORITY_MARK_MEDIUM;
+  /** @deprecated since 3.4.5 use {@link #PRIORITY_MARK_MEDIUM_HIGHER} instead */
+  public static final int HIGHER_MEDIUM_MARK_PRIORITY = PRIORITY_MARK_MEDIUM_HIGHER;
+  /** @deprecated since 3.4.5 use {@link #PRIORITY_MARK_MAX} instead */
+  public static final int MAX_MARK_PRIORITY = PRIORITY_MARK_MAX;
+
+  public static final byte IMPORTANCE_PROGRAM_DEFAULT = -1;
+  public static final byte IMPORTANCE_PROGRAM_MIN = 1;
+  public static final byte IMPORTANCE_PROGRAM_MEDIUM_LOWER = 3;
+  public static final byte IMPORTANCE_PROGRAM_MEDIUM = 5;
+  public static final byte IMPORTANCE_PROGRAM_MEDIUM_HIGHER = 7;
+  public static final byte IMPORTANCE_PROGRAM_MAX = 10;
+  
+  /** @deprecated since 3.4.5 use {@link #IMPORTANCE_PROGRAM_DEFAULT} instead */
+  public static final byte DEFAULT_PROGRAM_IMPORTANCE = IMPORTANCE_PROGRAM_DEFAULT;
+  /** @deprecated since 3.4.5 use {@link #IMPORTANCE_PROGRAM_MIN} instead */
+  public static final byte MIN_PROGRAM_IMPORTANCE = IMPORTANCE_PROGRAM_MIN;
+  /** @deprecated since 3.4.5 use {@link #IMPORTANCE_PROGRAM_MEDIUM_LOWER} instead */
+  public static final byte LOWER_MEDIUM_PROGRAM_IMPORTANCE = IMPORTANCE_PROGRAM_MEDIUM_LOWER;
+  /** @deprecated since 3.4.5 use {@link #IMPORTANCE_PROGRAM_MEDIUM} instead */
+  public static final byte MEDIUM_PROGRAM_IMPORTANCE = IMPORTANCE_PROGRAM_MEDIUM;
+  /** @deprecated since 3.4.5 use {@link #IMPORTANCE_PROGRAM_MEDIUM_HIGHER} instead */
+  public static final byte HIGHER_MEDIUM_PROGRAM_IMPORTANCE = IMPORTANCE_PROGRAM_MEDIUM_HIGHER;
+  /** @deprecated since 3.4.5 use {@link #IMPORTANCE_PROGRAM_MAX} instead */
+  public static final byte MAX_PROGRAM_IMPORTANCE = IMPORTANCE_PROGRAM_MAX;
   
   /** The key for the value of an action, to put the mark priority in
    * @since 2.6 */
@@ -407,16 +440,19 @@ public interface Program {
   
   /**
    * Gets whether this program is marked as "on air".
+   * @return <code>true</code> if this program if currently on air, <code>false</code> if not.
    */
   public boolean isOnAir();
 
   /**
    * Gets all {@link Marker}s that have marked this program.
+   * @return An array with all Marker that have marked this program.
    */
   public Marker[] getMarkerArr();
 
   /**
    * Gets whether this program is expired.
+   * @return <code>true</code> if this program is expired, <code>false</code> if not.
    */
   public boolean isExpired();
   

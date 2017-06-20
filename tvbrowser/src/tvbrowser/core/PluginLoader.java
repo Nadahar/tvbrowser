@@ -184,6 +184,7 @@ public class PluginLoader {
    * Loads the plugin from the file system
    * @param pluginFile File to load
    * @param deleteable is the Plugin deleteable
+   * @return The loaded plugin or <code>null</code> if the plugin could not be loaded.
    */
   public Object loadPlugin(File pluginFile, boolean deleteable) {
     Object plugin = null;

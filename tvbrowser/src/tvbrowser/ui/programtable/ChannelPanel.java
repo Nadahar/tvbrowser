@@ -49,7 +49,7 @@ public class ChannelPanel extends JPanel {
 
   private int mColumnWidth;
   private ProgramTableChannelLabel[] mLabelArr;
-  /** Height of Panel, if an Icon is > 15, it get adjusted to it's needs */
+  /** Height of Panel, if an Icon is &gt; 15, it get adjusted to it's needs */
   private int mColumnHeight = 15;
   
   public ChannelPanel(int columnWidth, Channel[] channelArr,KeyListener keyListener) {

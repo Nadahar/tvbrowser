@@ -474,7 +474,7 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
    * <p>
    * Override this method if your plugin provides icons for the program table
    * (shown below the start time). The returned String will be shown in settings
-   * dialog (german: Aussehen->Sendungsanzeige->Plugin-Icons).
+   * dialog (german: Aussehen - Sendungsanzeige - Plugin-Icons).
    *
    * @return The description text for the program table icons or
    *         <code>null</code> if the plugin does not provide this feature.
@@ -851,7 +851,7 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
    * @param receiveTarget
    *          The receive target of the programs.
    * @return <code>true</code> if the value array was handled correct,
-   *         </code>false</code> otherwise.
+   *         <code>false</code> otherwise.
    *
    * @see #canReceiveProgramsWithTarget()
    * @since 2.7
@@ -893,7 +893,7 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
   /**
    * Returns the available plugins filter component classes.
    * <br>
-   * ATTENTON: Use return <code>(Class<? extends PluginsFilterComponent>[]) new Class[] {MyFilterComponent1.class,MyFilterComponent2.class};</code>
+   * ATTENTON: Use return <code>(Class&lt;? extends PluginsFilterComponent&gt;[]) new Class[] {MyFilterComponent1.class,MyFilterComponent2.class};</code>
    * because the creation of a class array with generic type didn't work.
    *
    * @return The available plugins filter components classes or <code>null</code> if no plugins filter components are supported.
@@ -904,16 +904,16 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
   }
 
   /**
-   * Gets the mark priority for the given program that this Plugin uses.
+   * Gets the mark priority that this Plugin uses for the given program.
    * <p>
    * The mark priority can be
    * <ul>
-   * <li>{@link Program#NO_MARK_PRIORITY},</li>
-   * <li>{@link Program#MIN_MARK_PRIORITY},</li>
-   * <li>{@link Program#LOWER_MEDIUM_MARK_PRIORITY},</li>
-   * <li>{@link Program#MEDIUM_MARK_PRIORITY},</li>
-   * <li>{@link Program#HIGHER_MEDIUM_MARK_PRIORITY} or</li>
-   * <li>{@link Program#MAX_MARK_PRIORITY}.</li>
+   * <li>{@link Program#PRIORITY_MARK_NONE},</li>
+   * <li>{@link Program#PRIORITY_MARK_MIN},</li>
+   * <li>{@link Program#PRIORITY_MARK_MEDIUM_LOWER},</li>
+   * <li>{@link Program#PRIORITY_MARK_MEDIUM},</li>
+   * <li>{@link Program#PRIORITY_MARK_MEDIUM_HIGHER} or</li>
+   * <li>{@link Program#PRIORITY_MARK_MAX}.</li>
    * </ul>
    * <p>
    *
@@ -998,7 +998,7 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
    * @since 3.0
    */
   public ImportanceValue getImportanceValueForProgram(Program p) {
-    return new ImportanceValue((byte)1,Program.DEFAULT_PROGRAM_IMPORTANCE);
+    return new ImportanceValue((byte)1,Program.IMPORTANCE_PROGRAM_DEFAULT);
   }
   
   /**
@@ -1065,6 +1065,7 @@ abstract public class Plugin implements Marker, ContextMenuIf, ProgramReceiveIf 
   
   /**
    * Is called when a TV data update is started.
+   * @param until The last date of the data update.
    * @since 3.3.3
    */
   public void handleTvDataUpdateStarted(Date until) {

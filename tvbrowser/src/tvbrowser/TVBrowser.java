@@ -1551,6 +1551,7 @@ public class TVBrowser {
    * Called when TV-Browser shuts down.
    * <p>
    * Stops the save thread and saves the settings.
+   * @param <code>true</code> if the log should be written, <code>false</code> if not.
    */
   public static void shutdown(boolean log) {
     mSaveThreadShouldStop = true;

@@ -35,8 +35,10 @@ import util.ui.ProgramPanel;
  * the column to the same height.
  * 
  * algorithm:
+ * <ul>
  * <li> find the column with the largest height (using preferred size of panels)</li>
- * <li> make all columns equally high, do this by adding the same amount of empty space
+ * <li> make all columns equally high, do this by adding the same amount of empty space</li>
+ * </ul>
  * at the end of each panel in a column
  * 
  * @author Til Schneider, www.murfman.de

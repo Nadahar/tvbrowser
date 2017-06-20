@@ -313,7 +313,7 @@ public abstract class Favorite {
           }
         }
 
-        if(newProg != null && newProg.getProgramState() == Program.IS_VALID_STATE && !newProg.isExpired()) {
+        if(newProg != null && newProg.getProgramState() == Program.STATE_IS_VALID && !newProg.isExpired()) {
           mNewPrograms.set(i,newProg);
         }
         else {
@@ -620,7 +620,7 @@ public abstract class Favorite {
          *
          * check if the new found program is a new instance
          * of the program and mark it if it is so. */
-        if(p1[inx1].getProgramState() == Program.WAS_DELETED_STATE) {
+        if(p1[inx1].getProgramState() == Program.STATE_WAS_DELETED) {
           int minutes = ReminderPlugin.getInstance().getReminderMinutesForProgram(p1[inx1]);
           markProgram(newProgList[inx2], minutes);
         }
@@ -1063,7 +1063,7 @@ public abstract class Favorite {
                 Program p = mPrograms.remove(i);
                 mNewPrograms.remove(p);
               }
-              else if(mPrograms.get(i).getProgramState() == Program.WAS_UPDATED_STATE) {
+              else if(mPrograms.get(i).getProgramState() == Program.STATE_WAS_UPDATED) {
                 Program prog = mPrograms.remove(i);
                 
                 int j = mNewPrograms.indexOf(prog);
@@ -1090,7 +1090,7 @@ public abstract class Favorite {
                 if(mBlackList.get(i).getDate().compareTo(todayMinus2) <= 0) {
                   mBlackList.remove(i);
                 }
-                else if(mBlackList.get(i).getProgramState() == Program.WAS_UPDATED_STATE) {
+                else if(mBlackList.get(i).getProgramState() == Program.STATE_WAS_UPDATED) {
                   Program prog = mBlackList.remove(i);
                   mBlackList.add(i,Plugin.getPluginManager().getProgram(prog.getDate(),prog.getID()));
                 }

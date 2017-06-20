@@ -40,6 +40,7 @@ public interface SettingsTab {
   
   /**
    * Creates the settings panel for this tab.
+   * @return The panel with the settings GUI.
    */
   public JPanel createSettingsPanel();
 
@@ -54,6 +55,7 @@ public interface SettingsTab {
    * Returns the icon of the tab-sheet.
    * <br>
    * For plugins the plugin icon is used if this method returns null.
+   * @return The icon to show for this settings tab.
    */
   public Icon getIcon();
   
@@ -62,6 +64,7 @@ public interface SettingsTab {
    * Returns the title of the tab-sheet.
    * <br>
    * For plugins the return value of this method is ignored since version 2.7
+   * @return The title to show for this settings tab.
    */
   public String getTitle();
 

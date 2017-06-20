@@ -23,7 +23,7 @@ public class WritingConversion {
   }
 
   /**
-   * Replaces non-ASCII latin derived letters with similar ASCII letters if available.<br />
+   * Replaces non-ASCII latin derived letters with similar ASCII letters if available.<br>
    * (currently supported: ISO-8859-1 to -4, ISO-8859-9, -10, ISO 8859-13 to -16, Windows-1252, MacRoman)
    * @param string The string to replace non-ASCII letters.
    * @return The string with all supported non-ASCII letters replaced.
@@ -74,7 +74,7 @@ public class WritingConversion {
   }
 
   /**
-   * Replace punctuation (!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~¿¡
+   * Replace punctuation (!"#$%&amp;'()*+,-./:;&lt;=>&gt;@[\]^_`{|}~¿¡
    * dashes and quotation marks) with a given string
    * @param string The string to replace punctuation from.
    * @param replaceString The string to replace the punctuation with
@@ -95,7 +95,7 @@ public class WritingConversion {
 
   /**
    * Reduces String to ASCII letters by removing punctuation and redundant whitespaces
-   * and replacing non-ASCII letters with similar ASCII letters if available.<br />
+   * and replacing non-ASCII letters with similar ASCII letters if available.<br>
    * (currently supported: ISO-8859-1 to -4, ISO-8859-9, -10, ISO 8859-13 to -16, Windows-1252, MacRoman)
    * @param string The string to reduce.
    * @param replaceUnsupportedChars If true, all characters that can't be replaced with

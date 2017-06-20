@@ -62,6 +62,7 @@ public class OnDemandProgram extends MutableProgram {
    *
    * @param channel The channel object of this program.
    * @param localDate The date of this program.
+   * @param onDemandFile The file to read the data from.
    */
   public OnDemandProgram(final Channel channel, final devplugin.Date localDate,
     final OnDemandDayProgramFile onDemandFile)

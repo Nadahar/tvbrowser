@@ -251,7 +251,7 @@ public class ProgramListCellRenderer extends DefaultListCellRenderer {
       mMainPanel.setEnabled(label.isEnabled());
       mMainPanel.setBorder(label.getBorder());
 
-      if ((!isSelected) && program.getMarkPriority() < Program.MIN_MARK_PRIORITY) {
+      if ((!isSelected) && program.getMarkPriority() < Program.PRIORITY_MARK_MIN) {
         if(((index & 1) == 1)) {
           mMainPanel.setBackground(program.isExpired() ? SECOND_ROW_COLOR_EXPIRED : SECOND_ROW_COLOR);
         }

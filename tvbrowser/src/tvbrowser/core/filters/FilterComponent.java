@@ -56,8 +56,8 @@ public interface FilterComponent {
    * 
    * @param in The stream to read from.
    * @param version The version of the data.
-   * @throws IOException
-   * @throws ClassNotFoundException
+   * @throws IOException Thrown if an IO operation went wrong.
+   * @throws ClassNotFoundException Thrown if a class could not be found.
    */
   public void read(ObjectInputStream in, int version) throws IOException, ClassNotFoundException;
   
@@ -65,7 +65,7 @@ public interface FilterComponent {
    * Saves the settings of a FilterComponent to an ObjectOutputStream.
    * 
    * @param out The stream to write to.
-   * @throws IOException
+   * @throws IOException Thrown if an IO operation went wrong.
    */
   public void write(ObjectOutputStream out) throws IOException;
   

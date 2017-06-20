@@ -542,7 +542,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
       // Set the new title
       mTitleIcon.setText(mTitleString);
 
-      if(mProgram.getProgramState() == Program.IS_VALID_STATE) {
+      if(mProgram.getProgramState() == Program.STATE_IS_VALID) {
         programHasChanged();
       }
     }
@@ -583,7 +583,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
         || (maxDescLines != mDescriptionIcon.getMaximumLineCount())) {
       int descHeight = 0;
       // (Re)set the description text
-      if (!mSettings.isShowingOnlyDateAndTitle() && program.getProgramState() == Program.IS_VALID_STATE && maxDescLines > 0) {
+      if (!mSettings.isShowingOnlyDateAndTitle() && program.getProgramState() == Program.STATE_IS_VALID && maxDescLines > 0) {
         mDescriptionIcon.setMaximumLineCount(maxDescLines);
         ProgramFieldType[] infoFieldArr = Settings.propProgramInfoFields
             .getProgramFieldTypeArray();
@@ -625,7 +625,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
   }
   
   private boolean showPicture(Program program, boolean dontShow) {
-    if (!mSettings.isShowingOnlyDateAndTitle() && program.getProgramState() == Program.IS_VALID_STATE
+    if (!mSettings.isShowingOnlyDateAndTitle() && program.getProgramState() == Program.STATE_IS_VALID
         && mProgram.hasFieldValue(ProgramFieldType.PICTURE_TYPE)
         && (
         mSettings.isShowingPictureEver() || !dontShow ||
@@ -652,7 +652,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
     String[] iconPluginArr = Settings.propProgramTableIconPlugins
         .getStringArray();
 
-    if (program.getProgramState() != Program.IS_VALID_STATE || (iconPluginArr == null) || (iconPluginArr.length == 0)) {
+    if (program.getProgramState() != Program.STATE_IS_VALID || (iconPluginArr == null) || (iconPluginArr.length == 0)) {
       return new Icon[0];
     } else {
       PluginProxyManager mng = PluginProxyManager.getInstance();
@@ -734,20 +734,20 @@ private static Font getDynamicFontSize(Font font, int offset) {
     // lazy update of plugin icons and layout
     if (mHasChanged) {
       mIconArr = getPluginIcons(mProgram);
-      mProgramImportance = !mSettings.isIgnoringProgramImportance() ? ProgramUtilities.getProgramImportance(mProgram) : Program.MAX_PROGRAM_IMPORTANCE;
+      mProgramImportance = !mSettings.isIgnoringProgramImportance() ? ProgramUtilities.getProgramImportance(mProgram) : Program.IMPORTANCE_PROGRAM_MAX;
       mHasChanged = false;
     }
 
     /* Prevent accidentally set program importance to take effect */
-    if(mSettings.isIgnoringProgramImportance() || mProgram.getProgramState() == Program.WAS_DELETED_STATE) {
-      mProgramImportance = Program.MAX_PROGRAM_IMPORTANCE;
+    if(mSettings.isIgnoringProgramImportance() || mProgram.getProgramState() == Program.STATE_WAS_DELETED) {
+      mProgramImportance = Program.IMPORTANCE_PROGRAM_MAX;
     }
     
     /* This is for debugging of the marking problem after an data update */
-    if(mProgram.getProgramState() == Program.WAS_DELETED_STATE) {
+    if(mProgram.getProgramState() == Program.STATE_WAS_DELETED) {
       setForeground(Color.red);
       mTextColor = Color.red;
-    } else if(mProgram.getProgramState() == Program.WAS_UPDATED_STATE) {
+    } else if(mProgram.getProgramState() == Program.STATE_WAS_UPDATED) {
       setForeground(Color.blue);
       mTextColor = Color.blue;
     }
@@ -880,7 +880,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
         grp.setColor(new Color(c.getRed(), c.getGreen(), c.getBlue(), alphaValue));
       }
 
-      if(mProgram.getMarkPriority() > Program.NO_MARK_PRIORITY) {
+      if(mProgram.getMarkPriority() > Program.PRIORITY_MARK_NONE) {
         if(Settings.propProgramPanelWithMarkingsShowingBoder.getBoolean()) {
           grp.fill3DRect(0, 0, width, height, true);
         }
@@ -960,7 +960,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
     
     mTitleIcon.paintIcon(this, grp, WIDTH_LEFT, 0);
 
-    if (!mSettings.isShowingOnlyDateAndTitle() && mProgram.getProgramState() == Program.IS_VALID_STATE) {
+    if (!mSettings.isShowingOnlyDateAndTitle() && mProgram.getProgramState() == Program.STATE_IS_VALID) {
       mPictureAreaIcon.paintIcon(this,grp, WIDTH_LEFT, mTitleIcon.getIconHeight());
 
       if (mHeight >= mPreferredHeight) {

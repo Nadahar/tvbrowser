@@ -50,10 +50,10 @@ public class ImportanceValue {
     mWeight = weight;
     mTotalImportance = totalImportance;
     
-    if(totalImportance / weight < Program.MIN_PROGRAM_IMPORTANCE ||
-        totalImportance / weight > weight * Program.MAX_PROGRAM_IMPORTANCE) {
+    if(totalImportance / weight < Program.IMPORTANCE_PROGRAM_MIN ||
+        totalImportance / weight > weight * Program.IMPORTANCE_PROGRAM_MAX) {
       weight = 0;
-      mTotalImportance = Program.DEFAULT_PROGRAM_IMPORTANCE;
+      mTotalImportance = Program.IMPORTANCE_PROGRAM_DEFAULT;
     }
   }
   

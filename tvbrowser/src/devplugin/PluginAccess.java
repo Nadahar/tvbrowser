@@ -124,7 +124,7 @@ public interface PluginAccess extends ButtonActionIf,Marker,ProgramReceiveIf,Con
   /**
    * Returns the available plugins filter component classes.
    * <br>
-   * ATTENTON: Use return <code>(Class<? extends PluginsFilterComponent>[]) new Class[] {MyFilterComponent1.class,MyFilterComponent2.class};</code>
+   * ATTENTON: Use return <code>(Class&lt;? extends PluginsFilterComponent&gt;[]) new Class[] {MyFilterComponent1.class,MyFilterComponent2.class};</code>
    * because the creation of a class array with generic type didn't work.
    * 
    * @return The available plugins filter components classes or <code>null</code> if no plugins filter components are supported.

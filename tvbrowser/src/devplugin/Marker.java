@@ -33,14 +33,42 @@ import javax.swing.Icon;
 */
 public interface Marker {
 
+  /**
+   * @return The id of this Marker.
+   */
   public String getId();
   
+  /**
+   * @return The default mark icon for this Marker
+   */
   public Icon getMarkIcon();
   
-  /** @since 2.5 */
+  /** 
+   * @param p The program to check.
+   * @return An array with icon to use for marking of the given program
+   * or <code>null</code> if this Marker doesn't sets icons for the program.
+   * @since 2.5 
+   */
   public Icon[] getMarkIcons(Program p);
   
-  /** @since 2.5.1 */
+  /** 
+   * Gets the mark priority that this Marker uses for the given program.
+   * <p>
+   * The mark priority can be
+   * <ul>
+   * <li>{@link Program#PRIORITY_MARK_NONE},</li>
+   * <li>{@link Program#PRIORITY_MARK_MIN},</li>
+   * <li>{@link Program#PRIORITY_MARK_MEDIUM_LOWER},</li>
+   * <li>{@link Program#PRIORITY_MARK_MEDIUM},</li>
+   * <li>{@link Program#PRIORITY_MARK_MEDIUM_HIGHER} or</li>
+   * <li>{@link Program#PRIORITY_MARK_MAX}.</li>
+   * </ul>
+   * <p>
+   *
+   * @param p The program to check.
+   * @return The mark priority for the given program.
+   * @since 2.5.1 
+   */
   public int getMarkPriorityForProgram(Program p);
 
 }

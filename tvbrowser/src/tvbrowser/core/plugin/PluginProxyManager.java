@@ -608,6 +608,7 @@ public class PluginProxyManager {
    * Activates a plugin.
    *
    * @param plugin The plugin to activate
+   * @param setParentFrame <code>true</code> if the parent frame should be set for the plugin, <code>false</code> if not.
    * @throws TvBrowserException If activating failed
    */
   public void activatePlugin(PluginProxy plugin, boolean setParentFrame) throws TvBrowserException {

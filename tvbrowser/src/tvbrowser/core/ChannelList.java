@@ -481,7 +481,7 @@ public class ChannelList {
   /**
    * Subscribes a channel
    *
-   * @param channel
+   * @param channel The channel to subscribe.
    */
   public static void subscribeChannel(Channel channel) {
     if(!mSubscribedChannels.contains(channel)) {
@@ -600,7 +600,7 @@ public class ChannelList {
    *          The country of the channel.
    * @param channelId
    *          The id of the channel.
-   * @param channelName 
+   * @param channelName The name of the channel
    *
    * @return The specified channel or <code>null</code> if the channel wasn't
    *         found.

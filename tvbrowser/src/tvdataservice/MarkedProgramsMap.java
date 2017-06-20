@@ -154,7 +154,7 @@ public class MarkedProgramsMap {
       }
     }
     
-    return Program.NO_MARK_PRIORITY;
+    return Program.PRIORITY_MARK_NONE;
   }
   
   boolean validateMarkingForProgram(Program p) {
@@ -343,7 +343,7 @@ public class MarkedProgramsMap {
     
     MarkedHolder(Program prog) {
       mCurrentProgramInstance = prog;
-      mMarkPriority = Program.NO_MARK_PRIORITY;
+      mMarkPriority = Program.PRIORITY_MARK_NONE;
      // mMarkerArr = MutableProgram.EMPTY_MARKER_ARR;
       mMarkerIDs = new HashSet<String>(0);
       mMarkerSet = new HashSet<Marker>(0);
@@ -397,7 +397,7 @@ public class MarkedProgramsMap {
     synchronized boolean removeMarker(Marker marker) {
       HashSet<Marker> newSet = new HashSet<Marker>();
       
-      mMarkPriority = Program.NO_MARK_PRIORITY;
+      mMarkPriority = Program.PRIORITY_MARK_NONE;
       
       for(Marker test : mMarkerSet) {
         if(test != null && !test.getId().equals(marker.getId())) {
@@ -425,7 +425,7 @@ public class MarkedProgramsMap {
       mMarkerIDs.clear();
       mMarkerSet.clear();
       
-      mMarkPriority = Program.NO_MARK_PRIORITY;
+      mMarkPriority = Program.PRIORITY_MARK_NONE;
       
       for(Marker test : marker) {
         if(test != null) {
@@ -457,7 +457,7 @@ public class MarkedProgramsMap {
     }
     
     synchronized void validateMarking() {
-      mMarkPriority = Program.NO_MARK_PRIORITY;
+      mMarkPriority = Program.PRIORITY_MARK_NONE;
 
       for(Marker mark : mMarkerSet) {
         if(mark != null) {
@@ -528,43 +528,10 @@ public class MarkedProgramsMap {
       }
 
       if(testProg == null || titleWasChangedToMuch) {
-        //programInList.setMarkerArr(MutableProgram.EMPTY_MARKER_ARR);
-        programInList.setProgramState(Program.WAS_DELETED_STATE);
+        programInList.setProgramState(Program.STATE_WAS_DELETED);
       }
       else if(testProg != programInList) {
-      /*  Marker[] testMarkerArr = testProg.getMarkerArr();
-        Marker[] currentMarkerArr = programInList.getMarkerArr();
-
-        if(testMarkerArr == MutableProgram.EMPTY_MARKER_ARR) {
-          testProg.setMarkerArr(currentMarkerArr);
-          testProg.setMarkPriority(programInList.getMarkPriority());
-        }
-        else if(currentMarkerArr != MutableProgram.EMPTY_MARKER_ARR) {
-          ArrayList<Marker> newMarkerList = new ArrayList<Marker>();
-
-          for(Marker marker : testMarkerArr) {
-            newMarkerList.add(marker);
-          }
-
-          for(Marker marker : currentMarkerArr) {
-            if(!newMarkerList.contains(marker)) {
-              newMarkerList.add(marker);
-            }
-          }
-
-          java.util.Collections.sort(newMarkerList,new Comparator<Marker>() {
-            public int compare(Marker o1, Marker o2) {
-              return o1.getId().compareTo(o2.getId());
-            }
-          });
-
-          testProg.setMarkerArr(newMarkerList.toArray(new Marker[newMarkerList.size()]));
-          testProg.setMarkPriority(Math.max(testProg.getMarkPriority(),programInList.getMarkPriority()));
-        }
-
-        programInList.setMarkerArr(MutableProgram.EMPTY_MARKER_ARR);
-        programInList.setMarkPriority(-1);*/
-        programInList.setProgramState(Program.WAS_UPDATED_STATE);
+        programInList.setProgramState(Program.STATE_WAS_UPDATED);
         return testProg;
       } else {
         return programInList;

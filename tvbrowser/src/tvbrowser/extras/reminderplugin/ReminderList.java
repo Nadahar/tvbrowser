@@ -356,9 +356,9 @@ public class ReminderList implements ActionListener {
     ArrayList<Program> removedPrograms = new ArrayList<Program>();
 
     for (ReminderListItem item : localItems) {
-      if (item.getProgram().getProgramState() == Program.WAS_DELETED_STATE) {
+      if (item.getProgram().getProgramState() == Program.STATE_WAS_DELETED) {
         removedPrograms.add(item.getProgram());
-      } else if (item.getProgram().getProgramState() == Program.WAS_UPDATED_STATE) {
+      } else if (item.getProgram().getProgramState() == Program.STATE_WAS_UPDATED) {
         Program p = item.getProgram();
         add(Plugin.getPluginManager().getProgram(p.getDate(), p.getID()),
                 item.getMinutes(), item.getReferenceCount());
