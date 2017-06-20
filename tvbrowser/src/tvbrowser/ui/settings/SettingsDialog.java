@@ -120,6 +120,8 @@ public class SettingsDialog implements WindowClosingIf {
 
   /**
    * Creates a new instance of SettingsDialog.
+   * @param parent The parent window.
+   * @param selectedTabId The tab to open.
    */
   public SettingsDialog(Window parent, String selectedTabId) {
     mInstance = this;

@@ -344,7 +344,7 @@ public class SearchField extends JPanel {
 
   /**
    * Show the Configuration-Dialog
-   * @param textField
+   * @param textField The search text field.
    */
   protected void showConfigureDialog(final SearchTextField textField) {
     final SearchForm form = new SearchForm(false, false, true);

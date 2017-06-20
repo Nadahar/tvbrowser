@@ -174,6 +174,7 @@ public class FilterTreeModel extends DefaultTreeModel {
    * @param parent
    *          The parent node to add the filter to or <code>null</code> if the
    *          root node should be used.
+   * @param tree The tree to reload to.
    * @return the newly created node for the filter
    */
   public FilterNode addFilter(ProgramFilter filter, FilterNode parent, FilterTree tree) {

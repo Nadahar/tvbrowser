@@ -552,7 +552,7 @@ public class ReminderPlugin {
    * Save the data of this plugin in the given stream.
    * <p>
    * @param out The stream to write the data in.
-   * @throws IOException
+   * @throws IOException Thrown if an IO operation went wrong.
    */
   public void writeData(ObjectOutputStream out) throws IOException {
     out.writeInt(3);
@@ -791,6 +791,7 @@ public class ReminderPlugin {
    * Add the given programs to the reminder list.
    * <p>
    * @param programArr The programs to add.
+   * @param reminderMinutes The reminder time.
    */
   public void addPrograms(Program[] programArr, int reminderMinutes) {
     mReminderList.addAndCheckBlocked(programArr, reminderMinutes);
@@ -801,6 +802,8 @@ public class ReminderPlugin {
    * Add the given programs to the reminder list.
    * <p>
    * @param programArr The programs to add.
+   * @param reminderMinutes The reminder time.
+   * @param oldMinutesValue The old reminder time.
    */
   public void updatePrograms(Program[] programArr, int reminderMinutes, int oldMinutesValue) {
     mReminderList.update(programArr, reminderMinutes, oldMinutesValue);

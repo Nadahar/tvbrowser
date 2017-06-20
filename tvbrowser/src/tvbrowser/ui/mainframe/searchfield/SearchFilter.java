@@ -60,7 +60,7 @@ public class SearchFilter implements ProgramFilter {
   /**
    * Set the Search-Settings
    * @param searchFormSettings Search-Settings
-   * @throws TvBrowserException
+   * @throws TvBrowserException Thrown if something went wrong.
    */
   public void setSearch(SearchFormSettings searchFormSettings) throws TvBrowserException {
     mSearcherForm = searchFormSettings;

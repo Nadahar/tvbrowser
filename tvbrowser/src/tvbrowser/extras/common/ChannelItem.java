@@ -74,8 +74,8 @@ public class ChannelItem {
    * <p>
    * @param in The stream to read the channel values from.
    * @param version The version of the file.
-   * @throws IOException
-   * @throws ClassNotFoundException
+   * @throws IOException Thrown if an IO operation went wrong.
+   * @throws ClassNotFoundException Thrown if a class could not be found.
    */
   public ChannelItem(ObjectInputStream in, int version) throws IOException, ClassNotFoundException {
     if(version == 1) {
@@ -137,7 +137,7 @@ public class ChannelItem {
    * Saves this channel item in an output stream.
    * <p>
    * @param out The stream to save this item in.
-   * @throws IOException
+   * @throws IOException Thrown if an IO operation went wrong.
    */
   public void saveItem(ObjectOutputStream out) throws IOException {
     out.writeUTF(mChannelDataServiceId);

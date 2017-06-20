@@ -298,7 +298,7 @@ public class ChannelLabel extends JLabel {
    * Set the minimum-Size.
    *
    * Overridden to set the Size now
-   * @param dim
+   * @param dim The dimension.
    */
   public void setMinimumSize(Dimension dim) {
     super.setMinimumSize(dim);

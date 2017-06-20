@@ -848,7 +848,7 @@ public class PluginManagerImpl implements PluginManager {
    * @param program The program to pass to the middle click context menu action.
    *
    * @since 3.0
-   * @deprecated since 3.3.1 Use {@link util.programmouseevent#ProgramMouseEventHandler} and/or {@link util.programkeyevent#ProgramKeyEventHandler} instead.
+   * @deprecated since 3.3.1 Use {@link util.programmouseevent.ProgramMouseEventHandler} and/or {@link util.programkeyevent.ProgramKeyEventHandler} instead.
    */
   public void handleProgramMiddleDoubleClick(Program program) {
     handleProgramMiddleDoubleClick(program, null);

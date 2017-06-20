@@ -90,7 +90,9 @@ public class BooleanSearcher extends AbstractSearcher {
    * immer nur ein Konstruktor gleichzeitig laufen. Fuer Synchronization ist
    * gesorgt.
    *
-   * @throws ParserException
+   * @param pattern The pattern to match against.
+   * @param caseSensitive <code>true</code> if the matching should be case sensitive, <code>false</code> if not.
+   * @throws ParserException Thrown if something went wrong.
    */
   public BooleanSearcher(String pattern, boolean caseSensitive) throws ParserException {
     Hashtable<String, Object> matcherTab = new Hashtable<String, Object>();

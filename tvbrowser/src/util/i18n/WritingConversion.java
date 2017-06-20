@@ -74,7 +74,7 @@ public class WritingConversion {
   }
 
   /**
-   * Replace punctuation (!"#$%&amp;'()*+,-./:;&lt;=>&gt;@[\]^_`{|}~¿¡
+   * Replace punctuation (!"#$%&amp;'()*+,-./:;&lt;=&gt;@[\]^_`{|}~¿¡
    * dashes and quotation marks) with a given string
    * @param string The string to replace punctuation from.
    * @param replaceString The string to replace the punctuation with

@@ -81,7 +81,8 @@ public class ProgramTableScrollPane extends JScrollPane implements ProgramTableM
   
   /**
    * Creates a new instance of ProgramTableScrollPane.
-   * 
+   * @param model The table model.
+   * @param keyListener The key listener.
    */
   public ProgramTableScrollPane(ProgramTableModel model,KeyListener keyListener) {
     setFocusable(true);

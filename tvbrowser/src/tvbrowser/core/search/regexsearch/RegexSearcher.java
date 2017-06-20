@@ -65,8 +65,8 @@ public class RegexSearcher extends AbstractSearcher {
   /**
    * Creates a new instance of RegexSearcher.
    *
-   * @param regex
-   * @param caseSensitive
+   * @param regex The regualar expression to match against.
+   * @param caseSensitive <code>true</code> if the matching should be case sensitive, <code>false</code> if not.
    * @throws TvBrowserException If there is a syntax error in the regular expression.
    */
   public RegexSearcher(String regex, boolean caseSensitive)
@@ -84,8 +84,9 @@ public class RegexSearcher extends AbstractSearcher {
   /**
    * Creates a new instance of RegexSearcher.
    *
-   * @param regex
-   * @param caseSensitive
+   * @param regex The regular expression to check against,
+   * @param caseSensitive <code>true</code> if the matching should be case sensitive, <code>false</code> if not.
+   * @param searchTerm The term to search.
    * @throws TvBrowserException If there is a syntax error in the regular expression.
    */
   public RegexSearcher(String regex, boolean caseSensitive, String searchTerm)

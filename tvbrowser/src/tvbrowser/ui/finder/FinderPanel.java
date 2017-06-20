@@ -200,8 +200,9 @@ public class FinderPanel extends AbstractDateSelector implements DateSelector, M
   /**
    * This is a non blocking method
    * 
-   * @param d
-   * @param callback
+   * @param d The date to mark.
+   * @param callback The callback to call.
+   * @param informPluginPanels <code>true</code> if plugin panels should be informed about date change, <code>false</code> if not.
    */
   public void markDate(final Date d, Runnable callback, final boolean informPluginPanels) {
 

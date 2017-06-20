@@ -64,7 +64,7 @@ public class ChannelChooserPanel extends JPanel implements ListDropAction<Object
   private ChannelFilter mChannelFilter;
   
   /**
-   * @param frame
+   * @param frame The mainframe.
    * @param keyListener The key listener for FAYT.
    */
   public ChannelChooserPanel(MainFrame frame,KeyListener keyListener) {

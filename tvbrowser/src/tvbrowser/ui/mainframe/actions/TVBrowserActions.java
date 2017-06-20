@@ -430,7 +430,7 @@ public final class TVBrowserActions {
 
   /**
    * register this action, so we can iterate over all actions later
-   * @param tvBrowserAction
+   * @param tvBrowserAction The action to register.
    */
   public static void register(final TVBrowserAction tvBrowserAction) {
     mAllActions.add(tvBrowserAction);

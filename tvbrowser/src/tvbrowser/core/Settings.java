@@ -274,7 +274,7 @@ public class Settings {
   }
 
   /**
-   * @eturn The user directory. (e.g.: ~/.tvbrowser/)
+   * @return The user directory. (e.g.: ~/.tvbrowser/)
    */
   public static String getUserDirectoryName() {
     String dir = new StringBuilder(System.getProperty("user.home")).append(

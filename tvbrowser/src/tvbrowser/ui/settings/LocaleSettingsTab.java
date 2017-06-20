@@ -115,6 +115,7 @@ public class LocaleSettingsTab implements devplugin.SettingsTab {
   
   /**
    * Creates a new instance of ProxySettingsTab.
+   * @param settingsDialog The settings dialog.
    */
   public LocaleSettingsTab(SettingsDialog settingsDialog) {
     mSettingsDialog = settingsDialog;

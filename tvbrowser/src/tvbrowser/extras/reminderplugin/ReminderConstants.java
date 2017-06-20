@@ -93,6 +93,8 @@ public final class ReminderConstants {
   /**
    * Gets the time (in seconds) after which the reminder frame closes
    * automatically.
+   * @param p The program to use.
+   * @return The auto close reminder time or 0 if no auto close time exists.
    */
   static int getAutoCloseReminderTime(Program p) {
     int autoCloseReminderTime = 0;

@@ -104,7 +104,7 @@ public abstract class AbstractDateSelector extends JPanel implements
   /**
    * Show the Popup of the FinderPanel
    * 
-   * @param e
+   * @param e The mouse event.
    */
   protected void showPopup(final MouseEvent e) {
 

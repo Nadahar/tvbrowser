@@ -125,7 +125,7 @@ public class ExcludeWizardStep extends AbstractWizardStep {
   /**
    * Creates a new Wizard Step instance to create a new exclusion
    *
-   * @param favorite
+   * @param favorite The favorite to use.
    */
   public ExcludeWizardStep(Favorite favorite) {
     init(MODE_CREATE_EXCLUSION, favorite, null, null);
@@ -134,8 +134,8 @@ public class ExcludeWizardStep extends AbstractWizardStep {
   /**
    * Creates a new Wizard Step instance to edit an existing exclusion
    *
-   * @param favorite
-   * @param exclusion
+   * @param favorite The favorite to use.
+   * @param exclusion The current exclusion.
    */
   public ExcludeWizardStep(Favorite favorite, Exclusion exclusion) {
     init(MODE_EDIT_EXCLUSION, favorite, null, exclusion);
@@ -145,8 +145,8 @@ public class ExcludeWizardStep extends AbstractWizardStep {
    * Creates a new Wizard Step instance to create a new exclusion derived from a
    * program
    *
-   * @param favorite
-   * @param prog
+   * @param favorite The favorite to use.
+   * @param prog The program to use.
    */
   public ExcludeWizardStep(Favorite favorite, Program prog) {
     init(MODE_CREATE_DERIVED_FROM_PROGRAM, favorite, prog, null);

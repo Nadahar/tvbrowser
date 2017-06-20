@@ -736,7 +736,7 @@ public class ProgramTable extends JPanel
    * get the average Y coordinate of the center of the program panels of all
    * columns where the program is running at the given time
    *
-   * @param minutesAfterMidnight
+   * @param minutesAfterMidnight The minutes after midnight.
    * @return y offset
    */
   protected int getTimeY(final int minutesAfterMidnight) {
