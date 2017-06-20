@@ -443,8 +443,8 @@ public class Channel implements Comparable<Channel> {
    * @param allowNull <code>True</code> if the method is allowed to return <code>null</code>.
    * @return The load channel or <code>null</code> if <code>allowNull</code> is <code>true</code>
    * and the channel could not be load.
-   * @throws IOException
-   * @throws ClassNotFoundException
+   * @throws IOException Thrown if an IO operation went wrong.
+   * @throws ClassNotFoundException Thrown if a class could not be found.
    */
   public static Channel readData(ObjectInputStream in, boolean allowNull)
   throws IOException, ClassNotFoundException
@@ -489,10 +489,10 @@ public class Channel implements Comparable<Channel> {
    * Method for OnDemandDayProgramFile file format version 2.
    *
    * @param in The file too read the Data from.
-   * @param allowNull
-   * @return channel
-   * @throws IOException
-   * @throws ClassNotFoundException
+   * @param allowNull <code>true</code> if channel can be <code>null</code>
+   * @return channel The channel that was read.
+   * @throws IOException Thrown if channel is null and allowNull is <code>false</code>
+   * @throws ClassNotFoundException Thrown if a class could not be found.
    *
    * @since 2.2
    */
@@ -549,7 +549,7 @@ public class Channel implements Comparable<Channel> {
    * Method for OnDemandDayProgramFile file format version 2.
    *
    * @param out The file to write the Data in.
-   * @throws IOException
+   * @throws IOException Thrown if an IO operation went wrong.
    *
    * @since 2.2
    */
@@ -564,7 +564,7 @@ public class Channel implements Comparable<Channel> {
   /**
    * Serialized this object.
    * @param out The stream to write the values of this channel to.
-   * @throws IOException
+   * @throws IOException Thrown if an IO operation went wrong.
    */
   public void writeData(ObjectOutputStream out) throws IOException {
     out.writeInt(5); // version

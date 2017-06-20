@@ -128,47 +128,47 @@ public class ProgramFieldType {
 
 
   public static final ProgramFieldType START_TIME_TYPE
-    = new ProgramFieldType(1, TIME_FORMAT, true, "start time",
+    = new ProgramFieldType(1, FORMAT_TIME, true, "start time",
                            "startTime", "Start time", 0);
 
   public static final ProgramFieldType END_TIME_TYPE
-    = new ProgramFieldType(2, TIME_FORMAT, true, "end time",
+    = new ProgramFieldType(2, FORMAT_TIME, true, "end time",
                            "endTime", "End time", 1);
 
   /**
    * title
    */
   public static final ProgramFieldType TITLE_TYPE
-    = new ProgramFieldType(3, TEXT_FORMAT, true, "title",
+    = new ProgramFieldType(3, FORMAT_TEXT, true, "title",
                            "title", "Title", 0);
 
   /**
    * original language title
    */
   public static final ProgramFieldType ORIGINAL_TITLE_TYPE
-    = new ProgramFieldType(4, TEXT_FORMAT, true, "original title",
+    = new ProgramFieldType(4, FORMAT_TEXT, true, "original title",
                            "originalTitle", "Original title", 1);
 
   /**
    * episode title
    */
   public static final ProgramFieldType EPISODE_TYPE
-    = new ProgramFieldType(5, TEXT_FORMAT, true, "episode",
+    = new ProgramFieldType(5, FORMAT_TEXT, true, "episode",
                            "episode", "Episode", 2);
 
   /**
    * original language episode title
    */
   public static final ProgramFieldType ORIGINAL_EPISODE_TYPE
-    = new ProgramFieldType(6, TEXT_FORMAT, true, "original episode",
+    = new ProgramFieldType(6, FORMAT_TEXT, true, "original episode",
                            "originalEpisode", "Original episode", 3);
 
   public static final ProgramFieldType SHORT_DESCRIPTION_TYPE
-    = new ProgramFieldType(7, TEXT_FORMAT, true, "short description",
+    = new ProgramFieldType(7, FORMAT_TEXT, true, "short description",
                            "shortDescription", "Short description", 4);
 
   public static final ProgramFieldType DESCRIPTION_TYPE
-    = new ProgramFieldType(8, TEXT_FORMAT, true, "description",
+    = new ProgramFieldType(8, FORMAT_TEXT, true, "description",
                            "description", "Description", 5);
   
   /**
@@ -179,35 +179,35 @@ public class ProgramFieldType {
    *
    */
   public static final ProgramFieldType ACTOR_LIST_TYPE
-    = new ProgramFieldType(10, TEXT_FORMAT, true, "actor list",
+    = new ProgramFieldType(10, FORMAT_TEXT, true, "actor list",
                            "actors", "Actors", 6);
 
   public static final ProgramFieldType DIRECTOR_TYPE
-    = new ProgramFieldType(11, TEXT_FORMAT, true, "director",
+    = new ProgramFieldType(11, FORMAT_TEXT, true, "director",
                            "director", "Director", 7);
 
   public static final ProgramFieldType CUSTOM_TYPE
-  = new ProgramFieldType(12, TEXT_FORMAT, true, "custom field",
+  = new ProgramFieldType(12, FORMAT_TEXT, true, "custom field",
                          "custom", "Custom information", 8);
 
   public static final ProgramFieldType INFO_TYPE
-    = new ProgramFieldType(13, INT_FORMAT, true, "info bits",
+    = new ProgramFieldType(13, FORMAT_INT, true, "info bits",
                            "formatInfo", "Format information", 2);
 
   public static final ProgramFieldType AGE_LIMIT_TYPE
-    = new ProgramFieldType(14, INT_FORMAT, true, "age limit",
+    = new ProgramFieldType(14, FORMAT_INT, true, "age limit",
                            "ageLimit", "Age limit", 3);
 
   public static final ProgramFieldType URL_TYPE
-    = new ProgramFieldType(15, TEXT_FORMAT, true, "film URL",
+    = new ProgramFieldType(15, FORMAT_TEXT, true, "film URL",
                            "filmUrl", "Website", 9);
 
   public static final ProgramFieldType GENRE_TYPE
-    = new ProgramFieldType(16, TEXT_FORMAT, true, "genre",
+    = new ProgramFieldType(16, FORMAT_TEXT, true, "genre",
                            "genre", "Genre", 10);
 
   public static final ProgramFieldType ORIGIN_TYPE
-    = new ProgramFieldType(17, TEXT_FORMAT, true, "origin",
+    = new ProgramFieldType(17, FORMAT_TEXT, true, "origin",
                            "origin", "Origin", 11);
 
   /**
@@ -215,53 +215,53 @@ public class ProgramFieldType {
    * due to commercials in between)
    */
   public static final ProgramFieldType NET_PLAYING_TIME_TYPE
-    = new ProgramFieldType(18, INT_FORMAT, true, "net playing time",
+    = new ProgramFieldType(18, FORMAT_INT, true, "net playing time",
                            "netPlayingTime", "Net playing time", 4);
 
   public static final ProgramFieldType VPS_TYPE
-    = new ProgramFieldType(19, TIME_FORMAT, true, "vps",
+    = new ProgramFieldType(19, FORMAT_TIME, true, "vps",
                            "vps", "VPS", 5);
 
   public static final ProgramFieldType SCRIPT_TYPE
-    = new ProgramFieldType(20, TEXT_FORMAT, true, "script",
+    = new ProgramFieldType(20, FORMAT_TEXT, true, "script",
                            "script", "Script", 12);
 
   /**
    * program is a repetition of this past date/time
    */
   public static final ProgramFieldType REPETITION_OF_TYPE
-    = new ProgramFieldType(21, TEXT_FORMAT, true, "repetition of",
+    = new ProgramFieldType(21, FORMAT_TEXT, true, "repetition of",
                            "repetitionOf", "Repetition of", 13);
 
   public static final ProgramFieldType MUSIC_TYPE
-    = new ProgramFieldType(22, TEXT_FORMAT, true, "music",
+    = new ProgramFieldType(22, FORMAT_TEXT, true, "music",
                            "music", "Music", 33);
 
   public static final ProgramFieldType MODERATION_TYPE
-    = new ProgramFieldType(23, TEXT_FORMAT, true, "moderation",
+    = new ProgramFieldType(23, FORMAT_TEXT, true, "moderation",
                            "moderation", "Moderation", 15);
 
   public static final ProgramFieldType PRODUCTION_YEAR_TYPE
-    = new ProgramFieldType(24, INT_FORMAT, true, "production year",
+    = new ProgramFieldType(24, FORMAT_INT, true, "production year",
                            "productionYear", "Production year", 6);
 
   /**
    * program will be repeated at this future date/time
    */
   public static final ProgramFieldType REPETITION_ON_TYPE
-      = new ProgramFieldType(25, TEXT_FORMAT, true, "repetition on",
+      = new ProgramFieldType(25, FORMAT_TEXT, true, "repetition on",
                            "repetitionOn", "Repetition on", 16);
 
   public static final ProgramFieldType PICTURE_TYPE
-      = new ProgramFieldType(26, BINARY_FORMAT, true, "picture",
+      = new ProgramFieldType(26, FORMAT_BINARY, true, "picture",
                             "picture", "Picture", 17);
 
   public static final ProgramFieldType PICTURE_COPYRIGHT_TYPE
-       = new ProgramFieldType(27, TEXT_FORMAT, true, "picture copyright",
+       = new ProgramFieldType(27, FORMAT_TEXT, true, "picture copyright",
                               "pictureCopyright", "Picture copyright", 18);
 
   public static final ProgramFieldType PICTURE_DESCRIPTION_TYPE
-       = new ProgramFieldType(28, TEXT_FORMAT, true, "picture description",
+       = new ProgramFieldType(28, FORMAT_TEXT, true, "picture description",
                               "pictureDescription", "Picture description", 19);
 
   /**
@@ -270,7 +270,7 @@ public class ProgramFieldType {
    * @since 2.6/2.2.4
    */
   public static final ProgramFieldType EPISODE_NUMBER_TYPE
-       = new ProgramFieldType(29, INT_FORMAT, true, "number of episode",
+       = new ProgramFieldType(29, FORMAT_INT, true, "number of episode",
                               "episodeNumber", "Number of Episode", 7);
 
   /**
@@ -279,7 +279,7 @@ public class ProgramFieldType {
    * @since 2.6/2.2.4
    */
   public static final ProgramFieldType EPISODE_TOTAL_NUMBER_TYPE
-       = new ProgramFieldType(30, INT_FORMAT, true, "total number of episodes",
+       = new ProgramFieldType(30, FORMAT_INT, true, "total number of episodes",
                               "episodeNumberTotal", "Total number of Episodes", 8);
 
   /**
@@ -288,7 +288,7 @@ public class ProgramFieldType {
    * @since 2.6/2.2.4
    */
   public static final ProgramFieldType SEASON_NUMBER_TYPE
-       = new ProgramFieldType(31, INT_FORMAT, true, "number of season",
+       = new ProgramFieldType(31, FORMAT_INT, true, "number of season",
                               "seasonNumber", "Number of Season", 9);
 
   /**
@@ -298,7 +298,7 @@ public class ProgramFieldType {
    * @see #PRODUCTION_COMPANY_TYPE
    */
   public static final ProgramFieldType PRODUCER_TYPE
-       = new ProgramFieldType(32, TEXT_FORMAT, true, "producer",
+       = new ProgramFieldType(32, FORMAT_TEXT, true, "producer",
                               "producer", "Producer", 20);
 
   /**
@@ -307,7 +307,7 @@ public class ProgramFieldType {
    * @since 2.6/2.2.4
    */
   public static final ProgramFieldType CAMERA_TYPE
-       = new ProgramFieldType(33, TEXT_FORMAT, true, "camera",
+       = new ProgramFieldType(33, FORMAT_TEXT, true, "camera",
                               "camera", "Camera", 21);
 
   /**
@@ -316,7 +316,7 @@ public class ProgramFieldType {
    * @since 2.6/2.2.4
    */
   public static final ProgramFieldType CUTTER_TYPE
-       = new ProgramFieldType(34, TEXT_FORMAT, true, "cutter",
+       = new ProgramFieldType(34, FORMAT_TEXT, true, "cutter",
                               "cutter", "Cutter", 22);
 
   /**
@@ -330,7 +330,7 @@ public class ProgramFieldType {
    * @since 2.6/2.2.4
    */
   public static final ProgramFieldType ADDITIONAL_PERSONS_TYPE
-       = new ProgramFieldType(35, TEXT_FORMAT, true, "additional persons",
+       = new ProgramFieldType(35, FORMAT_TEXT, true, "additional persons",
                               "additionalPersons", "additional persons", 23);
 
   /**
@@ -339,7 +339,7 @@ public class ProgramFieldType {
    * @since 2.7
    */
   public static final ProgramFieldType RATING_TYPE
-       = new ProgramFieldType(36, INT_FORMAT, true, "rating",
+       = new ProgramFieldType(36, FORMAT_INT, true, "rating",
                               "rating", "Rating", 10);
 
   /**
@@ -349,7 +349,7 @@ public class ProgramFieldType {
    * @see #PRODUCER_TYPE
    */
   public static final ProgramFieldType PRODUCTION_COMPANY_TYPE
-       = new ProgramFieldType(37, TEXT_FORMAT, true, "production company",
+       = new ProgramFieldType(37, FORMAT_TEXT, true, "production company",
                               "productionCompany", "Production company", 24);
 
   /**
@@ -360,7 +360,7 @@ public class ProgramFieldType {
    * @see #AGE_LIMIT_TYPE
    */
   public static final ProgramFieldType AGE_RATING_TYPE
-  = new ProgramFieldType(38, TEXT_FORMAT, true, "age rating",
+  = new ProgramFieldType(38, FORMAT_TEXT, true, "age rating",
                          "ageRating", "Age rating", 25);
 
   /**
@@ -382,7 +382,7 @@ public class ProgramFieldType {
    * @since 3.0
    */
   public static final ProgramFieldType ADDITIONAL_INFORMATION_TYPE
-  = new ProgramFieldType(40, TEXT_FORMAT, true, "additional information",
+  = new ProgramFieldType(40, FORMAT_TEXT, true, "additional information",
                          "additionalInformation", "Additional information", 26);
   
   /**
@@ -391,15 +391,15 @@ public class ProgramFieldType {
    * @since 3.2
    */
   public static final ProgramFieldType SERIES_TYPE
-  = new ProgramFieldType(41, TEXT_FORMAT, true, "series",
+  = new ProgramFieldType(41, FORMAT_TEXT, true, "series",
                          "series", "Series", 27);
 
   public static final ProgramFieldType PART_NUMBER_TYPE
-  = new ProgramFieldType(42, INT_FORMAT, true, "part number",
+  = new ProgramFieldType(42, FORMAT_INT, true, "part number",
                          "partNumber", "Part number", 12);
 
   public static final ProgramFieldType PART_NUMBER_TOTAL_TYPE
-  = new ProgramFieldType(43, INT_FORMAT, true, "total number of parts",
+  = new ProgramFieldType(43, FORMAT_INT, true, "total number of parts",
                          "totalPartNumber", "Total number of parts", 13);
   
   /**

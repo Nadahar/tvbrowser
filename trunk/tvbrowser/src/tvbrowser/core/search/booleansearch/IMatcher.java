@@ -32,13 +32,17 @@ package tvbrowser.core.search.booleansearch;
  */
 public interface IMatcher {
 
-  /** Testet einen String. Gibt true zurück wenn die Bedinung erfüllt ist */
+  /** Testet einen String. Gibt true zurück wenn die Bedinung erfüllt ist
+   * @param s The string to check.
+   * @return <code>true</code> if the given string matches. 
+   */
   public boolean matches(String s);
 
   /**
    * Initialisiert und optimiert den IMatcher. Da der IMatcher u.U. ausgetauscht
    * werden muss gibt die Methode einen (neuen) IMatcher zurück. Dieser ist zu
    * verwenden.
+   * @return The optimized IMatcher.
    */
   public IMatcher optimize();
 

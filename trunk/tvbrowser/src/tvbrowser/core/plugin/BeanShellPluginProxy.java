@@ -254,7 +254,7 @@ public class BeanShellPluginProxy extends AbstractPluginProxy {
     @Override
     protected int doGetMarkPriorityForProgram(Program p) {
       // TODO Automatisch erstellter Methoden-Stub
-      return Program.MIN_MARK_PRIORITY;
+      return Program.PRIORITY_MARK_MIN;
     }
 
     public String getPluginFileName() {
@@ -292,7 +292,7 @@ public class BeanShellPluginProxy extends AbstractPluginProxy {
     @Override
     protected ImportanceValue doGetImportanceValueForProgram(Program p) {
       // TODO Auto-generated method stub
-      return new ImportanceValue((byte)1,Program.DEFAULT_PROGRAM_IMPORTANCE);
+      return new ImportanceValue((byte)1,Program.IMPORTANCE_PROGRAM_DEFAULT);
     }
 
     @Override

@@ -96,7 +96,7 @@ public class ProgramMenuItemUI extends BasicMenuItemUI {
     boolean isOnAir = ProgramUtilities.isOnAir(mProgram);
     g.clearRect(0, 0, menuItem.getWidth(), menuItem.getHeight());
 
-    boolean isMarked = mProgram.getMarkPriority() > Program.NO_MARK_PRIORITY;
+    boolean isMarked = mProgram.getMarkPriority() > Program.PRIORITY_MARK_NONE;
 
     if (menuItem.isArmed()) {
       g.setColor(bgColor);

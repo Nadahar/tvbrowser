@@ -171,7 +171,7 @@ public class ReminderListItem implements Comparable<ReminderListItem> {
 
   /**
    * Gets the reminder comment of this list item.
-   * <p/>
+   * <p>
    *
    * @return The reminder comment of this list item.
    */
@@ -185,7 +185,7 @@ public class ReminderListItem implements Comparable<ReminderListItem> {
 
   /**
    * Sets the comment of this list item.
-   * <p/>
+   * <p>
    *
    * @param comment The comment of this list item.
    */

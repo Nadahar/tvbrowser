@@ -192,7 +192,7 @@ public final class DefaultMarkingPrioritySelectionPanel extends JPanel {
 
   /**
    * the arrays for label and priority must have the same length. the index of
-   * both arrays must be in the range of an integer. both indexes must be > 0.
+   * both arrays must be in the range of an integer. both indexes must be &gt; 0.
    *
    * @param priority which priority is selected in the dropdowns. must not be null.
    * @param label the labels for the dropdowns. must not be null.

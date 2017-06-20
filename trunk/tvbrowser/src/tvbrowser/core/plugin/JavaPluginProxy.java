@@ -653,7 +653,7 @@ public class JavaPluginProxy extends AbstractPluginProxy {
     UserFilter filter = GenericFilterMap.getInstance().getGenericPluginFilter(this, true);
     
     if(p != null && (accessControl(p.getChannel()) || (filter != null && !filter.accept(p)))) {
-      return Program.NO_MARK_PRIORITY;
+      return Program.PRIORITY_MARK_NONE;
     }
     
     return mPlugin.getMarkPriorityForProgram(p);
@@ -665,7 +665,8 @@ public class JavaPluginProxy extends AbstractPluginProxy {
 
   /**
    * connect a lazy loaded plugin to its proxy
-   * @param plugin
+   * @param plugin The plugin to set for this proxy.
+   * @param fileName The file name of the plugin file.
    */
   public void setPlugin(Plugin plugin, String fileName) {
     mPlugin = plugin;
@@ -725,7 +726,7 @@ public class JavaPluginProxy extends AbstractPluginProxy {
     UserFilter filter = GenericFilterMap.getInstance().getGenericPluginFilter(this, true);
     
     if(p != null && (accessControl(p.getChannel()) || (filter != null && !filter.accept(p)))) {
-      return new ImportanceValue((byte)1,Program.DEFAULT_PROGRAM_IMPORTANCE);
+      return new ImportanceValue((byte)1,Program.IMPORTANCE_PROGRAM_DEFAULT);
     }
     
     return mPlugin.getImportanceValueForProgram(p);

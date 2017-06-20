@@ -120,7 +120,7 @@ public class TvDataInventory {
 
   /**
    * Sets the day program to "NOT known to the user".
-   * 
+   * @param key The key to remove.
    */
   public synchronized void setUnknown(final String key) {
     mInventoryHash.remove(key);
@@ -143,8 +143,9 @@ public class TvDataInventory {
   
   /**
    * Loads the inventory list.
-   * @throws IOException
-   * @throws ClassNotFoundException
+   * @param file The file to read the data from.
+   * @throws IOException Thrown if an IO operation went wrong.
+   * @throws ClassNotFoundException Thrown if a class could not be found.
    *
    * @see #writeData(File)
    */
@@ -181,7 +182,8 @@ public class TvDataInventory {
    * If TV-Browser failes to save the plugin data then the inventory list should
    * NOT be saved too. Doing so the plugins will update themselves automatically
    * on the next startup, because new TV data will be treated as unknown.
-   * @throws IOException
+   * @param file The file to write the data to.
+   * @throws IOException Thrown if an IO operation went wrong.
    *
    * @see #readData(File)
    */

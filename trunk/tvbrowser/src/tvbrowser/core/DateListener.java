@@ -35,11 +35,10 @@ package tvbrowser.core;
 public interface DateListener {
 
   /**
-   * 
-   * @param date
-   * @param monitor
-   * @param callback
-   * @param informPluginPanels 
+   * @param date The date it was changed to
+   * @param monitor The progress monitor to use
+   * @param callback A callback to be called.
+   * @param informPluginPanels <code>true</code> if the plugin panels should be informed about the date change, <code>false</code> if not.
    */
     void dateChanged(devplugin.Date date, devplugin.ProgressMonitor monitor, Runnable callback, boolean informPluginPanels);
 }

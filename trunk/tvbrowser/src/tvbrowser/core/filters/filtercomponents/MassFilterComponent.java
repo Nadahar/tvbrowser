@@ -74,8 +74,8 @@ public class MassFilterComponent extends AbstractFilterComponent {
   /**
    * Create the Filter
    *
-   * @param name
-   * @param description
+   * @param name The name for this filter component.
+   * @param description The description for this filter component.
    */
   public MassFilterComponent(String name, String description) {
     super(name, description);

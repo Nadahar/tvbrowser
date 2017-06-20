@@ -1156,7 +1156,7 @@ public class ReminderPlugin {
 
   protected int getMarkPriority() {
     if(mMarkPriority == - 2 && mSettings != null) {
-      mMarkPriority = Integer.parseInt(mSettings.getProperty("markPriority",String.valueOf(Program.MIN_MARK_PRIORITY)));
+      mMarkPriority = Integer.parseInt(mSettings.getProperty("markPriority",String.valueOf(Program.PRIORITY_MARK_MIN)));
       return mMarkPriority;
     } else {
       return mMarkPriority;

@@ -84,8 +84,8 @@ public class ProgramInfoHelper {
     /**
      * Returns whether a bit (or combination of bits) is set in the specified
      * number.
-     * @param num
-     * @param pattern
+     * @param num The number with the set bit.
+     * @param pattern The pattern to check for.
      * @return <code>true</code>, if the bit is set
      */
     public static boolean bitSet(int num, int pattern) {

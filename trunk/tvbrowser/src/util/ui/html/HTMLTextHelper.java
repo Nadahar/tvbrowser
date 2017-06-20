@@ -25,7 +25,7 @@ import util.io.IOUtilities;
 public class HTMLTextHelper {
 
   /**
-   * Convert Text to HTML. > and < will be converted to &gt; and &lt;
+   * Convert Text to HTML. &gt; and &lt; will be converted to &amp;gt; and &amp;lt;
    * \n will be <code>&lt;br&gt;</code>
    *
    * Links in the text will be made clickable.
@@ -39,7 +39,7 @@ public class HTMLTextHelper {
   }
 
   /**
-   * Convert Text to HTML. > and < will be converted to &gt; and &lt;
+   * Convert Text to HTML. &gt; and &lt; will be converted to &amp;gt; and &amp;lt;
    * \n will be <code>&lt;br&gt;</code>
    *
    * If createLinks is true, it will try to find links and make them clickable

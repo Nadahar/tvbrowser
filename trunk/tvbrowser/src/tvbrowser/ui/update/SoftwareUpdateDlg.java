@@ -723,8 +723,8 @@ public class SoftwareUpdateDlg extends JDialog implements ActionListener, ListSe
      * internalisation.
      * <p>
      * @param o The Object to compare with
-     * @return < 0 if the name of this item is alphabetical smaller as the given String
-     * 0 if they are equal and > 0 if this name is greater.
+     * @return &lt; 0 if the name of this item is alphabetical smaller as the given String
+     * 0 if they are equal and &gt; 0 if this name is greater.
      */
     public int compareTo(Object o) {
       if(o != null) {

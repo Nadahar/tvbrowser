@@ -93,8 +93,8 @@ public class OnDemandDayProgramFile {
    *
    * @param update <code>True</code> if this is called from TV data update,
    *        <code>false</code> otherwise.
-   * @throws IOException
-   * @throws ClassNotFoundException
+   * @throws IOException Thrown if an IO operation went wrong.
+   * @throws ClassNotFoundException Thrown if a class could not be found.
    */
   public synchronized void loadDayProgram(boolean update) throws IOException,
       ClassNotFoundException {
@@ -268,7 +268,7 @@ public class OnDemandDayProgramFile {
   /**
    * Saves the day program to the on demand data file.
    *
-   * @throws IOException
+   * @throws IOException Thrown if an IO operation went wrong.
    */
   public synchronized void saveDayProgram() throws IOException {
     saveDayProgram(false);

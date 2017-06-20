@@ -39,14 +39,14 @@ import tvbrowser.core.search.AbstractSearcher;
  * Muster: WOrt AND WOrt OR NOT (WOrt AND WOrt). Jedes Wort kann alle
  * Zeichenfolgen inklusive " " enthalten.
  *
- * Ausnahmen (casesensitive): "AND", "OR", "&&", "||", "NOT", "(", ")" und
+ * Ausnahmen (casesensitive): "AND", "OR", "&amp;&amp;", "||", "NOT", "(", ")" und
  * regex-Ausdrücke. " "-Zeichen werden durch den regex-Ausdruck "\s"
  * ersetzt.
  *
  * regex-Ausdruck in den Wörtern führen zu unvOrhersagbarem Verhalten
  *
- * PriOritätsreihenfolge: NOT, AND, OR. Beispiele: WOrt AND WOrt OR WOrt =>
- * (WOrt AND WOrt) OR WOrt WOrt AND NOT WOrt OR WOrt => (WOrt AND (NOT WOrt)) OR
+ * PriOritätsreihenfolge: NOT, AND, OR. Beispiele: WOrt AND WOrt OR WOrt =&gt;
+ * (WOrt AND WOrt) OR WOrt WOrt AND NOT WOrt OR WOrt =&gt; (WOrt AND (NOT WOrt)) OR
  * WOrt
  *
  * Klammern müssen nicht geschlossen werden.

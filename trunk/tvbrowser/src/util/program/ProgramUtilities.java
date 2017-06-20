@@ -708,7 +708,7 @@ public class ProgramUtilities {
    * @since 3.1
    */
   public static byte getProgramImportance(Program program) {
-    if (program.getProgramState() == Program.IS_VALID_STATE &&
+    if (program.getProgramState() == Program.STATE_IS_VALID &&
         Settings.propProgramPanelAllowTransparency.getBoolean()) {
       int count = 0;
       int addValue = 0;
@@ -718,18 +718,18 @@ public class ProgramUtilities {
       for(PluginProxy plugin : plugins) {
         ImportanceValue value = plugin.getImportanceValueForProgram(program);
 
-        if(value.getWeight() > 0 && value.getTotalImportance() >= Program.MIN_MARK_PRIORITY) {
+        if(value.getWeight() > 0 && value.getTotalImportance() >= Program.PRIORITY_MARK_MIN) {
           count += value.getWeight();
           addValue += value.getTotalImportance();
         }
       }
 
       if(count > 0) {
-        return (byte)Math.max(addValue/count, Program.MIN_MARK_PRIORITY);
+        return (byte)Math.max(addValue/count, Program.PRIORITY_MARK_MIN);
       }
     }
 
-    return Program.MAX_PROGRAM_IMPORTANCE;
+    return Program.IMPORTANCE_PROGRAM_MAX;
   }
   
   /** 

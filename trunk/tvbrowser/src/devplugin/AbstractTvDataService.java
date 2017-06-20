@@ -202,7 +202,7 @@ public abstract class AbstractTvDataService {
    * This method is called by the host application to set the working folder.
    * If required, TvDataService implementations should store their data
    * within this 'dataDir' directory
-   * @param dataDir
+   * @param dataDir The data directory.
    */
   public abstract void setWorkingDirectory(File dataDir);
 
@@ -214,13 +214,13 @@ public abstract class AbstractTvDataService {
 
   /**
    * Updates the TV listings provided by this data service.
-   * @param updateManager
-   * @param channelArr
-   * @param startDate
-   * @param dateCount
-   * @param monitor
+   * @param updateManager The update manager.
+   * @param channelArr The channel array.
+   * @param startDate The start date.
+   * @param dateCount The number of days to update
+   * @param monitor The progress monitor to use.
    *
-   * @throws util.exc.TvBrowserException
+   * @throws util.exc.TvBrowserException Thrown if something went's wrong.
    */
   public abstract void updateTvData(TvDataUpdateManager updateManager,
                            Channel[] channelArr, Date startDate, int dateCount, ProgressMonitor monitor)
@@ -229,7 +229,7 @@ public abstract class AbstractTvDataService {
   /**
    * Called by the host-application during start-up. Implement this method to
    * load your data service settings from the file system.
-   * @param settings
+   * @param settings The properties with the settings.
    */
   public abstract void loadSettings(Properties settings);
 
@@ -256,6 +256,8 @@ public abstract class AbstractTvDataService {
 
   /**
    * Gets the list of the channels that are available for the given channel group.
+   * @param group The group the get the channels for
+   * @return The array with the available channels.
    */
   public abstract Channel[] getAvailableChannels(ChannelGroup group);
 
@@ -263,10 +265,11 @@ public abstract class AbstractTvDataService {
    * Some TvDataServices may need to connect to the Internet to know their
    * channels. If {@link #supportsDynamicChannelList()} returns true, this method is
    * called to check for available channels.
-   * @param group
-   * @param monitor
+   * @param group The group to check.
+   * @param monitor The progress monitor to use.
    * @return array of all available channels (new and old)
-   * @throws TvBrowserException
+   * @throws TvBrowserException Thrown if something went's wrong.
+   * @return The array with the available channels.
    */
   public abstract Channel[] checkForAvailableChannels(ChannelGroup group, ProgressMonitor monitor) throws TvBrowserException;
 
@@ -286,6 +289,7 @@ public abstract class AbstractTvDataService {
 
   /**
    * Gets information about this TvDataService
+   * @return The plugin info for this TvDataService.
    */
   public abstract PluginInfo getInfo();
 

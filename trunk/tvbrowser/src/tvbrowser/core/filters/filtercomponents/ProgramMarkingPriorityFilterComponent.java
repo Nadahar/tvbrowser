@@ -51,7 +51,7 @@ public class ProgramMarkingPriorityFilterComponent extends
   private static final Localizer mLocalizer = Localizer
       .getLocalizerFor(ProgramMarkingPriorityFilterComponent.class);
 
-  private int mMarkPriority = Program.MIN_MARK_PRIORITY;
+  private int mMarkPriority = Program.PRIORITY_MARK_MIN;
   private JComboBox<String> mValueSelection;
 
   /**

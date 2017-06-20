@@ -457,7 +457,7 @@ public class Date implements Comparable<Date>
   }
 
   /**
-   * @param locale
+   * @param locale The locale to use for the calendar.
    * @return the corresponding calendar for this date
    * @since 3.0
    */

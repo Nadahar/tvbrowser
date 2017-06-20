@@ -386,7 +386,7 @@ public class ChannelLabel extends JLabel {
   }
   
   /**
-   * Clear the icon cache.<br/>
+   * Clear the icon cache.<br>
    * This may be useful after lots of channel labels have been
    * created (e.g. in the settings dialog).
    * @since 2.7

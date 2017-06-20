@@ -185,7 +185,7 @@ public class MutableProgram implements Program {
     // The title is not-null.
     setTextField(ProgramFieldType.TITLE_TYPE, "");
     
-    mState = IS_VALID_STATE;
+    mState = STATE_IS_VALID;
   }
 
   private Calendar getNormalizedCalendarForTime(final int localStartTime) {
@@ -442,7 +442,7 @@ public class MutableProgram implements Program {
 
   /**
    * access method to object field values. this allows ondemand programs to reimplement the access
-   * @param type
+   * @param type The program file type to get the value for.
    * @return object stored in the field
    */
   protected Object getObjectValueField(final ProgramFieldType type) {
@@ -975,7 +975,7 @@ public class MutableProgram implements Program {
   /**
    * check if two programs are identical by their field contents
    *
-   * @param program
+   * @param program The program to check.
    * @return <code>true</code>, if all fields are equal
    * @since 2.6
    */

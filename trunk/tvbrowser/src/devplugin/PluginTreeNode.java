@@ -96,7 +96,7 @@ public class PluginTreeNode implements Comparable<PluginTreeNode> {
 
   /**
    * Creates a new PluginTreeNode object with a specified title
-   * @param title
+   * @param title The title for the node.
    */
   public PluginTreeNode(final String title) {
     this(Node.CUSTOM_NODE, title);
@@ -105,7 +105,7 @@ public class PluginTreeNode implements Comparable<PluginTreeNode> {
   /**
    * Creates a new root PluginTreeNode
    * On TV listings updates, the {@link PluginTreeListener} gets informed.
-   * @param marker
+   * @param marker The Marker to create the root node for.
    */
   public PluginTreeNode(final Marker marker) {
     this(marker, true);
@@ -114,9 +114,8 @@ public class PluginTreeNode implements Comparable<PluginTreeNode> {
   /**
    * creates a plugin root node WITHOUT marker
    *
+   * @param plugin The Plugin to create the root node for.
    * @since 3.0
-   * @param plugin
-   *
    */
   public PluginTreeNode(final Plugin plugin) {
     this(true, plugin);
@@ -124,7 +123,7 @@ public class PluginTreeNode implements Comparable<PluginTreeNode> {
 
   /**
    * Creates a new root PluginTreeNode
-   * @param plugin
+   * @param plugin The plugin to create the root node for.
    * @param handleTvDataUpdate specifies, if the {@link PluginTreeListener}
    * should get called on TV listings updates
    * @since 3.0
@@ -139,7 +138,7 @@ public class PluginTreeNode implements Comparable<PluginTreeNode> {
 
   /**
    * Creates a new root PluginTreeNode
-   * @param marker
+   * @param marker The Marker to create the root node for.
    * @param handleTvDataUpdate specifies, if the {@link PluginTreeListener}
    * should get called on TV listings updates
    */
@@ -173,7 +172,7 @@ public class PluginTreeNode implements Comparable<PluginTreeNode> {
 
   /**
    * Creates a new Node containing a program item.
-   * @param item
+   * @param item The program item to create the node for.
    */
   public PluginTreeNode(final ProgramItem item) {
     this(Node.PROGRAM, item);
@@ -223,10 +222,10 @@ public class PluginTreeNode implements Comparable<PluginTreeNode> {
           node.removeProgram(progItemInTree);
         }
         else {
-          if (progInTree.getProgramState() == Program.WAS_DELETED_STATE) {
+          if (progInTree.getProgramState() == Program.STATE_WAS_DELETED) {
             removeProgram(progInTree);
             handler.addRemovedProgram(progInTree);
-          } else if (progInTree.getProgramState() == Program.WAS_UPDATED_STATE) {
+          } else if (progInTree.getProgramState() == Program.STATE_WAS_UPDATED) {
             final Program updatedProg = Plugin.getPluginManager().getProgram(
                 progInTree.getDate(), progInTree.getID());
             progItemInTree.setProgram(updatedProg);
@@ -255,7 +254,7 @@ public class PluginTreeNode implements Comparable<PluginTreeNode> {
 
   /**
    * Adds a an action menu to this node
-   * @param menu
+   * @param menu The action menu to add to this node.
    */
   public void addActionMenu(final ActionMenu menu) {
     mDefaultNode.addActionMenu(menu);
@@ -286,7 +285,7 @@ public class PluginTreeNode implements Comparable<PluginTreeNode> {
    * Enables/Disables the 'grouping by date'-feature.
    * Default is 'enabled'
    *
-   * @param enable
+   * @param enable <code>true</code> if grouping should be enabled, <code>false</code> if not.
    */
   public void setGroupingByDateEnabled(boolean enable) {
     mGroupingByDate = enable;
@@ -300,7 +299,7 @@ public class PluginTreeNode implements Comparable<PluginTreeNode> {
    *
    * @see #setGroupingByDateEnabled(boolean)
    *
-   * @param enable
+   * @param enable <code>true</code> if grouping should be enabled, <code>false</code> if not.
    */
   public void setGroupingByWeekEnabled(final boolean enable) {
     mGroupWeekly = enable;
@@ -593,7 +592,7 @@ public class PluginTreeNode implements Comparable<PluginTreeNode> {
    * <br>
    * After you have finished adding all programs, you need to call {@link #update()} to refresh the UI.
    *
-   * @param program
+   * @param program The program to add.
    * @return the tree node containing the program
    */
   public synchronized PluginTreeNode addProgram(final Program program) {
@@ -622,7 +621,7 @@ public class PluginTreeNode implements Comparable<PluginTreeNode> {
    * <br>
    * After you have finished adding all programs, you need to call {@link #update()} to refresh the UI.
    *
-   * @param program
+   * @param program The program to add.
    * @return the tree node containing the program
    */
   public synchronized PluginTreeNode addProgramWithoutCheck(
