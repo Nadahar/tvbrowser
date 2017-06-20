@@ -68,7 +68,7 @@ public class FrameReminders extends JFrame implements InterfaceClose<PanelRemind
     
     mDelete = new JButton(TVBrowserIcons.delete(TVBrowserIcons.SIZE_SMALL));
     mDelete.setEnabled(false);
-    mDelete.setToolTipText(Localizer.getLocalization(Localizer.I18N_DELETE));
+    mDelete.setToolTipText(Localizer.getLocalization(Localizer.I18N_DELETE)+ReminderPlugin.LOCALIZER.msg("delete", " (Ctrl+Delete)"));
     mDelete.addActionListener(e -> {
       for(int i = mListReminders.getComponentCount()-1; i >= 0; i--) {
         close((PanelReminder)mListReminders.getComponent(i), false, false);
@@ -147,6 +147,16 @@ public class FrameReminders extends JFrame implements InterfaceClose<PanelRemind
       @Override
       public void actionPerformed(ActionEvent e) {
         mReschedule.doClick();
+      }
+    });
+    
+    final KeyStroke deleteAndClose = KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, KeyEvent.CTRL_DOWN_MASK);
+    
+    rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(deleteAndClose, "delete_and_close_reminder");
+    rootPane.getActionMap().put("delete_and_close_reminder", new AbstractAction() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        mDelete.doClick();
       }
     });
     
