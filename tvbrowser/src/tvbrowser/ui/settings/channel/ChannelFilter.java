@@ -81,7 +81,7 @@ public class ChannelFilter {
   /**
    * Set the Values in the Filter
    * @param country The country.
-   * @param category The category.
+   * @param categories The category.
    * @param name The name.
    */
   public void setFilter(String country, int[] categories, String name) {

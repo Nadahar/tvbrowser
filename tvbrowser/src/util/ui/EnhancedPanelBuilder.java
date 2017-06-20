@@ -47,7 +47,7 @@ public class EnhancedPanelBuilder extends PanelBuilder {
   /**
    * Create a new panel builder with the given columns.
    * You can add rows afterwards by using {@link #addParagraph(String)}, {@link #addRow()} and {@link #addGrowingRow()}.
-   * @param encodedColumnSpecs
+   * @param encodedColumnSpecs The encoded column spec.
    */
   public EnhancedPanelBuilder(final String encodedColumnSpecs) {
     super(new FormLayout(encodedColumnSpecs,""));
@@ -56,7 +56,7 @@ public class EnhancedPanelBuilder extends PanelBuilder {
   /**
    * Create a new panel builder with the given columns, which sits on the given panel.
    * You can add rows afterwards by using {@link #addParagraph(String)}, {@link #addRow()} and {@link #addGrowingRow()}.
-   * @param encodedColumnSpecs
+   * @param encodedColumnSpecs The encoded column spec.
    * @param parentPanel the finally built panel will be a child of this parent panel
    */
   public EnhancedPanelBuilder(final String encodedColumnSpecs, final JPanel parentPanel) {

@@ -528,9 +528,9 @@ public class UiUtilities {
   }
 
   /**
-   * @param helpTextArea
-   * @param html
-   * @param background
+   * @param helpTextArea The help text area.
+   * @param html The html string.
+   * @param background The background color.
    * @since 3.0.2
    */
   public static void updateHtmlHelpTextArea(final JEditorPane helpTextArea, String html, Color background) {
@@ -545,7 +545,7 @@ public class UiUtilities {
 
   /**
    * returns a color code as used in HTML, e.g. #FF0000 for pure red
-   * @param color
+   * @param color The color to get HTML color code for.
    * @return HTML color code
    */
   public static String getHTMLColorCode(Color color) {
@@ -575,6 +575,7 @@ public class UiUtilities {
    *          Move from this List
    * @param toList
    *          Move into this List
+   * @param typeRemoveOnly Classes of types that should only be removed.
    * @return Moved Elements
    */
   @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -905,6 +906,7 @@ public class UiUtilities {
    * @param targetHeight
    *          new height
    * @param type The type of the image.
+   * @param backgroundColor The background color.
    * @return Scaled BufferedImage
    *
    * @since 3.0
@@ -958,7 +960,7 @@ public class UiUtilities {
    *
    * The scaled Version will have a Background and a Border.
    *
-   * @param ic
+   * @param ic The icon
    * @return ImageIcon
    * @since 2.1
    */

@@ -362,7 +362,7 @@ public class SelectableItemList<E> extends JPanel implements ListSelectionListen
   /**
    * set the (focus) selection to the item with the given index
    * 
-   * @param index
+   * @param index The index.
    * @since 3.0
    */
   public void setSelectedIndex(int index) {

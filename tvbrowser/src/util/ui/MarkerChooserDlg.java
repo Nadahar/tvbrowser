@@ -67,7 +67,7 @@ public class MarkerChooserDlg extends JDialog implements WindowClosingIf {
 
   /**
    * 
-   * @param parent
+   * @param parent The parent window.
    * @param pluginArr
    *          The initially selected Plugins.
    * @param description

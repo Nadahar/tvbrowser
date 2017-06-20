@@ -41,10 +41,7 @@ public final class HashCodeUtilities {
   public static int hash(final char value) {
     return hash(SEED, value);
   }
-
-  /**
-   * ints.
-   */
+  
   public static int hash(int aSeed, int aInt) {
     /*
      * Implementation Note Note that byte and short are handled by this method,
