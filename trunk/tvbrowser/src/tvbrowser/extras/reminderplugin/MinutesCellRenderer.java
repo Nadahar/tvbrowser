@@ -57,6 +57,7 @@ public class MinutesCellRenderer extends DefaultTableCellRenderer {
         "pref:grow,pref,2dlu,pref,pref:grow"));
     CellConstraints cc = new CellConstraints();
     mTextLabel = new JLabel();
+    mTextLabel.setOpaque(false);
     mIconLabel = new JLabel(TVBrowserIcons.edit(TVBrowserIcons.SIZE_SMALL));
     mNoteLabel = new JLabel("");
     
@@ -82,9 +83,9 @@ public class MinutesCellRenderer extends DefaultTableCellRenderer {
         
         mTextLabel.setText(ReminderConstants.getStringForMinutes(minutes.intValue()));
         
-        mTextLabel.setOpaque(def.isOpaque());
+        /*mTextLabel.setOpaque(def.isOpaque());
         mTextLabel.setForeground(def.getForeground());
-        mTextLabel.setBackground(def.getBackground());
+        mTextLabel.setBackground(def.getBackground());*/
         
         mPanel.setOpaque(def.isOpaque());
         mPanel.setBackground(def.getBackground());

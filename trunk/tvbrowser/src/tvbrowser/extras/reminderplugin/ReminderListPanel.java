@@ -2,6 +2,7 @@ package tvbrowser.extras.reminderplugin;
 
 import java.awt.Component;
 import java.awt.Font;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Window;
 import java.awt.event.KeyAdapter;
@@ -21,6 +22,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -38,9 +41,12 @@ import devplugin.Date;
 import devplugin.Plugin;
 import devplugin.Program;
 import devplugin.SettingsItem;
+import tvbrowser.core.Settings;
 import tvbrowser.core.icontheme.IconLoader;
 import tvbrowser.core.plugin.PluginManagerImpl;
 import tvbrowser.ui.mainframe.MainFrame;
+import util.programkeyevent.ProgramKeyAndContextMenuListener;
+import util.programkeyevent.ProgramKeyEventHandler;
 import util.programmouseevent.ProgramMouseAndContextMenuListener;
 import util.programmouseevent.ProgramMouseEventHandler;
 import util.settings.PluginPictureSettings;
@@ -49,6 +55,7 @@ import util.ui.ProgramTableCellRenderer;
 import util.ui.SendToPluginDialog;
 import util.ui.TVBrowserIcons;
 import util.ui.TabListenerPanel;
+import util.ui.UiUtilities;
 import util.ui.persona.Persona;
 import util.ui.persona.PersonaListener;
 
@@ -65,6 +72,7 @@ public class ReminderListPanel extends TabListenerPanel implements PersonaListen
   private JComboBox<String> mTitleSelection;
   private JLabel mFilterLabel;
   private long mLastEditorClosing;
+  private JScrollPane tableScroll;
   
   public ReminderListPanel(ReminderList list, JButton close) {
     mLastEditorClosing = 0;
@@ -85,11 +93,26 @@ public class ReminderListPanel extends TabListenerPanel implements PersonaListen
     
     mRevertCache = new RevertCache<ReminderListItem[]>(3);
     mModel = new ReminderTableModel(mReminderList, mTitleSelection = new JComboBox<>());
-
+    
     mTable = new JTable();
     setDefaultFocusOwner(mTable);
     mTable.getTableHeader().setResizingAllowed(false);
     mTable.getTableHeader().setReorderingAllowed(false);
+    mTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+      @Override
+      public void valueChanged(ListSelectionEvent e) {
+        if(!e.getValueIsAdjusting()) {
+          int[] selection = mTable.getSelectedRows();
+          
+          if(selection.length == 1) {
+            SwingUtilities.invokeLater(() -> {
+              Rectangle r = mTable.getCellRect(selection[0], 0, false);
+              mTable.scrollRectToVisible(r);
+            });
+          }
+        }
+      }
+    });
     mTable.addKeyListener(new KeyAdapter() {
       public void keyPressed(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_ESCAPE || e.getKeyCode() == KeyEvent.VK_ENTER) {
@@ -100,37 +123,70 @@ public class ReminderListPanel extends TabListenerPanel implements PersonaListen
     
     ProgramMouseEventHandler mouseEventHandler = new ProgramMouseEventHandler(this, ReminderPluginProxy.getInstance()) {
       public void mouseClicked(final MouseEvent e) {
-        int column = mTable.columnAtPoint(e.getPoint());
+        final int row = mTable.rowAtPoint(e.getPoint());
+        final int[] rows = mTable.getSelectedRows();
         
-        if (SwingUtilities.isLeftMouseButton(e) && (e.getClickCount() == 1) && column == 1) {
-          int row = mTable.rowAtPoint(e.getPoint());
-          mTable.editCellAt(row,column);
-          ((MinutesCellEditor)mTable.getCellEditor()).getComboBox().addPopupMenuListener(new PopupMenuListener() {
-            
-            @Override
-            public void popupMenuWillBecomeVisible(PopupMenuEvent e) {}
-            
-            @Override
-            public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
-              mLastEditorClosing = System.currentTimeMillis();
-            }
-            
-            @Override
-            public void popupMenuCanceled(PopupMenuEvent e) {}
-          });
-          ((MinutesCellEditor)mTable.getCellEditor()).getComboBox().showPopup();
+        if(mTable.getValueAt(row, 0).equals(PluginManagerImpl.getInstance().getExampleProgram()) && rows.length <= 1) {
+          mTable.getSelectionModel().setSelectionInterval(row+1, row+1);
         }
         else {
-          super.mouseClicked(e);
+          final int column = mTable.columnAtPoint(e.getPoint());
+          
+          if (SwingUtilities.isLeftMouseButton(e) && (e.getClickCount() == 1) && column == 1) {
+            mTable.editCellAt(row,column);
+            ((MinutesCellEditor)mTable.getCellEditor()).getComboBox().addPopupMenuListener(new PopupMenuListener() {
+              
+              @Override
+              public void popupMenuWillBecomeVisible(PopupMenuEvent e) {}
+              
+              @Override
+              public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
+                mLastEditorClosing = System.currentTimeMillis();
+              }
+              
+              @Override
+              public void popupMenuCanceled(PopupMenuEvent e) {}
+            });
+            ((MinutesCellEditor)mTable.getCellEditor()).getComboBox().showPopup();
+          }
+          else {
+            super.mouseClicked(e);
+          }
+          
+          mTable.repaint();
         }
-        
-        mTable.repaint();
       }
     };
 
     mTable.addMouseListener(mouseEventHandler);
-
+    mTable.addKeyListener(new ProgramKeyEventHandler(new ProgramKeyAndContextMenuListener() {
+      @Override
+      public void showContextMenu(Program program) {
+        final Rectangle rect = mTable.getCellRect(mTable.getSelectedRow(), 0, false);
+        final Point p = new Point((int)(rect.x + rect.width * 1/4.)+15, (int)(rect.y + rect.height * 2/3.) + 15);
+        
+        ReminderListPanel.this.showContextMenu(p);
+      }
+      
+      @Override
+      public void keyEventActionFinished() {}
+      
+      @Override
+      public Program getProgramForKeyEvent(KeyEvent e) {
+        int row = mTable.getSelectedRow();
+        return (Program) mTable.getModel().getValueAt(row, 0);
+      }
+    }, ReminderPluginProxy.getInstance()));
+    
     installTableModel(mModel);
+    
+    UiUtilities.addKeyRotation(mTable, index -> {
+      if(index >= 0 && index < mTable.getRowCount()) {
+        return (Program)mTable.getValueAt(index, 0);
+      }
+      
+      return null;
+    });
     
     add(mFilterLabel = new JLabel(mLocalizer.msg("titleFilterText","Show only programs with the following title:")), cc.xy(1,1));
     add(mTitleSelection, cc.xy(3,1));
@@ -261,7 +317,7 @@ public class ReminderListPanel extends TabListenerPanel implements PersonaListen
     }
     builder.getPanel().setOpaque(false);
     
-    JScrollPane tableScroll = new JScrollPane(mTable);
+    tableScroll = new JScrollPane(mTable);
     tableScroll.setBorder(BorderFactory.createEmptyBorder());
     tableScroll.setBackground(UIManager.getColor("TextField.background"));
     tableScroll.getViewport().setBackground(UIManager.getColor("TextField.background"));
@@ -299,6 +355,7 @@ public class ReminderListPanel extends TabListenerPanel implements PersonaListen
     
     mTable.setColumnModel(cModel);
     mTable.setModel(model);
+    mTable.setSelectionBackground(Settings.propKeyboardSelectedColor.getColor());
     
     final ProgramTableCellRenderer backend = new ProgramTableCellRenderer(new PluginPictureSettings(PluginPictureSettings.ALL_PLUGINS_SETTINGS_TYPE));
     
@@ -348,7 +405,7 @@ public class ReminderListPanel extends TabListenerPanel implements PersonaListen
     mTable.getColumnModel().getColumn(1).setCellEditor(new MinutesCellEditor());
     mTable.getColumnModel().getColumn(1).setCellRenderer(new MinutesCellRenderer());
     updateButtons();
-
+    
     SwingUtilities.invokeLater(() -> {
       try {
         mTable.updateUI();
@@ -445,22 +502,6 @@ public class ReminderListPanel extends TabListenerPanel implements PersonaListen
       send.setVisible(true);
     }
   }
-
-  /**
-   * Shows the Popup
-   * 
-   * @param e Mouse-Event
-   */
-/*  private void showPopup(MouseEvent e) {
-    int row = mTable.rowAtPoint(e.getPoint());
-
-    mTable.changeSelection(row, 0, false, false);
-
-    Program p = (Program) mTable.getModel().getValueAt(row, 0);
-
-    JPopupMenu menu = PluginManagerImpl.getInstance().createPluginContextMenu(p, ReminderPluginProxy.getInstance());
-    menu.show(mTable, e.getX() - 15, e.getY() - 15);
-  }*/
   
   void stopCellEditing() {
     if (mTable.isEditing()) {
@@ -478,9 +519,12 @@ public class ReminderListPanel extends TabListenerPanel implements PersonaListen
     }
   }
   
-  void updateTableEntries() {
+  void updateTableEntries() {System.out.println("hier");
     mModel.updateTableEntries();
     updateButtons();
+    if(tableScroll != null) {
+      tableScroll.getViewport().getSize();
+    }
   }
   
   private void updateButtons() {
@@ -555,20 +599,27 @@ public class ReminderListPanel extends TabListenerPanel implements PersonaListen
 
   @Override
   public void showContextMenu(MouseEvent e) {
-    int row = mTable.rowAtPoint(e.getPoint());
+    showContextMenu(e.getPoint());
+  }
+  
+  private void showContextMenu(Point point) {
+    int row = mTable.rowAtPoint(point);
 
     mTable.changeSelection(row, 0, false, false);
 
     Program p = (Program) mTable.getModel().getValueAt(row, 0);
 
     JPopupMenu menu = PluginManagerImpl.getInstance().createPluginContextMenu(p, ReminderPluginProxy.getInstance());
-    menu.show(mTable, e.getX() - 15, e.getY() - 15);
+    UiUtilities.registerForClosing(menu);
+    menu.show(mTable, point.x - 15, point.y - 15);    
   }
   
   public static final int SCROLL_TO_DATE_TYPE = 0;
   public static final int SCROLL_TO_NOW_TYPE = 1;
   public static final int SCROLL_TO_NEXT_TIME_TYPE = 2;
   public static final int SCROLL_TO_TIME_TYPE = 3;
+  
+  
   
   public void scrollTo(int type, Date date, int time) {
     Program example = PluginManagerImpl.getInstance().getExampleProgram();

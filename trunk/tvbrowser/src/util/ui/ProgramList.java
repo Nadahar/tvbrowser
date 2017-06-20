@@ -29,19 +29,15 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
-import javax.swing.AbstractAction;
 import javax.swing.DefaultListModel;
-import javax.swing.JComponent;
 import javax.swing.JList;
 import javax.swing.JPopupMenu;
-import javax.swing.KeyStroke;
 import javax.swing.ListModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -53,7 +49,6 @@ import devplugin.Date;
 import devplugin.Plugin;
 import devplugin.PluginManager;
 import devplugin.Program;
-import tvbrowser.core.contextmenu.ContextMenuManager;
 import tvbrowser.core.plugin.PluginProxy;
 import tvbrowser.core.plugin.PluginProxyManager;
 import tvbrowser.core.plugin.PluginStateListener;
@@ -332,19 +327,7 @@ public class ProgramList extends JList<Object> implements ChangeListener,
       if (getModel().getElementAt(inx) instanceof Program) {
         Program prog = (Program) getModel().getElementAt(inx);
         mPopupMenu = mng.createPluginContextMenu(prog, caller);
-        
-        mPopupMenu.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, ContextMenuManager.NO_MOUSE_MODIFIER_EX), "close window");
-        mPopupMenu.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_R, ContextMenuManager.NO_MOUSE_MODIFIER_EX), "close window");
-        mPopupMenu.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_CONTEXT_MENU, ContextMenuManager.NO_MOUSE_MODIFIER_EX), "close window");
-        
-        mPopupMenu.getActionMap().put("close window", new AbstractAction() {
-          @Override
-          public void actionPerformed(ActionEvent e) {
-            mPopupMenu.setVisible(false);
-          }
-        });
-        
-        
+        UiUtilities.registerForClosing(mPopupMenu);
         mPopupMenu.show(ProgramList.this, p.x - 15, p.y - 15);
       }
     }
