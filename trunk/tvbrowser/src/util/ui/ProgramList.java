@@ -39,6 +39,7 @@ import javax.swing.DefaultListModel;
 import javax.swing.JList;
 import javax.swing.JPopupMenu;
 import javax.swing.ListModel;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ListDataEvent;
@@ -793,16 +794,18 @@ public class ProgramList extends JList<Object> implements ChangeListener,
 
   @Override
   public Program getProgramForMouseEvent(MouseEvent e) {
-    final int inx = locationToIndex(e.getPoint());
-    if (inx >= 0) {
-      final Object element = ProgramList.this.getModel()
-      .getElementAt(inx);
-      
-      if(element instanceof Program) {
-        return (Program) element;
-      }
-      else if (element instanceof String && getSelectedIndices().length == 1) {
-        setSelectedIndex(inx);
+    if(SwingUtilities.isLeftMouseButton(e)) {
+      final int inx = locationToIndex(e.getPoint());
+      if (inx >= 0) {
+        final Object element = ProgramList.this.getModel()
+        .getElementAt(inx);
+        
+        if(element instanceof Program) {
+          return (Program) element;
+        }
+        else if (element instanceof String && getSelectedIndices().length == 1) {
+          setSelectedIndex(inx);
+        }
       }
     }
     return null;
