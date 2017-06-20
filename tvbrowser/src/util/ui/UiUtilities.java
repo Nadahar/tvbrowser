@@ -43,6 +43,7 @@ import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Insets;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Toolkit;
 import java.awt.Window;
@@ -58,6 +59,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Locale;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 import javax.swing.AbstractAction;
@@ -76,10 +78,13 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
+import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
 import javax.swing.ListCellRenderer;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UIManager.LookAndFeelInfo;
 import javax.swing.border.Border;
@@ -89,6 +94,9 @@ import javax.swing.filechooser.FileFilter;
 
 import org.apache.commons.lang3.StringUtils;
 
+import devplugin.Program;
+import tvbrowser.core.contextmenu.ContextMenuManager;
+import tvbrowser.core.plugin.PluginManagerImpl;
 import tvbrowser.ui.mainframe.MainFrame;
 import util.browserlauncher.Launch;
 import util.misc.OperatingSystem;
@@ -1276,5 +1284,129 @@ public class UiUtilities {
         }
       }
     });
+  }
+
+  /**
+   * Adds support for rotating through table with up and down keys.
+   * <p>
+   * @param table The table to add the rotation to
+   * @since 3.4.5
+   */
+  public static void addKeyRotation(final JTable table) {
+    addKeyRotation(table, null);
+  }
+  
+  /**
+   * Adds support for rotating through table with up and down keys.
+   * <p>
+   * @param table The table to add the rotation to
+   * @param programGetter If date separators should not be selected the programs in the
+   * table have to be checked for the example program.
+   * @since 3.4.5
+   */
+  public static void addKeyRotation(final JTable table, final ProgramGetter programGetter) {
+    table.addKeyListener(new KeyAdapter() {
+      @Override
+      public void keyPressed(KeyEvent e) {
+        if(table.getRowCount() > 1) {
+          if(e.getModifiersEx() == 0) {
+            final AtomicInteger index = new AtomicInteger(table.getSelectedRow());
+            
+            if(e.getKeyCode() == KeyEvent.VK_DOWN) {
+              if(index.get() == table.getRowCount()-1) {
+                index.set(0);
+              }
+              else {
+                index.incrementAndGet();
+              }
+            }
+            else if(e.getKeyCode() == KeyEvent.VK_UP) {
+              if(index.get() == 0) {
+                index.set(table.getRowCount()-1);
+              }
+              else {
+                index.decrementAndGet();
+              }
+            }
+            
+            if(programGetter != null) {
+              final Program test = programGetter.getProgram(index.get());
+              
+              if(test != null && test.equals(PluginManagerImpl.getInstance().getExampleProgram())) {
+                
+                if(e.getKeyCode() == KeyEvent.VK_DOWN) {
+                  index.incrementAndGet();
+                  
+                  if(index.get() > table.getRowCount()-1) {
+                    index.set(0);
+                    
+                    final Program test2 = programGetter.getProgram(index.get());
+                    
+                    if(test2 != null && test2.equals(PluginManagerImpl.getInstance().getExampleProgram())) {
+                      index.incrementAndGet();
+                    }
+                  }
+                }
+                else if(e.getKeyCode() == KeyEvent.VK_UP) {
+                  index.decrementAndGet();
+                  
+                  if(index.get() == -1) {
+                    index.set(table.getRowCount()-1);
+                  }
+                }
+              }
+            }
+            
+            if(index.get() != -1 && index.get() != table.getSelectedRow()) {
+              table.getSelectionModel().setSelectionInterval(index.get(), index.get());
+              
+              SwingUtilities.invokeLater(() -> {
+                final Rectangle rect = table.getCellRect(index.get(), index.get(), false);
+                
+                if(programGetter != null && index.get() > 0) {
+                  final Program test = programGetter.getProgram(index.get()-1);
+                  
+                  if(test != null && test.equals(PluginManagerImpl.getInstance().getExampleProgram())) {
+                    final Rectangle x = table.getCellRect(index.get()-1, index.get()-1, false);
+                    
+                    rect.y = x.y;
+                    rect.height += x.height;
+                  }
+                }
+                
+                table.scrollRectToVisible(rect);
+              });
+              
+              e.consume();
+            }
+          }
+        }
+      }
+    });
+  }
+  
+
+  /**
+   * Registers the escape key, the R key and the context menu key as close key for a JPopupMenu.
+   *
+   * @param popupMenu The popup menu to add the closing keys.
+   * @since 3.4.5
+   */
+  public static void registerForClosing(JPopupMenu popupMenu) {
+    if(popupMenu != null) {
+      final String key = "UiUtilities:close_window";
+      
+      popupMenu.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, ContextMenuManager.NO_MOUSE_MODIFIER_EX), key);
+      popupMenu.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_R, ContextMenuManager.NO_MOUSE_MODIFIER_EX), key);
+      popupMenu.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_CONTEXT_MENU, ContextMenuManager.NO_MOUSE_MODIFIER_EX), key);
+      
+      popupMenu.getActionMap().put(key, new AbstractAction() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+          popupMenu.setVisible(false);
+        }
+      });
+
+    }
   }
 }

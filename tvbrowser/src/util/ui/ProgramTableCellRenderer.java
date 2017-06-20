@@ -87,7 +87,7 @@ public class ProgramTableCellRenderer extends DefaultTableCellRenderer {
      */
     public ProgramTableCellRenderer(ProgramPanelSettings settings) {
         mMainPanel = new JPanel(new BorderLayout());
-        mMainPanel.setOpaque(true);
+        mMainPanel.setOpaque(false);
 
         mHeaderLb = new JLabel();
         mMainPanel.add(mHeaderLb, BorderLayout.NORTH);
@@ -108,6 +108,7 @@ public class ProgramTableCellRenderer extends DefaultTableCellRenderer {
             Insets borderInsets = label.getBorder().getBorderInsets(label);
             mProgramPanel.setWidth(table.getCellRect(row, column, false).width - borderInsets.left - borderInsets.right);
             mProgramPanel.setProgram(program);
+            mProgramPanel.setSelectedInList(isSelected);
             
             program.addChangeListener(e -> {
               table.repaint();
@@ -145,11 +146,21 @@ public class ProgramTableCellRenderer extends DefaultTableCellRenderer {
               mHeaderLb.setForeground(Color.gray);
             }
             else {
-              mHeaderLb.setForeground(label.getForeground());
+              mHeaderLb.setForeground(mProgramPanel.getTextColor());
             }
-
-            mMainPanel.setBackground(label.getBackground());
-            mMainPanel.setForeground(label.getForeground());
+            
+            if(isSelected) {
+              mHeaderLb.setOpaque(true);
+              mHeaderLb.setBackground(Settings.propKeyboardSelectedColor.getColor());
+            }
+            else {
+              mHeaderLb.setOpaque(false);
+            }
+            
+            
+            //mMainPanel.setBackground(label.getBackground());
+            //mMainPanel.setForeground(label.getForeground());
+            
             mMainPanel.setEnabled(label.isEnabled());
             mMainPanel.setBorder(label.getBorder());
 
