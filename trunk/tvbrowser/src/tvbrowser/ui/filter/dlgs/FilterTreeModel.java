@@ -197,14 +197,14 @@ public class FilterTreeModel extends DefaultTreeModel {
   }
   
   /**
-   * Adds a filter to this tree at the given target node.
+   * Adds a directory to this tree at the given target node.
    *
-   * @param filter
-   *          The filter to add.
+   * @param name
+   *          The diretory name.
    * @param parent
-   *          The parent node to add the filter to or <code>null</code> if the
+   *          The parent node to add the directory to or <code>null</code> if the
    *          root node should be used.
-   * @return the newly created node for the filter
+   * @return the newly created node for the directory
    */
   public FilterNode addDirectory(String name, FilterNode parent) {
     if (parent == null) {

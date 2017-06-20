@@ -122,7 +122,6 @@ public class ProgramPanelSettings {
    * @param showOnlyDateAndTitle If the program panel should only contain date and title.
    * @param axis The axis for the ProgramPanel.
    * @param ignoreProgramImportance If the program importance should be ignored.
-   * @param showPictureBorder If the picture border should be shown.
    * @since 3.0
    */
   public ProgramPanelSettings(PluginPictureSettings settings, boolean showOnlyDateAndTitle, int axis, boolean ignoreProgramImportance) {

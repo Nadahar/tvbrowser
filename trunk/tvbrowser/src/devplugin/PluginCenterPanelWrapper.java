@@ -91,7 +91,6 @@ public abstract class PluginCenterPanelWrapper {
    * table.
    * <p>
    * @param date The new selected date.
-   * @param minute The minute of the date to scroll to.
    */
   public void scrolledToDate(Date date) {
     
