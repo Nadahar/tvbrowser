@@ -200,7 +200,7 @@ public class ProgramListCellRenderer extends DefaultListCellRenderer {
       mProgramPanel.setProgram(program);
       mProgramPanel.setPaintExpiredProgramsPale(!isSelected);
       mProgramPanel.setBackground(label.getBackground());
-      mProgramPanel.setSelected(isSelected);
+      mProgramPanel.setSelectedInList(isSelected);
       
       if (!mProgramSet.contains(program)) {
         mProgramSet.add(program);
@@ -237,13 +237,15 @@ public class ProgramListCellRenderer extends DefaultListCellRenderer {
       if (program.isExpired() && !isSelected) {
         mHeaderLb.setForeground(Color.gray);
       } else {
-        mHeaderLb.setForeground(label.getForeground());
+        mHeaderLb.setForeground(mProgramPanel.getForeground());
       }
-
-      mMainPanel.setBackground(label.getBackground());
-
+      
       if (isSelected) {
-        mMainPanel.setForeground(label.getForeground());
+        mMainPanel.setBackground(Settings.propKeyboardSelectedColor.getColor());
+      //  mMainPanel.setForeground(label.getForeground());
+      }
+      else {
+        mMainPanel.setBackground(label.getBackground());
       }
 
       mMainPanel.setEnabled(label.isEnabled());

@@ -168,6 +168,7 @@ public class ProgramPanel extends JComponent implements ChangeListener, PluginSt
   private boolean mMouseOver = false;
 
   private boolean mIsSelected = false;
+  private boolean mIsSelectedInList = false;
 
   /**
    * this panel has been changed by third party, needs update before painting
@@ -895,28 +896,34 @@ private static Font getDynamicFontSize(Font font, int offset) {
         test = Settings.propKeyboardSelectedColor.getColor();
       }
       grp.setColor(test);
-      grp.fillRect(0, 0, width - 1, height - 1);
-
-      Stroke str = grp.getStroke();
-      Color col = grp.getColor();
-      float[] dash = { 2.0f };
-      int lineWidth = 1;
-      BasicStroke dashed = new BasicStroke(lineWidth, BasicStroke.CAP_BUTT,
-          BasicStroke.JOIN_MITER, 10.0f, dash, 0.0f);
       
-      if(Settings.propTableBackgroundStyle.getString().contains("ui")) {
-        grp.setColor(UIManager.getColor("List.foreground"));
+      if(mIsSelectedInList) {
+        grp.fillRect(0, 0, width, height);
       }
       else {
-        grp.setColor(Settings.propProgramPanelForegroundColor.getColor());
+        grp.fillRect(0, 0, width - 1, height - 1);
+  
+        Stroke str = grp.getStroke();
+        Color col = grp.getColor();
+        float[] dash = { 2.0f };
+        int lineWidth = 1;
+        BasicStroke dashed = new BasicStroke(lineWidth, BasicStroke.CAP_BUTT,
+            BasicStroke.JOIN_MITER, 10.0f, dash, 0.0f);
+        
+        if(Settings.propTableBackgroundStyle.getString().contains("ui")) {
+          grp.setColor(UIManager.getColor("List.foreground"));
+        }
+        else {
+          grp.setColor(Settings.propProgramPanelForegroundColor.getColor());
+        }
+        
+        grp.setStroke(dashed);
+  
+        grp.drawRect(lineWidth - 1, lineWidth - 1, width - lineWidth, height - lineWidth);
+  
+        grp.setStroke(str);
+        grp.setColor(col);
       }
-      
-      grp.setStroke(dashed);
-
-      grp.drawRect(lineWidth - 1, lineWidth - 1, width - lineWidth, height - lineWidth);
-
-      grp.setStroke(str);
-      grp.setColor(col);
     }
     
     int channelWidth = 0;
@@ -1452,5 +1459,10 @@ private static Font getDynamicFontSize(Font font, int offset) {
   
   public void setSelected(boolean isSelected) {
     mIsSelected = isSelected;
+  }
+  
+  public void setSelectedInList(boolean isSelected) {
+    mIsSelectedInList = isSelected;
+    setSelected(isSelected);
   }
 }
