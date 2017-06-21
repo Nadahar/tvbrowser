@@ -54,6 +54,12 @@ import javax.swing.event.ChangeListener;
 
 import org.apache.commons.lang3.StringUtils;
 
+import devplugin.ActionMenu;
+import devplugin.Channel;
+import devplugin.Date;
+import devplugin.ProgramFieldType;
+import devplugin.ProgramFilter;
+import devplugin.Version;
 import tvbrowser.TVBrowser;
 import tvbrowser.core.contextmenu.ContextMenuManager;
 import tvbrowser.core.contextmenu.SeparatorMenuItem;
@@ -111,12 +117,6 @@ import util.ui.Localizer;
 import util.ui.UiUtilities;
 import util.ui.persona.Persona;
 import util.ui.view.SplitViewProperty;
-import devplugin.ActionMenu;
-import devplugin.Channel;
-import devplugin.Date;
-import devplugin.ProgramFieldType;
-import devplugin.ProgramFilter;
-import devplugin.Version;
 
 /**
  * The Settings class provides access to the settings of the whole application
@@ -2195,6 +2195,16 @@ public class Settings {
   
   public static final StringArrayProperty propDataPluginPostProcessingOrder = new StringArrayProperty(
       mProp, "dataPluginPostProcessingOrder", new String[0]);
+  
+  /**
+   * Hidden property for blocked filter components for Favorite usage.
+   * Add the property favoriteBlockedFilterComponents to the settings.prop
+   * to change the blocked filter components.
+   * <p>
+   * @since 3.4.5 */
+  public static final StringArrayProperty propFavoriteBlockedFilterComponents = new StringArrayProperty(
+      mProp, "favoriteBlockedFilterComponents", new String[] {"tvbrowser.core.filters.filtercomponents.BeanShellFilterComponent","tvbrowser.core.filters.filtercomponents.ProgramMarkingPriorityFilterComponent","tvbrowser.core.filters.filtercomponents.ReminderFilterComponent","tvbrowser.core.filters.filtercomponents.PluginFilterComponent"});
+  
   
   /**
    * Sets the window position and size for the given window with the values of
