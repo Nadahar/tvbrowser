@@ -1226,4 +1226,10 @@ public class ManageFavoritesPanel extends TabListenerPanel implements ListDropAc
   public String getSelectedProgramFilterName() {
     return mProgramListPanel.getSelectedProgramFilterName();
   }
+  
+  @Override
+  public void tabShown() {
+    super.tabShown();
+    scrollToFirstNotExpiredIndex(false);
+  }
 }
