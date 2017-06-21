@@ -36,20 +36,18 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.regex.Pattern;
 
+import devplugin.Channel;
+import devplugin.ProgramFilter;
+import tvbrowser.core.Settings;
 import tvbrowser.core.filters.filtercomponents.AcceptNoneFilterComponent;
-import tvbrowser.core.filters.filtercomponents.BeanShellFilterComponent;
 import tvbrowser.core.filters.filtercomponents.ChannelFilterComponent;
 import tvbrowser.core.filters.filtercomponents.FavoritesFilterComponent;
-import tvbrowser.core.filters.filtercomponents.PluginFilterComponent;
-import tvbrowser.core.filters.filtercomponents.ProgramMarkingPriorityFilterComponent;
-import tvbrowser.core.filters.filtercomponents.ReminderFilterComponent;
 import tvbrowser.core.filters.filtercomponents.SingleChannelFilterComponent;
+import tvbrowser.extras.favoritesplugin.core.FilterComponentNewFavoritePrograms;
 import util.exc.ErrorHandler;
 import util.io.stream.ObjectInputStreamProcessor;
 import util.io.stream.ObjectOutputStreamProcessor;
 import util.io.stream.StreamUtilities;
-import devplugin.Channel;
-import devplugin.ProgramFilter;
 
 class Token {
 
@@ -543,16 +541,27 @@ public class UserFilter implements devplugin.ProgramFilter {
       
       for(Token token : tokens) {
         if(token.type == Token.ITEM) {
-          FilterComponent component = FilterComponentList.getInstance().getFilterComponentByName(token.value);
+          final FilterComponent component = FilterComponentList.getInstance().getFilterComponentByName(token.value);
           
-          if(component != null &&
-              (component instanceof BeanShellFilterComponent ||
-                  component instanceof FavoritesFilterComponent ||
-                  component instanceof ProgramMarkingPriorityFilterComponent ||
-                  component instanceof ReminderFilterComponent ||
-                  component instanceof PluginFilterComponent)) {
-            acceptable = false;
-            break;
+          if(component != null) {
+            acceptable = !(component instanceof FavoritesFilterComponent) && !(component instanceof FilterComponentNewFavoritePrograms);
+            
+            if(acceptable) {
+              final String[] blocked = Settings.propFavoriteBlockedFilterComponents.getStringArray();
+              
+              for(final String test : blocked) {
+                final String name = component.getClass().getCanonicalName();
+                
+                if(name.equals(test)) {
+                  acceptable = false;
+                  break;
+                }
+              }
+              
+              if(!acceptable) {
+                break;
+              }
+            }
           }
         }
       }
