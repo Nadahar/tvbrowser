@@ -66,7 +66,7 @@ import util.ui.UiUtilities;
  * A User can configure his favorite Search-Engines and search for the given Movie
  */
 public class WebPlugin extends Plugin {
-  private static final Version VERSION = new Version(3,15);
+  private static final Version VERSION = new Version(3,16);
 
   private static final Logger LOGGER = java.util.logging.Logger
   .getLogger(WebPlugin.class.getName());
@@ -489,13 +489,28 @@ public class WebPlugin extends Plugin {
   }
 
   public ProgramReceiveTarget[] getProgramReceiveTargets() {
+    boolean isTextSearch = false;
+    
+    final StackTraceElement[] els = Thread.currentThread().getStackTrace();
+    for(int i = 0; i < 6; i++) {
+      if(els[i].getClassName().startsWith("tvbrowser.extras.programinfo.ProgramInfoDialog") && els[i].getMethodName().equals("getPopupMenu")) {
+        isTextSearch = true;
+        break;
+      }
+    }
+    
     final ArrayList<ProgramReceiveTarget> list = new ArrayList<ProgramReceiveTarget>();
 
     for (int i = 0; i < mAddresses.size(); i++) {
       final WebAddress adr = mAddresses.get(i);
 
       if (adr.isActive()) {
-        list.add(new ProgramReceiveTarget(this,LOCALIZER.msg("SearchOn", "Search on ") + " " + adr.getName(),adr.getName() + "." + adr.getUrl()));
+        if(!isTextSearch ||
+            !(adr.getUrl().equals(PROGRAM_SITE) ||
+                adr.getUrl().equals(SITE_VOD) ||
+            adr.getUrl().equals(CHANNEL_SITE))) {
+          list.add(new ProgramReceiveTarget(this,LOCALIZER.msg("SearchOn", "Search on ") + " " + adr.getName(),adr.getName() + "." + adr.getUrl()));
+        }
       }
     }
 
