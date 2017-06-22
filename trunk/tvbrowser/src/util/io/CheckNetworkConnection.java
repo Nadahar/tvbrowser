@@ -228,12 +228,7 @@ class CheckNetworkConnection {
     }catch(Exception e) {}
     
     if ((mRunningCount.get() > 0) && (mWaitingDialog == null) && !mResult) {
-      Window comp = UiUtilities.getLastModalChildOf(MainFrame.getInstance());
-      if (comp instanceof Dialog) {
-        mWaitingDialog = new JDialog((Dialog) comp, false);
-      } else {
-        mWaitingDialog = new JDialog((Frame) comp, false);
-      }
+      mWaitingDialog = UiUtilities.createDialog(MainFrame.getInstance(), true);
       mWaitingDialog.setUndecorated(true);
       mWaitingDialog.setCursor(new Cursor(Cursor.WAIT_CURSOR));
 
