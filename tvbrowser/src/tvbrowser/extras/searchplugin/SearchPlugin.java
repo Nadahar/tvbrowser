@@ -315,7 +315,7 @@ public class SearchPlugin {
       RepetitionDialog dlg = new RepetitionDialog(parent, channel);
   
       dlg.setPatternText(program.getTitle());
-      UiUtilities.centerAndShow(dlg);
+      dlg.setVisible(true);
     }
     }catch(Throwable t) {t.printStackTrace();}
   }
