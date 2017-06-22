@@ -525,7 +525,7 @@ public class ReminderListPanel extends TabListenerPanel implements PersonaListen
     }
   }
   
-  void updateTableEntries() {System.out.println("hier");
+  void updateTableEntries() {
     mModel.updateTableEntries();
     updateButtons();
     if(tableScroll != null) {
@@ -591,7 +591,7 @@ public class ReminderListPanel extends TabListenerPanel implements PersonaListen
       int row = mTable.rowAtPoint(e.getPoint());
       
       final Program p = (Program) mTable.getModel().getValueAt(row, 0);
-      System.out.println(p);
+      
       if(p != null && !p.equals(PluginManagerImpl.getInstance().getExampleProgram())) {
         return p;
       }
