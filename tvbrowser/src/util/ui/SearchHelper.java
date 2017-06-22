@@ -28,10 +28,8 @@ package util.ui;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Cursor;
-import java.awt.Dialog;
 import java.awt.Dialog.ModalityType;
 import java.awt.Dimension;
-import java.awt.Frame;
 import java.awt.Rectangle;
 import java.awt.Window;
 import java.awt.event.ItemEvent;
@@ -53,16 +51,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 
-import tvbrowser.core.Settings;
-import tvbrowser.core.TvDataUpdater;
-import tvbrowser.core.filters.FilterManagerImpl;
-import tvbrowser.extras.searchplugin.SearchDialog;
-import tvbrowser.ui.mainframe.MainFrame;
-import util.exc.ErrorHandler;
-import util.exc.TvBrowserException;
-import util.settings.PluginPictureSettings;
-import util.settings.ProgramPanelSettings;
-
 import com.jgoodies.forms.builder.ButtonBarBuilder;
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.factories.CC;
@@ -72,6 +60,15 @@ import devplugin.Program;
 import devplugin.ProgramFilter;
 import devplugin.ProgramSearcher;
 import devplugin.ProgressMonitor;
+import tvbrowser.core.Settings;
+import tvbrowser.core.TvDataUpdater;
+import tvbrowser.core.filters.FilterManagerImpl;
+import tvbrowser.extras.searchplugin.SearchDialog;
+import tvbrowser.ui.mainframe.MainFrame;
+import util.exc.ErrorHandler;
+import util.exc.TvBrowserException;
+import util.settings.PluginPictureSettings;
+import util.settings.ProgramPanelSettings;
 
 /**
  * This Class helps to search for a Program.

@@ -72,9 +72,9 @@ public class ProgramKeyEventHandler extends KeyAdapter {
   
   @Override
   public void keyPressed(KeyEvent e) {
-    if((e.getKeyCode() == LEFT_SINGLE_KEY || e.getKeyCode() == MIDDLE_SINGLE_KEY || e.getKeyCode() == LEFT_DOUBLE_KEY
-      || e.getKeyCode() == MIDDLE_DOUBLE_KEY || e.getKeyCode() == KeyEvent.VK_CONTEXT_MENU || e.getKeyCode() == KeyEvent.VK_R)
-        && e.getModifiersEx() == 0) {
+    if(e.getKeyCode() == LEFT_SINGLE_KEY || e.getKeyCode() == MIDDLE_SINGLE_KEY || e.getKeyCode() == LEFT_DOUBLE_KEY
+      || e.getKeyCode() == MIDDLE_DOUBLE_KEY || ((e.getKeyCode() == KeyEvent.VK_CONTEXT_MENU || e.getKeyCode() == KeyEvent.VK_R)
+        && e.getModifiersEx() == 0)) {
       Program program = mContextMenuListener.getProgramForKeyEvent(e);
       
       if(program != null) {
