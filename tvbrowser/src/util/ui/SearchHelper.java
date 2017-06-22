@@ -29,6 +29,7 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dialog;
+import java.awt.Dialog.ModalityType;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.Rectangle;
@@ -276,18 +277,10 @@ public class SearchHelper {
    * @param pictureSettings Picture Settings
    */
   private JDialog createHitsDialog(Component comp, final Program[] programArr, String title, final SearchFormSettings searchSettings, ProgramPanelSettings pictureSettings) {
-    final JDialog dlg;
-
     final Window parentWindow = UiUtilities.getBestDialogParent(comp);
-
-    if (parentWindow instanceof Frame) {
-      dlg = new JDialog((Frame)parentWindow, title, true);
-    } else {
-      dlg = new JDialog((Dialog)parentWindow, title, true);
-    }
-
+    final JDialog dlg = new JDialog(parentWindow, title, ModalityType.DOCUMENT_MODAL);
+    
     UiUtilities.registerForClosing(new WindowClosingIf() {
-
       public void close() {
         dlg.dispose();
       }
@@ -295,7 +288,6 @@ public class SearchHelper {
       public JRootPane getRootPane() {
         return dlg.getRootPane();
       }
-
     });
 
     EnhancedPanelBuilder pb = new EnhancedPanelBuilder("default:grow");
