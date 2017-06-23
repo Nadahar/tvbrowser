@@ -654,11 +654,7 @@ public class ProgramListPanel extends TabListenerPanel implements PersonaCompatL
             @Override
             public void run() {
               synchronized (mPrograms) {
-                DefaultListModel model = new DefaultListModel();
-                /*mFilterBox.setEnabled(false);
-                mChannelBox.setEnabled(false);
-                mRefreshBtn.setEnabled(false);
-                mSendBtn.setEnabled(false);*/
+                final DefaultListModel model = new DefaultListModel();
                 
                 try {
                   setPriority(MIN_PRIORITY);
@@ -787,20 +783,28 @@ public class ProgramListPanel extends TabListenerPanel implements PersonaCompatL
   private void updateList(final DefaultListModel model, final int index, final boolean select) {
     SwingUtilities.invokeLater(new Runnable() {
       @Override
-      public void run() {
+      public void run() {try {
         mModel = model;
         mList.setModel(model);
         
         final Rectangle rect = mList.getCellBounds(index, index);
-        rect.height = mList.getVisibleRect().height;
+        final Rectangle visibleRect = mList.getVisibleRect();
         
-        mList.scrollRectToVisible(rect);
-        
-        if(select) {
-          mList.setSelectedIndex(index);
+        if(rect != null && visibleRect != null) {
+          rect.height = visibleRect.height;
         }
-        else if(mCurrentVisible != null && mList.contains(mCurrentVisible.getLocation()) && mModel.getSize() == mCurrentCount) {
-          mList.scrollRectToVisible(mCurrentVisible);
+        
+        if(rect != null) {
+          mList.scrollRectToVisible(rect);
+        }
+        
+        if(index >= 0 && index < mModel.getSize()) {
+          if(select) {
+            mList.setSelectedIndex(index);
+          }
+          else if(mCurrentVisible != null && mList.contains(mCurrentVisible.getLocation()) && mModel.getSize() == mCurrentCount) {
+            mList.scrollRectToVisible(mCurrentVisible);
+          }
         }
         
         mCurrentVisible = null;
@@ -808,6 +812,7 @@ public class ProgramListPanel extends TabListenerPanel implements PersonaCompatL
         
         setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));   
         mList.repaint();//.updateUI();
+      }catch(Throwable t) {t.printStackTrace();}
       }
     });
   }
