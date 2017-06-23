@@ -66,7 +66,7 @@ import util.ui.UiUtilities;
  * A User can configure his favorite Search-Engines and search for the given Movie
  */
 public class WebPlugin extends Plugin {
-  private static final Version VERSION = new Version(3,16);
+  private static final Version VERSION = new Version(3,17);
 
   private static final Logger LOGGER = java.util.logging.Logger
   .getLogger(WebPlugin.class.getName());
@@ -489,28 +489,15 @@ public class WebPlugin extends Plugin {
   }
 
   public ProgramReceiveTarget[] getProgramReceiveTargets() {
-    boolean isTextSearch = false;
-    
-    final StackTraceElement[] els = Thread.currentThread().getStackTrace();
-    for(int i = 0; i < 6; i++) {
-      if(els[i].getClassName().startsWith("tvbrowser.extras.programinfo.ProgramInfoDialog") && els[i].getMethodName().equals("getPopupMenu")) {
-        isTextSearch = true;
-        break;
-      }
-    }
-    
     final ArrayList<ProgramReceiveTarget> list = new ArrayList<ProgramReceiveTarget>();
 
     for (int i = 0; i < mAddresses.size(); i++) {
       final WebAddress adr = mAddresses.get(i);
 
-      if (adr.isActive()) {
-        if(!isTextSearch ||
-            !(adr.getUrl().equals(PROGRAM_SITE) ||
-                adr.getUrl().equals(SITE_VOD) ||
+      if (adr.isActive() && !(adr.getUrl().equals(PROGRAM_SITE) ||
+            adr.getUrl().equals(SITE_VOD) ||
             adr.getUrl().equals(CHANNEL_SITE))) {
-          list.add(new ProgramReceiveTarget(this,LOCALIZER.msg("SearchOn", "Search on ") + " " + adr.getName(),adr.getName() + "." + adr.getUrl()));
-        }
+        list.add(new ProgramReceiveTarget(this,LOCALIZER.msg("SearchOn", "Search on ") + " " + adr.getName(),adr.getName() + "." + adr.getUrl()));
       }
     }
 
@@ -541,14 +528,13 @@ public class WebPlugin extends Plugin {
     return false;
   }
 
-  public boolean receivePrograms(final Program[] programArr,
-      final ProgramReceiveTarget target) {
+  public boolean receivePrograms(final Program[] programArr, final ProgramReceiveTarget target) {
     for (int i = 0; i < mAddresses.size(); i++) {
       final WebAddress adr = mAddresses.get(i);
 
       if (adr.isActive() && target.isReceiveTargetWithIdOfProgramReceiveIf(this,adr.getName() + "." + adr.getUrl())) {
         for(Program p : programArr) {
-          openUrl(p, adr);
+          openUrl(p, adr, p.getTitle());
         }
 
         return true;
@@ -558,6 +544,14 @@ public class WebPlugin extends Plugin {
     return false;
   }
 
+  protected void openUrl(final Program program, WebAddress address, final String search) {
+    if(address.getUrl().contains(WEBSEARCH_ALL)) {
+      address = new WebAddress(address.getName(), address.getUrl(WebAddress.MOVIE_SEARCH).replace(WEBSEARCH_ALL, "\"" + program.getTitle() + "\""), null, false, true);
+    }
+    
+    openUrl(program, address);
+  }
+  
   /**
    * Opens the Address in a browser
    * @param program Program to search on the Web
@@ -568,7 +562,7 @@ public class WebPlugin extends Plugin {
       final ParamParser parser = new ParamParser();
       
       final String result = parser.analyse(address.getUrl(), program);
-      
+      System.out.println(result);
       if (parser.hasErrors()) {
         final String errorString = parser.getErrorString();
         LOGGER.warning("URL parse error " + errorString+ " in " + address.getUrl());
