@@ -110,7 +110,7 @@ public class ManagePanel extends TabListenerPanel implements PersonaCompatListen
   
   private JComboBox mFilterSelection;
   private JLabel mFilterLabel;
-
+  
   /**
    * Creates an instance of this panel.
    *
@@ -634,5 +634,17 @@ public class ManagePanel extends TabListenerPanel implements PersonaCompatListen
     }
     
     mShowTitles.setForeground(mShowPrograms.getForeground());
+  }
+  
+  @Override
+  public void tabShown() {
+    super.tabShown();
+    for(int i = 0; i < mProgramListModel.getSize(); i++) {
+      if(mProgramListModel.getElementAt(i) instanceof Program && 
+          !((Program)mProgramListModel.getElementAt(i)).isExpired()) {
+        scroll(ProgramListCompat.getNewIndexForOldIndex(mProgramsList,i));
+        break;
+      }
+    }
   }
 }
