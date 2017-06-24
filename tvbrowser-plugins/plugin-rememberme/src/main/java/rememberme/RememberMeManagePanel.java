@@ -754,7 +754,7 @@ public class RememberMeManagePanel extends TabListenerPanel implements PersonaCo
     }
   }
   
-  public void updateFilters(int dayCount) {try {
+  public void updateFilters(int dayCount) {
     int selection = mDayFilter.getSelectedIndex();
     
     if(selection < 0) {
@@ -763,7 +763,11 @@ public class RememberMeManagePanel extends TabListenerPanel implements PersonaCo
     
     mFilterModel.removeAllElements();
     
-    mFilterModel.addElement(mCurrentDayFilter);
+    try {
+      mFilterModel.addElement(mCurrentDayFilter);
+    }catch(Exception e) {/* Catch stupid exception */}
+    
+    try {
     mFilterModel.addElement(new DayFilter(RememberMe.mLocalizer.msg("last3", "Last 3 days"),0,-3));
     mFilterModel.addElement(new DayFilter(RememberMe.mLocalizer.msg("last7", "Last 7 days"),0,-7));
     

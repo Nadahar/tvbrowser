@@ -62,7 +62,7 @@ import util.ui.WindowClosingIf;
 
 public class RememberMe extends Plugin {
   public static final int DEFAULT_DAY_COUNT = 14; 
-  private static final Version mVersion = new Version(0,19,1,true);
+  private static final Version mVersion = new Version(0,19,2,true);
   static final Localizer mLocalizer = Localizer.getLocalizerFor(RememberMe.class);
   private static final String TARGET_ID = "###REMEMBERME###";
   
