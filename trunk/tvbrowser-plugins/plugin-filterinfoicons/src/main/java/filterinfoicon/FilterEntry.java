@@ -31,17 +31,16 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
 import compat.IOCompat;
-import tvdataservice.MutableChannelDayProgram;
-import util.exc.TvBrowserException;
-import util.io.IOUtilities;
-import util.ui.SearchFormSettings;
-import util.ui.UiUtilities;
 import devplugin.Plugin;
 import devplugin.PluginManager;
 import devplugin.Program;
 import devplugin.ProgramFilter;
 import devplugin.ProgramReceiveTarget;
 import devplugin.ProgramSearcher;
+import tvdataservice.MutableChannelDayProgram;
+import util.exc.TvBrowserException;
+import util.ui.SearchFormSettings;
+import util.ui.UiUtilities;
 
 /**
  * A filter info icon.
