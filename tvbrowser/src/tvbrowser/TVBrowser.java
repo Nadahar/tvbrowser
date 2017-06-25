@@ -26,13 +26,13 @@
 package tvbrowser;
 
 import java.awt.Color;
+import java.awt.Dialog.ModalityType;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Frame;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Toolkit;
-import java.awt.Dialog.ModalityType;
 import java.awt.event.WindowAdapter;
 import java.io.BufferedReader;
 import java.io.File;
@@ -79,6 +79,15 @@ import org.apache.commons.lang3.StringUtils;
 import org.pushingpixels.substance.api.SubstanceLookAndFeel;
 import org.pushingpixels.substance.api.skin.SkinInfo;
 
+import com.jgoodies.looks.LookUtils;
+import com.l2fprod.gui.plaf.skin.SkinLookAndFeel;
+
+import ca.beq.util.win32.registry.RegistryKey;
+import ca.beq.util.win32.registry.RegistryValue;
+import ca.beq.util.win32.registry.RootKey;
+import devplugin.Date;
+import devplugin.ProgramFieldType;
+import devplugin.Version;
 import tvbrowser.core.ChannelList;
 import tvbrowser.core.PendingMarkings;
 import tvbrowser.core.PluginLoader;
@@ -120,16 +129,6 @@ import util.ui.Localizer;
 import util.ui.UIThreadRunner;
 import util.ui.UiUtilities;
 import util.ui.textcomponentpopup.TextComponentPopupEventQueue;
-import ca.beq.util.win32.registry.RegistryKey;
-import ca.beq.util.win32.registry.RegistryValue;
-import ca.beq.util.win32.registry.RootKey;
-
-import com.jgoodies.looks.LookUtils;
-import com.l2fprod.gui.plaf.skin.SkinLookAndFeel;
-
-import devplugin.Date;
-import devplugin.ProgramFieldType;
-import devplugin.Version;
 
 /**
  * TV-Browser
@@ -150,10 +149,10 @@ public class TVBrowser {
   
   public static final ArrayList<Image> ICONS_WINDOW = new ArrayList<Image>(4);
 
-  private static final boolean mIsStable = false;
-  private static final int mMajorVersion = 3;
-  private static final int mMinorVersion = 44;
-  private static final int mSubMinorVersion = 98;
+  private static final boolean mIsStable = true;
+  private static final int mMajorVersion = 4;
+  private static final int mMinorVersion = 00;
+  private static final int mSubMinorVersion = 00;
 
   /* If you want to change the version string, add it to the beginning of this array.
      We need the old version strings to import the settings.
@@ -167,10 +166,7 @@ public class TVBrowser {
   */
   /** The string array with the names of the earlier versions. */
   private static final String[] ALL_VERSIONS = new String[] {
-          "3.4.4.98 RC3",
-	        "3.4.4.97 RC2",
-          "3.4.4.95 Beta1",
-          "3.4.4.50 SVN",
+          "4", "3.4.4.98 RC3", "3.4.4.97 RC2", "3.4.4.95 Beta1", "3.4.4.50 SVN",
           "3.4.4", "3.4.3.96 RC1", "3.4.3.95 Beta1", "3.4.3.52 SVN", "3.4.3.51 SVN", "3.4.3.50 SVN",
 	        "3.4.3", "3.4.2.50 SVN", "3.4.2", "3.4.1.96 RC1", "3.4.1.95 Beta1", "3.4.1.50-SVN",
           "3.4.1a", "3.4.1", "3.4.0.99 RC", "3.4.0.98 RC", "3.4.0.97 RC", "3.4.0.96 RC", "3.4.0.95 Beta", "3.4.0.50-SVN",
