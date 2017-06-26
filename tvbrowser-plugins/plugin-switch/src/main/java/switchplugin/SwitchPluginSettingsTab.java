@@ -7,9 +7,7 @@ import java.awt.event.ActionListener;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JDialog;
 import javax.swing.JFileChooser;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -20,10 +18,6 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.table.TableModel;
 
-import util.paramhandler.ParamHelpDialog;
-import util.ui.Localizer;
-import util.ui.UiUtilities;
-
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.factories.Borders;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -31,6 +25,9 @@ import com.jgoodies.forms.layout.FormLayout;
 
 import devplugin.Channel;
 import devplugin.SettingsTab;
+import util.paramhandler.ParamHelpDialog;
+import util.ui.Localizer;
+import util.ui.UiUtilities;
 
 /**
  * The settings tab for the SwitchPlugin.
@@ -75,24 +72,17 @@ public class SwitchPluginSettingsTab implements SettingsTab {
     mParaArea.setText(switchPlugin.getProperty("para","").trim());    
     mParaArea.setLineWrap(true);
     
-    JScrollPane areaScrollPane = new JScrollPane(mParaArea, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+    final JScrollPane areaScrollPane = new JScrollPane(mParaArea, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
         JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
     
     JButton paraHelp = new JButton(mLocalizer.msg("help","Help"));
     paraHelp.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        java.awt.Window w = UiUtilities.getLastModalChildOf(SwitchPlugin.getInstance().getSuperFrame());
-        ParamHelpDialog helpDlg;
-        
-        if(w instanceof JDialog) {
-          helpDlg = new ParamHelpDialog((JDialog)w, new SwitchParamLibrary());
-        }
-        else {
-          helpDlg = new ParamHelpDialog((JFrame)w, new SwitchParamLibrary());
-        }
+      public void actionPerformed(ActionEvent e) {try {
+        final java.awt.Window w = UiUtilities.getLastModalChildOf(SwitchPlugin.getInstance().getSuperFrame());
+        final ParamHelpDialog helpDlg = new ParamHelpDialog(w, new SwitchParamLibrary());
         
         helpDlg.setLocationRelativeTo(w);
-        helpDlg.setVisible(true);
+        helpDlg.setVisible(true);}catch(Throwable t) {t.printStackTrace();}
       }
     });
     
