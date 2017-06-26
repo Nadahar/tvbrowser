@@ -586,7 +586,8 @@ public class MarkList extends Vector<Program> {
    */
   protected Program[] getProgramsWithTitle(String title) {
     LinkedList<Program> list = mProgram.get(title);
-    return (list.toArray(new Program[list.size()]));
+    
+    return list != null ? (list.toArray(new Program[list.size()])) : new Program[0];
   }
 
   /**
