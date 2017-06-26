@@ -347,12 +347,13 @@ public class ManagePanel extends TabListenerPanel implements PersonaCompatListen
     SimpleMarkerPlugin.getInstance().resetManageDialog();
   }
 
-  private void send() {
+  private void send() {try {
     Program[] programs = null;
 
     MarkList list = (MarkList) mMarkListsList.getSelectedValue();
 
-    if(mProgramsList.getSelectedValue() != null && mProgramsList.getSelectedValue() instanceof Program) {
+    if(mProgramsList.getSelectedValue() != null && ((mProgramsList.getSelectedValue() instanceof Program)
+        || mProgramsList.getSelectedValue().equals("DATE_SEPARATOR"))) {
       programs = mProgramsList.getSelectedPrograms();
     } else if(mProgramsList.getSelectedValue() != null) {
       Object[] values = mProgramsList.getSelectedValues();
@@ -396,7 +397,7 @@ public class ManagePanel extends TabListenerPanel implements PersonaCompatListen
           .getInstance(), list.getReceiveTarget(), UiUtilities.getLastModalChildOf(SimpleMarkerPlugin.getInstance().getSuperFrame()), programs);
 
       send.setVisible(true);
-    }
+    }}catch(Throwable t) {t.printStackTrace();}
   }
   
   synchronized void selectPrograms(boolean scroll) {
@@ -638,12 +639,34 @@ public class ManagePanel extends TabListenerPanel implements PersonaCompatListen
   
   @Override
   public void tabShown() {
+    int index = mProgramsList.getSelectedIndex();
     super.tabShown();
-    for(int i = 0; i < mProgramListModel.getSize(); i++) {
-      if(mProgramListModel.getElementAt(i) instanceof Program && 
-          !((Program)mProgramListModel.getElementAt(i)).isExpired()) {
-        scroll(ProgramListCompat.getNewIndexForOldIndex(mProgramsList,i));
-        break;
+    
+    if(index == -1 && mProgramsList.getModel().getSize() > 0) {
+      SwingUtilities.invokeLater(new Runnable() {
+        @Override
+        public void run() {
+          mProgramsList.getSelectionModel().setSelectionInterval(0, 0);
+          SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+              mProgramsList.clearSelection();
+            }
+          });
+        }
+      });
+    }
+    else if(index < mProgramsList.getModel().getSize()) {
+      mProgramsList.ensureIndexIsVisible(index);
+    }
+    
+    if(index == -1) {
+      for(int i = 0; i < mProgramListModel.getSize(); i++) {
+        if(mProgramListModel.getElementAt(i) instanceof Program && 
+            !((Program)mProgramListModel.getElementAt(i)).isExpired()) {
+          scroll(ProgramListCompat.getNewIndexForOldIndex(mProgramsList,i));
+          break;
+        }
       }
     }
   }
