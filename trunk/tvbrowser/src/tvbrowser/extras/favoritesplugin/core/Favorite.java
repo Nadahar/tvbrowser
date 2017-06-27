@@ -306,10 +306,12 @@ public abstract class Favorite {
         
         Program newProg = null;
         
-        for(Program check : newProgs) {
-          if(check.getTitle().equals(test.getTitle())) {
-            newProg = check;
-            break;
+        if(newProgs != null) {
+          for(Program check : newProgs) {
+            if(check.getTitle().equals(test.getTitle())) {
+              newProg = check;
+              break;
+            }
           }
         }
 
