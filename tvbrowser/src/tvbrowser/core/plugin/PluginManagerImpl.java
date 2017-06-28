@@ -242,7 +242,7 @@ public class PluginManagerImpl implements PluginManager {
     if (ch != null && ChannelList.isSubscribedChannel(ch)) {
       int index = progID.lastIndexOf('_');
       String timeString = progID.substring(index + 1);
-      int hourIndex = timeString.indexOf(':');
+  /*    int hourIndex = timeString.indexOf(':');
       int offsetIndex = timeString.lastIndexOf(':');
 
       if(hourIndex != offsetIndex) {
@@ -275,7 +275,7 @@ public class PluginManagerImpl implements PluginManager {
         //  progID = newId.toString();
         }
       }
-      /*else {
+     /*else {
         String[] hourMinute = timeString.split(":");
         StringBuilder newId = new StringBuilder(progID.substring(0, index + 1));
         newId.append(hourMinute[0]).append(":").append(hourMinute[1]).append(":").append(TimeZone.getDefault().getRawOffset()/60000);
@@ -283,13 +283,14 @@ public class PluginManagerImpl implements PluginManager {
         progID = newId.toString();
       }*/
       
-      if(ch.getTimeZone().getRawOffset() != TimeZone.getDefault().getRawOffset()) {
+      /*if(ch.getTimeZone().getRawOffset() != TimeZone.getDefault().getRawOffset() || 
+          (ch.getTimeZone().getDSTSavings() != TimeZone.getDefault().getDSTSavings())) {*/
         String[] hourMinute = timeString.split(":");
         int milliSeconds = Integer.parseInt(hourMinute[0]) * 60 * 60 * 1000 + Integer.parseInt(hourMinute[1]) * 60 * 1000;
 
-        int diff = Math.abs(ch.getTimeZone().getRawOffset() - TimeZone.getDefault().getRawOffset());
+        int diff = Math.abs(ch.getTimeZone().getOffset(date.getCalendar().getTimeInMillis()+milliSeconds) - TimeZone.getDefault().getOffset(date.getCalendar().getTimeInMillis()+milliSeconds));
         
-        if(ch.getTimeZone().getRawOffset() < TimeZone.getDefault().getRawOffset()) {
+        if(ch.getTimeZone().getOffset(date.getCalendar().getTimeInMillis()+milliSeconds) < TimeZone.getDefault().getOffset(date.getCalendar().getTimeInMillis()+milliSeconds)) {
           if(milliSeconds < diff) {
             date = date.addDays(-1);
           }
@@ -297,7 +298,7 @@ public class PluginManagerImpl implements PluginManager {
         else if(milliSeconds + diff >= 86400 * 1000) {
           date = date.addDays(1);
         }
-      }
+     // }
       
       return db.getDayProgram(date, ch);
     }else{
