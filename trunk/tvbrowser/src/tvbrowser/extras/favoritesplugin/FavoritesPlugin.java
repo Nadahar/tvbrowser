@@ -609,6 +609,7 @@ public class FavoritesPlugin {
       mConfigurationHandler.loadData(new DataDeserializer(){
         public void read(ObjectInputStream in) throws IOException, ClassNotFoundException {
           readData(in);
+          store();
         }
       });
     }catch(IOException e) {
