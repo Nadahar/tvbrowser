@@ -78,7 +78,7 @@ import util.ui.WindowClosingIf;
 public class ProgramListPlugin extends Plugin {
   static final Localizer mLocalizer = Localizer.getLocalizerFor(ProgramListPlugin.class);
 
-  private static Version mVersion = new Version(3, 30, 5, true);
+  private static Version mVersion = new Version(3, 30, 6, true);
   
   private static final int MAX_DIALOG_LIST_SIZE = 5000;
   static final int MAX_PANEL_LIST_SIZE = 2500;
@@ -191,20 +191,22 @@ public class ProgramListPlugin extends Plugin {
       @Override
       public void run() {
         if(getSettings().getBooleanValue(ProgramListSettings.KEY_PROVIDE_TAB)) {
-          mCenterPanelEntry = new ProgramListPanel(null, false, MAX_PANEL_LIST_SIZE);
-          PersonaCompat.getInstance().registerPersonaListener(mCenterPanelEntry);
-          FilterCompat.getInstance().registerFilterChangeListener(mCenterPanelEntry);
-          
-          SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-              mCenterPanelWrapper.add(mCenterPanelEntry, BorderLayout.CENTER);
-              
-              if(PersonaCompat.getInstance().getHeaderImage() != null) {
-                mCenterPanelEntry.updatePersona();
+          if(mCenterPanelEntry == null) {
+            mCenterPanelEntry = new ProgramListPanel(null, false, MAX_PANEL_LIST_SIZE);
+            PersonaCompat.getInstance().registerPersonaListener(mCenterPanelEntry);
+            FilterCompat.getInstance().registerFilterChangeListener(mCenterPanelEntry);
+            
+            SwingUtilities.invokeLater(new Runnable() {
+              @Override
+              public void run() {
+                mCenterPanelWrapper.add(mCenterPanelEntry, BorderLayout.CENTER);
+                
+                if(PersonaCompat.getInstance().getHeaderImage() != null) {
+                  mCenterPanelEntry.updatePersona();
+                }
               }
-            }
-          });
+            });
+          }
         } else {
           if(mCenterPanelEntry != null) {
             PersonaCompat.getInstance().removePersonaListener(mCenterPanelEntry);
