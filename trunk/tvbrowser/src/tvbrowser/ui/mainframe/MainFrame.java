@@ -325,7 +325,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
   
   private MainFrame() {
     super(TVBrowser.MAINWINDOW_TITLE);
-    
+    println("POS 1");
     setContentPane(new BackgroundPanel());
     
     Persona.getInstance().registerPersonaListener(this);
@@ -409,7 +409,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     skinPanel.addKeyListener(mGlobalFindAsYouTypeKeyListener);
     skinPanel.setOpaque(false);
     skinPanel.setLayout(new BorderLayout());
-
+    println("POS 2");
     JPanel centerPanel = new JPanel(new BorderLayout());
     centerPanel.addKeyListener(mGlobalFindAsYouTypeKeyListener);
     centerPanel.setOpaque(false);
@@ -445,7 +445,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     if(channelArr.length == 0) {
       mScrollPaneWrapper.showInfoPanel(ProgramTableScrollPaneWrapper.INFO_NO_CHANNELS_SUBSCRIBED, null);
     }
-    
+    println("POS 3");
     mCenterTabPane = new JTabbedPane();
     mCenterTabPane.addChangeListener(e -> {
       final Component focusOwner = getMostRecentFocusOwner();
@@ -484,7 +484,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
         scrollThroughTabs(DIRECTION_LEFT);
       }
     });
-    
+    println("POS 4");
     mDefaultUI = mCenterTabPane.getUI();
     mPersonaUI = new BasicTabbedPaneUI() {
       protected  void  paintText(Graphics g, int tabPlacement, Font font, FontMetrics metrics, int tabIndex, String title, Rectangle textRect, boolean isSelected) {
@@ -523,7 +523,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
         }
       }
     };
-    
+    println("POS 5");
     KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_UP, InputEvent.CTRL_MASK);
     
     // Remove ctrl-up from normal focus traversal
@@ -588,7 +588,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     });
     
     mProgramTableScrollPane.setOpaque(false);
-
+    println("POS 6");
     createDateSelector();
 
     skinPanel.add(centerPanel, BorderLayout.CENTER);
@@ -625,7 +625,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     mMainframeNode.setProperty(Settings.propViewMainframe);
     mNavigationNode.setProperty(Settings.propViewNavigation);
     mDateChannelNode.setProperty(Settings.propViewDateChannel);
-    
+    println("POS 7");
     /* create views */
     programtableNode.setLeaf(skinPanel);
     this.setShowPluginOverview(Settings.propShowPluginView.getBoolean());
@@ -657,7 +657,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     
     // set program filter
     final FilterList filterList = FilterList.getInstance();
-    
+    println("POS 8");
     ProgramFilter filter = filterList
         .getFilterByName(Settings.propLastUsedFilter.getString());
     
@@ -695,10 +695,11 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     }
 
     this.setDropTarget(target);
-    
+    println("POS 9");
     updateCenterPanels();
     
     FilterManagerImpl.getInstance().registerFilterChangeListener(this);
+    println("POS 10");
   }
 
   /**
@@ -1316,7 +1317,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     return mStatusBar.getLabel();
   }
 
-  public void updateToolbar() {
+  public void updateToolbar() {try {
     JPanel contentPane = (JPanel) getContentPane();
 
     if (mToolBarPanel != null) {
@@ -1378,7 +1379,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     }
 
     contentPane.invalidate();
-    contentPane.updateUI();
+    contentPane.updateUI();}catch(Throwable t) {t.printStackTrace();}
   }
 
   private void addContextMenuMouseListener(final JComponent c) {
@@ -3656,5 +3657,9 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
       
       mSingleton.mMenuBar.updateChannelGroupMenu();
     }
+  }
+  
+  private static void println(String text) {
+    //System.out.println(text);
   }
 }

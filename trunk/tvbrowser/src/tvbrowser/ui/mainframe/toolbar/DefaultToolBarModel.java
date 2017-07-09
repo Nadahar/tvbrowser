@@ -50,6 +50,12 @@ import javax.swing.SwingConstants;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 
+import devplugin.ActionMenu;
+import devplugin.Channel;
+import devplugin.ContextMenuSeparatorAction;
+import devplugin.Date;
+import devplugin.Plugin;
+import devplugin.ProgressMonitor;
 import tvbrowser.TVBrowser;
 import tvbrowser.core.DateListener;
 import tvbrowser.core.Settings;
@@ -63,6 +69,7 @@ import tvbrowser.core.tvdataservice.TvDataServiceProxy;
 import tvbrowser.core.tvdataservice.TvDataServiceProxyManager;
 import tvbrowser.extras.common.InternalPluginProxyIf;
 import tvbrowser.extras.common.InternalPluginProxyList;
+import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
 import tvbrowser.extras.reminderplugin.ReminderPlugin;
 import tvbrowser.ui.filter.dlgs.SelectFilterPopup;
 import tvbrowser.ui.mainframe.MainFrame;
@@ -73,12 +80,6 @@ import util.ui.Localizer;
 import util.ui.ScrollableMenu;
 import util.ui.UIThreadRunner;
 import util.ui.UiUtilities;
-import devplugin.ActionMenu;
-import devplugin.Channel;
-import devplugin.ContextMenuSeparatorAction;
-import devplugin.Date;
-import devplugin.Plugin;
-import devplugin.ProgressMonitor;
 
 public class DefaultToolBarModel implements ToolBarModel, DateListener {
 
@@ -337,10 +338,24 @@ public class DefaultToolBarModel implements ToolBarModel, DateListener {
         mVisibleActions.add(mAvailableActions.get("searchplugin.SearchPlugin"));
       } else if (buttonName.equals("java.reminderplugin.ReminderPlugin") || buttonName.equals("#reminder") || buttonName.equals("reminderplugin.ReminderPlugin")) {
         try {
-        mVisibleActions.add(mAvailableActions.get("reminderplugin.ReminderPlugin##"+ReminderPlugin.REMINDER_LIST_ACTION_ID));
+          action = mAvailableActions.get("reminderplugin.ReminderPlugin##"+ReminderPlugin.REMINDER_LIST_ACTION_ID);
+          
+          if(action != null) {
+            mVisibleActions.add(action);
+          }
         }catch(Throwable t){t.printStackTrace();}
-      } else if (buttonName.equals("java.favoritesplugin.FavoritesPlugin") || buttonName.equals("#favorite")) {
-        mVisibleActions.add(mAvailableActions.get("favoritesplugin.FavoritesPlugin"));
+      } else if (buttonName.equals("java.favoritesplugin.FavoritesPlugin") || buttonName.equals("#favorite") || buttonName.equals("favoritesplugin.FavoritesPlugin##Lieblingssendungen")) {
+        action = mAvailableActions.get("favoritesplugin.FavoritesPlugin##"+FavoritesPlugin.ID_ACTION_MANAGE);
+        
+        if(action != null) {
+          mVisibleActions.add(action);
+        }
+      } else if (buttonName.equals("favoritesplugin.FavoritesPlugin##Neue Sendungen anzeigen")) {
+        action = mAvailableActions.get("favoritesplugin.FavoritesPlugin##"+FavoritesPlugin.ID_ACTION_SHOW_NEW);
+        
+        if(action != null) {
+          mVisibleActions.add(action);
+        }
       } else { // if the buttonName is not valid, we try to add the
         // prefix '.java' - maybe it's a plugin from
         // TV-Browser 1.0

@@ -126,6 +126,9 @@ import util.ui.persona.Persona;
  * @author Til Schneider, www.murfman.de
  */
 public class FavoritesPlugin {
+  public static final String ID_ACTION_MANAGE = "manageFavorites";
+  public static final String ID_ACTION_SHOW_NEW = "showNewFavorites";
+  
   public static final Logger mLog = Logger.getLogger(FavoritesPlugin.class.getName());
   /**
    * Tango category of the icon to be used in this plugin
@@ -976,6 +979,7 @@ public class FavoritesPlugin {
     action.setShortDescription(mLocalizer.msg("favoritesManager",
             "Manage favorite programs"));
     action.setText(getName());
+    action.putValue(Plugin.ACTION_ID_KEY, ID_ACTION_MANAGE);
 
     ButtonAction showNew = new ButtonAction();
     showNew.setActionListener(e -> {
@@ -988,6 +992,7 @@ public class FavoritesPlugin {
     showNew.setText(mLocalizer.msg("showNewTitle",
         "Show new programs"));
     showNew.putValue(InternalPluginProxyIf.KEYBOARD_ACCELERATOR, KeyStroke.getKeyStroke(KeyEvent.VK_E, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+    showNew.putValue(Plugin.ACTION_ID_KEY, ID_ACTION_SHOW_NEW);
     
     final ActionMenu m = new ActionMenu(getName(), getIconFromTheme(ICON_CATEGORY, ICON_NAME, 16), new Action[] {action,showNew});
     m.getAction().putValue(Plugin.BIG_ICON, getIconFromTheme(ICON_CATEGORY, ICON_NAME, 22));
