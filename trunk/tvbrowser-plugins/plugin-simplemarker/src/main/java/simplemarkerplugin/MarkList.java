@@ -40,6 +40,7 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.Icon;
 
+import compat.ProgramCompat;
 import devplugin.ActionMenu;
 import devplugin.Date;
 import devplugin.NodeFormatter;
@@ -87,8 +88,8 @@ public class MarkList extends Vector<Program> {
       mDate = date;
     }
 
-    Program getProgram() {
-      return Plugin.getPluginManager().getProgram(mDate, mProgramId);
+    Program[] getProgram() {
+      return ProgramCompat.getPrograms(mDate, mProgramId);
     }
   }
 
@@ -505,7 +506,9 @@ public class MarkList extends Vector<Program> {
       Program markedProgram = remove(i);
       switch (markedProgram.getProgramState()) {
       case Program.WAS_UPDATED_STATE:
-        Program updatedProg = Plugin.getPluginManager().getProgram(markedProgram.getDate(), markedProgram.getID());
+        final Program[] result = ProgramCompat.getPrograms(markedProgram.getDate(), markedProgram.getID());
+        
+        Program updatedProg = result != null && result.length > 0 ? result[0] : null;
         addElement(updatedProg);
         break;
       case Program.IS_VALID_STATE:
@@ -736,11 +739,13 @@ public class MarkList extends Vector<Program> {
    */
   void loadPrograms() {
     for (MarkListProgramItem programItem : mProgramItems) {
-      Program program = programItem.getProgram();
-      if (program != null) {
-        addProgram(program);
-        program.mark(SimpleMarkerPlugin.getInstance());
-        program.validateMarking();
+      Program[] programs = programItem.getProgram();
+      if (programs != null) {
+        for(Program program : programs) {
+          addProgram(program);
+          program.mark(SimpleMarkerPlugin.getInstance());
+          program.validateMarking();
+        }
       }
     }
     mProgramItems.clear();
