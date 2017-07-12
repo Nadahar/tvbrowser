@@ -22,6 +22,8 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Properties;
 import java.util.logging.Logger;
@@ -29,22 +31,22 @@ import java.util.logging.Logger;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
-import util.io.ExecutionHandler;
-import util.io.IOUtilities;
-import util.misc.OperatingSystem;
-import util.paramhandler.ParamParser;
-import util.program.LocalPluginProgramFormating;
 import devplugin.Plugin;
 import devplugin.PluginInfo;
 import devplugin.Program;
 import devplugin.ProgramReceiveTarget;
 import devplugin.SettingsTab;
 import devplugin.Version;
+import util.io.ExecutionHandler;
+import util.io.IOUtilities;
+import util.misc.OperatingSystem;
+import util.paramhandler.ParamParser;
+import util.program.LocalPluginProgramFormating;
 
 public class NotifyOSDPlugin extends Plugin {
   private static final String COMMAND_NOTIFY_SEND = "notify-send";
   private static final boolean IS_STABLE = true;
-  private static final Version mVersion = new Version(2, 73, IS_STABLE);
+  private static final Version mVersion = new Version(2, 75, IS_STABLE);
 
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(NotifyOSDPlugin.class);
 
@@ -215,7 +217,29 @@ public class NotifyOSDPlugin extends Plugin {
         // TODO Auto-generated catch block
         e.printStackTrace();
       }
-      String location = executionHandler.getOutput();
+            
+      String location = null;
+      
+      try {
+        Method m = executionHandler.getInputStreamReaderThread().getClass().getDeclaredMethod("getOutputString");
+        m.setAccessible(true);
+        location = (String)m.invoke(executionHandler.getInputStreamReaderThread());
+      } catch (NoSuchMethodException e) {
+        location = executionHandler.getInputStreamReaderThread().getOutput();
+      } catch (SecurityException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      } catch (IllegalAccessException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      } catch (IllegalArgumentException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      } catch (InvocationTargetException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+      
       if (location != null) {
         location = location.trim();
         if (location.length() > 0) {

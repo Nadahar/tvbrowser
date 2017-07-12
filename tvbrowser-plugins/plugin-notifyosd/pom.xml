@@ -26,20 +26,33 @@
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
-          <source>1.5</source>
-          <target>1.5</target>
+          <source>1.6</source>
+          <target>1.6</target>
           <encoding>UTF-8</encoding>
         </configuration>
       </plugin>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
+        <artifactId>maven-assembly-plugin</artifactId>
         <configuration>
-          <finalName>NotifyOSDPlugin</finalName>
+            <descriptorRefs>
+                <descriptorRef>jar-with-dependencies</descriptorRef>
+            </descriptorRefs>
+            <finalName>NotifyOSDPlugin</finalName>
+            <appendAssemblyId>false</appendAssemblyId>
+            <attach>false</attach>
         </configuration>
+        <executions>
+         <execution>
+                <id>make-assembly</id> <!-- this is used for inheritance merges -->
+                <phase>package</phase> <!-- append to the packaging phase. -->
+                <goals>
+                    <goal>single</goal> <!-- goals == mojos -->
+                </goals>
+          </execution>
+        </executions>
       </plugin>
-
     </plugins>
+    
   </build>
   <dependencies>
     <dependency>
