@@ -35,8 +35,10 @@ package tvbrowser.extras.reminderplugin;
 
 import java.awt.Toolkit;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Properties;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import javax.swing.SwingUtilities;
@@ -104,8 +106,14 @@ public class ReminderTimerListener {
         list.add(reminder);
       }
       
+      Set<Integer> keys = sortedReminders.keySet();
+      Integer[] timeSortedKeys = keys.toArray(new Integer[keys.size()]);
+      Arrays.sort(timeSortedKeys);
+      
       // show reminders at same time in one window
-      for (ArrayList<ReminderListItem> singleTimeReminders : sortedReminders.values()) {
+      for (int i = timeSortedKeys.length-1; i >= 0; i--) {
+        final ArrayList<ReminderListItem> singleTimeReminders = sortedReminders.get(timeSortedKeys[i]);
+        
         if(ReminderPropertyDefaults.getPropertyDefaults().getValueFromProperties(ReminderPropertyDefaults.KEY_FRAME_REMINDERS_SHOW,ReminderPlugin.getInstance().getSettings()).equalsIgnoreCase("true")) {
           FrameReminders.getInstance().addReminders(mReminderList, singleTimeReminders);
         }
