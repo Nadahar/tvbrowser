@@ -52,6 +52,14 @@ import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import devplugin.ContextMenuIf;
+import devplugin.Marker;
+import devplugin.Plugin;
+import devplugin.PluginAccess;
+import devplugin.Program;
+import devplugin.ProgramFieldType;
+import devplugin.ProgramInfoHelper;
+import devplugin.ToolTipIcon;
 import tvbrowser.core.Settings;
 import tvbrowser.core.filters.GenericFilterMap;
 import tvbrowser.core.icontheme.InfoIconTheme;
@@ -70,14 +78,6 @@ import util.program.ProgramUtilities;
 import util.programmouseevent.ProgramMouseAndContextMenuListener;
 import util.programmouseevent.ProgramMouseEventHandler;
 import util.settings.ProgramPanelSettings;
-import devplugin.ContextMenuIf;
-import devplugin.Marker;
-import devplugin.Plugin;
-import devplugin.PluginAccess;
-import devplugin.Program;
-import devplugin.ProgramFieldType;
-import devplugin.ProgramInfoHelper;
-import devplugin.ToolTipIcon;
 
 /**
  * A ProgramPanel is a JComponent representing a single program.
@@ -1169,7 +1169,7 @@ private static Font getDynamicFontSize(Font font, int offset) {
    *          The event describing the change.
    */
   public void stateChanged(ChangeEvent evt) {
-    if (mProgram.equals(evt.getSource())) {
+    if (mProgram != null && evt != null && mProgram.equals(evt.getSource())) {
       programHasChanged();
       repaint();
     }
