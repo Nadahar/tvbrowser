@@ -43,12 +43,11 @@ import javax.swing.Action;
 import javax.swing.SwingUtilities;
 
 import compat.PluginCompat;
-import util.exc.ErrorHandler;
-import util.io.IOUtilities;
 import devplugin.ActionMenu;
 import devplugin.Plugin;
 import devplugin.PluginInfo;
 import devplugin.Version;
+import util.io.IOUtilities;
 
 /**
  * A plugin that gets after each TV data update news from the TV-Browser website
@@ -57,7 +56,7 @@ import devplugin.Version;
  * @author Til Schneider, www.murfman.de
  */
 public class NewsPlugin extends Plugin {
-  private static final Version mVersion = new Version(3,13);
+  private static final Version mVersion = new Version(3,14);
 
   /** The localizer used by this class. */
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer
@@ -214,8 +213,8 @@ public class NewsPlugin extends Plugin {
           serverWaitDays = getServerNoConnectionDays("");
         }
       } catch (Exception exc) {
-        String msg = mLocalizer.msg("error.1", "Getting news failed.");
-        ErrorHandler.handle(msg, exc);
+       // String msg = mLocalizer.msg("error.1", "Getting news failed.");
+       // ErrorHandler.handle(msg, exc);
       }
       
       long randomNoConnectionTime = (long)((1.0 + Math.random() * 2) * 24 * 60 * 60 * 1000) + currentTime;

@@ -64,7 +64,6 @@ import util.ui.UiUtilities;
 import util.ui.WindowClosingIf;
 import util.ui.html.ExtendedHTMLDocument;
 import util.ui.html.ExtendedHTMLEditorKit;
-import util.ui.html.HTMLTextHelper;
 
 /**
  * Shows the news.
