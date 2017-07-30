@@ -31,6 +31,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.Map.Entry;
@@ -260,9 +261,20 @@ public class MarkList extends Vector<Program> {
     out.writeInt(mMarkPriority);
     out.writeObject(mName);
     out.writeUTF(mId);
-    out.writeInt(size());
-
-    for (Program p : this) {
+    
+    ArrayList<Program> pList = new ArrayList<Program>();
+    HashSet<String> knownIds = new HashSet<String>();
+    
+    for(Program p : this) {
+      if(!knownIds.contains(p.getUniqueID())) {
+        knownIds.add(p.getUniqueID());
+        pList.add(p);
+      }
+    }
+    
+    out.writeInt(pList.size());
+    
+    for (Program p : pList) {
       p.getDate().writeData((java.io.DataOutput) out);
       out.writeObject(p.getID());
     }
