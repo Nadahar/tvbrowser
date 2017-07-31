@@ -364,18 +364,25 @@ public class MarkList extends Vector<Program> {
    * <p>
    * @param p The program to add.
    */
-  void addProgram(Program p) {
+  boolean addProgram(Program p) {
+	boolean result = false;
+	
     if(p != null) {
       if (mReceiveTargets != null) {
         for (ProgramReceiveTarget target:mReceiveTargets){
           target.receivePrograms(new Program[] {p});
         }
       }
-  
-      addElement(p);
-      p.mark(SimpleMarkerPlugin.getInstance());
-      p.validateMarking();
+      
+      result = addElementInternal(p);
+      
+      if(result) {
+        p.mark(SimpleMarkerPlugin.getInstance());
+        p.validateMarking();
+      }
     }
+    
+    return result;
   }
 
   /**
@@ -520,8 +527,11 @@ public class MarkList extends Vector<Program> {
       case Program.WAS_UPDATED_STATE:
         final Program[] result = ProgramCompat.getPrograms(markedProgram.getDate(), markedProgram.getID());
         
-        Program updatedProg = result != null && result.length > 0 ? result[0] : null;
-        addElement(updatedProg);
+        if(result != null) {
+          for(Program updatedProg : result) {
+            addElement(updatedProg);
+          }
+        }
         break;
       case Program.IS_VALID_STATE:
         addElement(markedProgram);
@@ -648,27 +658,47 @@ public class MarkList extends Vector<Program> {
     return mName;
   }
 
+  
+  
   @Override
   public void addElement(Program p) {
+    addElementInternal(p);
+  }
+  
+  private boolean addElementInternal(Program p) {
+	boolean result = false;
+	
     if(p != null) {
       if (isEmpty()) {
         super.addElement(p);
       } else {
         int index = 0;
-        Comparator<Program> c = ProgramUtilities.getProgramComparator();
-  
+        final Comparator<Program> c = ProgramUtilities.getProgramComparator();
+        
         for (int i = 0; i < size(); i++) {
           int value = c.compare(elementAt(i), p);
           if (value < 1) {
             index = i + 1;
+            if(value == 0 && !result) {
+          	  result = (elementAt(i) == p);
+          	  
+          	  if(result) {
+                break;
+          	  }
+          	}
           } else {
             break;
           }
         }
   
-        insertElementAt(p, index);
+        if(!result) {
+          insertElementAt(p, index);
+          result = true;
+        }
       }
     }
+    
+    return result;
   }
 
   /**
