@@ -671,6 +671,7 @@ public class MarkList extends Vector<Program> {
     if(p != null) {
       if (isEmpty()) {
         super.addElement(p);
+        result = true;
       } else {
         int index = 0;
         final Comparator<Program> c = ProgramUtilities.getProgramComparator();
