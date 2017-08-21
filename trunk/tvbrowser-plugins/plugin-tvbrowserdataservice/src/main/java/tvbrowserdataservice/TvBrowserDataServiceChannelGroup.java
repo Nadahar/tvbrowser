@@ -669,7 +669,7 @@ public class TvBrowserDataServiceChannelGroup extends ChannelGroupImpl {
     }
   }
   
-  private String readMd5Hash(File md5) {
+  public static String readMd5Hash(File md5) {
     String result = ""; 
     
     if(md5.isFile() && md5.canRead()) {
@@ -679,6 +679,10 @@ public class TvBrowserDataServiceChannelGroup extends ChannelGroupImpl {
         in = new BufferedReader(new InputStreamReader(new FileInputStream(md5),"UTF-8"));
         
         result = in.readLine();
+        
+        if(result.contains(" ")) {
+          result = result.substring(0, result.indexOf(" ")).trim();
+        }
       }catch(IOException ioe) {
         ioe.printStackTrace();
       }finally {
@@ -695,7 +699,7 @@ public class TvBrowserDataServiceChannelGroup extends ChannelGroupImpl {
     return result;
   }
   
-  private String getMD5Hash(File file) {
+  public static String getMD5Hash(File file) {
     try {
          final java.security.MessageDigest md = java.security.MessageDigest.getInstance("MD5");
          final byte[] array = md.digest(IOUtilities.getBytesFromFile(file));
