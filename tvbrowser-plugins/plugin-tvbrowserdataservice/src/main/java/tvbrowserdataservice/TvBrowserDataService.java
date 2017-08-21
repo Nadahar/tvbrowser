@@ -66,6 +66,16 @@ import javax.swing.UIManager;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
+import com.jgoodies.forms.factories.Borders;
+
+import devplugin.ActionMenu;
+import devplugin.Channel;
+import devplugin.ChannelGroup;
+import devplugin.Date;
+import devplugin.Plugin;
+import devplugin.PluginInfo;
+import devplugin.ProgressMonitor;
+import devplugin.Version;
 import tvbrowserdataservice.file.DayProgramFile;
 import tvbrowserdataservice.file.SummaryFile;
 import tvbrowserdataservice.file.TvDataLevel;
@@ -83,17 +93,6 @@ import util.ui.UiUtilities;
 import util.ui.html.ExtendedHTMLEditorKit;
 import util.ui.html.HTMLTextHelper;
 
-import com.jgoodies.forms.factories.Borders;
-
-import devplugin.ActionMenu;
-import devplugin.Channel;
-import devplugin.ChannelGroup;
-import devplugin.Date;
-import devplugin.Plugin;
-import devplugin.PluginInfo;
-import devplugin.ProgressMonitor;
-import devplugin.Version;
-
 
 /**
  *
@@ -109,7 +108,7 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
   public static final util.ui.Localizer mLocalizer
           = util.ui.Localizer.getLocalizerFor(TvBrowserDataService.class);
 
-  private static final Version VERSION = new Version(3,8,2);
+  private static final Version VERSION = new Version(3,9,0);
 
   protected static final String CHANNEL_GROUPS_FILENAME = "groups.txt";
   private static final String DEFAULT_CHANNEL_GROUPS_URL = "http://tvbrowser.org/listings";
@@ -1118,27 +1117,113 @@ public class TvBrowserDataService extends devplugin.AbstractTvDataService {
 
   protected void downloadChannelGroupFile() throws TvBrowserException {
     if(!mGroupFileWasLoaded) {
-      String url = getChannelGroupsMirror().getUrl();
-
-      try {
-        String name = CHANNEL_GROUPS_FILENAME.substring(0,
-            CHANNEL_GROUPS_FILENAME.indexOf('.'))
-            + "_" + Mirror.MIRROR_LIST_FILE_NAME;
-        IOUtilities.download(new URL(url + (url.endsWith("/") ? "" : "/") + name), new File(mDataDir, name));
-      } catch(Exception ee) {}
-
-      try {
+      Mirror mirror = getChannelGroupsMirror();
+      
+      if(mirror != null) {
+        String url = getChannelGroupsMirror().getUrl();
+  
         try {
-          IOUtilities.download(new URL(url + (url.endsWith("/") ? "" : "/") + CHANNEL_GROUPS_FILENAME), new File(mDataDir, CHANNEL_GROUPS_FILENAME));
-        }catch(Exception ex) {
-          url = DEFAULT_CHANNEL_GROUPS_URL;
-          IOUtilities.download(new URL(url + (url.endsWith("/") ? "" : "/") + CHANNEL_GROUPS_FILENAME), new File(mDataDir, CHANNEL_GROUPS_FILENAME));
+          final String name = CHANNEL_GROUPS_FILENAME.substring(0,
+              CHANNEL_GROUPS_FILENAME.indexOf('.'))
+              + "_" + Mirror.MIRROR_LIST_FILE_NAME;
+          final File groupFileMirrosOld = new File(mDataDir, name);
+          final File groupFileMirrosNew = new File(groupFileMirrosOld.getAbsolutePath()+"_new");
+          
+          if(groupFileMirrosNew.isFile()) {
+            groupFileMirrosNew.delete();
+          }
+          
+          URL downloadUrl = new URL(url + (url.endsWith("/") ? "" : "/") + name);
+          
+          if(IOUtilities.download(downloadUrl, groupFileMirrosNew, Plugin.getPluginManager().getTvBrowserSettings().getDefaultNetworkConnectionTimeout())) {
+            final File fileMd5Hash = new File(groupFileMirrosNew.getAbsolutePath() + ".md5");
+            downloadUrl = new URL(url + (url.endsWith("/") ? "" : "/") + name + ".md5");
+            
+            if(IOUtilities.download(downloadUrl, fileMd5Hash, Plugin.getPluginManager().getTvBrowserSettings().getDefaultNetworkConnectionTimeout()) && fileMd5Hash.length() > 0) {
+              String md5ToHave = TvBrowserDataServiceChannelGroup.readMd5Hash(fileMd5Hash);
+              String md5OfDownload = TvBrowserDataServiceChannelGroup.getMD5Hash(groupFileMirrosNew);
+              
+              if(md5ToHave.length() > 0 && md5OfDownload.length() > 0 && md5ToHave.equals(md5OfDownload)) {
+                if(groupFileMirrosOld.isFile()) {
+                  groupFileMirrosOld.delete();
+                }
+                
+                groupFileMirrosNew.renameTo(groupFileMirrosOld);
+              }
+            }
+            else if(fileMd5Hash.isFile()) {
+              groupFileMirrosNew.delete();
+            }
+            
+            if(!fileMd5Hash.delete()) {
+              fileMd5Hash.deleteOnExit();
+            }
+          }
+        } catch(Exception ee) {}
+  
+        try {
+          final File channelGroupFileOld = new File(mDataDir, CHANNEL_GROUPS_FILENAME);
+          final File channelGroupFileNew = new File(mDataDir, CHANNEL_GROUPS_FILENAME+"_new");
+          
+          if(channelGroupFileNew.isFile()) {
+            channelGroupFileNew.delete();
+          }
+          
+          boolean downloaded = false;
+          
+          try {
+            downloaded = IOUtilities.download(new URL(url + (url.endsWith("/") ? "" : "/") + CHANNEL_GROUPS_FILENAME), channelGroupFileNew, Plugin.getPluginManager().getTvBrowserSettings().getDefaultNetworkConnectionTimeout());
+            
+            if(!downloaded) {
+              throw new Exception();
+            }
+          }catch(Exception ex) {
+            url = DEFAULT_CHANNEL_GROUPS_URL;
+            downloaded = IOUtilities.download(new URL(url + (url.endsWith("/") ? "" : "/") + CHANNEL_GROUPS_FILENAME), channelGroupFileNew, Plugin.getPluginManager().getTvBrowserSettings().getDefaultNetworkConnectionTimeout());
+          }
+          
+          if(downloaded) {
+            final File fileMd5Hash = new File(channelGroupFileNew.getAbsolutePath() + ".md5");
+            
+            boolean gotHash = false;
+            
+            try {
+              gotHash = IOUtilities.download(new URL(url + (url.endsWith("/") ? "" : "/") + CHANNEL_GROUPS_FILENAME+".md5"), fileMd5Hash, Plugin.getPluginManager().getTvBrowserSettings().getDefaultNetworkConnectionTimeout());
+              
+              if(!gotHash) {
+                throw new Exception();
+              }
+            }catch(Exception e) {
+              url = DEFAULT_CHANNEL_GROUPS_URL;
+              gotHash = IOUtilities.download(new URL(url + (url.endsWith("/") ? "" : "/") + CHANNEL_GROUPS_FILENAME+".md5"), fileMd5Hash, Plugin.getPluginManager().getTvBrowserSettings().getDefaultNetworkConnectionTimeout());
+            }
+            
+            if(gotHash && fileMd5Hash.length() > 0) {
+              String md5ToHave = TvBrowserDataServiceChannelGroup.readMd5Hash(fileMd5Hash);
+              String md5OfDownload = TvBrowserDataServiceChannelGroup.getMD5Hash(channelGroupFileNew);
+              
+              if(md5ToHave.length() > 0 && md5OfDownload.length() > 0 && md5ToHave.equals(md5OfDownload)) {
+                if(channelGroupFileOld.isFile()) {
+                  channelGroupFileOld.delete();
+                }
+                
+                channelGroupFileNew.renameTo(channelGroupFileOld);
+                mGroupFileWasLoaded = true;
+              }
+            }
+            else if(fileMd5Hash.isFile()) {
+              channelGroupFileNew.delete();
+            }
+            
+            if(!fileMd5Hash.delete()) {
+              fileMd5Hash.deleteOnExit();
+            }
+          }
+        } catch (MalformedURLException e) {
+          throw new TvBrowserException(TvBrowserDataService.class, "invalidURL", "Invalid URL: {0}", url, e);
+        } catch (IOException e) {
+          throw new TvBrowserException(TvBrowserDataService.class, "downloadGroupFileFailed","Could not download group file {0}", url, e);
         }
-        mGroupFileWasLoaded = true;
-      } catch (MalformedURLException e) {
-        throw new TvBrowserException(TvBrowserDataService.class, "invalidURL", "Invalid URL: {0}", url, e);
-      } catch (IOException e) {
-        throw new TvBrowserException(TvBrowserDataService.class, "downloadGroupFileFailed","Could not download group file {0}", url, e);
       }
     }
   }
