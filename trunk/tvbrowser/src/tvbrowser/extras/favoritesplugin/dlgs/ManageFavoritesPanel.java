@@ -75,8 +75,10 @@ import devplugin.Channel;
 import devplugin.Date;
 import devplugin.Program;
 import devplugin.ProgramFilter;
+import devplugin.ProgressMonitorExtended;
 import devplugin.SettingsItem;
 import tvbrowser.core.icontheme.IconLoader;
+import tvbrowser.core.plugin.PluginManagerImpl;
 import tvbrowser.extras.favoritesplugin.FavoritesPlugin;
 import tvbrowser.extras.favoritesplugin.core.AdvancedFavorite;
 import tvbrowser.extras.favoritesplugin.core.Favorite;
@@ -118,7 +120,7 @@ public class ManageFavoritesPanel extends TabListenerPanel implements ListDropAc
   private FavoriteTree mFavoriteTree;
   private ProgramList mProgramList;
   private JSplitPane mSplitPane;
-  private JButton mNewBt, mEditBt, mDeleteBt, mUpBt, mDownBt, mSortAlphaBt, mSortCountBt, mImportBt, mSendBt;
+  private JButton mNewBt, mEditBt, mDeleteBt, mUpBt, mDownBt, mSortAlphaBt, mSortCountBt, mImportBt, mSendBt, mUpdateBt;
   private JButton mCloseBt;
 
   private boolean mShowNew = false;
@@ -248,6 +250,37 @@ public class ManageFavoritesPanel extends TabListenerPanel implements ListDropAc
     });
     toolbarPn.add(mDeleteBt);
 
+    msg = mLocalizer.ellipsisMsg("update", "Search for all Favorites again");
+    icon = TVBrowserIcons.update(TVBrowserIcons.SIZE_LARGE);
+    mUpdateBt = UiUtilities.createToolBarButton(msg, icon);
+    mUpdateBt.setOpaque(false);
+    mUpdateBt.addActionListener(e -> {
+      ProgressMonitorExtended m = PluginManagerImpl.getInstance().createProgressMonitor();
+      m.setValue(0);
+      
+      final Favorite[] favs = mFavoriteTree.getModel().getFavoriteArr();
+      
+      m.setMaximum(favs.length);
+      m.setMessage(mLocalizer.ellipsisMsg("update", "Search for all Favorites again"));
+      m.setVisible(true);
+    
+      for(int i= 0; i < favs.length; i++) {
+        m.setValue(i);
+        if(favs[i] != null) {
+          try {
+            favs[i].updatePrograms();
+          } catch (TvBrowserException e1) {}
+        }
+      }
+      
+      m.setMessage("");
+      m.setVisible(false);
+    });
+    
+    if(!mShowNew) {
+      toolbarPn.add(mUpdateBt);
+    }
+    
     msg = mLocalizer.msg("up", "Move the selected favorite up");
     icon = TVBrowserIcons.up(TVBrowserIcons.SIZE_LARGE);
     mUpBt = UiUtilities.createToolBarButton(msg, icon);
