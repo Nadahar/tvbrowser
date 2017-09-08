@@ -354,21 +354,30 @@ public class AdvancedFavorite extends Favorite implements PendingFilterLoader {
         SelectFilterDlg filterDlg = SelectFilterDlg.create(UiUtilities.getLastModalChildOf(MainFrame.getInstance()));
         filterDlg.setVisible(true);
         
-        Object selected = mFilterCombo.getSelectedItem();
+        WrapperFilter selected = (WrapperFilter)mFilterCombo.getSelectedItem();
         
         ((DefaultComboBoxModel<WrapperFilter>)mFilterCombo.getModel()).removeAllElements();
         
         ProgramFilter[] availableFilter1 = Plugin.getPluginManager().getFilterManager().getAvailableFilters();
         
+        int selectedIndex = -1;
+        int index = 0;
+        
         for(ProgramFilter filter : availableFilter1) {
           if(FilterFavorite.filterIsAcceptable(filter)) {
+            if(selected.getFilter().equals(filter) || selected.getFilter().getName().equals(filter.getName())) {
+              selectedIndex = index;
+            }
+            
             ((DefaultComboBoxModel<WrapperFilter>)mFilterCombo.getModel()).addElement(new WrapperFilter(filter));
+            index++;
           }
         }
-        
-        mFilterCombo.setSelectedItem(new WrapperFilter((ProgramFilter)selected));
+
+        if(selectedIndex != -1) {
+          mFilterCombo.setSelectedIndex(selectedIndex);
         }
-      );
+      });
       
       panelBuilder.add(mEditFilter, cc.xy(5, 3));
       
