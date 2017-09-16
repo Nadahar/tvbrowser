@@ -179,7 +179,7 @@ public final class MediathekSettingsTab implements SettingsTab {
     JButton update = new JButton(localizer.msg("updatemediathek", "Update Mediathek"));
     update.addActionListener(new ActionListener(){
       public void actionPerformed(final ActionEvent e) {
-        MediathekPlugin.getInstance().startMediathekUpdate();
+        (new Thread(){public void run(){MediathekPlugin.getInstance().startMediathekUpdate();}}).start();
       }
     });
     panelBuilder.add(update, cc.xyw(2,panelBuilder.getRow(), 3));
