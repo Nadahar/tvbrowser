@@ -204,6 +204,7 @@ public class Database {
       
       String channelName = "";
       String topic = "";
+      String date = "";
       
       BufferedReader in = new BufferedReader(new FileReader(fileName));
       String lineEncoded;
@@ -211,7 +212,7 @@ public class Database {
         String line = new String(lineEncoded.getBytes(), "UTF-8");
 
         Matcher itemMatcher = ITEM_PATTERN.matcher(line);
-        while (itemMatcher.find()) {          
+        while (itemMatcher.find()) {
           String[] entry = SEPARATOR_PATTERN.split(itemMatcher.group(2));
           
           if (itemMatcher.group(1).equals("Filmliste") && (entry.length >5)) { //heading
@@ -255,6 +256,12 @@ public class Database {
               if (!entry[mColTheme].isEmpty()){
                 topic =  entry[mColTheme].trim();
               }
+              if (!entry[mColDate].isEmpty()){
+                date = entry[mColDate].trim();
+              } else {
+                entry[mColDate] = date;
+              }
+              if (date.length()>10) continue;
               long key = getKey(topic);
               // store the URLs byte offset inside the file
               ArrayList<MediathekProgramItem> list = programs.get(key);
@@ -279,8 +286,8 @@ public class Database {
     }
     LOG.info("Found " + programCount + " programs in Mediathek");
   }
-	
-	private MediathekProgramItem parseDatabaseEntry(String[] entry, MediathekQuality defaultQuality){	  
+
+  private MediathekProgramItem parseDatabaseEntry(String[] entry, MediathekQuality defaultQuality){	  
     String itemTitle = StringEscapeUtils.unescapeJava(entry[mColTitle].trim());
     String itemUrl = entry[mColUrl].trim();
     String itemDate = entry[mColDate].trim();

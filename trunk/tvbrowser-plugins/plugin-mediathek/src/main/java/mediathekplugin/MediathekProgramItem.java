@@ -48,6 +48,9 @@ public final class MediathekProgramItem implements Comparable<MediathekProgramIt
     this.mTitle = title;
     this.mUrl = url;
     this.mDate = Date.createDDMMYYYY(date, ".");
+    if (mDate == null) {
+      System.err.println("Mediathek: Error reading Date: " + date);
+    }
     this.mQuality = quality;
   }
 
@@ -80,6 +83,12 @@ public final class MediathekProgramItem implements Comparable<MediathekProgramIt
   }
 
   public int compareTo(MediathekProgramItem o) {
+    if (mDate==null){
+      return -1;
+    }
+    if (o.mDate==null){
+      return 1;
+    }
     int c = this.mDate.compareTo(o.mDate);
     if (c!=0) return c;
     c = mTitle.compareTo(o.mTitle);
