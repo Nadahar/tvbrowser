@@ -304,6 +304,8 @@ public class FrameReminders extends JFrame implements InterfaceClose<PanelRemind
     if(isVisible()) {
       mListReminders.repaint();
       mListReminders.revalidate();
+      mScrollPane.repaint();
+      mScrollPane.revalidate();
     }
     
     updateButtons();
