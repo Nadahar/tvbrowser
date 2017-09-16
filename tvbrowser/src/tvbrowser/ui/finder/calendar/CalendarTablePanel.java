@@ -23,6 +23,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
@@ -30,6 +31,7 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableColumn;
 
 import devplugin.Date;
@@ -71,6 +73,7 @@ public class CalendarTablePanel extends AbstractCalendarPanel implements ListSel
     }
     mTable.getTableHeader().setReorderingAllowed(false);
     mTable.getTableHeader().setFont(new Font(mTable.getTableHeader().getFont().getFontName(), Font.PLAIN, mTable.getTableHeader().getFont().getSize() - 2));
+    ((DefaultTableCellRenderer)mTable.getTableHeader().getDefaultRenderer()).setHorizontalAlignment(JLabel.CENTER);
     JScrollPane pane = new JScrollPane(mTable);
     pane.getViewport().addKeyListener(keyListener);
     pane.getVerticalScrollBar().addKeyListener(keyListener);

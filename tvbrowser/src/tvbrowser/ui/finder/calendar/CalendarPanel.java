@@ -63,6 +63,7 @@ public class CalendarPanel extends AbstractCalendarPanel {
       components[i][0] = new JLabel(new SimpleDateFormat("E").format(weekday
           .getCalendar().getTime()));
       components[i][0].addKeyListener(mKeyListener);
+      ((JLabel)components[i][0]).setHorizontalAlignment(JLabel.CENTER);
       add(components[i][0]);
       weekday = weekday.addDays(1);
     }
