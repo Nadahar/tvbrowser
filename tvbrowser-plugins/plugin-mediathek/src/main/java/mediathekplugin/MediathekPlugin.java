@@ -60,7 +60,7 @@ public class MediathekPlugin extends Plugin {
 
   private static final boolean IS_STABLE = true;
 
-  private static final Version PLUGIN_VERSION = new Version(3, 2, 3, IS_STABLE);
+  private static final Version PLUGIN_VERSION = new Version(3, 2, 6, IS_STABLE);
 
   /** The localizer used by this class. */
   private static final util.ui.Localizer mLocalizer = util.ui.Localizer.getLocalizerFor(MediathekPlugin.class);
@@ -190,7 +190,7 @@ public class MediathekPlugin extends Plugin {
         for(final Entry<Date,TreeMap<Date,ArrayList<Action>>> eMonth: actionmap.entrySet()){
           ArrayList<ActionMenu> actionListSubMenu = new ArrayList<ActionMenu>();
           for(final Entry<Date,ArrayList<Action>> eDate: eMonth.getValue().entrySet()){
-            actionListSubMenu.add(new ActionMenu(eDate.getKey().toString(),eDate.getValue().toArray(new Action[eDate.getValue().size()])));
+            actionListSubMenu.add(new ActionMenu(getDay(eDate.getKey()),eDate.getValue().toArray(new Action[eDate.getValue().size()])));
           }
           actionMonths.add(new ActionMenu(getMonthOnly(eMonth.getKey()),actionListSubMenu.toArray(new ActionMenu[actionListSubMenu.size()])));
         }
@@ -209,7 +209,7 @@ public class MediathekPlugin extends Plugin {
         final ArrayList<ActionMenu> actionDays = new ArrayList<ActionMenu>();
         for(final Entry<Date,TreeMap<Date,ArrayList<Action>>> eMonth: actionmap.entrySet()){
           for(final Entry<Date,ArrayList<Action>> eDate: eMonth.getValue().entrySet()){
-            actionDays.add(new ActionMenu(eDate.getKey().toString(),eDate.getValue().toArray(new Action[eDate.getValue().size()])));
+            actionDays.add(new ActionMenu(getDay(eDate.getKey()),eDate.getValue().toArray(new Action[eDate.getValue().size()])));
           }
           
         }
@@ -234,6 +234,10 @@ public class MediathekPlugin extends Plugin {
     Calendar cal = date.getCalendar();
     cal.set(Calendar.DAY_OF_MONTH, 1);
     return new Date(cal);
+  }
+  
+  private String getDay(Date date) {
+    return date.getFormattedString("EE, dd.MMM yy");
   }
   
   private String getMonthOnly(Date date) {
