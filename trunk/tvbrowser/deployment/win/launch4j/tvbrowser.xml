@@ -1,10 +1,10 @@
 <launch4jConfig>
-  <dontWrapJar>false</dontWrapJar>
+  <dontWrapJar>true</dontWrapJar>
   <headerType>gui</headerType>
-  <jar>../launcher/bin/JarWinJavaExeLauncher.jar</jar>
+  <jar>tvbrowser.jar</jar>
   <outfile>../../../runtime/tvbrowser_win/tvbrowser.exe</outfile>
   <errTitle></errTitle>
-  <cmdLine>/start tvbrowser.jar -Dpropertiesfile=windows.properties -Xmx512m</cmdLine>
+  <cmdLine></cmdLine>
   <chdir>.</chdir>
   <priority>normal</priority>
   <downloadUrl>http://java.com/download</downloadUrl>
@@ -14,19 +14,19 @@
   <icon>../../../runtime/tvbrowser_win/imgs/desktop.ico</icon>
   <jre>
     <path></path>
-    <minVersion>1.6.0</minVersion>
+    <minVersion>1.8.0</minVersion>
     <dontUsePrivateJres>false</dontUsePrivateJres>
     <initialHeapSize>0</initialHeapSize>
-    <maxHeapSize>0</maxHeapSize>
+    <maxHeapSize>512</maxHeapSize>
     <opt>-Dpropertiesfile=windows.properties</opt>
   </jre>
   <versionInfo>
-    <fileVersion>3.0.0.0</fileVersion>
-    <txtFileVersion>3.0</txtFileVersion>
+    <fileVersion>4.0.0.0</fileVersion>
+    <txtFileVersion>4.0</txtFileVersion>
     <fileDescription>TV-Browser</fileDescription>
     <copyright>Copyright (c) 04/2003 by Martin Oberhauser, Til Schneider, Bodo Tasche, Rene Mach, Michael Keppler under GNU General Public License.</copyright>
-    <productVersion>3.0.0.0</productVersion>
-    <txtProductVersion>3.0</txtProductVersion>
+    <productVersion>4.0.0.0</productVersion>
+    <txtProductVersion>4.0</txtProductVersion>
     <productName>TV-Browser</productName>
     <companyName></companyName>
     <internalName>TV-Browser</internalName>
