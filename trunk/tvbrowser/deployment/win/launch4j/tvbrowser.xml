@@ -18,7 +18,7 @@
     <dontUsePrivateJres>false</dontUsePrivateJres>
     <initialHeapSize>0</initialHeapSize>
     <maxHeapSize>512</maxHeapSize>
-    <opt>-Dpropertiesfile=windows.properties</opt>
+    <opt>--add-modules=ALL-SYSTEM -Dpropertiesfile=windows.properties</opt>
   </jre>
   <versionInfo>
     <fileVersion>4.0.0.0</fileVersion>
