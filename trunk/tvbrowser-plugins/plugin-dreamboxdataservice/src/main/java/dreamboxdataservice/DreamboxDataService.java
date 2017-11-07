@@ -73,7 +73,7 @@ public class DreamboxDataService extends AbstractTvDataService {
      */
     private static final Localizer mLocalizer = Localizer.getLocalizerFor(DreamboxDataService.class);
 
-    private static final Version VERSION = new Version(0, 8, 0);
+    private static final Version VERSION = new Version(0, 9, 0);
 
     private ChannelGroup mChannelGroup = new ChannelGroupImpl("Dreambox", "Dreambox", "Dreambox", "Dreambox");
 
@@ -121,8 +121,7 @@ public class DreamboxDataService extends AbstractTvDataService {
 
         TimeZone timeZone = TimeZone.getTimeZone("CET");
         for (int i = 0; i < numChannels; i++) {
-            Channel ch = new Channel(this, settings.getProperty("ChannelTitle-" + i, ""), settings.getProperty("ChannelId-"
-                    + i, ""), timeZone, "de", "Imported from Dreambox", "", mChannelGroup, null, Channel.CATEGORY_TV);
+            Channel ch = new Channel(this, settings.getProperty("ChannelTitle-" + i, ""), settings.getProperty("ChannelId-" + i, ""), timeZone, "de", "Imported from Dreambox", "", mChannelGroup, null, Channel.CATEGORY_TV);
 
             mChannels.add(ch);
         }
@@ -212,7 +211,7 @@ public class DreamboxDataService extends AbstractTvDataService {
                     TreeMap<String, String> map = getServiceData(URLEncoder.encode(key, "UTF8"));
 
                     for (String mkey : map.keySet()) {
-                        Channel ch = new Channel(this, map.get(mkey), "DREAM" + StringUtils.replace(mkey, ":", "_"), TimeZone.getTimeZone("GMT+1:00"), "de",
+                        Channel ch = new Channel(this, map.get(mkey), "DREAM" + StringUtils.replace(mkey, ":", "$"), TimeZone.getTimeZone("CET"), "de",
                                 "Imported from Dreambox", "", mChannelGroup, null, Channel.CATEGORY_TV);
                         allChannels.add(ch);
                     }
@@ -302,7 +301,7 @@ public class DreamboxDataService extends AbstractTvDataService {
 
     private void getEPGData(TvDataUpdateManager updateManager, Channel ch) {
         try {
-            URL url = new URL("http://" + mProperties.getProperty("ip", "") + "/web/epgservice?sRef=" + StringUtils.replace(StringUtils.replace(ch.getId().substring(5), "_", ":"), " ", "%20"));
+            URL url = new URL("http://" + mProperties.getProperty("ip", "") + "/web/epgservice?sRef=" + StringUtils.replace(StringUtils.replace(ch.getId().substring(5), "$", ":"), " ", "%20"));
 
             URLConnection connection = url.openConnection();
 
