@@ -273,6 +273,7 @@ public class ManageFavoritesPanel extends TabListenerPanel implements ListDropAc
         }
       }
       
+      FavoritesPlugin.getInstance().saveFavorites();
       m.setMessage("");
       m.setVisible(false);
     });
