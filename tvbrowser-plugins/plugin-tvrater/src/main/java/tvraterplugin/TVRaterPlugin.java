@@ -67,7 +67,7 @@ import devplugin.Version;
  * @author Bodo Tasche
  */
 public class TVRaterPlugin extends devplugin.Plugin {
-  private static final Version mVersion = new Version(3,04);
+  private static final Version mVersion = new Version(3,05);
 
   protected final static int MINLENGTH = 15;
 
