@@ -27,7 +27,6 @@
 package printplugin.dlgs.components;
 
 import java.awt.Frame;
-import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -36,14 +35,14 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
-import util.ui.ChannelChooserDlg;
-import util.ui.Localizer;
-
 import com.jgoodies.forms.builder.PanelBuilder;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 
 import devplugin.Channel;
+import util.ui.ChannelChooserDlg;
+import util.ui.Localizer;
+import util.ui.UiUtilities;
 
 
 /**
@@ -80,7 +79,7 @@ public class ChannelSelectionPanel extends JPanel {
 
     mChangeSelectedChannelsBt.addActionListener(new ActionListener(){
       public void actionPerformed(ActionEvent event){
-        ChannelChooserDlg dlg = new ChannelChooserDlg((Window)dlgParent, mChannels,"<html>" + mLocalizer.msg("infotext.1","Waehlen Sie jene Sender aus, deren Programm ausgedruckt werden soll.")+"</html>");
+        ChannelChooserDlg dlg = new ChannelChooserDlg(UiUtilities.getLastModalChildOf(dlgParent), mChannels,"<html>" + mLocalizer.msg("infotext.1","Waehlen Sie jene Sender aus, deren Programm ausgedruckt werden soll.")+"</html>");
         util.ui.UiUtilities.centerAndShow(dlg);
         mChannels = dlg.getChannels();
         updateSelectedChannelsPanel();

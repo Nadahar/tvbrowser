@@ -78,7 +78,7 @@ import devplugin.Version;
 
 
 public class PrintPlugin extends Plugin {
-  private static final Version mVersion = new Version(3,02,2);
+  private static final Version mVersion = new Version(3,02,3);
 
   /** The localizer for this class. */
   private static final util.ui.Localizer mLocalizer
