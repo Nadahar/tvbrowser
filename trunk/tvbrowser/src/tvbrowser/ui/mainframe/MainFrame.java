@@ -1736,7 +1736,7 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
       resetOnAirArrays();
       mAutoDownloadTimer = (int)(Math.random() * (24 * 60 - 10));
     }
-
+    
     // Avoid a repaint 6 times a minute (Once a minute is enough)
     try {
       int minutesAfterMidnight = IOUtilities.getMinutesAfterMidnight();

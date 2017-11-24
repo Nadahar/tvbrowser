@@ -99,8 +99,19 @@ public class CalendarTablePanel extends AbstractCalendarPanel implements ListSel
   }
 
   protected void rebuildControls() {
+    final Date test = getCurrentDate();
+    
+    mTableModel.updateContent(Date.getCurrentDate().addDays(-1));
+    mTableModel.fireTableDataChanged();
+    updateItems();
+    
+    if(test == null || test.compareTo(getFirstDate()) < 0) {
+      markDate(mToday,true);
+    }
+    else {
+      markDate(test,false);
+    }
   }
-
   
   @Override
   public void markDate(Date date, boolean informPluginPanels) {

@@ -154,4 +154,8 @@ public abstract class AbstractDateSelector extends JPanel implements
               .toString()), numberOfDays);
     }
   }
+  
+  public Date getCurrentDate() {
+    return mCurChoosenDate;
+  }
 }
