@@ -34,6 +34,10 @@ public final class CalendarTableModel extends AbstractTableModel {
   private int mFirstDayOfWeek = Calendar.MONDAY;
 
   public CalendarTableModel(final Date firstDate) {
+    updateContent(firstDate);
+  }
+  
+  public void updateContent(final Date firstDate) {
     Date date = firstDate;
     mFirstDayOfWeek = Settings.propFirstDayOfWeek.getInt();
     
