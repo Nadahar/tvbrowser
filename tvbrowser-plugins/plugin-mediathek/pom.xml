@@ -57,7 +57,7 @@
     <dependency>
       <groupId>org.tvbrowser</groupId>
       <artifactId>tvbrowser</artifactId>
-      <version>3.3.2</version>
+      <version>3.3.2</version><!--$NO-MVN-MAN-VER$-->
     </dependency>
   </dependencies>
 </project>

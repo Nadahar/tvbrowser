@@ -18,8 +18,10 @@ package mediathekplugin;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Timer;
@@ -206,10 +208,17 @@ public class Database {
       String topic = "";
       String date = "";
       
-      BufferedReader in = new BufferedReader(new FileReader(fileName));
-      String lineEncoded;
-      while ((lineEncoded = in.readLine()) != null){
-        String line = new String(lineEncoded.getBytes(), "UTF-8");
+      InputStream is = new FileInputStream(fileName);
+      String UTF8 = "utf8";
+      int BUFFER_SIZE = 8192;
+
+      BufferedReader in = new BufferedReader(new InputStreamReader(is,
+              UTF8), BUFFER_SIZE);
+      
+      //BufferedReader in = new BufferedReader(new FileReader(fileName));
+      String line;
+      while ((line = in.readLine()) != null){
+        //String line = new String(lineEncoded.getBytes(), "UTF-8");
 
         Matcher itemMatcher = ITEM_PATTERN.matcher(line);
         while (itemMatcher.find()) {
