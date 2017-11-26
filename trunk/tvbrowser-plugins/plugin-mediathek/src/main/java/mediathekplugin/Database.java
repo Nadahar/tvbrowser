@@ -16,19 +16,16 @@
  */
 package mediathekplugin;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.Map.Entry;
+import java.util.Scanner;
 import java.util.logging.Logger;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.CRC32;
 
@@ -54,7 +51,12 @@ public class Database {
       + QUOTEFREE_PATTERN
       + "(?:\"\\s*,\\s*\""
       + QUOTEFREE_PATTERN
-      + ")*)\"\\s*\\]");
+      + ")*)");
+  
+  /**
+   * pattern for entryLine separation
+   */
+  private static final Pattern ENTRY_PATTERN = Pattern.compile("\"\\s*:\\s*\\[\\s*\"");
   
   /**
    * pattern for data separation
@@ -206,85 +208,75 @@ public class Database {
       
       String channelName = "";
       String topic = "";
-      String date = "";
+      String date = "";      
       
-      InputStream is = new FileInputStream(fileName);
-      String UTF8 = "utf8";
-      int BUFFER_SIZE = 8192;
-
-      BufferedReader in = new BufferedReader(new InputStreamReader(is,
-              UTF8), BUFFER_SIZE);
+      Scanner sc = new Scanner(new FileInputStream(fileName), "UTF-8");
       
-      //BufferedReader in = new BufferedReader(new FileReader(fileName));
-      String line;
-      while ((line = in.readLine()) != null){
-        //String line = new String(lineEncoded.getBytes(), "UTF-8");
-
-        Matcher itemMatcher = ITEM_PATTERN.matcher(line);
-        while (itemMatcher.find()) {
-          String[] entry = SEPARATOR_PATTERN.split(itemMatcher.group(2));
-          
-          if (itemMatcher.group(1).equals("Filmliste") && (entry.length >5)) { //heading
-            mColMax = entry.length;
-            for(int i=0;i<entry.length;i++){
-              if (entry[i].equals(HEAD_CHANNEL)){
-                mColChannel = i;
-              }
-              if (entry[i].equals(HEAD_THEME)){
-                mColTheme = i;
-              }
-              if (entry[i].equals(HEAD_TITLE)){
-                mColTitle = i;
-              }
-              if (entry[i].equals(HEAD_URL)){
-                mColUrl = i;
-              }
-              if (entry[i].equals(HEAD_URL_LOW)){
-                mColUrlLow = i;
-              }
-              if (entry[i].equals(HEAD_URL_HD)){
-                mColUrlHD = i;
-              }
-              if (entry[i].equals(HEAD_DATE)){
-                mColDate = i;
-              }
-            }          
-          } else { //normal entry          
-            if (entry.length<mColMax) continue; //invalid line          
-          
-            if (!entry[mColChannel].isEmpty()) { //if empty: use last one
-              channelName = unifyChannelName(entry[mColChannel].trim());
+      String item;
+      while ((item=sc.findWithinHorizon(ITEM_PATTERN,8192))!=null) {
+        String[] entryLine = ENTRY_PATTERN.split(item);          
+        String[] entry = SEPARATOR_PATTERN.split(entryLine[1]);
+        
+        if (entryLine[0].equals("\"Filmliste") && (entry.length >5)) { //heading
+          mColMax = entry.length;
+          for(int i=0;i<entry.length;i++){
+            if (entry[i].equals(HEAD_CHANNEL)){
+              mColChannel = i;
             }
-            Channel channel = findChannel(channelName);
-            if (channel != null) {
-              HashMap<Long, ArrayList<MediathekProgramItem>> programs = channelItems.get(channelName);
-              if (programs == null) {
-                programs = new HashMap<Long, ArrayList<MediathekProgramItem>>(500);
-                channelItems.put(channelName, programs);
-              }
-              if (!entry[mColTheme].isEmpty()){
-                topic =  entry[mColTheme].trim();
-              }
-              if (!entry[mColDate].isEmpty()){
-                date = entry[mColDate].trim();
-              } else {
-                entry[mColDate] = date;
-              }
-              if (date.length()>10) continue;
-              long key = getKey(topic);
-              // store the URLs byte offset inside the file
-              ArrayList<MediathekProgramItem> list = programs.get(key);
-              if (list == null) {
-                list = new ArrayList<MediathekProgramItem>();
-                programs.put(key, list);
-              }
-              programCount++;
-              list.add(parseDatabaseEntry(entry, quality));
+            if (entry[i].equals(HEAD_THEME)){
+              mColTheme = i;
             }
+            if (entry[i].equals(HEAD_TITLE)){
+              mColTitle = i;
+            }
+            if (entry[i].equals(HEAD_URL)){
+              mColUrl = i;
+            }
+            if (entry[i].equals(HEAD_URL_LOW)){
+              mColUrlLow = i;
+            }
+            if (entry[i].equals(HEAD_URL_HD)){
+              mColUrlHD = i;
+            }
+            if (entry[i].equals(HEAD_DATE)){
+              mColDate = i;
+            }
+          }          
+        } else { //normal entry          
+          if (entry.length<mColMax) continue; //invalid line          
+        
+          if (!entry[mColChannel].isEmpty()) { //if empty: use last one
+            channelName = unifyChannelName(entry[mColChannel].trim());
+          }
+          Channel channel = findChannel(channelName);
+          if (channel != null) {
+            HashMap<Long, ArrayList<MediathekProgramItem>> programs = channelItems.get(channelName);
+            if (programs == null) {
+              programs = new HashMap<Long, ArrayList<MediathekProgramItem>>(500);
+              channelItems.put(channelName, programs);
+            }
+            if (!entry[mColTheme].isEmpty()){
+              topic =  entry[mColTheme].trim();
+            }
+            if (!entry[mColDate].isEmpty()){
+              date = entry[mColDate].trim();
+            } else {
+              entry[mColDate] = date;
+            }
+            if (date.length()>10) continue;
+            long key = getKey(topic);
+            // store the URLs byte offset inside the file
+            ArrayList<MediathekProgramItem> list = programs.get(key);
+            if (list == null) {
+              list = new ArrayList<MediathekProgramItem>();
+              programs.put(key, list);
+            }
+            programCount++;
+            list.add(parseDatabaseEntry(entry, quality));
           }
         }
-      }
-      in.close();
+      } 
+      sc.close();
       mChannelItems = channelItems;
       if (dataUpdateNeeded){
         startReadFile();
@@ -294,6 +286,7 @@ public class Database {
       e.printStackTrace();
     }
     LOG.info("Found " + programCount + " programs in Mediathek");
+    //LOG.info("Items up to Length " + itemLen);
   }
 
   private MediathekProgramItem parseDatabaseEntry(String[] entry, MediathekQuality defaultQuality){	  
