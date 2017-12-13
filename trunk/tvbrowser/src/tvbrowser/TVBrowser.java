@@ -25,6 +25,7 @@
  */
 package tvbrowser;
 
+import java.awt.AWTException;
 import java.awt.Color;
 import java.awt.Dialog.ModalityType;
 import java.awt.Dimension;
@@ -32,7 +33,9 @@ import java.awt.Font;
 import java.awt.Frame;
 import java.awt.Image;
 import java.awt.Point;
+import java.awt.Robot;
 import java.awt.Toolkit;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.io.BufferedReader;
 import java.io.File;
@@ -242,9 +245,11 @@ public class TVBrowser {
 
   private static MainFrame mainFrame;
 
-  private static RandomAccessFile mLockFile;
-
-  private static FileLock mLock;
+  private static AtomicReference<RandomAccessFile> mLockFile = new AtomicReference<>(null);
+  private static AtomicReference<RandomAccessFile> mToggleLockFile = new AtomicReference<>(null);
+  
+  private static AtomicReference<FileLock> mLock = new AtomicReference<>(null);
+  private static AtomicReference<FileLock> mToggleLock = new AtomicReference<>(null);
 
   private static WindowAdapter mMainWindowAdapter;
 
@@ -373,10 +378,10 @@ public class TVBrowser {
     if (Settings.propFirstStartDate.getDate() == null) {
       Settings.propFirstStartDate.setDate(Date.getCurrentDate());
     }
-
-    if (!createLockFile()) {
+    
+    if (!createLockFile(mLockFile,mLock,".lock")) {
       updateLookAndFeel();
-      showTVBrowserIsAlreadyRunningMessageBox();
+      showTVBrowserIsAlreadyRunningMessageBox(!createLockGlobalToggle());
     }
 
     String logDirectory = Settings.propLogdirectory.getString();
@@ -760,7 +765,8 @@ public class TVBrowser {
      // register the shutdown hook
     Runtime.getRuntime().addShutdownHook(new Thread("Shutdown hook") {
       public void run() {
-        deleteLockFile();
+        deleteLockFile(mLockFile.get(),mLock.get(),".lock");
+        deleteLockGlobalToggle();
         MainFrame.getInstance().quit(false);
       }
      });
@@ -934,25 +940,33 @@ public class TVBrowser {
   }
 
 
+  public static boolean createLockGlobalToggle() {
+    return createLockFile(mToggleLockFile,mToggleLock,".toggle");
+  }
+  
+  public static void deleteLockGlobalToggle() {
+    deleteLockFile(mToggleLockFile.get(),mToggleLock.get(),".toggle");
+  }
+  
   /**
    * Create the .lock file in the user home directory
    * @return false, if the .lock file exist and is locked or cannot be locked.
    */
-  private static boolean createLockFile() {
+  private static boolean createLockFile(final AtomicReference<RandomAccessFile> lockFileAccess, final AtomicReference<FileLock> lockTarget, final String file) {
     String dir = Settings.getUserDirectoryName();
 
     if(!new File(dir).isDirectory()) {
       new File(dir).mkdirs();
     }
 
-    File lockFile = new File(dir, ".lock");
+    File lockFile = new File(dir, file);
 
     if(lockFile.exists()) {
       try {
-        mLockFile = new RandomAccessFile(lockFile.toString(),"rw");
-        mLock = mLockFile.getChannel().tryLock();
+        lockFileAccess.set(new RandomAccessFile(lockFile.toString(),"rw"));
+        lockTarget.set(lockFileAccess.get().getChannel().tryLock());
 
-        if(mLock == null) {
+        if(lockTarget.get() == null) {
           return false;
         }
       }catch(Exception e) {
@@ -962,8 +976,8 @@ public class TVBrowser {
     else {
       try {
         lockFile.createNewFile();
-        mLockFile = new RandomAccessFile(lockFile.toString(),"rw");
-        mLock = mLockFile.getChannel().tryLock();
+        lockFileAccess.set(new RandomAccessFile(lockFile.toString(),"rw"));
+        lockTarget.set(lockFileAccess.get().getChannel().tryLock());
       }catch(Exception e){
         if(e instanceof IOException) {
           mLog.log(Level.WARNING, e.getLocalizedMessage(), e);
@@ -974,34 +988,66 @@ public class TVBrowser {
     return true;
   }
 
-  private static void deleteLockFile() {
+  private static void deleteLockFile(final RandomAccessFile fileLockAccess, final FileLock fileLock,final String file) {
     String dir = Settings.getUserDirectoryName();
-    File lockFile = new File(dir, ".lock");
+    File lockFile = new File(dir, file);
 
-    try {
-      mLock.release();
-    }catch(Exception e) {
-      // ignore
+    if(lockFile.isFile()) {
+      try {
+        fileLock.release();
+      }catch(Exception e) {
+        // ignore
+      }
+  
+      try {
+        fileLockAccess.close();
+      }catch(Exception e) {
+        // ignore
+      }
+  
+      if(!lockFile.delete()) {
+        lockFile.deleteOnExit();
+      }
     }
-
-    try {
-      mLockFile.close();
-    }catch(Exception e) {
-      // ignore
-    }
-
-    lockFile.delete();
   }
 
 
-  private static void showTVBrowserIsAlreadyRunningMessageBox() {
+  private static void showTVBrowserIsAlreadyRunningMessageBox(final boolean isToggleActive) {
     try {
       UIThreadRunner.invokeAndWait(() -> {
-        Object[] options = { Localizer.getLocalization(Localizer.I18N_CLOSE),
-            mLocalizer.msg("startAnyway", "start anyway") };
-        if (JOptionPane.showOptionDialog(null, mLocalizer.msg("alreadyRunning", "TV-Browser is already running"),
+        Object[] options = new Object[isToggleActive ? 3 : 2];
+        
+        int index = 0;
+        
+        if(isToggleActive) {
+          options[index++] = mLocalizer.msg("showTvBrowser", "Open running TV-Browser");
+        }
+        
+        options[index++] = Localizer.getLocalization(Localizer.I18N_CLOSE);
+        options[index] = mLocalizer.msg("startAnyway", "start anyway");
+        
+        int result = JOptionPane.showOptionDialog(null, mLocalizer.msg("alreadyRunning", "TV-Browser is already running"),
             mLocalizer.msg("alreadyRunning", "TV-Browser is already running"), JOptionPane.DEFAULT_OPTION,
-            JOptionPane.WARNING_MESSAGE, null, options, options[0]) != 1) {
+            JOptionPane.WARNING_MESSAGE, null, options, options[0]);
+        
+        if (result == 0 && isToggleActive) {
+          try {
+            final Robot r = new Robot();
+            r.setAutoDelay(20);
+            r.keyPress(KeyEvent.VK_SHIFT);
+            r.keyPress(KeyEvent.VK_CONTROL);
+            r.keyPress(KeyEvent.VK_ALT);
+            r.keyPress(KeyEvent.VK_A);
+            r.delay(100);
+            r.keyRelease(KeyEvent.VK_A);
+            r.keyRelease(KeyEvent.VK_ALT);
+            r.keyRelease(KeyEvent.VK_CONTROL);
+            r.keyRelease(KeyEvent.VK_SHIFT);
+            r.delay(100);
+            System.exit(-1);
+          } catch (AWTException e) {e.printStackTrace();}
+          
+        } else if(result == 0) {
           System.exit(-1);
         }
       });
@@ -1201,12 +1247,25 @@ public class TVBrowser {
       }
     }
   }
+  
+  public static void registerGlobalKeyToggle() {
+    if(mTray.isTrayUsed()) {
+      mTray.registerGlobalKeyToggle();
+    }
+  }
+  
+  public static void unregisterGlobalKeyToggle() {
+    if(mTray.isTrayUsed()) {
+      mTray.unregisterGlobalKeyToggle();
+    }
+  }
 
   /**
    * Remove the tray icon.
    */
   public static void removeTray() {
     if(mTray.isTrayUsed()) {
+      mTray.unregisterGlobalKeyToggle();
       mTray.setVisible(false);
       addTrayWindowListener();
 

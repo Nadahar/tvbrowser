@@ -1,5 +1,5 @@
 /*
- * TV-Browser
+ * TV-Browvent.ser
  * Copyright (C) 04-2003 Martin Oberhauser (darras@users.sourceforge.net)
  *
  * This program is free software; you can redistribute it and/or
@@ -35,6 +35,7 @@ import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.swing.JComponent;
@@ -48,6 +49,11 @@ import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
+
+import org.jnativehook.GlobalScreen;
+import org.jnativehook.NativeHookException;
+import org.jnativehook.keyboard.NativeKeyEvent;
+import org.jnativehook.keyboard.NativeKeyListener;
 
 import devplugin.ActionMenu;
 import devplugin.Channel;
@@ -132,6 +138,8 @@ public class SystemTray {
     }
 
     if (mUseSystemTray) {
+      registerGlobalKeyToggle();
+      
       mTrayParent = new JDialog();
       mTrayParent.setTitle("Tray-Menu-Program-Popup");
 
@@ -142,6 +150,63 @@ public class SystemTray {
     }
 
     return mUseSystemTray;
+  }
+  
+  private NativeKeyListener mGlobalKeyToggleListener = null;
+  
+  public synchronized void registerGlobalKeyToggle() {
+    if(Settings.propTrayGlobalKeyToggle.getBoolean() && mGlobalKeyToggleListener == null) {
+      try {
+        if(!GlobalScreen.isNativeHookRegistered()) {
+          // Get the logger for "org.jnativehook" and set the level to off.
+          Logger logger = Logger.getLogger(GlobalScreen.class.getPackage().getName());
+          logger.setLevel(Level.OFF);
+  
+          // Don't forget to disable the parent handlers.
+          logger.setUseParentHandlers(false);
+        
+          GlobalScreen.registerNativeHook();
+        }
+        mGlobalKeyToggleListener = new NativeKeyListener() {
+          @Override
+          public void nativeKeyTyped(NativeKeyEvent event) {}
+           
+          @Override
+          public void nativeKeyReleased(NativeKeyEvent event) {}
+           
+          @Override
+          public void nativeKeyPressed(NativeKeyEvent event) {
+            if(event.getKeyCode() == NativeKeyEvent.VC_A && (event.getModifiers() & NativeKeyEvent.SHIFT_MASK) != 0
+                && (event.getModifiers() & NativeKeyEvent.CTRL_MASK) != 0) {
+              if((event.getModifiers() & NativeKeyEvent.ALT_MASK) != 0) {
+                SwingUtilities.invokeLater(() -> {
+                  MainFrame.getInstance().showFromTray(mState);
+                  
+                  if (Settings.propNowOnRestore.getBoolean()) {
+                    MainFrame.getInstance().scrollToNow();
+                  }
+                });
+              }
+              else {
+                toggleShowHide();
+              }
+            }
+          }
+        };
+        GlobalScreen.addNativeKeyListener(mGlobalKeyToggleListener);
+        TVBrowser.createLockGlobalToggle();
+      } catch (NativeHookException e) {
+        mGlobalKeyToggleListener = null;
+      }
+    }
+  }
+  
+  public synchronized void unregisterGlobalKeyToggle() {
+    if(mGlobalKeyToggleListener != null) {
+      TVBrowser.deleteLockGlobalToggle();
+      GlobalScreen.removeNativeKeyListener(mGlobalKeyToggleListener);
+      mGlobalKeyToggleListener = null;
+    }
   }
 
   /**

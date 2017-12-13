@@ -226,8 +226,9 @@ public class AboutBox extends JDialog implements WindowClosingIf{
     buf.append("<div id=\"small\">");
     buf.append("This product includes software developed " +
                        "by L2FProd.com (http://www.L2FProd.com/), \n" +
-            "The Apache Software Foundation (http://www.apache.org/) and\n" +
-            "BEQ Technologies Inc. (http://www.bayequities.com/tech/Products/jreg_key.shtml)");
+            "The Apache Software Foundation (http://www.apache.org/) \n" +
+            "BEQ Technologies Inc. (http://www.bayequities.com/tech/Products/jreg_key.shtml) and\n" +
+            "JNativeHook (https://github.com/kwhat/jnativehook)");
 
     buf.append("</div>");
     buf.append("</p>");
