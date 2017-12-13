@@ -56,7 +56,7 @@ public class TrayBaseSettingsTab implements SettingsTab {
   protected static final util.ui.Localizer mLocalizer = util.ui.Localizer
   .getLocalizerFor(TrayBaseSettingsTab.class);
 
-  private JCheckBox mTrayIsEnabled, mMinimizeToTrayChb, mNowOnRestore, mTrayIsAnialiasing;
+  private JCheckBox mTrayIsEnabled, mMinimizeToTrayChb, mNowOnRestore, mTrayIsAnialiasing, mTrayGlobalToggle;
   private boolean mOldState;
   private static boolean mIsEnabled = Settings.propTrayIsEnabled.getBoolean();
   private JRadioButton mFilterAll,mNoMarkedFiltering,mNoFiltering;
@@ -64,8 +64,8 @@ public class TrayBaseSettingsTab implements SettingsTab {
   public JPanel createSettingsPanel() {
 
     final PanelBuilder builder = new PanelBuilder(new FormLayout(
-        "5dlu, pref:grow, 5dlu",
-        "pref, 5dlu, pref, pref, pref, pref, pref, 10dlu, pref, 5dlu, pref, pref, pref"));
+        "5dlu, default:grow, 5dlu",
+        "default, 5dlu, default, default, default, default, default, default, 10dlu, default, 5dlu, default, default, default"));
     builder.border(Borders.DIALOG);
     CellConstraints cc = new CellConstraints();
 
@@ -78,6 +78,9 @@ public class TrayBaseSettingsTab implements SettingsTab {
     mMinimizeToTrayChb = new JCheckBox(msg, checked && mOldState);
     mMinimizeToTrayChb.setEnabled(mTrayIsEnabled.isSelected());
 
+    msg = mLocalizer.msg("trayGlobalKeyToggle", "System wide key shortcuts enabled (Ctrl+Shift+A=Minimize/Restore, Ctrl+Shift+Alt+A=To front)");
+    mTrayGlobalToggle = new JCheckBox(msg, Settings.propTrayGlobalKeyToggle.getBoolean());
+    
     msg = mLocalizer.msg("nowOnDeIconify", "Jump to now when restoring application");
     checked = Settings.propNowOnRestore.getBoolean();
     mNowOnRestore = new JCheckBox(msg, checked);
@@ -121,12 +124,13 @@ public class TrayBaseSettingsTab implements SettingsTab {
     builder.add(mTrayIsEnabled, cc.xy(2,3));
     builder.add(mTrayIsAnialiasing, cc.xy(2,4));
     builder.add(mMinimizeToTrayChb, cc.xy(2,5));
-    builder.add(mNowOnRestore, cc.xy(2,6));
+    builder.add(mTrayGlobalToggle, cc.xy(2,6));
+    builder.add(mNowOnRestore, cc.xy(2,7));
     
-    builder.addSeparator(mLocalizer.msg("filter", "Filter settings"), cc.xyw(1,9,3));
-    builder.add(mFilterAll, cc.xy(2,11));
-    builder.add(mNoMarkedFiltering, cc.xy(2,12));
-    builder.add(mNoFiltering, cc.xy(2,13));
+    builder.addSeparator(mLocalizer.msg("filter", "Filter settings"), cc.xyw(1,10,3));
+    builder.add(mFilterAll, cc.xy(2,12));
+    builder.add(mNoMarkedFiltering, cc.xy(2,13));
+    builder.add(mNoFiltering, cc.xy(2,14));
 
     mTrayIsEnabled.addActionListener(e -> {
       mIsEnabled = mTrayIsEnabled.isSelected();
@@ -159,6 +163,16 @@ public class TrayBaseSettingsTab implements SettingsTab {
       boolean checked = mMinimizeToTrayChb.isSelected() && mTrayIsEnabled.isSelected();
       Settings.propTrayMinimizeTo.setBoolean(checked);
     }
+    
+    Settings.propTrayGlobalKeyToggle.setBoolean(mTrayGlobalToggle.isSelected());
+    
+    if(mTrayGlobalToggle.isSelected() && TVBrowser.isUsingSystemTray()) {
+      TVBrowser.registerGlobalKeyToggle();
+    }
+    else {
+      TVBrowser.unregisterGlobalKeyToggle();
+    }
+    
     Settings.propNowOnRestore.setBoolean(mNowOnRestore.isSelected());
     Settings.propTrayIsAntialiasing.setBoolean(mTrayIsAnialiasing.isSelected());
     Settings.propTrayFilterNotMarked.setBoolean(mNoMarkedFiltering.isSelected());

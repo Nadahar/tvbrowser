@@ -108,10 +108,10 @@ fi
 
 cd ${PROGRAM_DIR}
 echo "Loading TV-Browser:"
-echo "Command line is" ${JAVA_DIR}/java '-Xms16m -Xmx512m -Dapple.laf.useScreenMenuBar=true -Dcom.apple.macos.use-file-dialog-packages=true -Dcom.apple.mrj.application.apple.menu.about.name=TV-Browser -Dcom.apple.smallTabs=true -Djava.library.path=\"${PROGRAM_DIR}\" -jar tvbrowser.jar \"$@\"'
+echo "Command line is" ${JAVA_DIR}/java '-Xms16m -Xmx512m -XX:+IgnoreUnrecognizedVMOptions --add-modules=ALL-SYSTEM -Dapple.laf.useScreenMenuBar=true -Dcom.apple.macos.use-file-dialog-packages=true -Dcom.apple.mrj.application.apple.menu.about.name=TV-Browser -Dcom.apple.smallTabs=true -Djava.library.path=\"${PROGRAM_DIR}\" -jar tvbrowser.jar \"$@\"'
 
 $cmdLine
-"${JAVA_DIR}/java" -Xms16m -Xmx512m -Dapple.laf.useScreenMenuBar=true -Dcom.apple.macos.use-file-dialog-packages=true -Dcom.apple.smallTabs=true -Djava.library.path="${PROGRAM_DIR}" -jar tvbrowser.jar "$@"
+"${JAVA_DIR}/java" -Xms16m -Xmx512m -XX:+IgnoreUnrecognizedVMOptions --add-modules=ALL-SYSTEM -Dapple.laf.useScreenMenuBar=true -Dcom.apple.macos.use-file-dialog-packages=true -Dcom.apple.smallTabs=true -Djava.library.path="${PROGRAM_DIR}" -jar tvbrowser.jar "$@"
 # ensure disk cache is written to drive
 sync
 echo "TV-Browser will terminate."

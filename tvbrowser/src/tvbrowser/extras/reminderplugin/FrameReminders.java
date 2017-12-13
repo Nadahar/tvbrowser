@@ -116,7 +116,7 @@ public class FrameReminders extends JFrame implements InterfaceClose<PanelRemind
       }
     });
     
-    final KeyStroke closeReminderInOrder = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, KeyEvent.CTRL_DOWN_MASK);
+    final KeyStroke closeReminderInOrder = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, KeyEvent.ALT_DOWN_MASK);
     
     rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(closeReminderInOrder, "close_reminder_in_order");
     rootPane.getActionMap().put("close_reminder_in_order", new AbstractAction() {
