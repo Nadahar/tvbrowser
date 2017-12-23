@@ -473,6 +473,14 @@ public class ReminderPlugin {
     }
   }
 
+  void saveSettings() {
+    try {
+      mConfigurationHandler.storeSettings(mSettings);
+    } catch (IOException e) {
+      ErrorHandler.handle("Could not store reminder settings.", e);
+    }
+  }
+  
   private void readData(ObjectInputStream in) throws IOException,
       ClassNotFoundException {
 

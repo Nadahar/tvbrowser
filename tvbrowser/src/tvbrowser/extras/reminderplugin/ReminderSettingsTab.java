@@ -91,6 +91,10 @@ public class ReminderSettingsTab implements SettingsTab {
   private JCheckBox mFrameRemindersCloseIfEmptry;
   private JCheckBox mFrameRemindersToFrontOnAdd;
   
+  private JCheckBox mFrameRemindersAutoResizeEnabled;
+  private JRadioButton mFrameRemindersAutoResizeTypeTop;
+  private JRadioButton mFrameRemindersAutoResizeTypeBottom;
+  
   private JCheckBox mReminderWindowChB;
   
   private JRadioButton[] mReminderWindowPosition;  
@@ -150,14 +154,29 @@ public class ReminderSettingsTab implements SettingsTab {
     mFrameRemindersChB = new JCheckBox(mLocalizer.msg("frameReminders", "Window with collected reminders"), propDefaults.getValueFromProperties(ReminderPropertyDefaults.KEY_FRAME_REMINDERS_SHOW).equalsIgnoreCase("true"));
     mFrameRemindersToFrontOnAdd = new JCheckBox(mLocalizer.msg("frameRemindersToFrontOnAdd", "Show window at front, when reminder is added"), propDefaults.getValueFromProperties(ReminderPropertyDefaults.KEY_FRAME_REMINDERS_TO_FRONT_WHEN_REMINDER_ADDED).equals("true"));
     mFrameRemindersCloseIfEmptry = new JCheckBox(mLocalizer.msg("frameRemindersCloseIfEmpty", "Close window automatically when last reminder is removed of it"), propDefaults.getValueFromProperties(ReminderPropertyDefaults.KEY_AUTO_CLOSE_FRAME_REMINDERS_IF_EMTPY).equals("true"));
+
+    mFrameRemindersAutoResizeEnabled = new JCheckBox(mLocalizer.msg("autoResizeEnabled", "Automatically resize"), propDefaults.getValueFromProperties(ReminderPropertyDefaults.KEY_AUTO_RESIZE_ENABLED).equals("true"));
+    
+    mFrameRemindersAutoResizeTypeTop = new JRadioButton(mLocalizer.msg("autoResizeType.top", "Align to top of screen"), propDefaults.getValueFromProperties(ReminderPropertyDefaults.KEY_AUTO_RESIZE_TYPE).equals(ReminderPropertyDefaults.VALUE_AUTO_RESIZE_TYPE_TOP));
+    mFrameRemindersAutoResizeTypeBottom = new JRadioButton(mLocalizer.msg("autoResizeType.bottom", "Align to bottom of screen"), propDefaults.getValueFromProperties(ReminderPropertyDefaults.KEY_AUTO_RESIZE_TYPE).equals(ReminderPropertyDefaults.VALUE_AUTO_RESIZE_TYPE_BOTTOM));
+    
+    final ButtonGroup bg1 = new ButtonGroup();
+    bg1.add(mFrameRemindersAutoResizeTypeTop);
+    bg1.add(mFrameRemindersAutoResizeTypeBottom);
     
     mFrameRemindersToFrontOnAdd.setEnabled(mFrameRemindersChB.isSelected());
     mFrameRemindersCloseIfEmptry.setEnabled(mFrameRemindersChB.isSelected());
+    mFrameRemindersAutoResizeEnabled.setEnabled(mFrameRemindersChB.isSelected());
+    mFrameRemindersAutoResizeTypeTop.setEnabled(mFrameRemindersChB.isSelected() && mFrameRemindersAutoResizeEnabled.isSelected());
+    mFrameRemindersAutoResizeTypeBottom.setEnabled(mFrameRemindersChB.isSelected() && mFrameRemindersAutoResizeEnabled.isSelected());
     
-    JPanel frameRemindersCfg = new JPanel(new FormLayout("12dlu,default:grow","default,1dlu,default,1dlu,default"));
-    frameRemindersCfg.add(mFrameRemindersChB, CC.xyw(1, 1, 2));
-    frameRemindersCfg.add(mFrameRemindersToFrontOnAdd, CC.xy(2, 3));
-    frameRemindersCfg.add(mFrameRemindersCloseIfEmptry, CC.xy(2, 5));
+    JPanel frameRemindersCfg = new JPanel(new FormLayout("12dlu,12dlu,default:grow","default,1dlu,default,1dlu,default,3dlu,default,1dlu,default,1dlu,default"));
+    frameRemindersCfg.add(mFrameRemindersChB, CC.xyw(1, 1, 3));
+    frameRemindersCfg.add(mFrameRemindersToFrontOnAdd, CC.xyw(2, 3, 2));
+    frameRemindersCfg.add(mFrameRemindersCloseIfEmptry, CC.xyw(2, 5, 2));
+    frameRemindersCfg.add(mFrameRemindersAutoResizeEnabled, CC.xyw(2, 7, 2));
+    frameRemindersCfg.add(mFrameRemindersAutoResizeTypeTop, CC.xy(3, 9));
+    frameRemindersCfg.add(mFrameRemindersAutoResizeTypeBottom, CC.xy(3, 11));
         
     mReminderWindowChB = new JCheckBox(mLocalizer.msg("reminderWindow", "Single reminder window"), propDefaults.getValueFromProperties(ReminderPropertyDefaults.KEY_REMINDER_WINDOW_SHOW).equalsIgnoreCase("true"));
     
@@ -395,6 +414,9 @@ public class ReminderSettingsTab implements SettingsTab {
       
       mFrameRemindersCloseIfEmptry.setEnabled(e.getStateChange() == ItemEvent.SELECTED);
       mFrameRemindersToFrontOnAdd.setEnabled(e.getStateChange() == ItemEvent.SELECTED);
+      mFrameRemindersAutoResizeEnabled.setEnabled(e.getStateChange() == ItemEvent.SELECTED);
+      mFrameRemindersAutoResizeTypeTop.setEnabled(e.getStateChange() == ItemEvent.SELECTED && mFrameRemindersAutoResizeEnabled.isSelected());
+      mFrameRemindersAutoResizeTypeBottom.setEnabled(e.getStateChange() == ItemEvent.SELECTED && mFrameRemindersAutoResizeEnabled.isSelected());
       
       c.setEnabled(e.getStateChange() == ItemEvent.SELECTED || mReminderWindowChB.isSelected());
       secondsLabel.setEnabled((e.getStateChange() == ItemEvent.SELECTED || mReminderWindowChB.isSelected()) && mCloseOnTime.isSelected());
@@ -403,6 +425,11 @@ public class ReminderSettingsTab implements SettingsTab {
       mCloseOnTime.setEnabled(e.getStateChange() == ItemEvent.SELECTED || mReminderWindowChB.isSelected());
       mShowTimeCounter.setEnabled((e.getStateChange() == ItemEvent.SELECTED || mReminderWindowChB.isSelected()) && !mCloseNever.isSelected());
       mAutoCloseReminderTimeSp.setEnabled((e.getStateChange() == ItemEvent.SELECTED || mReminderWindowChB.isSelected()) && mCloseOnTime.isSelected());
+    });
+    
+    mFrameRemindersAutoResizeEnabled.addItemListener(e -> {
+      mFrameRemindersAutoResizeTypeTop.setEnabled(e.getStateChange() == ItemEvent.SELECTED && mFrameRemindersChB.isSelected());
+      mFrameRemindersAutoResizeTypeBottom.setEnabled(e.getStateChange() == ItemEvent.SELECTED && mFrameRemindersChB.isSelected());
     });
     
     mReminderWindowChB.addItemListener(e -> {
@@ -588,6 +615,14 @@ public class ReminderSettingsTab implements SettingsTab {
         .isSelected()));
     mSettings.setProperty(ReminderPropertyDefaults.KEY_AUTO_CLOSE_FRAME_REMINDERS_IF_EMTPY, String.valueOf(mFrameRemindersCloseIfEmptry
         .isSelected()));
+    mSettings.setProperty(ReminderPropertyDefaults.KEY_AUTO_RESIZE_ENABLED, String.valueOf(mFrameRemindersAutoResizeEnabled.isSelected()));
+    mSettings.setProperty(ReminderPropertyDefaults.KEY_AUTO_RESIZE_TYPE, mFrameRemindersAutoResizeTypeTop.isSelected() ? ReminderPropertyDefaults.VALUE_AUTO_RESIZE_TYPE_TOP : ReminderPropertyDefaults.VALUE_AUTO_RESIZE_TYPE_BOTTOM);
+    
+    final FrameReminders update = FrameReminders.getInstance(false);
+        
+    if(update != null) {
+      update.updateWindowSettings();
+    }
     
     mSettings.setProperty(ReminderPropertyDefaults.KEY_REMINDER_WINDOW_SHOW, String.valueOf(mReminderWindowChB
         .isSelected()));

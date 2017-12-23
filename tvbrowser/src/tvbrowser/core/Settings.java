@@ -2248,6 +2248,21 @@ public class Settings {
    * @since 3.3
    */
   public static final void layoutWindow(String windowId, Window window, Dimension defaultSize, Window parent) {
+    layoutWindow(windowId, window, defaultSize, parent, false);
+  }
+
+ /**
+  * Sets the window position and size for the given window with the values of the given id.
+  
+  * @param windowId The id of the values to set.
+  * @param window The window to layout.
+  * @param defaultSize The default size for the window.
+  * @param parent The parent window of the window to layout (if not <code>null</code> the window is placed relative to it.)
+  * @param ignoreAndMinSizeLocation If the location of the window and the minimum size should be ignored and not be set.
+  *
+  * @since 4.0.1
+  */
+  public static final void layoutWindow(String windowId, Window window, Dimension defaultSize, Window parent, boolean ignoreAndMinSizeLocation) {
     WindowSetting setting = mWindowSettings.get(windowId);
 
     if(setting == null) {
@@ -2256,7 +2271,27 @@ public class Settings {
       mWindowSettings.put(windowId, setting);
     }
 
+    setting.setIgnoreAndMinSizeLocation(ignoreAndMinSizeLocation);
     setting.layout(window,parent);
+  }
+  
+  /**
+   * Update the window settings of a certain window.
+   * 
+   * @param windowId The id of the values to set.
+   * @param defaultSize The new default size for the window or <code>null</code> to delete default size.
+   * @param ignoreAndMinSizeLocation If the location of the window and the minimum size should be ignored and not be set.
+   */
+  public static final void updateWindowSettings(final String windowId, final Dimension defaultSize, final boolean ignoreAndMinSizeLocation) {
+    WindowSetting setting = mWindowSettings.get(windowId);
+
+    if(setting == null) {
+      setting = new WindowSetting(defaultSize);
+
+      mWindowSettings.put(windowId, setting);
+    }
+    
+    setting.setIgnoreAndMinSizeLocation(ignoreAndMinSizeLocation);
   }
   
   private static final class VariableFontSizeFont extends Font {
