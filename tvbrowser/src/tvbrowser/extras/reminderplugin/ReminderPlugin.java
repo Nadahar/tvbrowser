@@ -473,7 +473,7 @@ public class ReminderPlugin {
     }
   }
 
-  void saveSettings() {
+  synchronized void saveSettings() {
     try {
       mConfigurationHandler.storeSettings(mSettings);
     } catch (IOException e) {
