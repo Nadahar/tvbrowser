@@ -74,6 +74,14 @@ public class OperatingSystem {
   }
 
   /**
+   * @return <code>true</code> if the OS is a 64 bit OS.
+   * @since 4.0.1
+   */
+  public static boolean is64Bit() {
+    return System.getProperty("os.arch").contains("64");
+  }
+  
+  /**
    * @return true, if a KDE session is running
    * @since 3.0
    */
