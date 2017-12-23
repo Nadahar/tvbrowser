@@ -5,6 +5,8 @@ import java.util.HashMap;
 import util.misc.PropertyDefaults;
 
 public final class ReminderPropertyDefaults {
+  static final String KEY_AUTO_RESIZE_ENABLED = "autoResizeEnabled";
+  static final String KEY_AUTO_RESIZE_TYPE = "typeAutoResize";
   static final String KEY_AUTO_CLOSE_BEHAVIOUR = "autoCloseBehaviour";
   static final String KEY_AUTO_CLOSE_REMINDER_TIME = "autoCloseReminderTime";
   static final String KEY_AUTO_CLOSE_FRAME_REMINDERS_IF_EMTPY = "autoCloseFrameRemindersIfEmpty";
@@ -14,6 +16,12 @@ public final class ReminderPropertyDefaults {
   static final String VALUE_AUTO_CLOSE_BEHAVIOUR_ON_NEVER = "never";
   static final String VALUE_AUTO_CLOSE_BEHAVIOUR_ON_END = "onEnd";
   static final String VALUE_AUTO_CLOSE_BEHAVIOUR_ON_TIME = "onTime";
+  
+  static final String VALUE_AUTO_RESIZE_TYPE_TOP = "top";
+  static final String VALUE_AUTO_RESIZE_TYPE_BOTTOM = "bottom";
+  
+  static final String KEY_FRAME_REMINDERS_XPOS = "frameRemindersXpos";
+  static final String KEY_FRAME_REMINDERS_WIDTH = "frameRemindersWidth";
   
   public static final String KEY_SOUNDFILE = "soundfile";
   public static final String KEY_FRAME_REMINDERS_SHOW = "showFrameReminders";
@@ -36,6 +44,8 @@ public final class ReminderPropertyDefaults {
     DEFAULT_VALUE_MAP.put(KEY_REMINDER_WINDOW_ALWAYS_ON_TOP, "true");
     DEFAULT_VALUE_MAP.put(KEY_REMINDER_WINDOW_POSITION, "6");
     DEFAULT_VALUE_MAP.put(KEY_SCROLL_TIME_TYPE_NEXT, "true");
+    DEFAULT_VALUE_MAP.put(KEY_AUTO_RESIZE_ENABLED, "false");
+    DEFAULT_VALUE_MAP.put(KEY_AUTO_RESIZE_TYPE, VALUE_AUTO_RESIZE_TYPE_TOP);
     
     DEFAULT_VALUES = new PropertyDefaults(DEFAULT_VALUE_MAP);
   }

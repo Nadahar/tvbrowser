@@ -1514,8 +1514,10 @@ public class MainFrame extends JFrame implements DateListener,DropTargetListener
     new Thread("SEND FILTER TO CENTER PANELS") {
       @Override
       public void run() {
-        for(PluginCenterPanelWrapper wrapper : mCenterPanelWrapperList) {
-          wrapper.filterSelected(filter);
+        synchronized (mCenterPanelWrapperList) {
+          for(PluginCenterPanelWrapper wrapper : mCenterPanelWrapperList) {
+            wrapper.filterSelected(filter);
+          }          
         }
       }
     }.start();

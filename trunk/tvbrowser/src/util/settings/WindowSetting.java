@@ -58,6 +58,8 @@ public final class WindowSetting {
   private Dimension mMinSize;
 
   private int mExtendedState;
+  
+  private boolean mIgnoreAndMinSizeLocation;
 
   /**
    * Creates an instance of this class with the values read from the stream.
@@ -75,6 +77,10 @@ public final class WindowSetting {
     
     if(version > 1) {
       mExtendedState = in.readInt();
+    }
+    
+    if(version > 2) {
+      mIgnoreAndMinSizeLocation = in.readBoolean();
     }
   }
 
@@ -96,6 +102,7 @@ public final class WindowSetting {
     }
     
     mExtendedState = JFrame.NORMAL;
+    mIgnoreAndMinSizeLocation = false;
   }
 
   /**
@@ -105,7 +112,7 @@ public final class WindowSetting {
    * @throws IOException Thrown if an IO operation went wrong.
    */
   public void saveSettings(ObjectOutputStream out) throws IOException {
-    out.writeInt(2); // write version
+    out.writeInt(3); // write version
 
     out.writeInt(mXPos);
     out.writeInt(mYPos);
@@ -113,6 +120,7 @@ public final class WindowSetting {
     out.writeInt(mHeight);
     
     out.writeInt(mExtendedState);
+    out.writeBoolean(mIgnoreAndMinSizeLocation);
   }
   
   /**
@@ -184,7 +192,7 @@ public final class WindowSetting {
                 sleep(100);
               } catch (InterruptedException e1) {}
               
-              if(parent == null) {
+              if(parent == null && !mIgnoreAndMinSizeLocation) {
                 Point p = e.getComponent().getLocation();
                 
                 if(mXPos < 0 || mYPos < 0 || mXPos > d.width || mYPos > d.height) {
@@ -211,7 +219,7 @@ public final class WindowSetting {
                 }
 
                 public void componentResized(ComponentEvent e) {
-                  if (mMinSize != null) {
+                  if (mMinSize != null && !mIgnoreAndMinSizeLocation) {
                     int winWidth = window.getWidth();
                     int winHeight = window.getHeight();
                     boolean resize = false;
@@ -303,7 +311,7 @@ public final class WindowSetting {
       });
     }
     
-    if(parent != null) {
+    if(parent != null && !mIgnoreAndMinSizeLocation) {
       window.setLocationRelativeTo(parent);
     }
     
@@ -314,6 +322,10 @@ public final class WindowSetting {
   public String toString() {
     return new StringBuilder("x:").append(mXPos).append(" y:").append(mYPos)
         .append(" ").append(mWidth).append("x").append(mHeight).toString();
+  }
+  
+  public void setIgnoreAndMinSizeLocation(boolean ignoreAndMinSizeLocation) {
+    mIgnoreAndMinSizeLocation = ignoreAndMinSizeLocation;
   }
 }
 
