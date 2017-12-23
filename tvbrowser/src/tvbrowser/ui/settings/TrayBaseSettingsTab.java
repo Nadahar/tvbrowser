@@ -64,7 +64,7 @@ public class TrayBaseSettingsTab implements SettingsTab {
   public JPanel createSettingsPanel() {
 
     final PanelBuilder builder = new PanelBuilder(new FormLayout(
-        "5dlu, default:grow, 5dlu",
+        "5dlu, 50dlu:grow, 5dlu",
         "default, 5dlu, default, default, default, default, default, default, 10dlu, default, 5dlu, default, default, default"));
     builder.border(Borders.DIALOG);
     CellConstraints cc = new CellConstraints();
@@ -79,7 +79,7 @@ public class TrayBaseSettingsTab implements SettingsTab {
     mMinimizeToTrayChb.setEnabled(mTrayIsEnabled.isSelected());
 
     msg = mLocalizer.msg("trayGlobalKeyToggle", "System wide key shortcuts enabled (Ctrl+Shift+A=Minimize/Restore, Ctrl+Shift+Alt+A=To front)");
-    mTrayGlobalToggle = new JCheckBox(msg, Settings.propTrayGlobalKeyToggle.getBoolean());
+    mTrayGlobalToggle = new JCheckBox("<html>"+msg+"</html>", Settings.propTrayGlobalKeyToggle.getBoolean());
     
     msg = mLocalizer.msg("nowOnDeIconify", "Jump to now when restoring application");
     checked = Settings.propNowOnRestore.getBoolean();
@@ -124,8 +124,11 @@ public class TrayBaseSettingsTab implements SettingsTab {
     builder.add(mTrayIsEnabled, cc.xy(2,3));
     builder.add(mTrayIsAnialiasing, cc.xy(2,4));
     builder.add(mMinimizeToTrayChb, cc.xy(2,5));
-    builder.add(mTrayGlobalToggle, cc.xy(2,6));
-    builder.add(mNowOnRestore, cc.xy(2,7));
+    
+    if(OperatingSystem.is64Bit()) {
+      builder.add(mTrayGlobalToggle, cc.xy(2,6));
+      builder.add(mNowOnRestore, cc.xy(2,7));
+    }
     
     builder.addSeparator(mLocalizer.msg("filter", "Filter settings"), cc.xyw(1,10,3));
     builder.add(mFilterAll, cc.xy(2,12));
