@@ -54,6 +54,8 @@ public class FrameReminders extends JFrame implements InterfaceClose<PanelRemind
   private final JButton mDelete;
 
   private Thread mThreadUpdateHeight;
+
+  private AtomicBoolean mAutoResize = null;
   
   private FrameReminders() {
     mListReminders = new ScrollableJPanel();
@@ -257,17 +259,32 @@ public class FrameReminders extends JFrame implements InterfaceClose<PanelRemind
   }
   
   public void updateWindowSettings() {
-    if(ReminderPlugin.getInstance().getSettings().getProperty(ReminderPropertyDefaults.KEY_AUTO_RESIZE_ENABLED, ReminderPropertyDefaults.getPropertyDefaults().getDefaultValueForKey(ReminderPropertyDefaults.KEY_AUTO_RESIZE_ENABLED)).equals("false")) {
-      Settings.updateWindowSettings(ID_WINDOW, new Dimension(Sizes.dialogUnitXAsPixel(400, this), Sizes.dialogUnitYAsPixel(300, this)), false);
-    }
-    else {
-      int width = Integer.parseInt(ReminderPlugin.getInstance().getSettings().getProperty(ReminderPropertyDefaults.KEY_FRAME_REMINDERS_WIDTH, String.valueOf(getWidth())));
+    final boolean autoResize = ReminderPlugin.getInstance().getSettings().getProperty(ReminderPropertyDefaults.KEY_AUTO_RESIZE_ENABLED, ReminderPropertyDefaults.getPropertyDefaults().getDefaultValueForKey(ReminderPropertyDefaults.KEY_AUTO_RESIZE_ENABLED)).equals("false");
+    
+    if(mAutoResize == null || mAutoResize.get() != autoResize) {
+      if(mAutoResize == null) {
+        mAutoResize = new AtomicBoolean(autoResize);
+      }
+      else {
+        mAutoResize.set(autoResize);
+      }
       
-      Settings.updateWindowSettings(ID_WINDOW, new Dimension(Sizes.dialogUnitXAsPixel(400, this), Sizes.dialogUnitYAsPixel(300, this)), true);
-      pack();
-      setSize(width, getHeight());
-      
-      setLocation(Integer.parseInt(ReminderPlugin.getInstance().getSettings().getProperty(ReminderPropertyDefaults.KEY_FRAME_REMINDERS_XPOS,"0")), Toolkit.getDefaultToolkit().getScreenSize().height-10);
+      if(autoResize) {
+        Settings.updateWindowSettings(ID_WINDOW, new Dimension(Sizes.dialogUnitXAsPixel(400, this), Sizes.dialogUnitYAsPixel(300, this)), false);
+      }
+      else {
+        int width = Integer.parseInt(ReminderPlugin.getInstance().getSettings().getProperty(ReminderPropertyDefaults.KEY_FRAME_REMINDERS_WIDTH, String.valueOf(getWidth())));
+        
+        Settings.updateWindowSettings(ID_WINDOW, new Dimension(Sizes.dialogUnitXAsPixel(400, this), Sizes.dialogUnitYAsPixel(300, this)), true);
+        pack();
+        setSize(width, getHeight());
+        
+        setLocation(Integer.parseInt(ReminderPlugin.getInstance().getSettings().getProperty(ReminderPropertyDefaults.KEY_FRAME_REMINDERS_XPOS,"0")), Toolkit.getDefaultToolkit().getScreenSize().height-10);
+        
+        if(isVisible()) {
+          updateHeight();
+        }
+      }
     }
   }
   
@@ -437,7 +454,7 @@ public class FrameReminders extends JFrame implements InterfaceClose<PanelRemind
   }
   
   private synchronized void updateHeight() {
-    if (ReminderPropertyDefaults.getPropertyDefaults().getValueFromProperties(ReminderPropertyDefaults.KEY_AUTO_RESIZE_ENABLED,ReminderPlugin.getInstance().getSettings()).equals("true") && mThreadUpdateHeight == null || !mThreadUpdateHeight.isAlive()) {
+    if (ReminderPropertyDefaults.getPropertyDefaults().getValueFromProperties(ReminderPropertyDefaults.KEY_AUTO_RESIZE_ENABLED,ReminderPlugin.getInstance().getSettings()).equals("true") && (mThreadUpdateHeight == null || !mThreadUpdateHeight.isAlive())) {
       mThreadUpdateHeight = new Thread("UPDATE HEIGHT THREAD") {
         @Override
         public void run() {
@@ -451,7 +468,7 @@ public class FrameReminders extends JFrame implements InterfaceClose<PanelRemind
             Container c = getContentPane();
 
             int height = c.getInsets().top + c.getInsets().bottom;
-
+            
             int space = 0;
 
             for (int i = 1; i < c.getComponentCount(); i++) {
@@ -463,85 +480,53 @@ public class FrameReminders extends JFrame implements InterfaceClose<PanelRemind
             heightWithoutScroll = height + space;
             
             if(mListReminders.getComponentCount() > 0) {
-            Dimension scrnSize = Toolkit.getDefaultToolkit().getScreenSize();
-            Rectangle winSize = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
-            
-            int maxWindowHeight = winSize.height;
-            int titleBarHeight = getInsets().top + getInsets().bottom;
-            int taskBarHeight = scrnSize.height - winSize.height;
-            int remindersHeight = 0;
-            
-            for(int i = 0; i < mListReminders.getComponentCount(); i++) {
-              remindersHeight += Math.max(mListReminders.getComponent(i).getPreferredSize().height, mListReminders.getComponent(i).getHeight());
-            }
-            
-            int futureHeight = remindersHeight+heightWithoutScroll+titleBarHeight+3;
-            
-            if(futureHeight < maxWindowHeight) {
-              setSize(Math.max(Sizes.dialogUnitXAsPixel(400, FrameReminders.this),getWidth()), futureHeight);
-            }
-            else {
-              setSize(Math.max(Sizes.dialogUnitXAsPixel(400, FrameReminders.this),getWidth()), maxWindowHeight +getInsets().bottom*2);
-            }
-            
-            int xPos = Integer.parseInt(ReminderPlugin.getInstance().getSettings().getProperty(ReminderPropertyDefaults.KEY_FRAME_REMINDERS_XPOS,"0"));
-            int winBorder = xPos - winSize.width + getWidth();
-            
-            if(winBorder == 0) {
-          	  xPos = winSize.width - getWidth() + getInsets().right - 1;
-            }
-            else if(xPos <= getInsets().left) {
-              xPos = 0 - getInsets().left+1;
-            }
-            
-            if(ReminderPropertyDefaults.getPropertyDefaults().getValueFromProperties(ReminderPropertyDefaults.KEY_AUTO_RESIZE_TYPE, ReminderPlugin.getInstance().getSettings()).equals(ReminderPropertyDefaults.VALUE_AUTO_RESIZE_TYPE_TOP)) {
-              setLocation(xPos, winSize.y);
-            }
-            else {
-              int y = scrnSize.height-getHeight()+getInsets().bottom;
-              
-              if((scrnSize.height - winSize.y) != winSize.height) {
-                y -= taskBarHeight;
-              }
-              
-              setLocation(xPos, y);
-            }
-          }
-            /*if (mListReminders.getComponentCount() > 0) {
               Dimension scrnSize = Toolkit.getDefaultToolkit().getScreenSize();
               Rectangle winSize = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
-
+              
+              final Insets insets = getInsets();
+              
               int maxWindowHeight = winSize.height;
-              int titleBarHeight = getInsets().top;
+              int titleBarHeight = insets.top + insets.bottom;
               int taskBarHeight = scrnSize.height - winSize.height;
-
               int remindersHeight = 0;
-
-              for (int i = 0; i < mListReminders.getComponentCount(); i++) {
-                remindersHeight += mListReminders.getComponent(i).getPreferredSize().height;
+              
+              for(int i = 0; i < mListReminders.getComponentCount(); i++) {
+                remindersHeight += Math.max(mListReminders.getComponent(i).getPreferredSize().height, mListReminders.getComponent(i).getHeight());
               }
-
-              int futureHeight = remindersHeight + heightWithoutScroll - titleBarHeight + 3;
-
-              if (futureHeight < maxWindowHeight) {
-                setSize(Math.max(Sizes.dialogUnitXAsPixel(400, FrameReminders.this), getWidth()), futureHeight);
-              } else {
-                setSize(Math.max(Sizes.dialogUnitXAsPixel(400, FrameReminders.this), getWidth()), maxWindowHeight);
+              
+              int futureHeight = remindersHeight+heightWithoutScroll+titleBarHeight+3;
+              
+              if(futureHeight < maxWindowHeight) {
+                setSize(Math.max(Sizes.dialogUnitXAsPixel(400, FrameReminders.this),getWidth()), futureHeight);
               }
-
-              if (ReminderPropertyDefaults.getPropertyDefaults().getValueFromProperties(ReminderPropertyDefaults.KEY_AUTO_RESIZE_TYPE, ReminderPlugin.getInstance().getSettings()).equals(ReminderPropertyDefaults.VALUE_AUTO_RESIZE_TYPE_TOP)) {
-                setLocation(getX(), winSize.y);
-              } else {
-                int y = scrnSize.height - getHeight() - titleBarHeight;
-
-                if ((scrnSize.height - winSize.y) != winSize.height) {
+              else {
+                setSize(Math.max(Sizes.dialogUnitXAsPixel(400, FrameReminders.this),getWidth()), maxWindowHeight + insets.bottom + (insets.top == 0 ? -30 : 0));
+              }
+              
+              int xPos = Integer.parseInt(ReminderPlugin.getInstance().getSettings().getProperty(ReminderPropertyDefaults.KEY_FRAME_REMINDERS_XPOS,"0"));
+              int winBorder = xPos - winSize.width + getWidth();
+              
+              if(winBorder == 0) {
+            	  xPos = winSize.width - getWidth() + insets.right - 1;
+              }
+              else if(xPos <= insets.left) {
+                xPos = 0 - insets.left+1;
+              }
+              
+              if(ReminderPropertyDefaults.getPropertyDefaults().getValueFromProperties(ReminderPropertyDefaults.KEY_AUTO_RESIZE_TYPE, ReminderPlugin.getInstance().getSettings()).equals(ReminderPropertyDefaults.VALUE_AUTO_RESIZE_TYPE_TOP)) {
+                setLocation(xPos, winSize.y);
+              }
+              else {
+                int y = scrnSize.height-getHeight()+insets.bottom;
+                
+                if((scrnSize.height - winSize.y) != winSize.height) {
                   y -= taskBarHeight;
                 }
-
-                setLocation(getX(), y);
+                
+                setLocation(xPos, y);
               }
             }
-*/
+            
             try {
               sleep(500);
             } catch (InterruptedException e) {/* Ignore */}
