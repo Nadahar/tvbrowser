@@ -96,7 +96,7 @@ public class ConfigurationHandler {
 
   }
 
-  public void storeData(final DataSerializer serializer) throws IOException {
+  public synchronized void storeData(final DataSerializer serializer) throws IOException {
     String userDirectoryName = Settings.getUserSettingsDirName();
     File userDirectory = new File(userDirectoryName);
 
@@ -148,7 +148,7 @@ public class ConfigurationHandler {
     }
   }
 
-  public void storeSettings(Properties settings) throws IOException {
+  public synchronized void storeSettings(Properties settings) throws IOException {
     // save settings in a temp file
     String userDirectoryName = Settings.getUserSettingsDirName();
     FileOutputStream fOut = null;

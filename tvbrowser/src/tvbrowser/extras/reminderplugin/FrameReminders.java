@@ -207,7 +207,7 @@ public class FrameReminders extends JFrame implements InterfaceClose<PanelRemind
       }
     });
     
-    final KeyStroke closeReminderInOrder = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, KeyEvent.ALT_DOWN_MASK);
+    final KeyStroke closeReminderInOrder = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, KeyEvent.ALT_DOWN_MASK | KeyEvent.CTRL_DOWN_MASK);
     
     rootPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(closeReminderInOrder, "close_reminder_in_order");
     rootPane.getActionMap().put("close_reminder_in_order", new AbstractAction() {
@@ -443,8 +443,7 @@ public class FrameReminders extends JFrame implements InterfaceClose<PanelRemind
         public void run() {
           try {
             sleep(100);
-          } catch (InterruptedException e) {
-          }
+          } catch (InterruptedException e) {/* Ignore */}
 
           for (int g = 0; g < 2; g++) {
             int heightWithoutScroll = 0;
@@ -463,7 +462,52 @@ public class FrameReminders extends JFrame implements InterfaceClose<PanelRemind
 
             heightWithoutScroll = height + space;
             
-            if (mListReminders.getComponentCount() > 0) {
+            if(mListReminders.getComponentCount() > 0) {
+            Dimension scrnSize = Toolkit.getDefaultToolkit().getScreenSize();
+            Rectangle winSize = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
+            
+            int maxWindowHeight = winSize.height;
+            int titleBarHeight = getInsets().top + getInsets().bottom;
+            int taskBarHeight = scrnSize.height - winSize.height;
+            int remindersHeight = 0;
+            
+            for(int i = 0; i < mListReminders.getComponentCount(); i++) {
+              remindersHeight += Math.max(mListReminders.getComponent(i).getPreferredSize().height, mListReminders.getComponent(i).getHeight());
+            }
+            
+            int futureHeight = remindersHeight+heightWithoutScroll+titleBarHeight+3;
+            
+            if(futureHeight < maxWindowHeight) {
+              setSize(Math.max(Sizes.dialogUnitXAsPixel(400, FrameReminders.this),getWidth()), futureHeight);
+            }
+            else {
+              setSize(Math.max(Sizes.dialogUnitXAsPixel(400, FrameReminders.this),getWidth()), maxWindowHeight +getInsets().bottom*2);
+            }
+            
+            int xPos = Integer.parseInt(ReminderPlugin.getInstance().getSettings().getProperty(ReminderPropertyDefaults.KEY_FRAME_REMINDERS_XPOS,"0"));
+            int winBorder = xPos - winSize.width + getWidth();
+            
+            if(winBorder == 0) {
+          	  xPos = winSize.width - getWidth() + getInsets().right - 1;
+            }
+            else if(xPos <= getInsets().left) {
+              xPos = 0 - getInsets().left+1;
+            }
+            
+            if(ReminderPropertyDefaults.getPropertyDefaults().getValueFromProperties(ReminderPropertyDefaults.KEY_AUTO_RESIZE_TYPE, ReminderPlugin.getInstance().getSettings()).equals(ReminderPropertyDefaults.VALUE_AUTO_RESIZE_TYPE_TOP)) {
+              setLocation(xPos, winSize.y);
+            }
+            else {
+              int y = scrnSize.height-getHeight()+getInsets().bottom;
+              
+              if((scrnSize.height - winSize.y) != winSize.height) {
+                y -= taskBarHeight;
+              }
+              
+              setLocation(xPos, y);
+            }
+          }
+            /*if (mListReminders.getComponentCount() > 0) {
               Dimension scrnSize = Toolkit.getDefaultToolkit().getScreenSize();
               Rectangle winSize = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
 
@@ -497,10 +541,10 @@ public class FrameReminders extends JFrame implements InterfaceClose<PanelRemind
                 setLocation(getX(), y);
               }
             }
-
+*/
             try {
               sleep(500);
-            } catch (InterruptedException e) {}
+            } catch (InterruptedException e) {/* Ignore */}
           }
         }
       };
