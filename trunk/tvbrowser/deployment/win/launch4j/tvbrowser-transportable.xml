@@ -1,5 +1,5 @@
 <launch4jConfig>
-  <dontWrapJar>false</dontWrapJar>
+  <dontWrapJar>true</dontWrapJar>
   <headerType>gui</headerType>
   <jar>tvbrowser.jar</jar>
   <outfile>../../../runtime/tvbrowser_transportable/tvbrowser-transportable.exe</outfile>
