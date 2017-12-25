@@ -138,8 +138,6 @@ public class SystemTray {
     }
 
     if (mUseSystemTray) {
-      registerGlobalKeyToggle();
-      
       mTrayParent = new JDialog();
       mTrayParent.setTitle("Tray-Menu-Program-Popup");
 
@@ -155,7 +153,7 @@ public class SystemTray {
   private NativeKeyListener mGlobalKeyToggleListener = null;
   
   public synchronized void registerGlobalKeyToggle() {
-    if(Settings.propTrayGlobalKeyToggle.getBoolean() && mGlobalKeyToggleListener == null) {
+    if(OperatingSystem.is64Bit() && Settings.propTrayGlobalKeyToggle.getBoolean() && mGlobalKeyToggleListener == null) {
       try {
         if(!GlobalScreen.isNativeHookRegistered()) {
           // Get the logger for "org.jnativehook" and set the level to off.
