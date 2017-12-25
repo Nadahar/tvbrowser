@@ -711,7 +711,7 @@
   	   	<zipfileset dir="${deployment.dir}/linux"
   	                 prefix="/usr/bin"
   	   	   filemode="755" includes="**/tvbrowser" />
-  		<depends name="java" version="1.7"/>
+  		<depends name="java" version="1.8"/>
   	</rrpm>
   </target>
 	
